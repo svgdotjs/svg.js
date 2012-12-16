@@ -68,6 +68,17 @@ SVG.Element.prototype.setAttribute = function(a, v, ns) {
   return this;
 };
 
+// set svg element attribute
+SVG.Element.prototype.attr = function(v) {
+  if (typeof v == 'object')
+    for (var k in v)
+      this.setAttribute(k, v[k]);
+  else if (arguments.length == 2)
+    this.setAttribute(arguments[0], arguments[1]);
+  
+  return this;
+};
+
 // get bounding box
 SVG.Element.prototype.getBBox = function() {
   return this.svgElement.getBBox();

@@ -10,7 +10,7 @@ SVG.Circle.prototype = new SVG.Shape();
 SVG.Circle.prototype.move = function(x, y) {
   this.attributes.x = x;
   this.attributes.y = y;
-  this._center();
+  this.center();
   
   return this;
 };
@@ -18,15 +18,15 @@ SVG.Circle.prototype.move = function(x, y) {
 // custom size function
 SVG.Circle.prototype.size = function(w, h) {
   this.setAttribute('r', w / 2);
-  this._center();
+  this.center();
   
   return this;
 };
 
 // private: center 
-SVG.Circle.prototype._center = function() {
+SVG.Circle.prototype.center = function(cx, cy) {
   var r = this.attributes.r || 0;
   
-  this.setAttribute('cx', (this.attributes.x || 0) + r);
-  this.setAttribute('cy', (this.attributes.y || 0) + r);
+  this.setAttribute('cx', cx || ((this.attributes.x || 0) + r));
+  this.setAttribute('cy', cy || ((this.attributes.y || 0) + r));
 };
