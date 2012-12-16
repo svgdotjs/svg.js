@@ -1,6 +1,6 @@
 SVGJS_VERSION = '0.1'
 
-DEFAULT_MODULES = %w[ svg ]
+DEFAULT_MODULES = %w[ svg container dispatcher draggable object element document defs group nested clip_path shape rect circle ellipse path image ]
 
 KILO = 1024   # how many bytes in a "kilobyte"
 
@@ -8,6 +8,7 @@ task :default => :dist
 
 # module-aware file task
 class BuildTask < Rake::FileTask
+  
   def modules
     prerequisites.map {|f| File.basename(f, '.js') }
   end
@@ -28,24 +29,33 @@ class BuildTask < Rake::FileTask
   end
 
   def first_line
-    File.open(name, 'r') {|f| f.gets }
+    File.open(name, 'r') { |f| f.gets }
   end
+  
 end
 
 BuildTask.define_task 'dist/svg.js' => DEFAULT_MODULES.map {|m| "src/#{ m }.js" } do |task|
   mkdir_p 'dist', :verbose => false
-  File.open(task.name, 'w') do |svgjs|
-    svgjs.puts "/* svg.js %s - %s - svgjs.com/license */" %
-                [version_string, task.modules.join(' ')]
-
-    task.prerequisites.each do |src|
-      # bring in source files one by one, but without copyright info
-      copyright = true
-      File.open(src).each_line do |line|
-        copyright = false if copyright and line !~ %r{^(/|\s*$)}
-        svgjs.puts line unless copyright
-      end
+  
+  svgjs = ''
+  
+  task.prerequisites.each do |src|
+    # bring in source files one by one, but without copyright info
+    copyright = true
+    File.open(src).each_line do |line|
+      copyright = false if copyright and line !~ %r{^(/|\s*$)}
+      svgjs << "  #{ line }" unless copyright
     end
+    svgjs << "\n\n"
+  end
+  
+  File.open(task.name, 'w') do |file|
+    file.puts "/* svg.js %s - %s - svgjs.com/license */" % [version_string, task.modules.join(' ')]
+
+    file.puts '(function() {'
+    file.puts "\n"
+    file.puts svgjs
+    file.puts '}).call(this);'
   end
 end
 
