@@ -85,3 +85,8 @@ SVG.Element.prototype._findParent = function(pt) {
 
 // include the dispatcher object
 SVG.Element.include(SVG.Dispatcher);
+
+
+
+
+

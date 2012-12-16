@@ -90,21 +90,33 @@ SVG.Container = {
   },
   
   circle: function(v) {
-    return this.place(new SVG.Circle(), {
-      x: v != null ? v.x : void 0,
-      y: v != null ? v.y : void 0,
-      width: (v != null ? (v.width || v.r || v.radius) : void 0),
-      height: null
-    });
+    var g;
+    
+    if (v != null) {
+      g = { x: v.x, y: v.y };
+      
+      if (v.r || v.radius)
+        g.width = g.height = (v.r || v.radius) * 2;
+      else
+        g.width = g.height = v.width || v.height;
+    }
+    
+    return this.place(new SVG.Circle(), g);
   },
   
   ellipse: function(v) {
-    return this.place(new SVG.Ellipse(), {
-      x: v != null ? v.x : void 0,
-      y: v != null ? v.y : void 0,
-      width:  (v != null ? (v.width  || v.rx || v.radiusX) : void 0),
-      height: (v != null ? (v.height || v.ry || v.radiusY) : void 0)
-    });
+    var g;
+    
+    if (v != null) {
+      g = { x: v.x, y: v.y };
+      
+      if (v.width)  g.width  = v.width;
+      if (v.height) g.height = v.height;
+      if (v.rx)     g.width  = v.rx * 2;
+      if (v.ry)     g.height = v.ry * 2;
+    }
+    
+    return this.place(new SVG.Ellipse(), g);
   },
   
   path: function(v) {
