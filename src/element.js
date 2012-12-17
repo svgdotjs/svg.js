@@ -42,32 +42,20 @@ SVG.Utils.merge(SVG.Element, {
   },
 
   // remove element
-  destroy: function() {
+  remove: function() {
     return this.parent != null ? this.parent.remove(this) : void 0;
   },
 
   // get parent document
   parentDoc: function() {
-    return this._parent(SVG.Document);
+    return this._parent(SVG.Doc);
   },
 
   // get parent svg wrapper
   parentSVG: function() {
     return this.parentDoc();
   },
-
-  //_D // set svg element attribute
-  //_D setAttribute: function(a, v, ns) {
-  //_D   this.attrs[a] = v;
-  //_D 
-  //_D   if (ns != null)
-  //_D     this.node.setAttributeNS(ns, a, v);
-  //_D   else
-  //_D     this.node.setAttribute(a, v);
-  //_D 
-  //_D   return this;
-  //_D },
-
+  
   // set svg element attribute
   attr: function(v) {
     var a = arguments;

@@ -1,5 +1,5 @@
 
-SVG.Document = function Document(e) {
+SVG.Doc = function Doc(e) {
   this.constructor.call(this, SVG.create('svg'));
   
   this.attr('xmlns', SVG.ns);
@@ -13,7 +13,7 @@ SVG.Document = function Document(e) {
 };
 
 // inherit from SVG.Element
-SVG.Document.prototype = new SVG.Element();
+SVG.Doc.prototype = new SVG.Element();
 
 // include the container object
-SVG.Utils.merge(SVG.Document, SVG.Container);
+SVG.Utils.merge(SVG.Doc, SVG.Container);

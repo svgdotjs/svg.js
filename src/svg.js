@@ -9,5 +9,5 @@ this.SVG = {
 };
 
 this.svg = function(e) {
-  return new SVG.Document(e);
+  return new SVG.Doc(e);
 };

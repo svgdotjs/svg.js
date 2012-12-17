@@ -1,4 +1,4 @@
-/* svg.js 0.1 - svg utils container element document defs shape rect circle ellipse path image group clip_path - svgjs.com/license */
+/* svg.js 0.1 - svg utils container element doc defs shape rect circle ellipse path image g clip - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -11,7 +11,7 @@
   };
   
   this.svg = function(e) {
-    return new SVG.Document(e);
+    return new SVG.Doc(e);
   };
 
   SVG.Utils = {
@@ -99,7 +99,7 @@
     },
     
     group: function() {
-      var e = new SVG.Group();
+      var e = new SVG.G();
       this.add(e);
       
       return e;
@@ -212,32 +212,20 @@
     },
   
     // remove element
-    destroy: function() {
+    remove: function() {
       return this.parent != null ? this.parent.remove(this) : void 0;
     },
   
     // get parent document
     parentDoc: function() {
-      return this._parent(SVG.Document);
+      return this._parent(SVG.Doc);
     },
   
     // get parent svg wrapper
     parentSVG: function() {
       return this.parentDoc();
     },
-  
-    //_D // set svg element attribute
-    //_D setAttribute: function(a, v, ns) {
-    //_D   this.attrs[a] = v;
-    //_D 
-    //_D   if (ns != null)
-    //_D     this.node.setAttributeNS(ns, a, v);
-    //_D   else
-    //_D     this.node.setAttribute(a, v);
-    //_D 
-    //_D   return this;
-    //_D },
-  
+    
     // set svg element attribute
     attr: function(v) {
       var a = arguments;
@@ -275,7 +263,7 @@
   });
 
 
-  SVG.Document = function Document(e) {
+  SVG.Doc = function Doc(e) {
     this.constructor.call(this, SVG.create('svg'));
     
     this.attr('xmlns', SVG.ns);
@@ -289,10 +277,10 @@
   };
   
   // inherit from SVG.Element
-  SVG.Document.prototype = new SVG.Element();
+  SVG.Doc.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.Document, SVG.Container);
+  SVG.Utils.merge(SVG.Doc, SVG.Container);
 
   SVG.Defs = function Defs() {
     this.constructor.call(this, SVG.create('defs'));
@@ -309,7 +297,7 @@
     
     // define clippath
     clipPath: function() {
-      var e = new SVG.ClipPath();
+      var e = new SVG.Clip();
       this.add(e);
   
       return e;
@@ -328,26 +316,26 @@
   SVG.Utils.merge(SVG.Shape, {
     
     // set fill color and opacity
-    fill: function(fill) {
-      if (fill.color != null)
-        this.attr('fill', fill.color);
+    fill: function(f) {
+      if (f.color != null)
+        this.attr('fill', f.color);
   
-      if (fill.opacity != null)
-        this.attr('fill-opacity', fill.opacity);
+      if (f.opacity != null)
+        this.attr('fill-opacity', f.opacity);
   
       return this;
     },
   
     // set stroke color and opacity
-    stroke: function(stroke) {
-      if (stroke.color != null)
-        this.attr('stroke', stroke.color);
+    stroke: function(s) {
+      if (s.color)
+        this.attr('stroke', s.color);
   
-      if (stroke.width != null)
-        this.attr('stroke-width', stroke.width);
+      if (s.width != null)
+        this.attr('stroke-width', s.width);
   
-      if (stroke.opacity != null)
-        this.attr('stroke-opacity', stroke.opacity);
+      if (s.opacity != null)
+        this.attr('stroke-opacity', s.opacity);
   
       if (this.attrs['fill-opacity'] == null)
         this.fill({ opacity: 0 });
@@ -476,18 +464,18 @@
     
   });
 
-  SVG.Group = function Group() {
+  SVG.G = function G() {
     this.constructor.call(this, SVG.create('g'));
   };
   
   // inherit from SVG.Element
-  SVG.Group.prototype = new SVG.Element();
+  SVG.G.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.Group, SVG.Container);
+  SVG.Utils.merge(SVG.G, SVG.Container);
   
   // Add group-specific functions
-  SVG.Utils.merge(SVG.Group, {
+  SVG.Utils.merge(SVG.G, {
     
     // group rotation
     rotate: function(d) {
@@ -499,16 +487,16 @@
 
   var clipID = 0;
   
-  SVG.ClipPath = function ClipPath() {
+  SVG.Clip = function Clip() {
     this.constructor.call(this, SVG.create('clipPath'));
     this.id = '_' + (clipID++);
     this.attr('id', this.id);
   };
   
   // inherit from SVG.Element
-  SVG.ClipPath.prototype = new SVG.Element();
+  SVG.Clip.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.ClipPath, SVG.Container);
+  SVG.Utils.merge(SVG.Clip, SVG.Container);
 
 }).call(this);

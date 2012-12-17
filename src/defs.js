@@ -14,7 +14,7 @@ SVG.Utils.merge(SVG.Defs, {
   
   // define clippath
   clipPath: function() {
-    var e = new SVG.ClipPath();
+    var e = new SVG.Clip();
     this.add(e);
 
     return e;

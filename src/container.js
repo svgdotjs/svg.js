@@ -75,7 +75,7 @@ SVG.Container = {
   },
   
   group: function() {
-    var e = new SVG.Group();
+    var e = new SVG.G();
     this.add(e);
     
     return e;

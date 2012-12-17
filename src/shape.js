@@ -10,26 +10,26 @@ SVG.Shape.prototype = new SVG.Element();
 SVG.Utils.merge(SVG.Shape, {
   
   // set fill color and opacity
-  fill: function(fill) {
-    if (fill.color != null)
-      this.attr('fill', fill.color);
+  fill: function(f) {
+    if (f.color != null)
+      this.attr('fill', f.color);
 
-    if (fill.opacity != null)
-      this.attr('fill-opacity', fill.opacity);
+    if (f.opacity != null)
+      this.attr('fill-opacity', f.opacity);
 
     return this;
   },
 
   // set stroke color and opacity
-  stroke: function(stroke) {
-    if (stroke.color != null)
-      this.attr('stroke', stroke.color);
+  stroke: function(s) {
+    if (s.color)
+      this.attr('stroke', s.color);
 
-    if (stroke.width != null)
-      this.attr('stroke-width', stroke.width);
+    if (s.width != null)
+      this.attr('stroke-width', s.width);
 
-    if (stroke.opacity != null)
-      this.attr('stroke-opacity', stroke.opacity);
+    if (s.opacity != null)
+      this.attr('stroke-opacity', s.opacity);
 
     if (this.attrs['fill-opacity'] == null)
       this.fill({ opacity: 0 });
