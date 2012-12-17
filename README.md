@@ -34,9 +34,57 @@ This will generate the following output:
 var path = draw.path({ data: "M10,20L30,40" }).attr({ fill: '#9dffd3' });
 ```
 
-For more details on path data strings, check SVG documentation:
+For more details on path data strings, please read the SVG documentation:
 http://www.w3.org/TR/SVG/paths.html#PathData
 
+
+### Bounding box
+
+```javascript
+path.bbox();
+```
+This will return a SVGRect element as a js object:
+
+```javascript
+{ height: 20, width: 20, y: 20, x: 10 } 
+```
+
+### Clipping elements
+Clipping elements can be done with either 'clip()' or 'clipTo()'.
+
+Using 'clip()' creates a clip path in the parents 'defs' node, and passes it to a block:
+
+```javascript
+rect.clip(function(clipPath) {
+	clipPath.rect({ x:10, y:10, width:80, height:80 });
+});
+```
+
+You can also reuse clip paths for multiple elements using 'clipTo()'.
+```javascript
+var clipPath = doc.defs().clipPath();
+clipRect = clipPath.rect({ x:10, y:10, width:80, height:80 });
+rect.clipTo(clipPath);
+```
+
+### Setting attributes
+You can set an element's attributes directly with 'attr()':
+
+```javascript
+// set a single attribute
+rect.attr('x', 50);
+
+// set multiple attributes at once
+rect.attr({
+  fill: '#f06',
+  'fill-opacity': 0.5,
+  stroke: '#000',
+  'stroke-width': 10
+});
+
+// set an attribute with a namespace
+rect.setAttribute('x', 50, 'http://www.w3.org/2000/svg');
+```
 
 ## Compatibility
 
