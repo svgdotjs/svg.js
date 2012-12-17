@@ -69,6 +69,25 @@ rect.size(200, 300);
 Same as with 'move()' the size of an element could be set by using 'attr()'. But because every type of element is handles its size differently the 'size()' function is much more convenient.
 
 
+#### Fill
+The 'fill()' function is a pretty alternative to the 'attr()' method:
+```javascript
+rect.fill({ color: '#f06', opacity: 0.6 });
+```
+
+#### Stroke
+The 'stroke()' function is similar to 'fill()':
+```javascript
+rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
+```
+
+#### Removing elements
+Pretty straightforward:
+```javascript
+rect.remove();
+```
+
+
 ### Path element
 
 ```javascript
