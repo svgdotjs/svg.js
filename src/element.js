@@ -53,7 +53,7 @@ SVG.Element.prototype.parentDoc = function() {
 
 // get parent svg wrapper
 SVG.Element.prototype.parentSVG = function() {
-  return this._findParent(SVG.Nested) || this.parentDoc();
+  return this.parentDoc();
 };
 
 // set svg element attribute
@@ -93,10 +93,6 @@ SVG.Element.prototype._findParent = function(pt) {
   
   return e;
 };
-
-// include the dispatcher object
-SVG.Element.include(SVG.Dispatcher);
-
 
 
 

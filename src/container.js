@@ -81,10 +81,6 @@ SVG.Container = {
     return e;
   },
   
-  svg: function(v) {
-    return this.place(new SVG.Nested(), v);
-  },
-  
   rect: function(v) {
     return this.place(new SVG.Rect(), v);
   },
