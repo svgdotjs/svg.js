@@ -1,6 +1,6 @@
 
 SVG.Rect = function Rect() {
-  this.constructor.call(this, SVG.createElement('rect'));
+  this.constructor.call(this, SVG.create('rect'));
 };
 
 // inherit from SVG.Shape

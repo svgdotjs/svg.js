@@ -1,30 +1,35 @@
 
 SVG.Ellipse = function Ellipse() {
-  this.constructor.call(this, SVG.createElement('ellipse'));
+  this.constructor.call(this, SVG.create('ellipse'));
 };
 
 // inherit from SVG.Shape
 SVG.Ellipse.prototype = new SVG.Shape();
 
-// custom move function
-SVG.Ellipse.prototype.move = function(x, y) {
-  this.attributes.x = x;
-  this.attributes.y = y;
-  this.center();
+// Add ellipse-specific functions
+SVG.Utils.merge(SVG.Ellipse, {
   
-  return this;
-};
+  // custom move function
+  move: function(x, y) {
+    this.attrs.x = x;
+    this.attrs.y = y;
+    this.center();
 
-// custom size function
-SVG.Ellipse.prototype.size = function(w, h) {
-  this.setAttribute('rx', w / 2);
-  this.setAttribute('ry', h / 2);
-  this.center();
+    return this;
+  },
+
+  // custom size function
+  size: function(w, h) {
+    this.attr('rx', w / 2);
+    this.attr('ry', h / 2);
+    this.center();
+
+    return this; 
+  },
+
+  center: function(cx, cy) {
+    this.attr('cx', cx || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
+    this.attr('cy', cy || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
+  }
   
-  return this; 
-};
-
-SVG.Ellipse.prototype.center = function(cx, cy) {
-  this.setAttribute('cx', cx || ((this.attributes.x || 0) + (this.attributes.rx || 0)));
-  this.setAttribute('cy', cy || ((this.attributes.y || 0) + (this.attributes.ry || 0)));
-};
+});

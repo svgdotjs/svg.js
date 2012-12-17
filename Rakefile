@@ -1,6 +1,6 @@
 SVGJS_VERSION = '0.1'
 
-DEFAULT_MODULES = %w[ svg container object element document defs shape rect circle ellipse path image group clip_path ]
+DEFAULT_MODULES = %w[ svg utils container element document defs shape rect circle ellipse path image group clip_path ]
 
 KILO = 1024   # how many bytes in a "kilobyte"
 

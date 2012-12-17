@@ -9,7 +9,7 @@ SVG.Container = {
     if (!this.contains(e)) {
       i = i == null ? this.children().length : i;
       this.children().splice(i, 0, e);
-      this.svgElement.insertBefore(e.svgElement, this.svgElement.childNodes[i + 1]);
+      this.node.insertBefore(e.node, this.node.childNodes[i + 1]);
       e.parent = this;
     }
     
@@ -58,7 +58,7 @@ SVG.Container = {
     if (0 <= i && i < this.children().length) {
       var e = this.children()[i];
       this.children().splice(i, 1);
-      this.svgElement.removeChild(e.svgElement);
+      this.node.removeChild(e.node);
       e.parent = null;
     }
     

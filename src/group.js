@@ -1,16 +1,21 @@
 
 SVG.Group = function Group() {
-  this.constructor.call(this, SVG.createElement("g"));
+  this.constructor.call(this, SVG.create('g'));
 };
 
 // inherit from SVG.Element
 SVG.Group.prototype = new SVG.Element();
 
-// group rotation
-SVG.Group.prototype.rotate = function(d) {
-  this.setAttribute('transform', 'rotate(' + d + ')');
-  return this;
-};
-
 // include the container object
-SVG.Group.include(SVG.Container);
+SVG.Utils.merge(SVG.Group, SVG.Container);
+
+// Add group-specific functions
+SVG.Utils.merge(SVG.Group, {
+  
+  // group rotation
+  rotate: function(d) {
+    this.attr('transform', 'rotate(' + d + ')');
+    return this;
+  }
+  
+});

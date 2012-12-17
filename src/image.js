@@ -1,16 +1,21 @@
 
 SVG.Image = function Image() {
-  this.constructor.call(this, SVG.createElement('image'));
+  this.constructor.call(this, SVG.create('image'));
 };
 
 // inherit from SVG.Element
 SVG.Image.prototype = new SVG.Element();
 
-// (re)load image
-SVG.Image.prototype.load = function(url) {
-  this.setAttribute('href', url, SVG.xlink);
-  return this;
-};
-
 // include the container object
-SVG.Image.include(SVG.Container);
+SVG.Utils.merge(SVG.Image, SVG.Container);
+
+// Add image-specific functions
+SVG.Utils.merge(SVG.Image, {
+  
+  // (re)load image
+  load: function(u) {
+    this.attr('href', u, SVG.xlink);
+    return this;
+  }
+  
+});

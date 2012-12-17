@@ -1,16 +1,19 @@
 
-SVG.Document = function Document(c) {
-  this.constructor.call(this, SVG.createElement('svg'));
+SVG.Document = function Document(e) {
+  this.constructor.call(this, SVG.create('svg'));
   
-  this.setAttribute('xmlns', SVG.namespace);
-  this.setAttribute('version', '1.1');
-  this.setAttribute('xlink', 'http://www.w3.org/1999/xlink', SVG.namespace);
+  this.attr('xmlns', SVG.ns);
+  this.attr('version', '1.1');
+  this.attr('xlink', SVG.xlink, SVG.ns);
   
-  document.getElementById(c).appendChild(this.svgElement);
+  if (typeof e == 'string')
+    e = document.getElementById(e);
+  
+  e.appendChild(this.node);
 };
 
 // inherit from SVG.Element
 SVG.Document.prototype = new SVG.Element();
 
 // include the container object
-SVG.Document.include(SVG.Container);
+SVG.Utils.merge(SVG.Document, SVG.Container);

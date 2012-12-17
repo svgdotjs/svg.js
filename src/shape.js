@@ -6,30 +6,35 @@ SVG.Shape = function Shape(element) {
 // inherit from SVG.Element
 SVG.Shape.prototype = new SVG.Element();
 
-// set fill color and opacity
-SVG.Shape.prototype.fill = function(fill) {
-  if (fill.color != null)
-    this.setAttribute('fill', fill.color);
+// Add shape-specific functions
+SVG.Utils.merge(SVG.Shape, {
   
-  if (fill.opacity != null)
-    this.setAttribute('fill-opacity', fill.opacity);
-  
-  return this;
-};
+  // set fill color and opacity
+  fill: function(fill) {
+    if (fill.color != null)
+      this.attr('fill', fill.color);
 
-// set stroke color and opacity
-SVG.Shape.prototype.stroke = function(stroke) {
-  if (stroke.color != null)
-    this.setAttribute('stroke', stroke.color);
+    if (fill.opacity != null)
+      this.attr('fill-opacity', fill.opacity);
+
+    return this;
+  },
+
+  // set stroke color and opacity
+  stroke: function(stroke) {
+    if (stroke.color != null)
+      this.attr('stroke', stroke.color);
+
+    if (stroke.width != null)
+      this.attr('stroke-width', stroke.width);
+
+    if (stroke.opacity != null)
+      this.attr('stroke-opacity', stroke.opacity);
+
+    if (this.attrs['fill-opacity'] == null)
+      this.fill({ opacity: 0 });
+
+    return this;
+  }
   
-  if (stroke.width != null)
-    this.setAttribute('stroke-width', stroke.width);
-  
-  if (stroke.opacity != null)
-    this.setAttribute('stroke-opacity', stroke.opacity);
-  
-  if (this.attributes['fill-opacity'] == null)
-    this.fill({ opacity: 0 });
-  
-  return this;
-};
+});
