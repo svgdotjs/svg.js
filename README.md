@@ -11,7 +11,7 @@ svg.js is licensed under the terms of the MIT License.
 
 ### Create a SVG document
 
-Use the svg() function to create a SVG document within a given html element:
+Use the 'svg()' function to create a SVG document within a given html element:
 
 ```javascript
 var draw = svg('paper').size(300, 300);
@@ -28,7 +28,48 @@ This will generate the following output:
 </div>
 ```
 
-### Path elements
+### Manipulating elements
+
+#### Setting attributes
+You can set an element's attributes directly with 'attr()':
+
+```javascript
+// set a single attribute
+rect.attr('x', 50);
+
+// set multiple attributes at once
+rect.attr({
+  fill: '#f06',
+  'fill-opacity': 0.5,
+  stroke: '#000',
+  'stroke-width': 10
+});
+
+// set an attribute with a namespace
+rect.setAttribute('x', 50, 'http://www.w3.org/2000/svg');
+```
+
+#### Move 
+Move the element to a given x and y position by its upper left corner:
+```javascript
+rect.move(200, 350);
+```
+Note that you can also use the following code to move elements around:
+```javascript
+rect.attr({ x: 20, y: 60 })
+``` 
+Although 'move()' is much more convenient because it will also use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner and circle uses the center.
+
+
+#### Size
+Set the size of an element by a given width and height:
+```javascript
+rect.size(200, 300);
+```
+Same as with 'move()' the size of an element could be set by using 'attr()'. But because every type of element is handles its size differently the 'size()' function is much more convenient.
+
+
+### Path element
 
 ```javascript
 var path = draw.path({ data: "M10,20L30,40" }).attr({ fill: '#9dffd3' });
@@ -65,25 +106,6 @@ You can also reuse clip paths for multiple elements using 'clipTo()'.
 var clipPath = doc.defs().clipPath();
 clipRect = clipPath.rect({ x:10, y:10, width:80, height:80 });
 rect.clipTo(clipPath);
-```
-
-### Setting attributes
-You can set an element's attributes directly with 'attr()':
-
-```javascript
-// set a single attribute
-rect.attr('x', 50);
-
-// set multiple attributes at once
-rect.attr({
-  fill: '#f06',
-  'fill-opacity': 0.5,
-  stroke: '#000',
-  'stroke-width': 10
-});
-
-// set an attribute with a namespace
-rect.setAttribute('x', 50, 'http://www.w3.org/2000/svg');
 ```
 
 ## Compatibility
