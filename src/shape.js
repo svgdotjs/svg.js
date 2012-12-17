@@ -1,6 +1,5 @@
 
 SVG.Shape = function Shape(element) {
-  this.drag = new SVG.Draggable(this);
   this.constructor.call(this, element);
 };
 
