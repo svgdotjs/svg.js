@@ -1,4 +1,3 @@
 .DS_Store
-dist/
-dist/svg.min.js
-dist/svg.js
+public/
+bleed/
