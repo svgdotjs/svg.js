@@ -46,7 +46,7 @@ rect.attr({
 });
 
 // set an attribute with a namespace
-rect.setAttribute('x', 50, 'http://www.w3.org/2000/svg');
+rect.attr('x', 50, 'http://www.w3.org/2000/svg');
 ```
 
 #### Move 
