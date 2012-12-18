@@ -33,7 +33,7 @@ This will generate the following output:
 ### Manipulating elements
 
 #### Attributes
-You can get set an element's attributes directly using 'attr()':
+You can get and set an element's attributes directly using 'attr()':
 
 ```javascript
 // get a single attribute
