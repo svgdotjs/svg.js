@@ -150,7 +150,6 @@ rect.forward();
 
 // move element one step backward
 rect.backward();
-// 
 ```
 
 This functionality requires the arrange.js module which is included in the default distribution.
