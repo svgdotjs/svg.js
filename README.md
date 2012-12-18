@@ -32,10 +32,13 @@ This will generate the following output:
 
 ### Manipulating elements
 
-#### Setting attributes
-You can set an element's attributes directly with 'attr()':
+#### Attributes
+You can get set an element's attributes directly using 'attr()':
 
 ```javascript
+// get a single attribute
+rect.attr('x');
+
 // set a single attribute
 rect.attr('x', 50);
 
@@ -128,6 +131,30 @@ var clipPath = doc.defs().clipPath();
 clipRect = clipPath.rect({ x:10, y:10, width:80, height:80 });
 rect.clipTo(clipPath);
 ```
+
+This functionality requires the clip.js module which is included in the default distribution.
+
+
+### Arranging elements
+You can arrange elements within their parent SVG document using the following methods:
+
+```javascript
+// move element to the front
+rect.front();
+
+// move element to the back
+rect.back();
+
+// move element one step forward
+rect.forward();
+
+// move element one step backward
+rect.backward();
+// 
+```
+
+This functionality requires the arrange.js module which is included in the default distribution.
+
 
 ## Compatibility
 
