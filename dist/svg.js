@@ -1,4 +1,4 @@
-/* svg.js 0.1 - svg utils container element doc defs shape rect circle ellipse path image g clip - svgjs.com/license */
+/* svg.js 0.1a - svg container element clip doc defs shape rect circle ellipse path image group sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -7,20 +7,16 @@
     
     create: function(e) {
       return document.createElementNS(this.ns, e);
+    },
+    
+    extend: function(o, m) {
+      for (var k in m)
+        o.prototype[k] = m[k];
     }
   };
   
   this.svg = function(e) {
     return new SVG.Doc(e);
-  };
-
-  SVG.Utils = {
-    
-    merge: function(o, m) {
-      for (var k in m)
-        o.prototype[k] = m[k];
-    }
-    
   };
 
   SVG.Container = {
@@ -169,13 +165,13 @@
     
   };
 
-  SVG.Element = function Element(node) {
-    this.node = node;
+  SVG.Element = function Element(n) {
+    this.node = n;
     this.attrs = {};
   };
   
   // Add element-specific functions
-  SVG.Utils.merge(SVG.Element, {
+  SVG.extend(SVG.Element, {
     
     // move element to given x and y values
     move: function(x, y) {
@@ -184,12 +180,7 @@
   
       return this;
     },
-  
-    // set element opacity
-    opacity: function(o) {
-      return this.attr('opacity', Math.max(0, Math.min(1, o)));
-    },
-  
+    
     // set element size to given width and height
     size: function(w, h) {
       this.attr('width', w);
@@ -197,20 +188,7 @@
   
       return this;
     },
-  
-    // clip element using another element
-    clip: function(block) {
-      var p = this.parentSVG().defs().clipPath();
-      block(p);
-  
-      return this.clipTo(p);
-    },
-  
-    // distribute clipping path to svg element
-    clipTo: function(p) {
-      return this.attr('clip-path', 'url(#' + p.id + ')');
-    },
-  
+    
     // remove element
     remove: function() {
       return this.parent != null ? this.parent.remove(this) : void 0;
@@ -227,27 +205,69 @@
     },
     
     // set svg element attribute
-    attr: function(v) {
-      var a = arguments;
+    attr: function(a, v, n) {
       
-      this.attrs[a[0]] = a[1];
+      if (arguments.length < 2) {
+        if (typeof a == 'object')
+          for (v in a) this.attr(v, a[v]);
+        else
+          return this.attrs[a];
       
-      if (typeof v == 'object')
-        for (var k in v)
-          this.attr(k, v[k]);
+      } else {
+        this.attrs[a] = v;
+        n != null ?
+          this.node.setAttributeNS(n, a, v) :
+          this.node.setAttribute(a, v);
           
-      else if (a.length == 2)
-        this.node.setAttribute(a[0], a[1]);
+      }
+      
+      return this;
+    },
+    
+    // transformations
+    transform: function(t, a) {
+      var n = [],
+          s = this.attr('transform') || '',
+          l = s.match(/([a-z]+\([^\)]+\))/g) || [];
+      
+      if (a === true) {
+        var v = t.match(/^([A-Za-z\-]+)/)[1],
+            r = new RegExp('^' + v);
         
-      else if (a.length == 3)
-        this.node.setAttributeNS(a[2], a[0], a[1]);
-  
+        for (var i = 0, s = l.length; i < s; i++)
+          if (!r.test(l[i]))
+            n.push(l[i]);
+      } else
+        n = l;
+      
+      n.push(t);
+      
+      this.attr('transform', n.join(' '));
+      
       return this;
     },
   
     // get bounding box
     bbox: function() {
-      return this.node.getBBox();
+      var b = this.node.getBBox();
+      
+      b.cx = b.x + b.width / 2;
+      b.cy = b.y + b.height / 2;
+      
+      return b;
+    },
+    
+    // clip element using another element
+    clip: function(block) {
+      var p = this.parentSVG().defs().clipPath();
+      block(p);
+  
+      return this.clipTo(p);
+    },
+  
+    // distribute clipping path to svg element
+    clipTo: function(p) {
+      return this.attr('clip-path', 'url(#' + p.id + ')');
     },
   
     // private: find svg parent
@@ -261,6 +281,21 @@
     }
     
   });
+
+
+  var clipID = 0;
+  
+  SVG.Clip = function Clip() {
+    this.constructor.call(this, SVG.create('clipPath'));
+    this.id = '_' + (clipID++);
+    this.attr('id', this.id);
+  };
+  
+  // inherit from SVG.Element
+  SVG.Clip.prototype = new SVG.Element();
+  
+  // include the container object
+  SVG.extend(SVG.Clip, SVG.Container);
 
 
   SVG.Doc = function Doc(e) {
@@ -280,7 +315,7 @@
   SVG.Doc.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.Doc, SVG.Container);
+  SVG.extend(SVG.Doc, SVG.Container);
 
   SVG.Defs = function Defs() {
     this.constructor.call(this, SVG.create('defs'));
@@ -290,10 +325,10 @@
   SVG.Defs.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.Defs, SVG.Container);
+  SVG.extend(SVG.Defs, SVG.Container);
   
   // Add def-specific functions
-  SVG.Utils.merge(SVG.Defs, {
+  SVG.extend(SVG.Defs, {
     
     // define clippath
     clipPath: function() {
@@ -311,39 +346,6 @@
   
   // inherit from SVG.Element
   SVG.Shape.prototype = new SVG.Element();
-  
-  // Add shape-specific functions
-  SVG.Utils.merge(SVG.Shape, {
-    
-    // set fill color and opacity
-    fill: function(f) {
-      if (f.color != null)
-        this.attr('fill', f.color);
-  
-      if (f.opacity != null)
-        this.attr('fill-opacity', f.opacity);
-  
-      return this;
-    },
-  
-    // set stroke color and opacity
-    stroke: function(s) {
-      if (s.color)
-        this.attr('stroke', s.color);
-  
-      if (s.width != null)
-        this.attr('stroke-width', s.width);
-  
-      if (s.opacity != null)
-        this.attr('stroke-opacity', s.opacity);
-  
-      if (this.attrs['fill-opacity'] == null)
-        this.fill({ opacity: 0 });
-  
-      return this;
-    }
-    
-  });
 
   SVG.Rect = function Rect() {
     this.constructor.call(this, SVG.create('rect'));
@@ -360,7 +362,7 @@
   SVG.Circle.prototype = new SVG.Shape();
   
   // Add circle-specific functions
-  SVG.Utils.merge(SVG.Circle, {
+  SVG.extend(SVG.Circle, {
     
     // custom move function
     move: function(x, y) {
@@ -397,7 +399,7 @@
   SVG.Ellipse.prototype = new SVG.Shape();
   
   // Add ellipse-specific functions
-  SVG.Utils.merge(SVG.Ellipse, {
+  SVG.extend(SVG.Ellipse, {
     
     // custom move function
     move: function(x, y) {
@@ -433,7 +435,7 @@
   SVG.Path.prototype = new SVG.Shape();
   
   // Add path-specific functions
-  SVG.Utils.merge(SVG.Path, {
+  SVG.extend(SVG.Path, {
     
     // set path data
     data: function(d) {
@@ -451,10 +453,10 @@
   SVG.Image.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.Image, SVG.Container);
+  SVG.extend(SVG.Image, SVG.Container);
   
   // Add image-specific functions
-  SVG.Utils.merge(SVG.Image, {
+  SVG.extend(SVG.Image, {
     
     // (re)load image
     load: function(u) {
@@ -472,31 +474,55 @@
   SVG.G.prototype = new SVG.Element();
   
   // include the container object
-  SVG.Utils.merge(SVG.G, SVG.Container);
-  
-  // Add group-specific functions
-  SVG.Utils.merge(SVG.G, {
+  SVG.extend(SVG.G, SVG.Container);
+
+  SVG.extend(SVG.Shape, {
     
-    // group rotation
-    rotate: function(d) {
-      this.attr('transform', 'rotate(' + d + ')');
+    // set fill color and opacity
+    fill: function(f) {
+      if (f.color != null)
+        this.attr('fill', f.color);
+  
+      if (f.opacity != null)
+        this.attr('fill-opacity', f.opacity);
+  
+      return this;
+    },
+  
+    // set stroke color and opacity
+    stroke: function(s) {
+      if (s.color)
+        this.attr('stroke', s.color);
+      
+      var a = ('width opacity linecap linejoin miterlimit dasharray dashoffset').split(' ');
+      
+      for (var i = a.length - 1; i >= 0; i--)
+        if (s[a[i]] != null)
+          this.attr('stroke-' + a[i], s[a[i]]);
+      
+      //-D if (this.attrs['fill-opacity'] == null)
+      //-D   this.fill({ opacity: 0 });
+  
+      return this;
+    }
+    
+  });
+  
+  // Add element-specific functions
+  SVG.extend(SVG.Element, {
+    
+    // rotation
+    rotate: function(o) {
+      var b = this.bbox();
+      if (o.x == null) o.x = b.cx;
+      if (o.y == null) o.y = b.cy;
+  
+      this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
+  
       return this;
     }
     
   });
 
-  var clipID = 0;
-  
-  SVG.Clip = function Clip() {
-    this.constructor.call(this, SVG.create('clipPath'));
-    this.id = '_' + (clipID++);
-    this.attr('id', this.id);
-  };
-  
-  // inherit from SVG.Element
-  SVG.Clip.prototype = new SVG.Element();
-  
-  // include the container object
-  SVG.Utils.merge(SVG.Clip, SVG.Container);
 
 }).call(this);

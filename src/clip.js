@@ -1,3 +1,4 @@
+
 // initialize id sequence
 var clipID = 0;
 
@@ -11,4 +12,4 @@ SVG.Clip = function Clip() {
 SVG.Clip.prototype = new SVG.Element();
 
 // include the container object
-SVG.Utils.merge(SVG.Clip, SVG.Container);
+SVG.extend(SVG.Clip, SVG.Container);

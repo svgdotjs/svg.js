@@ -1,10 +1,12 @@
-# svg.js
+# Svg.js
 
-svg.js is a small JavaScript library for manipulating SVG.
+Svg.js is a small JavaScript library for manipulating SVG.
 
 Have a look at [svgjs.com](http://svgjs.com) for a examples.
 
-svg.js is licensed under the terms of the MIT License.
+Svg.js is licensed under the terms of the MIT License.
+
+Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
 
 
 ## Usage

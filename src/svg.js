@@ -5,6 +5,11 @@ this.SVG = {
   
   create: function(e) {
     return document.createElementNS(this.ns, e);
+  },
+  
+  extend: function(o, m) {
+    for (var k in m)
+      o.prototype[k] = m[k];
   }
 };
 

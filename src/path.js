@@ -7,7 +7,7 @@ SVG.Path = function Path() {
 SVG.Path.prototype = new SVG.Shape();
 
 // Add path-specific functions
-SVG.Utils.merge(SVG.Path, {
+SVG.extend(SVG.Path, {
   
   // set path data
   data: function(d) {

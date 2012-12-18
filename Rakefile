@@ -1,6 +1,10 @@
-SVGJS_VERSION = '0.1'
+SVGJS_VERSION = '0.1a'
 
-DEFAULT_MODULES = %w[ svg utils container element doc defs shape rect circle ellipse path image g clip ]
+CORE_MODULES = %w[ svg container element clip doc defs shape rect circle ellipse path image group ]
+
+OPTIONAL_MODULES = %w[ sugar ]
+
+DEFAULT_MODULES = CORE_MODULES + OPTIONAL_MODULES
 
 KILO = 1024   # how many bytes in a "kilobyte"
 
@@ -10,7 +14,7 @@ task :default => :dist
 class BuildTask < Rake::FileTask
   
   def modules
-    prerequisites.map {|f| File.basename(f, '.js') }
+    prerequisites.map { |f| File.basename(f, '.js') }
   end
 
   def remove_prerequisites to_remove

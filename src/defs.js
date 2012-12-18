@@ -7,10 +7,10 @@ SVG.Defs = function Defs() {
 SVG.Defs.prototype = new SVG.Element();
 
 // include the container object
-SVG.Utils.merge(SVG.Defs, SVG.Container);
+SVG.extend(SVG.Defs, SVG.Container);
 
 // Add def-specific functions
-SVG.Utils.merge(SVG.Defs, {
+SVG.extend(SVG.Defs, {
   
   // define clippath
   clipPath: function() {

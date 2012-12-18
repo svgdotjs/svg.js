@@ -16,4 +16,4 @@ SVG.Doc = function Doc(e) {
 SVG.Doc.prototype = new SVG.Element();
 
 // include the container object
-SVG.Utils.merge(SVG.Doc, SVG.Container);
+SVG.extend(SVG.Doc, SVG.Container);

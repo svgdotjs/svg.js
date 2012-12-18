@@ -7,7 +7,7 @@ SVG.Circle = function Circle() {
 SVG.Circle.prototype = new SVG.Shape();
 
 // Add circle-specific functions
-SVG.Utils.merge(SVG.Circle, {
+SVG.extend(SVG.Circle, {
   
   // custom move function
   move: function(x, y) {

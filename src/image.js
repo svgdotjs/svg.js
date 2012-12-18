@@ -7,10 +7,10 @@ SVG.Image = function Image() {
 SVG.Image.prototype = new SVG.Element();
 
 // include the container object
-SVG.Utils.merge(SVG.Image, SVG.Container);
+SVG.extend(SVG.Image, SVG.Container);
 
 // Add image-specific functions
-SVG.Utils.merge(SVG.Image, {
+SVG.extend(SVG.Image, {
   
   // (re)load image
   load: function(u) {

@@ -7,7 +7,7 @@ SVG.Ellipse = function Ellipse() {
 SVG.Ellipse.prototype = new SVG.Shape();
 
 // Add ellipse-specific functions
-SVG.Utils.merge(SVG.Ellipse, {
+SVG.extend(SVG.Ellipse, {
   
   // custom move function
   move: function(x, y) {

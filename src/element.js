@@ -1,11 +1,11 @@
 
-SVG.Element = function Element(node) {
-  this.node = node;
+SVG.Element = function Element(n) {
+  this.node = n;
   this.attrs = {};
 };
 
 // Add element-specific functions
-SVG.Utils.merge(SVG.Element, {
+SVG.extend(SVG.Element, {
   
   // move element to given x and y values
   move: function(x, y) {
@@ -14,12 +14,7 @@ SVG.Utils.merge(SVG.Element, {
 
     return this;
   },
-
-  // set element opacity
-  opacity: function(o) {
-    return this.attr('opacity', Math.max(0, Math.min(1, o)));
-  },
-
+  
   // set element size to given width and height
   size: function(w, h) {
     this.attr('width', w);
@@ -27,20 +22,7 @@ SVG.Utils.merge(SVG.Element, {
 
     return this;
   },
-
-  // clip element using another element
-  clip: function(block) {
-    var p = this.parentSVG().defs().clipPath();
-    block(p);
-
-    return this.clipTo(p);
-  },
-
-  // distribute clipping path to svg element
-  clipTo: function(p) {
-    return this.attr('clip-path', 'url(#' + p.id + ')');
-  },
-
+  
   // remove element
   remove: function() {
     return this.parent != null ? this.parent.remove(this) : void 0;
@@ -57,27 +39,69 @@ SVG.Utils.merge(SVG.Element, {
   },
   
   // set svg element attribute
-  attr: function(v) {
-    var a = arguments;
+  attr: function(a, v, n) {
     
-    this.attrs[a[0]] = a[1];
+    if (arguments.length < 2) {
+      if (typeof a == 'object')
+        for (v in a) this.attr(v, a[v]);
+      else
+        return this.attrs[a];
     
-    if (typeof v == 'object')
-      for (var k in v)
-        this.attr(k, v[k]);
+    } else {
+      this.attrs[a] = v;
+      n != null ?
+        this.node.setAttributeNS(n, a, v) :
+        this.node.setAttribute(a, v);
         
-    else if (a.length == 2)
-      this.node.setAttribute(a[0], a[1]);
+    }
+    
+    return this;
+  },
+  
+  // transformations
+  transform: function(t, a) {
+    var n = [],
+        s = this.attr('transform') || '',
+        l = s.match(/([a-z]+\([^\)]+\))/g) || [];
+    
+    if (a === true) {
+      var v = t.match(/^([A-Za-z\-]+)/)[1],
+          r = new RegExp('^' + v);
       
-    else if (a.length == 3)
-      this.node.setAttributeNS(a[2], a[0], a[1]);
-
+      for (var i = 0, s = l.length; i < s; i++)
+        if (!r.test(l[i]))
+          n.push(l[i]);
+    } else
+      n = l;
+    
+    n.push(t);
+    
+    this.attr('transform', n.join(' '));
+    
     return this;
   },
 
   // get bounding box
   bbox: function() {
-    return this.node.getBBox();
+    var b = this.node.getBBox();
+    
+    b.cx = b.x + b.width / 2;
+    b.cy = b.y + b.height / 2;
+    
+    return b;
+  },
+  
+  // clip element using another element
+  clip: function(block) {
+    var p = this.parentSVG().defs().clipPath();
+    block(p);
+
+    return this.clipTo(p);
+  },
+
+  // distribute clipping path to svg element
+  clipTo: function(p) {
+    return this.attr('clip-path', 'url(#' + p.id + ')');
   },
 
   // private: find svg parent
