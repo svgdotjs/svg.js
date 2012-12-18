@@ -18,20 +18,20 @@ SVG.extend(SVG.Circle, {
     return this;
   },
 
-  // custom size function
-  size: function(w, h) {
+  // custom size function (no height value here!)
+  size: function(w) {
     this.attr('r', w / 2);
     this.center();
 
     return this;
   },
 
-  // private: center 
-  center: function(cx, cy) {
+  // position element by its center
+  center: function(x, y) {
     var r = this.attrs.r || 0;
 
-    this.attr('cx', cx || ((this.attrs.x || 0) + r));
-    this.attr('cy', cy || ((this.attrs.y || 0) + r));
+    this.attr('cx', x || ((this.attrs.x || 0) + r));
+    this.attr('cy', y || ((this.attrs.y || 0) + r));
   }
   
 });

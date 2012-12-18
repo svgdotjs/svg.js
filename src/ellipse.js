@@ -26,10 +26,11 @@ SVG.extend(SVG.Ellipse, {
 
     return this; 
   },
-
-  center: function(cx, cy) {
-    this.attr('cx', cx || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
-    this.attr('cy', cy || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
+  
+  // position element by its center
+  center: function(x, y) {
+    this.attr('cx', x || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
+    this.attr('cy', y || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
   }
   
 });

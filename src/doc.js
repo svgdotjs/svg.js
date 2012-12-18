@@ -6,6 +6,8 @@ SVG.Doc = function Doc(e) {
   this.attr('version', '1.1');
   this.attr('xlink', SVG.xlink, SVG.ns);
   
+  this.defs();
+  
   if (typeof e == 'string')
     e = document.getElementById(e);
   

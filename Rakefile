@@ -1,12 +1,19 @@
 SVGJS_VERSION = '0.1a'
 
-CORE_MODULES = %w[ svg container element clip doc defs shape rect circle ellipse path image group ]
+# all available modules in the correct loading order
+ALL = %w[ svg container element arrange clip doc defs shape rect circle ellipse path image group sugar ]
 
-OPTIONAL_MODULES = %w[ sugar ]
+# required modules to make the library operational
+CORE = %w[ circle container defs doc element ellipse image path rect shape svg ]
 
-DEFAULT_MODULES = CORE_MODULES + OPTIONAL_MODULES
+# optional modules
+OPTIONAL = %w[ clip group arrange sugar ]
 
-KILO = 1024   # how many bytes in a "kilobyte"
+# modules used in the curren build
+MODULES = CORE.concat(OPTIONAL).sort { |a,b| ALL.index(a) <=> ALL.index(b) }
+
+# how many bytes in a "kilobyte"
+KILO = 1024
 
 task :default => :dist
 
@@ -38,7 +45,7 @@ class BuildTask < Rake::FileTask
   
 end
 
-BuildTask.define_task 'dist/svg.js' => DEFAULT_MODULES.map {|m| "src/#{ m }.js" } do |task|
+BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |task|
   mkdir_p 'dist', :verbose => false
   
   svgjs = ''
@@ -107,7 +114,7 @@ desc "List available modules"
 task :modules do
   Dir['src/**/*.js'].each do |file|
     name = file.gsub(/^src\//,'').gsub(/.js$/,'')
-    puts name + (DEFAULT_MODULES.include?(name) ? '*' : '')
+    puts name + (MODULES.include?(name) ? '*' : '')
   end
   puts "\n*included in default build"
 end

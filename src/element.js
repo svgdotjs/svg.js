@@ -9,16 +9,20 @@ SVG.extend(SVG.Element, {
   
   // move element to given x and y values
   move: function(x, y) {
-    this.attr('x', x);
-    this.attr('y', y);
+    this.attr({
+      x: x,
+      y: y
+    });
 
     return this;
   },
   
   // set element size to given width and height
   size: function(w, h) {
-    this.attr('width', w);
-    this.attr('height', h);
+    this.attr({
+      width: w,
+      height: h
+    });
 
     return this;
   },
@@ -27,14 +31,14 @@ SVG.extend(SVG.Element, {
   remove: function() {
     return this.parent != null ? this.parent.remove(this) : void 0;
   },
-
+  
   // get parent document
   parentDoc: function() {
     return this._parent(SVG.Doc);
   },
 
   // get parent svg wrapper
-  parentSVG: function() {
+  mother: function() {
     return this.parentDoc();
   },
   
@@ -71,6 +75,7 @@ SVG.extend(SVG.Element, {
       for (var i = 0, s = l.length; i < s; i++)
         if (!r.test(l[i]))
           n.push(l[i]);
+      
     } else
       n = l;
     
@@ -91,19 +96,6 @@ SVG.extend(SVG.Element, {
     return b;
   },
   
-  // clip element using another element
-  clip: function(block) {
-    var p = this.parentSVG().defs().clipPath();
-    block(p);
-
-    return this.clipTo(p);
-  },
-
-  // distribute clipping path to svg element
-  clipTo: function(p) {
-    return this.attr('clip-path', 'url(#' + p.id + ')');
-  },
-
   // private: find svg parent
   _parent: function(pt) {
     var e = this;

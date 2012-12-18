@@ -1,53 +1,23 @@
 
 SVG.Container = {
   
-  add: function(e) {
-    return this.addAt(e);
-  },
-  
-  addAt: function(e, i) {
-    if (!this.contains(e)) {
+  add: function(e, i) {
+    if (!this.has(e)) {
       i = i == null ? this.children().length : i;
       this.children().splice(i, 0, e);
-      this.node.insertBefore(e.node, this.node.childNodes[i + 1]);
+      this.node.insertBefore(e.node, this.node.childNodes[i]);
       e.parent = this;
     }
     
     return this;
   },
   
-  contains: function(e) {
+  has: function(e) {
     return Array.prototype.indexOf.call(this.children(), e) >= 0;
   },
   
   children: function() {
-    return this._children || [];
-  },
-  
-  sendBack: function(e) {
-    var i = this.children().indexOf(e);
-    if (i !== -1)
-      return this.remove(e).addAt(e, i - 1);
-  },
-  
-  bringForward: function(e) {
-    var i = this.children().indexOf(e);
-    if (i !== -1)
-      return this.remove(e).addAt(e, i + 1);
-  },
-  
-  bringToFront: function(e) {
-    if (this.contains(e))
-      this.remove(e).add(e);
-    
-    return this;
-  },
-  
-  sendToBottom: function(e) {
-    if (this.contains(e))
-      this.remove(e).addAt(e, 0);
-    
-    return this;
+    return this._children || (this._children = []);
   },
   
   remove: function(e) {
@@ -68,10 +38,18 @@ SVG.Container = {
   defs: function() {
     if (this._defs == null) {
       this._defs = new SVG.Defs();
-      this.add(this._defs);
+      this.add(this._defs, 0);
     }
     
     return this._defs;
+  },
+  
+  levelDefs: function() {
+    var d = this.defs();
+    
+    this.remove(d).add(d, 0);
+    
+    return this;
   },
   
   group: function() {

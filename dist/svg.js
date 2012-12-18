@@ -1,4 +1,4 @@
-/* svg.js 0.1a - svg container element clip doc defs shape rect circle ellipse path image group sugar - svgjs.com/license */
+/* svg.js 0.1a - svg container element arrange clip doc defs shape rect circle ellipse path image group sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -21,53 +21,23 @@
 
   SVG.Container = {
     
-    add: function(e) {
-      return this.addAt(e);
-    },
-    
-    addAt: function(e, i) {
-      if (!this.contains(e)) {
+    add: function(e, i) {
+      if (!this.has(e)) {
         i = i == null ? this.children().length : i;
         this.children().splice(i, 0, e);
-        this.node.insertBefore(e.node, this.node.childNodes[i + 1]);
+        this.node.insertBefore(e.node, this.node.childNodes[i]);
         e.parent = this;
       }
       
       return this;
     },
     
-    contains: function(e) {
+    has: function(e) {
       return Array.prototype.indexOf.call(this.children(), e) >= 0;
     },
     
     children: function() {
-      return this._children || [];
-    },
-    
-    sendBack: function(e) {
-      var i = this.children().indexOf(e);
-      if (i !== -1)
-        return this.remove(e).addAt(e, i - 1);
-    },
-    
-    bringForward: function(e) {
-      var i = this.children().indexOf(e);
-      if (i !== -1)
-        return this.remove(e).addAt(e, i + 1);
-    },
-    
-    bringToFront: function(e) {
-      if (this.contains(e))
-        this.remove(e).add(e);
-      
-      return this;
-    },
-    
-    sendToBottom: function(e) {
-      if (this.contains(e))
-        this.remove(e).addAt(e, 0);
-      
-      return this;
+      return this._children || (this._children = []);
     },
     
     remove: function(e) {
@@ -88,10 +58,18 @@
     defs: function() {
       if (this._defs == null) {
         this._defs = new SVG.Defs();
-        this.add(this._defs);
+        this.add(this._defs, 0);
       }
       
       return this._defs;
+    },
+    
+    levelDefs: function() {
+      var d = this.defs();
+      
+      this.remove(d).add(d, 0);
+      
+      return this;
     },
     
     group: function() {
@@ -175,16 +153,20 @@
     
     // move element to given x and y values
     move: function(x, y) {
-      this.attr('x', x);
-      this.attr('y', y);
+      this.attr({
+        x: x,
+        y: y
+      });
   
       return this;
     },
     
     // set element size to given width and height
     size: function(w, h) {
-      this.attr('width', w);
-      this.attr('height', h);
+      this.attr({
+        width: w,
+        height: h
+      });
   
       return this;
     },
@@ -193,14 +175,14 @@
     remove: function() {
       return this.parent != null ? this.parent.remove(this) : void 0;
     },
-  
+    
     // get parent document
     parentDoc: function() {
       return this._parent(SVG.Doc);
     },
   
     // get parent svg wrapper
-    parentSVG: function() {
+    mother: function() {
       return this.parentDoc();
     },
     
@@ -237,6 +219,7 @@
         for (var i = 0, s = l.length; i < s; i++)
           if (!r.test(l[i]))
             n.push(l[i]);
+        
       } else
         n = l;
       
@@ -257,19 +240,6 @@
       return b;
     },
     
-    // clip element using another element
-    clip: function(block) {
-      var p = this.parentSVG().defs().clipPath();
-      block(p);
-  
-      return this.clipTo(p);
-    },
-  
-    // distribute clipping path to svg element
-    clipTo: function(p) {
-      return this.attr('clip-path', 'url(#' + p.id + ')');
-    },
-  
     // private: find svg parent
     _parent: function(pt) {
       var e = this;
@@ -282,6 +252,58 @@
     
   });
 
+
+  SVG.extend(SVG.Element, {
+    
+    // get all siblings, including me
+    siblings: function() {
+      return this.mother().children();
+    },
+    
+    // send given element one step forwards
+    forward: function() {
+      var i = this.siblings().indexOf(this);
+      this.mother().remove(this).add(this, i + 1);
+      
+      return this;
+    },
+    
+    // send given element one step backwards
+    backward: function() {
+      var i, p = this.mother();
+      
+      p.levelDefs();
+      
+      i = this.siblings().indexOf(this);
+      
+      if (i > 1)
+        p.remove(this).add(this, i - 1);
+      
+      return this;
+    },
+    
+    // send given element all the way to the front
+    front: function() {
+      this.mother().remove(this).add(this);
+      
+      return this;
+    },
+    
+    // send given element all the way to the back
+    back: function() {
+      var i, p = this.mother();
+      
+      p.levelDefs();
+      
+      i = this.siblings().indexOf(this);
+      
+      if (i > 1)
+        p.remove(this).add(this, 0);
+      
+      return this;
+    }
+    
+  });
 
   var clipID = 0;
   
@@ -296,6 +318,24 @@
   
   // include the container object
   SVG.extend(SVG.Clip, SVG.Container);
+  
+  // add clipping functionality to element
+  SVG.extend(SVG.Element, {
+    
+    // clip element using another element
+    clip: function(block) {
+      var p = this.mother().defs().clipPath();
+      block(p);
+  
+      return this.clipTo(p);
+    },
+  
+    // distribute clipping path to svg element
+    clipTo: function(p) {
+      return this.attr('clip-path', 'url(#' + p.id + ')');
+    }
+    
+  });
 
 
   SVG.Doc = function Doc(e) {
@@ -304,6 +344,8 @@
     this.attr('xmlns', SVG.ns);
     this.attr('version', '1.1');
     this.attr('xlink', SVG.xlink, SVG.ns);
+    
+    this.defs();
     
     if (typeof e == 'string')
       e = document.getElementById(e);
@@ -373,20 +415,20 @@
       return this;
     },
   
-    // custom size function
-    size: function(w, h) {
+    // custom size function (no height value here!)
+    size: function(w) {
       this.attr('r', w / 2);
       this.center();
   
       return this;
     },
   
-    // private: center 
-    center: function(cx, cy) {
+    // position element by its center
+    center: function(x, y) {
       var r = this.attrs.r || 0;
   
-      this.attr('cx', cx || ((this.attrs.x || 0) + r));
-      this.attr('cy', cy || ((this.attrs.y || 0) + r));
+      this.attr('cx', x || ((this.attrs.x || 0) + r));
+      this.attr('cy', y || ((this.attrs.y || 0) + r));
     }
     
   });
@@ -418,10 +460,11 @@
   
       return this; 
     },
-  
-    center: function(cx, cy) {
-      this.attr('cx', cx || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
-      this.attr('cy', cy || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
+    
+    // position element by its center
+    center: function(x, y) {
+      this.attr('cx', x || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
+      this.attr('cy', y || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
     }
     
   });
