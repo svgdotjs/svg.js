@@ -1,8 +1,6 @@
 # Svg.js
 
-Svg.js is a small JavaScript library for manipulating SVG.
-
-Have a look at [svgjs.com](http://svgjs.com) for a examples.
+Svg.js is a lightweight (2k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -54,6 +52,20 @@ rect.attr({
 rect.attr('x', 50, 'http://www.w3.org/2000/svg');
 ```
 
+
+#### Transform
+With the transform attribute elements can be scaled, rotated, translated, skewed... :
+```javascript
+rect.transform('rotate(45, 100, 100)');
+```
+Every transformation will remembered so multiple rotate operations will be stacked together making them relative to previous operations. To ensure absolute operations a boolean value can be passed as a second argument:
+```javascript
+rect.transform('rotate(45, 100, 100)', true);
+```
+More details on available transformations can be found here:
+http://www.w3.org/TR/SVG/coords.html#TransformAttribute
+
+
 #### Move 
 Move the element to a given x and y position by its upper left corner:
 ```javascript
@@ -61,9 +73,9 @@ rect.move(200, 350);
 ```
 Note that you can also use the following code to move elements around:
 ```javascript
-rect.attr({ x: 20, y: 60 })
+rect.attr({ x: 20, y: 60 });
 ``` 
-Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner and circle uses the center.
+Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner and circle uses the centre.
 
 
 #### Size
@@ -74,18 +86,6 @@ rect.size(200, 300);
 Same as with 'move()' the size of an element could be set by using 'attr()'. But because every type of element is handles its size differently the 'size()' function is much more convenient.
 
 
-#### Fill
-The 'fill()' function is a pretty alternative to the 'attr()' method:
-```javascript
-rect.fill({ color: '#f06', opacity: 0.6 });
-```
-
-#### Stroke
-The 'stroke()' function is similar to 'fill()':
-```javascript
-rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
-```
-
 #### Removing elements
 Pretty straightforward:
 ```javascript
@@ -93,8 +93,20 @@ rect.remove();
 ```
 
 
-### Path element
+### Image element
+When creating images the width and height values should be defined:
+```javascript
+var image = draw.image({
+  width:  200,
+  height: 200,
+  x:      100,
+  y:      100,
+  src:    '/path/to/image.jpg'
+});
+```
 
+
+### Path element
 ```javascript
 var path = draw.path({ data: "M10,20L30,40" }).attr({ fill: '#9dffd3' });
 ```
@@ -114,6 +126,39 @@ This will return a SVGRect element as a js object:
 { height: 20, width: 20, y: 20, x: 10 } 
 ```
 
+
+### Syntax sugar
+Fill and stroke are used quite often. Therefore two convenience methods are provided:
+
+#### Fill
+The 'fill()' function is a pretty alternative to the 'attr()' method:
+```javascript
+rect.fill({ color: '#f06', opacity: 0.6 });
+```
+
+#### Stroke
+The 'stroke()' function is similar to 'fill()':
+```javascript
+rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
+```
+
+#### Rotate
+The 'rotate()' method will automatically rotate elements according to the centre of the element:
+```javascript
+rect.rotate({ deg: 45 });
+```
+But you also define a rotation point:
+```javascript
+rect.rotate({ deg: 45, x: 100, y: 100 });
+```
+To make the operation absolute:
+```javascript
+rect.rotate({ deg: 45, x: 100, y: 100, absolute: true });
+```
+
+_This functionality requires the sugar.js module which is included in the default distribution._
+
+
 ### Clipping elements
 Clipping elements can be done with either 'clip()' or 'clipTo()'.
 
@@ -132,7 +177,7 @@ clipRect = clipPath.rect({ x:10, y:10, width:80, height:80 });
 rect.clipTo(clipPath);
 ```
 
-This functionality requires the clip.js module which is included in the default distribution.
+_This functionality requires the clip.js module which is included in the default distribution._
 
 
 ### Arranging elements
@@ -152,7 +197,21 @@ rect.forward();
 rect.backward();
 ```
 
-This functionality requires the arrange.js module which is included in the default distribution.
+_This functionality requires the arrange.js module which is included in the default distribution._
+
+
+### Grouping elements
+Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
+```javascript
+var group = draw.group();
+group.path({ data: "M10,20L30,40" });
+```
+Existing elements from the svg document can also be added to a group:
+```javascript
+group.add(rect);
+```
+
+_This functionality requires the group.js module which is included in the default distribution._
 
 
 ## Compatibility

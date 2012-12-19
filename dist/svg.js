@@ -1,4 +1,4 @@
-/* svg.js 0.1a - svg container element arrange clip doc defs shape rect circle ellipse path image group sugar - svgjs.com/license */
+/* svg.js 0.1a - svg container element group arrange clip doc defs shape rect circle ellipse path image sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -33,7 +33,7 @@
     },
     
     has: function(e) {
-      return Array.prototype.indexOf.call(this.children(), e) >= 0;
+      return this.children().indexOf(e) >= 0;
     },
     
     children: function() {
@@ -252,6 +252,16 @@
     
   });
 
+
+  SVG.G = function G() {
+    this.constructor.call(this, SVG.create('g'));
+  };
+  
+  // inherit from SVG.Element
+  SVG.G.prototype = new SVG.Element();
+  
+  // include the container object
+  SVG.extend(SVG.G, SVG.Container);
 
   SVG.extend(SVG.Element, {
     
@@ -509,16 +519,6 @@
     
   });
 
-  SVG.G = function G() {
-    this.constructor.call(this, SVG.create('g'));
-  };
-  
-  // inherit from SVG.Element
-  SVG.G.prototype = new SVG.Element();
-  
-  // include the container object
-  SVG.extend(SVG.G, SVG.Container);
-
   SVG.extend(SVG.Shape, {
     
     // set fill color and opacity
@@ -557,6 +557,7 @@
     // rotation
     rotate: function(o) {
       var b = this.bbox();
+      
       if (o.x == null) o.x = b.cx;
       if (o.y == null) o.y = b.cy;
   
@@ -566,6 +567,22 @@
     }
     
   });
+  
+  // Add group-specific functions
+  SVG.extend(SVG.G, {
+    
+    // move using translate
+    move: function(x, y) {
+      this.transform('translate(' + x + ' ' + y + ')', true);
+  
+      return this;
+    }
+    
+  });
+  
+  
+  
+  
 
 
 }).call(this);

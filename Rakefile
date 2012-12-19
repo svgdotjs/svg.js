@@ -1,7 +1,7 @@
 SVGJS_VERSION = '0.1a'
 
 # all available modules in the correct loading order
-ALL = %w[ svg container element arrange clip doc defs shape rect circle ellipse path image group sugar ]
+ALL = %w[ svg container element group arrange clip doc defs shape rect circle ellipse path image sugar ]
 
 # required modules to make the library operational
 CORE = %w[ circle container defs doc element ellipse image path rect shape svg ]

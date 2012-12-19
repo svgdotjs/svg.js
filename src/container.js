@@ -13,7 +13,7 @@ SVG.Container = {
   },
   
   has: function(e) {
-    return Array.prototype.indexOf.call(this.children(), e) >= 0;
+    return this.children().indexOf(e) >= 0;
   },
   
   children: function() {

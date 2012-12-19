@@ -38,6 +38,7 @@ SVG.extend(SVG.Element, {
   // rotation
   rotate: function(o) {
     var b = this.bbox();
+    
     if (o.x == null) o.x = b.cx;
     if (o.y == null) o.y = b.cy;
 
@@ -47,3 +48,19 @@ SVG.extend(SVG.Element, {
   }
   
 });
+
+// Add group-specific functions
+SVG.extend(SVG.G, {
+  
+  // move using translate
+  move: function(x, y) {
+    this.transform('translate(' + x + ' ' + y + ')', true);
+
+    return this;
+  }
+  
+});
+
+
+
+
