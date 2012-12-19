@@ -248,7 +248,7 @@ SVG.extend(SVG.Doc, {
     var children = this.children();
     
     for (var i = 0, l = children.length; i < l; i++) {
-      this.fill({ color: 'pink' });
+      children[i].fill({ color: 'pink' });
     };
     
     return this;
