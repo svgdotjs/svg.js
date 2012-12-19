@@ -9,22 +9,12 @@ SVG.extend(SVG.Element, {
   
   // move element to given x and y values
   move: function(x, y) {
-    this.attr({
-      x: x,
-      y: y
-    });
-
-    return this;
+    return this.attr({ x: x, y: y });
   },
   
   // set element size to given width and height
   size: function(w, h) {
-    this.attr({
-      width: w,
-      height: h
-    });
-
-    return this;
+    return this.attr({ width: w, height: h });
   },
   
   // remove element
@@ -81,9 +71,7 @@ SVG.extend(SVG.Element, {
     
     n.push(t);
     
-    this.attr('transform', n.join(' '));
-    
-    return this;
+    return this.attr('transform', n.join(' '));
   },
 
   // get bounding box

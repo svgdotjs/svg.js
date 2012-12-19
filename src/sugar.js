@@ -42,9 +42,7 @@ SVG.extend(SVG.Element, {
     if (o.x == null) o.x = b.cx;
     if (o.y == null) o.y = b.cy;
 
-    this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
-
-    return this;
+    return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
   }
   
 });
@@ -54,9 +52,7 @@ SVG.extend(SVG.G, {
   
   // move using translate
   move: function(x, y) {
-    this.transform('translate(' + x + ' ' + y + ')', true);
-
-    return this;
+    return this.transform('translate(' + x + ' ' + y + ')', true);
   }
   
 });

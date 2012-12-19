@@ -214,6 +214,50 @@ group.add(rect);
 _This functionality requires the group.js module which is included in the default distribution._
 
 
+## Extending functionality
+Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
+```javascript
+SVG.extend(SVG.Shape, {
+  
+  paintRed: function() {
+    return this.fill({ color: 'red' });
+  }
+  
+});
+```
+Now all shapes will have the paintRed method available. Say we want to have the paintRed method on a circle apply a slightly different color:
+```javascript
+SVG.extend(SVG.Circle, {
+  
+  paintRed: function() {
+    return this.fill({ color: 'orangered' });
+  }
+  
+});
+```
+The complete inheritance stack for 'SVG.Circle' is:
+
+_SVG.Circle < SVG.Shape < SVG.Element_
+
+The SVG document can be extended by using:
+
+```javascript
+SVG.extend(SVG.Doc, {
+  
+  paintAllPink: function() {
+    var children = this.children();
+    
+    for (var i = 0, l = children.length; i < l; i++) {
+      this.fill({ color: 'pink' });
+    };
+    
+    return this;
+  }
+  
+});
+```
+
+
 ## Compatibility
 
 ### Desktop

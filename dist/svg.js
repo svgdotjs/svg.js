@@ -153,22 +153,12 @@
     
     // move element to given x and y values
     move: function(x, y) {
-      this.attr({
-        x: x,
-        y: y
-      });
-  
-      return this;
+      return this.attr({ x: x, y: y });
     },
     
     // set element size to given width and height
     size: function(w, h) {
-      this.attr({
-        width: w,
-        height: h
-      });
-  
-      return this;
+      return this.attr({ width: w, height: h });
     },
     
     // remove element
@@ -225,9 +215,7 @@
       
       n.push(t);
       
-      this.attr('transform', n.join(' '));
-      
-      return this;
+      return this.attr('transform', n.join(' '));
     },
   
     // get bounding box
@@ -561,9 +549,7 @@
       if (o.x == null) o.x = b.cx;
       if (o.y == null) o.y = b.cy;
   
-      this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
-  
-      return this;
+      return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
     }
     
   });
@@ -573,9 +559,7 @@
     
     // move using translate
     move: function(x, y) {
-      this.transform('translate(' + x + ' ' + y + ')', true);
-  
-      return this;
+      return this.transform('translate(' + x + ' ' + y + ')', true);
     }
     
   });
