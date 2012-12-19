@@ -58,7 +58,7 @@ With the transform attribute elements can be scaled, rotated, translated, skewed
 ```javascript
 rect.transform('rotate(45, 100, 100)');
 ```
-Every transformation will remembered so multiple rotate operations will be stacked together making them relative to previous operations. To ensure absolute operations a boolean value can be passed as a second argument:
+These operations are always absolute. If every transformation needs remembered, so multiple rotate operations will be stacked together making them relative to previous operations, a boolean value can be passed as a second argument:
 ```javascript
 rect.transform('rotate(45, 100, 100)', true);
 ```
@@ -151,9 +151,9 @@ But you also define a rotation point:
 ```javascript
 rect.rotate({ deg: 45, x: 100, y: 100 });
 ```
-To make the operation absolute:
+To make the operation relative:
 ```javascript
-rect.rotate({ deg: 45, x: 100, y: 100, absolute: true });
+rect.rotate({ deg: 45, x: 100, y: 100, relative: true });
 ```
 
 _This functionality requires the sugar.js module which is included in the default distribution._
@@ -256,6 +256,13 @@ SVG.extend(SVG.Doc, {
   
 });
 ```
+
+
+## To-do
+- Animation module (element animation, path tweens and easing)
+- Draggable module (make elements and groups draggable)
+- Shapes module (add preset shapes like star, n-gon)
+
 
 
 ## Compatibility

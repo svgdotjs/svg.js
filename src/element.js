@@ -53,12 +53,12 @@ SVG.extend(SVG.Element, {
   },
   
   // transformations
-  transform: function(t, a) {
+  transform: function(t, r) {
     var n = [],
         s = this.attr('transform') || '',
         l = s.match(/([a-z]+\([^\)]+\))/g) || [];
     
-    if (a === true) {
+    if (r !== true) {
       var v = t.match(/^([A-Za-z\-]+)/)[1],
           r = new RegExp('^' + v);
       

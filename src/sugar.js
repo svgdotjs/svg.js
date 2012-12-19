@@ -24,9 +24,6 @@ SVG.extend(SVG.Shape, {
       if (s[a[i]] != null)
         this.attr('stroke-' + a[i], s[a[i]]);
     
-    //-D if (this.attrs['fill-opacity'] == null)
-    //-D   this.fill({ opacity: 0 });
-
     return this;
   }
   
@@ -42,7 +39,7 @@ SVG.extend(SVG.Element, {
     if (o.x == null) o.x = b.cx;
     if (o.y == null) o.y = b.cy;
 
-    return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.absolute);
+    return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.relative);
   }
   
 });
@@ -52,7 +49,7 @@ SVG.extend(SVG.G, {
   
   // move using translate
   move: function(x, y) {
-    return this.transform('translate(' + x + ' ' + y + ')', true);
+    return this.transform('translate(' + x + ' ' + y + ')');
   }
   
 });
