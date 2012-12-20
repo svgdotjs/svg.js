@@ -510,6 +510,7 @@
     
     this.style = { 'font-size':  16 };
     this.leading = 1.2;
+    this.anchor = 'start';
   };
   
   // inherit from SVG.Element
@@ -544,7 +545,7 @@
         if (o[a[i]] != null)
           this.style['font-' + a[i]] = o[a[i]];
      
-      a = ('leading kerning anchor').split(' ');
+      a = ('leading anchor').split(' ');
       
       for (i = a.length - 1; i >= 0; i--)
         if (o[a[i]] != null)
@@ -560,12 +561,9 @@
         if (this.style['font-' + a[i]] != null)
           s += 'font-' + a[i] + ':' + this.style['font-' + a[i]] + ';';
       
-      a = ('leading kerning anchor').split(' ');
-      
-      for (i = a.length - 1; i >= 0; i--)
-        if (this[a[i]] != null)
-          s += a[i] + ':' + this[a[i]] + ';';
-      
+      if (this.anchor != null)
+        s += 'text-anchor:' + this.anchor + ';';
+        
       return s;
     }
     

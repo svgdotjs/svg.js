@@ -1,6 +1,6 @@
 # Svg.js
 
-Svg.js is a lightweight (2k gzipped) library for manipulating SVG.
+Svg.js is a lightweight (2.5k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -90,6 +90,26 @@ Same as with 'move()' the size of an element could be set by using 'attr()'. But
 Pretty straightforward:
 ```javascript
 rect.remove();
+```
+
+
+### Text element
+Text elements can be created with a single style applied.
+```javascript
+var text = draw.text({
+  text: "svg\nto\nthe\npoint.",
+  x:    300,
+  y:    0
+});
+```
+Styling text can be done using the 'font()' method:
+```javascript
+text.font({
+  family: 'Helvetica',
+  size: 36,
+  anchor: 'middle',
+  leading: 1.5
+});
 ```
 
 
