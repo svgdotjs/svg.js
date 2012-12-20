@@ -1,10 +1,10 @@
 SVGJS_VERSION = '0.1a'
 
 # all available modules in the correct loading order
-ALL = %w[ svg container element group arrange clip doc defs shape rect circle ellipse path image sugar ]
+ALL = %w[ svg container element group arrange clip doc defs shape rect circle ellipse path image text sugar ]
 
 # required modules to make the library operational
-CORE = %w[ circle container defs doc element ellipse image path rect shape svg ]
+CORE = %w[ circle container defs doc element ellipse image path rect shape svg text ]
 
 # optional modules
 OPTIONAL = %w[ clip group arrange sugar ]
@@ -92,10 +92,10 @@ end
 desc "Concatenate source files to build svg.js"
 task :concat, [:modules] do |task, args|
   modules = args[:modules].to_s.split(':')
-  to_add, to_exclude = modules.partition {|m| m.sub!(/^(-)?(.+)/, 'src/\2.js'); !$1 }
+  toattrsdd, to_exclude = modules.partition {|m| m.sub!(/^(-)?(.+)/, 'src/\2.js'); !$1 }
 
   Rake::Task['dist/svg.js'].
-    remove_prerequisites(to_exclude).enhance(to_add).
+    remove_prerequisites(to_exclude).enhance(toattrsdd).
     invoke
 end
 

@@ -4,18 +4,14 @@ SVG.Image = function Image() {
 };
 
 // inherit from SVG.Element
-SVG.Image.prototype = new SVG.Element();
-
-// include the container object
-SVG.extend(SVG.Image, SVG.Container);
+SVG.Image.prototype = new SVG.Shape();
 
 // Add image-specific functions
 SVG.extend(SVG.Image, {
   
   // (re)load image
   load: function(u) {
-    this.attr('href', u, SVG.xlink);
-    return this;
+    return this.attr('href', u, SVG.xlink);
   }
   
 });

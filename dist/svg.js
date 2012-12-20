@@ -1,4 +1,4 @@
-/* svg.js 0.1a - svg container element group arrange clip doc defs shape rect circle ellipse path image sugar - svgjs.com/license */
+/* svg.js 0.1a - svg container element group arrange clip doc defs shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -121,6 +121,10 @@
       return this.place(new SVG.Image(), v);
     },
     
+    text: function(v) {
+      return this.place(new SVG.Text(), v);
+    },
+    
     place: function(e, v) {
       if (v != null) {
         if (v.x != null && v.y != null)
@@ -129,11 +133,13 @@
         if (v.width != null && v.height != null)
           e.size(v.width, v.height);
         
-        if (v.data != null)
-          e.data(v.data);
-        
-        if (v.src != null)
-          e.load(v.src);
+        v.data != null ?
+          e.data(v.data) :
+        v.src != null ?
+          e.load(v.src) :
+        v.text != null ?
+          e.text(v.text) :
+        void 0;
       }
       
       this.add(e);
@@ -408,25 +414,23 @@
     move: function(x, y) {
       this.attrs.x = x;
       this.attrs.y = y;
-      this.center();
-  
-      return this;
+      
+      return this.center();
     },
   
     // custom size function (no height value here!)
     size: function(w) {
-      this.attr('r', w / 2);
-      this.center();
-  
-      return this;
+      return this.attr('r', w / 2).center();
     },
   
     // position element by its center
     center: function(x, y) {
       var r = this.attrs.r || 0;
   
-      this.attr('cx', x || ((this.attrs.x || 0) + r));
-      this.attr('cy', y || ((this.attrs.y || 0) + r));
+      return this.attr({
+        cx: (x || ((this.attrs.x || 0) + r)),
+        cy: (y || ((this.attrs.y || 0) + r))
+      });
     }
     
   });
@@ -445,24 +449,23 @@
     move: function(x, y) {
       this.attrs.x = x;
       this.attrs.y = y;
-      this.center();
-  
-      return this;
+      
+      return this.center();
     },
   
     // custom size function
     size: function(w, h) {
-      this.attr('rx', w / 2);
-      this.attr('ry', h / 2);
-      this.center();
-  
-      return this; 
+      return this.
+        attr({ rx: w / 2, ry: h / 2 }).
+        center();
     },
     
     // position element by its center
     center: function(x, y) {
-      this.attr('cx', x || ((this.attrs.x || 0) + (this.attrs.rx || 0)));
-      this.attr('cy', y || ((this.attrs.y || 0) + (this.attrs.ry || 0)));
+      return this.attr({
+        cx: (x || ((this.attrs.x || 0) + (this.attrs.rx || 0))),
+        cy: (y || ((this.attrs.y || 0) + (this.attrs.ry || 0)))
+      });
     }
     
   });
@@ -480,8 +483,7 @@
     
     // set path data
     data: function(d) {
-      this.attr('d', d);
-      return this;
+      return this.attr('d', d);
     }
     
   });
@@ -491,17 +493,98 @@
   };
   
   // inherit from SVG.Element
-  SVG.Image.prototype = new SVG.Element();
-  
-  // include the container object
-  SVG.extend(SVG.Image, SVG.Container);
+  SVG.Image.prototype = new SVG.Shape();
   
   // Add image-specific functions
   SVG.extend(SVG.Image, {
     
     // (re)load image
     load: function(u) {
-      this.attr('href', u, SVG.xlink);
+      return this.attr('href', u, SVG.xlink);
+    }
+    
+  });
+
+  SVG.Text = function Text() {
+    this.constructor.call(this, SVG.create('text'));
+    
+    this.style = { 'font-size':  16 };
+    this.leading = 1.2;
+  };
+  
+  // inherit from SVG.Element
+  SVG.Text.prototype = new SVG.Shape();
+  
+  // Add image-specific functions
+  SVG.extend(SVG.Text, {
+    
+    text: function(t) {
+      this.content = t = t || 'text';
+      
+      var i,
+          p = this.parentDoc(),
+          a = t.split("\n");
+      
+      while (this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild);
+      
+      for (i = 0, l = a.length; i < l; i++) 
+        this.node.appendChild(new TSpan().
+          text(a[i]).
+          attr('style', this._style()).
+          attr({ dy: this.style['font-size'] * this.leading, x: (this.attr('x') || 0) }).node  );
+  
+      return this;
+    },
+    
+    font: function(o) {
+      var i, a = ('size family weight stretch variant style').split(' ');
+      
+      for (i = a.length - 1; i >= 0; i--)
+        if (o[a[i]] != null)
+          this.style['font-' + a[i]] = o[a[i]];
+     
+      a = ('leading kerning anchor').split(' ');
+      
+      for (i = a.length - 1; i >= 0; i--)
+        if (o[a[i]] != null)
+          this[a[i]] = o[a[i]];
+      
+      return this.text(this.content);
+    },
+    
+    _style: function() {
+      var i, s = '', a = ('size family weight stretch variant style').split(' ');
+      
+      for (i = a.length - 1; i >= 0; i--)
+        if (this.style['font-' + a[i]] != null)
+          s += 'font-' + a[i] + ':' + this.style['font-' + a[i]] + ';';
+      
+      a = ('leading kerning anchor').split(' ');
+      
+      for (i = a.length - 1; i >= 0; i--)
+        if (this[a[i]] != null)
+          s += a[i] + ':' + this[a[i]] + ';';
+      
+      return s;
+    }
+    
+  });
+  
+  
+  function TSpan() {
+    this.constructor.call(this, SVG.create('tspan'));
+  };
+  
+  // inherit from SVG.Element
+  TSpan.prototype = new SVG.Shape();
+  
+  // include the container object
+  SVG.extend(TSpan, {
+    
+    text: function(t) {
+      this.node.appendChild(document.createTextNode(t));
+      
       return this;
     }
     

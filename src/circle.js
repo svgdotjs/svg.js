@@ -13,25 +13,23 @@ SVG.extend(SVG.Circle, {
   move: function(x, y) {
     this.attrs.x = x;
     this.attrs.y = y;
-    this.center();
-
-    return this;
+    
+    return this.center();
   },
 
   // custom size function (no height value here!)
   size: function(w) {
-    this.attr('r', w / 2);
-    this.center();
-
-    return this;
+    return this.attr('r', w / 2).center();
   },
 
   // position element by its center
   center: function(x, y) {
     var r = this.attrs.r || 0;
 
-    this.attr('cx', x || ((this.attrs.x || 0) + r));
-    this.attr('cy', y || ((this.attrs.y || 0) + r));
+    return this.attr({
+      cx: (x || ((this.attrs.x || 0) + r)),
+      cy: (y || ((this.attrs.y || 0) + r))
+    });
   }
   
 });

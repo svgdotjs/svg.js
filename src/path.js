@@ -11,8 +11,7 @@ SVG.extend(SVG.Path, {
   
   // set path data
   data: function(d) {
-    this.attr('d', d);
-    return this;
+    return this.attr('d', d);
   }
   
 });

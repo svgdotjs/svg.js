@@ -101,6 +101,10 @@ SVG.Container = {
     return this.place(new SVG.Image(), v);
   },
   
+  text: function(v) {
+    return this.place(new SVG.Text(), v);
+  },
+  
   place: function(e, v) {
     if (v != null) {
       if (v.x != null && v.y != null)
@@ -109,11 +113,13 @@ SVG.Container = {
       if (v.width != null && v.height != null)
         e.size(v.width, v.height);
       
-      if (v.data != null)
-        e.data(v.data);
-      
-      if (v.src != null)
-        e.load(v.src);
+      v.data != null ?
+        e.data(v.data) :
+      v.src != null ?
+        e.load(v.src) :
+      v.text != null ?
+        e.text(v.text) :
+      void 0;
     }
     
     this.add(e);
