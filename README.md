@@ -111,6 +111,10 @@ text.font({
   leading: 1.5
 });
 ```
+Changing text afterwards is also possible with the 'text()' method:
+```javascript
+text.text('Brilliant!');
+```
 
 
 ### Image element
