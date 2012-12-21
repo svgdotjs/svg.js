@@ -299,6 +299,8 @@ SVG.extend(SVG.Doc, {
 - Animation module (element animation, path tweens and easing)
 - Draggable module (make elements and groups draggable)
 - Shapes module (add preset shapes like star, n-gon)
+- Gradient module (for linear and radial gradients)
+- Text on path module (write text along paths)
 
 
 
