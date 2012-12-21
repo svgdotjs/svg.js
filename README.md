@@ -1,6 +1,6 @@
 # Svg.js
 
-Svg.js is a lightweight (2.5k gzipped) library for manipulating SVG.
+Svg.js is a lightweight (less than 3k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -94,7 +94,7 @@ rect.remove();
 
 
 ### Text element
-Text elements can be created with a single style applied.
+Text elements can be created with an object as the first argument defining the 'text' content, 'x' and 'y':
 ```javascript
 var text = draw.text({
   text: "svg\nto\nthe\npoint.",
@@ -102,20 +102,13 @@ var text = draw.text({
   y:    0
 });
 ```
-Styling text can be done using the 'font()' method which is both a setter and a getter:
+Styling text can be done using the 'attr()':
 ```javascript
-// get a single font property
-text.font('size');
-
-// set a single font property
-text.font('anchor', 'start');
-
-// set multiple font properties at once
 text.font({
-  family: 'Helvetica',
-  size: 36,
-  anchor: 'middle',
-  leading: 1.5
+  'font-family': 'Helvetica',
+  'font-size': 36,
+  'text-anchor': 'middle',
+  'leading': 1.5
 });
 ```
 Changing text afterwards is also possible with the 'text()' method:
@@ -124,13 +117,15 @@ text.text('Brilliant!');
 ```
 To get the raw text content:
 ```javascript
-text.content;
+text.attr('text');
 ```
-Setting attributes like fill, opacity, x and y is the same as other elements:
+The sugar.js module provides some syntax sugar specifically for this element type:
 ```javascript
 text.attr({
-  fill: '#333',
-  x: 100
+  family:   'Helvetica',
+  size:     144,
+  anchor:   'middle',
+  leading:  1.5
 });
 ```
 

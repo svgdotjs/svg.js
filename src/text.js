@@ -2,11 +2,9 @@
 SVG.Text = function Text() {
   this.constructor.call(this, SVG.create('text'));
   
-  this.style = { 'font-size':  16, 'font-family': 'Helvetica' };
+  this.style = { 'font-size':  16, 'font-family': 'Helvetica', 'text-anchor': 'start' };
   this.leading = 1.2;
-  this.anchor = 'start';
-  this._s = ('size family weight stretch variant style').split(' ');
-  this._p = ('leading anchor').split(' ');
+  this.lines = [];
 };
 
 // inherit from SVG.Element
@@ -17,47 +15,29 @@ SVG.extend(SVG.Text, {
   
   text: function(t) {
     this.content = t = t || 'text';
+    this.lines = [];
     
-    var i,
+    var i, s,
         p = this.parentDoc(),
         a = t.split("\n");
     
     while (this.node.hasChildNodes())
       this.node.removeChild(this.node.lastChild);
     
-    for (i = 0, l = a.length; i < l; i++) 
-      this.node.appendChild(new TSpan().
+    for (i = 0, l = a.length; i < l; i++) {
+      s = new TSpan().
         text(a[i]).
-        attr('style', this._style()).
-        attr({ dy: this.style['font-size'] * this.leading, x: (this.attr('x') || 0) }).node  );
-
-    return this;
-  },
-  
-  font: function(a, v) {
-    if (typeof a == 'object') {
-      var i, s = this._s;
-
-      for (i = s.length - 1; i >= 0; i--)
-        if (a[s[i]] != null)
-          this.style['font-' + s[i]] = a[s[i]];
-
-      s = this._p;
-
-      for (i = s.length - 1; i >= 0; i--)
-        if (a[s[i]] != null)
-          this[s[i]] = a[s[i]];
+        attr({
+          dy:     this.style['font-size'] * this.leading,
+          x:      (this.attr('x') || 0),
+          style:  this._style()
+        });
       
-    } else if (v != null) {
-      var s = {};
-      s[a] = v;
-      this.font(s);
-      
-    } else {
-      return this._p.indexOf(a) > -1 ? this[a] : this._s.indexOf(a) > -1 ? this.style['font-' + a] : void 0;
-    }
+      this.node.appendChild(s.node);
+      this.lines.push(s);
+    };
     
-    return this.text(this.content);
+    return this;
   },
   
   _style: function() {
@@ -67,8 +47,7 @@ SVG.extend(SVG.Text, {
       if (this.style['font-' + s[i]] != null)
         o += 'font-' + s[i] + ':' + this.style['font-' + s[i]] + ';';
     
-    if (this.anchor != null)
-      o += 'text-anchor:' + this.anchor + ';';
+    o += 'text-anchor:' + this.style['text-anchor'] + ';';
       
     return o;
   }

@@ -18,9 +18,9 @@ SVG.extend(SVG.Clip, SVG.Container);
 SVG.extend(SVG.Element, {
   
   // clip element using another element
-  clip: function(block) {
+  clip: function(b) {
     var p = this.mother().defs().clipPath();
-    block(p);
+    b(p);
 
     return this.clipTo(p);
   },
@@ -28,6 +28,19 @@ SVG.extend(SVG.Element, {
   // distribute clipping path to svg element
   clipTo: function(p) {
     return this.attr('clip-path', 'url(#' + p.id + ')');
+  }
+  
+});
+
+// add def-specific functions
+SVG.extend(SVG.Defs, {
+  
+  // define clippath
+  clipPath: function() {
+    var e = new SVG.Clip();
+    this.add(e);
+
+    return e;
   }
   
 });

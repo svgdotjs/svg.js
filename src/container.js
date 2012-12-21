@@ -114,7 +114,7 @@ SVG.Container = {
         e.size(v.width, v.height);
       
       v.data != null ?
-        e.data(v.data) :
+        e.plot(v.data) :
       v.src != null ?
         e.load(v.src) :
       v.text != null ?

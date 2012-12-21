@@ -10,7 +10,7 @@ SVG.Path.prototype = new SVG.Shape();
 SVG.extend(SVG.Path, {
   
   // set path data
-  data: function(d) {
+  plot: function(d) {
     return this.attr('d', d);
   }
   

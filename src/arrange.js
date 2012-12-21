@@ -17,9 +17,7 @@ SVG.extend(SVG.Element, {
   
   // send given element one step backwards
   backward: function() {
-    var i, p = this.mother();
-    
-    p.levelDefs();
+    var i, p = this.mother().levelDefs();
     
     i = this.siblings().indexOf(this);
     
@@ -38,9 +36,7 @@ SVG.extend(SVG.Element, {
   
   // send given element all the way to the back
   back: function() {
-    var i, p = this.mother();
-    
-    p.levelDefs();
+    var i, p = this.mother().levelDefs();
     
     i = this.siblings().indexOf(this);
     

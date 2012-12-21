@@ -8,16 +8,3 @@ SVG.Defs.prototype = new SVG.Element();
 
 // include the container object
 SVG.extend(SVG.Defs, SVG.Container);
-
-// Add def-specific functions
-SVG.extend(SVG.Defs, {
-  
-  // define clippath
-  clipPath: function() {
-    var e = new SVG.Clip();
-    this.add(e);
-
-    return e;
-  }
-  
-});

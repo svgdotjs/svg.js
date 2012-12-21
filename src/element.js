@@ -2,6 +2,8 @@
 SVG.Element = function Element(n) {
   this.node = n;
   this.attrs = {};
+  
+  this._s = ('size family weight stretch variant style').split(' ');
 };
 
 // Add element-specific functions
@@ -34,18 +36,38 @@ SVG.extend(SVG.Element, {
   
   // set svg element attribute
   attr: function(a, v, n) {
-    
     if (arguments.length < 2) {
       if (typeof a == 'object')
         for (v in a) this.attr(v, a[v]);
+        
+      else if (this._isStyle(a))
+        return a == 'text' ?
+                 this.content :
+               a == 'leading' ?
+                 this[a] :
+                 this.style[a];
+        
       else
         return this.attrs[a];
     
+    } else if (this._isStyle(a)) {
+      a == 'text' ?
+        this.text(v) :
+      a == 'leading' ?
+        this[a] = v :
+        this.style[a] = v;
+      
+      this.text(this.content);
+      
     } else {
       this.attrs[a] = v;
-      n != null ?
-        this.node.setAttributeNS(n, a, v) :
-        this.node.setAttribute(a, v);
+      if (a == 'x' && this._isText())
+        for (var i = this.lines.length - 1; i >= 0; i--)
+          this.lines[i].attr(a, v);
+      else
+        n != null ?
+          this.node.setAttributeNS(n, a, v) :
+          this.node.setAttribute(a, v);
         
     }
     
@@ -92,6 +114,16 @@ SVG.extend(SVG.Element, {
       e = e.parent;
 
     return e;
+  },
+  
+  // private: is this text style
+  _isStyle: function(a) {
+    return typeof a == 'string' && this._isText() ? (/^font|text|leading/).test(a) : false;
+  },
+  
+  // private: element type tester
+  _isText: function() {
+    return this instanceof SVG.Text;
   }
   
 });

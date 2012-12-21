@@ -1,4 +1,4 @@
-/* svg.js 0.1a - svg container element group arrange clip doc defs shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js 0.1a - svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -134,7 +134,7 @@
           e.size(v.width, v.height);
         
         v.data != null ?
-          e.data(v.data) :
+          e.plot(v.data) :
         v.src != null ?
           e.load(v.src) :
         v.text != null ?
@@ -152,6 +152,8 @@
   SVG.Element = function Element(n) {
     this.node = n;
     this.attrs = {};
+    
+    this._s = ('size family weight stretch variant style').split(' ');
   };
   
   // Add element-specific functions
@@ -184,18 +186,38 @@
     
     // set svg element attribute
     attr: function(a, v, n) {
-      
       if (arguments.length < 2) {
         if (typeof a == 'object')
           for (v in a) this.attr(v, a[v]);
+          
+        else if (this._isStyle(a))
+          return a == 'text' ?
+                   this.content :
+                 a == 'leading' ?
+                   this[a] :
+                   this.style[a];
+          
         else
           return this.attrs[a];
       
+      } else if (this._isStyle(a)) {
+        a == 'text' ?
+          this.text(v) :
+        a == 'leading' ?
+          this[a] = v :
+          this.style[a] = v;
+        
+        this.text(this.content);
+        
       } else {
         this.attrs[a] = v;
-        n != null ?
-          this.node.setAttributeNS(n, a, v) :
-          this.node.setAttribute(a, v);
+        if (a == 'x' && this._isText())
+          for (var i = this.lines.length - 1; i >= 0; i--)
+            this.lines[i].attr(a, v);
+        else
+          n != null ?
+            this.node.setAttributeNS(n, a, v) :
+            this.node.setAttribute(a, v);
           
       }
       
@@ -242,6 +264,16 @@
         e = e.parent;
   
       return e;
+    },
+    
+    // private: is this text style
+    _isStyle: function(a) {
+      return typeof a == 'string' && this._isText() ? (/^font|text|leading/).test(a) : false;
+    },
+    
+    // private: element type tester
+    _isText: function() {
+      return this instanceof SVG.Text;
     }
     
   });
@@ -274,9 +306,7 @@
     
     // send given element one step backwards
     backward: function() {
-      var i, p = this.mother();
-      
-      p.levelDefs();
+      var i, p = this.mother().levelDefs();
       
       i = this.siblings().indexOf(this);
       
@@ -295,9 +325,7 @@
     
     // send given element all the way to the back
     back: function() {
-      var i, p = this.mother();
-      
-      p.levelDefs();
+      var i, p = this.mother().levelDefs();
       
       i = this.siblings().indexOf(this);
       
@@ -308,6 +336,16 @@
     }
     
   });
+
+  SVG.Defs = function Defs() {
+    this.constructor.call(this, SVG.create('defs'));
+  };
+  
+  // inherit from SVG.Element
+  SVG.Defs.prototype = new SVG.Element();
+  
+  // include the container object
+  SVG.extend(SVG.Defs, SVG.Container);
 
   var clipID = 0;
   
@@ -327,9 +365,9 @@
   SVG.extend(SVG.Element, {
     
     // clip element using another element
-    clip: function(block) {
+    clip: function(b) {
       var p = this.mother().defs().clipPath();
-      block(p);
+      b(p);
   
       return this.clipTo(p);
     },
@@ -340,16 +378,28 @@
     }
     
   });
-
+  
+  // add def-specific functions
+  SVG.extend(SVG.Defs, {
+    
+    // define clippath
+    clipPath: function() {
+      var e = new SVG.Clip();
+      this.add(e);
+  
+      return e;
+    }
+    
+  });
 
   SVG.Doc = function Doc(e) {
     this.constructor.call(this, SVG.create('svg'));
     
-    this.attr('xmlns', SVG.ns);
-    this.attr('version', '1.1');
-    this.attr('xlink', SVG.xlink, SVG.ns);
     
-    this.defs();
+    this.
+      attr({ xmlns: SVG.ns, version: '1.1' }).
+      attr('xlink', SVG.xlink, SVG.ns).
+      defs();
     
     if (typeof e == 'string')
       e = document.getElementById(e);
@@ -362,29 +412,6 @@
   
   // include the container object
   SVG.extend(SVG.Doc, SVG.Container);
-
-  SVG.Defs = function Defs() {
-    this.constructor.call(this, SVG.create('defs'));
-  };
-  
-  // inherit from SVG.Element
-  SVG.Defs.prototype = new SVG.Element();
-  
-  // include the container object
-  SVG.extend(SVG.Defs, SVG.Container);
-  
-  // Add def-specific functions
-  SVG.extend(SVG.Defs, {
-    
-    // define clippath
-    clipPath: function() {
-      var e = new SVG.Clip();
-      this.add(e);
-  
-      return e;
-    }
-    
-  });
 
   SVG.Shape = function Shape(element) {
     this.constructor.call(this, element);
@@ -482,7 +509,7 @@
   SVG.extend(SVG.Path, {
     
     // set path data
-    data: function(d) {
+    plot: function(d) {
       return this.attr('d', d);
     }
     
@@ -508,11 +535,9 @@
   SVG.Text = function Text() {
     this.constructor.call(this, SVG.create('text'));
     
-    this.style = { 'font-size':  16, 'font-family': 'Helvetica' };
+    this.style = { 'font-size':  16, 'font-family': 'Helvetica', 'text-anchor': 'start' };
     this.leading = 1.2;
-    this.anchor = 'start';
-    this._s = ('size family weight stretch variant style').split(' ');
-    this._p = ('leading anchor').split(' ');
+    this.lines = [];
   };
   
   // inherit from SVG.Element
@@ -523,47 +548,29 @@
     
     text: function(t) {
       this.content = t = t || 'text';
+      this.lines = [];
       
-      var i,
+      var i, s,
           p = this.parentDoc(),
           a = t.split("\n");
       
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild);
       
-      for (i = 0, l = a.length; i < l; i++) 
-        this.node.appendChild(new TSpan().
+      for (i = 0, l = a.length; i < l; i++) {
+        s = new TSpan().
           text(a[i]).
-          attr('style', this._style()).
-          attr({ dy: this.style['font-size'] * this.leading, x: (this.attr('x') || 0) }).node  );
-  
-      return this;
-    },
-    
-    font: function(a, v) {
-      if (typeof a == 'object') {
-        var i, s = this._s;
-  
-        for (i = s.length - 1; i >= 0; i--)
-          if (a[s[i]] != null)
-            this.style['font-' + s[i]] = a[s[i]];
-  
-        s = this._p;
-  
-        for (i = s.length - 1; i >= 0; i--)
-          if (a[s[i]] != null)
-            this[s[i]] = a[s[i]];
+          attr({
+            dy:     this.style['font-size'] * this.leading,
+            x:      (this.attr('x') || 0),
+            style:  this._style()
+          });
         
-      } else if (v != null) {
-        var s = {};
-        s[a] = v;
-        this.font(s);
-        
-      } else {
-        return this._p.indexOf(a) > -1 ? this[a] : this._s.indexOf(a) > -1 ? this.style['font-' + a] : void 0;
-      }
+        this.node.appendChild(s.node);
+        this.lines.push(s);
+      };
       
-      return this.text(this.content);
+      return this;
     },
     
     _style: function() {
@@ -573,8 +580,7 @@
         if (this.style['font-' + s[i]] != null)
           o += 'font-' + s[i] + ':' + this.style['font-' + s[i]] + ';';
       
-      if (this.anchor != null)
-        o += 'text-anchor:' + this.anchor + ';';
+      o += 'text-anchor:' + this.style['text-anchor'] + ';';
         
       return o;
     }
@@ -654,6 +660,26 @@
     
   });
   
+  // Add text-specific functions
+  SVG.extend(SVG.Text, {
+    
+    // set font 
+    font: function(o) {
+      var a = {};
+      
+      for (var k in o)
+        k == 'leading' ?
+          a[k] = o[k] :
+        k == 'anchor' ?
+          a['text-anchor'] = o[k] :
+        this._s.indexOf(k) > -1 ?
+          a['font-'+ k] = o[k] :
+          void 0;
+      
+      return this.attr(a).text(this.content);
+    },
+    
+  });
   
   
   

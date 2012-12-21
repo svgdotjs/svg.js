@@ -54,6 +54,26 @@ SVG.extend(SVG.G, {
   
 });
 
+// Add text-specific functions
+SVG.extend(SVG.Text, {
+  
+  // set font 
+  font: function(o) {
+    var a = {};
+    
+    for (var k in o)
+      k == 'leading' ?
+        a[k] = o[k] :
+      k == 'anchor' ?
+        a['text-anchor'] = o[k] :
+      this._s.indexOf(k) > -1 ?
+        a['font-'+ k] = o[k] :
+        void 0;
+    
+    return this.attr(a).text(this.content);
+  },
+  
+});
 
 
 
