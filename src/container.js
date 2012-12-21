@@ -107,8 +107,7 @@ SVG.Container = {
   
   place: function(e, v) {
     if (v != null) {
-      if (v.x != null && v.y != null)
-        e.move(v.x, v.y);
+      e.move(v.x || 0, v.y || 0);
       
       if (v.width != null && v.height != null)
         e.size(v.width, v.height);

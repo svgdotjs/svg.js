@@ -160,7 +160,7 @@ path.bbox();
 This will return a SVGRect element as a js object:
 
 ```javascript
-{ height: 20, width: 20, y: 20, x: 10 } 
+{ height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
 ```
 
 
