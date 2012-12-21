@@ -50,15 +50,6 @@ SVG.extend(SVG.Element, {
       else
         return this.attrs[a];
     
-    } else if (this._isStyle(a)) {
-      a == 'text' ?
-        this.text(v) :
-      a == 'leading' ?
-        this[a] = v :
-        this.style[a] = v;
-      
-      this.text(this.content);
-      
     } else {
       this.attrs[a] = v;
       if (a == 'x' && this._isText())
@@ -68,7 +59,16 @@ SVG.extend(SVG.Element, {
         n != null ?
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v);
-        
+      
+      if (this._isStyle(a)) {
+        a == 'text' ?
+          this.text(v) :
+        a == 'leading' ?
+          this[a] = v :
+          this.style[a] = v;
+      
+        this.text(this.content);
+      }
     }
     
     return this;
