@@ -104,7 +104,7 @@ var text = draw.text({
 ```
 Styling text can be done using the 'attr()':
 ```javascript
-text.font({
+text.attr({
   'font-family': 'Helvetica',
   'font-size': 36,
   'text-anchor': 'middle',
@@ -121,7 +121,7 @@ text.attr('text');
 ```
 The sugar.js module provides some syntax sugar specifically for this element type:
 ```javascript
-text.attr({
+text.font({
   family:   'Helvetica',
   size:     144,
   anchor:   'middle',
