@@ -12,7 +12,3 @@ this.SVG = {
       o.prototype[k] = m[k];
   }
 };
-
-window.svg = function(e) {
-  return new SVG.Doc(e);
-};

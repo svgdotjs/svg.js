@@ -67,6 +67,7 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
     file.puts "\n"
     file.puts svgjs
     file.puts '}).call(this);'
+    file.puts 'window.svg = function(e) { return new SVG.Doc(e); };'
   end
 end
 

@@ -1,4 +1,4 @@
-/* svg.js v0.1-1-g9dd851e - svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-2-gcf1bd17 - svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -13,10 +13,6 @@
       for (var k in m)
         o.prototype[k] = m[k];
     }
-  };
-  
-  window.svg = function(e) {
-    return new SVG.Doc(e);
   };
 
   SVG.Container = {
@@ -688,3 +684,4 @@
 
 
 }).call(this);
+window.svg = function(e) { return new SVG.Doc(e); };
