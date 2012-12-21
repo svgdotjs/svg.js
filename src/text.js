@@ -2,9 +2,11 @@
 SVG.Text = function Text() {
   this.constructor.call(this, SVG.create('text'));
   
-  this.style = { 'font-size':  16 };
+  this.style = { 'font-size':  16, 'font-family': 'Helvetica' };
   this.leading = 1.2;
   this.anchor = 'start';
+  this._s = ('size family weight stretch variant style').split(' ');
+  this._p = ('leading anchor').split(' ');
 };
 
 // inherit from SVG.Element
@@ -32,33 +34,43 @@ SVG.extend(SVG.Text, {
     return this;
   },
   
-  font: function(o) {
-    var i, a = ('size family weight stretch variant style').split(' ');
-    
-    for (i = a.length - 1; i >= 0; i--)
-      if (o[a[i]] != null)
-        this.style['font-' + a[i]] = o[a[i]];
-   
-    a = ('leading anchor').split(' ');
-    
-    for (i = a.length - 1; i >= 0; i--)
-      if (o[a[i]] != null)
-        this[a[i]] = o[a[i]];
+  font: function(a, v) {
+    if (typeof a == 'object') {
+      var i, s = this._s;
+
+      for (i = s.length - 1; i >= 0; i--)
+        if (a[s[i]] != null)
+          this.style['font-' + s[i]] = a[s[i]];
+
+      s = this._p;
+
+      for (i = s.length - 1; i >= 0; i--)
+        if (a[s[i]] != null)
+          this[s[i]] = a[s[i]];
+      
+    } else if (v != null) {
+      var s = {};
+      s[a] = v;
+      this.font(s);
+      
+    } else {
+      return this._p.indexOf(a) > -1 ? this[a] : this._s.indexOf(a) > -1 ? this.style['font-' + a] : void 0;
+    }
     
     return this.text(this.content);
   },
   
   _style: function() {
-    var i, s = '', a = ('size family weight stretch variant style').split(' ');
+    var i, o = '', s = this._s;
     
-    for (i = a.length - 1; i >= 0; i--)
-      if (this.style['font-' + a[i]] != null)
-        s += 'font-' + a[i] + ':' + this.style['font-' + a[i]] + ';';
+    for (i = s.length - 1; i >= 0; i--)
+      if (this.style['font-' + s[i]] != null)
+        o += 'font-' + s[i] + ':' + this.style['font-' + s[i]] + ';';
     
     if (this.anchor != null)
-      s += 'text-anchor:' + this.anchor + ';';
+      o += 'text-anchor:' + this.anchor + ';';
       
-    return s;
+    return o;
   }
   
 });

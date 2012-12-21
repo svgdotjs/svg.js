@@ -102,8 +102,15 @@ var text = draw.text({
   y:    0
 });
 ```
-Styling text can be done using the 'font()' method:
+Styling text can be done using the 'font()' method which is both a setter and a getter:
 ```javascript
+// get a single font property
+text.font('size');
+
+// set a single font property
+text.font('anchor', 'start');
+
+// set multiple font properties at once
 text.font({
   family: 'Helvetica',
   size: 36,
@@ -114,6 +121,17 @@ text.font({
 Changing text afterwards is also possible with the 'text()' method:
 ```javascript
 text.text('Brilliant!');
+```
+To get the raw text content:
+```javascript
+text.content;
+```
+Setting attributes like fill, opacity, x and y is the same as other elements:
+```javascript
+text.attr({
+  fill: '#333',
+  x: 100
+});
 ```
 
 
