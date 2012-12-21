@@ -311,13 +311,10 @@ SVG.extend(SVG.Doc, {
 - Chrome 4+
 - Safari 3.2+
 - Opera 9+
-- IE 9+
 
 ### Mobile
 - iOS Safari 3.2+
 - Android Browser 3+
-- Blackberry 7+
-- Opera Mini 5+
 - Opera Mobile 10+
 - Chrome for Android 18+
 - Firefox for Android 15+
