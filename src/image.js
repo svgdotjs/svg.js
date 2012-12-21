@@ -11,7 +11,7 @@ SVG.extend(SVG.Image, {
   
   // (re)load image
   load: function(u) {
-    return this.attr('href', u, SVG.xlink);
+    return this.attr('xlink:href', u, SVG.xlink);
   }
   
 });

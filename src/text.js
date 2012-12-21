@@ -17,7 +17,8 @@ SVG.extend(SVG.Text, {
     this.content = t = t || 'text';
     this.lines = [];
     
-    var i, s,
+    var i, n,
+        s = this._style(),
         p = this.parentDoc(),
         a = t.split("\n");
     
@@ -25,19 +26,19 @@ SVG.extend(SVG.Text, {
       this.node.removeChild(this.node.lastChild);
     
     for (i = 0, l = a.length; i < l; i++) {
-      s = new TSpan().
+      n = new TSpan().
         text(a[i]).
         attr({
           dy:     this.style['font-size'] * this.leading,
           x:      (this.attr('x') || 0),
-          style:  this._style()
+          style:  s
         });
       
-      this.node.appendChild(s.node);
-      this.lines.push(s);
+      this.node.appendChild(n.node);
+      this.lines.push(n);
     };
     
-    return this;
+    return this.attr('style', s);
   },
   
   _style: function() {

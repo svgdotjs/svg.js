@@ -13,6 +13,6 @@ this.SVG = {
   }
 };
 
-this.svg = function(e) {
+window.svg = function(e) {
   return new SVG.Doc(e);
 };

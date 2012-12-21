@@ -1,4 +1,4 @@
-/* svg.js v0.1 - svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-1-g9dd851e - svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -15,7 +15,7 @@
     }
   };
   
-  this.svg = function(e) {
+  window.svg = function(e) {
     return new SVG.Doc(e);
   };
 
@@ -528,7 +528,7 @@
     
     // (re)load image
     load: function(u) {
-      return this.attr('href', u, SVG.xlink);
+      return this.attr('xlink:href', u, SVG.xlink);
     }
     
   });
@@ -551,7 +551,8 @@
       this.content = t = t || 'text';
       this.lines = [];
       
-      var i, s,
+      var i, n,
+          s = this._style(),
           p = this.parentDoc(),
           a = t.split("\n");
       
@@ -559,19 +560,19 @@
         this.node.removeChild(this.node.lastChild);
       
       for (i = 0, l = a.length; i < l; i++) {
-        s = new TSpan().
+        n = new TSpan().
           text(a[i]).
           attr({
             dy:     this.style['font-size'] * this.leading,
             x:      (this.attr('x') || 0),
-            style:  this._style()
+            style:  s
           });
         
-        this.node.appendChild(s.node);
-        this.lines.push(s);
+        this.node.appendChild(n.node);
+        this.lines.push(n);
       };
       
-      return this;
+      return this.attr('style', s);
     },
     
     _style: function() {
