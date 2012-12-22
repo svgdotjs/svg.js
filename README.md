@@ -214,7 +214,7 @@ rect.clip(function(clipPath) {
 
 You can also reuse clip paths for multiple elements using 'clipTo()'.
 ```javascript
-var clipPath = doc.defs().clipPath();
+var clipPath = doc.defs().clip();
 clipRect = clipPath.rect(80, 80).move(10, 10);
 rect.clipTo(clipPath);
 ```
@@ -301,6 +301,10 @@ draw.gradient('radial', function(stop) {
 
 s1.update({ offset: 10, color: '#0f0', opacity: 1 });
 ```
+
+[W3Schools](http://www.w3schools.com/svg/svg_grad_linear.asp) has a great example page on how
+[linear gradients](http://www.w3schools.com/svg/svg_grad_linear.asp) and
+[radial gradients](http://www.w3schools.com/svg/svg_grad_radial.asp) work.
 
 _This functionality requires the gradient.js module which is included in the default distribution._
 
