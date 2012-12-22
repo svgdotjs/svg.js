@@ -15,7 +15,7 @@ Use the 'svg()' function to create a SVG document within a given html element:
 
 ```javascript
 var draw = svg('paper').size(300, 300);
-var rect = draw.rect({ width:100, height:100 }).attr({ fill: '#f06' });
+var rect = draw.rect(100, 100).attr({ fill: '#f06' });
 ```
 The first argument can either be an id of the element or the selected element itself.
 This will generate the following output:
@@ -96,11 +96,7 @@ rect.remove();
 ### Text element
 Text elements can be created with an object as the first argument defining the 'text' content, 'x' and 'y':
 ```javascript
-var text = draw.text({
-  text: "svg\nto\nthe\npoint.",
-  x:    300,
-  y:    0
-});
+var text = draw.text("svg\nto\nthe\npoint.").move(300, 0);
 ```
 Styling text can be done using the 'attr()':
 ```javascript
@@ -133,19 +129,13 @@ text.font({
 ### Image element
 When creating images the width and height values should be defined:
 ```javascript
-var image = draw.image({
-  width:  200,
-  height: 200,
-  x:      100,
-  y:      100,
-  src:    '/path/to/image.jpg'
-});
+var image = draw.image('/path/to/image.jpg').move(100, 100).size(200, 200);
 ```
 
 
 ### Path element
 ```javascript
-var path = draw.path({ data: "M10,20L30,40" }).attr({ fill: '#9dffd3' });
+var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
 ```
 
 For more details on path data strings, please read the SVG documentation:
@@ -203,14 +193,14 @@ Using 'clip()' creates a clip path in the parents 'defs' node, and passes it to 
 
 ```javascript
 rect.clip(function(clipPath) {
-	clipPath.rect({ x:10, y:10, width:80, height:80 });
+	clipPath.rect(80, 80).move(10, 10);
 });
 ```
 
 You can also reuse clip paths for multiple elements using 'clipTo()'.
 ```javascript
 var clipPath = doc.defs().clipPath();
-clipRect = clipPath.rect({ x:10, y:10, width:80, height:80 });
+clipRect = clipPath.rect(80, 80).move(10, 10);
 rect.clipTo(clipPath);
 ```
 
@@ -241,7 +231,7 @@ _This functionality requires the arrange.js module which is included in the defa
 Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
 ```javascript
 var group = draw.group();
-group.path({ data: "M10,20L30,40" });
+group.path('M10,20L30,40');
 ```
 Existing elements from the svg document can also be added to a group:
 ```javascript

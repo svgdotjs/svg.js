@@ -59,76 +59,50 @@ SVG.Container = {
     return e;
   },
   
-  rect: function(v) {
-    return this.place(new SVG.Rect(), v);
-  },
-  
-  circle: function(v) {
-    var g;
+  rect: function(w, h) {
+    var e = new SVG.Rect().size(w, h);
+    this.add(e);
     
-    if (v != null) {
-      g = { x: v.x, y: v.y };
-      
-      if (v.r || v.radius)
-        g.width = g.height = (v.r || v.radius) * 2;
-      else
-        g.width = g.height = v.width || v.height;
-    }
+    return e;
+  },
+  
+  circle: function(r) {
+    var e = new SVG.Circle().size(r);
+    this.add(e);
     
-    return this.place(new SVG.Circle(), g);
+    return e;
   },
   
-  ellipse: function(v) {
-    var g;
+  ellipse: function(w, h) {
+    var e = new SVG.Ellipse().size(w, h);
+    this.add(e);
     
-    if (v != null) {
-      g = { x: v.x, y: v.y };
-      
-      if (v.width)  g.width  = v.width;
-      if (v.height) g.height = v.height;
-      if (v.rx)     g.width  = v.rx * 2;
-      if (v.ry)     g.height = v.ry * 2;
-    }
+    return e;
+  },
+  
+  path: function(d) {
+    var e = new SVG.Path().plot(d);
+    this.add(e);
     
-    return this.place(new SVG.Ellipse(), g);
+    return e;
   },
   
-  path: function(v) {
-    return this.place(new SVG.Path(), v);
+  image: function(s) {
+    var e = new SVG.Image().load(s);
+    this.add(e);
+    
+    return e;
   },
   
-  image: function(v) {
-    return this.place(new SVG.Image(), v);
-  },
-  
-  text: function(v) {
-    return this.place(new SVG.Text(), v);
+  text: function(t) {
+    var e = new SVG.Text().text(t);
+    this.add(e);
+    
+    return e;
   },
   
   gradient: function(t, b) {
     return this.defs().gradient(t, b);
-  },
-  
-  place: function(e, v) {
-    if (v != null) {
-      e.move(v.x || 0, v.y || 0);
-      
-      
-      if (v.width != null && v.height != null)
-        e.size(v.width, v.height);
-      
-      v.data != null ?
-        e.plot(v.data) :
-      v.src != null ?
-        e.load(v.src) :
-      v.text != null ?
-        e.text(v.text) :
-      void 0;
-    }
-    
-    this.add(e);
-    
-    return e;
   }
   
 };
