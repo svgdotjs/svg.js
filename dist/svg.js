@@ -1,4 +1,4 @@
-/* svg.js v0.1-7-g0c4be8f - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-10-gffcc6f4 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -730,10 +730,15 @@
     rotate: function(o) {
       var b = this.bbox();
       
-      if (o.x == null) o.x = b.cx;
-      if (o.y == null) o.y = b.cy;
-  
-      return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.relative);
+      if (typeof o == 'number')
+        o = { deg: o };
+      
+      return this.transform(
+        'rotate(' +
+        (o.deg || 0) + ' ' +
+        (o.x == null ? b.cx : o.x) + ' ' +
+        (o.y == null ? b.cx : o.y) + ')',
+      o.relative);
     }
     
   });

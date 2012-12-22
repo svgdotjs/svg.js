@@ -187,9 +187,9 @@ rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
 ### Rotate
 The 'rotate()' method will automatically rotate elements according to the centre of the element:
 ```javascript
-rect.rotate({ deg: 45 });
+rect.rotate(45);
 ```
-But you also define a rotation point:
+Unless you also define a rotation point:
 ```javascript
 rect.rotate({ deg: 45, x: 100, y: 100 });
 ```

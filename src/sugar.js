@@ -36,10 +36,15 @@ SVG.extend(SVG.Element, {
   rotate: function(o) {
     var b = this.bbox();
     
-    if (o.x == null) o.x = b.cx;
-    if (o.y == null) o.y = b.cy;
-
-    return this.transform('rotate(' + (o.deg || 0) + ' ' + o.x + ' ' + o.y + ')', o.relative);
+    if (typeof o == 'number')
+      o = { deg: o };
+    
+    return this.transform(
+      'rotate(' +
+      (o.deg || 0) + ' ' +
+      (o.x == null ? b.cx : o.x) + ' ' +
+      (o.y == null ? b.cx : o.y) + ')',
+    o.relative);
   }
   
 });
