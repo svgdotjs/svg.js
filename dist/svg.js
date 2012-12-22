@@ -1,4 +1,4 @@
-/* svg.js v0.1-10-gffcc6f4 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-12-g0967c92 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -486,7 +486,7 @@
     
     // set 
     this.
-      attr({ xmlns: SVG.ns, version: '1.1' }).
+      attr({ xmlns: SVG.ns, version: '1.1', style: 'position:absolute;', x: 0, y: 0 }).
       attr('xlink', SVG.xlink, SVG.ns).
       size(e.offsetWidth, e.offsetHeight).
       defs();
