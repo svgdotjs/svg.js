@@ -251,6 +251,55 @@ group.add(rect);
 _This functionality requires the group.js module which is included in the default distribution._
 
 
+### Gradients
+There are linear and radial gradients. The linear gradient can be created like this:
+```javascript
+var gradient = draw.gradient('linear', function(stop) {
+  stop.at({ offset: 0, color: '#333', opacity: 1 });
+  stop.at({ offset: 100, color: '#fff', opacity: 1 });
+});
+```
+The 'offset' and 'color' parameters are required for stops, 'opacity' is optional. Offset is an integer expressed in percentage. To define the direction you can set from x, y and to x, y:
+```javascript
+gradient.from(0, 0).to(0, 100);
+```
+The from and to values are also expressed in percent.
+Finally, to use the gradient on an element:
+```javascript
+rect.attr({ fill: gradient.fill() });
+```
+Radial gradients have a 'radius()' method to define the outermost radius to where the inner color should develop:
+```javascript
+var gradient = draw.gradient('radial', function(stop) {
+  stop.at({ offset: 0, color: '#333', opacity: 1 });
+  stop.at({ offset: 100, color: '#fff', opacity: 1 });
+});
+
+gradient.from(50, 50).to(50, 50).radius(50);
+```
+A gradient can also be updated afterwards:
+```javascript
+gradient.update(function(stop) {
+  stop.at({ offset: 10, color: '#333', opacity: 0.2 });
+  stop.at({ offset: 90, color: '#f03', opacity: 1 });
+});
+```
+And even a single stop can be updated:
+```javascript
+var s1, s2, s3;
+
+draw.gradient('radial', function(stop) {
+  s1 = stop.at({ offset: 0, color: '#000', opacity: 1 });
+  s2 = stop.at({ offset: 50, color: '#f03', opacity: 1 });
+  s3 = stop.at({ offset: 100, color: '#066', opacity: 1 });
+});
+
+stop1.update({ offset: 10, color: '#0f0', opacity: 1 });
+```
+
+_This functionality requires the gradient.js module which is included in the default distribution._
+
+
 ## Extending functionality
 Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 ```javascript
@@ -299,7 +348,6 @@ SVG.extend(SVG.Doc, {
 - Animation module (element animation, path tweens and easing)
 - Draggable module (make elements and groups draggable)
 - Shapes module (add preset shapes like star, n-gon)
-- Gradient module (for linear and radial gradients)
 - Text on path module (write text along paths)
 
 

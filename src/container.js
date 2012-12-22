@@ -105,9 +105,14 @@ SVG.Container = {
     return this.place(new SVG.Text(), v);
   },
   
+  gradient: function(t, b) {
+    return this.defs().gradient(t, b);
+  },
+  
   place: function(e, v) {
     if (v != null) {
       e.move(v.x || 0, v.y || 0);
+      
       
       if (v.width != null && v.height != null)
         e.size(v.width, v.height);

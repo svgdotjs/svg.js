@@ -4,7 +4,7 @@ var clipID = 0;
 
 SVG.Clip = function Clip() {
   this.constructor.call(this, SVG.create('clipPath'));
-  this.id = '_' + (clipID++);
+  this.id = 'svgjs_clip_' + (clipID++);
   this.attr('id', this.id);
 };
 
@@ -19,7 +19,7 @@ SVG.extend(SVG.Element, {
   
   // clip element using another element
   clip: function(b) {
-    var p = this.mother().defs().clipPath();
+    var p = this.mother().defs().clip();
     b(p);
 
     return this.clipTo(p);
@@ -36,7 +36,7 @@ SVG.extend(SVG.Element, {
 SVG.extend(SVG.Defs, {
   
   // define clippath
-  clipPath: function() {
+  clip: function() {
     var e = new SVG.Clip();
     this.add(e);
 

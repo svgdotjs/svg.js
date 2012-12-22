@@ -1,13 +1,13 @@
 SVGJS_VERSION = '0.1a'
 
 # all available modules in the correct loading order
-ALL = %w[ svg container element group arrange defs clip doc shape rect circle ellipse path image text sugar ]
+ALL = %w[ svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar ]
 
 # required modules to make the library operational
 CORE = %w[ circle container defs doc element ellipse image path rect shape svg text ]
 
 # optional modules
-OPTIONAL = %w[ clip group arrange sugar ]
+OPTIONAL = %w[ clip group arrange gradient sugar ]
 
 # modules used in the curren build
 MODULES = CORE.concat(OPTIONAL).sort { |a,b| ALL.index(a) <=> ALL.index(b) }
@@ -67,7 +67,7 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
     file.puts "\n"
     file.puts svgjs
     file.puts '}).call(this);'
-    file.puts 'window.svg = function(e) { return new SVG.Doc(e); };'
+    file.puts 'function svg(e) { return new SVG.Doc(e); };'
   end
 end
 

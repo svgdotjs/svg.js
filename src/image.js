@@ -6,7 +6,7 @@ SVG.Image = function Image() {
 // inherit from SVG.Element
 SVG.Image.prototype = new SVG.Shape();
 
-// Add image-specific functions
+// add image-specific functions
 SVG.extend(SVG.Image, {
   
   // (re)load image
