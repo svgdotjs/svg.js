@@ -23,7 +23,7 @@ This will generate the following output:
 ```html
 <div id="paper">
 	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink" width="300" height="300">
-		<rect width="100" height="100" fill-color="#f06"></rect>
+		<rect width="100" height="100" fill="#f06"></rect>
 	</svg>
 </div>
 ```
