@@ -28,9 +28,72 @@ This will generate the following output:
 </div>
 ```
 
-### Manipulating elements
+## Elements
 
-#### Attributes
+### Rect
+Rects have two arguments, their width and height:
+```javascript
+var text = draw.rect(100, 100);
+```
+
+
+### Ellipse
+Ellipses, like rects, have two arguments, their width and height:
+```javascript
+var ellipse = draw.ellipse(100, 100);
+```
+
+
+### Circle
+The only argument necessary for a circle is the diameter:
+```javascript
+var circle = draw.circle(100);
+```
+
+
+### Text
+The first argument of a text element is the actual text content:
+```javascript
+var text = draw.text("svg\nto\nthe\npoint.").move(300, 0);
+```
+Changing text afterwards is also possible with the 'text()' method:
+```javascript
+text.text('Brilliant!');
+```
+To get the raw text content:
+```javascript
+text.content;
+```
+The sugar.js module provides some syntax sugar specifically for this element type:
+```javascript
+text.font({
+  family:   'Helvetica',
+  size:     144,
+  anchor:   'middle',
+  leading:  1.5
+});
+```
+
+
+### Image
+When creating images the width and height values should be defined:
+```javascript
+var image = draw.image('/path/to/image.jpg').move(100, 100).size(200, 200);
+```
+
+
+### Path
+```javascript
+var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
+```
+
+For more details on path data strings, please read the SVG documentation:
+http://www.w3.org/TR/SVG/paths.html#PathData
+
+
+## Manipulating elements
+
+### Attributes
 You can get and set an element's attributes directly using 'attr()':
 
 ```javascript
@@ -53,7 +116,7 @@ rect.attr('x', 50, 'http://www.w3.org/2000/svg');
 ```
 
 
-#### Transform
+### Transform
 With the transform attribute elements can be scaled, rotated, translated, skewed... :
 ```javascript
 rect.transform('rotate(45, 100, 100)');
@@ -66,7 +129,7 @@ More details on available transformations can be found here:
 http://www.w3.org/TR/SVG/coords.html#TransformAttribute
 
 
-#### Move 
+### Move 
 Move the element to a given x and y position by its upper left corner:
 ```javascript
 rect.move(200, 350);
@@ -78,7 +141,7 @@ rect.attr({ x: 20, y: 60 });
 Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner and circle uses the centre.
 
 
-#### Size
+### Size
 Set the size of an element by a given width and height:
 ```javascript
 rect.size(200, 300);
@@ -86,60 +149,11 @@ rect.size(200, 300);
 Same as with 'move()' the size of an element could be set by using 'attr()'. But because every type of element is handles its size differently the 'size()' method is much more convenient.
 
 
-#### Removing elements
+### Removing elements
 Pretty straightforward:
 ```javascript
 rect.remove();
 ```
-
-
-### Text element
-Text elements can be created with an object as the first argument defining the 'text' content, 'x' and 'y':
-```javascript
-var text = draw.text("svg\nto\nthe\npoint.").move(300, 0);
-```
-Styling text can be done using the 'attr()':
-```javascript
-text.attr({
-  'font-family': 'Helvetica',
-  'font-size': 36,
-  'text-anchor': 'middle',
-  'leading': 1.5
-});
-```
-Changing text afterwards is also possible with the 'text()' method:
-```javascript
-text.text('Brilliant!');
-```
-To get the raw text content:
-```javascript
-text.attr('text');
-```
-The sugar.js module provides some syntax sugar specifically for this element type:
-```javascript
-text.font({
-  family:   'Helvetica',
-  size:     144,
-  anchor:   'middle',
-  leading:  1.5
-});
-```
-
-
-### Image element
-When creating images the width and height values should be defined:
-```javascript
-var image = draw.image('/path/to/image.jpg').move(100, 100).size(200, 200);
-```
-
-
-### Path element
-```javascript
-var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
-```
-
-For more details on path data strings, please read the SVG documentation:
-http://www.w3.org/TR/SVG/paths.html#PathData
 
 
 ### Bounding box
@@ -154,22 +168,22 @@ This will return a SVGRect element as a js object:
 ```
 
 
-### Syntax sugar
+## Syntax sugar
 Fill and stroke are used quite often. Therefore two convenience methods are provided:
 
-#### Fill
+### Fill
 The 'fill()' method is a pretty alternative to the 'attr()' method:
 ```javascript
 rect.fill({ color: '#f06', opacity: 0.6 });
 ```
 
-#### Stroke
+### Stroke
 The 'stroke()' method is similar to 'fill()':
 ```javascript
 rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
 ```
 
-#### Rotate
+### Rotate
 The 'rotate()' method will automatically rotate elements according to the centre of the element:
 ```javascript
 rect.rotate({ deg: 45 });
@@ -186,7 +200,7 @@ rect.rotate({ deg: 45, x: 100, y: 100, relative: true });
 _This functionality requires the sugar.js module which is included in the default distribution._
 
 
-### Clipping elements
+## Clipping elements
 Clipping elements can be done with either 'clip()' or 'clipTo()'.
 
 Using 'clip()' creates a clip path in the parents 'defs' node, and passes it to a block:
@@ -207,7 +221,7 @@ rect.clipTo(clipPath);
 _This functionality requires the clip.js module which is included in the default distribution._
 
 
-### Arranging elements
+## Arranging elements
 You can arrange elements within their parent SVG document using the following methods:
 
 ```javascript
@@ -227,7 +241,7 @@ rect.backward();
 _This functionality requires the arrange.js module which is included in the default distribution._
 
 
-### Grouping elements
+## Grouping elements
 Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
 ```javascript
 var group = draw.group();
@@ -241,7 +255,7 @@ group.add(rect);
 _This functionality requires the group.js module which is included in the default distribution._
 
 
-### Gradients
+## Gradients
 There are linear and radial gradients. The linear gradient can be created like this:
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
