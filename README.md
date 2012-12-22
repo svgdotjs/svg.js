@@ -83,6 +83,7 @@ var image = draw.image('/path/to/image.jpg').move(100, 100).size(200, 200);
 
 
 ### Path
+Pass the path string as the first argument:
 ```javascript
 var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
 ```
