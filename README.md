@@ -294,7 +294,7 @@ draw.gradient('radial', function(stop) {
   s3 = stop.at({ offset: 100, color: '#066', opacity: 1 });
 });
 
-stop1.update({ offset: 10, color: '#0f0', opacity: 1 });
+s1.update({ offset: 10, color: '#0f0', opacity: 1 });
 ```
 
 _This functionality requires the gradient.js module which is included in the default distribution._
