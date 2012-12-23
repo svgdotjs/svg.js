@@ -46,12 +46,19 @@ Ellipses, like rects, have two arguments, their width and height:
 ```javascript
 var ellipse = draw.ellipse(100, 100);
 ```
-
+This element type has an extra method to move it by its 'cx' and 'cy' values:
+```javascript
+ellipse.center(150, 150);
+```
 
 ### Circle
 The only argument necessary for a circle is the diameter:
 ```javascript
 var circle = draw.circle(100);
+```
+Like ellipse this element type has an extra method to move it by its 'cx' and 'cy' values:
+```javascript
+circle.center(150, 150);
 ```
 
 
