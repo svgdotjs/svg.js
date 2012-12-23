@@ -150,7 +150,7 @@ Note that you can also use the following code to move elements around:
 ```javascript
 rect.attr({ x: 20, y: 60 });
 ``` 
-Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner with the 'x' and 'y' attributes, circle and ellipse use their centre with the 'cx' and 'cy' attributes.
+Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner with the 'x' and 'y' attributes, circle and ellipse use their centre with the 'cx' and 'cy' attributes and thereby simply ignoring the 'x' and 'y' values you might assign.
 
 
 ### Size
