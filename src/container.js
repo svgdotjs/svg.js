@@ -113,8 +113,8 @@ SVG.Container = {
     
     r = function() {
       if (document.readyState === 'complete') {
-        e.node.style.position = 'absolute';
-        setTimeout(function() { e.node.style.position = 'relative'; }, 5);
+        e.attr('style', 'position:absolute;left:0;top:0;');
+        setTimeout(function() { e.attr('style', 'position:relative;'); }, 5);
       } else {
         setTimeout(r, 10);
       }
