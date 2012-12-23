@@ -12,7 +12,7 @@ SVG.Doc = function Doc(e) {
   
   // set svg element attributes
   this.
-    attr({ xmlns: SVG.ns, version: '1.1' }).
+    attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' }).
     attr('xlink', SVG.xlink, SVG.ns).
     defs();
   
