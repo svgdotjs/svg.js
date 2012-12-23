@@ -4,8 +4,6 @@ Svg.js is a lightweight (less than 3k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
-Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
-
 
 ## Usage
 
@@ -412,6 +410,8 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 
 
 ## Compatibility
+
+Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
 
 ### Desktop
 - Firefox 3+
