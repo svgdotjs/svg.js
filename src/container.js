@@ -44,7 +44,7 @@ SVG.Container = {
     return this._defs;
   },
   
-  levelDefs: function() {
+  level: function() {
     var d = this.defs();
     
     this.remove(d).add(d, 0);
@@ -103,6 +103,28 @@ SVG.Container = {
   
   gradient: function(t, b) {
     return this.defs().gradient(t, b);
+  },
+  
+  // hack for safari preventing text to be rendered in one line,
+  // basically it sets the position of the svg node to absolute
+  // when the dom is loaded, and resets it to relative a few ms later.
+  stage: function() {
+    if (document.readyState !== 'complete') {
+      var r, e = this;
+      
+      r = function() {
+        if (document.readyState === 'complete') {
+          e.node.style.position = 'absolute';
+          setTimeout(function() { e.node.style.position = 'relative'; }, 5);
+        } else {
+          setTimeout(r, 10);
+        }
+      };
+      
+      r();
+    }
+    
+    return this;
   }
   
 };

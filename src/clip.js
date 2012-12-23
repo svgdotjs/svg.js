@@ -19,7 +19,7 @@ SVG.extend(SVG.Element, {
   
   // clip element using another element
   clip: function(b) {
-    var p = this.mother().defs().clip();
+    var p = this.parent.defs().clip();
     b(p);
 
     return this.clipTo(p);

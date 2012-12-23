@@ -1,4 +1,4 @@
-/* svg.js v0.1-12-g0967c92 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-13-g7039458 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -60,7 +60,7 @@
       return this._defs;
     },
     
-    levelDefs: function() {
+    level: function() {
       var d = this.defs();
       
       this.remove(d).add(d, 0);
@@ -119,6 +119,28 @@
     
     gradient: function(t, b) {
       return this.defs().gradient(t, b);
+    },
+    
+    // hack for safari preventing text to be rendered in one line,
+    // basically it sets the position of the svg node to absolute
+    // when the dom is loaded, and resets it to relative a few ms later.
+    stage: function() {
+      if (document.readyState !== 'complete') {
+        var r, e = this;
+        
+        r = function() {
+          if (document.readyState === 'complete') {
+            e.node.style.position = 'absolute';
+            setTimeout(function() { e.node.style.position = 'relative'; }, 5);
+          } else {
+            setTimeout(r, 10);
+          }
+        };
+        
+        r();
+      }
+      
+      return this;
     }
     
   };
@@ -151,11 +173,6 @@
     // get parent document
     parentDoc: function() {
       return this._parent(SVG.Doc);
-    },
-  
-    // get parent svg wrapper
-    mother: function() {
-      return this.parentDoc();
     },
     
     // set svg element attribute
@@ -267,20 +284,20 @@
     
     // get all siblings, including me
     siblings: function() {
-      return this.mother().children();
+      return this.parent.children();
     },
     
     // send given element one step forwards
     forward: function() {
       var i = this.siblings().indexOf(this);
-      this.mother().remove(this).add(this, i + 1);
+      this.parent.remove(this).add(this, i + 1);
       
       return this;
     },
     
     // send given element one step backwards
     backward: function() {
-      var i, p = this.mother().levelDefs();
+      var i, p = this.parent.level();
       
       i = this.siblings().indexOf(this);
       
@@ -292,14 +309,14 @@
     
     // send given element all the way to the front
     front: function() {
-      this.mother().remove(this).add(this);
+      this.parent.remove(this).add(this);
       
       return this;
     },
     
     // send given element all the way to the back
     back: function() {
-      var i, p = this.mother().levelDefs();
+      var i, p = this.parent.level();
       
       i = this.siblings().indexOf(this);
       
@@ -340,7 +357,7 @@
     
     // clip element using another element
     clip: function(b) {
-      var p = this.mother().defs().clip();
+      var p = this.parent.defs().clip();
       b(p);
   
       return this.clipTo(p);
@@ -486,12 +503,15 @@
     
     // set 
     this.
-      attr({ xmlns: SVG.ns, version: '1.1', style: 'position:absolute;', x: 0, y: 0 }).
+      attr({ xmlns: SVG.ns, version: '1.1', style: 'position:relative;' }).
       attr('xlink', SVG.xlink, SVG.ns).
       size(e.offsetWidth, e.offsetHeight).
       defs();
     
     e.appendChild(this.node);
+    
+    // ensure 
+    this.stage();
   };
   
   // inherit from SVG.Element
@@ -499,6 +519,9 @@
   
   // include the container object
   SVG.extend(SVG.Doc, SVG.Container);
+  
+  
+
 
   SVG.Shape = function Shape(element) {
     this.constructor.call(this, element);

@@ -28,11 +28,6 @@ SVG.extend(SVG.Element, {
   parentDoc: function() {
     return this._parent(SVG.Doc);
   },
-
-  // get parent svg wrapper
-  mother: function() {
-    return this.parentDoc();
-  },
   
   // set svg element attribute
   attr: function(a, v, n) {
