@@ -1,16 +1,7 @@
 SVGJS_VERSION = '0.1a'
 
 # all available modules in the correct loading order
-ALL = %w[ svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar ]
-
-# required modules to make the library operational
-CORE = %w[ circle container defs doc element ellipse image path rect shape svg text ]
-
-# optional modules
-OPTIONAL = %w[ clip group arrange gradient sugar ]
-
-# modules used in the curren build
-MODULES = CORE.concat(OPTIONAL).sort { |a,b| ALL.index(a) <=> ALL.index(b) }
+MODULES = %w[ svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar ]
 
 # how many bytes in a "kilobyte"
 KILO = 1024

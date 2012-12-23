@@ -364,6 +364,45 @@ SVG.extend(SVG.Doc, {
 ```
 
 
+## Building
+Starting out with the default distribution of svg.js is good. Although you might want to remove some modules to keep the size at minimum. 
+
+You will need ruby, RubyGems, and rake installed on your system.
+
+``` sh
+# dependencies:
+$ ruby -v
+$ gem -v
+$ rake -V
+
+# required to generate the minified version:
+$ gem install uglifier
+```
+
+Build Zepto by running `rake`:
+
+``` sh
+$ rake
+Original version: 17.010k
+Minified: 9.083k
+Minified and gzipped: 2.760k, compression factor 6.163
+```
+
+The resulting files are:
+
+1. `dist/svg.js`
+2. `dist/svg.min.js`
+
+To include optional modules and remove default ones, use the `concat` task. In
+this example, 'clip' is removed, but 'group' and 'arrange' are added:
+
+```
+$ rake concat[-clip:group:arrange] dist
+```
+
+_The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_
+
+
 ## To-do
 - Animation module (element animation, path tweens and easing)
 - Draggable module (make elements and groups draggable)
