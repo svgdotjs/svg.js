@@ -1,4 +1,4 @@
-/* svg.js v0.1-13-g7039458 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-14-g1ae730f - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -125,20 +125,18 @@
     // basically it sets the position of the svg node to absolute
     // when the dom is loaded, and resets it to relative a few ms later.
     stage: function() {
-      if (document.readyState !== 'complete') {
-        var r, e = this;
-        
-        r = function() {
-          if (document.readyState === 'complete') {
-            e.node.style.position = 'absolute';
-            setTimeout(function() { e.node.style.position = 'relative'; }, 5);
-          } else {
-            setTimeout(r, 10);
-          }
-        };
-        
-        r();
-      }
+      var r, e = this;
+      
+      r = function() {
+        if (document.readyState === 'complete') {
+          e.node.style.position = 'absolute';
+          setTimeout(function() { e.node.style.position = 'relative'; }, 5);
+        } else {
+          setTimeout(r, 10);
+        }
+      };
+      
+      r();
       
       return this;
     }
@@ -503,9 +501,8 @@
     
     // set 
     this.
-      attr({ xmlns: SVG.ns, version: '1.1', style: 'position:relative;' }).
+      attr({ xmlns: SVG.ns, version: '1.1' }).
       attr('xlink', SVG.xlink, SVG.ns).
-      size(e.offsetWidth, e.offsetHeight).
       defs();
     
     e.appendChild(this.node);

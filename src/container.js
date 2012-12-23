@@ -109,20 +109,18 @@ SVG.Container = {
   // basically it sets the position of the svg node to absolute
   // when the dom is loaded, and resets it to relative a few ms later.
   stage: function() {
-    if (document.readyState !== 'complete') {
-      var r, e = this;
-      
-      r = function() {
-        if (document.readyState === 'complete') {
-          e.node.style.position = 'absolute';
-          setTimeout(function() { e.node.style.position = 'relative'; }, 5);
-        } else {
-          setTimeout(r, 10);
-        }
-      };
-      
-      r();
-    }
+    var r, e = this;
+    
+    r = function() {
+      if (document.readyState === 'complete') {
+        e.node.style.position = 'absolute';
+        setTimeout(function() { e.node.style.position = 'relative'; }, 5);
+      } else {
+        setTimeout(r, 10);
+      }
+    };
+    
+    r();
     
     return this;
   }

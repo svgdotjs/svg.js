@@ -27,6 +27,10 @@ This will generate the following output:
 	</svg>
 </div>
 ```
+If the svg canvas should follow the dimensions of its parent, in this case '#paper', you can use a percentage value:
+```javascript
+var draw = svg('paper').size('100%', '100%');
+```
 
 ## Elements
 

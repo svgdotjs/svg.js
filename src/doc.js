@@ -8,9 +8,8 @@ SVG.Doc = function Doc(e) {
   
   // set 
   this.
-    attr({ xmlns: SVG.ns, version: '1.1', style: 'position:relative;' }).
+    attr({ xmlns: SVG.ns, version: '1.1' }).
     attr('xlink', SVG.xlink, SVG.ns).
-    size(e.offsetWidth, e.offsetHeight).
     defs();
   
   e.appendChild(this.node);
