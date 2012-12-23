@@ -5,7 +5,7 @@ SVG.Container = {
     if (!this.has(e)) {
       i = i == null ? this.children().length : i;
       this.children().splice(i, 0, e);
-      this.node.insertBefore(e.node, this.node.childNodes[i]);
+      this.node.insertBefore(e.node, this.node.childNodes[i] || null);
       e.parent = this;
     }
     

@@ -418,6 +418,7 @@ Important: this library is still in alpha, therefore the API might be subject to
 - Chrome 4+
 - Safari 3.2+
 - Opera 9+
+- IE9 +
 
 ### Mobile
 - iOS Safari 3.2+
