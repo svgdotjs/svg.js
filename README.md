@@ -406,6 +406,7 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 - Draggable module (make elements and groups draggable)
 - Shapes module (add preset shapes like star, n-gon)
 - Text on path module (write text along paths)
+- Nested SVG (add a svg document inside another svg document)
 
 
 
