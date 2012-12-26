@@ -25,10 +25,12 @@ This will generate the following output:
 	</svg>
 </div>
 ```
-If the svg canvas should follow the dimensions of its parent, in this case '#paper', you can use a percentage value:
+If the svg canvas should follow the dimensions of its parent, in this case '#paper', you can also use a percentage value:
 ```javascript
 var draw = svg('paper').size('100%', '100%');
 ```
+By default the width and height are set to 100% so you will not need it very often.
+
 
 ## Elements
 
@@ -360,6 +362,8 @@ SVG.extend(SVG.Doc, {
   
 });
 ```
+
+
 
 
 ## Building

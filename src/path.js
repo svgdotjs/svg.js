@@ -12,6 +12,11 @@ SVG.extend(SVG.Path, {
   // set path data
   plot: function(d) {
     return this.attr('d', d);
+  },
+  
+  // move path using translate
+  move: function(x, y) {
+    return this.transform('translate(' + x + ',' + y + ')');
   }
   
 });

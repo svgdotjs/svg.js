@@ -1,9 +1,9 @@
-/* svg.js v0.1-23-g1831089 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-25-ga2f2323 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
-    ns:     'http://www.w3.org/2000/svg',
-    xlink:  'http://www.w3.org/1999/xlink',
+    ns:         'http://www.w3.org/2000/svg',
+    xlink:      'http://www.w3.org/1999/xlink',
     
     create: function(e) {
       return document.createElementNS(this.ns, e);
@@ -13,6 +13,7 @@
       for (var k in m)
         o.prototype[k] = m[k];
     }
+    
   };
 
   SVG.Container = {
@@ -623,6 +624,11 @@
     // set path data
     plot: function(d) {
       return this.attr('d', d);
+    },
+    
+    // move path using translate
+    move: function(x, y) {
+      return this.transform('translate(' + x + ',' + y + ')');
     }
     
   });
