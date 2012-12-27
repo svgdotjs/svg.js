@@ -127,15 +127,17 @@ SVG.extend(SVG.Element, {
     // actual bounding box
     var b = this.node.getBBox();
     
-    // include translations on x an y
-    b.x += this.trans.x;
-    b.y += this.trans.y;
-    
-    // add the center
-    b.cx = b.x + b.width / 2;
-    b.cy = b.y + b.height / 2;
-    
-    return b;
+    return {
+      // include translations on x an y
+      x:      b.x + this.trans.x,
+      y:      b.x + this.trans.y,
+      // add the center
+      cx:     b.x + this.trans.x + b.width / 2,
+      cy:     b.x + this.trans.y + b.height / 2,
+      // plain width and height
+      width:  b.width,
+      height: b.height
+    };
   },
   
   // private: find svg parent

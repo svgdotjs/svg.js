@@ -1,4 +1,4 @@
-/* svg.js v0.1-28-gb0360d1 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-30-g9501ce9 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -272,15 +272,17 @@
       // actual bounding box
       var b = this.node.getBBox();
       
-      // include translations on x an y
-      b.x += this.trans.x;
-      b.y += this.trans.y;
-      
-      // add the center
-      b.cx = b.x + b.width / 2;
-      b.cy = b.y + b.height / 2;
-      
-      return b;
+      return {
+        // include translations on x an y
+        x:      b.x + this.trans.x,
+        y:      b.x + this.trans.y,
+        // add the center
+        cx:     b.x + this.trans.x + b.width / 2,
+        cy:     b.x + this.trans.y + b.height / 2,
+        // plain width and height
+        width:  b.width,
+        height: b.height
+      };
     },
     
     // private: find svg parent
