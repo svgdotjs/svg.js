@@ -33,18 +33,14 @@ SVG.extend(SVG.Shape, {
 SVG.extend(SVG.Element, {
   
   // rotation
-  rotate: function(o) {
+  rotate: function(d, x, y) {
     var b = this.bbox();
     
-    if (typeof o == 'number')
-      o = { deg: o };
-    
-    return this.transform(
-      'rotate(' +
-      (o.deg || 0) + ' ' +
-      (o.x == null ? b.cx : o.x) + ' ' +
-      (o.y == null ? b.cx : o.y) + ')',
-    o.relative);
+    return this.transform({
+      rotation: d || 0,
+      cx:       x == null ? b.cx : x,
+      cy:       y == null ? b.cx : y
+    });
   }
   
 });
@@ -54,7 +50,7 @@ SVG.extend(SVG.G, {
   
   // move using translate
   move: function(x, y) {
-    return this.transform('translate(' + x + ' ' + y + ')');
+    return this.transform({ x: x, y: y });
   }
   
 });
@@ -64,9 +60,9 @@ SVG.extend(SVG.Text, {
   
   // set font 
   font: function(o) {
-    var a = {};
+    var k, a = {};
     
-    for (var k in o)
+    for (k in o)
       k == 'leading' ?
         a[k] = o[k] :
       k == 'anchor' ?
@@ -76,7 +72,7 @@ SVG.extend(SVG.Text, {
         void 0;
     
     return this.attr(a).text(this.content);
-  },
+  }
   
 });
 

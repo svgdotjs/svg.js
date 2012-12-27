@@ -129,16 +129,30 @@ rect.attr('x', 50, 'http://www.w3.org/2000/svg');
 
 
 ### Transform
-With the transform attribute elements can be scaled, rotated, translated, skewed... :
+With the transform attribute elements can be scaled, rotated, translated and skewed:
 ```javascript
-rect.transform('rotate(45, 100, 100)');
+rect.transform({
+  rotation: 45,
+  cx:       100,
+  cy:       100
+});
 ```
-These operations are always absolute. If every transformation needs remembered, so multiple rotate operations will be stacked together making them relative to previous operations, a boolean value can be passed as a second argument:
+All available translations are:
 ```javascript
-rect.transform('rotate(45, 100, 100)', true);
+rect.transform({
+  x:        _[translation on x-axis]_,
+  y:        _[translation on y-axis]_,
+  rotation: _[degrees]_,
+  cx:       _[x rotation point]_,
+  cy:       _[y rotation point]_,
+  scaleX:   _[scaling on x-axis]_,
+  scaleX:   _[scaling on y-axis]_,
+  skewX:    _[skewing on x-axis]_,
+  skewY:    _[skewing on y-axis]_
+});
 ```
-More details on available transformations can be found here:
-http://www.w3.org/TR/SVG/coords.html#TransformAttribute
+
+Important: matrix transformations are not yet supported.
 
 
 ### Move 
@@ -173,11 +187,13 @@ rect.remove();
 ```javascript
 path.bbox();
 ```
-This will return a SVGRect element as a js object:
+This will return an object with the following values:
 
 ```javascript
 { height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
 ```
+
+As opposed to the built-in `getBBox()` method any translations used with the `transform()` method will be taken into account. 
 
 
 ## Syntax sugar
@@ -198,15 +214,13 @@ rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
 ### Rotate
 The 'rotate()' method will automatically rotate elements according to the centre of the element:
 ```javascript
+// rotate(degrees)
 rect.rotate(45);
 ```
 Unless you also define a rotation point:
 ```javascript
-rect.rotate({ deg: 45, x: 100, y: 100 });
-```
-To make the operation relative:
-```javascript
-rect.rotate({ deg: 45, x: 100, y: 100, relative: true });
+// rotate(degrees, cx, cy)
+rect.rotate(45, 100, 100);
 ```
 
 _This functionality requires the sugar.js module which is included in the default distribution._

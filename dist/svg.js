@@ -1,4 +1,4 @@
-/* svg.js v0.1-25-ga2f2323 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-26-gf301d23 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -147,6 +147,15 @@
   SVG.Element = function Element(n) {
     this.node = n;
     this.attrs = {};
+    this.trans = {
+      x:        0,
+      y:        0,
+      scaleX:   1,
+      scaleY:   1,
+      rotation: 0,
+      skewX:    0,
+      skewY:    0
+    };
     
     this._s = ('size family weight stretch variant style').split(' ');
   };
@@ -186,7 +195,7 @@
                  a == 'leading' ?
                    this[a] :
                    this.style[a];
-          
+        
         else
           return this.attrs[a];
       
@@ -214,32 +223,60 @@
       return this;
     },
     
-    // transformations
-    transform: function(t, r) {
-      var n = [],
+    transform: function(o) {
+      // act as a getter if the first argument is a string
+      if (typeof o === 'string')
+        return this.trans[o];
+        
+      // ... otherwise continue as a setter
+      var k,
+          t = [],
+          b = this.bbox(),
           s = this.attr('transform') || '',
-          l = s.match(/([a-z]+\([^\)]+\))/g) || [];
+          l = s.match(/[a-z]+\([^\)]+\)/g) || [];
       
-      if (r !== true) {
-        var v = t.match(/^([A-Za-z\-]+)/)[1],
-            r = new RegExp('^' + v);
-        
-        for (var i = 0, s = l.length; i < s; i++)
-          if (!r.test(l[i]))
-            n.push(l[i]);
-        
-      } else
-        n = l;
+      // merge values
+      for (k in this.trans)
+        if (o[k] != null)
+          this.trans[k] = o[k];
       
-      n.push(t);
+      // alias current transformations
+      o = this.trans;
       
-      return this.attr('transform', n.join(' '));
+      // add rotate
+      if (o.rotation != 0)
+        t.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : b.cx) + ',' + (o.cy != null ? o.cy : b.cy) + ')');
+      
+      // add scale
+      if (o.scaleX != 1 && o.scaleY != 1)
+        t.push('scale(' + o.sx + ',' + o.sy + ')');
+      
+      // add skew on x axis
+      if (o.skewX != 0)
+        t.push('skewX(' + x.skewX + ')');
+      
+      // add skew on y axis
+      if (o.skewY != 0)
+        t.push('skewY(' + x.skewY + ')')
+      
+      // add translate
+      if (o.x != 0 && o.y != 0)
+        t.push('translate(' + o.x + ',' + o.y + ')');
+      
+      // add only te required transformations
+      return this.attr('transform', t.join(' '));
     },
-  
+    
     // get bounding box
     bbox: function() {
+      // actual bounding box
       var b = this.node.getBBox();
       
+      // include translations on x an y
+      b.x += this.trans.x;
+      b.y += this.trans.y;
+      
+      // add the center
       b.cx = b.x + b.width / 2;
       b.cy = b.y + b.height / 2;
       
@@ -623,12 +660,12 @@
     
     // set path data
     plot: function(d) {
-      return this.attr('d', d);
+      return this.attr('d', d || 'M0,0L0,0');
     },
     
     // move path using translate
     move: function(x, y) {
-      return this.transform('translate(' + x + ',' + y + ')');
+      return this.transform({ x: x, y: y });
     }
     
   });
@@ -758,18 +795,14 @@
   SVG.extend(SVG.Element, {
     
     // rotation
-    rotate: function(o) {
+    rotate: function(d, x, y) {
       var b = this.bbox();
       
-      if (typeof o == 'number')
-        o = { deg: o };
-      
-      return this.transform(
-        'rotate(' +
-        (o.deg || 0) + ' ' +
-        (o.x == null ? b.cx : o.x) + ' ' +
-        (o.y == null ? b.cx : o.y) + ')',
-      o.relative);
+      return this.transform({
+        rotation: d || 0,
+        cx:       x == null ? b.cx : x,
+        cy:       y == null ? b.cx : y
+      });
     }
     
   });
@@ -779,7 +812,7 @@
     
     // move using translate
     move: function(x, y) {
-      return this.transform('translate(' + x + ' ' + y + ')');
+      return this.transform({ x: x, y: y });
     }
     
   });
@@ -789,9 +822,9 @@
     
     // set font 
     font: function(o) {
-      var a = {};
+      var k, a = {};
       
-      for (var k in o)
+      for (k in o)
         k == 'leading' ?
           a[k] = o[k] :
         k == 'anchor' ?
@@ -801,7 +834,7 @@
           void 0;
       
       return this.attr(a).text(this.content);
-    },
+    }
     
   });
   
