@@ -28,6 +28,13 @@ SVG.extend(SVG.Element, {
     return this.attr({ width: w, height: h });
   },
   
+  // position element by its center
+  center: function(x, y) {
+    var b = this.bbox();
+    
+    return this.move(x - b.width / 2, y - b.height / 2);
+  },
+  
   // remove element
   remove: function() {
     return this.parent != null ? this.parent.remove(this) : void 0;
@@ -130,10 +137,10 @@ SVG.extend(SVG.Element, {
     return {
       // include translations on x an y
       x:      b.x + this.trans.x,
-      y:      b.x + this.trans.y,
+      y:      b.y + this.trans.y,
       // add the center
       cx:     b.x + this.trans.x + b.width / 2,
-      cy:     b.x + this.trans.y + b.height / 2,
+      cy:     b.y + this.trans.y + b.height / 2,
       // plain width and height
       width:  b.width,
       height: b.height
