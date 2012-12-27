@@ -140,15 +140,15 @@ rect.transform({
 All available translations are:
 ```javascript
 rect.transform({
-  x:        _[translation on x-axis]_,
-  y:        _[translation on y-axis]_,
-  rotation: _[degrees]_,
-  cx:       _[x rotation point]_,
-  cy:       _[y rotation point]_,
-  scaleX:   _[scaling on x-axis]_,
-  scaleX:   _[scaling on y-axis]_,
-  skewX:    _[skewing on x-axis]_,
-  skewY:    _[skewing on y-axis]_
+  x:        [translation on x-axis],
+  y:        [translation on y-axis],
+  rotation: [degrees],
+  cx:       [x rotation point],
+  cy:       [y rotation point],
+  scaleX:   [scaling on x-axis],
+  scaleX:   [scaling on y-axis],
+  skewX:    [skewing on x-axis],
+  skewY:    [skewing on y-axis]
 });
 ```
 

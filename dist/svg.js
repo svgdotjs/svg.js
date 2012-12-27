@@ -1,4 +1,4 @@
-/* svg.js v0.1-26-gf301d23 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-27-g819c6e5 - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -236,7 +236,7 @@
           l = s.match(/[a-z]+\([^\)]+\)/g) || [];
       
       // merge values
-      for (k in this.trans)
+      for (k in o)
         if (o[k] != null)
           this.trans[k] = o[k];
       

@@ -91,7 +91,7 @@ SVG.extend(SVG.Element, {
         l = s.match(/[a-z]+\([^\)]+\)/g) || [];
     
     // merge values
-    for (k in this.trans)
+    for (k in o)
       if (o[k] != null)
         this.trans[k] = o[k];
     
