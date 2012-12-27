@@ -34,7 +34,7 @@ var draw = svg('paper').size('100%', '100%');
 ## Elements
 
 ### Rect
-Rects have two arguments, their width and height:
+Rects have two arguments, their `width` and `height`:
 ```javascript
 var text = draw.rect(100, 100);
 ```
@@ -45,21 +45,12 @@ Ellipses, like rects, have two arguments, their `width` and `height`:
 ```javascript
 var ellipse = draw.ellipse(100, 100);
 ```
-This element type has an extra method to move it by its `cx` and `cy` values:
-```javascript
-ellipse.center(150, 150);
-```
 
 ### Circle
 The only argument necessary for a circle is the diameter:
 ```javascript
 var circle = draw.circle(100);
 ```
-Like ellipse this element type has an extra method to move it by its `cx` and `cy` values:
-```javascript
-circle.center(150, 150);
-```
-
 
 ### Text
 The first argument of a text element is the actual text content:
@@ -159,22 +150,36 @@ Important: matrix transformations are not yet supported.
 
 ### Move 
 Move the element to a given `x` and `y` position by its upper left corner:
+
 ```javascript
 rect.move(200, 350);
 ```
+
 Note that you can also use the following code to move elements around:
+
 ```javascript
 rect.attr({ x: 20, y: 60 });
 ``` 
-Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their centre with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
+
+Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
 
 
 ### Size
 Set the size of an element by a given `width` and `height`:
+
 ```javascript
 rect.size(200, 300);
 ```
+
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
+
+
+### Centre
+This is an extra method to move an element by its center:
+
+```javascript
+rect.center(150, 150);
+```
 
 
 ### Removing elements
@@ -215,7 +220,7 @@ rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
 ```
 
 ### Rotate
-The `rotate()` method will automatically rotate elements according to the centre of the element:
+The `rotate()` method will automatically rotate elements according to the center of the element:
 
 ```javascript
 // rotate(degrees)
