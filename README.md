@@ -77,7 +77,8 @@ text.font({
 
 
 ### Image
-When creating images the width and height values should be defined:
+When creating images the `width` and `height` values should be defined:
+
 ```javascript
 // image(src, width, height)
 var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
@@ -86,6 +87,7 @@ var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
 
 ### Path
 Pass the path string as the first argument:
+
 ```javascript
 var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
 ```
