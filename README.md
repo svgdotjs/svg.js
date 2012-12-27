@@ -433,8 +433,6 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 
 ## Compatibility
 
-Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
-
 ### Desktop
 - Firefox 3+
 - Chrome 4+
@@ -448,3 +446,7 @@ Important: this library is still in alpha, therefore the API might be subject to
 - Opera Mobile 10+
 - Chrome for Android 18+
 - Firefox for Android 15+
+
+Visit the [svg.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
+
+Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
