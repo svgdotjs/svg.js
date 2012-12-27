@@ -79,7 +79,8 @@ text.font({
 ### Image
 When creating images the width and height values should be defined:
 ```javascript
-var image = draw.image('/path/to/image.jpg').move(100, 100).size(200, 200);
+// image(src, width, height)
+var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
 ```
 
 

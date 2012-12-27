@@ -87,8 +87,9 @@ SVG.Container = {
     return e;
   },
   
-  image: function(s) {
-    var e = new SVG.Image().load(s);
+  image: function(s, w, h) {
+    w = w != null ? w : 100;
+    var e = new SVG.Image().load(s).size(w, h != null ? h : w);  
     this.add(e);
     
     return e;
