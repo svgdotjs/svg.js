@@ -128,7 +128,8 @@ rect.attr('x', 50, 'http://www.w3.org/2000/svg');
 
 
 ### Transform
-With the transform attribute elements can be scaled, rotated, translated and skewed:
+With the `transform()` method elements can be scaled, rotated, translated and skewed:
+
 ```javascript
 rect.transform({
   rotation: 45,
@@ -136,7 +137,9 @@ rect.transform({
   cy:       100
 });
 ```
-All available translations are:
+
+All available transformations are:
+
 ```javascript
 rect.transform({
   x:        [translation on x-axis],
@@ -181,7 +184,7 @@ rect.remove();
 ```
 
 
-### Bounding box
+## Bounding box
 
 ```javascript
 path.bbox();
