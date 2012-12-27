@@ -9,7 +9,7 @@ Svg.js is licensed under the terms of the MIT License.
 
 ### Create a SVG document
 
-Use the 'svg()' function to create a SVG document within a given html element:
+Use the `svg()` function to create a SVG document within a given html element:
 
 ```javascript
 var draw = svg('paper').size(300, 300);
@@ -25,11 +25,10 @@ This will generate the following output:
 	</svg>
 </div>
 ```
-If the svg canvas should follow the dimensions of its parent, in this case '#paper', you can also use a percentage value:
+By default the svg canvas follows the dimensions of its parent, in this case `#paper`:
 ```javascript
 var draw = svg('paper').size('100%', '100%');
 ```
-By default the width and height are set to 100% so you will not need it very often.
 
 
 ## Elements
@@ -42,11 +41,11 @@ var text = draw.rect(100, 100);
 
 
 ### Ellipse
-Ellipses, like rects, have two arguments, their width and height:
+Ellipses, like rects, have two arguments, their `width` and `height`:
 ```javascript
 var ellipse = draw.ellipse(100, 100);
 ```
-This element type has an extra method to move it by its 'cx' and 'cy' values:
+This element type has an extra method to move it by its `cx` and `cy` values:
 ```javascript
 ellipse.center(150, 150);
 ```
@@ -56,7 +55,7 @@ The only argument necessary for a circle is the diameter:
 ```javascript
 var circle = draw.circle(100);
 ```
-Like ellipse this element type has an extra method to move it by its 'cx' and 'cy' values:
+Like ellipse this element type has an extra method to move it by its `cx` and `cy` values:
 ```javascript
 circle.center(150, 150);
 ```
@@ -67,7 +66,7 @@ The first argument of a text element is the actual text content:
 ```javascript
 var text = draw.text("svg\nto\nthe\npoint.").move(300, 0);
 ```
-Changing text afterwards is also possible with the 'text()' method:
+Changing text afterwards is also possible with the `text()` method:
 ```javascript
 text.text('Brilliant!');
 ```
@@ -106,7 +105,7 @@ http://www.w3.org/TR/SVG/paths.html#PathData
 ## Manipulating elements
 
 ### Attributes
-You can get and set an element's attributes directly using 'attr()':
+You can get and set an element's attributes directly using `attr()`:
 
 ```javascript
 // get a single attribute
@@ -156,7 +155,7 @@ Important: matrix transformations are not yet supported.
 
 
 ### Move 
-Move the element to a given x and y position by its upper left corner:
+Move the element to a given `x` and `y` position by its upper left corner:
 ```javascript
 rect.move(200, 350);
 ```
@@ -164,15 +163,15 @@ Note that you can also use the following code to move elements around:
 ```javascript
 rect.attr({ x: 20, y: 60 });
 ``` 
-Although 'move()' is much more convenient because it will always use the upper left corner as the position reference, whereas with using 'attr()' the x an y reference differ between element types. For example, rect uses the upper left corner with the 'x' and 'y' attributes, circle and ellipse use their centre with the 'cx' and 'cy' attributes and thereby simply ignoring the 'x' and 'y' values you might assign.
+Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their centre with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
 
 
 ### Size
-Set the size of an element by a given width and height:
+Set the size of an element by a given `width` and `height`:
 ```javascript
 rect.size(200, 300);
 ```
-Same as with 'move()' the size of an element could be set by using 'attr()'. But because every type of element is handles its size differently the 'size()' method is much more convenient.
+Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
 
 ### Removing elements
@@ -193,31 +192,35 @@ This will return an object with the following values:
 { height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
 ```
 
-As opposed to the built-in `getBBox()` method any translations used with the `transform()` method will be taken into account. 
+As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account. 
 
 
 ## Syntax sugar
 Fill and stroke are used quite often. Therefore two convenience methods are provided:
 
 ### Fill
-The 'fill()' method is a pretty alternative to the 'attr()' method:
+The `fill()` method is a pretty alternative to the `attr()` method:
 ```javascript
 rect.fill({ color: '#f06', opacity: 0.6 });
 ```
 
 ### Stroke
-The 'stroke()' method is similar to 'fill()':
+The `stroke()` method is similar to `fill()`:
+
 ```javascript
 rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
 ```
 
 ### Rotate
-The 'rotate()' method will automatically rotate elements according to the centre of the element:
+The `rotate()` method will automatically rotate elements according to the centre of the element:
+
 ```javascript
 // rotate(degrees)
 rect.rotate(45);
 ```
+
 Unless you also define a rotation point:
+
 ```javascript
 // rotate(degrees, cx, cy)
 rect.rotate(45, 100, 100);
@@ -227,9 +230,9 @@ _This functionality requires the sugar.js module which is included in the defaul
 
 
 ## Clipping elements
-Clipping elements can be done with either 'clip()' or 'clipTo()'.
+Clipping elements can be done with either `clip()` or `clipTo()`.
 
-Using 'clip()' creates a clip path in the parents 'defs' node, and passes it to a block:
+Using `clip()` creates a clip path in the parents 'defs' node, and passes it to a block:
 
 ```javascript
 rect.clip(function(clipPath) {
@@ -237,7 +240,7 @@ rect.clip(function(clipPath) {
 });
 ```
 
-You can also reuse clip paths for multiple elements using 'clipTo()'.
+You can also reuse clip paths for multiple elements using `clipTo()`.
 ```javascript
 var clipPath = doc.defs().clip();
 clipRect = clipPath.rect(80, 80).move(10, 10);
@@ -289,7 +292,7 @@ var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 100, color: '#fff', opacity: 1 });
 });
 ```
-The 'offset' and 'color' parameters are required for stops, 'opacity' is optional. Offset is an integer expressed in percentage. To define the direction you can set from x, y and to x, y:
+The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is an integer expressed in percentage. To define the direction you can set from `x`, `y` and to `x`, `y`:
 ```javascript
 gradient.from(0, 0).to(0, 100);
 ```
@@ -298,7 +301,7 @@ Finally, to use the gradient on an element:
 ```javascript
 rect.attr({ fill: gradient.fill() });
 ```
-Radial gradients have a 'radius()' method to define the outermost radius to where the inner color should develop:
+Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
 ```javascript
 var gradient = draw.gradient('radial', function(stop) {
   stop.at({ offset: 0, color: '#333', opacity: 1 });
@@ -355,7 +358,7 @@ SVG.extend(SVG.Circle, {
   
 });
 ```
-The complete inheritance stack for 'SVG.Circle' is:
+The complete inheritance stack for `SVG.Circle` is:
 
 _SVG.Circle < SVG.Shape < SVG.Element_
 
