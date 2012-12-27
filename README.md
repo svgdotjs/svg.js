@@ -177,7 +177,7 @@ rect.size(200, 300);
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
 
-### Centre
+### Center
 This is an extra method to move an element by its center:
 
 ```javascript
