@@ -110,20 +110,18 @@ SVG.extend(SVG.Element, {
       t.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : b.cx) + ',' + (o.cy != null ? o.cy : b.cy) + ')');
     
     // add scale
-    if (o.scaleX != 1 && o.scaleY != 1)
-      t.push('scale(' + o.sx + ',' + o.sy + ')');
+    t.push('scale(' + o.scaleX + ',' + o.scaleY + ')');
     
     // add skew on x axis
     if (o.skewX != 0)
-      t.push('skewX(' + x.skewX + ')');
+      t.push('skewX(' + o.skewX + ')');
     
     // add skew on y axis
     if (o.skewY != 0)
-      t.push('skewY(' + x.skewY + ')')
+      t.push('skewY(' + o.skewY + ')')
     
     // add translate
-    if (o.x != 0 && o.y != 0)
-      t.push('translate(' + o.x + ',' + o.y + ')');
+    t.push('translate(' + o.x + ',' + o.y + ')');
     
     // add only te required transformations
     return this.attr('transform', t.join(' '));
@@ -138,9 +136,11 @@ SVG.extend(SVG.Element, {
       // include translations on x an y
       x:      b.x + this.trans.x,
       y:      b.y + this.trans.y,
+      
       // add the center
-      cx:     b.x + this.trans.x + b.width / 2,
+      cx:     b.x + this.trans.x + b.width  / 2,
       cy:     b.y + this.trans.y + b.height / 2,
+      
       // plain width and height
       width:  b.width,
       height: b.height

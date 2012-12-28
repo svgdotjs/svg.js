@@ -41,6 +41,14 @@ SVG.extend(SVG.Element, {
       cx:       x == null ? b.cx : x,
       cy:       y == null ? b.cx : y
     });
+  },
+  
+  // skew
+  skew: function(x, y) {
+    return this.transform({
+      skewX: x || 0,
+      skewY: y || 0
+    });
   }
   
 });

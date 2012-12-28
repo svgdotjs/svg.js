@@ -237,6 +237,14 @@ Unless you also define a rotation point:
 rect.rotate(45, 100, 100);
 ```
 
+### Skew
+The `skew()` method will take an `x` and `y` value:
+
+```javascript
+// skew(x, y)
+rect.skew(0, 45);
+```
+
 _This functionality requires the sugar.js module which is included in the default distribution._
 
 

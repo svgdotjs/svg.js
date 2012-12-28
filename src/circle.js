@@ -27,8 +27,8 @@ SVG.extend(SVG.Circle, {
     var r = this.attrs.r || 0;
 
     return this.attr({
-      cx: (x || ((this.attrs.x || 0) + r)),
-      cy: (y || ((this.attrs.y || 0) + r))
+      cx: x || (this.attrs.x || 0) + r,
+      cy: y || (this.attrs.y || 0) + r
     });
   }
   
