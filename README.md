@@ -62,7 +62,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
 
 ```javascript
-// polyline(x1, y1, x2, y2)
+// polyline('x,y x,y x,y')
 var polyline = draw.polyline('10,20 30,40 50,60');
 ```
 
@@ -75,7 +75,7 @@ _Not unlike the `<circle>` element, the svg `<line>` element has not been implem
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
 
 ```javascript
-// polyline('x,y x,y x,y')
+// polygon('x,y x,y x,y')
 var polygon = draw.polygon('10,20 30,40 50,60');
 ```
 

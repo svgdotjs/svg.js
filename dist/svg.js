@@ -1,4 +1,4 @@
-/* svg.js v0.1-38-ga20c0b1 - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-40-g5fc94f8 - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -121,7 +121,7 @@
       
       r = function() {
         if (document.readyState === 'complete') {
-          e.attr('style', 'position:absolute;left:0;top:0;');
+          e.attr('style', 'position:absolute;');
           setTimeout(function() { e.attr('style', 'position:relative;'); }, 5);
         } else {
           setTimeout(r, 10);
@@ -605,8 +605,8 @@
     // position element by its center
     center: function(x, y) {
       return this.attr({
-        cx: (x || ((this.attrs.x || 0) + (this.attrs.rx || 0))),
-        cy: (y || ((this.attrs.y || 0) + (this.attrs.ry || 0)))
+        cx: x || ((this.attrs.x || 0) + (this.attrs.rx || 0)),
+        cy: y || ((this.attrs.y || 0) + (this.attrs.ry || 0))
       });
     }
     
