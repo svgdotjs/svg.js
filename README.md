@@ -86,7 +86,7 @@ Polygon strings are exactly the same as polyline strings. There is no need to cl
 The path string is similar to the polygon string but much more complex in order to support curves:
 
 ```javascript
-// polyline('path data')
+// path('path data')
 var path = draw.path('M10,20L30,40');
 ```
 
