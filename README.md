@@ -1,6 +1,6 @@
-# Svg.js
+# svg.js
 
-Svg.js is a lightweight (3k gzipped) library for manipulating SVG.
+A lightweight (3k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
