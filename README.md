@@ -1,6 +1,6 @@
 # Svg.js
 
-Svg.js is a lightweight (less than 3k gzipped) library for manipulating SVG.
+Svg.js is a lightweight (3k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -35,6 +35,7 @@ var draw = svg('paper').size('100%', '100%');
 
 ### Rect
 Rects have two arguments, their `width` and `height`:
+
 ```javascript
 var text = draw.rect(100, 100);
 ```
@@ -42,15 +43,65 @@ var text = draw.rect(100, 100);
 
 ### Ellipse
 Ellipses, like rects, have two arguments, their `width` and `height`:
+
 ```javascript
 var ellipse = draw.ellipse(100, 100);
 ```
 
 ### Circle
 The only argument necessary for a circle is the diameter:
+
 ```javascript
 var circle = draw.circle(100);
 ```
+
+_Note that this generates an `<ellipse>` element rather than a `<circle>`. This choice has been made to keep the size of the library down._
+
+
+### Polyline
+The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
+
+```javascript
+// polyline(x1, y1, x2, y2)
+var polyline = draw.polyline('10,20 30,40 50,60');
+```
+
+Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
+
+_Note that the svg `<line>` element is not implemented. Therefore you might want to use the `polyline()` method to create a line._
+
+
+### Polygon
+The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
+
+```javascript
+// polyline('x,y x,y x,y')
+var polygon = draw.polygon('10,20 30,40 50,60');
+```
+
+Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be automatically connected.
+
+
+### Path
+The path string is similar to the polygon string but much more complex in order to support curves:
+
+```javascript
+// polyline('path data')
+var path = draw.path('M10,20L30,40');
+```
+
+For more details on path data strings, please refer to the SVG documentation:
+http://www.w3.org/TR/SVG/paths.html#PathData
+
+
+### Image
+When creating images the `width` and `height` values should be defined:
+
+```javascript
+// image(src, width, height)
+var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
+```
+
 
 ### Text
 The first argument of a text element is the actual text content:
@@ -74,26 +125,6 @@ text.font({
   leading:  1.5
 });
 ```
-
-
-### Image
-When creating images the `width` and `height` values should be defined:
-
-```javascript
-// image(src, width, height)
-var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
-```
-
-
-### Path
-Pass the path string as the first argument:
-
-```javascript
-var path = draw.path('M10,20L30,40').attr({ fill: '#9dffd3' });
-```
-
-For more details on path data strings, please read the SVG documentation:
-http://www.w3.org/TR/SVG/paths.html#PathData
 
 
 ## Manipulating elements

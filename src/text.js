@@ -20,7 +20,8 @@ SVG.extend(SVG.Text, {
     var i, n,
         s = this._style(),
         p = this.parentDoc(),
-        a = t.split("\n");
+        a = t.split("\n"),
+        f = this.style['font-size'];
     
     while (this.node.hasChildNodes())
       this.node.removeChild(this.node.lastChild);
@@ -29,7 +30,7 @@ SVG.extend(SVG.Text, {
       n = new TSpan().
         text(a[i]).
         attr({
-          dy:     this.style['font-size'] * this.leading,
+          dy:     f * this.leading - (i == 0 ? f * 0.3 : 0),
           x:      (this.attr('x') || 0),
           style:  s
         });

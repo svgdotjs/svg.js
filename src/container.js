@@ -12,6 +12,11 @@ SVG.Container = {
     return this;
   },
   
+  put: function(e, i) {
+    this.add(e, i);
+    return e;
+  },
+  
   has: function(e) {
     return this.children().indexOf(e) >= 0;
   },
@@ -47,59 +52,44 @@ SVG.Container = {
   level: function() {
     var d = this.defs();
     
-    this.remove(d).add(d, 0);
-    
-    return this;
+    return this.remove(d).add(d, 0);
   },
   
   group: function() {
-    var e = new SVG.G();
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.G());
   },
   
   rect: function(w, h) {
-    var e = new SVG.Rect().size(w, h);
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.Rect().size(w, h));
   },
   
-  circle: function(r) {
-    var e = new SVG.Circle().size(r);
-    this.add(e);
-    
-    return e;
+  circle: function(d) {
+    return this.ellipse(d);
   },
   
   ellipse: function(w, h) {
-    var e = new SVG.Ellipse().size(w, h);
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.Ellipse().size(w, h));
+  },
+  
+  polyline: function(p) {
+    return this.put(new SVG.Polyline().plot(p));
+  },
+  
+  polygon: function(p) {
+    return this.put(new SVG.Polygon().plot(p));
   },
   
   path: function(d) {
-    var e = new SVG.Path().plot(d);
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.Path().plot(d));
   },
   
   image: function(s, w, h) {
     w = w != null ? w : 100;
-    var e = new SVG.Image().load(s).size(w, h != null ? h : w);  
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.Image().load(s).size(w, h != null ? h : w));
   },
   
   text: function(t) {
-    var e = new SVG.Text().text(t);
-    this.add(e);
-    
-    return e;
+    return this.put(new SVG.Text().text(t));
   },
   
   gradient: function(t, b) {

@@ -1,4 +1,4 @@
-/* svg.js v0.1-37-gc8be3da - svg container element group arrange defs clip gradient doc shape rect circle ellipse path image text sugar - svgjs.com/license */
+/* svg.js v0.1-38-ga20c0b1 - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -27,6 +27,11 @@
       }
       
       return this;
+    },
+    
+    put: function(e, i) {
+      this.add(e, i);
+      return e;
     },
     
     has: function(e) {
@@ -64,59 +69,44 @@
     level: function() {
       var d = this.defs();
       
-      this.remove(d).add(d, 0);
-      
-      return this;
+      return this.remove(d).add(d, 0);
     },
     
     group: function() {
-      var e = new SVG.G();
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.G());
     },
     
     rect: function(w, h) {
-      var e = new SVG.Rect().size(w, h);
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.Rect().size(w, h));
     },
     
-    circle: function(r) {
-      var e = new SVG.Circle().size(r);
-      this.add(e);
-      
-      return e;
+    circle: function(d) {
+      return this.ellipse(d);
     },
     
     ellipse: function(w, h) {
-      var e = new SVG.Ellipse().size(w, h);
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.Ellipse().size(w, h));
+    },
+    
+    polyline: function(p) {
+      return this.put(new SVG.Polyline().plot(p));
+    },
+    
+    polygon: function(p) {
+      return this.put(new SVG.Polygon().plot(p));
     },
     
     path: function(d) {
-      var e = new SVG.Path().plot(d);
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.Path().plot(d));
     },
     
     image: function(s, w, h) {
       w = w != null ? w : 100;
-      var e = new SVG.Image().load(s).size(w, h != null ? h : w);  
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.Image().load(s).size(w, h != null ? h : w));
     },
     
     text: function(t) {
-      var e = new SVG.Text().text(t);
-      this.add(e);
-      
-      return e;
+      return this.put(new SVG.Text().text(t));
     },
     
     gradient: function(t, b) {
@@ -587,41 +577,6 @@
   // inherit from SVG.Shape
   SVG.Rect.prototype = new SVG.Shape();
 
-  SVG.Circle = function Circle() {
-    this.constructor.call(this, SVG.create('circle'));
-  };
-  
-  // inherit from SVG.Shape
-  SVG.Circle.prototype = new SVG.Shape();
-  
-  // Add circle-specific functions
-  SVG.extend(SVG.Circle, {
-    
-    // custom move function
-    move: function(x, y) {
-      this.attrs.x = x;
-      this.attrs.y = y;
-      
-      return this.center();
-    },
-  
-    // custom size function (no height value here!)
-    size: function(w) {
-      return this.attr('r', w / 2).center();
-    },
-  
-    // position element by its center
-    center: function(x, y) {
-      var r = this.attrs.r || 0;
-  
-      return this.attr({
-        cx: x || (this.attrs.x || 0) + r,
-        cy: y || (this.attrs.y || 0) + r
-      });
-    }
-    
-  });
-
   SVG.Ellipse = function Ellipse() {
     this.constructor.call(this, SVG.create('ellipse'));
   };
@@ -643,7 +598,7 @@
     // custom size function
     size: function(w, h) {
       return this.
-        attr({ rx: w / 2, ry: h / 2 }).
+        attr({ rx: w / 2, ry: (h != null ? h : w) / 2 }).
         center();
     },
     
@@ -658,6 +613,44 @@
   });
 
 
+  SVG.Poly = {
+    
+    // set polygon data with default zero point if no data is passed
+    plot: function(p) {
+      return this.attr('points', p || '0,0');
+    },
+    
+    // move path using translate
+    move: function(x, y) {
+      return this.transform({ x: x, y: y });
+    }
+    
+  };
+  
+  
+  
+  SVG.Polyline = function Polyline() {
+    this.constructor.call(this, SVG.create('polyline'));
+  };
+  
+  // inherit from SVG.Shape
+  SVG.Polyline.prototype = new SVG.Shape();
+  
+  // Add polygon-specific functions
+  SVG.extend(SVG.Polyline, SVG.Poly);
+  
+  
+  
+  SVG.Polygon = function Polygon() {
+    this.constructor.call(this, SVG.create('polygon'));
+  };
+  
+  // inherit from SVG.Shape
+  SVG.Polygon.prototype = new SVG.Shape();
+  
+  // Add polygon-specific functions
+  SVG.extend(SVG.Polygon, SVG.Poly);
+
   SVG.Path = function Path() {
     this.constructor.call(this, SVG.create('path'));
   };
@@ -670,7 +663,7 @@
     
     // set path data
     plot: function(d) {
-      return this.attr('d', d || 'M0,0L0,0');
+      return this.attr('d', d || 'M0,0');
     },
     
     // move path using translate
@@ -718,7 +711,8 @@
       var i, n,
           s = this._style(),
           p = this.parentDoc(),
-          a = t.split("\n");
+          a = t.split("\n"),
+          f = this.style['font-size'];
       
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild);
@@ -727,7 +721,7 @@
         n = new TSpan().
           text(a[i]).
           attr({
-            dy:     this.style['font-size'] * this.leading,
+            dy:     f * this.leading - (i == 0 ? f * 0.3 : 0),
             x:      (this.attr('x') || 0),
             style:  s
           });

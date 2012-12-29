@@ -20,7 +20,7 @@ SVG.extend(SVG.Ellipse, {
   // custom size function
   size: function(w, h) {
     return this.
-      attr({ rx: w / 2, ry: h / 2 }).
+      attr({ rx: w / 2, ry: (h != null ? h : w) / 2 }).
       center();
   },
   
