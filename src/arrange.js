@@ -2,7 +2,7 @@
 // add backward / forward functionality to elements
 SVG.extend(SVG.Element, {
   
-  // get all siblings, including me
+  // get all siblings, including myself
   siblings: function() {
     return this.parent.children();
   },
@@ -10,9 +10,8 @@ SVG.extend(SVG.Element, {
   // send given element one step forwards
   forward: function() {
     var i = this.siblings().indexOf(this);
-    this.parent.remove(this).add(this, i + 1);
     
-    return this;
+    return this.parent.remove(this).put(this, i + 1);
   },
   
   // send given element one step backwards
@@ -29,9 +28,7 @@ SVG.extend(SVG.Element, {
   
   // send given element all the way to the front
   front: function() {
-    this.parent.remove(this).add(this);
-    
-    return this;
+    return this.parent.remove(this).put(this);
   },
   
   // send given element all the way to the back

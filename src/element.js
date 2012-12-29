@@ -1,7 +1,12 @@
 
 SVG.Element = function Element(n) {
+  // keep reference to the element node 
   this.node = n;
+  
+  // initialize attribute store
   this.attrs = {};
+  
+  // initialize transformations store
   this.trans = {
     x:        0,
     y:        0,
@@ -11,8 +16,6 @@ SVG.Element = function Element(n) {
     skewX:    0,
     skewY:    0
   };
-  
-  this._s = ('size family weight stretch variant style').split(' ');
 };
 
 // Add element-specific functions
@@ -48,9 +51,11 @@ SVG.extend(SVG.Element, {
   // set svg element attribute
   attr: function(a, v, n) {
     if (arguments.length < 2) {
+      // apply every attribute individually if an object is passed
       if (typeof a == 'object')
         for (v in a) this.attr(v, a[v]);
-        
+      
+      // act as a getter for style attributes
       else if (this._isStyle(a))
         return a == 'text' ?
                  this.content :
@@ -58,19 +63,26 @@ SVG.extend(SVG.Element, {
                  this[a] :
                  this.style[a];
       
+      // act as a getter if the first and only argument is not an object
       else
         return this.attrs[a];
     
     } else {
+      // store value
       this.attrs[a] = v;
+      
+      // treat x differently on text elements
       if (a == 'x' && this._isText())
         for (var i = this.lines.length - 1; i >= 0; i--)
           this.lines[i].attr(a, v);
+      
+      // set the actual attribute
       else
         n != null ?
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v);
       
+      // if the passed argument belongs to the style as well, add it there
       if (this._isStyle(a)) {
         a == 'text' ?
           this.text(v) :
@@ -150,14 +162,15 @@ SVG.extend(SVG.Element, {
   // private: find svg parent
   _parent: function(pt) {
     var e = this;
-
+    
+    // find ancestor with given type
     while (e != null && !(e instanceof pt))
       e = e.parent;
 
     return e;
   },
   
-  // private: is this text style
+  // private: tester method for style detection
   _isStyle: function(a) {
     return typeof a == 'string' && this._isText() ? (/^font|text|leading/).test(a) : false;
   },

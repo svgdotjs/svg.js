@@ -16,10 +16,11 @@ SVG.Doc = function Doc(e) {
     attr('xlink', SVG.xlink, SVG.ns).
     defs();
   
+  // add elements
   e.appendChild(w);
   w.appendChild(this.node);
   
-  // ensure 
+  // ensure correct rendering for safari
   this.stage();
 };
 

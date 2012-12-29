@@ -1,14 +1,17 @@
-/* svg.js v0.1-40-g5fc94f8 - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-43-g52ed3ba - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
+    // define default namespaces
     ns:         'http://www.w3.org/2000/svg',
     xlink:      'http://www.w3.org/1999/xlink',
     
+    // method for element creation
     create: function(e) {
       return document.createElementNS(this.ns, e);
     },
     
+    // method for extending objects
     extend: function(o, m) {
       for (var k in m)
         o.prototype[k] = m[k];
@@ -18,6 +21,7 @@
 
   SVG.Container = {
     
+    // add given element at goven position
     add: function(e, i) {
       if (!this.has(e)) {
         i = i == null ? this.children().length : i;
@@ -29,23 +33,28 @@
       return this;
     },
     
+    // basically does the same as add() but returns the added element rather than 'this'
     put: function(e, i) {
       this.add(e, i);
       return e;
     },
     
+    // chacks if the given element is a child
     has: function(e) {
       return this.children().indexOf(e) >= 0;
     },
     
+    // returns all child elements and initializes store array if non existant
     children: function() {
       return this._children || (this._children = []);
     },
     
+    // remove a given child element
     remove: function(e) {
       return this.removeAt(this.children().indexOf(e));
     },
     
+    // remove child element at a given position
     removeAt: function(i) {
       if (0 <= i && i < this.children().length) {
         var e = this.children()[i];
@@ -57,58 +66,63 @@
       return this;
     },
     
+    // returns defs element and initializes store array if non existant
     defs: function() {
-      if (this._defs == null) {
-        this._defs = new SVG.Defs();
-        this.add(this._defs, 0);
-      }
-      
-      return this._defs;
+      return this._defs || (this._defs = this.put(new SVG.Defs(), 0));
     },
     
+    // re-level defs to first positon in element stack
     level: function() {
-      var d = this.defs();
-      
-      return this.remove(d).add(d, 0);
+      return this.remove(d).put(this.defs(), 0);
     },
     
+    // create a group element
     group: function() {
       return this.put(new SVG.G());
     },
     
+    // create a rect element
     rect: function(w, h) {
       return this.put(new SVG.Rect().size(w, h));
     },
     
+    // create circle element, based on ellipse
     circle: function(d) {
       return this.ellipse(d);
     },
     
+    // create and ellipse
     ellipse: function(w, h) {
       return this.put(new SVG.Ellipse().size(w, h));
     },
     
+    // create a polyline element
     polyline: function(p) {
       return this.put(new SVG.Polyline().plot(p));
     },
     
+    // create a polygon element
     polygon: function(p) {
       return this.put(new SVG.Polygon().plot(p));
     },
     
+    // create a path element
     path: function(d) {
       return this.put(new SVG.Path().plot(d));
     },
     
+    // create image element, load image and set its size
     image: function(s, w, h) {
       w = w != null ? w : 100;
       return this.put(new SVG.Image().load(s).size(w, h != null ? h : w));
     },
     
+    // create text element
     text: function(t) {
       return this.put(new SVG.Text().text(t));
     },
     
+    // create element in defs
     gradient: function(t, b) {
       return this.defs().gradient(t, b);
     },
@@ -136,8 +150,13 @@
   };
 
   SVG.Element = function Element(n) {
+    // keep reference to the element node 
     this.node = n;
+    
+    // initialize attribute store
     this.attrs = {};
+    
+    // initialize transformations store
     this.trans = {
       x:        0,
       y:        0,
@@ -147,8 +166,6 @@
       skewX:    0,
       skewY:    0
     };
-    
-    this._s = ('size family weight stretch variant style').split(' ');
   };
   
   // Add element-specific functions
@@ -184,9 +201,11 @@
     // set svg element attribute
     attr: function(a, v, n) {
       if (arguments.length < 2) {
+        // apply every attribute individually if an object is passed
         if (typeof a == 'object')
           for (v in a) this.attr(v, a[v]);
-          
+        
+        // act as a getter for style attributes
         else if (this._isStyle(a))
           return a == 'text' ?
                    this.content :
@@ -194,19 +213,26 @@
                    this[a] :
                    this.style[a];
         
+        // act as a getter if the first and only argument is not an object
         else
           return this.attrs[a];
       
       } else {
+        // store value
         this.attrs[a] = v;
+        
+        // treat x differently on text elements
         if (a == 'x' && this._isText())
           for (var i = this.lines.length - 1; i >= 0; i--)
             this.lines[i].attr(a, v);
+        
+        // set the actual attribute
         else
           n != null ?
             this.node.setAttributeNS(n, a, v) :
             this.node.setAttribute(a, v);
         
+        // if the passed argument belongs to the style as well, add it there
         if (this._isStyle(a)) {
           a == 'text' ?
             this.text(v) :
@@ -286,14 +312,15 @@
     // private: find svg parent
     _parent: function(pt) {
       var e = this;
-  
+      
+      // find ancestor with given type
       while (e != null && !(e instanceof pt))
         e = e.parent;
   
       return e;
     },
     
-    // private: is this text style
+    // private: tester method for style detection
     _isStyle: function(a) {
       return typeof a == 'string' && this._isText() ? (/^font|text|leading/).test(a) : false;
     },
@@ -318,7 +345,7 @@
 
   SVG.extend(SVG.Element, {
     
-    // get all siblings, including me
+    // get all siblings, including myself
     siblings: function() {
       return this.parent.children();
     },
@@ -326,9 +353,8 @@
     // send given element one step forwards
     forward: function() {
       var i = this.siblings().indexOf(this);
-      this.parent.remove(this).add(this, i + 1);
       
-      return this;
+      return this.parent.remove(this).put(this, i + 1);
     },
     
     // send given element one step backwards
@@ -345,9 +371,7 @@
     
     // send given element all the way to the front
     front: function() {
-      this.parent.remove(this).add(this);
-      
-      return this;
+      return this.parent.remove(this).put(this);
     },
     
     // send given element all the way to the back
@@ -378,6 +402,8 @@
   
   SVG.Clip = function Clip() {
     this.constructor.call(this, SVG.create('clipPath'));
+    
+    // set unique id
     this.id = 'svgjs_clip_' + (clipID++);
     this.attr('id', this.id);
   };
@@ -409,12 +435,9 @@
   // add def-specific functions
   SVG.extend(SVG.Defs, {
     
-    // define clippath
+    // create clippath
     clip: function() {
-      var e = new SVG.Clip();
-      this.add(e);
-  
-      return e;
+      return this.put(new SVG.Clip());
     }
     
   });
@@ -423,10 +446,13 @@
   
   SVG.Gradient = function Gradient(t) {
     this.constructor.call(this, SVG.create(t + 'Gradient'));
-    this.id = 'svgjs_grad_' + (gradID++);
-    this.type = t;
     
+    // set unique id
+    this.id = 'svgjs_grad_' + (gradID++);
     this.attr('id', this.id);
+    
+    // store type
+    this.type = t;
   };
   
   // inherit from SVG.Element
@@ -459,21 +485,20 @@
                this;
     },
     
-    // add color stops
+    // add a color stop
     at: function(o) {
-      var m = new SVG.Stop(o);
-      this.add(m);
-      
-      return m;
+      return this.put(new SVG.Stop(o));
     },
     
     // update gradient
     update: function(b) {
+      // remove all stops
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild);
       
+      // invoke passed block
       b(this);
-        
+      
       return this;
     },
     
@@ -489,8 +514,9 @@
     
     // define clippath
     gradient: function(t, b) {
-      var e = new SVG.Gradient(t);
-      this.add(e);
+      var e = this.put(new SVG.Gradient(t));
+      
+      // invoke passed block
       b(e);
       
       return e;
@@ -502,6 +528,7 @@
   SVG.Stop = function Stop(o) {
     this.constructor.call(this, SVG.create('stop'));
     
+    // immediatelly build stop
     this.update(o);
   };
   
@@ -513,15 +540,18 @@
     
     // add color stops
     update: function(o) {
-      var s = '',
+      var i,
+          s = '',
           a = ['opacity', 'color'];
-  
-      for (var i = a.length - 1; i >= 0; i--)
+      
+      // build style attribute
+      for (i = a.length - 1; i >= 0; i--)
         if (o[a[i]] != null)
           s += 'stop-' + a[i] + ':' + o[a[i]] + ';';
-  
+      
+      // set attributes
       return this.attr({
-        offset: (o.offset != null ? o.offset : this.attr('offset') || 0) + '%',
+        offset: (o.offset != null ? o.offset : this.attrs.offset || 0) + '%',
         style:  s
       });
     }
@@ -547,10 +577,11 @@
       attr('xlink', SVG.xlink, SVG.ns).
       defs();
     
+    // add elements
     e.appendChild(w);
     w.appendChild(this.node);
     
-    // ensure 
+    // ensure correct rendering for safari
     this.stage();
   };
   
@@ -605,8 +636,8 @@
     // position element by its center
     center: function(x, y) {
       return this.attr({
-        cx: x || ((this.attrs.x || 0) + (this.attrs.rx || 0)),
-        cy: y || ((this.attrs.y || 0) + (this.attrs.ry || 0))
+        cx: x || (this.attrs.x || 0) + (this.attrs.rx || 0),
+        cy: y || (this.attrs.y || 0) + (this.attrs.ry || 0)
       });
     }
     
@@ -666,7 +697,7 @@
       return this.attr('d', d || 'M0,0');
     },
     
-    // move path using translate
+    // move path using translate, path's don't take x and y
     move: function(x, y) {
       return this.transform({ x: x, y: y });
     }
@@ -690,12 +721,15 @@
     
   });
 
+  var _styleAttr = ['size', 'family', 'weight', 'stretch', 'variant', 'style'];
+  
+  
   SVG.Text = function Text() {
     this.constructor.call(this, SVG.create('text'));
     
+    // define default style
     this.style = { 'font-size':  16, 'font-family': 'Helvetica', 'text-anchor': 'start' };
     this.leading = 1.2;
-    this.lines = [];
   };
   
   // inherit from SVG.Element
@@ -705,6 +739,7 @@
   SVG.extend(SVG.Text, {
     
     text: function(t) {
+      // update the content
       this.content = t = t || 'text';
       this.lines = [];
       
@@ -714,31 +749,37 @@
           a = t.split("\n"),
           f = this.style['font-size'];
       
+      // remove existing child nodes
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild);
       
+      // build new lines
       for (i = 0, l = a.length; i < l; i++) {
+        // create new tspan and set attributes
         n = new TSpan().
           text(a[i]).
           attr({
             dy:     f * this.leading - (i == 0 ? f * 0.3 : 0),
-            x:      (this.attr('x') || 0),
+            x:      (this.attrs.x || 0),
             style:  s
           });
         
+        // add new tspan
         this.node.appendChild(n.node);
         this.lines.push(n);
       };
       
+      // set style
       return this.attr('style', s);
     },
     
+    // build style based on _styleAttr
     _style: function() {
-      var i, o = '', s = this._s;
+      var i, o = '';
       
-      for (i = s.length - 1; i >= 0; i--)
-        if (this.style['font-' + s[i]] != null)
-          o += 'font-' + s[i] + ':' + this.style['font-' + s[i]] + ';';
+      for (i = _styleAttr.length - 1; i >= 0; i--)
+        if (this.style['font-' + _styleAttr[i]] != null)
+          o += 'font-' + _styleAttr[i] + ':' + this.style['font-' + _styleAttr[i]] + ';';
       
       o += 'text-anchor:' + this.style['text-anchor'] + ';';
         
@@ -766,29 +807,41 @@
     
   });
 
+  var _strokeAttr = ['width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
+      _fillAttr   = ['opacity', 'rule'];
+  
+  
+  // Add shape-specific functions
   SVG.extend(SVG.Shape, {
     
     // set fill color and opacity
     fill: function(f) {
+      var i;
+      
+      // set fill color if not null
       if (f.color != null)
         this.attr('fill', f.color);
-  
-      if (f.opacity != null)
-        this.attr('fill-opacity', f.opacity);
-  
+      
+      // set all attributes from _fillAttr list with prependes 'fill-' if not null
+      for (i = _fillAttr.length - 1; i >= 0; i--)
+        if (f[_fillAttr[i]] != null)
+          this.attr('fill-' + _fillAttr[i], f[_fillAttr[i]]);
+      
       return this;
     },
   
     // set stroke color and opacity
     stroke: function(s) {
+      var i;
+      
+      // set stroke color if not null
       if (s.color)
         this.attr('stroke', s.color);
       
-      var a = ('width opacity linecap linejoin miterlimit dasharray dashoffset').split(' ');
-      
-      for (var i = a.length - 1; i >= 0; i--)
-        if (s[a[i]] != null)
-          this.attr('stroke-' + a[i], s[a[i]]);
+      // set all attributes from _strokeAttr list with prependes 'stroke-' if not null
+      for (i = _strokeAttr.length - 1; i >= 0; i--)
+        if (s[_strokeAttr[i]] != null)
+          this.attr('stroke-' + _strokeAttr[i], s[_strokeAttr[i]]);
       
       return this;
     }
@@ -841,7 +894,7 @@
           a[k] = o[k] :
         k == 'anchor' ?
           a['text-anchor'] = o[k] :
-        this._s.indexOf(k) > -1 ?
+        _styleAttr.indexOf(k) > -1 ?
           a['font-'+ k] = o[k] :
           void 0;
       

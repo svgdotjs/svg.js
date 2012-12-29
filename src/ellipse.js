@@ -27,8 +27,8 @@ SVG.extend(SVG.Ellipse, {
   // position element by its center
   center: function(x, y) {
     return this.attr({
-      cx: x || ((this.attrs.x || 0) + (this.attrs.rx || 0)),
-      cy: y || ((this.attrs.y || 0) + (this.attrs.ry || 0))
+      cx: x || (this.attrs.x || 0) + (this.attrs.rx || 0),
+      cy: y || (this.attrs.y || 0) + (this.attrs.ry || 0)
     });
   }
   

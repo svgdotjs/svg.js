@@ -14,7 +14,7 @@ SVG.extend(SVG.Path, {
     return this.attr('d', d || 'M0,0');
   },
   
-  // move path using translate
+  // move path using translate, path's don't take x and y
   move: function(x, y) {
     return this.transform({ x: x, y: y });
   }

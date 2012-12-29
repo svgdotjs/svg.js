@@ -1,28 +1,40 @@
 
+// define list of available attributes for stroke and fill
+var _strokeAttr = ['width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
+    _fillAttr   = ['opacity', 'rule'];
+
+
 // Add shape-specific functions
 SVG.extend(SVG.Shape, {
   
   // set fill color and opacity
   fill: function(f) {
+    var i;
+    
+    // set fill color if not null
     if (f.color != null)
       this.attr('fill', f.color);
-
-    if (f.opacity != null)
-      this.attr('fill-opacity', f.opacity);
-
+    
+    // set all attributes from _fillAttr list with prependes 'fill-' if not null
+    for (i = _fillAttr.length - 1; i >= 0; i--)
+      if (f[_fillAttr[i]] != null)
+        this.attr('fill-' + _fillAttr[i], f[_fillAttr[i]]);
+    
     return this;
   },
 
   // set stroke color and opacity
   stroke: function(s) {
+    var i;
+    
+    // set stroke color if not null
     if (s.color)
       this.attr('stroke', s.color);
     
-    var a = ('width opacity linecap linejoin miterlimit dasharray dashoffset').split(' ');
-    
-    for (var i = a.length - 1; i >= 0; i--)
-      if (s[a[i]] != null)
-        this.attr('stroke-' + a[i], s[a[i]]);
+    // set all attributes from _strokeAttr list with prependes 'stroke-' if not null
+    for (i = _strokeAttr.length - 1; i >= 0; i--)
+      if (s[_strokeAttr[i]] != null)
+        this.attr('stroke-' + _strokeAttr[i], s[_strokeAttr[i]]);
     
     return this;
   }
@@ -75,7 +87,7 @@ SVG.extend(SVG.Text, {
         a[k] = o[k] :
       k == 'anchor' ?
         a['text-anchor'] = o[k] :
-      this._s.indexOf(k) > -1 ?
+      _styleAttr.indexOf(k) > -1 ?
         a['font-'+ k] = o[k] :
         void 0;
     
