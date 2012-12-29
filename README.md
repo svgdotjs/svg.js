@@ -55,7 +55,7 @@ The only argument necessary for a circle is the diameter:
 var circle = draw.circle(100);
 ```
 
-_Note that this generates an `<ellipse>` element rather than a `<circle>`. This choice has been made to keep the size of the library down._
+_Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
 
 
 ### Polyline
@@ -68,7 +68,7 @@ var polyline = draw.polyline('10,20 30,40 50,60');
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
 
-_Note that the svg `<line>` element is not implemented. Therefore you might want to use the `polyline()` method to create a line._
+_Not unlike the `<circle>` element, the svg `<line>` element has not been implemented to keep the library as small as possible. Therefore you might want to use the `polyline()` method to create a single line segment._
 
 
 ### Polygon
@@ -79,7 +79,7 @@ The polygon element, unlike the polyline element, defines a closed shape consist
 var polygon = draw.polygon('10,20 30,40 50,60');
 ```
 
-Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be automatically connected.
+Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.
 
 
 ### Path
