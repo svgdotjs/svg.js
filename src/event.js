@@ -1,20 +1,15 @@
 
-var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'];
-
-// generate events
-for (var i = eventTypes.length - 1; i >= 0; i--) {
-  var t = eventTypes[i];
-  
+var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'].forEach(function(e) {
   // add event to SVG.Elment
-  SVG.Element.prototype[t] = function(f) {
-    var e = this;
-    
+  SVG.Element.prototype[e] = function(f) {
+    var s = this;
+
     // bind event to element rather than element node
-    this.node['on' + t] = function() {
-      return f.apply(e, arguments);
+    this.node['on' + e] = function() {
+      return f.apply(s, arguments);
     };
-    
+
     // return self
     return this;
   };
-};
+});

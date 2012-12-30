@@ -159,6 +159,20 @@ SVG.extend(SVG.Element, {
     };
   },
   
+  // show element
+  show: function() {
+    this.node.style.display = '';
+    
+    return this;
+  },
+  
+  // hide element
+  hide: function() {
+    this.node.style.display = 'none';
+    
+    return this;
+  },
+  
   // private: find svg parent
   _parent: function(pt) {
     var e = this;

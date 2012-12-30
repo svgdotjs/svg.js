@@ -1,4 +1,4 @@
-/* svg.js v0.1-46-gf6724c3 - svg container element event group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-48-gb663ead - svg container element event group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -309,6 +309,20 @@
       };
     },
     
+    // show element
+    show: function() {
+      this.node.style.display = '';
+      
+      return this;
+    },
+    
+    // hide element
+    hide: function() {
+      this.node.style.display = 'none';
+      
+      return this;
+    },
+    
     // private: find svg parent
     _parent: function(pt) {
       var e = this;
@@ -333,25 +347,21 @@
   });
 
 
-  var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'];
-  
-  // generate events
-  for (var i = eventTypes.length - 1; i >= 0; i--) {
-    var t = eventTypes[i];
-    
+  var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'].forEach(function(e) {
     // add event to SVG.Elment
-    SVG.Element.prototype[t] = function(f) {
-      var e = this;
-      
+    SVG.Element.prototype[e] = function(f) {
+      var s = this;
+  
       // bind event to element rather than element node
-      this.node['on' + t] = function() {
-        return f.apply(e, arguments);
+      this.node['on' + e] = function() {
+        return f.apply(s, arguments);
       };
-      
+  
       // return self
       return this;
     };
-  };
+  });
+
 
   SVG.G = function G() {
     this.constructor.call(this, SVG.create('g'));

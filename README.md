@@ -215,6 +215,18 @@ This is an extra method to move an element by its center:
 rect.center(150, 150);
 ```
 
+### Hide and show
+We all love to have a little hide:
+
+```javascript
+rect.hide();
+```
+
+and show:
+
+```javascript
+rect.show();
+```
 
 ### Removing elements
 Pretty straightforward:
