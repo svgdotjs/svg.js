@@ -407,9 +407,7 @@ All usual events are accessible on elements:
 
 ```javascript
 rect.click(function() {
-  
   this.fill({ color: '#f06' });
-  
 });
 ```
 
@@ -422,11 +420,9 @@ Svg.js has a modular structure. It is very easy to add you own methods at differ
 
 ```javascript
 SVG.extend(SVG.Shape, {
-  
   paintRed: function() {
     return this.fill({ color: 'red' });
   }
-  
 });
 ```
 
@@ -434,11 +430,9 @@ Now all shapes will have the paintRed method available. Say we want to have the 
 
 ```javascript
 SVG.extend(SVG.Ellipse, {
-  
   paintRed: function() {
     return this.fill({ color: 'orangered' });
   }
-  
 });
 
 ```
@@ -451,7 +445,6 @@ The SVG document can be extended by using:
 ```javascript
 
 SVG.extend(SVG.Doc, {
-  
   paintAllPink: function() {
     var children = this.children();
     
@@ -461,7 +454,6 @@ SVG.extend(SVG.Doc, {
     
     return this;
   }
-  
 });
 ```
 
