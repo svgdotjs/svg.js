@@ -413,7 +413,7 @@ rect.click(function() {
 });
 ```
 
-Available events are `click`, `mousedown`, `mouseup`, `mouseover`, `mouseout` and `mousemove`.
+Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout` and `mousemove`.
 
 
 
