@@ -1,7 +1,7 @@
 SVGJS_VERSION = '0.1a'
 
 # all available modules in the correct loading order
-MODULES = %w[ svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar ]
+MODULES = %w[ svg container element event group arrange defs clip gradient doc shape rect ellipse poly path image text sugar ]
 
 # how many bytes in a "kilobyte"
 KILO = 1024

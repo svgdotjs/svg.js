@@ -1,4 +1,4 @@
-/* svg.js v0.1-43-g52ed3ba - svg container element group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-45-g44be0ce - svg container element event group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -332,6 +332,21 @@
     
   });
 
+
+  var eventTypes = ['click', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'];
+  
+  // generate events
+  for (var i = eventTypes.length - 1; i >= 0; i--) {
+    var t = eventTypes[i];
+    SVG.Element.prototype[t] = function(f) {
+      var e = this;
+      this.node['on' + t] = function() {
+        return f.apply(e, arguments);
+      };
+      
+      return e;
+    };
+  };
 
   SVG.G = function G() {
     this.constructor.call(this, SVG.create('g'));

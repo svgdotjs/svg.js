@@ -286,14 +286,14 @@ Using `clip()` creates a clip path in the parents 'defs' node, and passes it to 
 
 ```javascript
 rect.clip(function(clipPath) {
-	clipPath.rect(80, 80).move(10, 10);
+	clipPath.ellipse(80, 40).move(10, 10);
 });
 ```
 
 You can also reuse clip paths for multiple elements using `clipTo()`.
 ```javascript
 var clipPath = doc.defs().clip();
-clipRect = clipPath.rect(80, 80).move(10, 10);
+clipRect = clipPath.ellipse(80, 40).move(10, 10);
 rect.clipTo(clipPath);
 ```
 
@@ -322,11 +322,14 @@ _This functionality requires the arrange.js module which is included in the defa
 
 ## Grouping elements
 Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
+
 ```javascript
 var group = draw.group();
 group.path('M10,20L30,40');
 ```
+
 Existing elements from the svg document can also be added to a group:
+
 ```javascript
 group.add(rect);
 ```
@@ -335,23 +338,31 @@ _This functionality requires the group.js module which is included in the defaul
 
 
 ## Gradients
+
 There are linear and radial gradients. The linear gradient can be created like this:
+
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 0, color: '#333', opacity: 1 });
   stop.at({ offset: 100, color: '#fff', opacity: 1 });
 });
 ```
+
 The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is an integer expressed in percentage. To define the direction you can set from `x`, `y` and to `x`, `y`:
+
 ```javascript
 gradient.from(0, 0).to(0, 100);
 ```
+
 The from and to values are also expressed in percent.
 Finally, to use the gradient on an element:
+
 ```javascript
 rect.attr({ fill: gradient.fill() });
 ```
+
 Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
+
 ```javascript
 var gradient = draw.gradient('radial', function(stop) {
   stop.at({ offset: 0, color: '#333', opacity: 1 });
@@ -360,14 +371,18 @@ var gradient = draw.gradient('radial', function(stop) {
 
 gradient.from(50, 50).to(50, 50).radius(50);
 ```
+
 A gradient can also be updated afterwards:
+
 ```javascript
 gradient.update(function(stop) {
   stop.at({ offset: 10, color: '#333', opacity: 0.2 });
   stop.at({ offset: 90, color: '#f03', opacity: 1 });
 });
 ```
+
 And even a single stop can be updated:
+
 ```javascript
 var s1, s2, s3;
 
@@ -385,6 +400,21 @@ s1.update({ offset: 10, color: '#0f0', opacity: 1 });
 [radial gradients](http://www.w3schools.com/svg/svg_grad_radial.asp) work.
 
 _This functionality requires the gradient.js module which is included in the default distribution._
+
+
+## Events
+All usual events are accessible on elements:
+
+```javascript
+rect.click(function() {
+  
+  this.fill({ color: '#f06' });
+  
+});
+```
+
+Available events are `click`, `mousedown`, `mouseup`, `mouseover`, `mouseout` and `mousemove`.
+
 
 
 ## Extending functionality
@@ -434,8 +464,6 @@ SVG.extend(SVG.Doc, {
   
 });
 ```
-
-
 
 
 ## Building
