@@ -30,6 +30,19 @@ SVG.Container = {
     return this._children || (this._children = []);
   },
   
+  // iterates over all children
+  each: function(b) {
+    var i,
+        c = this.children();
+    
+    // iteralte all shapes
+    for (i = 1, l = c.length; i < l; i++)
+      if (c[i] instanceof SVG.Shape)
+        b.apply(c[i], [i, c]);
+    
+    return this;
+  },
+  
   // remove a given child element
   remove: function(e) {
     return this.removeAt(this.children().indexOf(e));
@@ -106,6 +119,26 @@ SVG.Container = {
   // create element in defs
   gradient: function(t, b) {
     return this.defs().gradient(t, b);
+  },
+  
+  // get first child, skipping the defs node
+  first: function() {
+    return this.children()[1];
+  },
+  
+  // let the last child
+  last: function() {
+    return this.children()[this.children().length - 1];
+  },
+  
+  // clears all elements of this container
+  clear: function() {
+    this._children = [];
+    
+    while (this.node.hasChildNodes())
+      this.node.removeChild(this.node.lastChild);
+    
+    return this;
   },
   
   // hack for safari preventing text to be rendered in one line,

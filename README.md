@@ -230,12 +230,19 @@ rect.show();
 
 ### Removing elements
 Pretty straightforward:
+
 ```javascript
 rect.remove();
 ```
 
+To remove all elements in the svg document:
 
-## Bounding box
+```javascript
+draw.clear();
+```
+
+
+### Bounding box
 
 ```javascript
 path.bbox();
@@ -247,6 +254,17 @@ This will return an object with the following values:
 ```
 
 As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account. 
+
+
+### Iterating over all children
+
+If you would iterate over all the `children()` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
+
+```javascript
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' });
+});
+```
 
 
 ## Syntax sugar
@@ -340,27 +358,56 @@ _This functionality requires the mask.js module which is included in the default
 
 
 ## Arranging elements
-You can arrange elements within their parent SVG document using the following methods:
+You can arrange elements within their parent SVG document using the following methods.
+
+Move element to the front:
 
 ```javascript
-// move element to the front
 rect.front();
+```
 
-// move element to the back
+Move element to the back:
+
+```javascript
 rect.back();
+```
 
-// move element one step forward
+Note that `back()` will move the element to position 1, not 0, because the `<defs>` node is already located at position 0.
+
+Move element one step forward:
+
+```javascript
 rect.forward();
+```
 
-// move element one step backward
+Move element one step backward:
+
+```javascript
 rect.backward();
 ```
 
-The arrange.js module brings some additional methods:
+The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:
 
 ```javascript
-// returns the position (a number) of the element between its siblings
+rect.siblings();
+```
+
+Get the position (a number) of rect between its siblings:
+
+```javascript
 rect.position();
+```
+
+Get the next sibling:
+
+```javascript
+rect.next();
+```
+
+Get the previous sibling:
+
+```javascript
+rect.previous();
 ```
 
 

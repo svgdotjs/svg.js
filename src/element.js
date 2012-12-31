@@ -182,6 +182,16 @@ SVG.extend(SVG.Element, {
     };
   },
   
+  // is a given point inside the bounding box of the element
+  inside: function(x, y) {
+    var b = this.bbox();
+    
+    return x > b.x &&
+           y > b.y &&
+           x < b.x + b.width &&
+           y < b.y + b.height;
+  },
+  
   // show element
   show: function() {
     this.node.style.display = '';

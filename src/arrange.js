@@ -12,11 +12,19 @@ SVG.extend(SVG.Element, {
     return this.siblings().indexOf(this);
   },
   
+  // get the next element
+  next: function() {
+    return this.siblings()[this.position() + 1];
+  },
+  
+  // get the next element
+  previous: function() {
+    return this.siblings()[this.position() - 1];
+  },
+  
   // send given element one step forwards
   forward: function() {
-    var i = this.siblings().indexOf(this);
-    
-    return this.parent.remove(this).put(this, i + 1);
+    return this.parent.remove(this).put(this, this.position() + 1);
   },
   
   // send given element one step backwards
