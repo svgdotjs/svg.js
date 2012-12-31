@@ -1,10 +1,13 @@
-/* svg.js v0.1-48-gb663ead - svg container element event group arrange defs clip gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-49-g7d3e4c4 - svg container element event group arrange defs clip mask gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
     // define default namespaces
-    ns:         'http://www.w3.org/2000/svg',
-    xlink:      'http://www.w3.org/1999/xlink',
+    ns:    'http://www.w3.org/2000/svg',
+    xlink: 'http://www.w3.org/1999/xlink',
+    
+    // initialize defs id sequence
+    did:    0,
     
     // method for element creation
     create: function(e) {
@@ -347,7 +350,18 @@
   });
 
 
-  var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'].forEach(function(e) {
+  [ 'click',
+    'dblclick',
+    'mousedown',
+    'mouseup',
+    'mouseover',
+    'mouseout',
+    'mousemove',
+    'touchstart',
+    'touchend',
+    'touchmove',
+    'touchcancel' ].forEach(function(e) {
+    
     // add event to SVG.Elment
     SVG.Element.prototype[e] = function(f) {
       var s = this;
@@ -428,13 +442,11 @@
   // include the container object
   SVG.extend(SVG.Defs, SVG.Container);
 
-  var clipID = 0;
-  
   SVG.Clip = function Clip() {
     this.constructor.call(this, SVG.create('clipPath'));
     
     // set unique id
-    this.id = 'svgjs_clip_' + (clipID++);
+    this.id = 'svgjs_' + (SVG.did++);
     this.attr('id', this.id);
   };
   
@@ -472,13 +484,53 @@
     
   });
 
-  var gradID = 0;
+  SVG.Mask = function Mask() {
+    this.constructor.call(this, SVG.create('mask'));
+    
+    // set unique id
+    this.id = 'svgjs_' + (SVG.did++);
+    this.attr('id', this.id);
+  };
   
+  // inherit from SVG.Element
+  SVG.Mask.prototype = new SVG.Element();
+  
+  // include the container object
+  SVG.extend(SVG.Mask, SVG.Container);
+  
+  // add clipping functionality to element
+  SVG.extend(SVG.Element, {
+    
+    // mask element using another element
+    mask: function(b) {
+      var m = this.parent.defs().mask();
+      b(m);
+  
+      return this.maskTo(m);
+    },
+  
+    // distribute mask to svg element
+    maskTo: function(m) {
+      return this.attr('mask', 'url(#' + m.id + ')');
+    }
+    
+  });
+  
+  // add def-specific functions
+  SVG.extend(SVG.Defs, {
+    
+    // create clippath
+    mask: function() {
+      return this.put(new SVG.Mask());
+    }
+    
+  });
+
   SVG.Gradient = function Gradient(t) {
     this.constructor.call(this, SVG.create(t + 'Gradient'));
     
     // set unique id
-    this.id = 'svgjs_grad_' + (gradID++);
+    this.id = 'svgjs_' + (SVG.did++);
     this.attr('id', this.id);
     
     // store type

@@ -1,5 +1,16 @@
 
-var eventTypes = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove'].forEach(function(e) {
+[ 'click',
+  'dblclick',
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'mousemove',
+  'touchstart',
+  'touchend',
+  'touchmove',
+  'touchcancel' ].forEach(function(e) {
+  
   // add event to SVG.Elment
   SVG.Element.prototype[e] = function(f) {
     var s = this;

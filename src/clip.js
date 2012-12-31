@@ -1,12 +1,9 @@
 
-// initialize id sequence
-var clipID = 0;
-
 SVG.Clip = function Clip() {
   this.constructor.call(this, SVG.create('clipPath'));
   
   // set unique id
-  this.id = 'svgjs_clip_' + (clipID++);
+  this.id = 'svgjs_' + (SVG.did++);
   this.attr('id', this.id);
 };
 

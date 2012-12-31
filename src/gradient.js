@@ -1,12 +1,9 @@
 
-// initialize id sequence
-var gradID = 0;
-
 SVG.Gradient = function Gradient(t) {
   this.constructor.call(this, SVG.create(t + 'Gradient'));
   
   // set unique id
-  this.id = 'svgjs_grad_' + (gradID++);
+  this.id = 'svgjs_' + (SVG.did++);
   this.attr('id', this.id);
   
   // store type

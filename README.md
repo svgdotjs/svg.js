@@ -1,6 +1,6 @@
 # svg.js
 
-A lightweight (3k gzipped) library for manipulating SVG.
+A lightweight (3.5k gzipped) library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -304,12 +304,39 @@ rect.clip(function(clipPath) {
 
 You can also reuse clip paths for multiple elements using `clipTo()`.
 ```javascript
-var clipPath = doc.defs().clip();
-clipRect = clipPath.ellipse(80, 40).move(10, 10);
+var clipPath = draw.defs().clip();
+var ellipse = clipPath.ellipse(80, 40).move(10, 10);
 rect.clipTo(clipPath);
 ```
 
 _This functionality requires the clip.js module which is included in the default distribution._
+
+
+## Masking elements
+Masking elements works very much the same as clipping with either `mask()` or `maskTo()`.
+
+Using `mask()` creates a mask in the parents 'defs' node, and passes it to a block:
+
+```javascript
+var gradient = draw.gradient('linear', function(stop) {
+  stop.at({ offset: 0, color: '#000' });
+  stop.at({ offset: 90, color: '#fff' });
+});
+
+rect.mask(function(mask) {
+	mask.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
+});
+```
+
+You can also reuse masks for multiple elements using `maskTo()`.
+
+```javascript
+var mask = draw.defs().mask();
+var ellipse = mask.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
+rect.maskTo(mask);
+```
+
+_This functionality requires the mask.js module which is included in the default distribution._
 
 
 ## Arranging elements
@@ -423,7 +450,7 @@ rect.click(function() {
 });
 ```
 
-Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout` and `mousemove`.
+Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchend`, `touchmove` and `touchcancel`.
 
 
 

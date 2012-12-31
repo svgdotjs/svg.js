@@ -1,8 +1,11 @@
 
 this.SVG = {
   // define default namespaces
-  ns:         'http://www.w3.org/2000/svg',
-  xlink:      'http://www.w3.org/1999/xlink',
+  ns:    'http://www.w3.org/2000/svg',
+  xlink: 'http://www.w3.org/1999/xlink',
+  
+  // initialize defs id sequence
+  did:    0,
   
   // method for element creation
   create: function(e) {
