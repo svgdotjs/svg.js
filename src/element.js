@@ -43,6 +43,7 @@ SVG.extend(SVG.Element, {
     var c,
         n = this.node.nodeName;
     
+    // invoke shape method with shape-specific arguments
     c = n == 'rect' ?
       this.parent[n](this.attrs.width, this.attrs.height) :
     n == 'ellipse' ?
@@ -53,7 +54,11 @@ SVG.extend(SVG.Element, {
       this.parent[n](this.content) :
       this.parent[n]();
     
-    return c.attr(this.attrs);
+    // copy translations
+    c.trans = this.trans;
+    
+    // apply attributes and translations
+    return c.attr(this.attrs).transform({});
   },
   
   // remove element

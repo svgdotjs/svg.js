@@ -7,6 +7,11 @@ SVG.extend(SVG.Element, {
     return this.parent.children();
   },
   
+  // get the curent position siblings
+  position: function() {
+    return this.siblings().indexOf(this);
+  },
+  
   // send given element one step forwards
   forward: function() {
     var i = this.siblings().indexOf(this);
@@ -18,7 +23,7 @@ SVG.extend(SVG.Element, {
   backward: function() {
     var i, p = this.parent.level();
     
-    i = this.siblings().indexOf(this);
+    i = this.position();
     
     if (i > 1)
       p.remove(this).add(this, i - 1);
@@ -33,11 +38,9 @@ SVG.extend(SVG.Element, {
   
   // send given element all the way to the back
   back: function() {
-    var i, p = this.parent.level();
+    var p = this.parent.level();
     
-    i = this.siblings().indexOf(this);
-    
-    if (i > 1)
+    if (this.position() > 1)
       p.remove(this).add(this, 0);
     
     return this;

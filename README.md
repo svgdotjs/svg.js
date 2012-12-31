@@ -356,6 +356,14 @@ rect.forward();
 rect.backward();
 ```
 
+The arrange.js module brings some additional methods:
+
+```javascript
+// returns the position (a number) of the element between its siblings
+rect.position();
+```
+
+
 _This functionality requires the arrange.js module which is included in the default distribution._
 
 
