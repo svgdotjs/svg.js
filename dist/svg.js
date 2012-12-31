@@ -1,4 +1,4 @@
-/* svg.js v0.1-49-g7d3e4c4 - svg container element event group arrange defs clip mask gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-50-g9f622f7 - svg container element event group arrange defs clip mask gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -180,7 +180,7 @@
     },
     
     // set element size to given width and height
-    size: function(w, h) {
+    size: function(w, h) { 
       return this.attr({ width: w, height: h });
     },
     
@@ -189,6 +189,24 @@
       var b = this.bbox();
       
       return this.move(x - b.width / 2, y - b.height / 2);
+    },
+    
+    // clone element
+    clone: function() {
+      var c,
+          n = this.node.nodeName;
+      
+      c = n == 'rect' ?
+        this.parent[n](this.attrs.width, this.attrs.height) :
+      n == 'ellipse' ?
+        this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
+      n == 'image' ?
+        this.parent[n](this.src) :
+      n == 'text' ?
+        this.parent[n](this.content) :
+        this.parent[n]();
+      
+      return c.attr(this.attrs);
     },
     
     // remove element
@@ -798,7 +816,8 @@
     
     // (re)load image
     load: function(u) {
-      return this.attr('xlink:href', u, SVG.xlink);
+      this.src = u;
+      return (u ? this.attr('xlink:href', u, SVG.xlink) : this);
     }
     
   });

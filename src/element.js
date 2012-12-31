@@ -27,7 +27,7 @@ SVG.extend(SVG.Element, {
   },
   
   // set element size to given width and height
-  size: function(w, h) {
+  size: function(w, h) { 
     return this.attr({ width: w, height: h });
   },
   
@@ -36,6 +36,24 @@ SVG.extend(SVG.Element, {
     var b = this.bbox();
     
     return this.move(x - b.width / 2, y - b.height / 2);
+  },
+  
+  // clone element
+  clone: function() {
+    var c,
+        n = this.node.nodeName;
+    
+    c = n == 'rect' ?
+      this.parent[n](this.attrs.width, this.attrs.height) :
+    n == 'ellipse' ?
+      this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
+    n == 'image' ?
+      this.parent[n](this.src) :
+    n == 'text' ?
+      this.parent[n](this.content) :
+      this.parent[n]();
+    
+    return c.attr(this.attrs);
   },
   
   // remove element
