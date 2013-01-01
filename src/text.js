@@ -72,7 +72,7 @@ function TSpan() {
   this.constructor.call(this, SVG.create('tspan'));
 };
 
-// inherit from SVG.Element
+// inherit from SVG.Shape
 TSpan.prototype = new SVG.Shape();
 
 // include the container object

@@ -1,4 +1,4 @@
-/* svg.js v0.1-52-g8dbe359 - svg container element event group arrange defs clip mask gradient doc shape rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-53-g5e7c26e - svg container element event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -58,7 +58,7 @@
           c = this.children();
       
       // iteralte all shapes
-      for (i = 1, l = c.length; i < l; i++)
+      for (i = 0, l = c.length; i < l; i++)
         if (c[i] instanceof SVG.Shape)
           b.apply(c[i], [i, c]);
       
@@ -114,17 +114,17 @@
     
     // create a polyline element
     polyline: function(p) {
-      return this.put(new SVG.Polyline().plot(p));
+      return this.put(new Wrap(new SVG.Polyline())).plot(p);
     },
     
     // create a polygon element
     polygon: function(p) {
-      return this.put(new SVG.Polygon().plot(p));
+      return this.put(new Wrap(new SVG.Polygon())).plot(p);
     },
     
-    // create a path element
+    // create a wrapped path element
     path: function(d) {
-      return this.put(new SVG.Path().plot(d));
+      return this.put(new Wrap(new SVG.Path())).plot(d);
     },
     
     // create image element, load image and set its size
@@ -141,6 +141,11 @@
     // create element in defs
     gradient: function(t, b) {
       return this.defs().gradient(t, b);
+    },
+    
+    // create masking element
+    mask: function() {
+      return this.defs().put(new SVG.Mask());
     },
     
     // get first child, skipping the defs node
@@ -226,21 +231,35 @@
     
     // clone element
     clone: function() {
-      var c,
-          n = this.node.nodeName;
+      var c;
       
-      // invoke shape method with shape-specific arguments
-      c = n == 'rect' ?
-        this.parent[n](this.attrs.width, this.attrs.height) :
-      n == 'ellipse' ?
-        this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
-      n == 'image' ?
-        this.parent[n](this.src) :
-      n == 'text' ?
-        this.parent[n](this.content) :
-        this.parent[n]();
+      // if this is a wrapped shape
+      if (this instanceof Wrap) {
+        // build new wrapped shape
+        c = this.parent[this.child.node.nodeName]();
+        
+        // copy child attributes and transformations
+        c.child.trans = this.child.trans;
+        c.child.attr(this.child.attrs).transform({});
+        
+      } else {
+        var n = this.node.nodeName;
+        
+        // invoke shape method with shape-specific arguments
+        c = n == 'rect' ?
+          this.parent[n](this.attrs.width, this.attrs.height) :
+        n == 'ellipse' ?
+          this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
+        n == 'image' ?
+          this.parent[n](this.src) :
+        n == 'text' ?
+          this.parent[n](this.content) :
+        n == 'g' ?
+          this.parent.group() :
+          this.parent[n]();
+      }
       
-      // copy translations
+      // copy transformations
       c.trans = this.trans;
       
       // apply attributes and translations
@@ -527,48 +546,6 @@
   // include the container object
   SVG.extend(SVG.Defs, SVG.Container);
 
-  SVG.Clip = function Clip() {
-    this.constructor.call(this, SVG.create('clipPath'));
-    
-    // set unique id
-    this.id = 'svgjs_' + (SVG.did++);
-    this.attr('id', this.id);
-  };
-  
-  // inherit from SVG.Element
-  SVG.Clip.prototype = new SVG.Element();
-  
-  // include the container object
-  SVG.extend(SVG.Clip, SVG.Container);
-  
-  // add clipping functionality to element
-  SVG.extend(SVG.Element, {
-    
-    // clip element using another element
-    clip: function(b) {
-      var p = this.parent.defs().clip();
-      b(p);
-  
-      return this.clipTo(p);
-    },
-  
-    // distribute clipping path to svg element
-    clipTo: function(p) {
-      return this.attr('clip-path', 'url(#' + p.id + ')');
-    }
-    
-  });
-  
-  // add def-specific functions
-  SVG.extend(SVG.Defs, {
-    
-    // create clippath
-    clip: function() {
-      return this.put(new SVG.Clip());
-    }
-    
-  });
-
   SVG.Mask = function Mask() {
     this.constructor.call(this, SVG.create('mask'));
     
@@ -586,27 +563,9 @@
   // add clipping functionality to element
   SVG.extend(SVG.Element, {
     
-    // mask element using another element
-    mask: function(b) {
-      var m = this.parent.defs().mask();
-      b(m);
-  
-      return this.maskTo(m);
-    },
-  
     // distribute mask to svg element
-    maskTo: function(m) {
-      return this.attr('mask', 'url(#' + m.id + ')');
-    }
-    
-  });
-  
-  // add def-specific functions
-  SVG.extend(SVG.Defs, {
-    
-    // create clippath
-    mask: function() {
-      return this.put(new SVG.Mask());
+    maskWith: function(e) {
+      return this.attr('mask', 'url(#' + (e instanceof SVG.Mask ? e : this.parent.mask().add(e)).id + ')');
     }
     
   });
@@ -768,6 +727,90 @@
   // inherit from SVG.Element
   SVG.Shape.prototype = new SVG.Element();
 
+  function Wrap(e) {
+    this.constructor.call(this, SVG.create('g'));
+    
+    // insert and store child
+    this.node.insertBefore(e.node, null);
+    this.child = e;
+  };
+  
+  // inherit from SVG.Shape
+  Wrap.prototype = new SVG.Shape();
+  
+  // include the container object
+  SVG.extend(Wrap, {
+    
+    // move wrapper around
+    move: function(x, y) {
+      return this.center(
+        x + (this._b.width  * this.child.trans.scaleX) / 2,
+        y + (this._b.height * this.child.trans.scaleY) / 2
+      );
+    },
+    
+    // set the actual size in pixels
+    size: function(w, h) {
+      var s = w / this._b.width;
+      
+      this.child.transform({
+        scaleX: s,
+        scaleY: h != null ? h / this._b.height : s
+      });
+  
+      return this;
+    },
+    
+    // move by center
+    center: function(x, y) {
+      return this.transform({ x: x, y: y });
+    },
+    
+    // create distributed attr
+    attr: function(a, v, n) {
+      // call individual attributes if an object is given
+      if (typeof a == 'object') {
+        for (v in a) this.attr(v, a[v]);
+      
+      // act as a getter if only one argument is given
+      } else if (arguments.length < 2) {
+        return a == 'transform' ? this.attrs[a] : this.child.attrs[a];
+      
+      // apply locally for certain attributes
+      } else if (a == 'transform') {
+        this.attrs[a] = v;
+        
+        n != null ?
+          this.node.setAttributeNS(n, a, v) :
+          this.node.setAttribute(a, v);
+      
+      // apply attributes to child
+      } else {
+        this.child.attr(a, v, n);
+      }
+      
+      return this;
+    },
+    
+    // distribute plot method to child
+    plot: function(d) {
+      // plot new shape
+      this.child.plot(d);
+      
+      // get new bbox and store size
+      this._b = this.child.bbox();
+      
+      // reposition element withing wrapper
+      this.child.transform({
+        x: -this._b.cx,
+        y: -this._b.cy
+      });
+      
+      return this;
+    }
+    
+  });
+
   SVG.Rect = function Rect() {
     this.constructor.call(this, SVG.create('rect'));
   };
@@ -859,14 +902,14 @@
   // Add path-specific functions
   SVG.extend(SVG.Path, {
     
+    // move using transform
+    move: function(x, y) {
+      this.transform({ x: x, y: y });
+    },
+    
     // set path data
     plot: function(d) {
       return this.attr('d', d || 'M0,0');
-    },
-    
-    // move path using translate, path's don't take x and y
-    move: function(x, y) {
-      return this.transform({ x: x, y: y });
     }
     
   });
@@ -961,7 +1004,7 @@
     this.constructor.call(this, SVG.create('tspan'));
   };
   
-  // inherit from SVG.Element
+  // inherit from SVG.Shape
   TSpan.prototype = new SVG.Shape();
   
   // include the container object

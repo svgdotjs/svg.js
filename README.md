@@ -309,49 +309,38 @@ rect.skew(0, 45);
 _This functionality requires the sugar.js module which is included in the default distribution._
 
 
-## Clipping elements
-Clipping elements can be done with either `clip()` or `clipTo()`.
-
-Using `clip()` creates a clip path in the parents 'defs' node, and passes it to a block:
-
-```javascript
-rect.clip(function(clipPath) {
-	clipPath.ellipse(80, 40).move(10, 10);
-});
-```
-
-You can also reuse clip paths for multiple elements using `clipTo()`.
-```javascript
-var clipPath = draw.defs().clip();
-var ellipse = clipPath.ellipse(80, 40).move(10, 10);
-rect.clipTo(clipPath);
-```
-
-_This functionality requires the clip.js module which is included in the default distribution._
-
 
 ## Masking elements
-Masking elements works very much the same as clipping with either `mask()` or `maskTo()`.
-
-Using `mask()` creates a mask in the parents 'defs' node, and passes it to a block:
+The easiest way to mask is to use a single element:
 
 ```javascript
-var gradient = draw.gradient('linear', function(stop) {
-  stop.at({ offset: 0, color: '#000' });
-  stop.at({ offset: 90, color: '#fff' });
-});
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' });
 
-rect.mask(function(mask) {
-	mask.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
-});
+rect.maskWith(ellipse);
 ```
 
-You can also reuse masks for multiple elements using `maskTo()`.
+But you can also use multiple elements:
 
 ```javascript
-var mask = draw.defs().mask();
-var ellipse = mask.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
-rect.maskTo(mask);
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' });
+var text = draw.text('SVG.JS').move(10, 10).font({ size: 36 }).fill({ color: '#fff' });
+
+var mask = draw.mask().add(text).add(ellipse);
+
+rect.maskWith(mask);
+```
+
+If you want the masked object to be rendered at 100% you need to set the fill color of the masking object to white. But you might also want to use a gradient:
+
+```javascript
+var gradient = image.parent.gradient('linear', function(stop) {
+  stop.at({ offset: 0, color: '#000' });
+  stop.at({ offset: 100, color: '#fff' });
+});
+
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
+
+rect.maskWith(ellipse);
 ```
 
 _This functionality requires the mask.js module which is included in the default distribution._

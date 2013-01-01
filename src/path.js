@@ -9,14 +9,14 @@ SVG.Path.prototype = new SVG.Shape();
 // Add path-specific functions
 SVG.extend(SVG.Path, {
   
+  // move using transform
+  move: function(x, y) {
+    this.transform({ x: x, y: y });
+  },
+  
   // set path data
   plot: function(d) {
     return this.attr('d', d || 'M0,0');
-  },
-  
-  // move path using translate, path's don't take x and y
-  move: function(x, y) {
-    return this.transform({ x: x, y: y });
   }
   
 });

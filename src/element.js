@@ -40,21 +40,35 @@ SVG.extend(SVG.Element, {
   
   // clone element
   clone: function() {
-    var c,
-        n = this.node.nodeName;
+    var c;
     
-    // invoke shape method with shape-specific arguments
-    c = n == 'rect' ?
-      this.parent[n](this.attrs.width, this.attrs.height) :
-    n == 'ellipse' ?
-      this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
-    n == 'image' ?
-      this.parent[n](this.src) :
-    n == 'text' ?
-      this.parent[n](this.content) :
-      this.parent[n]();
+    // if this is a wrapped shape
+    if (this instanceof Wrap) {
+      // build new wrapped shape
+      c = this.parent[this.child.node.nodeName]();
+      
+      // copy child attributes and transformations
+      c.child.trans = this.child.trans;
+      c.child.attr(this.child.attrs).transform({});
+      
+    } else {
+      var n = this.node.nodeName;
+      
+      // invoke shape method with shape-specific arguments
+      c = n == 'rect' ?
+        this.parent[n](this.attrs.width, this.attrs.height) :
+      n == 'ellipse' ?
+        this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
+      n == 'image' ?
+        this.parent[n](this.src) :
+      n == 'text' ?
+        this.parent[n](this.content) :
+      n == 'g' ?
+        this.parent.group() :
+        this.parent[n]();
+    }
     
-    // copy translations
+    // copy transformations
     c.trans = this.trans;
     
     // apply attributes and translations

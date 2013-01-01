@@ -16,27 +16,9 @@ SVG.extend(SVG.Mask, SVG.Container);
 // add clipping functionality to element
 SVG.extend(SVG.Element, {
   
-  // mask element using another element
-  mask: function(b) {
-    var m = this.parent.defs().mask();
-    b(m);
-
-    return this.maskTo(m);
-  },
-
   // distribute mask to svg element
-  maskTo: function(m) {
-    return this.attr('mask', 'url(#' + m.id + ')');
-  }
-  
-});
-
-// add def-specific functions
-SVG.extend(SVG.Defs, {
-  
-  // create clippath
-  mask: function() {
-    return this.put(new SVG.Mask());
+  maskWith: function(e) {
+    return this.attr('mask', 'url(#' + (e instanceof SVG.Mask ? e : this.parent.mask().add(e)).id + ')');
   }
   
 });

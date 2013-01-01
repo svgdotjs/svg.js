@@ -36,7 +36,7 @@ SVG.Container = {
         c = this.children();
     
     // iteralte all shapes
-    for (i = 1, l = c.length; i < l; i++)
+    for (i = 0, l = c.length; i < l; i++)
       if (c[i] instanceof SVG.Shape)
         b.apply(c[i], [i, c]);
     
@@ -92,17 +92,17 @@ SVG.Container = {
   
   // create a polyline element
   polyline: function(p) {
-    return this.put(new SVG.Polyline().plot(p));
+    return this.put(new Wrap(new SVG.Polyline())).plot(p);
   },
   
   // create a polygon element
   polygon: function(p) {
-    return this.put(new SVG.Polygon().plot(p));
+    return this.put(new Wrap(new SVG.Polygon())).plot(p);
   },
   
-  // create a path element
+  // create a wrapped path element
   path: function(d) {
-    return this.put(new SVG.Path().plot(d));
+    return this.put(new Wrap(new SVG.Path())).plot(d);
   },
   
   // create image element, load image and set its size
@@ -119,6 +119,11 @@ SVG.Container = {
   // create element in defs
   gradient: function(t, b) {
     return this.defs().gradient(t, b);
+  },
+  
+  // create masking element
+  mask: function() {
+    return this.defs().put(new SVG.Mask());
   },
   
   // get first child, skipping the defs node
