@@ -1,4 +1,4 @@
-/* svg.js v0.1-53-g5e7c26e - svg container element event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text sugar - svgjs.com/license */
+/* svg.js v0.1-54-g88987d6 - svg container element event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -136,6 +136,11 @@
     // create text element
     text: function(t) {
       return this.put(new SVG.Text().text(t));
+    },
+    
+    // create nested svg document
+    nested: function(s) {
+      return this.put(new SVG.Nested());
     },
     
     // create element in defs
@@ -1017,6 +1022,17 @@
     }
     
   });
+
+  SVG.Nested = function Nested() {
+    this.constructor.call(this, SVG.create('svg'));
+    this.attr('overflow', 'visible');
+  };
+  
+  // inherit from SVG.Element
+  SVG.Nested.prototype = new SVG.Element();
+  
+  // include the container object
+  SVG.extend(SVG.Nested, SVG.Container);
 
   var _strokeAttr = ['width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
       _fillAttr   = ['opacity', 'rule'];

@@ -420,6 +420,20 @@ group.add(rect);
 _This functionality requires the group.js module which is included in the default distribution._
 
 
+
+## Nested svg
+With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
+
+```javascript
+var nested = draw.nested();
+
+var rect = nested.rect(200, 200);
+```
+
+
+_This functionality requires the nested.js module which is included in the default distribution._
+
+
 ## Gradients
 
 There are linear and radial gradients. The linear gradient can be created like this:

@@ -116,6 +116,11 @@ SVG.Container = {
     return this.put(new SVG.Text().text(t));
   },
   
+  // create nested svg document
+  nested: function(s) {
+    return this.put(new SVG.Nested());
+  },
+  
   // create element in defs
   gradient: function(t, b) {
     return this.defs().gradient(t, b);
