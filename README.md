@@ -279,7 +279,7 @@ rect.animate().move(150, 150);
 The `animate()` method will take two arguments. The first is `milliseconds`, the second `ease`:
 
 ```javascript
-rect.animate(2000, '>').fill({ color: '#f03' });
+rect.animate(2000, '>').attr({ fill: '#f03' });
 ```
 
 By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`. All available ease types are:
