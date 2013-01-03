@@ -1,4 +1,4 @@
-/* svg.js v0.1-55-g0da8f1d - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-56-g6f49a9d - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -622,6 +622,7 @@
         o.from = this._h2r(o.from || '#000');
       
       // convert hex to rgb and store it for further reference
+      
       if (typeof o.to !== 'object')
         o.to = this._h2r(o.to);
       
@@ -648,7 +649,13 @@
     
     // private: convert rgb object to hex string
     _r2h: function(r) {
-      return '#' + (r.r + 256 * r.g + 65536 * r.b).toString(16);
+      return '#' + this._c2h(r.r) + this._c2h(r.g) + this._c2h(r.b);
+    },
+    
+    // private: convert component to hex
+    _c2h: function(c) {
+      var h = c.toString(16);
+      return h.length == 1 ? '0' + h : h;
     },
     
     // private: force potential 3-based hex to 6-based 
