@@ -1,9 +1,10 @@
 # svg.js
 
-A lightweight (3.5k gzipped) library for manipulating SVG.
+A lightweight library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
+The base library is 2.7k gzipped, with all bells and whistles just under 5k.
 
 ## Usage
 
@@ -267,7 +268,82 @@ draw.each(function(i, children) {
 ```
 
 
+## Animating elements
+
+Animating elements is very much the same as manipulating elements, the only difference is you have to include the `animate()` method:
+
+```javascript
+rect.animate().move(150, 150);
+```
+
+The `animate()` method will take two arguments. The first is `milliseconds`, the second `ease`:
+
+```javascript
+rect.animate(2000, '>').fill({ color: '#f03' });
+```
+
+By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`. All available ease types are:
+
+- `<>`: ease in and out
+- `>`: ease out
+- `<`: ease in
+- `-`: linear
+- a function
+
+For the latter, here is an example of the default `<>` function:
+
+```javascript
+function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; };
+```
+
+Note that the `animate()` method will not return the targeted element but an instance of SVG.FX which will take the following methods:
+
+Of course `attr()`:
+```javascript
+rect.animate().attr({ fill: '#f03' });
+```
+
+The `move()` method:
+```javascript
+rect.animate().move(100, 100);
+```
+
+And the `center()` method:
+```javascript
+rect.animate().center(200, 200);
+```
+
+If you include the sugar.js module, `fill()`, `stroke()`, `animate()` and `skwe()` will be available as well:
+```javascript
+rect.animate().fill({ color: '#f03' }).stroke({ width: 10 });
+```
+
+Animations can be stopped in to ways.
+
+By calling the `stop()` method:
+```javascript
+var rectfx = rect.animate().move(200, 200);
+
+rectfx.stop();
+```
+
+Or by invoking another animation:
+```javascript
+var rectfx = rect.animate().move(200, 200);
+
+rect.animate().center(200, 200);
+```
+
+Finally, you can add callback methods using `after()`:
+```javascript
+rect.animate(3000).move(100, 100).after(function() {
+  this.animate().fill({ color: '#f06' });
+});
+```
+
+
 ## Syntax sugar
+
 Fill and stroke are used quite often. Therefore two convenience methods are provided:
 
 ### Fill
@@ -289,13 +365,6 @@ The `rotate()` method will automatically rotate elements according to the center
 ```javascript
 // rotate(degrees)
 rect.rotate(45);
-```
-
-Unless you also define a rotation point:
-
-```javascript
-// rotate(degrees, cx, cy)
-rect.rotate(45, 100, 100);
 ```
 
 ### Skew
@@ -556,7 +625,7 @@ SVG.extend(SVG.Doc, {
 
 
 ## Building
-Starting out with the default distribution of svg.js is good. Although you might want to remove some modules to keep the size at minimum. 
+Starting out with the default distribution of svg.js is good. Although you might want to remove some modules to keep the size at minimum.
 
 You will need ruby, RubyGems, and rake installed on your system.
 
@@ -570,13 +639,13 @@ $ rake -V
 $ gem install uglifier
 ```
 
-Build Zepto by running `rake`:
+Build svg.js by running `rake`:
 
 ``` sh
 $ rake
-Original version: 17.010k
-Minified: 9.083k
-Minified and gzipped: 2.760k, compression factor 6.163
+Original version: 32.165k
+Minified: 14.757k
+Minified and gzipped: 4.413k, compression factor 7.289
 ```
 
 The resulting files are:
@@ -587,8 +656,14 @@ The resulting files are:
 To include optional modules and remove default ones, use the `concat` task. In
 this example, 'clip' is removed, but 'group' and 'arrange' are added:
 
-```
+``` sh
 $ rake concat[-clip:group:arrange] dist
+```
+
+To build the base library only including shapes:
+
+``` sh
+rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
 ```
 
 _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_

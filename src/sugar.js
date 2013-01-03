@@ -45,13 +45,9 @@ SVG.extend(SVG.Shape, {
 SVG.extend(SVG.Element, {
   
   // rotation
-  rotate: function(d, x, y) {
-    var b = this.bbox();
-    
+  rotate: function(d) {
     return this.transform({
-      rotation: d || 0,
-      cx:       x == null ? b.cx : x,
-      cy:       y == null ? b.cx : y
+      rotation: d || 0
     });
   },
   
@@ -95,6 +91,45 @@ SVG.extend(SVG.Text, {
   }
   
 });
+
+// add methods to SVG.FX
+if (SVG.FX) {
+  // add sugar for fill and stroke
+  ['fill', 'stroke'].forEach(function(m) {
+    SVG.FX.prototype[m] = function(o) {
+      var a, k;
+
+      for (k in o) {
+        a = k == 'color' ? m : m + '-' + k;
+        this.attrs[a] = {
+          from: this.target.attrs[a],
+          to:   o[k]
+        };
+      };
+
+      return this;
+    };
+  });
+  
+  SVG.extend(SVG.FX, {
+
+    // rotation
+    rotate: function(d) {
+      return this.transform({
+        rotation: d || 0
+      });
+    },
+
+    // skew
+    skew: function(x, y) {
+      return this.transform({
+        skewX: x || 0,
+        skewY: y || 0
+      });
+    }
+
+  });
+}
 
 
 

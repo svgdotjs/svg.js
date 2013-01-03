@@ -4,9 +4,13 @@ SVG.Element = function Element(n) {
   this.node = n;
   
   // initialize attribute store
-  this.attrs = {};
+  this.attrs = {
+    'fill-opacity':   1,
+    'stroke-opacity': 1,
+    'stroke-width':   0
+  };
   
-  // initialize transformations store
+  // initialize transformation store
   this.trans = {
     x:        0,
     y:        0,
