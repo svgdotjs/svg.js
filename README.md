@@ -4,7 +4,7 @@ A lightweight library for manipulating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
-The base library is 2.7k gzipped, with all bells and whistles just under 5k.
+The base library is 2.7k gzipped, with all bells and whistles just under 4.5k.
 
 ## Usage
 
