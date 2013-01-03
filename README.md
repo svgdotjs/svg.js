@@ -313,9 +313,9 @@ And the `center()` method:
 rect.animate().center(200, 200);
 ```
 
-If you include the sugar.js module, `fill()`, `stroke()`, `animate()` and `skwe()` will be available as well:
+If you include the sugar.js module, `rotate()` and `skew()` will be available as well:
 ```javascript
-rect.animate().fill({ color: '#f03' }).stroke({ width: 10 });
+rect.animate().rotate(45).skew(25, 0);
 ```
 
 Animations can be stopped in to ways.
@@ -337,7 +337,7 @@ rect.animate().center(200, 200);
 Finally, you can add callback methods using `after()`:
 ```javascript
 rect.animate(3000).move(100, 100).after(function() {
-  this.animate().fill({ color: '#f06' });
+  this.animate().attr({ fill: '#f06' });
 });
 ```
 

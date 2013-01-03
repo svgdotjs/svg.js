@@ -1,4 +1,4 @@
-/* svg.js v0.1-56-g6f49a9d - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-57-g99c2d41 - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.SVG = {
@@ -540,6 +540,8 @@
       
       else
         this.attrs[a] = { from: this.target.attr(a), to: v };
+      
+      return this;  
     },
     
     // animated transformations
@@ -617,20 +619,19 @@
     
     // private: tween color
     _color: function(o, p) {
-      // convert hex to rgb and store it for further reference
-      if (typeof o.from !== 'object')
-        o.from = this._h2r(o.from || '#000');
+      var f, t;
       
-      // convert hex to rgb and store it for further reference
+      // convert FROM hex to rgb
+      f = this._h2r(o.from || '#000');
       
-      if (typeof o.to !== 'object')
-        o.to = this._h2r(o.to);
+      // convert TO hex to rgb
+      t = this._h2r(o.to);
       
       // tween color and return hex
       return this._r2h({
-        r: ~~(o.from.r + (o.to.r - o.from.r) * p),
-        g: ~~(o.from.g + (o.to.g - o.from.g) * p),
-        b: ~~(o.from.b + (o.to.b - o.from.b) * p)
+        r: ~~(f.r + (t.r - f.r) * p),
+        g: ~~(f.g + (t.g - f.g) * p),
+        b: ~~(f.b + (t.b - f.b) * p)
       });
     },
     
@@ -1335,6 +1336,7 @@
     }
     
   });
+  
   
   // Add element-specific functions
   SVG.extend(SVG.Element, {

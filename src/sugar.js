@@ -41,6 +41,7 @@ SVG.extend(SVG.Shape, {
   
 });
 
+
 // Add element-specific functions
 SVG.extend(SVG.Element, {
   
