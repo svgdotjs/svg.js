@@ -1,4 +1,8 @@
+// ### Manage events on elements
 
+//     rect.click(function() {
+//       this.fill({ color: '#f06' });
+//     });
 [ 'click',
   'dblclick',
   'mousedown',
@@ -9,18 +13,17 @@
   'touchstart',
   'touchend',
   'touchmove',
-  'touchcancel' ].forEach(function(e) {
+  'touchcancel' ].forEach(function(event) {
   
-  // add event to SVG.Elment
-  SVG.Element.prototype[e] = function(f) {
-    var s = this;
+  /* add event to SVG.Element */
+  SVG.Element.prototype[event] = function(f) {
+    var self = this;
 
-    // bind event to element rather than element node
-    this.node['on' + e] = function() {
-      return f.apply(s, arguments);
+    /* bind event to element rather than element node */
+    this.node['on' + event] = function() {
+      return f.apply(self, arguments);
     };
-
-    // return self
+    
     return this;
   };
 });

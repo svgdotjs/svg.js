@@ -1,58 +1,50 @@
-
-// define list of available attributes for stroke and fill
+// Define list of available attributes for stroke and fill
 var _strokeAttr = ['width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
     _fillAttr   = ['opacity', 'rule'];
 
-
-// Add shape-specific functions
 SVG.extend(SVG.Shape, {
   
-  // set fill color and opacity
-  fill: function(f) {
-    var i;
+  // Set fill color and opacity
+  fill: function(fill) {
+    var index;
     
-    // set fill color if not null
-    if (f.color != null)
-      this.attr('fill', f.color);
+    /* set fill color if not null */
+    if (fill.color != null)
+      this.attr('fill', fill.color);
     
-    // set all attributes from _fillAttr list with prependes 'fill-' if not null
-    for (i = _fillAttr.length - 1; i >= 0; i--)
-      if (f[_fillAttr[i]] != null)
-        this.attr('fill-' + _fillAttr[i], f[_fillAttr[i]]);
+    /* set all attributes from _fillAttr list with prependes 'fill-' if not null */
+    for (index = _fillAttr.length - 1; index >= 0; index--)
+      if (fill[_fillAttr[index]] != null)
+        this.attr('fill-' + _fillAttr[index], fill[_fillAttr[index]]);
     
     return this;
   },
-
-  // set stroke color and opacity
-  stroke: function(s) {
-    var i;
+  // Set stroke color and opacity
+  stroke: function(stroke) {
+    var index;
     
     // set stroke color if not null
-    if (s.color)
-      this.attr('stroke', s.color);
+    if (stroke.color)
+      this.attr('stroke', stroke.color);
     
     // set all attributes from _strokeAttr list with prependes 'stroke-' if not null
-    for (i = _strokeAttr.length - 1; i >= 0; i--)
-      if (s[_strokeAttr[i]] != null)
-        this.attr('stroke-' + _strokeAttr[i], s[_strokeAttr[i]]);
+    for (index = _strokeAttr.length - 1; index >= 0; index--)
+      if (stroke[_strokeAttr[index]] != null)
+        this.attr('stroke-' + _strokeAttr[index], stroke[_strokeAttr[index]]);
     
     return this;
   }
   
 });
 
-
-// Add element-specific functions
 SVG.extend(SVG.Element, {
-  
-  // rotation
-  rotate: function(d) {
+  // Rotation
+  rotate: function(angle) {
     return this.transform({
-      rotation: d || 0
+      rotation: angle || 0
     });
   },
-  
-  // skew
+  // Skew
   skew: function(x, y) {
     return this.transform({
       skewX: x || 0,
@@ -62,49 +54,48 @@ SVG.extend(SVG.Element, {
   
 });
 
-// Add group-specific functions
 SVG.extend(SVG.G, {
-  
-  // move using translate
+  // Move using translate
   move: function(x, y) {
-    return this.transform({ x: x, y: y });
+    return this.transform({
+      x: x,
+      y: y
+    });
   }
   
 });
 
-// Add text-specific functions
 SVG.extend(SVG.Text, {
-  
-  // set font 
+  // Set font 
   font: function(o) {
-    var k, a = {};
+    var key, attr = {};
     
-    for (k in o)
-      k == 'leading' ?
-        a[k] = o[k] :
-      k == 'anchor' ?
-        a['text-anchor'] = o[k] :
-      _styleAttr.indexOf(k) > -1 ?
-        a['font-'+ k] = o[k] :
+    for (key in o)
+      key == 'leading' ?
+        attr[key] = o[key] :
+      key == 'anchor' ?
+        attr['text-anchor'] = o[key] :
+      _styleAttr.indexOf(key) > -1 ?
+        attr['font-'+ key] = o[key] :
         void 0;
     
-    return this.attr(a).text(this.content);
+    return this.attr(attr).text(this.content);
   }
   
 });
 
-// add methods to SVG.FX
-if (SVG.FX) {
-  // add sugar for fill and stroke
-  ['fill', 'stroke'].forEach(function(m) {
-    SVG.FX.prototype[m] = function(o) {
-      var a, k;
 
-      for (k in o) {
-        a = k == 'color' ? m : m + '-' + k;
-        this.attrs[a] = {
-          from: this.target.attrs[a],
-          to:   o[k]
+if (SVG.FX) {
+  /* Add sugar for fill and stroke */
+  ['fill', 'stroke'].forEach(function(method) {
+    SVG.FX.prototype[method] = function(o) {
+      var attr, key;
+
+      for (key in o) {
+        attr = key == 'color' ? method : method + '-' + key;
+        this.attrs[attr] = {
+          from: this.target.attrs[attr],
+          to:   o[key]
         };
       };
 
@@ -113,15 +104,14 @@ if (SVG.FX) {
   });
   
   SVG.extend(SVG.FX, {
-
-    // rotation
-    rotate: function(d) {
+    // Rotation
+    rotate: function(angle) {
       return this.transform({
-        rotation: d || 0
+        rotation: angle || 0
       });
     },
 
-    // skew
+    // Skew
     skew: function(x, y) {
       return this.transform({
         skewX: x || 0,

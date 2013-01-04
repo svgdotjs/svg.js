@@ -1,55 +1,48 @@
+// ### This module adds backward / forward functionality to elements.
 
-// add backward / forward functionality to elements
+//
 SVG.extend(SVG.Element, {
-  
-  // get all siblings, including myself
+  // Get all siblings, including myself
   siblings: function() {
     return this.parent.children();
   },
-  
-  // get the curent position siblings
+  // Get the curent position siblings
   position: function() {
     return this.siblings().indexOf(this);
   },
-  
-  // get the next element
+  // Get the next element (will return null if there is none)
   next: function() {
     return this.siblings()[this.position() + 1];
   },
-  
-  // get the next element
+  // Get the next element (will return null if there is none)
   previous: function() {
     return this.siblings()[this.position() - 1];
   },
-  
-  // send given element one step forwards
+  // Send given element one step forward
   forward: function() {
     return this.parent.remove(this).put(this, this.position() + 1);
   },
-  
-  // send given element one step backwards
+  // Send given element one step backward
   backward: function() {
-    var i, p = this.parent.level();
+    var i, parent = this.parent.level();
     
     i = this.position();
     
     if (i > 1)
-      p.remove(this).add(this, i - 1);
+      parent.remove(this).add(this, i - 1);
     
     return this;
   },
-  
-  // send given element all the way to the front
+  // Send given element all the way to the front
   front: function() {
     return this.parent.remove(this).put(this);
   },
-  
-  // send given element all the way to the back
+  // Send given element all the way to the back
   back: function() {
-    var p = this.parent.level();
+    var parent = this.parent.level();
     
     if (this.position() > 1)
-      p.remove(this).add(this, 0);
+      parent.remove(this).add(this, 0);
     
     return this;
   }

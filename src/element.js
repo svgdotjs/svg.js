@@ -1,16 +1,19 @@
 
-SVG.Element = function Element(n) {
-  // keep reference to the element node 
-  this.node = n;
+// ### Used by nearly every other module
+
+//
+SVG.Element = function Element(node) {
+  /* keep reference to the element node */
+  this.node = node;
   
-  // initialize attribute store
+  /* initialize attribute store with defaults */
   this.attrs = {
     'fill-opacity':   1,
     'stroke-opacity': 1,
     'stroke-width':   0
   };
   
-  // initialize transformation store
+  /* initialize transformation store with defaults */
   this.trans = {
     x:        0,
     y:        0,
@@ -22,81 +25,80 @@ SVG.Element = function Element(n) {
   };
 };
 
-// Add element-specific functions
+//
 SVG.extend(SVG.Element, {
-  
-  // move element to given x and y values
+  // Move element to given x and y values
   move: function(x, y) {
-    return this.attr({ x: x, y: y });
+    return this.attr({
+      x: x,
+      y: y
+    });
   },
-  
-  // set element size to given width and height
-  size: function(w, h) { 
-    return this.attr({ width: w, height: h });
-  },
-  
-  // position element by its center
+  // Move element by its center
   center: function(x, y) {
-    var b = this.bbox();
+    var box = this.bbox();
     
-    return this.move(x - b.width / 2, y - b.height / 2);
+    return this.move(x - box.width / 2, y - box.height / 2);
   },
-  
-  // clone element
+  // Set element size to given width and height
+  size: function(width, height) { 
+    return this.attr({
+      width:  width,
+      height: height
+    });
+  },
+  // Clone element
   clone: function() {
-    var c;
+    var clone;
     
-    // if this is a wrapped shape
+    /* if this is a wrapped shape */
     if (this instanceof Wrap) {
-      // build new wrapped shape
-      c = this.parent[this.child.node.nodeName]();
+      /* build new wrapped shape */
+      clone = this.parent[this.child.node.nodeName]();
       
-      // copy child attributes and transformations
-      c.child.trans = this.child.trans;
-      c.child.attr(this.child.attrs).transform({});
+      /* copy child attributes and transformations */
+      clone.child.trans = this.child.trans;
+      clone.child.attr(this.child.attrs).transform({});
       
     } else {
-      var n = this.node.nodeName;
+      var name = this.node.nodeName;
       
-      // invoke shape method with shape-specific arguments
-      c = n == 'rect' ?
-        this.parent[n](this.attrs.width, this.attrs.height) :
-      n == 'ellipse' ?
-        this.parent[n](this.attrs.rx * 2, this.attrs.ry * 2) :
-      n == 'image' ?
-        this.parent[n](this.src) :
-      n == 'text' ?
-        this.parent[n](this.content) :
-      n == 'g' ?
+      /* invoke shape method with shape-specific arguments */
+      clone = name == 'rect' ?
+        this.parent[name](this.attrs.width, this.attrs.height) :
+      name == 'ellipse' ?
+        this.parent[name](this.attrs.rx * 2, this.attrs.ry * 2) :
+      name == 'image' ?
+        this.parent[name](this.src) :
+      name == 'text' ?
+        this.parent[name](this.content) :
+      name == 'g' ?
         this.parent.group() :
-        this.parent[n]();
+        this.parent[name]();
     }
     
-    // copy transformations
-    c.trans = this.trans;
+    /* copy transformations */
+    clone.trans = this.trans;
     
-    // apply attributes and translations
-    return c.attr(this.attrs).transform({});
+    /* apply attributes and translations */
+    return clone.attr(this.attrs).transform({});
   },
-  
-  // remove element
+  // Remove element
   remove: function() {
     return this.parent != null ? this.parent.remove(this) : void 0;
   },
-  
-  // get parent document
+  // Get parent document
   parentDoc: function() {
     return this._parent(SVG.Doc);
   },
-  
-  // set svg element attribute
+  // Set svg element attribute
   attr: function(a, v, n) {
     if (arguments.length < 2) {
-      // apply every attribute individually if an object is passed
+      /* apply every attribute individually if an object is passed */
       if (typeof a == 'object')
         for (v in a) this.attr(v, a[v]);
       
-      // act as a getter for style attributes
+      /* act as a getter for style attributes */
       else if (this._isStyle(a))
         return a == 'text' ?
                  this.content :
@@ -104,26 +106,26 @@ SVG.extend(SVG.Element, {
                  this[a] :
                  this.style[a];
       
-      // act as a getter if the first and only argument is not an object
+      /* act as a getter if the first and only argument is not an object */
       else
         return this.attrs[a];
     
     } else {
-      // store value
+      /* store value */
       this.attrs[a] = v;
       
-      // treat x differently on text elements
+      /* treat x differently on text elements */
       if (a == 'x' && this._isText())
         for (var i = this.lines.length - 1; i >= 0; i--)
           this.lines[i].attr(a, v);
       
-      // set the actual attribute
+      /* set the actual attribute */
       else
         n != null ?
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v);
       
-      // if the passed argument belongs to the style as well, add it there
+      /* if the passed argument belongs to the style as well, add it there */
       if (this._isStyle(a)) {
         a == 'text' ?
           this.text(v) :
@@ -137,110 +139,100 @@ SVG.extend(SVG.Element, {
     
     return this;
   },
-  
+  // Manage transformations
   transform: function(o) {
-    // act as a getter if the first argument is a string
+    /* act as a getter if the first argument is a string */
     if (typeof o === 'string')
       return this.trans[o];
       
-    // ... otherwise continue as a setter
-    var k,
-        t = [],
-        b = this.bbox(),
-        s = this.attr('transform') || '',
-        l = s.match(/[a-z]+\([^\)]+\)/g) || [];
+    /* ... otherwise continue as a setter */
+    var key, transform = [];
     
-    // merge values
-    for (k in o)
-      if (o[k] != null)
-        this.trans[k] = o[k];
+    /* merge values */
+    for (key in o)
+      if (o[key] != null)
+        this.trans[key] = o[key];
     
-    // alias current transformations
+    /* alias current transformations */
     o = this.trans;
     
-    // add rotate
-    if (o.rotation != 0)
-      t.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : b.cx) + ',' + (o.cy != null ? o.cy : b.cy) + ')');
+    /* add rotation */
+    if (o.rotation != 0) {
+      var box = this.bbox();
+      transform.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : box.cx) + ',' + (o.cy != null ? o.cy : box.cy) + ')');
+    }
     
-    // add scale
-    t.push('scale(' + o.scaleX + ',' + o.scaleY + ')');
+    /* add scale */
+    transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')');
     
-    // add skew on x axis
+    /* add skew on x axis */
     if (o.skewX != 0)
-      t.push('skewX(' + o.skewX + ')');
+      transform.push('skewX(' + o.skewX + ')');
     
-    // add skew on y axis
+    /* add skew on y axis */
     if (o.skewY != 0)
-      t.push('skewY(' + o.skewY + ')')
+      transform.push('skewY(' + o.skewY + ')')
     
-    // add translate
-    t.push('translate(' + o.x + ',' + o.y + ')');
+    /* add translation */
+    transform.push('translate(' + o.x + ',' + o.y + ')');
     
-    // add only te required transformations
-    return this.attr('transform', t.join(' '));
+    /* add only te required transformations */
+    return this.attr('transform', transform.join(' '));
   },
-  
-  // get bounding box
+  // Get bounding box
   bbox: function() {
-    // actual bounding box
-    var b = this.node.getBBox();
+    /* actual, native bounding box */
+    var box = this.node.getBBox();
     
     return {
-      // include translations on x an y
-      x:      b.x + this.trans.x,
-      y:      b.y + this.trans.y,
+      /* include translations on x an y */
+      x:      box.x + this.trans.x,
+      y:      box.y + this.trans.y,
       
-      // add the center
-      cx:     b.x + this.trans.x + b.width  / 2,
-      cy:     b.y + this.trans.y + b.height / 2,
+      /* add the center */
+      cx:     box.x + this.trans.x + box.width  / 2,
+      cy:     box.y + this.trans.y + box.height / 2,
       
-      // plain width and height
-      width:  b.width,
-      height: b.height
+      /* plain width and height */
+      width:  box.width,
+      height: box.height
     };
   },
-  
-  // is a given point inside the bounding box of the element
+  // Checks whether the given point inside the bounding box of the element
   inside: function(x, y) {
-    var b = this.bbox();
+    var box = this.bbox();
     
-    return x > b.x &&
-           y > b.y &&
-           x < b.x + b.width &&
-           y < b.y + b.height;
+    return x > box.x &&
+           y > box.y &&
+           x < box.x + box.width &&
+           y < box.y + box.height;
   },
-  
-  // show element
+  // Show element
   show: function() {
     this.node.style.display = '';
     
     return this;
   },
-  
-  // hide element
+  // Hide element
   hide: function() {
     this.node.style.display = 'none';
     
     return this;
   },
-  
-  // private: find svg parent
-  _parent: function(pt) {
-    var e = this;
+  // Private: find svg parent by instance
+  _parent: function(parent) {
+    var element = this;
     
-    // find ancestor with given type
-    while (e != null && !(e instanceof pt))
-      e = e.parent;
+    while (element != null && !(element instanceof parent))
+      element = element.parent;
 
-    return e;
+    return element;
   },
-  
-  // private: tester method for style detection
-  _isStyle: function(a) {
-    return typeof a == 'string' && this._isText() ? (/^font|text|leading/).test(a) : false;
+  // Private: tester method for style detection
+  _isStyle: function(attr) {
+    return typeof attr == 'string' && this._isText() ? (/^font|text|leading/).test(attr) : false;
   },
-  
-  // private: element type tester
+  // Private: element type tester
   _isText: function() {
     return this instanceof SVG.Text;
   }

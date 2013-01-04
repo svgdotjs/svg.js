@@ -58,7 +58,6 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
     file.puts "\n"
     file.puts svgjs
     file.puts '}).call(this);'
-    file.puts 'function svg(e) { return new SVG.Doc(e); };'
   end
 end
 
@@ -137,12 +136,12 @@ task :check_whitespace do
   fail if flunked
 end
 
-# desc "Generate docco documentation from source files"
-# task :docco do
-#   verbose false do
-#     sh 'docco', *Dir['src/*.js']
-#   end
-# end
+desc "Generate docco documentation from source files"
+task :docco do
+  verbose false do
+    sh 'docco', *Dir['src/*.js']
+  end
+end
 
 # svg.js version number + git sha if available
 def version_string

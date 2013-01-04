@@ -1,147 +1,123 @@
+// ### A module used for container elements like SVG.Doc, SVG.Group, SVG.Defs, ...
 
-// methods for container elements like SVG.Doc, SVG.Group, SVG.Defs, ...
+//
 SVG.Container = {
-  
-  // add given element at goven position
-  add: function(e, i) {
-    if (!this.has(e)) {
-      i = i == null ? this.children().length : i;
-      this.children().splice(i, 0, e);
-      this.node.insertBefore(e.node, this.node.childNodes[i] || null);
-      e.parent = this;
+  // Add given element at a position
+  add: function(element, index) {
+    if (!this.has(element)) {
+      index = index == null ? this.children().length : index;
+      this.children().splice(index, 0, element);
+      this.node.insertBefore(element.node, this.node.childNodes[index] || null);
+      element.parent = this;
     }
     
     return this;
   },
-  
-  // basically does the same as add() but returns the added element rather than 'this'
-  put: function(e, i) {
-    this.add(e, i);
-    return e;
+  // Basically does the same as `add()` but returns the added element
+  put: function(element, index) {
+    this.add(element, index);
+    return element;
   },
-  
-  // chacks if the given element is a child
-  has: function(e) {
-    return this.children().indexOf(e) >= 0;
+  // Checks if the given element is a child
+  has: function(element) {
+    return this.children().indexOf(element) >= 0;
   },
-  
-  // returns all child elements and initializes store array if non existant
+  // Returns all child elements
   children: function() {
     return this._children || (this._children = []);
   },
-  
-  // iterates over all children
-  each: function(b) {
-    var i,
-        c = this.children();
+  // Iterates over all children and invokes a given block
+  each: function(block) {
+    var index,
+        children = this.children();
     
-    // iteralte all shapes
-    for (i = 0, l = c.length; i < l; i++)
-      if (c[i] instanceof SVG.Shape)
-        b.apply(c[i], [i, c]);
+    for (index = 0, length = children.length; index < length; index++)
+      if (children[index] instanceof SVG.Shape)
+        block.apply(children[index], [index, children]);
     
     return this;
   },
-  
-  // remove a given child element
-  remove: function(e) {
-    return this.removeAt(this.children().indexOf(e));
+  // Remove a given child element
+  remove: function(element) {
+    return this.removeAt(this.children().indexOf(element));
   },
-  
-  // remove child element at a given position
-  removeAt: function(i) {
-    if (0 <= i && i < this.children().length) {
-      var e = this.children()[i];
-      this.children().splice(i, 1);
-      this.node.removeChild(e.node);
-      e.parent = null;
+  // Remove a child element at a given position
+  removeAt: function(index) {
+    if (0 <= index && index < this.children().length) {
+      var element = this.children()[index];
+      this.children().splice(index, 1);
+      this.node.removeChild(element.node);
+      element.parent = null;
     }
     
     return this;
   },
-  
-  // returns defs element and initializes store array if non existant
+  // Returns defs element
   defs: function() {
     return this._defs || (this._defs = this.put(new SVG.Defs(), 0));
   },
-  
-  // re-level defs to first positon in element stack
+  // Re-level defs to first positon in element stack
   level: function() {
-    return this.remove(d).put(this.defs(), 0);
+    return this.remove(this.defs()).put(this.defs(), 0);
   },
-  
-  // create a group element
+  // Create a group element
   group: function() {
     return this.put(new SVG.G());
   },
-  
-  // create a rect element
-  rect: function(w, h) {
-    return this.put(new SVG.Rect().size(w, h));
+  // Create a rect element
+  rect: function(width, height) {
+    return this.put(new SVG.Rect().size(width, height));
   },
-  
-  // create circle element, based on ellipse
-  circle: function(d) {
-    return this.ellipse(d);
+  // Create circle element, based on ellipse
+  circle: function(diameter) {
+    return this.ellipse(diameter);
   },
-  
-  // create and ellipse
-  ellipse: function(w, h) {
-    return this.put(new SVG.Ellipse().size(w, h));
+  // Create an ellipse
+  ellipse: function(width, height) {
+    return this.put(new SVG.Ellipse().size(width, height));
   },
-  
-  // create a polyline element
-  polyline: function(p) {
-    return this.put(new Wrap(new SVG.Polyline())).plot(p);
+  // Create a wrapped polyline element
+  polyline: function(points) {
+    return this.put(new Wrap(new SVG.Polyline())).plot(points);
   },
-  
-  // create a polygon element
-  polygon: function(p) {
-    return this.put(new Wrap(new SVG.Polygon())).plot(p);
+  // Create a wrapped polygon element
+  polygon: function(points) {
+    return this.put(new Wrap(new SVG.Polygon())).plot(points);
   },
-  
-  // create a wrapped path element
-  path: function(d) {
-    return this.put(new Wrap(new SVG.Path())).plot(d);
+  // Create a wrapped path element
+  path: function(data) {
+    return this.put(new Wrap(new SVG.Path())).plot(data);
   },
-  
-  // create image element, load image and set its size
-  image: function(s, w, h) {
-    w = w != null ? w : 100;
-    return this.put(new SVG.Image().load(s).size(w, h != null ? h : w));
+  // Create image element, load image and set its size
+  image: function(source, width, height) {
+    width = width != null ? width : 100;
+    return this.put(new SVG.Image().load(source).size(width, height != null ? height : width));
   },
-  
-  // create text element
-  text: function(t) {
-    return this.put(new SVG.Text().text(t));
+  // Create text element
+  text: function(text) {
+    return this.put(new SVG.Text().text(text));
   },
-  
-  // create nested svg document
-  nested: function(s) {
+  // Create nested svg document
+  nested: function() {
     return this.put(new SVG.Nested());
   },
-  
   // create element in defs
-  gradient: function(t, b) {
-    return this.defs().gradient(t, b);
+  gradient: function(type, block) {
+    return this.defs().gradient(type, block);
   },
-  
-  // create masking element
+  // Create masking element
   mask: function() {
     return this.defs().put(new SVG.Mask());
   },
-  
-  // get first child, skipping the defs node
+  // Get first child, skipping the defs node
   first: function() {
-    return this.children()[1];
+    return this.children()[0] instanceof SVG.Defs ? this.children()[1] : this.children()[0];
   },
-  
-  // let the last child
+  // Get the last child
   last: function() {
     return this.children()[this.children().length - 1];
   },
-  
-  // clears all elements of this container
+  // Remove all elements in this container
   clear: function() {
     this._children = [];
     
@@ -150,23 +126,22 @@ SVG.Container = {
     
     return this;
   },
-  
-  // hack for safari preventing text to be rendered in one line,
-  // basically it sets the position of the svg node to absolute
-  // when the dom is loaded, and resets it to relative a few ms later.
+  // Hack for safari preventing text to be rendered in one line.
+  // Basically it sets the position of the svg node to absolute
+  // when the dom is loaded, and resets it to relative a few milliseconds later.
   stage: function() {
-    var r, e = this;
+    var check, element = this;
     
-    r = function() {
+    check = function() {
       if (document.readyState === 'complete') {
-        e.attr('style', 'position:absolute;');
-        setTimeout(function() { e.attr('style', 'position:relative;'); }, 5);
+        element.attr('style', 'position:absolute;');
+        setTimeout(function() { element.attr('style', 'position:relative;'); }, 5);
       } else {
-        setTimeout(r, 10);
+        setTimeout(check, 10);
       }
     };
     
-    r();
+    check();
     
     return this;
   }

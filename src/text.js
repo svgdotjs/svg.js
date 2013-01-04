@@ -1,68 +1,66 @@
 
-// list font style attributes as they should be applied to style 
+// List font style attributes as they should be applied to style 
 var _styleAttr = ['size', 'family', 'weight', 'stretch', 'variant', 'style'];
-
 
 SVG.Text = function Text() {
   this.constructor.call(this, SVG.create('text'));
   
-  // define default style
+  /* define default style */
   this.style = { 'font-size':  16, 'font-family': 'Helvetica', 'text-anchor': 'start' };
   this.leading = 1.2;
 };
 
-// inherit from SVG.Element
+// Inherit from SVG.Element
 SVG.Text.prototype = new SVG.Shape();
 
-// Add image-specific functions
 SVG.extend(SVG.Text, {
-  
-  text: function(t) {
-    // update the content
-    this.content = t = t || 'text';
+  // Set the text content
+  text: function(text) {
+    /* update the content */
+    this.content = text = text || 'text';
     this.lines = [];
     
-    var i, n,
-        s = this._style(),
-        p = this.parentDoc(),
-        a = t.split("\n"),
-        f = this.style['font-size'];
+    var index, length, tspan,
+        style   = this._style(),
+        parent  = this.parentDoc(),
+        lines   = text.split("\n"),
+        size    = this.style['font-size'];
     
-    // remove existing child nodes
+    /* remove existing child nodes */
     while (this.node.hasChildNodes())
       this.node.removeChild(this.node.lastChild);
     
-    // build new lines
-    for (i = 0, l = a.length; i < l; i++) {
-      // create new tspan and set attributes
-      n = new TSpan().
-        text(a[i]).
+    /* build new lines */
+    for (index = 0, length = lines.length; index < length; index++) {
+      /* create new tspan and set attributes */
+      tspan = new TSpan().
+        text(lines[index]).
         attr({
-          dy:     f * this.leading - (i == 0 ? f * 0.3 : 0),
+          dy:     size * this.leading - (index == 0 ? size * 0.3 : 0),
           x:      (this.attrs.x || 0),
-          style:  s
+          style:  style
         });
       
-      // add new tspan
-      this.node.appendChild(n.node);
-      this.lines.push(n);
+      /* add new tspan */
+      this.node.appendChild(tspan.node);
+      this.lines.push(tspan);
     };
     
-    // set style
-    return this.attr('style', s);
+    /* set style */
+    return this.attr('style', style);
   },
   
-  // build style based on _styleAttr
+  // Build style based on _styleAttr
   _style: function() {
-    var i, o = '';
+    var index, style = '';
     
-    for (i = _styleAttr.length - 1; i >= 0; i--)
-      if (this.style['font-' + _styleAttr[i]] != null)
-        o += 'font-' + _styleAttr[i] + ':' + this.style['font-' + _styleAttr[i]] + ';';
+    for (index = _styleAttr.length - 1; index >= 0; index--)
+      if (this.style['font-' + _styleAttr[index]] != null)
+        style += 'font-' + _styleAttr[index] + ':' + this.style['font-' + _styleAttr[index]] + ';';
     
-    o += 'text-anchor:' + this.style['text-anchor'] + ';';
+    style += 'text-anchor:' + this.style['text-anchor'] + ';';
       
-    return o;
+    return style;
   }
   
 });
@@ -72,14 +70,14 @@ function TSpan() {
   this.constructor.call(this, SVG.create('tspan'));
 };
 
-// inherit from SVG.Shape
+// Inherit from SVG.Shape
 TSpan.prototype = new SVG.Shape();
 
-// include the container object
+// Include the container object
 SVG.extend(TSpan, {
-  
-  text: function(t) {
-    this.node.appendChild(document.createTextNode(t));
+  // Set text content
+  text: function(text) {
+    this.node.appendChild(document.createTextNode(text));
     
     return this;
   }

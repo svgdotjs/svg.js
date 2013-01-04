@@ -1,113 +1,106 @@
-
-SVG.Gradient = function Gradient(t) {
-  this.constructor.call(this, SVG.create(t + 'Gradient'));
+SVG.Gradient = function Gradient(type) {
+  this.constructor.call(this, SVG.create(type + 'Gradient'));
   
-  // set unique id
+  /* set unique id */
   this.id = 'svgjs_' + (SVG.did++);
   this.attr('id', this.id);
   
-  // store type
-  this.type = t;
+  /* store type */
+  this.type = type;
 };
 
-// inherit from SVG.Element
+// Inherit from SVG.Element
 SVG.Gradient.prototype = new SVG.Element();
 
-// include the container object
+// Include the container object
 SVG.extend(SVG.Gradient, SVG.Container);
 
-// add gradient-specific functions
+//
 SVG.extend(SVG.Gradient, {
-  
-  // from position
+  // From position
   from: function(x, y) {
     return this.type == 'radial' ?
-             this.attr({ fx: x + '%', fy: y + '%' }) :
-             this.attr({ x1: x + '%', y1: y + '%' });
+      this.attr({ fx: x + '%', fy: y + '%' }) :
+      this.attr({ x1: x + '%', y1: y + '%' });
   },
-  
-  // to position
+  // To position
   to: function(x, y) {
     return this.type == 'radial' ?
-             this.attr({ cx: x + '%', cy: y + '%' }) :
-             this.attr({ x2: x + '%', y2: y + '%' });
+      this.attr({ cx: x + '%', cy: y + '%' }) :
+      this.attr({ x2: x + '%', y2: y + '%' });
   },
-  
-  // radius for radial gradient
-  radius: function(r) {
+  // Radius for radial gradient
+  radius: function(radius) {
     return this.type == 'radial' ?
-             this.attr({ r: r + '%' }) :
-             this;
+      this.attr({ r: radius + '%' }) :
+      this;
   },
-  
-  // add a color stop
-  at: function(o) {
-    return this.put(new SVG.Stop(o));
+  // Add a color stop
+  at: function(stop) {
+    return this.put(new SVG.Stop(stop));
   },
-  
-  // update gradient
-  update: function(b) {
-    // remove all stops
+  // Update gradient
+  update: function(block) {
+    /* remove all stops */
     while (this.node.hasChildNodes())
       this.node.removeChild(this.node.lastChild);
     
-    // invoke passed block
-    b(this);
+    /* invoke passed block */
+    block(this);
     
     return this;
   },
-  
-  // return the fill id
+  // Return the fill id
   fill: function() {
     return 'url(#' + this.id + ')';
   }
   
 });
 
-// add def-specific functions
+//
 SVG.extend(SVG.Defs, {
   
-  // define clippath
-  gradient: function(t, b) {
-    var e = this.put(new SVG.Gradient(t));
+  /* define clippath */
+  gradient: function(type, block) {
+    var element = this.put(new SVG.Gradient(type));
     
-    // invoke passed block
-    b(e);
+    /* invoke passed block */
+    block(element);
     
-    return e;
+    return element;
   }
   
 });
 
 
-SVG.Stop = function Stop(o) {
+SVG.Stop = function Stop(stop) {
   this.constructor.call(this, SVG.create('stop'));
   
-  // immediatelly build stop
-  this.update(o);
+  /* immediatelly build stop */
+  this.update(stop);
 };
 
-// inherit from SVG.Element
+// Inherit from SVG.Element
 SVG.Stop.prototype = new SVG.Element();
 
-// add mark-specific functions
+//
 SVG.extend(SVG.Stop, {
   
-  // add color stops
+  /* add color stops */
   update: function(o) {
-    var i,
-        s = '',
-        a = ['opacity', 'color'];
+    var index,
+        style = '',
+        attr  = ['opacity', 'color'];
     
-    // build style attribute
-    for (i = a.length - 1; i >= 0; i--)
-      if (o[a[i]] != null)
-        s += 'stop-' + a[i] + ':' + o[a[i]] + ';';
+    /* build style attribute */
+    for (index = attr.length - 1; index >= 0; index--)
+      if (o[attr[index]] != null)
+        style += 'stop-' + attr[index] + ':' + o[attr[index]] + ';';
     
-    // set attributes
+    /* set attributes */
     return this.attr({
       offset: (o.offset != null ? o.offset : this.attrs.offset || 0) + '%',
-      style:  s
+      style:  style
     });
   }
   

@@ -1,33 +1,33 @@
+// ### This module accounts for the main svg document
 
-SVG.Doc = function Doc(e) {
+//
+SVG.Doc = function Doc(element) {
   this.constructor.call(this, SVG.create('svg'));
   
-  // create extra wrapper
-  var w = document.createElement('div');
-  w.style.cssText = 'position:relative;width:100%;height:100%;';
+  /* create an extra wrapper */
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:relative;width:100%;height:100%;';
   
-  // ensure the presence of a html element
-  if (typeof e == 'string')
-    e = document.getElementById(e);
+  /* ensure the presence of a html element */
+  if (typeof element == 'string')
+    element = document.getElementById(element);
   
-  // set svg element attributes
+  /* set svg element attributes and create the <defs> node */
   this.
     attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' }).
     attr('xlink', SVG.xlink, SVG.ns).
     defs();
   
-  // add elements
-  e.appendChild(w);
-  w.appendChild(this.node);
+  /* add elements */
+  element.appendChild(wrapper);
+  wrapper.appendChild(this.node);
   
-  // ensure correct rendering for safari
+  /* ensure correct rendering for safari */
   this.stage();
 };
 
-// inherit from SVG.Element
+// Inherits from SVG.Element
 SVG.Doc.prototype = new SVG.Element();
 
-// include the container object
+// Include the container object
 SVG.extend(SVG.Doc, SVG.Container);
-
-

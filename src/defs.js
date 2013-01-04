@@ -1,10 +1,12 @@
+// ### The defs node
 
+//
 SVG.Defs = function Defs() {
   this.constructor.call(this, SVG.create('defs'));
 };
 
-// inherit from SVG.Element
+// Inherits from SVG.Element
 SVG.Defs.prototype = new SVG.Element();
 
-// include the container object
+// Include the container object
 SVG.extend(SVG.Defs, SVG.Container);
