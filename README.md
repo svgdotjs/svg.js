@@ -6,6 +6,8 @@ Svg.js is licensed under the terms of the MIT License.
 
 The base library is 2.7k gzipped, with all bells and whistles just under 4.5k.
 
+See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://svgjs.com/docs) and [some action](http://svgjs.com/test)
+
 ## Usage
 
 ### Create a SVG document
