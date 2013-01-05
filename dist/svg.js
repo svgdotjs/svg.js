@@ -1,4 +1,4 @@
-/* svg.js v0.1-64-gb40093f - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-65-geb58a52 - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -160,7 +160,16 @@
     this.attrs = {
       'fill-opacity':   1,
       'stroke-opacity': 1,
-      'stroke-width':   0
+      'stroke-width':   0,
+      x:      0,
+      y:      0,
+      cx:     0,
+      cy:     0,
+      width:  0,
+      height: 0,
+      r:      0,
+      rx:     0,
+      ry:     0
     };
     
     /* initialize transformation store with defaults */
@@ -890,9 +899,9 @@
   // Include the container object
   SVG.extend(SVG.Doc, SVG.Container);
   
-    // Hack for safari preventing text to be rendered in one line.
-    // Basically it sets the position of the svg node to absolute
-    // when the dom is loaded, and resets it to relative a few milliseconds later.
+  // Hack for safari preventing text to be rendered in one line.
+  // Basically it sets the position of the svg node to absolute
+  // when the dom is loaded, and resets it to relative a few milliseconds later.
   SVG.Doc.prototype.stage = function() {
     var check,
         element = this,

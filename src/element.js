@@ -10,7 +10,16 @@ SVG.Element = function Element(node) {
   this.attrs = {
     'fill-opacity':   1,
     'stroke-opacity': 1,
-    'stroke-width':   0
+    'stroke-width':   0,
+    x:      0,
+    y:      0,
+    cx:     0,
+    cy:     0,
+    width:  0,
+    height: 0,
+    r:      0,
+    rx:     0,
+    ry:     0
   };
   
   /* initialize transformation store with defaults */
