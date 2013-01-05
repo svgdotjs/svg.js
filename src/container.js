@@ -125,25 +125,6 @@ SVG.Container = {
       this.node.removeChild(this.node.lastChild);
     
     return this;
-  },
-  // Hack for safari preventing text to be rendered in one line.
-  // Basically it sets the position of the svg node to absolute
-  // when the dom is loaded, and resets it to relative a few milliseconds later.
-  stage: function() {
-    var check, element = this;
-    
-    check = function() {
-      if (document.readyState === 'complete') {
-        element.attr('style', 'position:absolute;');
-        setTimeout(function() { element.attr('style', 'position:relative;'); }, 5);
-      } else {
-        setTimeout(check, 10);
-      }
-    };
-    
-    check();
-    
-    return this;
   }
   
 };

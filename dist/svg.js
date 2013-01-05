@@ -1,8 +1,8 @@
-/* svg.js v0.1-61-g40de199 - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-64-gb40093f - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
-  this.svg = function(e) {
-    return new SVG.Doc(e);
+  this.svg = function(element) {
+    return new SVG.Doc(element);
   };
   
   // The main wrapping element
@@ -146,25 +146,6 @@
       
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild);
-      
-      return this;
-    },
-    // Hack for safari preventing text to be rendered in one line.
-    // Basically it sets the position of the svg node to absolute
-    // when the dom is loaded, and resets it to relative a few milliseconds later.
-    stage: function() {
-      var check, element = this;
-      
-      check = function() {
-        if (document.readyState === 'complete') {
-          element.attr('style', 'position:absolute;');
-          setTimeout(function() { element.attr('style', 'position:relative;'); }, 5);
-        } else {
-          setTimeout(check, 10);
-        }
-      };
-      
-      check();
       
       return this;
     }
@@ -888,13 +869,10 @@
   SVG.Doc = function Doc(element) {
     this.constructor.call(this, SVG.create('svg'));
     
-    /* create an extra wrapper */
-    var wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:relative;width:100%;height:100%;';
-    
     /* ensure the presence of a html element */
-    if (typeof element == 'string')
-      element = document.getElementById(element);
+    this.parent = typeof element == 'string' ?
+      document.getElementById(element) :
+      element;
     
     /* set svg element attributes and create the <defs> node */
     this.
@@ -902,12 +880,8 @@
       attr('xlink', SVG.xlink, SVG.ns).
       defs();
     
-    /* add elements */
-    element.appendChild(wrapper);
-    wrapper.appendChild(this.node);
-    
     /* ensure correct rendering for safari */
-    this.stage();
+    this.stage(); 
   };
   
   // Inherits from SVG.Element
@@ -915,6 +889,45 @@
   
   // Include the container object
   SVG.extend(SVG.Doc, SVG.Container);
+  
+    // Hack for safari preventing text to be rendered in one line.
+    // Basically it sets the position of the svg node to absolute
+    // when the dom is loaded, and resets it to relative a few milliseconds later.
+  SVG.Doc.prototype.stage = function() {
+    var check,
+        element = this,
+        wrapper = document.createElement('div');
+    
+    /* set temp wrapper to position relative */
+    wrapper.style.cssText = 'position:relative;height:100%;';
+    
+    /* put element into wrapper */
+    element.parent.appendChild(wrapper);
+    wrapper.appendChild(element.node);
+    
+    /* check for dom:ready */
+    check = function() {
+      if (document.readyState === 'complete') {
+        element.attr('style', 'position:absolute;');
+        setTimeout(function() {
+          /* set position back to relative */
+          element.attr('style', 'position:relative;');
+          
+          /* remove temp wrapper */
+          element.parent.removeChild(element.node.parentNode);
+          element.node.parentNode.removeChild(element.node);
+          element.parent.appendChild(element.node);
+          
+        }, 5);
+      } else {
+        setTimeout(check, 10);
+      }
+    };
+    
+    check();
+    
+    return this;
+  };
 
   SVG.Shape = function Shape(element) {
     this.constructor.call(this, element);

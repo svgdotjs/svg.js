@@ -7,8 +7,8 @@
 
 
 // Shortcut for creating a svg document
-this.svg = function(e) {
-  return new SVG.Doc(e);
+this.svg = function(element) {
+  return new SVG.Doc(element);
 };
 
 // The main wrapping element
