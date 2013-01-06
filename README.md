@@ -337,6 +337,7 @@ rect.animate().center(200, 200);
 ```
 
 Finally, you can add callback methods using `after()`:
+
 ```javascript
 rect.animate(3000).move(100, 100).after(function() {
   this.animate().attr({ fill: '#f06' });
@@ -350,8 +351,15 @@ Fill and stroke are used quite often. Therefore two convenience methods are prov
 
 ### Fill
 The `fill()` method is a pretty alternative to the `attr()` method:
+
 ```javascript
 rect.fill({ color: '#f06', opacity: 0.6 });
+```
+
+A single hex string will work as well:
+
+```javascript
+rect.fill('#f06');
 ```
 
 ### Stroke
@@ -359,6 +367,12 @@ The `stroke()` method is similar to `fill()`:
 
 ```javascript
 rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
+```
+
+Like fill, a single hex string will work as well:
+
+```javascript
+rect.stroke('#f06');
 ```
 
 ### Rotate
