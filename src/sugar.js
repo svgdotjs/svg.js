@@ -1,39 +1,31 @@
 // Define list of available attributes for stroke and fill
-var _strokeAttr = ['width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
-    _fillAttr   = ['opacity', 'rule'];
+SVG._stroke = ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'];
+SVG._fill   = ['color', 'opacity', 'rule'];
 
-SVG.extend(SVG.Shape, {
+
+// Prepend correct color prefix
+var _colorPrefix = function(type, attr) {
+  return attr == 'color' ? type : type + '-' + attr;
+};
+
+/* Add sugar for fill and stroke */
+['fill', 'stroke'].forEach(function(method) {
   
   // Set fill color and opacity
-  fill: function(fill) {
+  SVG.Shape.prototype[method] = function(o) {
     var index;
     
-    /* set fill color if not null */
-    if (fill.color != null)
-      this.attr('fill', fill.color);
+    if (typeof o == 'string')
+      this.attr(method, o);
     
-    /* set all attributes from _fillAttr list with prependes 'fill-' if not null */
-    for (index = _fillAttr.length - 1; index >= 0; index--)
-      if (fill[_fillAttr[index]] != null)
-        this.attr('fill-' + _fillAttr[index], fill[_fillAttr[index]]);
-    
-    return this;
-  },
-  // Set stroke color and opacity
-  stroke: function(stroke) {
-    var index;
-    
-    // set stroke color if not null
-    if (stroke.color)
-      this.attr('stroke', stroke.color);
-    
-    // set all attributes from _strokeAttr list with prependes 'stroke-' if not null
-    for (index = _strokeAttr.length - 1; index >= 0; index--)
-      if (stroke[_strokeAttr[index]] != null)
-        this.attr('stroke-' + _strokeAttr[index], stroke[_strokeAttr[index]]);
+    else
+      /* set all attributes from _fillAttr and _strokeAttr list */
+      for (index = SVG['_' + method].length - 1; index >= 0; index--)
+        if (o[SVG['_' + method][index]] != null)
+          this.attr(_colorPrefix(method, SVG['_' + method][index]), o[SVG['_' + method][index]]);
     
     return this;
-  }
+  };
   
 });
 
@@ -86,23 +78,6 @@ SVG.extend(SVG.Text, {
 
 
 if (SVG.FX) {
-  /* Add sugar for fill and stroke */
-  ['fill', 'stroke'].forEach(function(method) {
-    SVG.FX.prototype[method] = function(o) {
-      var attr, key;
-
-      for (key in o) {
-        attr = key == 'color' ? method : method + '-' + key;
-        this.attrs[attr] = {
-          from: this.target.attrs[attr],
-          to:   o[key]
-        };
-      };
-
-      return this;
-    };
-  });
-  
   SVG.extend(SVG.FX, {
     // Rotation
     rotate: function(angle) {
