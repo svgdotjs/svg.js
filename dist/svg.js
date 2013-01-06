@@ -12,16 +12,15 @@
     xlink: 'http://www.w3.org/1999/xlink',
     // Defs id sequence
     did: 0,
-    // Method for element creation
+    // Function for element creation
     create: function(element) {
       return document.createElementNS(this.ns, element);
     },
-    // Method for extending objects
+    // Function for extending objects
     extend: function(object, module) {
       for (var key in module)
         object.prototype[key] = module[key];
     }
-    
   };
 
   SVG.Container = {
