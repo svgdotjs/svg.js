@@ -1,4 +1,4 @@
-function Wrap(element) {
+SVG.Wrap = function Wrap(element) {
   this.constructor.call(this, SVG.create('g'));
   
   /* insert and store child */
@@ -7,9 +7,9 @@ function Wrap(element) {
 };
 
 // inherit from SVG.Shape
-Wrap.prototype = new SVG.Shape();
+SVG.Wrap.prototype = new SVG.Shape();
 
-SVG.extend(Wrap, {
+SVG.extend(SVG.Wrap, {
   // Move wrapper around
   move: function(x, y) {
     return this.center(

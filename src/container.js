@@ -78,15 +78,15 @@ SVG.Container = {
   },
   // Create a wrapped polyline element
   polyline: function(points) {
-    return this.put(new Wrap(new SVG.Polyline())).plot(points);
+    return this.put(new SVG.Wrap(new SVG.Polyline())).plot(points);
   },
   // Create a wrapped polygon element
   polygon: function(points) {
-    return this.put(new Wrap(new SVG.Polygon())).plot(points);
+    return this.put(new SVG.Wrap(new SVG.Polygon())).plot(points);
   },
   // Create a wrapped path element
   path: function(data) {
-    return this.put(new Wrap(new SVG.Path())).plot(data);
+    return this.put(new SVG.Wrap(new SVG.Path())).plot(data);
   },
   // Create image element, load image and set its size
   image: function(source, width, height) {

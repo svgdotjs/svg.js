@@ -1,4 +1,4 @@
-/* svg.js v0.1-68-g5ff4802 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-69-g50e1e48 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -101,15 +101,15 @@
     },
     // Create a wrapped polyline element
     polyline: function(points) {
-      return this.put(new Wrap(new SVG.Polyline())).plot(points);
+      return this.put(new SVG.Wrap(new SVG.Polyline())).plot(points);
     },
     // Create a wrapped polygon element
     polygon: function(points) {
-      return this.put(new Wrap(new SVG.Polygon())).plot(points);
+      return this.put(new SVG.Wrap(new SVG.Polygon())).plot(points);
     },
     // Create a wrapped path element
     path: function(data) {
-      return this.put(new Wrap(new SVG.Path())).plot(data);
+      return this.put(new SVG.Wrap(new SVG.Path())).plot(data);
     },
     // Create image element, load image and set its size
     image: function(source, width, height) {
@@ -993,7 +993,7 @@
   // Inherit from SVG.Element
   SVG.Shape.prototype = new SVG.Element();
 
-  function Wrap(element) {
+  SVG.Wrap = function Wrap(element) {
     this.constructor.call(this, SVG.create('g'));
     
     /* insert and store child */
@@ -1002,9 +1002,9 @@
   };
   
   // inherit from SVG.Shape
-  Wrap.prototype = new SVG.Shape();
+  SVG.Wrap.prototype = new SVG.Shape();
   
-  SVG.extend(Wrap, {
+  SVG.extend(SVG.Wrap, {
     // Move wrapper around
     move: function(x, y) {
       return this.center(

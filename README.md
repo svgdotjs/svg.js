@@ -4,7 +4,7 @@ A lightweight library for manipulating and animating SVG.
 
 Svg.js is licensed under the terms of the MIT License.
 
-The base library is 2.7k gzipped, with all bells and whistles about 4.5k.
+The base library is 2.7k gzipped, with all bells and whistles about 4.6k.
 
 See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://svgjs.com/docs) and [some action](http://svgjs.com/test).
 
@@ -698,7 +698,7 @@ $ rake concat[-clip:group:arrange] dist
 To build the base library only including shapes:
 
 ``` sh
-rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
+rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] dist
 ```
 
 _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_
