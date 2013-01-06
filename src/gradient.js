@@ -60,7 +60,7 @@ SVG.extend(SVG.Gradient, {
 //
 SVG.extend(SVG.Defs, {
   
-  /* define clippath */
+  /* define gradient */
   gradient: function(type, block) {
     var element = this.put(new SVG.Gradient(type));
     

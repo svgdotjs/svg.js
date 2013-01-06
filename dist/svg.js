@@ -1,4 +1,4 @@
-/* svg.js v0.1-66-g6175f1a - svg container element fx event group arrange defs mask gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-68-g5ff4802 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -124,9 +124,13 @@
     nested: function() {
       return this.put(new SVG.Nested());
     },
-    // create element in defs
+    // Create gradient element in defs
     gradient: function(type, block) {
       return this.defs().gradient(type, block);
+    },
+    // Create pattern element in defs
+    pattern: function(width, height, block) {
+      return this.defs().pattern(width, height, block);
     },
     // Create masking element
     mask: function() {
@@ -765,6 +769,50 @@
     
   });
 
+  SVG.Pattern = function Pattern(type) {
+    this.constructor.call(this, SVG.create('pattern'));
+    
+    /* set unique id */
+    this.id = 'svgjs_' + (SVG.did++);
+    this.attr('id', this.id);
+  };
+  
+  // Inherit from SVG.Element
+  SVG.Pattern.prototype = new SVG.Element();
+  
+  // Include the container object
+  SVG.extend(SVG.Pattern, SVG.Container);
+  
+  //
+  SVG.extend(SVG.Pattern, {
+    // Return the fill id
+    fill: function() {
+      return 'url(#' + this.id + ')';
+    }
+    
+  });
+  
+  //
+  SVG.extend(SVG.Defs, {
+    
+    /* define gradient */
+    pattern: function(width, height, block) {
+      var element = this.put(new SVG.Pattern());
+      
+      /* invoke passed block */
+      block(element);
+      
+      return element.attr({
+        x:            0,
+        y:            0,
+        width:        width,
+        height:       height,
+        patternUnits: 'userSpaceOnUse'
+      });
+    }
+    
+  });
+
   SVG.Gradient = function Gradient(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'));
     
@@ -827,7 +875,7 @@
   //
   SVG.extend(SVG.Defs, {
     
-    /* define clippath */
+    /* define gradient */
     gradient: function(type, block) {
       var element = this.put(new SVG.Gradient(type));
       

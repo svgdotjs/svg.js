@@ -584,6 +584,25 @@ s1.update({ offset: 10, color: '#0f0', opacity: 1 });
 _This functionality requires the gradient.js module which is included in the default distribution._
 
 
+## Patterns
+
+Patterns work very much like gradients, you only have to define the tile size:
+
+```javascript
+var pattern = draw.pattern(20, 20, function(add) {
+  add.rect(10, 10).fill('#000');
+  add.rect(10, 10).move(10, 0).fill({ color: '#000', opacity: 0.5 });
+  add.rect(10, 10).move(0, 10).fill({ color: '#000', opacity: 0.5 });
+});
+
+var circle = draw.circle(200, 200).fill(pattern.fill());
+```
+
+This will fill the circle with a checkered pattern. There is a lot more to patterns. Please refer to the [Patterns section](http://www.w3.org/TR/SVG/pservers.html#Patterns) of the SVG specification.
+
+_This functionality requires the patterns.js module which is included in the default distribution._
+
+
 ## Events
 All usual events are accessible on elements:
 

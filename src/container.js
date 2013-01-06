@@ -101,9 +101,13 @@ SVG.Container = {
   nested: function() {
     return this.put(new SVG.Nested());
   },
-  // create element in defs
+  // Create gradient element in defs
   gradient: function(type, block) {
     return this.defs().gradient(type, block);
+  },
+  // Create pattern element in defs
+  pattern: function(width, height, block) {
+    return this.defs().pattern(width, height, block);
   },
   // Create masking element
   mask: function() {
