@@ -1,4 +1,4 @@
-/* svg.js v0.1-71-g87cef2a - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-72-g3bbd30e - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -413,7 +413,7 @@
     // Add animation parameters and start animation
     animate: function(duration, ease) {
       /* ensure default duration and easing */
-      duration = duration == null ? 1000 : duration < 10 ? 10 : duration;
+      duration = duration == null ? 1000 : duration;
       ease = ease || '<>';
       
       var akeys, tkeys, tvalues,
@@ -485,7 +485,7 @@
           fx._after ? fx._after.apply(element, [fx]) : fx.stop();
         }
           
-      }, 10);
+      }, duration > 10 ? 10 : duration);
       
       return this;
     },

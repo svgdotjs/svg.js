@@ -8,7 +8,7 @@ SVG.extend(SVG.FX, {
   // Add animation parameters and start animation
   animate: function(duration, ease) {
     /* ensure default duration and easing */
-    duration = duration == null ? 1000 : duration < 10 ? 10 : duration;
+    duration = duration == null ? 1000 : duration;
     ease = ease || '<>';
     
     var akeys, tkeys, tvalues,
@@ -80,7 +80,7 @@ SVG.extend(SVG.FX, {
         fx._after ? fx._after.apply(element, [fx]) : fx.stop();
       }
         
-    }, 10);
+    }, duration > 10 ? 10 : duration);
     
     return this;
   },
