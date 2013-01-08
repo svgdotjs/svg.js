@@ -658,6 +658,13 @@ SVG.extend(SVG.Doc, {
 });
 ```
 
+## Plugins
+Here are a few nice plugins that are available for svg.js:
+
+- [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
+- [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
+
+
 
 ## Building
 Starting out with the default distribution of svg.js is good. Although you might want to remove some modules to keep the size at minimum.
