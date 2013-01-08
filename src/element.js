@@ -4,7 +4,8 @@
 //
 SVG.Element = function Element(node) {
   /* keep reference to the element node */
-  this.node = node;
+  if (this.node = node)
+    this.type = node.nodeName;
   
   /* initialize attribute store with defaults */
   this.attrs = {

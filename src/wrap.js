@@ -4,6 +4,7 @@ SVG.Wrap = function Wrap(element) {
   /* insert and store child */
   this.node.insertBefore(element.node, null);
   this.child = element;
+  this.type = element.node.nodeName;
 };
 
 // inherit from SVG.Shape
