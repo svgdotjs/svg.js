@@ -711,10 +711,6 @@ rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] 
 _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_
 
 
-## Plug-ins
-- [svg.shapes.js](https://github.com/wout/svg.shapes.js)
-
-
 ## To-do
 - Draggable module (make elements and groups draggable)
 - Text on path module (write text along paths)
