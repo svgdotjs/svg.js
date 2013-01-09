@@ -2,7 +2,7 @@
 
 A lightweight library for manipulating and animating SVG.
 
-Svg.js has no dependencies and aims to be under 5k gzipped. The base library is 2.7k gzipped, with all bells and whistles about 4.6k.
+Svg.js has no dependencies and aims to be under 5k gzipped. The base library is 2.7k gzipped, with all bells and whistles about 4.7k.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -608,12 +608,42 @@ _This functionality requires the patterns.js module which is included in the def
 
 
 ## Events
-All usual events are accessible on elements:
+Events can be bound to elements as follows:
 
 ```javascript
 rect.click(function() {
   this.fill({ color: '#f06' });
 });
+```
+
+You can also bind event listeners to elements:
+
+```javascript
+var click = function() {
+  rect.fill({ color: '#f06' });
+};
+
+rect.on('click', click);
+```
+
+Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
+
+Unbinding events is just as easy:
+
+```javascript
+rect.off('click', click);
+```
+
+But there is more to event listeners. You can bind events to html elements as well:
+
+```javascript
+SVG.on(window, 'click', click);
+```
+
+Obviously unbinding is practically the same:
+
+```javascript
+SVG.off(window, 'click', click);
 ```
 
 Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchend`, `touchmove` and `touchcancel`.
@@ -667,6 +697,7 @@ Here are a few nice plugins that are available for svg.js:
 
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 - [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
+- [svg.draggable.js](https://github.com/wout/svg.draggable.js) for more easing methods on animations.
 
 
 
@@ -716,7 +747,7 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 
 
 ## To-do
-- Draggable module (make elements and groups draggable)
+- Instance module
 - Text on path module (write text along paths)
 
 
