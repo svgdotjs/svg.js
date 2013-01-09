@@ -1,4 +1,4 @@
-/* svg.js v0.1-78-g145f7e0 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-80-g6d40c80 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -216,7 +216,7 @@
       var clone;
       
       /* if this is a wrapped shape */
-      if (this instanceof Wrap) {
+      if (this instanceof SVG.Wrap) {
         /* build new wrapped shape */
         clone = this.parent[this.child.node.nodeName]();
         

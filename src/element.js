@@ -62,7 +62,7 @@ SVG.extend(SVG.Element, {
     var clone;
     
     /* if this is a wrapped shape */
-    if (this instanceof Wrap) {
+    if (this instanceof SVG.Wrap) {
       /* build new wrapped shape */
       clone = this.parent[this.child.node.nodeName]();
       
