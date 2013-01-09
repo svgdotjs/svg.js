@@ -19,6 +19,7 @@ SVG.extend(SVG.FX, {
     
     /* start animation */
     this.interval = setInterval(function(){
+      // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
       var index,
           time = (new Date).getTime(),
           pos = time > finish ? 1 : (time - start) / duration;
@@ -236,4 +237,3 @@ SVG.extend(SVG.Element, {
 //     rect.animate(1500, '>').move(200, 300).after(function() {
 //       this.fill({ color: '#f06' });
 //     });
-

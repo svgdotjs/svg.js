@@ -298,6 +298,8 @@ For the latter, here is an example of the default `<>` function:
 function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; };
 ```
 
+For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
+
 Note that the `animate()` method will not return the targeted element but an instance of SVG.FX which will take the following methods:
 
 Of course `attr()`:
@@ -343,6 +345,8 @@ rect.animate(3000).move(100, 100).after(function() {
   this.animate().attr({ fill: '#f06' });
 });
 ```
+
+_This functionality requires the fx.js module which is included in the default distribution._
 
 
 ## Syntax sugar
