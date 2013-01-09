@@ -1,4 +1,4 @@
-/* svg.js v0.1-73-gc4dc580 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-77-g64fadd1 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -425,6 +425,7 @@
       
       /* start animation */
       this.interval = setInterval(function(){
+        // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
         var index,
             time = (new Date).getTime(),
             pos = time > finish ? 1 : (time - start) / duration;
@@ -642,7 +643,6 @@
   //     rect.animate(1500, '>').move(200, 300).after(function() {
   //       this.fill({ color: '#f06' });
   //     });
-  
 
 
   [ 'click',
