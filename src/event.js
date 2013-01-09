@@ -26,4 +26,37 @@
     
     return this;
   };
+  
+});
+
+// Add event binder in the SVG namespace
+SVG.on = function(node, event, listener) {
+  if (node.addEventListener)
+    node.addEventListener(event, listener, false);
+  else
+    node.attachEvent('on' + event, listener);
+};
+
+// Add event unbinder in the SVG namespace
+SVG.off = function(node, event, listener) {
+  if (node.removeEventListener)
+    node.removeEventListener(event, listener, false);
+  else
+    node.detachEvent('on' + event, listener);
+};
+
+//
+SVG.extend(SVG.Element, {
+  // Bind given event to listener
+  on: function(event, listener) {
+    SVG.on(this.node, event, listener);
+    
+    return this;
+  },
+  // Unbind event from listener
+  off: function(event, listener) {
+    SVG.off(this.node, event, listener);
+    
+    return this;
+  }
 });

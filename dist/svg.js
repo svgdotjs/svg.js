@@ -1,4 +1,4 @@
-/* svg.js v0.1-77-g64fadd1 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-78-g145f7e0 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -668,8 +668,40 @@
       
       return this;
     };
+    
   });
-
+  
+  // Add event binder in the SVG namespace
+  SVG.on = function(node, event, listener) {
+    if (node.addEventListener)
+      node.addEventListener(event, listener, false);
+    else
+      node.attachEvent('on' + event, listener);
+  };
+  
+  // Add event unbinder in the SVG namespace
+  SVG.off = function(node, event, listener) {
+    if (node.removeEventListener)
+      node.removeEventListener(event, listener, false);
+    else
+      node.detachEvent('on' + event, listener);
+  };
+  
+  //
+  SVG.extend(SVG.Element, {
+    // Bind given event to listener
+    on: function(event, listener) {
+      SVG.on(this.node, event, listener);
+      
+      return this;
+    },
+    // Unbind event from listener
+    off: function(event, listener) {
+      SVG.off(this.node, event, listener);
+      
+      return this;
+    }
+  });
 
   SVG.G = function G() {
     this.constructor.call(this, SVG.create('g'));
