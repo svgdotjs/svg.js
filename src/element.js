@@ -65,6 +65,7 @@ SVG.extend(SVG.Element, {
     if (this instanceof SVG.Wrap) {
       /* build new wrapped shape */
       clone = this.parent[this.child.node.nodeName]();
+      clone.attrs = this.attrs;
       
       /* copy child attributes and transformations */
       clone.child.trans = this.child.trans;
@@ -85,13 +86,15 @@ SVG.extend(SVG.Element, {
       name == 'g' ?
         this.parent.group() :
         this.parent[name]();
+      
+      clone.attr(this.attrs);
     }
     
     /* copy transformations */
     clone.trans = this.trans;
     
     /* apply attributes and translations */
-    return clone.attr(this.attrs).transform({});
+    return clone.transform({});
   },
   // Remove element
   remove: function() {

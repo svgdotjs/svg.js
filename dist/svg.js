@@ -1,4 +1,4 @@
-/* svg.js v0.1-80-g6d40c80 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-82-gfac8f88 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -219,6 +219,7 @@
       if (this instanceof SVG.Wrap) {
         /* build new wrapped shape */
         clone = this.parent[this.child.node.nodeName]();
+        clone.attrs = this.attrs;
         
         /* copy child attributes and transformations */
         clone.child.trans = this.child.trans;
@@ -239,13 +240,15 @@
         name == 'g' ?
           this.parent.group() :
           this.parent[name]();
+        
+        clone.attr(this.attrs);
       }
       
       /* copy transformations */
       clone.trans = this.trans;
       
       /* apply attributes and translations */
-      return clone.attr(this.attrs).transform({});
+      return clone.transform({});
     },
     // Remove element
     remove: function() {
