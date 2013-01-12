@@ -1,27 +1,10 @@
 SVG.Poly = {
-  
   // Set polygon data with default zero point if no data is passed
   plot: function(points) {
     this.attr('points', points || '0,0');
     
-    var box = this.bbox();
-    
-    if (box.x != 0 || box.y != 0)
-      this.transform({
-        x: -box.x,
-        y: -box.y
-      });
-      
     return this;
-  },
-  // Move path using translate
-  move: function(x, y) {
-    return this.transform({
-      x: x,
-      y: y
-    });
   }
-  
 };
 
 SVG.Polyline = function Polyline() {

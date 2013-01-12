@@ -1,4 +1,4 @@
-/* svg.js v0.1-83-g312084a - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-84-gd8f4dd3 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -1155,29 +1155,12 @@
   //     draw.ellipse(200, 100);
 
   SVG.Poly = {
-    
     // Set polygon data with default zero point if no data is passed
     plot: function(points) {
       this.attr('points', points || '0,0');
       
-      var box = this.bbox();
-      
-      if (box.x != 0 || box.y != 0)
-        this.transform({
-          x: -box.x,
-          y: -box.y
-        });
-        
       return this;
-    },
-    // Move path using translate
-    move: function(x, y) {
-      return this.transform({
-        x: x,
-        y: y
-      });
     }
-    
   };
   
   SVG.Polyline = function Polyline() {
