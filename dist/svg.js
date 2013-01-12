@@ -1,4 +1,4 @@
-/* svg.js v0.1-82-gfac8f88 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-83-g312084a - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -1158,7 +1158,17 @@
     
     // Set polygon data with default zero point if no data is passed
     plot: function(points) {
-      return this.attr('points', points || '0,0');
+      this.attr('points', points || '0,0');
+      
+      var box = this.bbox();
+      
+      if (box.x != 0 || box.y != 0)
+        this.transform({
+          x: -box.x,
+          y: -box.y
+        });
+        
+      return this;
     },
     // Move path using translate
     move: function(x, y) {
