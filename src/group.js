@@ -11,7 +11,7 @@ SVG.extend(SVG.G, SVG.Container);
 SVG.extend(SVG.G, {
   
   defs: function() {
-    return this.parentDoc().defs();
+    return this.doc().defs();
   }
   
 });

@@ -22,7 +22,7 @@ SVG.extend(SVG.Text, {
     
     var index, length, tspan,
         style   = this._style(),
-        parent  = this.parentDoc(),
+        parent  = this.doc(),
         lines   = text.split("\n"),
         size    = this.style['font-size'];
     

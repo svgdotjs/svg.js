@@ -101,7 +101,7 @@ SVG.extend(SVG.Element, {
     return this.parent != null ? this.parent.remove(this) : void 0;
   },
   // Get parent document
-  parentDoc: function() {
+  doc: function() {
     return this._parent(SVG.Doc);
   },
   // Set svg element attribute

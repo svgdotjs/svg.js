@@ -1,4 +1,4 @@
-/* svg.js v0.1-84-gd8f4dd3 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-85-g2a4e6b7 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -255,7 +255,7 @@
       return this.parent != null ? this.parent.remove(this) : void 0;
     },
     // Get parent document
-    parentDoc: function() {
+    doc: function() {
       return this._parent(SVG.Doc);
     },
     // Set svg element attribute
@@ -719,7 +719,7 @@
   SVG.extend(SVG.G, {
     
     defs: function() {
-      return this.parentDoc().defs();
+      return this.doc().defs();
     }
     
   });
@@ -1246,7 +1246,7 @@
       
       var index, length, tspan,
           style   = this._style(),
-          parent  = this.parentDoc(),
+          parent  = this.doc(),
           lines   = text.split("\n"),
           size    = this.style['font-size'];
       
