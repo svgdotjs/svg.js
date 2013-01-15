@@ -1,4 +1,4 @@
-/* svg.js v0.1-85-g2a4e6b7 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-86-g8b253f8 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -1366,35 +1366,39 @@
     
   });
   
-  SVG.extend(SVG.G, {
-    // Move using translate
-    move: function(x, y) {
-      return this.transform({
-        x: x,
-        y: y
-      });
-    }
-    
-  });
+  if (SVG.G) {
+    SVG.extend(SVG.G, {
+      // Move using translate
+      move: function(x, y) {
+        return this.transform({
+          x: x,
+          y: y
+        });
+      }
   
-  SVG.extend(SVG.Text, {
-    // Set font 
-    font: function(o) {
-      var key, attr = {};
-      
-      for (key in o)
-        key == 'leading' ?
-          attr[key] = o[key] :
-        key == 'anchor' ?
-          attr['text-anchor'] = o[key] :
-        _styleAttr.indexOf(key) > -1 ?
-          attr['font-'+ key] = o[key] :
-          void 0;
-      
-      return this.attr(attr).text(this.content);
-    }
-    
-  });
+    });
+  }
+  
+  if (SVG.Text) {
+    SVG.extend(SVG.Text, {
+      // Set font 
+      font: function(o) {
+        var key, attr = {};
+  
+        for (key in o)
+          key == 'leading' ?
+            attr[key] = o[key] :
+          key == 'anchor' ?
+            attr['text-anchor'] = o[key] :
+          _styleAttr.indexOf(key) > -1 ?
+            attr['font-'+ key] = o[key] :
+            void 0;
+  
+        return this.attr(attr).text(this.content);
+      }
+  
+    });
+  }
   
   
   if (SVG.FX) {
@@ -1416,7 +1420,6 @@
   
     });
   }
-  
   
   
 

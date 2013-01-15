@@ -46,35 +46,39 @@ SVG.extend(SVG.Element, {
   
 });
 
-SVG.extend(SVG.G, {
-  // Move using translate
-  move: function(x, y) {
-    return this.transform({
-      x: x,
-      y: y
-    });
-  }
-  
-});
+if (SVG.G) {
+  SVG.extend(SVG.G, {
+    // Move using translate
+    move: function(x, y) {
+      return this.transform({
+        x: x,
+        y: y
+      });
+    }
 
-SVG.extend(SVG.Text, {
-  // Set font 
-  font: function(o) {
-    var key, attr = {};
-    
-    for (key in o)
-      key == 'leading' ?
-        attr[key] = o[key] :
-      key == 'anchor' ?
-        attr['text-anchor'] = o[key] :
-      _styleAttr.indexOf(key) > -1 ?
-        attr['font-'+ key] = o[key] :
-        void 0;
-    
-    return this.attr(attr).text(this.content);
-  }
-  
-});
+  });
+}
+
+if (SVG.Text) {
+  SVG.extend(SVG.Text, {
+    // Set font 
+    font: function(o) {
+      var key, attr = {};
+
+      for (key in o)
+        key == 'leading' ?
+          attr[key] = o[key] :
+        key == 'anchor' ?
+          attr['text-anchor'] = o[key] :
+        _styleAttr.indexOf(key) > -1 ?
+          attr['font-'+ key] = o[key] :
+          void 0;
+
+      return this.attr(attr).text(this.content);
+    }
+
+  });
+}
 
 
 if (SVG.FX) {
@@ -96,6 +100,5 @@ if (SVG.FX) {
 
   });
 }
-
 
 
