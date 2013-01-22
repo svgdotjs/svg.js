@@ -2,8 +2,7 @@ SVG.Mask = function Mask() {
   this.constructor.call(this, SVG.create('mask'));
   
   /* set unique id */
-  this.id = 'svgjs_' + (SVG.did++);
-  this.attr('id', this.id);
+  this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
 };
 
 // Inherit from SVG.Element

@@ -13,10 +13,10 @@ SVG.Wrap.prototype = new SVG.Shape();
 SVG.extend(SVG.Wrap, {
   // Move wrapper around
   move: function(x, y) {
-    return this.center(
-      x + (this._b.width  * this.child.trans.scaleX) / 2,
-      y + (this._b.height * this.child.trans.scaleY) / 2
-    );
+    return this.transform({
+      x: x,
+      y: y
+    });
   },
   // Set the actual size in pixels
   size: function(width, height) {
@@ -31,10 +31,10 @@ SVG.extend(SVG.Wrap, {
   },
   // Move by center
   center: function(x, y) {
-    return this.transform({
-      x: x,
-      y: y
-    });
+    return this.move(
+      x + (this._b.width  * this.child.trans.scaleX) / -2,
+      y + (this._b.height * this.child.trans.scaleY) / -2
+    );
   },
   // Create distributed attr
   attr: function(a, v, n) {
@@ -71,8 +71,8 @@ SVG.extend(SVG.Wrap, {
     
     /* reposition element withing wrapper */
     this.child.transform({
-      x: -this._b.cx,
-      y: -this._b.cy
+      x: -this._b.x,
+      y: -this._b.y
     });
     
     return this;

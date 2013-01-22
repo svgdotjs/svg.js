@@ -4,7 +4,7 @@
 SVG.extend(SVG.Element, {
   // Get all siblings, including myself
   siblings: function() {
-    return this.parent.children();
+    return (this.nested() || this.doc()).children();
   },
   // Get the curent position siblings
   position: function() {

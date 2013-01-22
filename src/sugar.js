@@ -29,22 +29,34 @@ var _colorPrefix = function(type, attr) {
   
 });
 
-SVG.extend(SVG.Element, {
-  // Rotation
-  rotate: function(angle) {
-    return this.transform({
-      rotation: angle || 0
-    });
-  },
-  // Skew
-  skew: function(x, y) {
-    return this.transform({
-      skewX: x || 0,
-      skewY: y || 0
+[SVG.Element, SVG.FX].forEach(function(module) {
+  if (module) {
+    SVG.extend(module, {
+      // Rotation
+      rotate: function(angle) {
+        return this.transform({
+          rotation: angle || 0
+        });
+      },
+      // Skew
+      skew: function(x, y) {
+        return this.transform({
+          skewX: x || 0,
+          skewY: y || 0
+        });
+      },
+      // Scale
+      scale: function(x, y) {
+        return this.transform({
+          scaleX: x || 0,
+          scaleY: y || 0
+        });
+      }
+
     });
   }
-  
 });
+
 
 if (SVG.G) {
   SVG.extend(SVG.G, {
@@ -79,26 +91,4 @@ if (SVG.Text) {
 
   });
 }
-
-
-if (SVG.FX) {
-  SVG.extend(SVG.FX, {
-    // Rotation
-    rotate: function(angle) {
-      return this.transform({
-        rotation: angle || 0
-      });
-    },
-
-    // Skew
-    skew: function(x, y) {
-      return this.transform({
-        skewX: x || 0,
-        skewY: y || 0
-      });
-    }
-
-  });
-}
-
 

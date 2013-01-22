@@ -33,6 +33,7 @@ SVG.Element = function Element(node) {
     skewX:    0,
     skewY:    0
   };
+
 };
 
 //
@@ -71,6 +72,10 @@ SVG.extend(SVG.Element, {
       clone.child.trans = this.child.trans;
       clone.child.attr(this.child.attrs).transform({});
       
+      /* re-plot shape */
+      if (clone.plot)
+        clone.plot(this.child.attrs[this.child instanceof SVG.Path ? 'd' : 'points']);
+      
     } else {
       var name = this.node.nodeName;
       
@@ -103,6 +108,10 @@ SVG.extend(SVG.Element, {
   // Get parent document
   doc: function() {
     return this._parent(SVG.Doc);
+  },
+  // Get parent nested document
+  nested: function() {
+    return this._parent(SVG.Nested);
   },
   // Set svg element attribute
   attr: function(a, v, n) {

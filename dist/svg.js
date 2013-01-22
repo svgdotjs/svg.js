@@ -1,4 +1,4 @@
-/* svg.js v0.1-86-g8b253f8 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-87-g6ae4977 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -187,6 +187,7 @@
       skewX:    0,
       skewY:    0
     };
+  
   };
   
   //
@@ -225,6 +226,10 @@
         clone.child.trans = this.child.trans;
         clone.child.attr(this.child.attrs).transform({});
         
+        /* re-plot shape */
+        if (clone.plot)
+          clone.plot(this.child.attrs[this.child instanceof SVG.Path ? 'd' : 'points']);
+        
       } else {
         var name = this.node.nodeName;
         
@@ -257,6 +262,10 @@
     // Get parent document
     doc: function() {
       return this._parent(SVG.Doc);
+    },
+    // Get parent nested document
+    nested: function() {
+      return this._parent(SVG.Nested);
     },
     // Set svg element attribute
     attr: function(a, v, n) {
@@ -727,7 +736,7 @@
   SVG.extend(SVG.Element, {
     // Get all siblings, including myself
     siblings: function() {
-      return this.parent.children();
+      return (this.nested() || this.doc()).children();
     },
     // Get the curent position siblings
     position: function() {
@@ -786,8 +795,7 @@
     this.constructor.call(this, SVG.create('mask'));
     
     /* set unique id */
-    this.id = 'svgjs_' + (SVG.did++);
-    this.attr('id', this.id);
+    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
   };
   
   // Inherit from SVG.Element
@@ -809,8 +817,7 @@
     this.constructor.call(this, SVG.create('pattern'));
     
     /* set unique id */
-    this.id = 'svgjs_' + (SVG.did++);
-    this.attr('id', this.id);
+    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
   };
   
   // Inherit from SVG.Element
@@ -853,8 +860,7 @@
     this.constructor.call(this, SVG.create(type + 'Gradient'));
     
     /* set unique id */
-    this.id = 'svgjs_' + (SVG.did++);
-    this.attr('id', this.id);
+    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
     
     /* store type */
     this.type = type;
@@ -1044,10 +1050,10 @@
   SVG.extend(SVG.Wrap, {
     // Move wrapper around
     move: function(x, y) {
-      return this.center(
-        x + (this._b.width  * this.child.trans.scaleX) / 2,
-        y + (this._b.height * this.child.trans.scaleY) / 2
-      );
+      return this.transform({
+        x: x,
+        y: y
+      });
     },
     // Set the actual size in pixels
     size: function(width, height) {
@@ -1062,10 +1068,10 @@
     },
     // Move by center
     center: function(x, y) {
-      return this.transform({
-        x: x,
-        y: y
-      });
+      return this.move(
+        x + (this._b.width  * this.child.trans.scaleX) / -2,
+        y + (this._b.height * this.child.trans.scaleY) / -2
+      );
     },
     // Create distributed attr
     attr: function(a, v, n) {
@@ -1102,8 +1108,8 @@
       
       /* reposition element withing wrapper */
       this.child.transform({
-        x: -this._b.cx,
-        y: -this._b.cy
+        x: -this._b.x,
+        y: -this._b.y
       });
       
       return this;
@@ -1349,22 +1355,34 @@
     
   });
   
-  SVG.extend(SVG.Element, {
-    // Rotation
-    rotate: function(angle) {
-      return this.transform({
-        rotation: angle || 0
-      });
-    },
-    // Skew
-    skew: function(x, y) {
-      return this.transform({
-        skewX: x || 0,
-        skewY: y || 0
+  [SVG.Element, SVG.FX].forEach(function(module) {
+    if (module) {
+      SVG.extend(module, {
+        // Rotation
+        rotate: function(angle) {
+          return this.transform({
+            rotation: angle || 0
+          });
+        },
+        // Skew
+        skew: function(x, y) {
+          return this.transform({
+            skewX: x || 0,
+            skewY: y || 0
+          });
+        },
+        // Scale
+        scale: function(x, y) {
+          return this.transform({
+            scaleX: x || 0,
+            scaleY: y || 0
+          });
+        }
+  
       });
     }
-    
   });
+  
   
   if (SVG.G) {
     SVG.extend(SVG.G, {
@@ -1399,28 +1417,6 @@
   
     });
   }
-  
-  
-  if (SVG.FX) {
-    SVG.extend(SVG.FX, {
-      // Rotation
-      rotate: function(angle) {
-        return this.transform({
-          rotation: angle || 0
-        });
-      },
-  
-      // Skew
-      skew: function(x, y) {
-        return this.transform({
-          skewX: x || 0,
-          skewY: y || 0
-        });
-      }
-  
-    });
-  }
-  
   
 
 
