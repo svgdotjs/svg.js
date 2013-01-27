@@ -204,8 +204,11 @@ SVG.extend(SVG.Element, {
   // Store data values on svg nodes
   data: function(a, v) {
     if (arguments.length < 2) {
-      var value = this.attr('data-' + a);
-      try { return JSON.parse(value); } catch(e) { return value; };
+      try {
+        return JSON.parse(this.attr('data-' + a));
+      } catch(e) {
+        return this.attr('data-' + a);
+      };
       
     } else {
       v === null ?
