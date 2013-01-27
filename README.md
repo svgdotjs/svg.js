@@ -649,6 +649,26 @@ SVG.off(window, 'click', click);
 Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchend`, `touchmove` and `touchcancel`.
 
 
+## Data
+The `data()` method allows you to bind arbitrary objects, strings and numbers to SVG elements:
+
+```javascript
+rect.data('key', { value: { data: 0.3 }});
+```
+
+Fetching the values is similar to the `attr()` method:
+
+```javascript
+rect.data('key');
+```
+
+Removing the data altogether:
+
+```javascript
+rect.data('key', null);
+```
+
+
 
 ## Extending functionality
 Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
@@ -691,6 +711,7 @@ SVG.extend(SVG.Doc, {
   }
 });
 ```
+
 
 ## Plugins
 Here are a few nice plugins that are available for svg.js:

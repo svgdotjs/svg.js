@@ -201,6 +201,20 @@ SVG.extend(SVG.Element, {
     /* add only te required transformations */
     return this.attr('transform', transform.join(' '));
   },
+  // Store data values on svg nodes
+  data: function(a, v) {
+    if (arguments.length < 2) {
+      var value = this.attr('data-' + a);
+      return value ? JSON.parse(value) : value;
+      
+    } else {
+      v === null ?
+        this.node.removeAttribute('data-' + a) :
+        this.attr('data-' + a, JSON.stringify(v));
+    }
+    
+    return this;
+  },
   // Get bounding box
   bbox: function() {
     /* actual, native bounding box */

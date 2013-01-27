@@ -1,4 +1,4 @@
-/* svg.js v0.1-87-g6ae4977 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-88-gb72373c - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -354,6 +354,20 @@
       
       /* add only te required transformations */
       return this.attr('transform', transform.join(' '));
+    },
+    // Store data values on svg nodes
+    data: function(a, v) {
+      if (arguments.length < 2) {
+        var value = this.attr('data-' + a);
+        return value ? JSON.parse(value) : value;
+        
+      } else {
+        v === null ?
+          this.node.removeAttribute('data-' + a) :
+          this.attr('data-' + a, JSON.stringify(v));
+      }
+      
+      return this;
     },
     // Get bounding box
     bbox: function() {
