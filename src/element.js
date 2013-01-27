@@ -205,7 +205,7 @@ SVG.extend(SVG.Element, {
   data: function(a, v) {
     if (arguments.length < 2) {
       var value = this.attr('data-' + a);
-      return value ? JSON.parse(value) : value;
+      try { return JSON.parse(value); } catch(e) { return value; };
       
     } else {
       v === null ?

@@ -1,4 +1,4 @@
-/* svg.js v0.1-88-gb72373c - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.1-89-gfe1747c - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -359,7 +359,7 @@
     data: function(a, v) {
       if (arguments.length < 2) {
         var value = this.attr('data-' + a);
-        return value ? JSON.parse(value) : value;
+        try { return JSON.parse(value); } catch(e) { return value; };
         
       } else {
         v === null ?
