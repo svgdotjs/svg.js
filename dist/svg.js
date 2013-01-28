@@ -1,4 +1,4 @@
-/* svg.js v0.1-90-gb9981fd - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.2 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -1391,8 +1391,8 @@
         // Scale
         scale: function(x, y) {
           return this.transform({
-            scaleX: x || 0,
-            scaleY: y || 0
+            scaleX: x,
+            scaleY: y == null ? x : y
           });
         }
   

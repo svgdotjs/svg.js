@@ -48,8 +48,8 @@ var _colorPrefix = function(type, attr) {
       // Scale
       scale: function(x, y) {
         return this.transform({
-          scaleX: x || 0,
-          scaleY: y || 0
+          scaleX: x,
+          scaleY: y == null ? x : y
         });
       }
 
