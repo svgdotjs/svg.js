@@ -1,4 +1,4 @@
-/* svg.js v0.2-1-g66d7cb4 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.3-1-g293ef89 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -21,7 +21,7 @@
     // Method for extending objects
     extend: function(object, module) {
       /* extend all container modules */
-      if (object === SVG.Container)
+      if (object == SVG.Container)
         ('Clip Defs Doc Gradient Group Mask Nested Pattern').split(' ').forEach(function(m) {
           if (SVG[m])
             SVG.extend(SVG[m], module);
@@ -763,7 +763,7 @@
   SVG.extend(SVG.Element, {
     // Get all siblings, including myself
     siblings: function() {
-      return (this.nested() || this.doc()).children();
+      return this.parent.children();
     },
     // Get the curent position siblings
     position: function() {
@@ -783,12 +783,14 @@
     },
     // Send given element one step backward
     backward: function() {
-      var i, parent = this.parent.level();
+      var i;
+      
+      this.parent.level();
       
       i = this.position();
       
       if (i > 1)
-        parent.remove(this).add(this, i - 1);
+        this.parent.remove(this).add(this, i - 1);
       
       return this;
     },
@@ -798,10 +800,10 @@
     },
     // Send given element all the way to the back
     back: function() {
-      var parent = this.parent.level();
+      this.parent.level();
       
       if (this.position() > 1)
-        parent.remove(this).add(this, 0);
+        this.parent.remove(this).add(this, 0);
       
       return this;
     }

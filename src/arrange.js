@@ -4,7 +4,7 @@
 SVG.extend(SVG.Element, {
   // Get all siblings, including myself
   siblings: function() {
-    return (this.nested() || this.doc()).children();
+    return this.parent.children();
   },
   // Get the curent position siblings
   position: function() {
@@ -24,12 +24,14 @@ SVG.extend(SVG.Element, {
   },
   // Send given element one step backward
   backward: function() {
-    var i, parent = this.parent.level();
+    var i;
+    
+    this.parent.level();
     
     i = this.position();
     
     if (i > 1)
-      parent.remove(this).add(this, i - 1);
+      this.parent.remove(this).add(this, i - 1);
     
     return this;
   },
@@ -39,10 +41,10 @@ SVG.extend(SVG.Element, {
   },
   // Send given element all the way to the back
   back: function() {
-    var parent = this.parent.level();
+    this.parent.level();
     
     if (this.position() > 1)
-      parent.remove(this).add(this, 0);
+      this.parent.remove(this).add(this, 0);
     
     return this;
   }
