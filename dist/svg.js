@@ -1,4 +1,4 @@
-/* svg.js v0.2 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.2-1-g66d7cb4 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -7,19 +7,29 @@
   
   // The main wrapping element
   this.SVG = {
-    // Default namespaces
+    /* default namespaces */
     ns:    'http://www.w3.org/2000/svg',
     xlink: 'http://www.w3.org/1999/xlink',
-    // Defs id sequence
+    
+    /* defs id sequence */
     did: 0,
+    
     // Method for element creation
     create: function(element) {
       return document.createElementNS(this.ns, element);
     },
     // Method for extending objects
     extend: function(object, module) {
-      for (var key in module)
-        object.prototype[key] = module[key];
+      /* extend all container modules */
+      if (object === SVG.Container)
+        ('Clip Defs Doc Gradient Group Mask Nested Pattern').split(' ').forEach(function(m) {
+          if (SVG[m])
+            SVG.extend(SVG[m], module);
+        });
+      /* extend given module */
+      else
+        for (var key in module)
+          object.prototype[key] = module[key];
     }
     
   };
