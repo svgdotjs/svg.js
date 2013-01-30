@@ -51,6 +51,15 @@ var _colorPrefix = function(type, attr) {
           scaleX: x,
           scaleY: y == null ? x : y
         });
+      },
+      // Opacity
+      opacity: function(value) {
+        if (['rect', 'ellipse', 'polygon', 'path', 'polyline', 'line', 'text'].indexOf(this.type) > -1)
+          this.attr({ 'fill-opacity': value, 'stroke-opacity': value });
+        else
+          this.attr('opacity', value);
+          
+        return this;
       }
 
     });

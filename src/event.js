@@ -10,6 +10,8 @@
   'mouseover',
   'mouseout',
   'mousemove',
+  'mouseenter',
+  'mouseleave',
   'touchstart',
   'touchend',
   'touchmove',

@@ -12,6 +12,9 @@ SVG.Element = function Element(node) {
     'fill-opacity':   1,
     'stroke-opacity': 1,
     'stroke-width':   0,
+    fill:     '#000',
+    stroke:   '#000',
+    opacity:  1,
     x:        0,
     y:        0,
     cx:       0,
@@ -257,6 +260,10 @@ SVG.extend(SVG.Element, {
     this.node.style.display = 'none';
     
     return this;
+  },
+  // Is element visible?
+  visible: function() {
+    return this.node.style.display != 'none';
   },
   // Private: find svg parent by instance
   _parent: function(parent) {

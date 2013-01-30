@@ -1,4 +1,4 @@
-/* svg.js v0.3-1-g293ef89 - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.3-2-g610e40c - svg container element fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -176,6 +176,9 @@
       'fill-opacity':   1,
       'stroke-opacity': 1,
       'stroke-width':   0,
+      fill:     '#000',
+      stroke:   '#000',
+      opacity:  1,
       x:        0,
       y:        0,
       cx:       0,
@@ -421,6 +424,10 @@
       this.node.style.display = 'none';
       
       return this;
+    },
+    // Is element visible?
+    visible: function() {
+      return this.node.style.display != 'none';
     },
     // Private: find svg parent by instance
     _parent: function(parent) {
@@ -691,6 +698,8 @@
     'mouseover',
     'mouseout',
     'mousemove',
+    'mouseenter',
+    'mouseleave',
     'touchstart',
     'touchend',
     'touchmove',
@@ -1406,6 +1415,15 @@
             scaleX: x,
             scaleY: y == null ? x : y
           });
+        },
+        // Opacity
+        opacity: function(value) {
+          if (['rect', 'ellipse', 'polygon', 'path', 'polyline', 'line', 'text'].indexOf(this.type) > -1)
+            this.attr({ 'fill-opacity': value, 'stroke-opacity': value });
+          else
+            this.attr('opacity', value);
+            
+          return this;
         }
   
       });
