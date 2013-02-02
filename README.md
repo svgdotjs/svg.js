@@ -40,7 +40,7 @@ var draw = svg('paper').size('100%', '100%');
 Rects have two arguments, their `width` and `height`:
 
 ```javascript
-var text = draw.rect(100, 100);
+var rect = draw.rect(100, 100);
 ```
 
 
