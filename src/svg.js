@@ -26,16 +26,8 @@ this.SVG = {
   },
   // Method for extending objects
   extend: function(object, module) {
-    /* extend all container modules */
-    if (object == SVG.Container)
-      ('Clip Defs Doc Gradient Group Mask Nested Pattern').split(' ').forEach(function(m) {
-        if (SVG[m])
-          SVG.extend(SVG[m], module);
-      });
-    /* extend given module */
-    else
-      for (var key in module)
-        object.prototype[key] = module[key];
+    for (var key in module)
+      object.prototype[key] = module[key];
   }
   
 };

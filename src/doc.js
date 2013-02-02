@@ -19,11 +19,8 @@ SVG.Doc = function Doc(element) {
   this.stage(); 
 };
 
-// Inherits from SVG.Element
-SVG.Doc.prototype = new SVG.Element();
-
-// Include the container object
-SVG.extend(SVG.Doc, SVG.Container);
+// Inherits from SVG.Container
+SVG.Doc.prototype = new SVG.Container();
 
 // Hack for safari preventing text to be rendered in one line.
 // Basically it sets the position of the svg node to absolute

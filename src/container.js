@@ -1,7 +1,12 @@
-// ### A module used for container elements like SVG.Doc, SVG.Group, SVG.Defs, ...
+SVG.Container = function Container(element) {
+  this.constructor.call(this, element);
+};
+
+// Inherit from SVG.Element
+SVG.Container.prototype = new SVG.Element();
 
 //
-SVG.Container = {
+SVG.extend(SVG.Container, {
   // Add given element at a position
   add: function(element, index) {
     if (!this.has(element)) {
@@ -131,4 +136,4 @@ SVG.Container = {
     return this;
   }
   
-};
+});

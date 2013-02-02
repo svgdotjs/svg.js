@@ -5,11 +5,8 @@ SVG.Mask = function Mask() {
   this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
 };
 
-// Inherit from SVG.Element
-SVG.Mask.prototype = new SVG.Element();
-
-// Include the container object
-SVG.extend(SVG.Mask, SVG.Container);
+// Inherit from SVG.Container
+SVG.Mask.prototype = new SVG.Container();
 
 SVG.extend(SVG.Element, {
   

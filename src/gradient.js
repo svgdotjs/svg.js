@@ -8,11 +8,8 @@ SVG.Gradient = function Gradient(type) {
   this.type = type;
 };
 
-// Inherit from SVG.Element
-SVG.Gradient.prototype = new SVG.Element();
-
-// Include the container object
-SVG.extend(SVG.Gradient, SVG.Container);
+// Inherit from SVG.Container
+SVG.Gradient.prototype = new SVG.Container();
 
 //
 SVG.extend(SVG.Gradient, {

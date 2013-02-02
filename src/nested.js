@@ -3,8 +3,5 @@ SVG.Nested = function Nested() {
   this.attr('overflow', 'visible');
 };
 
-// Inherit from SVG.Element
-SVG.Nested.prototype = new SVG.Element();
-
-// Include the container object
-SVG.extend(SVG.Nested, SVG.Container);
+// Inherit from SVG.Container
+SVG.Nested.prototype = new SVG.Container();

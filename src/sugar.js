@@ -54,10 +54,17 @@ var _colorPrefix = function(type, attr) {
       },
       // Opacity
       opacity: function(value) {
-        if (['rect', 'ellipse', 'polygon', 'path', 'polyline', 'line', 'text'].indexOf(this.type) > -1)
-          this.attr({ 'fill-opacity': value, 'stroke-opacity': value });
-        else
-          this.attr('opacity', value);
+        if (['rect', 'ellipse', 'polygon', 'path', 'polyline', 'line', 'text'].indexOf(this.type) > -1) {
+          if (value == null)
+            return this.attr('fill-opacity');
+          else
+            this.attr({ 'fill-opacity': value, 'stroke-opacity': value });
+        } else {
+          if (value == null)
+            return this.attr('opacity');
+          else
+            this.attr('opacity', value);
+        }
           
         return this;
       }

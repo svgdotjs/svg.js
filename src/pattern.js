@@ -5,11 +5,8 @@ SVG.Pattern = function Pattern(type) {
   this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)));
 };
 
-// Inherit from SVG.Element
-SVG.Pattern.prototype = new SVG.Element();
-
-// Include the container object
-SVG.extend(SVG.Pattern, SVG.Container);
+// Inherit from SVG.Container
+SVG.Pattern.prototype = new SVG.Container();
 
 //
 SVG.extend(SVG.Pattern, {
