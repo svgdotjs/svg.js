@@ -1,4 +1,4 @@
-SVGJS_VERSION = '0.4'
+SVGJS_VERSION = '0.5'
 
 # all available modules in the correct loading order
 MODULES = %w[ svg element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar ]
