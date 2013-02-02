@@ -61,6 +61,14 @@ var circle = draw.circle(100);
 _Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
 
 
+### Line
+The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
+
+```javascript
+var star = draw.line(0, 0, 100, 150);
+```
+
+
 ### Polyline
 The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
 
@@ -70,8 +78,6 @@ var polyline = draw.polyline('10,20 30,40 50,60');
 ```
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
-
-_Not unlike the `<circle>` element, the svg `<line>` element has not been implemented to keep the library as small as possible. Therefore you might want to use the `polyline()` method to create a single line segment._
 
 
 ### Polygon
