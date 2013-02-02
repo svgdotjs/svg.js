@@ -65,7 +65,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 
 ```javascript
-var star = draw.line(0, 0, 100, 150);
+var line = draw.line(0, 0, 100, 150);
 ```
 
 
