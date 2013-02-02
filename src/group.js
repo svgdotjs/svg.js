@@ -6,7 +6,7 @@ SVG.G = function G() {
 SVG.G.prototype = new SVG.Container();
 
 SVG.extend(SVG.G, {
-  
+  // Get defs
   defs: function() {
     return this.doc().defs();
   }
