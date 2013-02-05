@@ -443,6 +443,12 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() })
 rect.maskWith(ellipse);
 ```
 
+For your convenience, the masking element is also referenced in the masked element. This would be useful in case you want to change, or remove the mask:
+
+```javascript
+rect.mask.remove();
+```
+
 _This functionality requires the mask.js module which is included in the default distribution._
 
 
@@ -627,6 +633,12 @@ rect.click(function() {
 });
 ```
 
+Removing it is quite as easy:
+
+```javascript
+rect.click(null);
+```
+
 You can also bind event listeners to elements:
 
 ```javascript
@@ -731,7 +743,6 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
-
 
 
 ## Building

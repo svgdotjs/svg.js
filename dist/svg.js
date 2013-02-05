@@ -1,4 +1,4 @@
-/* svg.js v0.4-2-g1c9b6af - svg element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.5-3-g87dd416 - svg element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -708,11 +708,11 @@
     /* add event to SVG.Element */
     SVG.Element.prototype[event] = function(f) {
       var self = this;
-  
+      
       /* bind event to element rather than element node */
-      this.node['on' + event] = function() {
-        return f.apply(self, arguments);
-      };
+      this.node['on' + event] = typeof f == 'function'
+        ? function() { return f.apply(self, arguments); }
+        : null;
       
       return this;
     };
@@ -759,7 +759,7 @@
   SVG.G.prototype = new SVG.Container();
   
   SVG.extend(SVG.G, {
-    
+    // Get defs
     defs: function() {
       return this.doc().defs();
     }
@@ -837,7 +837,10 @@
     
     // Distribute mask to svg element
     maskWith: function(element) {
-      return this.attr('mask', 'url(#' + (element instanceof SVG.Mask ? element : this.parent.mask().add(element)).id + ')');
+      /* use given mask or create a new one */
+      this.mask = element instanceof SVG.Mask ? element : this.parent.mask().add(element);
+      
+      return this.attr('mask', 'url(#' + this.mask.id + ')');
     }
     
   });
@@ -1450,7 +1453,6 @@
       });
     }
   });
-  
   
   if (SVG.G) {
     SVG.extend(SVG.G, {

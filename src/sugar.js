@@ -61,7 +61,6 @@ var _colorPrefix = function(type, attr) {
   }
 });
 
-
 if (SVG.G) {
   SVG.extend(SVG.G, {
     // Move using translate

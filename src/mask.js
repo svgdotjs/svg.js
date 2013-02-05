@@ -12,7 +12,10 @@ SVG.extend(SVG.Element, {
   
   // Distribute mask to svg element
   maskWith: function(element) {
-    return this.attr('mask', 'url(#' + (element instanceof SVG.Mask ? element : this.parent.mask().add(element)).id + ')');
+    /* use given mask or create a new one */
+    this.mask = element instanceof SVG.Mask ? element : this.parent.mask().add(element);
+    
+    return this.attr('mask', 'url(#' + this.mask.id + ')');
   }
   
 });
