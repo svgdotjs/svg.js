@@ -222,11 +222,11 @@ SVG.extend(SVG.FX, {
 SVG.extend(SVG.Element, {
   // Get fx module or create a new one, then animate with given duration and ease
   animate: function(duration, ease) {
-    return (this._fx || (this._fx = new SVG.FX(this))).stop().animate(duration, ease);
+    return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(duration, ease);
   },
   // Stop current animation; this is an alias to the fx instance
   stop: function() {
-    this._fx.stop();
+    this.fx.stop();
     
     return this;
   }

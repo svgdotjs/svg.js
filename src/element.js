@@ -205,7 +205,7 @@ SVG.extend(SVG.Element, {
     return this.attr('transform', transform.join(' '));
   },
   // Store data values on svg nodes
-  data: function(a, v) {
+  data: function(a, v, r) {
     if (arguments.length < 2) {
       try {
         return JSON.parse(this.attr('data-' + a));
@@ -216,7 +216,7 @@ SVG.extend(SVG.Element, {
     } else {
       v === null ?
         this.node.removeAttribute('data-' + a) :
-        this.attr('data-' + a, JSON.stringify(v));
+        this.attr('data-' + a, r === true ? v : JSON.stringify(v));
     }
     
     return this;

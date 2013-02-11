@@ -1,4 +1,4 @@
-/* svg.js v0.5-3-g87dd416 - svg element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.5-4-g11fab70 - svg element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -229,7 +229,7 @@
       return this.attr('transform', transform.join(' '));
     },
     // Store data values on svg nodes
-    data: function(a, v) {
+    data: function(a, v, r) {
       if (arguments.length < 2) {
         try {
           return JSON.parse(this.attr('data-' + a));
@@ -240,7 +240,7 @@
       } else {
         v === null ?
           this.node.removeAttribute('data-' + a) :
-          this.attr('data-' + a, JSON.stringify(v));
+          this.attr('data-' + a, r === true ? v : JSON.stringify(v));
       }
       
       return this;
@@ -674,11 +674,11 @@
   SVG.extend(SVG.Element, {
     // Get fx module or create a new one, then animate with given duration and ease
     animate: function(duration, ease) {
-      return (this._fx || (this._fx = new SVG.FX(this))).stop().animate(duration, ease);
+      return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(duration, ease);
     },
     // Stop current animation; this is an alias to the fx instance
     stop: function() {
-      this._fx.stop();
+      this.fx.stop();
       
       return this;
     }

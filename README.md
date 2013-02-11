@@ -333,18 +333,18 @@ If you include the sugar.js module, `rotate()` and `skew()` will be available as
 rect.animate().rotate(45).skew(25, 0);
 ```
 
-Animations can be stopped in to ways.
+Animations can be stopped in two ways.
 
 By calling the `stop()` method:
 ```javascript
-var rectfx = rect.animate().move(200, 200);
+rect.animate().move(200, 200);
 
-rectfx.stop();
+rect.stop();
 ```
 
 Or by invoking another animation:
 ```javascript
-var rectfx = rect.animate().move(200, 200);
+rect.animate().move(200, 200);
 
 rect.animate().center(200, 200);
 ```
@@ -388,6 +388,13 @@ Like fill, a single hex string will work as well:
 
 ```javascript
 rect.stroke('#f06');
+```
+
+### Opacity
+To set the overall opacity of an element:
+
+```javascript
+rect.opacity(0.5);
 ```
 
 ### Rotate
@@ -689,6 +696,12 @@ Removing the data altogether:
 
 ```javascript
 rect.data('key', null);
+```
+
+Your values will always be stored as JSON and in some cases this might not be desirable. If you want to store the value as-is, just pass true as the third argument:
+
+```javascript
+rect.data('key', 'value', true);
 ```
 
 
