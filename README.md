@@ -33,6 +33,19 @@ By default the svg canvas follows the dimensions of its parent, in this case `#p
 var draw = svg('paper').size('100%', '100%');
 ```
 
+### Checking for SVG support
+
+By default this library assumes the client's browser supports SVG. You can test support as follows:
+
+```javascript
+if (SVG.supported) {
+  var draw = svg('paper');
+  var rect = draw.rect(100, 100);
+} else {
+  alert('SVG not supported');
+}
+```
+
 
 ## Elements
 
