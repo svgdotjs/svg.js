@@ -15,8 +15,8 @@ See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://sv
 Use the `svg()` function to create a SVG document within a given html element:
 
 ```javascript
-var draw = svg('paper').size(300, 300);
-var rect = draw.rect(100, 100).attr({ fill: '#f06' });
+var draw = svg('paper').size(300, 300)
+var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 ```
 The first argument can either be an id of the element or the selected element itself.
 This will generate the following output:
@@ -32,7 +32,7 @@ This will generate the following output:
 By default the svg canvas follows the dimensions of its parent, in this case `#paper`:
 
 ```javascript
-var draw = svg('paper').size('100%', '100%');
+var draw = svg('paper').size('100%', '100%')
 ```
 
 ### Checking for SVG support
@@ -41,10 +41,10 @@ By default this library assumes the client's browser supports SVG. You can test 
 
 ```javascript
 if (SVG.supported) {
-  var draw = svg('paper');
-  var rect = draw.rect(100, 100);
+  var draw = svg('paper')
+  var rect = draw.rect(100, 100)
 } else {
-  alert('SVG not supported');
+  alert('SVG not supported')
 }
 ```
 
@@ -53,13 +53,19 @@ if (SVG.supported) {
 The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with arguments it will act as a setter:
 
 ```javascript
-draw.viewbox(0, 0, 297, 210);
+draw.viewbox(0, 0, 297, 210)
 ```
 
 Without any attributes a an instance of `SVG.ViewBox` will be returned:
 
 ```javascript
-var box = draw.viewbox();
+var box = draw.viewbox()
+```
+
+But the best thing about the `viewbox()` method is that you can get the scale of the viewbox:
+
+```javascript
+var scale = draw.viewbox().scale
 ```
 
 
@@ -69,7 +75,7 @@ var box = draw.viewbox();
 Rects have two arguments, their `width` and `height`:
 
 ```javascript
-var rect = draw.rect(100, 100);
+var rect = draw.rect(100, 100)
 ```
 
 
@@ -77,14 +83,14 @@ var rect = draw.rect(100, 100);
 Ellipses, like rects, have two arguments, their `width` and `height`:
 
 ```javascript
-var ellipse = draw.ellipse(100, 100);
+var ellipse = draw.ellipse(100, 100)
 ```
 
 ### Circle
 The only argument necessary for a circle is the diameter:
 
 ```javascript
-var circle = draw.circle(100);
+var circle = draw.circle(100)
 ```
 
 _Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
@@ -94,7 +100,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 
 ```javascript
-var line = draw.line(0, 0, 100, 150);
+var line = draw.line(0, 0, 100, 150)
 ```
 
 
@@ -103,7 +109,7 @@ The polyline element defines a set of connected straight line segments. Typicall
 
 ```javascript
 // polyline('x,y x,y x,y')
-var polyline = draw.polyline('10,20 30,40 50,60');
+var polyline = draw.polyline('10,20 30,40 50,60')
 ```
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
@@ -114,7 +120,7 @@ The polygon element, unlike the polyline element, defines a closed shape consist
 
 ```javascript
 // polygon('x,y x,y x,y')
-var polygon = draw.polygon('10,20 30,40 50,60');
+var polygon = draw.polygon('10,20 30,40 50,60')
 ```
 
 Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.
@@ -125,7 +131,7 @@ The path string is similar to the polygon string but much more complex in order 
 
 ```javascript
 // path('path data')
-var path = draw.path('M10,20L30,40');
+var path = draw.path('M10,20L30,40')
 ```
 
 For more details on path data strings, please refer to the SVG documentation:
@@ -137,31 +143,31 @@ When creating images the `width` and `height` values should be defined:
 
 ```javascript
 // image(src, width, height)
-var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100);
+var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
 ```
 
 
 ### Text
 The first argument of a text element is the actual text content:
 ```javascript
-var text = draw.text("svg\nto\nthe\npoint.").move(300, 0);
+var text = draw.text("svg\nto\nthe\npoint.").move(300, 0)
 ```
 Changing text afterwards is also possible with the `text()` method:
 ```javascript
-text.text('Brilliant!');
+text.text('Brilliant!')
 ```
 To get the raw text content:
 ```javascript
-text.content;
+text.content
 ```
 The sugar.js module provides some syntax sugar specifically for this element type:
 ```javascript
 text.font({
-  family:   'Helvetica',
-  size:     144,
-  anchor:   'middle',
-  leading:  1.5
-});
+  family:   'Helvetica'
+, size:     144
+, anchor:   'middle'
+, leading:  1.5
+})
 ```
 
 
@@ -172,21 +178,21 @@ You can get and set an element's attributes directly using `attr()`:
 
 ```javascript
 // get a single attribute
-rect.attr('x');
+rect.attr('x')
 
 // set a single attribute
-rect.attr('x', 50);
+rect.attr('x', 50)
 
 // set multiple attributes at once
 rect.attr({
-  fill: '#f06',
-  'fill-opacity': 0.5,
-  stroke: '#000',
-  'stroke-width': 10
-});
+  fill: '#f06'
+, 'fill-opacity': 0.5
+, stroke: '#000'
+, 'stroke-width': 10
+})
 
 // set an attribute with a namespace
-rect.attr('x', 50, 'http://www.w3.org/2000/svg');
+rect.attr('x', 50, 'http://www.w3.org/2000/svg')
 ```
 
 
@@ -195,26 +201,26 @@ With the `transform()` method elements can be scaled, rotated, translated and sk
 
 ```javascript
 rect.transform({
-  rotation: 45,
-  cx:       100,
-  cy:       100
-});
+  rotation: 45
+, cx:       100
+, cy:       100
+})
 ```
 
 All available transformations are:
 
 ```javascript
 rect.transform({
-  x:        [translation on x-axis],
-  y:        [translation on y-axis],
-  rotation: [degrees],
-  cx:       [x rotation point],
-  cy:       [y rotation point],
-  scaleX:   [scaling on x-axis],
-  scaleX:   [scaling on y-axis],
-  skewX:    [skewing on x-axis],
-  skewY:    [skewing on y-axis]
-});
+  x:        [translation on x-axis]
+, y:        [translation on y-axis]
+, rotation: [degrees]
+, cx:       [x rotation point]
+, cy:       [y rotation point]
+, scaleX:   [scaling on x-axis]
+, scaleX:   [scaling on y-axis]
+, skewX:    [skewing on x-axis]
+, skewY:    [skewing on y-axis]
+})
 ```
 
 Important: matrix transformations are not yet supported.
@@ -230,7 +236,7 @@ rect.move(200, 350);
 Note that you can also use the following code to move elements around:
 
 ```javascript
-rect.attr({ x: 20, y: 60 });
+rect.attr({ x: 20, y: 60 })
 ``` 
 
 Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
@@ -240,7 +246,7 @@ Although `move()` is much more convenient because it will always use the upper l
 Set the size of an element by a given `width` and `height`:
 
 ```javascript
-rect.size(200, 300);
+rect.size(200, 300)
 ```
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
@@ -250,45 +256,45 @@ Same as with `move()` the size of an element could be set by using `attr()`. But
 This is an extra method to move an element by its center:
 
 ```javascript
-rect.center(150, 150);
+rect.center(150, 150)
 ```
 
 ### Hide and show
 We all love to have a little hide:
 
 ```javascript
-rect.hide();
+rect.hide()
 ```
 
 and show:
 
 ```javascript
-rect.show();
+rect.show()
 ```
 
 To check if the element is visible:
 ```javascript
-rect.visible();
+rect.visible()
 ```
 
 ### Removing elements
 Pretty straightforward:
 
 ```javascript
-rect.remove();
+rect.remove()
 ```
 
 To remove all elements in the svg document:
 
 ```javascript
-draw.clear();
+draw.clear()
 ```
 
 
 ### Bounding box
 
 ```javascript
-path.bbox();
+path.bbox()
 ```
 This will return an instance of `SVG.BBox` containing the following values:
 
@@ -305,8 +311,8 @@ If you would iterate over all the `children()` of the svg document, you might no
 
 ```javascript
 draw.each(function(i, children) {
-  this.fill({ color: '#f06' });
-});
+  this.fill({ color: '#f06' })
+})
 ```
 
 
@@ -315,13 +321,13 @@ draw.each(function(i, children) {
 Animating elements is very much the same as manipulating elements, the only difference is you have to include the `animate()` method:
 
 ```javascript
-rect.animate().move(150, 150);
+rect.animate().move(150, 150)
 ```
 
 The `animate()` method will take two arguments. The first is `milliseconds`, the second `ease`:
 
 ```javascript
-rect.animate(2000, '>').attr({ fill: '#f03' });
+rect.animate(2000, '>').attr({ fill: '#f03' })
 ```
 
 By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`. All available ease types are:
@@ -335,7 +341,7 @@ By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`. All
 For the latter, here is an example of the default `<>` function:
 
 ```javascript
-function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; };
+function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; }
 ```
 
 For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
@@ -344,46 +350,46 @@ Note that the `animate()` method will not return the targeted element but an ins
 
 Of course `attr()`:
 ```javascript
-rect.animate().attr({ fill: '#f03' });
+rect.animate().attr({ fill: '#f03' })
 ```
 
 The `move()` method:
 ```javascript
-rect.animate().move(100, 100);
+rect.animate().move(100, 100)
 ```
 
 And the `center()` method:
 ```javascript
-rect.animate().center(200, 200);
+rect.animate().center(200, 200)
 ```
 
 If you include the sugar.js module, `rotate()` and `skew()` will be available as well:
 ```javascript
-rect.animate().rotate(45).skew(25, 0);
+rect.animate().rotate(45).skew(25, 0)
 ```
 
 Animations can be stopped in two ways.
 
 By calling the `stop()` method:
 ```javascript
-rect.animate().move(200, 200);
+rect.animate().move(200, 200)
 
-rect.stop();
+rect.stop()
 ```
 
 Or by invoking another animation:
 ```javascript
-rect.animate().move(200, 200);
+rect.animate().move(200, 200)
 
-rect.animate().center(200, 200);
+rect.animate().center(200, 200)
 ```
 
 Finally, you can add callback methods using `after()`:
 
 ```javascript
 rect.animate(3000).move(100, 100).after(function() {
-  this.animate().attr({ fill: '#f06' });
-});
+  this.animate().attr({ fill: '#f06' })
+})
 ```
 
 _This functionality requires the fx.js module which is included in the default distribution._
@@ -397,33 +403,33 @@ Fill and stroke are used quite often. Therefore two convenience methods are prov
 The `fill()` method is a pretty alternative to the `attr()` method:
 
 ```javascript
-rect.fill({ color: '#f06', opacity: 0.6 });
+rect.fill({ color: '#f06', opacity: 0.6 })
 ```
 
 A single hex string will work as well:
 
 ```javascript
-rect.fill('#f06');
+rect.fill('#f06')
 ```
 
 ### Stroke
 The `stroke()` method is similar to `fill()`:
 
 ```javascript
-rect.stroke({ color: '#f06', opacity: 0.6, width: 5 });
+rect.stroke({ color: '#f06', opacity: 0.6, width: 5 })
 ```
 
 Like fill, a single hex string will work as well:
 
 ```javascript
-rect.stroke('#f06');
+rect.stroke('#f06')
 ```
 
 ### Opacity
 To set the overall opacity of an element:
 
 ```javascript
-rect.opacity(0.5);
+rect.opacity(0.5)
 ```
 
 ### Rotate
@@ -431,7 +437,7 @@ The `rotate()` method will automatically rotate elements according to the center
 
 ```javascript
 // rotate(degrees)
-rect.rotate(45);
+rect.rotate(45)
 ```
 
 ### Skew
@@ -439,7 +445,7 @@ The `skew()` method will take an `x` and `y` value:
 
 ```javascript
 // skew(x, y)
-rect.skew(0, 45);
+rect.skew(0, 45)
 ```
 
 _This functionality requires the sugar.js module which is included in the default distribution._
@@ -450,39 +456,39 @@ _This functionality requires the sugar.js module which is included in the defaul
 The easiest way to mask is to use a single element:
 
 ```javascript
-var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' });
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
 
-rect.maskWith(ellipse);
+rect.maskWith(ellipse)
 ```
 
 But you can also use multiple elements:
 
 ```javascript
-var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' });
-var text = draw.text('SVG.JS').move(10, 10).font({ size: 36 }).fill({ color: '#fff' });
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
+var text = draw.text('SVG.JS').move(10, 10).font({ size: 36 }).fill({ color: '#fff' })
 
-var mask = draw.mask().add(text).add(ellipse);
+var mask = draw.mask().add(text).add(ellipse)
 
-rect.maskWith(mask);
+rect.maskWith(mask)
 ```
 
 If you want the masked object to be rendered at 100% you need to set the fill color of the masking object to white. But you might also want to use a gradient:
 
 ```javascript
 var gradient = image.parent.gradient('linear', function(stop) {
-  stop.at({ offset: 0, color: '#000' });
-  stop.at({ offset: 100, color: '#fff' });
-});
+  stop.at({ offset: 0, color: '#000' })
+  stop.at({ offset: 100, color: '#fff' })
+})
 
-var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() });
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() })
 
-rect.maskWith(ellipse);
+rect.maskWith(ellipse)
 ```
 
 For your convenience, the masking element is also referenced in the masked element. This would be useful in case you want to change, or remove the mask:
 
 ```javascript
-rect.mask.remove();
+rect.mask.remove()
 ```
 
 If you want to clip elements rather than masking them, have a look at the [svg.clippath.js](https://github.com/wout/svg.clippath.js) plugin.
@@ -496,13 +502,13 @@ You can arrange elements within their parent SVG document using the following me
 Move element to the front:
 
 ```javascript
-rect.front();
+rect.front()
 ```
 
 Move element to the back:
 
 ```javascript
-rect.back();
+rect.back()
 ```
 
 Note that `back()` will move the element to position 1, not 0, because the `<defs>` node is already located at position 0.
@@ -510,37 +516,37 @@ Note that `back()` will move the element to position 1, not 0, because the `<def
 Move element one step forward:
 
 ```javascript
-rect.forward();
+rect.forward()
 ```
 
 Move element one step backward:
 
 ```javascript
-rect.backward();
+rect.backward()
 ```
 
 The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:
 
 ```javascript
-rect.siblings();
+rect.siblings()
 ```
 
 Get the position (a number) of rect between its siblings:
 
 ```javascript
-rect.position();
+rect.position()
 ```
 
 Get the next sibling:
 
 ```javascript
-rect.next();
+rect.next()
 ```
 
 Get the previous sibling:
 
 ```javascript
-rect.previous();
+rect.previous()
 ```
 
 
@@ -551,14 +557,14 @@ _This functionality requires the arrange.js module which is included in the defa
 Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
 
 ```javascript
-var group = draw.group();
-group.path('M10,20L30,40');
+var group = draw.group()
+group.path('M10,20L30,40')
 ```
 
 Existing elements from the svg document can also be added to a group:
 
 ```javascript
-group.add(rect);
+group.add(rect)
 ```
 
 _This functionality requires the group.js module which is included in the default distribution._
@@ -569,9 +575,9 @@ _This functionality requires the group.js module which is included in the defaul
 With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
 
 ```javascript
-var nested = draw.nested();
+var nested = draw.nested()
 
-var rect = nested.rect(200, 200);
+var rect = nested.rect(200, 200)
 ```
 
 
@@ -584,56 +590,56 @@ There are linear and radial gradients. The linear gradient can be created like t
 
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
-  stop.at({ offset: 0, color: '#333', opacity: 1 });
-  stop.at({ offset: 100, color: '#fff', opacity: 1 });
-});
+  stop.at({ offset: 0, color: '#333', opacity: 1 })
+  stop.at({ offset: 100, color: '#fff', opacity: 1 })
+})
 ```
 
 The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is an integer expressed in percentage. To define the direction you can set from `x`, `y` and to `x`, `y`:
 
 ```javascript
-gradient.from(0, 0).to(0, 100);
+gradient.from(0, 0).to(0, 100)
 ```
 
 The from and to values are also expressed in percent.
 Finally, to use the gradient on an element:
 
 ```javascript
-rect.attr({ fill: gradient.fill() });
+rect.attr({ fill: gradient.fill() })
 ```
 
 Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
 
 ```javascript
 var gradient = draw.gradient('radial', function(stop) {
-  stop.at({ offset: 0, color: '#333', opacity: 1 });
-  stop.at({ offset: 100, color: '#fff', opacity: 1 });
-});
+  stop.at({ offset: 0, color: '#333', opacity: 1 })
+  stop.at({ offset: 100, color: '#fff', opacity: 1 })
+})
 
-gradient.from(50, 50).to(50, 50).radius(50);
+gradient.from(50, 50).to(50, 50).radius(50)
 ```
 
 A gradient can also be updated afterwards:
 
 ```javascript
 gradient.update(function(stop) {
-  stop.at({ offset: 10, color: '#333', opacity: 0.2 });
-  stop.at({ offset: 90, color: '#f03', opacity: 1 });
-});
+  stop.at({ offset: 10, color: '#333', opacity: 0.2 })
+  stop.at({ offset: 90, color: '#f03', opacity: 1 })
+})
 ```
 
 And even a single stop can be updated:
 
 ```javascript
-var s1, s2, s3;
+var s1, s2, s3
 
 draw.gradient('radial', function(stop) {
-  s1 = stop.at({ offset: 0, color: '#000', opacity: 1 });
-  s2 = stop.at({ offset: 50, color: '#f03', opacity: 1 });
-  s3 = stop.at({ offset: 100, color: '#066', opacity: 1 });
-});
+  s1 = stop.at({ offset: 0, color: '#000', opacity: 1 })
+  s2 = stop.at({ offset: 50, color: '#f03', opacity: 1 })
+  s3 = stop.at({ offset: 100, color: '#066', opacity: 1 })
+})
 
-s1.update({ offset: 10, color: '#0f0', opacity: 1 });
+s1.update({ offset: 10, color: '#0f0', opacity: 1 })
 ```
 
 [W3Schools](http://www.w3schools.com/svg/svg_grad_linear.asp) has a great example page on how
@@ -649,12 +655,12 @@ Patterns work very much like gradients, you only have to define the tile size:
 
 ```javascript
 var pattern = draw.pattern(20, 20, function(add) {
-  add.rect(10, 10).fill('#000');
-  add.rect(10, 10).move(10, 0).fill({ color: '#000', opacity: 0.5 });
-  add.rect(10, 10).move(0, 10).fill({ color: '#000', opacity: 0.5 });
-});
+  add.rect(10, 10).fill('#000')
+  add.rect(10, 10).move(10, 0).fill({ color: '#000', opacity: 0.5 })
+  add.rect(10, 10).move(0, 10).fill({ color: '#000', opacity: 0.5 })
+})
 
-var circle = draw.circle(200, 200).fill(pattern.fill());
+var circle = draw.circle(200, 200).fill(pattern.fill())
 ```
 
 This will fill the circle with a checkered pattern. There is a lot more to patterns. Please refer to the [Patterns section](http://www.w3.org/TR/SVG/pservers.html#Patterns) of the SVG specification.
@@ -667,24 +673,24 @@ Events can be bound to elements as follows:
 
 ```javascript
 rect.click(function() {
-  this.fill({ color: '#f06' });
-});
+  this.fill({ color: '#f06' })
+})
 ```
 
 Removing it is quite as easy:
 
 ```javascript
-rect.click(null);
+rect.click(null)
 ```
 
 You can also bind event listeners to elements:
 
 ```javascript
 var click = function() {
-  rect.fill({ color: '#f06' });
+  rect.fill({ color: '#f06' })
 };
 
-rect.on('click', click);
+rect.on('click', click)
 ```
 
 Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
@@ -692,19 +698,19 @@ Note that the context of event listeners is not the same as events, which are ap
 Unbinding events is just as easy:
 
 ```javascript
-rect.off('click', click);
+rect.off('click', click)
 ```
 
 But there is more to event listeners. You can bind events to html elements as well:
 
 ```javascript
-SVG.on(window, 'click', click);
+SVG.on(window, 'click', click)
 ```
 
 Obviously unbinding is practically the same:
 
 ```javascript
-SVG.off(window, 'click', click);
+SVG.off(window, 'click', click)
 ```
 
 Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchend`, `touchmove` and `touchcancel`.
@@ -714,25 +720,25 @@ Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `
 The `data()` method allows you to bind arbitrary objects, strings and numbers to SVG elements:
 
 ```javascript
-rect.data('key', { value: { data: 0.3 }});
+rect.data('key', { value: { data: 0.3 }})
 ```
 
 Fetching the values is similar to the `attr()` method:
 
 ```javascript
-rect.data('key');
+rect.data('key')
 ```
 
 Removing the data altogether:
 
 ```javascript
-rect.data('key', null);
+rect.data('key', null)
 ```
 
 Your values will always be stored as JSON and in some cases this might not be desirable. If you want to store the value as-is, just pass true as the third argument:
 
 ```javascript
-rect.data('key', 'value', true);
+rect.data('key', 'value', true)
 ```
 
 
@@ -743,9 +749,9 @@ Svg.js has a modular structure. It is very easy to add you own methods at differ
 ```javascript
 SVG.extend(SVG.Shape, {
   paintRed: function() {
-    return this.fill({ color: 'red' });
+    return this.fill({ color: 'red' })
   }
-});
+})
 ```
 
 Now all shapes will have the paintRed method available. Say we want to have the paintRed method on an ellipse apply a slightly different color:
@@ -753,9 +759,9 @@ Now all shapes will have the paintRed method available. Say we want to have the 
 ```javascript
 SVG.extend(SVG.Ellipse, {
   paintRed: function() {
-    return this.fill({ color: 'orangered' });
+    return this.fill({ color: 'orangered' })
   }
-});
+})
 
 ```
 The complete inheritance stack for `SVG.Ellipse` is:
@@ -768,15 +774,15 @@ The SVG document can be extended by using:
 
 SVG.extend(SVG.Doc, {
   paintAllPink: function() {
-    var children = this.children();
+    var children = this.children()
     
     for (var i = 0, l = children.length; i < l; i++) {
-      children[i].fill({ color: 'pink' });
-    };
+      children[i].fill({ color: 'pink' })
+    }
     
-    return this;
+    return this
   }
-});
+})
 ```
 
 
