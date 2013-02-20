@@ -65,10 +65,11 @@ var box = draw.viewbox()
 But the best thing about the `viewbox()` method is that you can get the zoom of the viewbox:
 
 ```javascript
-var zoom = draw.viewbox().zoom
+var box = draw.viewbox()
+var zoom = box.zoom
 ```
 
-If the size of the viewbox equals the side of the svg canvas, the zoom value will be 1.
+If the size of the viewbox equals the size of the svg canvas, the zoom value will be 1.
 
 ## Elements
 
