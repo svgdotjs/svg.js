@@ -24,12 +24,12 @@ SVG.ViewBox = function(element) {
     }
     
     /* calculate zoom accoring to viewbox */
-    this.scale = (this.width / this.height > width / height) ?
+    this.zoom = (this.width / this.height > width / height) ?
       this.height / height :
       this.width  / width
     
   } else {
-    this.scale = 1
+    this.zoom = 1
   }
   
 }

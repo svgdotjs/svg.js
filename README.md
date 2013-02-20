@@ -62,12 +62,13 @@ Without any attributes a an instance of `SVG.ViewBox` will be returned:
 var box = draw.viewbox()
 ```
 
-But the best thing about the `viewbox()` method is that you can get the scale of the viewbox:
+But the best thing about the `viewbox()` method is that you can get the zoom of the viewbox:
 
 ```javascript
-var scale = draw.viewbox().scale
+var zoom = draw.viewbox().zoom
 ```
 
+If the size of the viewbox equals the side of the svg canvas, the zoom value will be 1.
 
 ## Elements
 
