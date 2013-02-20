@@ -1,4 +1,4 @@
-/* svg.js v0.6-3-g1265eaa - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.6-6-gb2ac141 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -36,38 +36,37 @@
   if (!SVG.supported) return false;
 
   SVG.ViewBox = function(element) {
-    var width, height
+    var x, y, width, height
       , box  = element.bbox()
       , view = (element.attr('viewBox') || '').match(/[\d\.]+/g)
     
     /* clone attributes */
     this.x      = box.x
     this.y      = box.y
-    this.width  = box.width
-    this.height = box.height
+    this.width  = element.node.offsetWidth
+    this.height = element.node.offsetHeight
+    this.zoom   = 1
     
     if (view) {
       /* get width and height from viewbox */
-      width  = parseFloat(view[2])
-      height = parseFloat(view[3])
+      x      = parseFloat(view[0])
+      y      = parseFloat(view[1])
+      width  = parseFloat(view[2]) - x
+      height = parseFloat(view[3]) - y
+      
+      /* calculate zoom accoring to viewbox */
+      this.zoom = ((this.width / this.height) > (width / height)) ?
+        this.height / height :
+        this.width  / width
   
       /* calculate real pixel dimensions on parent SVG.Doc element */
       if (element instanceof SVG.Doc) {
-        this.x      = 0
-        this.y      = 0
-        this.width  = element.node.offsetWidth
-        this.height = element.node.offsetHeight
+        this.x      = x
+        this.y      = y
+        this.width  = width
+        this.height = height
       }
-      
-      /* calculate zoom accoring to viewbox */
-      this.zoom = (this.width / this.height > width / height) ?
-        this.height / height :
-        this.width  / width
-      
-    } else {
-      this.zoom = 1
     }
-    
   }
 
   SVG.BBox = function(element) {
