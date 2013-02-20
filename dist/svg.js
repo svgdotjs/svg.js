@@ -1,4 +1,4 @@
-/* svg.js v0.6-7-g1e18370 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.6-8-g7529b96 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -69,6 +69,14 @@
     this.zoom = this.zoom || 1
     
   }
+  
+  SVG.extend(SVG.ViewBox, {
+    // Parse viewbox to string
+    toString: function() {
+      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+    }
+    
+  })
 
   SVG.BBox = function(element) {
     /* actual, native bounding box */

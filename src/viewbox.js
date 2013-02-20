@@ -33,3 +33,11 @@ SVG.ViewBox = function(element) {
   this.zoom = this.zoom || 1
   
 }
+
+SVG.extend(SVG.ViewBox, {
+  // Parse viewbox to string
+  toString: function() {
+    return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+  }
+  
+})
