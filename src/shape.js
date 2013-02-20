@@ -1,6 +1,6 @@
-SVG.Shape = function Shape(element) {
-  this.constructor.call(this, element);
-};
+SVG.Shape = function(element) {
+  this.constructor.call(this, element)
+}
 
 // Inherit from SVG.Element
-SVG.Shape.prototype = new SVG.Element();
+SVG.Shape.prototype = new SVG.Element()

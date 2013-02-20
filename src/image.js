@@ -1,16 +1,16 @@
-SVG.Image = function Image() {
-  this.constructor.call(this, SVG.create('image'));
-};
+SVG.Image = function() {
+  this.constructor.call(this, SVG.create('image'))
+}
 
 // Inherit from SVG.Element
-SVG.Image.prototype = new SVG.Shape();
+SVG.Image.prototype = new SVG.Shape()
 
 SVG.extend(SVG.Image, {
   
   /* (re)load image */
   load: function(url) {
-    this.src = url;
-    return (url ? this.attr('xlink:href', url, SVG.xlink) : this);
+    this.src = url
+    return (url ? this.attr('xlink:href', url, SVG.xlink) : this)
   }
   
-});
+})

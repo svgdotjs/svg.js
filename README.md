@@ -28,7 +28,9 @@ This will generate the following output:
 	</svg>
 </div>
 ```
+
 By default the svg canvas follows the dimensions of its parent, in this case `#paper`:
+
 ```javascript
 var draw = svg('paper').size('100%', '100%');
 ```
@@ -44,6 +46,20 @@ if (SVG.supported) {
 } else {
   alert('SVG not supported');
 }
+```
+
+### ViewBox
+
+The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with arguments it will act as a setter:
+
+```javascript
+draw.viewbox(0, 0, 297, 210);
+```
+
+Without any attributes a an instance of `SVG.ViewBox` will be returned:
+
+```javascript
+var box = draw.viewbox();
 ```
 
 
@@ -274,7 +290,7 @@ draw.clear();
 ```javascript
 path.bbox();
 ```
-This will return an object with the following values:
+This will return an instance of `SVG.BBox` containing the following values:
 
 ```javascript
 { height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
