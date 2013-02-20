@@ -56,7 +56,7 @@ The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()
 draw.viewbox(0, 0, 297, 210)
 ```
 
-Without any attributes a an instance of `SVG.ViewBox` will be returned:
+Without any attributes an instance of `SVG.ViewBox` will be returned:
 
 ```javascript
 var box = draw.viewbox()
