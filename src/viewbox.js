@@ -7,9 +7,8 @@ SVG.ViewBox = function(element) {
   /* clone attributes */
   this.x      = box.x
   this.y      = box.y
-  this.width  = element.node.offsetWidth
-  this.height = element.node.offsetHeight
-  this.zoom   = 1
+  this.width  = element.node.offsetWidth  || element.attr('width')
+  this.height = element.node.offsetHeight || element.attr('height')
   
   if (view) {
     /* get width and height from viewbox */
@@ -24,11 +23,13 @@ SVG.ViewBox = function(element) {
       this.width  / width
 
     /* calculate real pixel dimensions on parent SVG.Doc element */
-    if (element instanceof SVG.Doc) {
-      this.x      = x
-      this.y      = y
-      this.width  = width
-      this.height = height
-    }
+    this.x      = x
+    this.y      = y
+    this.width  = width
+    this.height = height
   }
+  
+  /* ensure a default zoom value */
+  this.zoom = this.zoom || 1
+  
 }
