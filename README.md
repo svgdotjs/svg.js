@@ -796,6 +796,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
 - [svg.clippath.js](https://github.com/wout/svg.clippath.js) clip elements.
+- [svg.export.js](https://github.com/wout/svg.export.js) export raw svg.
 
 
 ## Building
