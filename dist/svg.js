@@ -1,4 +1,4 @@
-/* svg.js v0.6-8-g7529b96 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.7 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -12,12 +12,22 @@
     ns:    'http://www.w3.org/2000/svg'
   , xlink: 'http://www.w3.org/1999/xlink'
     
-    /* defs id sequence */
-  , did: 0
-    
+    /* element id sequence */
+  , did: 1000
+  
+    // Get next named element id
+  , eid: function(name) {
+      return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + 'Element' + (SVG.did++)
+    }
     // Method for element creation
-  , create: function(element) {
-      return document.createElementNS(this.ns, element)
+  , create: function(name) {
+      /* create element */
+      var element = document.createElementNS(this.ns, name)
+      
+      /* apply unique id */
+      element.setAttribute('id', this.eid(name))
+      
+      return element
     }
     // Method for extending objects
   , extend: function(object, module) {
@@ -103,34 +113,34 @@
     
     /* initialize attribute store with defaults */
     this.attrs = {
-      'fill-opacity':   1,
-      'stroke-opacity': 1,
-      'stroke-width':   0,
-      fill:     '#000',
-      stroke:   '#000',
-      opacity:  1,
-      x:        0,
-      y:        0,
-      cx:       0,
-      cy:       0,
-      width:    0,
-      height:   0,
-      r:        0,
-      rx:       0,
-      ry:       0
+      'fill-opacity':   1
+    , 'stroke-opacity': 1
+    , 'stroke-width':   0
+    , 'id':     (node ? node.getAttribute('id') : null)
+    , fill:     '#000'
+    , stroke:   '#000'
+    , opacity:  1
+    , x:        0
+    , y:        0
+    , cx:       0
+    , cy:       0
+    , width:    0
+    , height:   0
+    , r:        0
+    , rx:       0
+    , ry:       0
     }
     
     /* initialize transformation store with defaults */
     this.trans = {
-      x:        0,
-      y:        0,
-      scaleX:   1,
-      scaleY:   1,
-      rotation: 0,
-      skewX:    0,
-      skewY:    0
+      x:        0
+    , y:        0
+    , scaleX:   1
+    , scaleY:   1
+    , rotation: 0
+    , skewX:    0
+    , skewY:    0
     }
-  
   }
   
   //
@@ -200,7 +210,9 @@
     },
     // Remove element
     remove: function() {
-      return this.parent != null ? this.parent.remove(this) : void 0
+      if (this.parent)
+        this.parent.remove(this)
+      return this
     },
     // Get parent document
     doc: function() {
@@ -229,20 +241,30 @@
         else
           return this.attrs[a]
       
+      } else if (v === null) {
+        /* remove value */
+        this.node.removeAttribute(a)
+        
       } else {
         /* store value */
         this.attrs[a] = v
         
         /* treat x differently on text elements */
-        if (a == 'x' && this._isText())
+        if (a == 'x' && this._isText()) {
           for (var i = this.lines.length - 1; i >= 0; i--)
             this.lines[i].attr(a, v)
         
         /* set the actual attribute */
-        else
+        } else {
+          /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
+          if (a == 'stroke-width')
+            this.attr('stroke', parseFloat(v) > 0 ? this.attrs.stroke : null)
+          
+          /* set give attribute on node */
           n != null ?
             this.node.setAttributeNS(n, a, v) :
             this.node.setAttribute(a, v)
+        }
         
         /* if the passed argument belongs to the style as well, add it there */
         if (this._isStyle(a)) {
@@ -308,9 +330,7 @@
         }
         
       } else {
-        v === null ?
-          this.node.removeAttribute('data-' + a) :
-          this.attr('data-' + a, r === true ? v : JSON.stringify(v))
+        this.attr('data-' + a, v === null ? null : r === true ? v : JSON.stringify(v))
       }
       
       return this
@@ -377,7 +397,16 @@
     // Add given element at a position
     add: function(element, index) {
       if (!this.has(element)) {
+        /* define insertion index if none given */
         index = index == null ? this.children().length : index
+        
+        /* remove references from previous parent */
+        if (element.parent) {
+          var i = element.parent.children().indexOf(element)
+          element.parent.children().splice(i, 1)
+        }
+        
+        /* add element references */
         this.children().splice(index, 0, element)
         this.node.insertBefore(element.node, this.node.childNodes[index] || null)
         element.parent = this
@@ -409,18 +438,13 @@
       
       return this
     }
-    // Remove a given child element
+    // Remove a child element at a position
   , remove: function(element) {
-      return this.removeAt(this.children().indexOf(element))
-    }
-    // Remove a child element at a given position
-  , removeAt: function(index) {
-      if (0 <= index && index < this.children().length) {
-        var element = this.children()[index]
-        this.children().splice(index, 1)
-        this.node.removeChild(element.node)
-        element.parent = null
-      }
+      var index = this.children().indexOf(element)
+  
+      this.children().splice(index, 1)
+      this.node.removeChild(element.node)
+      element.parent = null
       
       return this
     }
@@ -889,9 +913,6 @@
 
   SVG.Mask = function() {
     this.constructor.call(this, SVG.create('mask'))
-    
-    /* set unique id */
-    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
   }
   
   // Inherit from SVG.Container
@@ -904,16 +925,13 @@
       /* use given mask or create a new one */
       this.mask = element instanceof SVG.Mask ? element : this.parent.mask().add(element)
       
-      return this.attr('mask', 'url(#' + this.mask.id + ')')
+      return this.attr('mask', 'url(#' + this.mask.attr('id') + ')')
     }
     
   })
 
   SVG.Pattern = function(type) {
     this.constructor.call(this, SVG.create('pattern'))
-    
-    /* set unique id */
-    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
   }
   
   // Inherit from SVG.Container
@@ -923,7 +941,7 @@
   SVG.extend(SVG.Pattern, {
     // Return the fill id
     fill: function() {
-      return 'url(#' + this.id + ')'
+      return 'url(#' + this.attr('id') + ')'
     }
     
   })
@@ -951,9 +969,6 @@
 
   SVG.Gradient = function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
-    
-    /* set unique id */
-    this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
     
     /* store type */
     this.type = type
@@ -999,7 +1014,7 @@
     },
     // Return the fill id
     fill: function() {
-      return 'url(#' + this.id + ')'
+      return 'url(#' + this.attr('id') + ')'
     }
     
   })
@@ -1064,13 +1079,13 @@
       element
     
     /* set svg element attributes and create the <defs> node */
-    this.
-      attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' }).
-      attr('xlink', SVG.xlink, SVG.ns).
-      defs()
+    this
+      .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
+      .attr('xlink', SVG.xlink, SVG.ns)
+      .defs()
     
     /* ensure correct rendering for safari */
-    this.stage(); 
+    this.stage()
   }
   
   // Inherits from SVG.Container
@@ -1450,7 +1465,8 @@
 
   SVG.Nested = function() {
     this.constructor.call(this, SVG.create('svg'))
-    this.attr('overflow', 'visible')
+    
+    this.attr('style', 'overflow:visible')
   }
   
   // Inherit from SVG.Container

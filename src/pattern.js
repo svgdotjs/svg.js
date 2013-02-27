@@ -1,8 +1,5 @@
 SVG.Pattern = function(type) {
   this.constructor.call(this, SVG.create('pattern'))
-  
-  /* set unique id */
-  this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
 }
 
 // Inherit from SVG.Container
@@ -12,7 +9,7 @@ SVG.Pattern.prototype = new SVG.Container
 SVG.extend(SVG.Pattern, {
   // Return the fill id
   fill: function() {
-    return 'url(#' + this.id + ')'
+    return 'url(#' + this.attr('id') + ')'
   }
   
 })

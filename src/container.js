@@ -10,7 +10,16 @@ SVG.extend(SVG.Container, {
   // Add given element at a position
   add: function(element, index) {
     if (!this.has(element)) {
+      /* define insertion index if none given */
       index = index == null ? this.children().length : index
+      
+      /* remove references from previous parent */
+      if (element.parent) {
+        var i = element.parent.children().indexOf(element)
+        element.parent.children().splice(i, 1)
+      }
+      
+      /* add element references */
       this.children().splice(index, 0, element)
       this.node.insertBefore(element.node, this.node.childNodes[index] || null)
       element.parent = this
@@ -42,18 +51,13 @@ SVG.extend(SVG.Container, {
     
     return this
   }
-  // Remove a given child element
+  // Remove a child element at a position
 , remove: function(element) {
-    return this.removeAt(this.children().indexOf(element))
-  }
-  // Remove a child element at a given position
-, removeAt: function(index) {
-    if (0 <= index && index < this.children().length) {
-      var element = this.children()[index]
-      this.children().splice(index, 1)
-      this.node.removeChild(element.node)
-      element.parent = null
-    }
+    var index = this.children().indexOf(element)
+
+    this.children().splice(index, 1)
+    this.node.removeChild(element.node)
+    element.parent = null
     
     return this
   }

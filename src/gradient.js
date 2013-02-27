@@ -1,9 +1,6 @@
 SVG.Gradient = function(type) {
   this.constructor.call(this, SVG.create(type + 'Gradient'))
   
-  /* set unique id */
-  this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
-  
   /* store type */
   this.type = type
 }
@@ -48,7 +45,7 @@ SVG.extend(SVG.Gradient, {
   },
   // Return the fill id
   fill: function() {
-    return 'url(#' + this.id + ')'
+    return 'url(#' + this.attr('id') + ')'
   }
   
 })

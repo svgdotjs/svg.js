@@ -10,13 +10,13 @@ SVG.Doc = function(element) {
     element
   
   /* set svg element attributes and create the <defs> node */
-  this.
-    attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' }).
-    attr('xlink', SVG.xlink, SVG.ns).
-    defs()
+  this
+    .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
+    .attr('xlink', SVG.xlink, SVG.ns)
+    .defs()
   
   /* ensure correct rendering for safari */
-  this.stage(); 
+  this.stage()
 }
 
 // Inherits from SVG.Container

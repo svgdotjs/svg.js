@@ -9,34 +9,34 @@ SVG.Element = function(node) {
   
   /* initialize attribute store with defaults */
   this.attrs = {
-    'fill-opacity':   1,
-    'stroke-opacity': 1,
-    'stroke-width':   0,
-    fill:     '#000',
-    stroke:   '#000',
-    opacity:  1,
-    x:        0,
-    y:        0,
-    cx:       0,
-    cy:       0,
-    width:    0,
-    height:   0,
-    r:        0,
-    rx:       0,
-    ry:       0
+    'fill-opacity':   1
+  , 'stroke-opacity': 1
+  , 'stroke-width':   0
+  , 'id':     (node ? node.getAttribute('id') : null)
+  , fill:     '#000'
+  , stroke:   '#000'
+  , opacity:  1
+  , x:        0
+  , y:        0
+  , cx:       0
+  , cy:       0
+  , width:    0
+  , height:   0
+  , r:        0
+  , rx:       0
+  , ry:       0
   }
   
   /* initialize transformation store with defaults */
   this.trans = {
-    x:        0,
-    y:        0,
-    scaleX:   1,
-    scaleY:   1,
-    rotation: 0,
-    skewX:    0,
-    skewY:    0
+    x:        0
+  , y:        0
+  , scaleX:   1
+  , scaleY:   1
+  , rotation: 0
+  , skewX:    0
+  , skewY:    0
   }
-
 }
 
 //
@@ -106,7 +106,9 @@ SVG.extend(SVG.Element, {
   },
   // Remove element
   remove: function() {
-    return this.parent != null ? this.parent.remove(this) : void 0
+    if (this.parent)
+      this.parent.remove(this)
+    return this
   },
   // Get parent document
   doc: function() {
@@ -135,20 +137,30 @@ SVG.extend(SVG.Element, {
       else
         return this.attrs[a]
     
+    } else if (v === null) {
+      /* remove value */
+      this.node.removeAttribute(a)
+      
     } else {
       /* store value */
       this.attrs[a] = v
       
       /* treat x differently on text elements */
-      if (a == 'x' && this._isText())
+      if (a == 'x' && this._isText()) {
         for (var i = this.lines.length - 1; i >= 0; i--)
           this.lines[i].attr(a, v)
       
       /* set the actual attribute */
-      else
+      } else {
+        /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
+        if (a == 'stroke-width')
+          this.attr('stroke', parseFloat(v) > 0 ? this.attrs.stroke : null)
+        
+        /* set give attribute on node */
         n != null ?
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v)
+      }
       
       /* if the passed argument belongs to the style as well, add it there */
       if (this._isStyle(a)) {
@@ -214,9 +226,7 @@ SVG.extend(SVG.Element, {
       }
       
     } else {
-      v === null ?
-        this.node.removeAttribute('data-' + a) :
-        this.attr('data-' + a, r === true ? v : JSON.stringify(v))
+      this.attr('data-' + a, v === null ? null : r === true ? v : JSON.stringify(v))
     }
     
     return this

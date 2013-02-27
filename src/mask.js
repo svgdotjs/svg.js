@@ -1,8 +1,5 @@
 SVG.Mask = function() {
   this.constructor.call(this, SVG.create('mask'))
-  
-  /* set unique id */
-  this.attr('id', (this.id = 'svgjs_element_' + (SVG.did++)))
 }
 
 // Inherit from SVG.Container
@@ -15,7 +12,7 @@ SVG.extend(SVG.Element, {
     /* use given mask or create a new one */
     this.mask = element instanceof SVG.Mask ? element : this.parent.mask().add(element)
     
-    return this.attr('mask', 'url(#' + this.mask.id + ')')
+    return this.attr('mask', 'url(#' + this.mask.attr('id') + ')')
   }
   
 })

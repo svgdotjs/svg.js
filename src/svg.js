@@ -18,12 +18,22 @@ this.SVG = {
   ns:    'http://www.w3.org/2000/svg'
 , xlink: 'http://www.w3.org/1999/xlink'
   
-  /* defs id sequence */
-, did: 0
-  
+  /* element id sequence */
+, did: 1000
+
+  // Get next named element id
+, eid: function(name) {
+    return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + 'Element' + (SVG.did++)
+  }
   // Method for element creation
-, create: function(element) {
-    return document.createElementNS(this.ns, element)
+, create: function(name) {
+    /* create element */
+    var element = document.createElementNS(this.ns, name)
+    
+    /* apply unique id */
+    element.setAttribute('id', this.eid(name))
+    
+    return element
   }
   // Method for extending objects
 , extend: function(object, module) {
