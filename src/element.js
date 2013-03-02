@@ -3,16 +3,11 @@
 
 //
 SVG.Element = function(node) {
-  /* keep reference to the element node */
-  if (this.node = node)
-    this.type = node.nodeName
-  
   /* initialize attribute store with defaults */
   this.attrs = {
     'fill-opacity':   1
   , 'stroke-opacity': 1
   , 'stroke-width':   0
-  , 'id':     (node ? node.getAttribute('id') : null)
   , fill:     '#000'
   , stroke:   '#000'
   , opacity:  1
@@ -37,6 +32,12 @@ SVG.Element = function(node) {
   , skewX:    0
   , skewY:    0
   }
+  
+  /* keep reference to the element node */
+  if (this.node = node) {
+    this.type = node.nodeName
+    this.attrs.id = node.getAttribute('id')
+  }
 }
 
 //
@@ -44,25 +45,25 @@ SVG.extend(SVG.Element, {
   // Move element to given x and y values
   move: function(x, y) {
     return this.attr({
-      x: x,
-      y: y
+      x: x
+    , y: y
     })
-  },
+  }
   // Move element by its center
-  center: function(x, y) {
+, center: function(x, y) {
     var box = this.bbox()
     
     return this.move(x - box.width / 2, y - box.height / 2)
-  },
+  }
   // Set element size to given width and height
-  size: function(width, height) { 
+, size: function(width, height) { 
     return this.attr({
-      width:  width,
-      height: height
+      width:  width
+    , height: height
     })
-  },
+  }
   // Clone element
-  clone: function() {
+, clone: function() {
     var clone
     
     /* if this is a wrapped shape */
@@ -103,23 +104,23 @@ SVG.extend(SVG.Element, {
     
     /* apply attributes and translations */
     return clone.transform({})
-  },
+  }
   // Remove element
-  remove: function() {
+, remove: function() {
     if (this.parent)
       this.parent.remove(this)
     return this
-  },
+  }
   // Get parent document
-  doc: function() {
+, doc: function() {
     return this._parent(SVG.Doc)
-  },
+  }
   // Get parent nested document
-  nested: function() {
+, nested: function() {
     return this._parent(SVG.Nested)
-  },
+  }
   // Set svg element attribute
-  attr: function(a, v, n) {
+, attr: function(a, v, n) {
     if (arguments.length < 2) {
       /* apply every attribute individually if an object is passed */
       if (typeof a == 'object')
@@ -175,9 +176,9 @@ SVG.extend(SVG.Element, {
     }
     
     return this
-  },
+  }
   // Manage transformations
-  transform: function(o) {
+, transform: function(o) {
     /* act as a getter if the first argument is a string */
     if (typeof o === 'string')
       return this.trans[o]
@@ -215,9 +216,9 @@ SVG.extend(SVG.Element, {
     
     /* add only te required transformations */
     return this.attr('transform', transform.join(' '))
-  },
+  }
   // Store data values on svg nodes
-  data: function(a, v, r) {
+, data: function(a, v, r) {
     if (arguments.length < 2) {
       try {
         return JSON.parse(this.attr('data-' + a))
@@ -230,51 +231,51 @@ SVG.extend(SVG.Element, {
     }
     
     return this
-  },
+  }
   // Get bounding box
-  bbox: function() {
+, bbox: function() {
     return new SVG.BBox(this)
-  },
+  }
   // Checks whether the given point inside the bounding box of the element
-  inside: function(x, y) {
+, inside: function(x, y) {
     var box = this.bbox()
     
-    return x > box.x &&
-           y > box.y &&
-           x < box.x + box.width &&
-           y < box.y + box.height
-  },
+    return x > box.x
+        && y > box.y
+        && x < box.x + box.width
+        && y < box.y + box.height
+  }
   // Show element
-  show: function() {
+, show: function() {
     this.node.style.display = ''
     
     return this
-  },
+  }
   // Hide element
-  hide: function() {
+, hide: function() {
     this.node.style.display = 'none'
     
     return this
-  },
+  }
   // Is element visible?
-  visible: function() {
+, visible: function() {
     return this.node.style.display != 'none'
-  },
+  }
   // Private: find svg parent by instance
-  _parent: function(parent) {
+, _parent: function(parent) {
     var element = this
     
     while (element != null && !(element instanceof parent))
       element = element.parent
 
     return element
-  },
+  }
   // Private: tester method for style detection
-  _isStyle: function(attr) {
+, _isStyle: function(attr) {
     return typeof attr == 'string' && this._isText() ? (/^font|text|leading/).test(attr) : false
-  },
+  }
   // Private: element type tester
-  _isText: function() {
+, _isText: function() {
     return this instanceof SVG.Text
   }
   

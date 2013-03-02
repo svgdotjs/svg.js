@@ -176,26 +176,38 @@ text.font({
 ## Manipulating elements
 
 ### Attributes
-You can get and set an element's attributes directly using `attr()`:
+You can get and set an element's attributes directly using `attr()`.
 
+Get a single attribute:
 ```javascript
-// get a single attribute
 rect.attr('x')
+```
 
-// set a single attribute
+Set a single attribute:
+```javascript
 rect.attr('x', 50)
+```
 
-// set multiple attributes at once
+Set multiple attributes at once:
+```javascript
 rect.attr({
   fill: '#f06'
 , 'fill-opacity': 0.5
 , stroke: '#000'
 , 'stroke-width': 10
 })
+```
 
-// set an attribute with a namespace
+Set an attribute with a namespace:
+```javascript
 rect.attr('x', 50, 'http://www.w3.org/2000/svg')
 ```
+
+Explicitly remove an attribute:
+```javascript
+rect.attr('fill', null)
+```
+
 
 
 ### Transform
