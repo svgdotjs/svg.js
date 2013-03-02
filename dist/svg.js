@@ -1,4 +1,4 @@
-/* svg.js v0.7-1-ge9fa07a - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.7-2-g028bf91 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -854,6 +854,17 @@
     }
     
   })
+  
+  SVG.extend(SVG.G, {
+    // Move using translate
+    move: function(x, y) {
+      return this.transform({
+        x: x
+      , y: y
+      })
+    }
+  
+  })
 
   SVG.extend(SVG.Element, {
     // Get all siblings, including myself
@@ -1507,46 +1518,35 @@
     if (module) {
       SVG.extend(module, {
         // Rotation
-        rotate: function(angle) {
+        rotate: function(deg, cx, cy) {
           return this.transform({
-            rotation: angle || 0
+            rotation: deg || 0
+          , cx: cx
+          , cy: cy
           })
-        },
+        }
         // Skew
-        skew: function(x, y) {
+      , skew: function(x, y) {
           return this.transform({
-            skewX: x || 0,
-            skewY: y || 0
+            skewX: x || 0
+          , skewY: y || 0
           })
-        },
+        }
         // Scale
-        scale: function(x, y) {
+      , scale: function(x, y) {
           return this.transform({
             scaleX: x,
             scaleY: y == null ? x : y
           })
-        },
+        }
         // Opacity
-        opacity: function(value) {
+      , opacity: function(value) {
           return this.attr('opacity', value)
         }
   
       })
     }
   })
-  
-  if (SVG.G) {
-    SVG.extend(SVG.G, {
-      // Move using translate
-      move: function(x, y) {
-        return this.transform({
-          x: x,
-          y: y
-        })
-      }
-  
-    })
-  }
   
   if (SVG.Text) {
     SVG.extend(SVG.Text, {

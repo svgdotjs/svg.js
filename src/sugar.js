@@ -33,46 +33,35 @@ var _colorPrefix = function(type, attr) {
   if (module) {
     SVG.extend(module, {
       // Rotation
-      rotate: function(angle) {
+      rotate: function(deg, cx, cy) {
         return this.transform({
-          rotation: angle || 0
+          rotation: deg || 0
+        , cx: cx
+        , cy: cy
         })
-      },
+      }
       // Skew
-      skew: function(x, y) {
+    , skew: function(x, y) {
         return this.transform({
-          skewX: x || 0,
-          skewY: y || 0
+          skewX: x || 0
+        , skewY: y || 0
         })
-      },
+      }
       // Scale
-      scale: function(x, y) {
+    , scale: function(x, y) {
         return this.transform({
           scaleX: x,
           scaleY: y == null ? x : y
         })
-      },
+      }
       // Opacity
-      opacity: function(value) {
+    , opacity: function(value) {
         return this.attr('opacity', value)
       }
 
     })
   }
 })
-
-if (SVG.G) {
-  SVG.extend(SVG.G, {
-    // Move using translate
-    move: function(x, y) {
-      return this.transform({
-        x: x,
-        y: y
-      })
-    }
-
-  })
-}
 
 if (SVG.Text) {
   SVG.extend(SVG.Text, {

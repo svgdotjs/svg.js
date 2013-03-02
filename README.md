@@ -454,6 +454,13 @@ The `rotate()` method will automatically rotate elements according to the center
 rect.rotate(45)
 ```
 
+Although you can also define a specific rotation point:
+
+```javascript
+// rotate(degrees, cx, cy)
+rect.rotate(45, 50, 50)
+```
+
 ### Skew
 The `skew()` method will take an `x` and `y` value:
 

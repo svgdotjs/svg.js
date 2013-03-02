@@ -12,3 +12,14 @@ SVG.extend(SVG.G, {
   }
   
 })
+
+SVG.extend(SVG.G, {
+  // Move using translate
+  move: function(x, y) {
+    return this.transform({
+      x: x
+    , y: y
+    })
+  }
+
+})
