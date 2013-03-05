@@ -866,6 +866,8 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 ## To-do
 - Instance module
 - Text on path module (write text along paths)
+- Dynamic css styles
+- Animatable unit values (e.g. '100%' or '30mm')
 
 
 ## Compatibility

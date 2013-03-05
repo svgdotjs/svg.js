@@ -6,14 +6,6 @@ SVG.G = function() {
 SVG.G.prototype = new SVG.Container
 
 SVG.extend(SVG.G, {
-  // Get defs
-  defs: function() {
-    return this.doc().defs()
-  }
-  
-})
-
-SVG.extend(SVG.G, {
   // Move using translate
   move: function(x, y) {
     return this.transform({
@@ -21,5 +13,9 @@ SVG.extend(SVG.G, {
     , y: y
     })
   }
-
+  // Get defs
+, defs: function() {
+    return this.doc().defs()
+  }
+  
 })

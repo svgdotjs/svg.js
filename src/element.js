@@ -22,6 +22,9 @@ SVG.Element = function(node) {
   , ry:       0
   }
   
+  /* initialize style store */
+  this.style = {}
+  
   /* initialize transformation store with defaults */
   this.trans = {
     x:        0
