@@ -423,7 +423,7 @@ rect.animate(3000).move(100, 100).during(function(pos) {
 ```
 Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
 
-To make things easier for you a convenience method is passed as the second argument. This method accepts a from and to value and can be a number, unit or hex color:
+To make things easier a morphing function is passed as the second argument. This function accepts a `from` and `to` value as the first and second argument and they can be a number, unit or hex color:
 
 ```javascript
 var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
