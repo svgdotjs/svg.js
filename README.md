@@ -332,6 +332,7 @@ draw.each(function(i, children) {
 
 ## Animating elements
 
+### Invoking an animation
 Animating elements is very much the same as manipulating elements, the only difference is you have to include the `animate()` method:
 
 ```javascript
@@ -344,7 +345,10 @@ The `animate()` method will take two arguments. The first is `milliseconds`, the
 rect.animate(2000, '>').attr({ fill: '#f03' })
 ```
 
-By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`. All available ease types are:
+By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`.
+
+### Easing
+All available ease types are:
 
 - `<>`: ease in and out
 - `>`: ease out
@@ -360,6 +364,7 @@ function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; }
 
 For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
 
+### Animatable methods
 Note that the `animate()` method will not return the targeted element but an instance of SVG.FX which will take the following methods:
 
 Of course `attr()`:
@@ -382,6 +387,12 @@ If you include the sugar.js module, `rotate()` and `skew()` will be available as
 rect.animate().rotate(45).skew(25, 0)
 ```
 
+You can also animate non-numeric unit values unsing the `attr()` method:
+```javascript
+rect.attr('x', '10%').animate().attr('x', '50%')
+```
+
+### Stopping animations
 Animations can be stopped in two ways.
 
 By calling the `stop()` method:
@@ -398,6 +409,39 @@ rect.animate().move(200, 200)
 rect.animate().center(200, 200)
 ```
 
+### Animating along keyframes
+If you want to perform your own actions along and during the animations you can use the `along()` method:
+
+```javascript
+var position
+  , from = 100
+  , to   = 300
+
+rect.animate(3000).move(100, 100).along(function(pos) {
+  position = from + (to - from) * pos 
+})
+```
+Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
+
+To make things easier for you a convenience method is passed as the second argument. This method accepts a from and to value and can be a number, unit or hex color:
+
+```javascript
+var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
+
+rect.animate(3000).move(100, 100).during(function(pos, morph) {
+  /* numeric values */
+  circle.size(morph(100, 200), morph(100, 50))
+  
+  /* unit strings */
+  circle.attr('cx', morph('20%', '80%'))
+  
+  /* hex color strings */
+  circle.fill(morph('#333', '#ff0066'))
+})
+```
+
+
+### After animation callback
 Finally, you can add callback methods using `after()`:
 
 ```javascript

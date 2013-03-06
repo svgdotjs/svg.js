@@ -1,4 +1,4 @@
-/* svg.js v0.7-3-gca15876 - svg viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.8 - svg regex viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -44,6 +44,13 @@
   })()
   
   if (!SVG.supported) return false;
+
+  SVG.regex = {
+    
+    unit: /^([\d\.]+)([a-z%]{0,2})$/
+    
+  , hex:  /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
+  }
 
   SVG.ViewBox = function(element) {
     var x, y, width, height
@@ -303,8 +310,11 @@
       
       /* add rotation */
       if (o.rotation != 0) {
-        var box = this.bbox()
-        transform.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : box.cx) + ',' + (o.cy != null ? o.cy : box.cy) + ')')
+        transform.push(
+          'rotate(' + o.rotation + ','
+        + (o.cx != null ? o.cx : this.bbox().cx) + ','
+        + (o.cy != null ? o.cy : this.bbox().cy) + ')'
+        )
       }
       
       /* add scale */
@@ -564,9 +574,9 @@
       /* start animation */
       this.interval = setInterval(function(){
         // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-        var index,
-            time = (new Date).getTime(),
-            pos = time > finish ? 1 : (time - start) / duration
+        var index
+          , time = (new Date).getTime()
+          , pos = time > finish ? 1 : (time - start) / duration
         
         /* collect attribute keys */
         if (akeys == null) {
@@ -619,12 +629,18 @@
           element.transform(tvalues)
         }
         
+        /* callback for each keyframe */
+        if (fx._during)
+          fx._during.call(element, pos, function(from, to) {
+            return fx._at({ from: from, to: to }, pos)
+          })
+        
         /* finish off animation */
         if (time > finish) {
           clearInterval(fx.interval)
           fx._after ? fx._after.apply(element, [fx]) : fx.stop()
         }
-          
+        
       }, duration > 10 ? 10 : duration)
       
       return this
@@ -680,6 +696,12 @@
       
       return this
     }
+    // Add callback for each keyframe
+  , during: function(during) {
+      this._during = during
+      
+      return this
+    }
     // Callback after animation
   , after: function(after) {
       this._after = after
@@ -692,30 +714,51 @@
       clearInterval(this.interval)
       
       /* reset storage for properties that need animation */
-      this.attrs  = {}
-      this.trans  = {}
-      this._move  = null
-      this._size  = null
-      this._after = null
+      this.attrs    = {}
+      this.trans    = {}
+      this._move    = null
+      this._size    = null
+      this._after   = null
+      this._during  = null
       
       return this
     }
     // Private: at position according to from and to
   , _at: function(o, pos) {
-      /* if a number, recalculate pos */
+      /* number recalculation */
       return typeof o.from == 'number' ?
         o.from + (o.to - o.from) * pos :
       
-      /* if animating to a color */
-      o.to.r || /^#/.test(o.to) ?
+      /* unit recalculation */
+      SVG.regex.unit.test(o.to) ?
+        this._unit(o, pos) :
+      
+      /* color recalculation */
+      o.to && (o.to.r || /^#/.test(o.to)) ?
         this._color(o, pos) :
       
       /* for all other values wait until pos has reached 1 to return the final value */
       pos < 1 ? o.from : o.to
     }
+    // Private: tween unit
+  , _unit: function(o, pos) {
+      var match, from
+      
+      /* convert FROM unit */
+      match = SVG.regex.unit.exec(o.from.toString())
+      from = parseFloat(match[1])
+      
+      /* convert TO unit */
+      match = SVG.regex.unit.exec(o.to)
+      
+      return (from + (parseFloat(match[1]) - from) * pos) + match[2]
+    }
     // Private: tween color
   , _color: function(o, pos) {
       var from, to
+      
+      /* normalise pos */
+      pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
       
       /* convert FROM hex to rgb */
       from = this._h2r(o.from || '#000')
@@ -733,7 +776,7 @@
     // Private: convert hex to rgb object
   , _h2r: function(hex) {
       /* parse full hex */
-      var match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(this._fh(hex))
+      var match = SVG.regex.hex.exec(this._fh(hex))
       
       /* if the hex is successfully parsed, return it in rgb, otherwise return black */
       return match ? {

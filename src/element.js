@@ -199,8 +199,11 @@ SVG.extend(SVG.Element, {
     
     /* add rotation */
     if (o.rotation != 0) {
-      var box = this.bbox()
-      transform.push('rotate(' + o.rotation + ',' + (o.cx != null ? o.cx : box.cx) + ',' + (o.cy != null ? o.cy : box.cy) + ')')
+      transform.push(
+        'rotate(' + o.rotation + ','
+      + (o.cx != null ? o.cx : this.bbox().cx) + ','
+      + (o.cy != null ? o.cy : this.bbox().cy) + ')'
+      )
     }
     
     /* add scale */
