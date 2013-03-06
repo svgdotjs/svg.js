@@ -410,14 +410,14 @@ rect.animate().center(200, 200)
 ```
 
 ### Animating along keyframes
-If you want to perform your own actions along and during the animations you can use the `along()` method:
+If you want to perform your own actions during the animations you can use the `during()` method:
 
 ```javascript
 var position
   , from = 100
   , to   = 300
 
-rect.animate(3000).move(100, 100).along(function(pos) {
+rect.animate(3000).move(100, 100).during(function(pos) {
   position = from + (to - from) * pos 
 })
 ```
