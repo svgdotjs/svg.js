@@ -15,7 +15,7 @@ var _colorPrefix = function(type, attr) {
   SVG.Shape.prototype[method] = function(o) {
     var indexOf
     
-    if (typeof o == 'string')
+    if (typeof o == 'string' || SVG.Color.isRgb(o) || SVG.Color.isHsb(o))
       this.attr(method, o)
     
     else

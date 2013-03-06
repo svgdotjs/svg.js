@@ -329,6 +329,18 @@ draw.each(function(i, children) {
 })
 ```
 
+## Colors
+
+Svg.js has a dedicated color module handling different types of colors. Accepted values are:
+
+- hex string; three based (e.g. #f06) or six based (e.g. #ff0066)
+- rgb string; e.g. rgb(255, 0, 102)
+- hsb string; e.g. hsb(336, 100, 100)
+- rgb object; e.g. { r: 255, g: 0, b: 102 }
+- hsb object; e.g. { r: 336, g: 100, b: 100 }
+
+Note that when working with objects is important to provide all three values every time.
+
 
 ## Animating elements
 
@@ -409,7 +421,7 @@ rect.animate().move(200, 200)
 rect.animate().center(200, 200)
 ```
 
-### Animating along keyframes
+### Synchronising animations
 If you want to perform your own actions during the animations you can use the `during()` method:
 
 ```javascript

@@ -14,14 +14,14 @@ SVG.extend(SVG.FX, {
     var akeys, tkeys, tvalues
       , element   = this.target
       , fx        = this
-      , start     = (new Date).getTime()
+      , start     = new Date().getTime()
       , finish    = start + duration
     
     /* start animation */
     this.interval = setInterval(function(){
       // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
       var index
-        , time = (new Date).getTime()
+        , time = new Date().getTime()
         , pos = time > finish ? 1 : (time - start) / duration
       
       /* collect attribute keys */
@@ -180,7 +180,7 @@ SVG.extend(SVG.FX, {
       this._unit(o, pos) :
     
     /* color recalculation */
-    o.to && (o.to.r || /^#/.test(o.to)) ?
+    o.to && (o.to.r || SVG.Color.test(o.to)) ?
       this._color(o, pos) :
     
     /* for all other values wait until pos has reached 1 to return the final value */
@@ -206,48 +206,18 @@ SVG.extend(SVG.FX, {
     /* normalise pos */
     pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
     
-    /* convert FROM hex to rgb */
-    from = this._h2r(o.from || '#000')
+    /* convert FROM */
+    from = new SVG.Color(o.from)
     
     /* convert TO hex to rgb */
-    to = this._h2r(o.to)
+    to = new SVG.Color(o.to)
     
     /* tween color and return hex */
-    return this._r2h({
+    return new SVG.Color({
       r: ~~(from.r + (to.r - from.r) * pos)
     , g: ~~(from.g + (to.g - from.g) * pos)
     , b: ~~(from.b + (to.b - from.b) * pos)
-    })
-  }
-  // Private: convert hex to rgb object
-, _h2r: function(hex) {
-    /* parse full hex */
-    var match = SVG.regex.hex.exec(this._fh(hex))
-    
-    /* if the hex is successfully parsed, return it in rgb, otherwise return black */
-    return match ? {
-      r: parseInt(match[1], 16)
-    , g: parseInt(match[2], 16)
-    , b: parseInt(match[3], 16)
-    } : { r: 0, g: 0, b: 0 }
-  }
-  // Private: convert rgb object to hex string
-, _r2h: function(rgb) {
-    return '#' + this._c2h(rgb.r) + this._c2h(rgb.g) + this._c2h(rgb.b)
-  }
-  // Private: convert component to hex
-, _c2h: function(c) {
-    var hex = c.toString(16)
-    return hex.length == 1 ? '0' + hex : hex
-  }
-  // Private: force potential 3-based hex to 6-based 
-, _fh: function(hex) {
-    return hex.length == 4 ?
-      [ '#',
-        hex.substring(1, 2), hex.substring(1, 2)
-      , hex.substring(2, 3), hex.substring(2, 3)
-      , hex.substring(3, 4), hex.substring(3, 4)
-      ].join('') : hex
+    }).toHex()
   }
   
 })

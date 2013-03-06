@@ -160,6 +160,10 @@ SVG.extend(SVG.Element, {
         if (a == 'stroke-width')
           this.attr('stroke', parseFloat(v) > 0 ? this.attrs.stroke : null)
         
+        /* ensure hex color */
+        if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
+          v = new SVG.Color(v).toHex()
+          
         /* set give attribute on node */
         n != null ?
           this.node.setAttributeNS(n, a, v) :
