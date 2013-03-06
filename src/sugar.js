@@ -10,9 +10,9 @@ var _colorPrefix = function(type, attr) {
 
 /* Add sugar for fill and stroke */
 ;['fill', 'stroke'].forEach(function(method) {
+  var extension = {}
   
-  // Set fill color and opacity
-  SVG.Shape.prototype[method] = function(o) {
+  extension[method] = function(o) {
     var indexOf
     
     if (typeof o == 'string' || SVG.Color.isRgb(o) || SVG.Color.isHsb(o))
@@ -27,41 +27,40 @@ var _colorPrefix = function(type, attr) {
     return this
   }
   
+  SVG.extend(SVG.Shape, SVG.FX, extension)
+  
 })
 
-;[SVG.Element, SVG.FX].forEach(function(module) {
-  if (module) {
-    SVG.extend(module, {
-      // Rotation
-      rotate: function(deg, cx, cy) {
-        return this.transform({
-          rotation: deg || 0
-        , cx: cx
-        , cy: cy
-        })
-      }
-      // Skew
-    , skew: function(x, y) {
-        return this.transform({
-          skewX: x || 0
-        , skewY: y || 0
-        })
-      }
-      // Scale
-    , scale: function(x, y) {
-        return this.transform({
-          scaleX: x,
-          scaleY: y == null ? x : y
-        })
-      }
-      // Opacity
-    , opacity: function(value) {
-        return this.attr('opacity', value)
-      }
-
+SVG.extend(SVG.Element, SVG.FX, {
+  // Rotation
+  rotate: function(deg, cx, cy) {
+    return this.transform({
+      rotation: deg || 0
+    , cx: cx
+    , cy: cy
     })
   }
+  // Skew
+, skew: function(x, y) {
+    return this.transform({
+      skewX: x || 0
+    , skewY: y || 0
+    })
+  }
+  // Scale
+, scale: function(x, y) {
+    return this.transform({
+      scaleX: x,
+      scaleY: y == null ? x : y
+    })
+  }
+  // Opacity
+, opacity: function(value) {
+    return this.attr('opacity', value)
+  }
+
 })
+
 
 if (SVG.Text) {
   SVG.extend(SVG.Text, {

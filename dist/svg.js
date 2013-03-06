@@ -1,4 +1,4 @@
-/* svg.js v0.8-4-g6a8a3fe - svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.8-5-g5e3ff07 - svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 (function() {
 
   this.svg = function(element) {
@@ -30,9 +30,19 @@
       return element
     }
     // Method for extending objects
-  , extend: function(object, module) {
-      for (var key in module)
-        object.prototype[key] = module[key]
+  , extend: function() {
+      var modules, methods, key, i
+      
+      /* get list of modules */
+      modules = Array.prototype.slice.call(arguments)
+      
+      /* get object with extensions */
+      methods = modules.pop()
+      
+      for (i = modules.length - 1; i >= 0; i--)
+        if (modules[i])
+          for (key in methods)
+            modules[i].prototype[key] = methods[key]
     }
     
   }
@@ -1687,9 +1697,9 @@
   
   /* Add sugar for fill and stroke */
   ;['fill', 'stroke'].forEach(function(method) {
+    var extension = {}
     
-    // Set fill color and opacity
-    SVG.Shape.prototype[method] = function(o) {
+    extension[method] = function(o) {
       var indexOf
       
       if (typeof o == 'string' || SVG.Color.isRgb(o) || SVG.Color.isHsb(o))
@@ -1704,41 +1714,40 @@
       return this
     }
     
+    SVG.extend(SVG.Shape, SVG.FX, extension)
+    
   })
   
-  ;[SVG.Element, SVG.FX].forEach(function(module) {
-    if (module) {
-      SVG.extend(module, {
-        // Rotation
-        rotate: function(deg, cx, cy) {
-          return this.transform({
-            rotation: deg || 0
-          , cx: cx
-          , cy: cy
-          })
-        }
-        // Skew
-      , skew: function(x, y) {
-          return this.transform({
-            skewX: x || 0
-          , skewY: y || 0
-          })
-        }
-        // Scale
-      , scale: function(x, y) {
-          return this.transform({
-            scaleX: x,
-            scaleY: y == null ? x : y
-          })
-        }
-        // Opacity
-      , opacity: function(value) {
-          return this.attr('opacity', value)
-        }
-  
+  SVG.extend(SVG.Element, SVG.FX, {
+    // Rotation
+    rotate: function(deg, cx, cy) {
+      return this.transform({
+        rotation: deg || 0
+      , cx: cx
+      , cy: cy
       })
     }
+    // Skew
+  , skew: function(x, y) {
+      return this.transform({
+        skewX: x || 0
+      , skewY: y || 0
+      })
+    }
+    // Scale
+  , scale: function(x, y) {
+      return this.transform({
+        scaleX: x,
+        scaleY: y == null ? x : y
+      })
+    }
+    // Opacity
+  , opacity: function(value) {
+      return this.attr('opacity', value)
+    }
+  
   })
+  
   
   if (SVG.Text) {
     SVG.extend(SVG.Text, {

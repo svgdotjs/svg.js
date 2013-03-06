@@ -36,9 +36,19 @@ this.SVG = {
     return element
   }
   // Method for extending objects
-, extend: function(object, module) {
-    for (var key in module)
-      object.prototype[key] = module[key]
+, extend: function() {
+    var modules, methods, key, i
+    
+    /* get list of modules */
+    modules = Array.prototype.slice.call(arguments)
+    
+    /* get object with extensions */
+    methods = modules.pop()
+    
+    for (i = modules.length - 1; i >= 0; i--)
+      if (modules[i])
+        for (key in methods)
+          modules[i].prototype[key] = methods[key]
   }
   
 }
