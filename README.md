@@ -848,7 +848,6 @@ _SVG.Ellipse < SVG.Shape < SVG.Element_
 The SVG document can be extended by using:
 
 ```javascript
-
 SVG.extend(SVG.Doc, {
   paintAllPink: function() {
     var children = this.children()
@@ -861,6 +860,17 @@ SVG.extend(SVG.Doc, {
   }
 })
 ```
+
+You can also extend multiple elements at once:
+```javascript
+SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
+  paintRed: function() {
+    return this.fill({ color: 'orangered' })
+  }
+})
+
+```
+
 
 
 ## Plugins
