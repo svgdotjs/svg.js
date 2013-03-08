@@ -10,7 +10,7 @@ task :default => :dist
 
 # module-aware file task
 class BuildTask < Rake::FileTask
-  
+
   def modules
     prerequisites.map { |f| File.basename(f, '.js') }
   end
@@ -33,14 +33,14 @@ class BuildTask < Rake::FileTask
   def first_line
     File.open(name, 'r') { |f| f.gets }
   end
-  
+
 end
 
 BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |task|
   mkdir_p 'dist', :verbose => false
-  
+
   svgjs = ''
-  
+
   task.prerequisites.each do |src|
     # bring in source files one by one, but without copyright info
     copyright = true
@@ -50,14 +50,14 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
     end
     svgjs << "\n\n"
   end
-  
+
   File.open(task.name, 'w') do |file|
     file.puts "/* svg.js %s - %s - svgjs.com/license */" % [version_string, task.modules.join(' ')]
 
-    file.puts '(function() {'
+    file.puts "(function (root, factory) {if (typeof exports === 'object') {module.exports = factory(); } else if (typeof define === 'function' && define.amd) {define([],factory); } else {root.jscss = factory(); } }(this, function () {"
     file.puts "\n"
     file.puts svgjs
-    file.puts '}).call(this);'
+    file.puts 'return svg; }));'
   end
 end
 
