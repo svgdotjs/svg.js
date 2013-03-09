@@ -24,8 +24,8 @@ SVG.extend(SVG.Ellipse, {
   // Custom center function
   center: function(x, y) {
     return this.attr({
-      cx: x || (this.attrs.x || 0) + (this.attrs.rx || 0),
-      cy: y || (this.attrs.y || 0) + (this.attrs.ry || 0)
+      cx: x != null ? x : (this.attrs.x || 0) + (this.attrs.rx || 0),
+      cy: y != null ? y : (this.attrs.y || 0) + (this.attrs.ry || 0)
     })
   }
   
