@@ -15,25 +15,25 @@ SVG.extend(SVG.Gradient, {
     return this.type == 'radial' ?
       this.attr({ fx: x + '%', fy: y + '%' }) :
       this.attr({ x1: x + '%', y1: y + '%' })
-  },
+  }
   // To position
-  to: function(x, y) {
+, to: function(x, y) {
     return this.type == 'radial' ?
       this.attr({ cx: x + '%', cy: y + '%' }) :
       this.attr({ x2: x + '%', y2: y + '%' })
-  },
+  }
   // Radius for radial gradient
-  radius: function(radius) {
+, radius: function(radius) {
     return this.type == 'radial' ?
       this.attr({ r: radius + '%' }) :
       this
-  },
+  }
   // Add a color stop
-  at: function(stop) {
+, at: function(stop) {
     return this.put(new SVG.Stop(stop))
-  },
+  }
   // Update gradient
-  update: function(block) {
+, update: function(block) {
     /* remove all stops */
     while (this.node.hasChildNodes())
       this.node.removeChild(this.node.lastChild)
@@ -42,9 +42,9 @@ SVG.extend(SVG.Gradient, {
     block(this)
     
     return this
-  },
+  }
   // Return the fill id
-  fill: function() {
+, fill: function() {
     return 'url(#' + this.attr('id') + ')'
   }
   
@@ -81,20 +81,16 @@ SVG.extend(SVG.Stop, {
   
   /* add color stops */
   update: function(o) {
-    var index,
-        style = '',
-        attr  = ['opacity', 'color']
+    var index
+      , attr = ['opacity', 'color']
     
     /* build style attribute */
     for (index = attr.length - 1; index >= 0; index--)
       if (o[attr[index]] != null)
-        style += 'stop-' + attr[index] + ':' + o[attr[index]] + ';'
+        this.style('stop-' + attr[index], o[attr[index]])
     
     /* set attributes */
-    return this.attr({
-      offset: (o.offset != null ? o.offset : this.attrs.offset || 0) + '%',
-      style:  style
-    })
+    return this.attr('offset', (o.offset != null ? o.offset : this.attrs.offset || 0) + '%')
   }
   
 })

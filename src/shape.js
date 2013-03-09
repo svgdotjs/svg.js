@@ -3,4 +3,4 @@ SVG.Shape = function(element) {
 }
 
 // Inherit from SVG.Element
-SVG.Shape.prototype = new SVG.Element()
+SVG.Shape.prototype = new SVG.Element

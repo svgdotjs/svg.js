@@ -25,11 +25,11 @@ SVG.extend(SVG.Defs, {
     block(element)
     
     return element.attr({
-      x:            0,
-      y:            0,
-      width:        width,
-      height:       height,
-      patternUnits: 'userSpaceOnUse'
+      x:            0
+    , y:            0
+    , width:        width
+    , height:       height
+    , patternUnits: 'userSpaceOnUse'
     })
   }
   

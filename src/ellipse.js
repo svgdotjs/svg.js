@@ -17,15 +17,15 @@ SVG.extend(SVG.Ellipse, {
   },
   // Custom size function
   size: function(width, height) {
-    return this.
-      attr({ rx: width / 2, ry: (height != null ? height : width) / 2 }).
-      center()
+    return this
+     .attr({ rx: width / 2, ry: (height != null ? height : width) / 2 })
+     .center()
   },
   // Custom center function
   center: function(x, y) {
     return this.attr({
-      cx: x || (this.attrs.x || 0) + (this.attrs.rx || 0),
-      cy: y || (this.attrs.y || 0) + (this.attrs.ry || 0)
+      cx: x != null ? x : (this.attrs.x || 0) + (this.attrs.rx || 0)
+    , cy: y != null ? y : (this.attrs.y || 0) + (this.attrs.ry || 0)
     })
   }
   

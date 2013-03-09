@@ -11,7 +11,7 @@ SVG.extend(SVG.FX, {
     duration = duration == null ? 1000 : duration
     ease = ease || '<>'
     
-    var akeys, tkeys, tvalues
+    var akeys, tkeys, skeys
       , element   = this.target
       , fx        = this
       , start     = new Date().getTime()
@@ -20,24 +20,29 @@ SVG.extend(SVG.FX, {
     /* start animation */
     this.interval = setInterval(function(){
       // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-      var index
+      var i, key
         , time = new Date().getTime()
         , pos = time > finish ? 1 : (time - start) / duration
       
       /* collect attribute keys */
       if (akeys == null) {
         akeys = []
-        for (var key in fx.attrs)
+        for (key in fx.attrs)
           akeys.push(key)
       }
       
       /* collect transformation keys */
       if (tkeys == null) {
         tkeys = []
-        for (var key in fx.trans)
+        for (key in fx.trans)
           tkeys.push(key)
-        
-        tvalues = {}
+      }
+      
+      /* collect style keys */
+      if (skeys == null) {
+        skeys = []
+        for (key in fx.styles)
+          skeys.push(key)
       }
       
       /* apply easing */
@@ -57,23 +62,23 @@ SVG.extend(SVG.FX, {
       if (fx._move)
         element.move(fx._at(fx._move.x, pos), fx._at(fx._move.y, pos))
       else if (fx._center)
-        element.move(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
+        element.center(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
       
       /* run all size properties */
       if (fx._size)
         element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
       
       /* animate attributes */
-      for (index = akeys.length - 1; index >= 0; index--)
-        element.attr(akeys[index], fx._at(fx.attrs[akeys[index]], pos))
+      for (i = akeys.length - 1; i >= 0; i--)
+        element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
       
       /* animate transformations */
-      if (tkeys.length > 0) {
-        for (index = tkeys.length - 1; index >= 0; index--)
-          tvalues[tkeys[index]] = fx._at(fx.trans[tkeys[index]], pos)
-        
-        element.transform(tvalues)
-      }
+      for (i = tkeys.length - 1; i >= 0; i--)
+        element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+      
+      /* animate styles */
+      for (i = skeys.length - 1; i >= 0; i--)
+        element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
       
       /* callback for each keyframe */
       if (fx._during)
@@ -100,12 +105,23 @@ SVG.extend(SVG.FX, {
     else
       this.attrs[a] = { from: this.target.attr(a), to: v }
     
-    return this;  
+    return this
   }
   // Add animatable transformations
-, transform: function(o) {
-    for (var key in o)
-      this.trans[key] = { from: this.target.trans[key], to: o[key] }
+, transform: function(t, v) {
+    for (var key in t)
+      this.trans[key] = { from: this.target.trans[key], to: t[key] }
+    
+    return this
+  }
+  // Add animatable styles
+, style: function(s, v) {
+    if (typeof s == 'object')
+      for (var key in s)
+        this.style(key, s[key])
+    
+    else
+      this.styles[s] = { from: this.target.style(s), to: v }
     
     return this
   }
@@ -122,11 +138,18 @@ SVG.extend(SVG.FX, {
   }
   // Add animatable size
 , size: function(width, height) {
-    var box = this.target.bbox()
-    
-    this._size = {
-      width:  { from: box.width,  to: width  }
-    , height: { from: box.height, to: height }
+    if (this.target instanceof SVG.Text) {
+      /* animate font size for Text elements */
+      this.attr('font-size', width)
+      
+    } else {
+      /* animate bbox based size for all other elements */
+      var box = this.target.bbox()
+
+      this._size = {
+        width:  { from: box.width,  to: width  }
+      , height: { from: box.height, to: height }
+      }
     }
     
     return this
@@ -162,6 +185,7 @@ SVG.extend(SVG.FX, {
     /* reset storage for properties that need animation */
     this.attrs    = {}
     this.trans    = {}
+    this.styles   = {}
     this._move    = null
     this._size    = null
     this._after   = null

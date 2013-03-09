@@ -1,4 +1,4 @@
-SVGJS_VERSION = '0.8'
+SVGJS_VERSION = '0.9'
 
 # all available modules in the correct loading order
 MODULES = %w[ svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar ]
@@ -53,12 +53,13 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
   
   File.open(task.name, 'w') do |file|
     file.puts "/* svg.js %s - %s - svgjs.com/license */" % [version_string, task.modules.join(' ')]
-
-    file.puts '(function() {'
+  
+    file.puts ';(function() {'
     file.puts "\n"
     file.puts svgjs
     file.puts '}).call(this);'
   end
+  
 end
 
 file 'dist/svg.min.js' => 'dist/svg.js' do |task|

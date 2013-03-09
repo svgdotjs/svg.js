@@ -1,0 +1,37 @@
+{
+  "name":         "svg.js"
+, "description":  "A lightweight library for manipulating and animating SVG."
+, "url":          "http://svgjs.com"
+, "homepage":     "http://svgjs.com"
+, "keywords":     ["svg", "vector", "graphics", "animation"]
+, "author":       "Wout Fierens <wout@impinc.co.uk>"
+, "main":         "dist/svg.js"
+, "version":      "v0.9"
+, "jam": {
+    "include": [
+      "dist/svg.js"
+    , "README.md"
+    , "MIT-LICENSE"
+    ]
+  }
+, "maintainers": [
+    {
+      "name":     "Wout Fierens"
+    , "email":    "wout@impinc.co.uk"
+    , "web":      "http://impinc.co.uk"
+    }
+  ]
+, "licenses": [
+    {
+      "type":     "MIT"
+    , "url":      "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ]
+, "repositories": [
+    {
+      "type":     "git"
+    , "url":      "https://github.com/wout/svg.js.git"
+    }
+  ]
+, "github":       "https://github.com/wout/svg.js"
+}

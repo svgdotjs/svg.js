@@ -3,28 +3,27 @@
 //     rect.click(function() {
 //       this.fill({ color: '#f06' })
 //     })
-;[ 'click',
-  'dblclick',
-  'mousedown',
-  'mouseup',
-  'mouseover',
-  'mouseout',
-  'mousemove',
-  'mouseenter',
-  'mouseleave',
-  'touchstart',
-  'touchend',
-  'touchmove',
-  'touchcancel' ].forEach(function(event) {
+;[ 'click'
+, 'dblclick'
+, 'mousedown'
+, 'mouseup'
+, 'mouseover'
+, 'mouseout'
+, 'mousemove'
+, 'mouseenter'
+, 'mouseleave'
+, 'touchstart'
+, 'touchend'
+, 'touchmove'
+, 'touchcancel' ].forEach(function(event) {
   
   /* add event to SVG.Element */
   SVG.Element.prototype[event] = function(f) {
     var self = this
     
     /* bind event to element rather than element node */
-    this.node['on' + event] = typeof f == 'function'
-      ? function() { return f.apply(self, arguments); }
-      : null
+    this.node['on' + event] = typeof f == 'function' ?
+      function() { return f.apply(self, arguments) } : null
     
     return this
   }
@@ -54,11 +53,11 @@ SVG.extend(SVG.Element, {
     SVG.on(this.node, event, listener)
     
     return this
-  },
+  }
   // Unbind event from listener
-  off: function(event, listener) {
+, off: function(event, listener) {
     SVG.off(this.node, event, listener)
     
     return this
   }
-});
+})

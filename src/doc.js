@@ -26,9 +26,9 @@ SVG.Doc.prototype = new SVG.Container
 // Basically it sets the position of the svg node to absolute
 // when the dom is loaded, and resets it to relative a few milliseconds later.
 SVG.Doc.prototype.stage = function() {
-  var check,
-      element = this,
-      wrapper = document.createElement('div')
+  var check
+    , element = this
+    , wrapper = document.createElement('div')
   
   /* set temp wrapper to position relative */
   wrapper.style.cssText = 'position:relative;height:100%;'
@@ -40,10 +40,10 @@ SVG.Doc.prototype.stage = function() {
   /* check for dom:ready */
   check = function() {
     if (document.readyState === 'complete') {
-      element.attr('style', 'position:absolute;')
+      element.style('position:absolute;')
       setTimeout(function() {
         /* set position back to relative */
-        element.attr('style', 'position:relative;')
+        element.style('position:relative;')
         
         /* remove temp wrapper */
         element.parent.removeChild(element.node.parentNode)

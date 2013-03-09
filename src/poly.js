@@ -12,7 +12,7 @@ SVG.Polyline = function() {
 }
 
 // Inherit from SVG.Shape
-SVG.Polyline.prototype = new SVG.Shape()
+SVG.Polyline.prototype = new SVG.Shape
 
 // Add polygon-specific functions
 SVG.extend(SVG.Polyline, SVG.Poly)
@@ -22,7 +22,7 @@ SVG.Polygon = function() {
 }
 
 // Inherit from SVG.Shape
-SVG.Polygon.prototype = new SVG.Shape()
+SVG.Polygon.prototype = new SVG.Shape
 
 // Add polygon-specific functions
 SVG.extend(SVG.Polygon, SVG.Poly)

@@ -63,23 +63,19 @@ SVG.extend(SVG.Element, SVG.FX, {
 
 
 if (SVG.Text) {
-  SVG.extend(SVG.Text, {
+  SVG.extend(SVG.Text, SVG.FX, {
     // Set font 
     font: function(o) {
-      var key, attr = {}
-
-      for (key in o)
-        key == 'leading' ?
-          attr[key] = o[key] :
+      for (var key in o)
         key == 'anchor' ?
-          attr['text-anchor'] = o[key] :
+          this.attr('text-anchor', o[key]) :
         _styleAttr.indexOf(key) > -1 ?
-          attr['font-'+ key] = o[key] :
-          void 0
-
-      return this.attr(attr).text(this.content)
+          this.attr('font-'+ key, o[key]) :
+          this.attr(key, o[key])
+      
+      return this
     }
-
+    
   })
 }
 

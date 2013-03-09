@@ -23,7 +23,7 @@ SVG.Element = function(node) {
   }
   
   /* initialize style store */
-  this.style = {}
+  this.styles = {}
   
   /* initialize transformation store with defaults */
   this.trans = {
@@ -112,6 +112,7 @@ SVG.extend(SVG.Element, {
 , remove: function() {
     if (this.parent)
       this.parent.remove(this)
+    
     return this
   }
   // Get parent document
@@ -127,23 +128,28 @@ SVG.extend(SVG.Element, {
     if (arguments.length < 2) {
       /* apply every attribute individually if an object is passed */
       if (typeof a == 'object')
-        for (v in a) this.attr(v, a[v])
+        for (v in a)
+          this.attr(v, a[v])
       
       /* act as a getter for style attributes */
       else if (this._isStyle(a))
         return a == 'text' ?
                  this.content :
                a == 'leading' ?
-                 this[a] :
-                 this.style[a]
+                 this.leading() :
+                 this.style(a)
       
       /* act as a getter if the first and only argument is not an object */
       else
-        return this.attrs[a]
+        return this.attrs[a] || this.node.getAttribute(a)
     
     } else if (v === null) {
       /* remove value */
       this.node.removeAttribute(a)
+      
+    } else if (a == 'style') {
+      /* redirect to the style method */
+      return this.style(v)
       
     } else {
       /* store value */
@@ -175,28 +181,38 @@ SVG.extend(SVG.Element, {
         a == 'text' ?
           this.text(v) :
         a == 'leading' ?
-          this[a] = v :
-          this.style[a] = v
-      
-        this.text(this.content)
+          this.leading(v) :
+          this.style(a, v)
+        
+        /* rebuild if required */
+        if (this.rebuild)
+          this.rebuild()
       }
     }
     
     return this
   }
   // Manage transformations
-, transform: function(o) {
-    /* act as a getter if the first argument is a string */
-    if (typeof o === 'string')
-      return this.trans[o]
+, transform: function(o, v) {
+    if (typeof o === 'string') {
+      /* act as a getter if only one string argument is given */
+      if (arguments.length < 2)
+        return this.trans[o]
       
+      /* apply transformations as object if key value arguments are given*/
+      var transform = {}
+      transform[o] = v
+      
+      return this.transform(transform)
+    }
+    
     /* ... otherwise continue as a setter */
-    var key, transform = []
+    var transform = []
     
     /* merge values */
-    for (key in o)
-      if (o[key] != null)
-        this.trans[key] = o[key]
+    for (v in o)
+      if (o[v] != null)
+        this.trans[v] = o[v]
     
     /* alias current transformations */
     o = this.trans
@@ -226,6 +242,52 @@ SVG.extend(SVG.Element, {
     
     /* add only te required transformations */
     return this.attr('transform', transform.join(' '))
+  }
+  // Dynamic style generator
+, style: function(s, v) {
+    if (arguments.length == 0) {
+      /* get full style */
+      return this.attr('style')
+    
+    } else if (arguments.length < 2) {
+      /* apply every style individually if an object is passed */
+      if (typeof s == 'object') {
+        for (v in s) this.style(v, s[v])
+      
+      } else if (SVG.regex.isCss.test(s)) {
+        /* parse css string */
+        s = s.split(';')
+
+        /* apply every definition individually */
+        for (var i = 0; i < s.length; i++) {
+          v = s[i].split(':')
+
+          if (v.length == 2)
+            this.style(v[0].replace(/\s+/g, ''), v[1].replace(/^\s+/,'').replace(/\s+$/,''))
+        }
+      } else {
+        /* act as a getter if the first and only argument is not an object */
+        return this.styles[s]
+      }
+    
+    } else if (v === null) {
+      /* remove value */
+      delete this.styles[s]
+      
+    } else {
+      /* store value */
+      this.styles[s] = v
+    }
+    
+    /* rebuild style string */
+    s = ''
+    for (v in this.styles)
+      s += v + ':' + this.styles[v] + ';'
+    
+    /* apply style */
+    this.node.setAttribute('style', s)
+    
+    return this
   }
   // Store data values on svg nodes
 , data: function(a, v, r) {
@@ -257,19 +319,15 @@ SVG.extend(SVG.Element, {
   }
   // Show element
 , show: function() {
-    this.node.style.display = ''
-    
-    return this
+    return this.style('display', '')
   }
   // Hide element
 , hide: function() {
-    this.node.style.display = 'none'
-    
-    return this
+    return this.style('display', 'none')
   }
   // Is element visible?
 , visible: function() {
-    return this.node.style.display != 'none'
+    return this.style('display') != 'none'
   }
   // Private: find svg parent by instance
 , _parent: function(parent) {
@@ -282,7 +340,7 @@ SVG.extend(SVG.Element, {
   }
   // Private: tester method for style detection
 , _isStyle: function(attr) {
-    return typeof attr == 'string' && this._isText() ? (/^font|text|leading/).test(attr) : false
+    return typeof attr == 'string' ? SVG.regex.isStyle.test(attr) : false
   }
   // Private: element type tester
 , _isText: function() {

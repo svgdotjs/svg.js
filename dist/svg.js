@@ -1,50 +1,54 @@
-/* svg.js v0.8-5-g5e3ff07 - svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
-(function() {
+/* svg.js v0.9 - svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+;(function() {
 
-  this.svg = function(element) {
+  this.SVG = function(element) {
     if (SVG.supported)
       return new SVG.Doc(element)
   }
   
-  // The main wrapping element
-  this.SVG = {
-    /* default namespaces */
-    ns:    'http://www.w3.org/2000/svg'
-  , xlink: 'http://www.w3.org/1999/xlink'
-    
-    /* element id sequence */
-  , did: 1000
+  // DEPRECATED!!! Use SVG() instead
+  this.svg = function(element) {
+    console.warn('WARNING: svg() is deprecated, please use SVG() instead.')
+    return SVG(element)
+  }
   
-    // Get next named element id
-  , eid: function(name) {
-      return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + 'Element' + (SVG.did++)
-    }
-    // Method for element creation
-  , create: function(name) {
-      /* create element */
-      var element = document.createElementNS(this.ns, name)
-      
-      /* apply unique id */
-      element.setAttribute('id', this.eid(name))
-      
-      return element
-    }
-    // Method for extending objects
-  , extend: function() {
-      var modules, methods, key, i
-      
-      /* get list of modules */
-      modules = Array.prototype.slice.call(arguments)
-      
-      /* get object with extensions */
-      methods = modules.pop()
-      
-      for (i = modules.length - 1; i >= 0; i--)
-        if (modules[i])
-          for (key in methods)
-            modules[i].prototype[key] = methods[key]
-    }
+  // Default namespaces
+  SVG.ns = 'http://www.w3.org/2000/svg'
+  SVG.xlink = 'http://www.w3.org/1999/xlink'
+  
+  // Element id sequence
+  SVG.did  = 1000
+  
+  // Get next named element id
+  SVG.eid = function(name) {
+    return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + 'Element' + (SVG.did++)
+  }
+  
+  // Method for element creation
+  SVG.create = function(name) {
+    /* create element */
+    var element = document.createElementNS(this.ns, name)
     
+    /* apply unique id */
+    element.setAttribute('id', this.eid(name))
+    
+    return element
+  }
+  
+    // Method for extending objects
+  SVG.extend = function() {
+    var modules, methods, key, i
+    
+    /* get list of modules */
+    modules = Array.prototype.slice.call(arguments)
+    
+    /* get object with extensions */
+    methods = modules.pop()
+    
+    for (i = modules.length - 1; i >= 0; i--)
+      if (modules[i])
+        for (key in methods)
+          modules[i].prototype[key] = methods[key]
   }
   
   // svg support test
@@ -53,24 +57,39 @@
            !! document.createElementNS(SVG.ns,'svg').createSVGRect
   })()
   
-  if (!SVG.supported) return false;
+  if (!SVG.supported) return false
 
   SVG.regex = {
+    /* parse unit value */
+    unit:     /^([\d\.]+)([a-z%]{0,2})$/
     
-    unit:   /^([\d\.]+)([a-z%]{0,2})$/
+    /* parse hex value */
+  , hex:      /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
     
-  , hex:    /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
-  
-  , rgb:    /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
-  
-  , hsb:    /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
-  
-  , isHex:  /^#/i
-  
-  , isRgb:  /^rgb\(/
+    /* parse rgb value */
+  , rgb:      /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
     
-  , isHsb:  /^hsb\(/
+    /* parse hsb value */
+  , hsb:      /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
     
+    /* test hex value */
+  , isHex:    /^#[a-f0-9]{3,6}$/i
+    
+    /* test rgb value */
+  , isRgb:    /^rgb\(/
+    
+    /* test hsb value */
+  , isHsb:    /^hsb\(/
+    
+    /* test css declaration */
+  , isCss:    /[^:]+:[^;]+;?/
+    
+    /* test css property */
+  , isStyle:  /^font|text|leading|cursor/
+    
+    /* test for blank string */
+  , isBlank:  /^(\s+)?$/
+  
   }
 
   SVG.Color = function(color) {
@@ -116,7 +135,6 @@
       this.r = color.r
       this.g = color.g
       this.b = color.b
-      
     }
       
   }
@@ -290,7 +308,7 @@
     this.y = box.y + element.trans.y
     
     /* add the center */
-    this.cx = box.x + element.trans.x + box.width  / 2
+    this.cx = box.x + element.trans.x + box.width / 2
     this.cy = box.y + element.trans.y + box.height / 2
     
     /* plain width and height */
@@ -320,7 +338,7 @@
     }
     
     /* initialize style store */
-    this.style = {}
+    this.styles = {}
     
     /* initialize transformation store with defaults */
     this.trans = {
@@ -409,6 +427,7 @@
   , remove: function() {
       if (this.parent)
         this.parent.remove(this)
+      
       return this
     }
     // Get parent document
@@ -424,23 +443,28 @@
       if (arguments.length < 2) {
         /* apply every attribute individually if an object is passed */
         if (typeof a == 'object')
-          for (v in a) this.attr(v, a[v])
+          for (v in a)
+            this.attr(v, a[v])
         
         /* act as a getter for style attributes */
         else if (this._isStyle(a))
           return a == 'text' ?
                    this.content :
                  a == 'leading' ?
-                   this[a] :
-                   this.style[a]
+                   this.leading() :
+                   this.style(a)
         
         /* act as a getter if the first and only argument is not an object */
         else
-          return this.attrs[a]
+          return this.attrs[a] || this.node.getAttribute(a)
       
       } else if (v === null) {
         /* remove value */
         this.node.removeAttribute(a)
+        
+      } else if (a == 'style') {
+        /* redirect to the style method */
+        return this.style(v)
         
       } else {
         /* store value */
@@ -472,28 +496,38 @@
           a == 'text' ?
             this.text(v) :
           a == 'leading' ?
-            this[a] = v :
-            this.style[a] = v
-        
-          this.text(this.content)
+            this.leading(v) :
+            this.style(a, v)
+          
+          /* rebuild if required */
+          if (this.rebuild)
+            this.rebuild()
         }
       }
       
       return this
     }
     // Manage transformations
-  , transform: function(o) {
-      /* act as a getter if the first argument is a string */
-      if (typeof o === 'string')
-        return this.trans[o]
+  , transform: function(o, v) {
+      if (typeof o === 'string') {
+        /* act as a getter if only one string argument is given */
+        if (arguments.length < 2)
+          return this.trans[o]
         
+        /* apply transformations as object if key value arguments are given*/
+        var transform = {}
+        transform[o] = v
+        
+        return this.transform(transform)
+      }
+      
       /* ... otherwise continue as a setter */
-      var key, transform = []
+      var transform = []
       
       /* merge values */
-      for (key in o)
-        if (o[key] != null)
-          this.trans[key] = o[key]
+      for (v in o)
+        if (o[v] != null)
+          this.trans[v] = o[v]
       
       /* alias current transformations */
       o = this.trans
@@ -523,6 +557,52 @@
       
       /* add only te required transformations */
       return this.attr('transform', transform.join(' '))
+    }
+    // Dynamic style generator
+  , style: function(s, v) {
+      if (arguments.length == 0) {
+        /* get full style */
+        return this.attr('style')
+      
+      } else if (arguments.length < 2) {
+        /* apply every style individually if an object is passed */
+        if (typeof s == 'object') {
+          for (v in s) this.style(v, s[v])
+        
+        } else if (SVG.regex.isCss.test(s)) {
+          /* parse css string */
+          s = s.split(';')
+  
+          /* apply every definition individually */
+          for (var i = 0; i < s.length; i++) {
+            v = s[i].split(':')
+  
+            if (v.length == 2)
+              this.style(v[0].replace(/\s+/g, ''), v[1].replace(/^\s+/,'').replace(/\s+$/,''))
+          }
+        } else {
+          /* act as a getter if the first and only argument is not an object */
+          return this.styles[s]
+        }
+      
+      } else if (v === null) {
+        /* remove value */
+        delete this.styles[s]
+        
+      } else {
+        /* store value */
+        this.styles[s] = v
+      }
+      
+      /* rebuild style string */
+      s = ''
+      for (v in this.styles)
+        s += v + ':' + this.styles[v] + ';'
+      
+      /* apply style */
+      this.node.setAttribute('style', s)
+      
+      return this
     }
     // Store data values on svg nodes
   , data: function(a, v, r) {
@@ -554,19 +634,15 @@
     }
     // Show element
   , show: function() {
-      this.node.style.display = ''
-      
-      return this
+      return this.style('display', '')
     }
     // Hide element
   , hide: function() {
-      this.node.style.display = 'none'
-      
-      return this
+      return this.style('display', 'none')
     }
     // Is element visible?
   , visible: function() {
-      return this.node.style.display != 'none'
+      return this.style('display') != 'none'
     }
     // Private: find svg parent by instance
   , _parent: function(parent) {
@@ -579,7 +655,7 @@
     }
     // Private: tester method for style detection
   , _isStyle: function(attr) {
-      return typeof attr == 'string' && this._isText() ? (/^font|text|leading/).test(attr) : false
+      return typeof attr == 'string' ? SVG.regex.isStyle.test(attr) : false
     }
     // Private: element type tester
   , _isText: function() {
@@ -755,7 +831,7 @@
       duration = duration == null ? 1000 : duration
       ease = ease || '<>'
       
-      var akeys, tkeys, tvalues
+      var akeys, tkeys, skeys
         , element   = this.target
         , fx        = this
         , start     = new Date().getTime()
@@ -764,24 +840,29 @@
       /* start animation */
       this.interval = setInterval(function(){
         // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-        var index
+        var i, key
           , time = new Date().getTime()
           , pos = time > finish ? 1 : (time - start) / duration
         
         /* collect attribute keys */
         if (akeys == null) {
           akeys = []
-          for (var key in fx.attrs)
+          for (key in fx.attrs)
             akeys.push(key)
         }
         
         /* collect transformation keys */
         if (tkeys == null) {
           tkeys = []
-          for (var key in fx.trans)
+          for (key in fx.trans)
             tkeys.push(key)
-          
-          tvalues = {}
+        }
+        
+        /* collect style keys */
+        if (skeys == null) {
+          skeys = []
+          for (key in fx.styles)
+            skeys.push(key)
         }
         
         /* apply easing */
@@ -801,23 +882,23 @@
         if (fx._move)
           element.move(fx._at(fx._move.x, pos), fx._at(fx._move.y, pos))
         else if (fx._center)
-          element.move(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
+          element.center(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
         
         /* run all size properties */
         if (fx._size)
           element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
         
         /* animate attributes */
-        for (index = akeys.length - 1; index >= 0; index--)
-          element.attr(akeys[index], fx._at(fx.attrs[akeys[index]], pos))
+        for (i = akeys.length - 1; i >= 0; i--)
+          element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
         
         /* animate transformations */
-        if (tkeys.length > 0) {
-          for (index = tkeys.length - 1; index >= 0; index--)
-            tvalues[tkeys[index]] = fx._at(fx.trans[tkeys[index]], pos)
-          
-          element.transform(tvalues)
-        }
+        for (i = tkeys.length - 1; i >= 0; i--)
+          element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+        
+        /* animate styles */
+        for (i = skeys.length - 1; i >= 0; i--)
+          element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
         
         /* callback for each keyframe */
         if (fx._during)
@@ -844,12 +925,23 @@
       else
         this.attrs[a] = { from: this.target.attr(a), to: v }
       
-      return this;  
+      return this
     }
     // Add animatable transformations
-  , transform: function(o) {
-      for (var key in o)
-        this.trans[key] = { from: this.target.trans[key], to: o[key] }
+  , transform: function(t, v) {
+      for (var key in t)
+        this.trans[key] = { from: this.target.trans[key], to: t[key] }
+      
+      return this
+    }
+    // Add animatable styles
+  , style: function(s, v) {
+      if (typeof s == 'object')
+        for (var key in s)
+          this.style(key, s[key])
+      
+      else
+        this.styles[s] = { from: this.target.style(s), to: v }
       
       return this
     }
@@ -866,11 +958,18 @@
     }
     // Add animatable size
   , size: function(width, height) {
-      var box = this.target.bbox()
-      
-      this._size = {
-        width:  { from: box.width,  to: width  }
-      , height: { from: box.height, to: height }
+      if (this.target instanceof SVG.Text) {
+        /* animate font size for Text elements */
+        this.attr('font-size', width)
+        
+      } else {
+        /* animate bbox based size for all other elements */
+        var box = this.target.bbox()
+  
+        this._size = {
+          width:  { from: box.width,  to: width  }
+        , height: { from: box.height, to: height }
+        }
       }
       
       return this
@@ -906,6 +1005,7 @@
       /* reset storage for properties that need animation */
       this.attrs    = {}
       this.trans    = {}
+      this.styles   = {}
       this._move    = null
       this._size    = null
       this._after   = null
@@ -986,28 +1086,27 @@
   //     })
 
 
-  ;[ 'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mousemove',
-    'mouseenter',
-    'mouseleave',
-    'touchstart',
-    'touchend',
-    'touchmove',
-    'touchcancel' ].forEach(function(event) {
+  ;[ 'click'
+  , 'dblclick'
+  , 'mousedown'
+  , 'mouseup'
+  , 'mouseover'
+  , 'mouseout'
+  , 'mousemove'
+  , 'mouseenter'
+  , 'mouseleave'
+  , 'touchstart'
+  , 'touchend'
+  , 'touchmove'
+  , 'touchcancel' ].forEach(function(event) {
     
     /* add event to SVG.Element */
     SVG.Element.prototype[event] = function(f) {
       var self = this
       
       /* bind event to element rather than element node */
-      this.node['on' + event] = typeof f == 'function'
-        ? function() { return f.apply(self, arguments); }
-        : null
+      this.node['on' + event] = typeof f == 'function' ?
+        function() { return f.apply(self, arguments) } : null
       
       return this
     }
@@ -1037,14 +1136,14 @@
       SVG.on(this.node, event, listener)
       
       return this
-    },
+    }
     // Unbind event from listener
-    off: function(event, listener) {
+  , off: function(event, listener) {
       SVG.off(this.node, event, listener)
       
       return this
     }
-  });
+  })
 
   SVG.G = function() {
     this.constructor.call(this, SVG.create('g'))
@@ -1091,11 +1190,9 @@
     }
     // Send given element one step backward
   , backward: function() {
-      var i
-      
       this.parent.level()
       
-      i = this.position()
+      var i = this.position()
       
       if (i > 1)
         this.parent.remove(this).add(this, i - 1)
@@ -1171,11 +1268,11 @@
       block(element)
       
       return element.attr({
-        x:            0,
-        y:            0,
-        width:        width,
-        height:       height,
-        patternUnits: 'userSpaceOnUse'
+        x:            0
+      , y:            0
+      , width:        width
+      , height:       height
+      , patternUnits: 'userSpaceOnUse'
       })
     }
     
@@ -1198,25 +1295,25 @@
       return this.type == 'radial' ?
         this.attr({ fx: x + '%', fy: y + '%' }) :
         this.attr({ x1: x + '%', y1: y + '%' })
-    },
+    }
     // To position
-    to: function(x, y) {
+  , to: function(x, y) {
       return this.type == 'radial' ?
         this.attr({ cx: x + '%', cy: y + '%' }) :
         this.attr({ x2: x + '%', y2: y + '%' })
-    },
+    }
     // Radius for radial gradient
-    radius: function(radius) {
+  , radius: function(radius) {
       return this.type == 'radial' ?
         this.attr({ r: radius + '%' }) :
         this
-    },
+    }
     // Add a color stop
-    at: function(stop) {
+  , at: function(stop) {
       return this.put(new SVG.Stop(stop))
-    },
+    }
     // Update gradient
-    update: function(block) {
+  , update: function(block) {
       /* remove all stops */
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
@@ -1225,9 +1322,9 @@
       block(this)
       
       return this
-    },
+    }
     // Return the fill id
-    fill: function() {
+  , fill: function() {
       return 'url(#' + this.attr('id') + ')'
     }
     
@@ -1264,20 +1361,16 @@
     
     /* add color stops */
     update: function(o) {
-      var index,
-          style = '',
-          attr  = ['opacity', 'color']
+      var index
+        , attr = ['opacity', 'color']
       
       /* build style attribute */
       for (index = attr.length - 1; index >= 0; index--)
         if (o[attr[index]] != null)
-          style += 'stop-' + attr[index] + ':' + o[attr[index]] + ';'
+          this.style('stop-' + attr[index], o[attr[index]])
       
       /* set attributes */
-      return this.attr({
-        offset: (o.offset != null ? o.offset : this.attrs.offset || 0) + '%',
-        style:  style
-      })
+      return this.attr('offset', (o.offset != null ? o.offset : this.attrs.offset || 0) + '%')
     }
     
   })
@@ -1309,9 +1402,9 @@
   // Basically it sets the position of the svg node to absolute
   // when the dom is loaded, and resets it to relative a few milliseconds later.
   SVG.Doc.prototype.stage = function() {
-    var check,
-        element = this,
-        wrapper = document.createElement('div')
+    var check
+      , element = this
+      , wrapper = document.createElement('div')
     
     /* set temp wrapper to position relative */
     wrapper.style.cssText = 'position:relative;height:100%;'
@@ -1323,10 +1416,10 @@
     /* check for dom:ready */
     check = function() {
       if (document.readyState === 'complete') {
-        element.attr('style', 'position:absolute;')
+        element.style('position:absolute;')
         setTimeout(function() {
           /* set position back to relative */
-          element.attr('style', 'position:relative;')
+          element.style('position:relative;')
           
           /* remove temp wrapper */
           element.parent.removeChild(element.node.parentNode)
@@ -1349,7 +1442,7 @@
   }
   
   // Inherit from SVG.Element
-  SVG.Shape.prototype = new SVG.Element()
+  SVG.Shape.prototype = new SVG.Element
 
   SVG.Wrap = function(element) {
     this.constructor.call(this, SVG.create('g'))
@@ -1367,30 +1460,30 @@
     // Move wrapper around
     move: function(x, y) {
       return this.transform({
-        x: x,
-        y: y
+        x: x
+      , y: y
       })
-    },
+    }
     // Set the actual size in pixels
-    size: function(width, height) {
+  , size: function(width, height) {
       var scale = width / this._b.width
       
       this.child.transform({
-        scaleX: scale,
-        scaleY: height != null ? height / this._b.height : scale
+        scaleX: scale
+      , scaleY: height != null ? height / this._b.height : scale
       })
   
       return this
-    },
+    }
     // Move by center
-    center: function(x, y) {
+  , center: function(x, y) {
       return this.move(
-        x + (this._b.width  * this.child.trans.scaleX) / -2,
-        y + (this._b.height * this.child.trans.scaleY) / -2
+        x + (this._b.width  * this.child.trans.scaleX) / -2
+      , y + (this._b.height * this.child.trans.scaleY) / -2
       )
-    },
+    }
     // Create distributed attr
-    attr: function(a, v, n) {
+  , attr: function(a, v, n) {
       /* call individual attributes if an object is given */
       if (typeof a == 'object') {
         for (v in a) this.attr(v, a[v])
@@ -1413,9 +1506,9 @@
       }
       
       return this
-    },
+    }
     // Distribute plot method to child
-    plot: function(data) {
+  , plot: function(data) {
       /* plot new shape */
       this.child.plot(data)
       
@@ -1424,8 +1517,8 @@
       
       /* reposition element withing wrapper */
       this.child.transform({
-        x: -this._b.x,
-        y: -this._b.y
+        x: -this._b.x
+      , y: -this._b.y
       })
       
       return this
@@ -1438,7 +1531,7 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.Rect.prototype = new SVG.Shape()
+  SVG.Rect.prototype = new SVG.Shape
 
   SVG.Ellipse = function() {
     this.constructor.call(this, SVG.create('ellipse'))
@@ -1458,15 +1551,15 @@
     },
     // Custom size function
     size: function(width, height) {
-      return this.
-        attr({ rx: width / 2, ry: (height != null ? height : width) / 2 }).
-        center()
+      return this
+       .attr({ rx: width / 2, ry: (height != null ? height : width) / 2 })
+       .center()
     },
     // Custom center function
     center: function(x, y) {
       return this.attr({
-        cx: x || (this.attrs.x || 0) + (this.attrs.rx || 0),
-        cy: y || (this.attrs.y || 0) + (this.attrs.ry || 0)
+        cx: x != null ? x : (this.attrs.x || 0) + (this.attrs.rx || 0)
+      , cy: y != null ? y : (this.attrs.y || 0) + (this.attrs.ry || 0)
       })
     }
     
@@ -1490,24 +1583,25 @@
       var bbox = this.bbox()
       
       return this.attr({
-        x1: this.attr('x1') - bbox.x + x,
-        y1: this.attr('y1') - bbox.y + y,
-        x2: this.attr('x2') - bbox.x + x,
-        y2: this.attr('y2') - bbox.y + y
+        x1: this.attr('x1') - bbox.x + x
+      , y1: this.attr('y1') - bbox.y + y
+      , x2: this.attr('x2') - bbox.x + x
+      , y2: this.attr('y2') - bbox.y + y
       })
-    },
+    }
     // Move element by its center
-    center: function(x, y) {
+  , center: function(x, y) {
       var bbox = this.bbox()
       
       return this.move(x - bbox.width / 2, y - bbox.height / 2)
-    },
+    }
     // Set line size by width and height
-    size: function(width, height) {
+  , size: function(width, height) {
       var bbox = this.bbox()
       
-      this.attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', bbox.x + width)
-      return this.attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', bbox.y + height)
+      return this
+        .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', bbox.x + width)
+        .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', bbox.y + height)
     }
   })
   
@@ -1515,10 +1609,10 @@
   SVG.extend(SVG.Container, {
     line: function(x1, y1, x2, y2) {
       return this.put(new SVG.Line().attr({
-        x1: x1,
-        y1: y1,
-        x2: x2,
-        y2: y2
+        x1: x1
+      , y1: y1
+      , x2: x2
+      , y2: y2
       }))
     }
   })
@@ -1537,7 +1631,7 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.Polyline.prototype = new SVG.Shape()
+  SVG.Polyline.prototype = new SVG.Shape
   
   // Add polygon-specific functions
   SVG.extend(SVG.Polyline, SVG.Poly)
@@ -1547,7 +1641,7 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.Polygon.prototype = new SVG.Shape()
+  SVG.Polygon.prototype = new SVG.Shape
   
   // Add polygon-specific functions
   SVG.extend(SVG.Polygon, SVG.Poly)
@@ -1560,21 +1654,20 @@
   SVG.Path.prototype = new SVG.Shape()
   
   SVG.extend(SVG.Path, {
-    
-    /* move using transform */
+    // Move using transform
     move: function(x, y) {
       this.transform({
         x: x,
         y: y
       })
-    },
+    }
     
-    /* set path data */
-    plot: function(data) {
+    // Set path data
+  , plot: function(data) {
       return this.attr('d', data || 'M0,0')
     }
     
-  });
+  })
 
   SVG.Image = function() {
     this.constructor.call(this, SVG.create('image'))
@@ -1593,78 +1686,118 @@
     
   })
 
-  var _styleAttr = ['size', 'family', 'weight', 'stretch', 'variant', 'style']
+  var _styleAttr = ('size family weight stretch variant style').split(' ')
   
   SVG.Text = function() {
     this.constructor.call(this, SVG.create('text'))
     
     /* define default style */
-    this.style = { 'font-size':  16, 'font-family': 'Helvetica', 'text-anchor': 'start' }
-    this.leading = 1.2
+    this.styles = {
+      'font-size':    16
+    , 'font-family':  'Helvetica'
+    , 'text-anchor':  'start'
+    }
+    
+    this._leading = 1.2
   }
   
   // Inherit from SVG.Element
-  SVG.Text.prototype = new SVG.Shape()
+  SVG.Text.prototype = new SVG.Shape
   
   SVG.extend(SVG.Text, {
     // Set the text content
     text: function(text) {
+      /* act as getter */
+      if (text == null)
+        return this.content
+      
+      /* remove existing lines */
+      this.clear()
+      
       /* update the content */
-      this.content = text = text || 'text'
-      this.lines = []
+      this.content = SVG.regex.isBlank.test(text) ? 'text' : text
       
-      var index, length, tspan,
-          style   = this._style(),
-          parent  = this.doc(),
-          lines   = text.split("\n"),
-          size    = this.style['font-size']
+      var i, il
+        , lines = text.split('\n')
       
+      /* build new lines */
+      for (i = 0, il = lines.length; i < il; i++)
+        this.tspan(lines[i])
+        
+      /* set style */
+      return this.attr('style', this.style())
+    }
+    // Create a tspan
+  , tspan: function(text) {
+      var tspan = new SVG.TSpan().text(text)
+      
+      /* add new tspan */
+      this.node.appendChild(tspan.node)
+      this.lines.push(tspan)
+      
+      return tspan.attr('style', this.style())
+    }
+    // Move element by its center
+  , center: function(x, y) {
+      var anchor = this.style('text-anchor')
+        , box = this.bbox()
+        , x = anchor == 'start' ?
+            x - box.width / 2 :
+          anchor == 'end' ?
+            x + box.width / 2 : x
+      
+      return this.move(x, y - box.height / 2)
+    }
+    // Set font size
+  , size: function(size) {
+      return this.attr('font-size', size)
+    }
+    // Set / get leading
+  , leading: function(value) {
+      /* act as getter */
+      if (value == null)
+        return this._leading
+      
+      /* act as setter */
+      this._leading = value
+      
+      return this.rebuild()
+    }
+    // rebuild appearance type
+  , rebuild: function() {
+      var i, il
+        , size = this.styles['font-size']
+      
+      /* define position of all lines */
+      for (i = 0, il = this.lines.length; i < il; i++)
+        this.lines[i].attr({
+          dy: size * this._leading - (i == 0 ? size * 0.3 : 0)
+        , x: (this.attrs.x || 0)
+        , style: this.style()
+        })
+      
+      return this
+    }
+    // Clear all lines
+  , clear: function() {
       /* remove existing child nodes */
       while (this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
       
-      /* build new lines */
-      for (index = 0, length = lines.length; index < length; index++) {
-        /* create new tspan and set attributes */
-        tspan = new SVG.TSpan().
-          text(lines[index]).
-          attr({
-            dy:     size * this.leading - (index == 0 ? size * 0.3 : 0),
-            x:      (this.attrs.x || 0),
-            style:  style
-          })
-        
-        /* add new tspan */
-        this.node.appendChild(tspan.node)
-        this.lines.push(tspan)
-      }
+      this.lines = []
       
-      /* set style */
-      return this.attr('style', style)
-    },
-    
-    // Build style based on _styleAttr
-    _style: function() {
-      var index, style = ''
-      
-      for (index = _styleAttr.length - 1; index >= 0; index--)
-        if (this.style['font-' + _styleAttr[index]] != null)
-          style += 'font-' + _styleAttr[index] + ':' + this.style['font-' + _styleAttr[index]] + ';'
-      
-      style += 'text-anchor:' + this.style['text-anchor'] + ';'
-        
-      return style
+      return this
     }
     
   })
   
-  
+  // tspan class
   SVG.TSpan = function() {
     this.constructor.call(this, SVG.create('tspan'))
   }
   
   // Inherit from SVG.Shape
-  SVG.TSpan.prototype = new SVG.Shape()
+  SVG.TSpan.prototype = new SVG.Shape
   
   // Include the container object
   SVG.extend(SVG.TSpan, {
@@ -1675,12 +1808,12 @@
       return this
     }
     
-  });
+  })
 
   SVG.Nested = function() {
     this.constructor.call(this, SVG.create('svg'))
     
-    this.attr('style', 'overflow:visible')
+    this.style('overflow', 'visible')
   }
   
   // Inherit from SVG.Container
@@ -1750,23 +1883,19 @@
   
   
   if (SVG.Text) {
-    SVG.extend(SVG.Text, {
+    SVG.extend(SVG.Text, SVG.FX, {
       // Set font 
       font: function(o) {
-        var key, attr = {}
-  
-        for (key in o)
-          key == 'leading' ?
-            attr[key] = o[key] :
+        for (var key in o)
           key == 'anchor' ?
-            attr['text-anchor'] = o[key] :
+            this.attr('text-anchor', o[key]) :
           _styleAttr.indexOf(key) > -1 ?
-            attr['font-'+ key] = o[key] :
-            void 0
-  
-        return this.attr(attr).text(this.content)
+            this.attr('font-'+ key, o[key]) :
+            this.attr(key, o[key])
+        
+        return this
       }
-  
+      
     })
   }
   

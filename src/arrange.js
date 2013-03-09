@@ -24,11 +24,9 @@ SVG.extend(SVG.Element, {
   }
   // Send given element one step backward
 , backward: function() {
-    var i
-    
     this.parent.level()
     
-    i = this.position()
+    var i = this.position()
     
     if (i > 1)
       this.parent.remove(this).add(this, i - 1)

@@ -2,7 +2,7 @@
 
 A lightweight library for manipulating and animating SVG.
 
-Svg.js has no dependencies and aims to be as small as possible. The base library is 3k gzipped, with all bells and whistles about 5k.
+Svg.js has no dependencies and aims to be as small as possible. The base library is 3k gzipped, with all bells and whistles about 6.5k.
 
 Svg.js is licensed under the terms of the MIT License.
 
@@ -12,27 +12,27 @@ See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://sv
 
 ### Create a SVG document
 
-Use the `svg()` function to create a SVG document within a given html element:
+Use the `SVG()` function to create a SVG document within a given html element:
 
 ```javascript
-var draw = svg('paper').size(300, 300)
+var draw = SVG('canvas').size(300, 300)
 var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 ```
 The first argument can either be an id of the element or the selected element itself.
 This will generate the following output:
 
 ```html
-<div id="paper">
+<div id="canvas">
 	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink" width="300" height="300">
 		<rect width="100" height="100" fill="#f06"></rect>
 	</svg>
 </div>
 ```
 
-By default the svg canvas follows the dimensions of its parent, in this case `#paper`:
+By default the svg canvas follows the dimensions of its parent, in this case `#canvas`:
 
 ```javascript
-var draw = svg('paper').size('100%', '100%')
+var draw = SVG('canvas').size('100%', '100%')
 ```
 
 ### Checking for SVG support
@@ -41,7 +41,7 @@ By default this library assumes the client's browser supports SVG. You can test 
 
 ```javascript
 if (SVG.supported) {
-  var draw = svg('paper')
+  var draw = SVG('canvas')
   var rect = draw.rect(100, 100)
 } else {
   alert('SVG not supported')
@@ -70,6 +70,19 @@ var zoom = box.zoom
 ```
 
 If the size of the viewbox equals the size of the svg canvas, the zoom value will be 1.
+
+### Nested svg
+With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
+
+```javascript
+var nested = draw.nested()
+
+var rect = nested.rect(200, 200)
+```
+
+
+_This functionality requires the nested.js module which is included in the default distribution._
+
 
 ## Elements
 
@@ -240,11 +253,45 @@ rect.transform({
 Important: matrix transformations are not yet supported.
 
 
+### Style
+With the `style()` method the `style` attribute can be managed like attributes with `attr`:
+
+```javascript
+rect.style('cursor', 'pointer')
+```
+
+Multiple styles can be set at once using an object:
+
+```javascript
+rect.style({ cursor: 'pointer', fill: '#f03' })
+```
+
+Or a css string:
+
+```javascript
+rect.style('cursor:pointer;fill:#f03;')
+```
+
+Similarly to `attr()` the `style()` method can also act as a getter:
+
+```javascript
+rect.style('cursor')
+// => pointer
+```
+
+Or even a full getter:
+
+```javascript
+rect.style()
+// => 'cursor:pointer;fill:#f03;'
+```
+
+
 ### Move 
 Move the element to a given `x` and `y` position by its upper left corner:
 
 ```javascript
-rect.move(200, 350);
+rect.move(200, 350)
 ```
 
 Note that you can also use the following code to move elements around:
@@ -647,20 +694,6 @@ group.add(rect)
 _This functionality requires the group.js module which is included in the default distribution._
 
 
-
-## Nested svg
-With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
-
-```javascript
-var nested = draw.nested()
-
-var rect = nested.rect(200, 200)
-```
-
-
-_This functionality requires the nested.js module which is included in the default distribution._
-
-
 ## Gradients
 
 There are linear and radial gradients. The linear gradient can be created like this:
@@ -932,8 +965,6 @@ _The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [
 ## To-do
 - Instance module
 - Text on path module (write text along paths)
-- Dynamic css styles
-- Animatable unit values (e.g. '100%' or '30mm')
 
 
 ## Compatibility

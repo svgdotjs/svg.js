@@ -3,4 +3,4 @@ SVG.Rect = function() {
 }
 
 // Inherit from SVG.Shape
-SVG.Rect.prototype = new SVG.Shape()
+SVG.Rect.prototype = new SVG.Shape
