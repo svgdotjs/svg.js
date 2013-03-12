@@ -234,23 +234,38 @@ rect.transform({
 })
 ```
 
+You can also provide two arguments as property and value:
+
+```javascript
+rect.transform('matrix', '1,0.5,0.5,1,0,0')
+```
+
 All available transformations are:
 
 ```javascript
 rect.transform({
   x:        [translation on x-axis]
 , y:        [translation on y-axis]
+
 , rotation: [degrees]
 , cx:       [x rotation point]
 , cy:       [y rotation point]
+
 , scaleX:   [scaling on x-axis]
 , scaleX:   [scaling on y-axis]
+
 , skewX:    [skewing on x-axis]
 , skewY:    [skewing on y-axis]
+
+, matrix:   [a 6-digit matrix string; e.g. '1,0,0,1,0,0']
+, a:        [the first matrix digit]
+, b:        [the second matrix digit]
+, c:        [the third matrix digit]
+, d:        [the fourth matrix digit]
+, e:        [the fifth matrix digit]
+, f:        [the sixth matrix digit]
 })
 ```
-
-Important: matrix transformations are not yet supported.
 
 
 ### Style
@@ -294,6 +309,12 @@ Move the element to a given `x` and `y` position by its upper left corner:
 rect.move(200, 350)
 ```
 
+This will have the same effect as:
+
+```javascript
+rect.x(200).y(350)
+```
+
 Note that you can also use the following code to move elements around:
 
 ```javascript
@@ -302,6 +323,18 @@ rect.attr({ x: 20, y: 60 })
 
 Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
 
+### Center
+This is an extra method to move an element by its center:
+
+```javascript
+rect.center(150, 150)
+```
+
+This will have the same effect as:
+
+```javascript
+rect.cx(150).cy(150)
+```
 
 ### Size
 Set the size of an element by a given `width` and `height`:
@@ -311,14 +344,6 @@ rect.size(200, 300)
 ```
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
-
-
-### Center
-This is an extra method to move an element by its center:
-
-```javascript
-rect.center(150, 150)
-```
 
 ### Hide and show
 We all love to have a little hide:
@@ -431,24 +456,24 @@ Of course `attr()`:
 rect.animate().attr({ fill: '#f03' })
 ```
 
-The `move()` method:
+The `x()`, `y()` and `move()` methods:
 ```javascript
 rect.animate().move(100, 100)
 ```
 
-And the `center()` method:
+And the `cx()`, `cy()` and `center()` methods:
 ```javascript
 rect.animate().center(200, 200)
 ```
 
-If you include the sugar.js module, `rotate()` and `skew()` will be available as well:
+If you include the sugar.js module, `fill()`, `stroke()`, `rotate()`, `skew()`, `scale()`, `matrix()` and `opacity()` will be available as well:
 ```javascript
 rect.animate().rotate(45).skew(25, 0)
 ```
 
 You can also animate non-numeric unit values unsing the `attr()` method:
 ```javascript
-rect.attr('x', '10%').animate().attr('x', '50%')
+rect.animate().attr('x', '10%').animate().attr('x', '50%')
 ```
 
 ### Stopping animations

@@ -6,14 +6,14 @@ SVG.Path = function() {
 SVG.Path.prototype = new SVG.Shape()
 
 SVG.extend(SVG.Path, {
-  // Move using transform
-  move: function(x, y) {
-    this.transform({
-      x: x,
-      y: y
-    })
+  // Move over x-axis
+  x: function(x) {
+    return this.transform('x', x)
   }
-  
+  // Move over y-axis
+, y: function(y) {
+    return this.transform('y', y)
+  }
   // Set path data
 , plot: function(data) {
     return this.attr('d', data || 'M0,0')

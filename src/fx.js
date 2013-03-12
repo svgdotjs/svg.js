@@ -58,11 +58,17 @@ SVG.extend(SVG.FX, {
         ease(pos) :
         pos
       
-      /* run all position properties */
-      if (fx._move)
-        element.move(fx._at(fx._move.x, pos), fx._at(fx._move.y, pos))
-      else if (fx._center)
-        element.center(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
+      /* run all x-position properties */
+      if (fx._x)
+        element.x(fx._at(fx._x, pos))
+      else if (fx._cx)
+        element.cx(fx._at(fx._cx, pos))
+      
+      /* run all y-position properties */
+      if (fx._y)
+        element.y(fx._at(fx._y, pos))
+      else if (fx._cy)
+        element.cy(fx._at(fx._cy, pos))
       
       /* run all size properties */
       if (fx._size)
@@ -96,6 +102,10 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Get bounding box of target element
+, bbox: function() {
+    return this.target.bbox()
+  }
   // Add animatable attributes
 , attr: function(a, v, n) {
     if (typeof a == 'object')
@@ -108,9 +118,25 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Add animatable transformations
-, transform: function(t, v) {
-    for (var key in t)
-      this.trans[key] = { from: this.target.trans[key], to: t[key] }
+, transform: function(o, v) {
+    if (arguments.length == 1) {
+      /* parse matrix string */
+      o = this.target._parseMatrix(o)
+      
+      /* dlete matrixstring from object */
+      delete o.matrix
+      
+      /* store matrix values */
+      for (v in o)
+        this.trans[v] = { from: this.target.trans[v], to: o[v] }
+      
+    } else {
+      /* apply transformations as object if key value arguments are given*/
+      var transform = {}
+      transform[o] = v
+      
+      this.transform(transform)
+    }
     
     return this
   }
@@ -125,16 +151,41 @@ SVG.extend(SVG.FX, {
     
     return this
   }
-  // Add animatable move
-, move: function(x, y) {
-    var box = this.target.bbox()
-    
-    this._move = {
-      x: { from: box.x, to: x }
-    , y: { from: box.y, to: y }
-    }
+  // Animatable x-axis
+, x: function(x) {
+    var b = this.bbox()
+    this._x = { from: b.x, to: x }
     
     return this
+  }
+  // Animatable y-axis
+, y: function(y) {
+    var b = this.bbox()
+    this._y = { from: b.y, to: y }
+    
+    return this
+  }
+  // Animatable center x-axis
+, cx: function(x) {
+    var b = this.bbox()
+    this._cx = { from: b.cx, to: x }
+    
+    return this
+  }
+  // Animatable center y-axis
+, cy: function(y) {
+    var b = this.bbox()
+    this._cy = { from: b.cy, to: y }
+    
+    return this
+  }
+  // Add animatable move
+, move: function(x, y) {
+    return this.x(x).y(y)
+  }
+  // Add animatable center
+, center: function(x, y) {
+    return this.cx(x).cy(y)
   }
   // Add animatable size
 , size: function(width, height) {
@@ -150,17 +201,6 @@ SVG.extend(SVG.FX, {
         width:  { from: box.width,  to: width  }
       , height: { from: box.height, to: height }
       }
-    }
-    
-    return this
-  }
-  // Add animatable center
-, center: function(x, y) {
-    var box = this.target.bbox()
-    
-    this._move = {
-      x: { from: box.cx, to: x - box.width / 2 }
-    , y: { from: box.cy, to: y - box.height / 2 }
     }
     
     return this

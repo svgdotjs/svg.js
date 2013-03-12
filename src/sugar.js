@@ -54,6 +54,10 @@ SVG.extend(SVG.Element, SVG.FX, {
       scaleY: y == null ? x : y
     })
   }
+  // Matrix
+, matrix: function(m) {
+    return this.transform({ matrix: m })
+  }
   // Opacity
 , opacity: function(value) {
     return this.attr('opacity', value)

@@ -11,12 +11,13 @@ SVG.Wrap = function(element) {
 SVG.Wrap.prototype = new SVG.Shape()
 
 SVG.extend(SVG.Wrap, {
-  // Move wrapper around
-  move: function(x, y) {
-    return this.transform({
-      x: x
-    , y: y
-    })
+  // Move over x-axis
+  x: function(x) {
+    return this.transform('x', x)
+  }
+  // Move over y-axis
+, y: function(y) {
+    return this.transform('y', y)
   }
   // Set the actual size in pixels
 , size: function(width, height) {

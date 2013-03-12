@@ -6,12 +6,13 @@ SVG.G = function() {
 SVG.G.prototype = new SVG.Container
 
 SVG.extend(SVG.G, {
-  // Move using translate
-  move: function(x, y) {
-    return this.transform({
-      x: x
-    , y: y
-    })
+  // Move over x-axis
+  x: function(x) {
+    return this.transform('x', x)
+  }
+  // Move over y-axis
+, y: function(y) {
+    return this.transform('y', y)
   }
   // Get defs
 , defs: function() {

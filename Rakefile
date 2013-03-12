@@ -1,7 +1,7 @@
-SVGJS_VERSION = '0.9'
+SVGJS_VERSION = '0.10'
 
 # all available modules in the correct loading order
-MODULES = %w[ svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar ]
+MODULES = %w[ svg regex default color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar ]
 
 # how many bytes in a "kilobyte"
 KILO = 1024

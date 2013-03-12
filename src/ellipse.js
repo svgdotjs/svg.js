@@ -4,28 +4,31 @@ SVG.Ellipse = function() {
 }
 
 // Inherit from SVG.Shape
-SVG.Ellipse.prototype = new SVG.Shape()
+SVG.Ellipse.prototype = new SVG.Shape
 
 //
 SVG.extend(SVG.Ellipse, {
-  // Custom move function
-  move: function(x, y) {
-    this.attrs.x = x
-    this.attrs.y = y
-    
-    return this.center()
-  },
+  // Move over x-axis
+  x: function(x) {
+    return this.cx(x + this.attrs.rx)
+  }
+  // Move over y-axis
+, y: function(y) {
+    return this.cy(y + this.attrs.ry)
+  }
+  // Move by center over x-axis
+, cx: function(x) {
+    return this.attr('cx', x)
+  }
+  // Move by center over y-axis
+, cy: function(y) {
+    return this.attr('cy', y)
+  }
   // Custom size function
-  size: function(width, height) {
-    return this
-     .attr({ rx: width / 2, ry: (height != null ? height : width) / 2 })
-     .center()
-  },
-  // Custom center function
-  center: function(x, y) {
+, size: function(width, height) {
     return this.attr({
-      cx: x != null ? x : (this.attrs.x || 0) + (this.attrs.rx || 0)
-    , cy: y != null ? y : (this.attrs.y || 0) + (this.attrs.ry || 0)
+      rx: width / 2,
+      ry: height / 2
     })
   }
   

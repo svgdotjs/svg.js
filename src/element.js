@@ -4,59 +4,47 @@
 //
 SVG.Element = function(node) {
   /* initialize attribute store with defaults */
-  this.attrs = {
-    'fill-opacity':   1
-  , 'stroke-opacity': 1
-  , 'stroke-width':   0
-  , fill:     '#000'
-  , stroke:   '#000'
-  , opacity:  1
-  , x:        0
-  , y:        0
-  , cx:       0
-  , cy:       0
-  , width:    0
-  , height:   0
-  , r:        0
-  , rx:       0
-  , ry:       0
-  }
+  this.attrs = SVG.default.attrs()
   
   /* initialize style store */
   this.styles = {}
   
   /* initialize transformation store with defaults */
-  this.trans = {
-    x:        0
-  , y:        0
-  , scaleX:   1
-  , scaleY:   1
-  , rotation: 0
-  , skewX:    0
-  , skewY:    0
-  }
+  this.trans = SVG.default.trans()
   
   /* keep reference to the element node */
   if (this.node = node) {
     this.type = node.nodeName
     this.attrs.id = node.getAttribute('id')
   }
+  
 }
 
 //
 SVG.extend(SVG.Element, {
+  // Move over x-axis
+  x: function(x) {
+    return this.attr('x', x)
+  }
+  // Move over y-axis
+, y: function(y) {
+    return this.attr('y', y)
+  }
+  // Move by center over x-axis
+, cx: function(x) {
+    return this.x(x - this.bbox().width / 2)
+  }
+  // Move by center over y-axis
+, cy: function(y) {
+    return this.y(y - this.bbox().height / 2)
+  }
   // Move element to given x and y values
-  move: function(x, y) {
-    return this.attr({
-      x: x
-    , y: y
-    })
+, move: function(x, y) {
+    return this.x(x).y(y)
   }
   // Move element by its center
 , center: function(x, y) {
-    var box = this.bbox()
-    
-    return this.move(x - box.width / 2, y - box.height / 2)
+    return this.cx(x).cy(y)
   }
   // Set element size to given width and height
 , size: function(width, height) { 
@@ -150,6 +138,10 @@ SVG.extend(SVG.Element, {
     } else if (a == 'style') {
       /* redirect to the style method */
       return this.style(v)
+    
+    } else if (a == 'transform') {
+      /* redirect to the transform method*/
+      return this.transform(v)
       
     } else {
       /* store value */
@@ -209,13 +201,28 @@ SVG.extend(SVG.Element, {
     /* ... otherwise continue as a setter */
     var transform = []
     
+    /* parse matrix */
+    o = this._parseMatrix(o)
+    
     /* merge values */
     for (v in o)
       if (o[v] != null)
         this.trans[v] = o[v]
     
+    /* compile matrix */
+    this.trans.matrix = this.trans.a
+                + ',' + this.trans.b
+                + ',' + this.trans.c
+                + ',' + this.trans.d
+                + ',' + this.trans.e
+                + ',' + this.trans.f
+    
     /* alias current transformations */
     o = this.trans
+    
+    /* add matrix */
+    if (o.matrix != SVG.default.matrix)
+      transform.push('matrix(' + o.matrix + ')')
     
     /* add rotation */
     if (o.rotation != 0) {
@@ -227,7 +234,8 @@ SVG.extend(SVG.Element, {
     }
     
     /* add scale */
-    transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')')
+    if (o.scaleX != 1 || o.scaleY != 1)
+      transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')')
     
     /* add skew on x axis */
     if (o.skewX != 0)
@@ -238,10 +246,13 @@ SVG.extend(SVG.Element, {
       transform.push('skewY(' + o.skewY + ')')
     
     /* add translation */
-    transform.push('translate(' + o.x + ',' + o.y + ')')
+    if (o.x != 0 || o.y != 0)
+      transform.push('translate(' + o.x + ',' + o.y + ')')
     
     /* add only te required transformations */
-    return this.attr('transform', transform.join(' '))
+    this.node.setAttribute('transform', transform.join(' '))
+    
+    return this
   }
   // Dynamic style generator
 , style: function(s, v) {
@@ -345,6 +356,25 @@ SVG.extend(SVG.Element, {
   // Private: element type tester
 , _isText: function() {
     return this instanceof SVG.Text
+  }
+  // Private: parse a matrix string
+, _parseMatrix: function(o) {
+    if (o.matrix) {
+      /* split matrix string */
+      var m = o.matrix.replace(/\s/g, '').split(',')
+      
+      /* pasrse values */
+      if (m.length == 6) {
+        o.a = parseFloat(m[0])
+        o.b = parseFloat(m[1])
+        o.c = parseFloat(m[2])
+        o.d = parseFloat(m[3])
+        o.e = parseFloat(m[4])
+        o.f = parseFloat(m[5])
+      }
+    }
+    
+    return o
   }
   
 })

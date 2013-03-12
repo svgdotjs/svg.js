@@ -1,4 +1,4 @@
-/* svg.js v0.9 - svg regex color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.10 - svg regex default color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -61,35 +61,91 @@
 
   SVG.regex = {
     /* parse unit value */
-    unit:     /^([\d\.]+)([a-z%]{0,2})$/
+    unit:         /^([\d\.]+)([a-z%]{0,2})$/
     
     /* parse hex value */
-  , hex:      /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
+  , hex:          /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
     
     /* parse rgb value */
-  , rgb:      /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
+  , rgb:          /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
     
     /* parse hsb value */
-  , hsb:      /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
+  , hsb:          /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
     
     /* test hex value */
-  , isHex:    /^#[a-f0-9]{3,6}$/i
+  , isHex:        /^#[a-f0-9]{3,6}$/i
     
     /* test rgb value */
-  , isRgb:    /^rgb\(/
+  , isRgb:        /^rgb\(/
     
     /* test hsb value */
-  , isHsb:    /^hsb\(/
+  , isHsb:        /^hsb\(/
     
     /* test css declaration */
-  , isCss:    /[^:]+:[^;]+;?/
+  , isCss:        /[^:]+:[^;]+;?/
     
     /* test css property */
-  , isStyle:  /^font|text|leading|cursor/
+  , isStyle:      /^font|text|leading|cursor/
     
     /* test for blank string */
-  , isBlank:  /^(\s+)?$/
-  
+  , isBlank:      /^(\s+)?$/
+    
+  }
+
+  SVG.default = {
+    // Default matrix
+    matrix:       '1,0,0,1,0,0'
+    
+    // Default attribute values
+  , attrs: function() {
+      return {
+        /* fill and stroke */
+        'fill-opacity':   1
+      , 'stroke-opacity': 1
+      , 'stroke-width':   0
+      , fill:     '#000'
+      , stroke:   '#000'
+      , opacity:  1
+        /* position */
+      , x:        0
+      , y:        0
+      , cx:       0
+      , cy:       0
+        /* size */
+      , width:    0
+      , height:   0
+        /* radius */
+      , r:        0
+      , rx:       0
+      , ry:       0
+      }
+    }
+    
+    // Default transformation values
+  , trans: function() {
+      return {
+        /* translate */
+        x:        0
+      , y:        0
+        /* scale */
+      , scaleX:   1
+      , scaleY:   1
+        /* rotate */
+      , rotation: 0
+        /* skew */
+      , skewX:    0
+      , skewY:    0
+        /* matrix */
+      , matrix:   this.matrix
+      , a:        1
+      , b:        0
+      , c:        0
+      , d:        1
+      , e:        0
+      , f:        0
+      }
+    }
+    
   }
 
   SVG.Color = function(color) {
@@ -319,59 +375,47 @@
 
   SVG.Element = function(node) {
     /* initialize attribute store with defaults */
-    this.attrs = {
-      'fill-opacity':   1
-    , 'stroke-opacity': 1
-    , 'stroke-width':   0
-    , fill:     '#000'
-    , stroke:   '#000'
-    , opacity:  1
-    , x:        0
-    , y:        0
-    , cx:       0
-    , cy:       0
-    , width:    0
-    , height:   0
-    , r:        0
-    , rx:       0
-    , ry:       0
-    }
+    this.attrs = SVG.default.attrs()
     
     /* initialize style store */
     this.styles = {}
     
     /* initialize transformation store with defaults */
-    this.trans = {
-      x:        0
-    , y:        0
-    , scaleX:   1
-    , scaleY:   1
-    , rotation: 0
-    , skewX:    0
-    , skewY:    0
-    }
+    this.trans = SVG.default.trans()
     
     /* keep reference to the element node */
     if (this.node = node) {
       this.type = node.nodeName
       this.attrs.id = node.getAttribute('id')
     }
+    
   }
   
   //
   SVG.extend(SVG.Element, {
+    // Move over x-axis
+    x: function(x) {
+      return this.attr('x', x)
+    }
+    // Move over y-axis
+  , y: function(y) {
+      return this.attr('y', y)
+    }
+    // Move by center over x-axis
+  , cx: function(x) {
+      return this.x(x - this.bbox().width / 2)
+    }
+    // Move by center over y-axis
+  , cy: function(y) {
+      return this.y(y - this.bbox().height / 2)
+    }
     // Move element to given x and y values
-    move: function(x, y) {
-      return this.attr({
-        x: x
-      , y: y
-      })
+  , move: function(x, y) {
+      return this.x(x).y(y)
     }
     // Move element by its center
   , center: function(x, y) {
-      var box = this.bbox()
-      
-      return this.move(x - box.width / 2, y - box.height / 2)
+      return this.cx(x).cy(y)
     }
     // Set element size to given width and height
   , size: function(width, height) { 
@@ -465,6 +509,10 @@
       } else if (a == 'style') {
         /* redirect to the style method */
         return this.style(v)
+      
+      } else if (a == 'transform') {
+        /* redirect to the transform method*/
+        return this.transform(v)
         
       } else {
         /* store value */
@@ -524,13 +572,28 @@
       /* ... otherwise continue as a setter */
       var transform = []
       
+      /* parse matrix */
+      o = this._parseMatrix(o)
+      
       /* merge values */
       for (v in o)
         if (o[v] != null)
           this.trans[v] = o[v]
       
+      /* compile matrix */
+      this.trans.matrix = this.trans.a
+                  + ',' + this.trans.b
+                  + ',' + this.trans.c
+                  + ',' + this.trans.d
+                  + ',' + this.trans.e
+                  + ',' + this.trans.f
+      
       /* alias current transformations */
       o = this.trans
+      
+      /* add matrix */
+      if (o.matrix != SVG.default.matrix)
+        transform.push('matrix(' + o.matrix + ')')
       
       /* add rotation */
       if (o.rotation != 0) {
@@ -542,7 +605,8 @@
       }
       
       /* add scale */
-      transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')')
+      if (o.scaleX != 1 || o.scaleY != 1)
+        transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')')
       
       /* add skew on x axis */
       if (o.skewX != 0)
@@ -553,10 +617,13 @@
         transform.push('skewY(' + o.skewY + ')')
       
       /* add translation */
-      transform.push('translate(' + o.x + ',' + o.y + ')')
+      if (o.x != 0 || o.y != 0)
+        transform.push('translate(' + o.x + ',' + o.y + ')')
       
       /* add only te required transformations */
-      return this.attr('transform', transform.join(' '))
+      this.node.setAttribute('transform', transform.join(' '))
+      
+      return this
     }
     // Dynamic style generator
   , style: function(s, v) {
@@ -661,6 +728,25 @@
   , _isText: function() {
       return this instanceof SVG.Text
     }
+    // Private: parse a matrix string
+  , _parseMatrix: function(o) {
+      if (o.matrix) {
+        /* split matrix string */
+        var m = o.matrix.replace(/\s/g, '').split(',')
+        
+        /* pasrse values */
+        if (m.length == 6) {
+          o.a = parseFloat(m[0])
+          o.b = parseFloat(m[1])
+          o.c = parseFloat(m[2])
+          o.d = parseFloat(m[3])
+          o.e = parseFloat(m[4])
+          o.f = parseFloat(m[5])
+        }
+      }
+      
+      return o
+    }
     
   })
 
@@ -745,12 +831,16 @@
       return this.put(new SVG.Rect().size(width, height))
     }
     // Create circle element, based on ellipse
-  , circle: function(diameter) {
-      return this.ellipse(diameter)
+  , circle: function(size) {
+      return this.ellipse(size, size)
     }
     // Create an ellipse
   , ellipse: function(width, height) {
-      return this.put(new SVG.Ellipse().size(width, height))
+      return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
+    }
+    // Create a line element
+  , line: function(x1, y1, x2, y2) {
+      return this.put(new SVG.Line().attr({ x1: x1, y1: y1, x2: x2, y2: y2 }))
     }
     // Create a wrapped polyline element
   , polyline: function(points) {
@@ -878,11 +968,17 @@
           ease(pos) :
           pos
         
-        /* run all position properties */
-        if (fx._move)
-          element.move(fx._at(fx._move.x, pos), fx._at(fx._move.y, pos))
-        else if (fx._center)
-          element.center(fx._at(fx._center.x, pos), fx._at(fx._center.y, pos))
+        /* run all x-position properties */
+        if (fx._x)
+          element.x(fx._at(fx._x, pos))
+        else if (fx._cx)
+          element.cx(fx._at(fx._cx, pos))
+        
+        /* run all y-position properties */
+        if (fx._y)
+          element.y(fx._at(fx._y, pos))
+        else if (fx._cy)
+          element.cy(fx._at(fx._cy, pos))
         
         /* run all size properties */
         if (fx._size)
@@ -916,6 +1012,10 @@
       
       return this
     }
+    // Get bounding box of target element
+  , bbox: function() {
+      return this.target.bbox()
+    }
     // Add animatable attributes
   , attr: function(a, v, n) {
       if (typeof a == 'object')
@@ -928,9 +1028,25 @@
       return this
     }
     // Add animatable transformations
-  , transform: function(t, v) {
-      for (var key in t)
-        this.trans[key] = { from: this.target.trans[key], to: t[key] }
+  , transform: function(o, v) {
+      if (arguments.length == 1) {
+        /* parse matrix string */
+        o = this.target._parseMatrix(o)
+        
+        /* dlete matrixstring from object */
+        delete o.matrix
+        
+        /* store matrix values */
+        for (v in o)
+          this.trans[v] = { from: this.target.trans[v], to: o[v] }
+        
+      } else {
+        /* apply transformations as object if key value arguments are given*/
+        var transform = {}
+        transform[o] = v
+        
+        this.transform(transform)
+      }
       
       return this
     }
@@ -945,16 +1061,41 @@
       
       return this
     }
-    // Add animatable move
-  , move: function(x, y) {
-      var box = this.target.bbox()
-      
-      this._move = {
-        x: { from: box.x, to: x }
-      , y: { from: box.y, to: y }
-      }
+    // Animatable x-axis
+  , x: function(x) {
+      var b = this.bbox()
+      this._x = { from: b.x, to: x }
       
       return this
+    }
+    // Animatable y-axis
+  , y: function(y) {
+      var b = this.bbox()
+      this._y = { from: b.y, to: y }
+      
+      return this
+    }
+    // Animatable center x-axis
+  , cx: function(x) {
+      var b = this.bbox()
+      this._cx = { from: b.cx, to: x }
+      
+      return this
+    }
+    // Animatable center y-axis
+  , cy: function(y) {
+      var b = this.bbox()
+      this._cy = { from: b.cy, to: y }
+      
+      return this
+    }
+    // Add animatable move
+  , move: function(x, y) {
+      return this.x(x).y(y)
+    }
+    // Add animatable center
+  , center: function(x, y) {
+      return this.cx(x).cy(y)
     }
     // Add animatable size
   , size: function(width, height) {
@@ -970,17 +1111,6 @@
           width:  { from: box.width,  to: width  }
         , height: { from: box.height, to: height }
         }
-      }
-      
-      return this
-    }
-    // Add animatable center
-  , center: function(x, y) {
-      var box = this.target.bbox()
-      
-      this._move = {
-        x: { from: box.cx, to: x - box.width / 2 }
-      , y: { from: box.cy, to: y - box.height / 2 }
       }
       
       return this
@@ -1153,12 +1283,13 @@
   SVG.G.prototype = new SVG.Container
   
   SVG.extend(SVG.G, {
-    // Move using translate
-    move: function(x, y) {
-      return this.transform({
-        x: x
-      , y: y
-      })
+    // Move over x-axis
+    x: function(x) {
+      return this.transform('x', x)
+    }
+    // Move over y-axis
+  , y: function(y) {
+      return this.transform('y', y)
     }
     // Get defs
   , defs: function() {
@@ -1457,12 +1588,13 @@
   SVG.Wrap.prototype = new SVG.Shape()
   
   SVG.extend(SVG.Wrap, {
-    // Move wrapper around
-    move: function(x, y) {
-      return this.transform({
-        x: x
-      , y: y
-      })
+    // Move over x-axis
+    x: function(x) {
+      return this.transform('x', x)
+    }
+    // Move over y-axis
+  , y: function(y) {
+      return this.transform('y', y)
     }
     // Set the actual size in pixels
   , size: function(width, height) {
@@ -1538,28 +1670,31 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.Ellipse.prototype = new SVG.Shape()
+  SVG.Ellipse.prototype = new SVG.Shape
   
   //
   SVG.extend(SVG.Ellipse, {
-    // Custom move function
-    move: function(x, y) {
-      this.attrs.x = x
-      this.attrs.y = y
-      
-      return this.center()
-    },
+    // Move over x-axis
+    x: function(x) {
+      return this.cx(x + this.attrs.rx)
+    }
+    // Move over y-axis
+  , y: function(y) {
+      return this.cy(y + this.attrs.ry)
+    }
+    // Move by center over x-axis
+  , cx: function(x) {
+      return this.attr('cx', x)
+    }
+    // Move by center over y-axis
+  , cy: function(y) {
+      return this.attr('cy', y)
+    }
     // Custom size function
-    size: function(width, height) {
-      return this
-       .attr({ rx: width / 2, ry: (height != null ? height : width) / 2 })
-       .center()
-    },
-    // Custom center function
-    center: function(x, y) {
+  , size: function(width, height) {
       return this.attr({
-        cx: x != null ? x : (this.attrs.x || 0) + (this.attrs.rx || 0)
-      , cy: y != null ? y : (this.attrs.y || 0) + (this.attrs.ry || 0)
+        rx: width / 2,
+        ry: height / 2
       })
     }
     
@@ -1574,47 +1709,45 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.Line.prototype = new SVG.Shape()
+  SVG.Line.prototype = new SVG.Shape
   
   // Add required methods
   SVG.extend(SVG.Line, {
-    // Move line
-    move: function(x, y) {
-      var bbox = this.bbox()
+    // Move over x-axis
+    x: function(x) {
+      var b = this.bbox()
       
       return this.attr({
-        x1: this.attr('x1') - bbox.x + x
-      , y1: this.attr('y1') - bbox.y + y
-      , x2: this.attr('x2') - bbox.x + x
-      , y2: this.attr('y2') - bbox.y + y
+        x1: this.attrs.x1 - b.x + x
+      , x2: this.attrs.x2 - b.x + x
       })
     }
-    // Move element by its center
-  , center: function(x, y) {
-      var bbox = this.bbox()
+    // Move over y-axis
+  , y: function(y) {
+      var b = this.bbox()
       
-      return this.move(x - bbox.width / 2, y - bbox.height / 2)
+      return this.attr({
+        y1: this.attrs.y1 - b.y + y
+      , y2: this.attrs.y2 - b.y + y
+      })
+    }
+    // Move by center over x-axis
+  , cx: function(x) {
+      return this.x(x - this.bbox().width / 2)
+    }
+    // Move by center over y-axis
+  , cy: function(y) {
+      return this.y(y - this.bbox().height / 2)
     }
     // Set line size by width and height
   , size: function(width, height) {
-      var bbox = this.bbox()
+      var b = this.bbox()
       
       return this
-        .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', bbox.x + width)
-        .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', bbox.y + height)
+        .attr(this.attrs.x1 < this.attrs.x2 ? 'x2' : 'x1', b.x + width)
+        .attr(this.attrs.y1 < this.attrs.y2 ? 'y2' : 'y1', b.y + height)
     }
-  })
-  
-  // Extend all container modules
-  SVG.extend(SVG.Container, {
-    line: function(x1, y1, x2, y2) {
-      return this.put(new SVG.Line().attr({
-        x1: x1
-      , y1: y1
-      , x2: x2
-      , y2: y2
-      }))
-    }
+    
   })
 
   SVG.Poly = {
@@ -1654,14 +1787,14 @@
   SVG.Path.prototype = new SVG.Shape()
   
   SVG.extend(SVG.Path, {
-    // Move using transform
-    move: function(x, y) {
-      this.transform({
-        x: x,
-        y: y
-      })
+    // Move over x-axis
+    x: function(x) {
+      return this.transform('x', x)
     }
-    
+    // Move over y-axis
+  , y: function(y) {
+      return this.transform('y', y)
+    }
     // Set path data
   , plot: function(data) {
       return this.attr('d', data || 'M0,0')
@@ -1873,6 +2006,10 @@
         scaleX: x,
         scaleY: y == null ? x : y
       })
+    }
+    // Matrix
+  , matrix: function(m) {
+      return this.transform({ matrix: m })
     }
     // Opacity
   , opacity: function(value) {

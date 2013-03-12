@@ -78,12 +78,16 @@ SVG.extend(SVG.Container, {
     return this.put(new SVG.Rect().size(width, height))
   }
   // Create circle element, based on ellipse
-, circle: function(diameter) {
-    return this.ellipse(diameter)
+, circle: function(size) {
+    return this.ellipse(size, size)
   }
   // Create an ellipse
 , ellipse: function(width, height) {
-    return this.put(new SVG.Ellipse().size(width, height))
+    return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
+  }
+  // Create a line element
+, line: function(x1, y1, x2, y2) {
+    return this.put(new SVG.Line().attr({ x1: x1, y1: y1, x2: x2, y2: y2 }))
   }
   // Create a wrapped polyline element
 , polyline: function(points) {
