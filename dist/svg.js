@@ -1,4 +1,4 @@
-/* svg.js v0.10 - svg regex default color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
+/* svg.js v0.10-1-g4bd21ec - svg regex default color viewbox bbox element container fx event group arrange defs mask pattern gradient doc shape wrap rect ellipse line poly path image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -364,8 +364,8 @@
     this.y = box.y + element.trans.y
     
     /* add the center */
-    this.cx = box.x + element.trans.x + box.width / 2
-    this.cy = box.y + element.trans.y + box.height / 2
+    this.cx = this.x + box.width / 2
+    this.cy = this.x + box.height / 2
     
     /* plain width and height */
     this.width  = box.width
@@ -510,10 +510,6 @@
         /* redirect to the style method */
         return this.style(v)
       
-      } else if (a == 'transform') {
-        /* redirect to the transform method*/
-        return this.transform(v)
-        
       } else {
         /* store value */
         this.attrs[a] = v
@@ -1133,13 +1129,16 @@
       clearInterval(this.interval)
       
       /* reset storage for properties that need animation */
-      this.attrs    = {}
-      this.trans    = {}
-      this.styles   = {}
-      this._move    = null
-      this._size    = null
-      this._after   = null
-      this._during  = null
+      this.attrs  = {}
+      this.trans  = {}
+      this.styles = {}
+      delete this._x
+      delete this._y
+      delete this._cx
+      delete this._cy
+      delete this._size
+      delete this._after
+      delete this._during
       
       return this
     }

@@ -139,10 +139,6 @@ SVG.extend(SVG.Element, {
       /* redirect to the style method */
       return this.style(v)
     
-    } else if (a == 'transform') {
-      /* redirect to the transform method*/
-      return this.transform(v)
-      
     } else {
       /* store value */
       this.attrs[a] = v

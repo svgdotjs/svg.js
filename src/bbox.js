@@ -8,8 +8,8 @@ SVG.BBox = function(element) {
   this.y = box.y + element.trans.y
   
   /* add the center */
-  this.cx = box.x + element.trans.x + box.width / 2
-  this.cy = box.y + element.trans.y + box.height / 2
+  this.cx = this.x + box.width / 2
+  this.cy = this.x + box.height / 2
   
   /* plain width and height */
   this.width  = box.width

@@ -223,13 +223,16 @@ SVG.extend(SVG.FX, {
     clearInterval(this.interval)
     
     /* reset storage for properties that need animation */
-    this.attrs    = {}
-    this.trans    = {}
-    this.styles   = {}
-    this._move    = null
-    this._size    = null
-    this._after   = null
-    this._during  = null
+    this.attrs  = {}
+    this.trans  = {}
+    this.styles = {}
+    delete this._x
+    delete this._y
+    delete this._cx
+    delete this._cy
+    delete this._size
+    delete this._after
+    delete this._during
     
     return this
   }
