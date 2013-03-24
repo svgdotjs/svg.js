@@ -99,6 +99,16 @@ describe('Line', function() {
     })
   })
   
+  describe('plot()', function() {
+    it('should update the start and end points', function() {
+      line.plot(100,200,300,400)
+      expect(line.node.getAttribute('x1')).toBe('100')
+      expect(line.node.getAttribute('y1')).toBe('200')
+      expect(line.node.getAttribute('x2')).toBe('300')
+      expect(line.node.getAttribute('y2')).toBe('400')
+    })
+  })
+  
 })
 
 

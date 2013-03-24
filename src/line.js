@@ -43,5 +43,14 @@ SVG.extend(SVG.Line, {
       .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
       .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
   }
+  // Set path data
+, plot: function(x1, y1, x2, y2) {
+    return this.attr({
+      x1: x1
+    , y1: y1
+    , x2: x2
+    , y2: y2
+    })
+  }
   
 })

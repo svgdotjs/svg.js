@@ -1,4 +1,4 @@
-/* svg.js v0.11 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.11-4-g20e9f67 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -846,7 +846,7 @@
     }
     // Create a line element
   , line: function(x1, y1, x2, y2) {
-      return this.put(new SVG.Line().attr({ x1: x1, y1: y1, x2: x2, y2: y2 }))
+      return this.put(new SVG.Line().plot(x1, y1, x2, y2))
     }
     // Create a wrapped polyline element
   , polyline: function(points) {
@@ -1739,6 +1739,15 @@
       return this
         .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
         .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+    }
+    // Set path data
+  , plot: function(x1, y1, x2, y2) {
+      return this.attr({
+        x1: x1
+      , y1: y1
+      , x2: x2
+      , y2: y2
+      })
     }
     
   })

@@ -87,7 +87,7 @@ SVG.extend(SVG.Container, {
   }
   // Create a line element
 , line: function(x1, y1, x2, y2) {
-    return this.put(new SVG.Line().attr({ x1: x1, y1: y1, x2: x2, y2: y2 }))
+    return this.put(new SVG.Line().plot(x1, y1, x2, y2))
   }
   // Create a wrapped polyline element
 , polyline: function(points) {
