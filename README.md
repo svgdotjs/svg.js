@@ -697,10 +697,19 @@ For your convenience, the masking element is also referenced in the masked eleme
 rect.mask.remove()
 ```
 
-If you want to clip elements rather than masking them, have a look at the [svg.clippath.js](https://github.com/wout/svg.clippath.js) plugin.
-
 _This functionality requires the mask.js module which is included in the default distribution._
 
+
+## Clipping elements
+Clipping elements is exactly the same as masking elements:
+
+```javascript
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
+
+rect.clipWith(ellipse)
+```
+
+_This functionality requires the clip.js module which is included in the default distribution._
 
 ## Arranging elements
 You can arrange elements within their parent SVG document using the following methods.
@@ -993,7 +1002,6 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
-- [svg.clippath.js](https://github.com/wout/svg.clippath.js) clip elements.
 - [svg.export.js](https://github.com/wout/svg.export.js) export raw svg.
 
 
