@@ -1,4 +1,4 @@
-/* svg.js v0.11-4-g20e9f67 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.11-5-ga0076d7 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -849,16 +849,16 @@
       return this.put(new SVG.Line().plot(x1, y1, x2, y2))
     }
     // Create a wrapped polyline element
-  , polyline: function(points) {
-      return this.put(new SVG.Polyline).plot(points)
+  , polyline: function(points, unbiased) {
+      return this.put(new SVG.Polyline(unbiased)).plot(points)
     }
     // Create a wrapped polygon element
-  , polygon: function(points) {
-      return this.put(new SVG.Polygon).plot(points)
+  , polygon: function(points, unbiased) {
+      return this.put(new SVG.Polygon(unbiased)).plot(points)
     }
     // Create a wrapped path element
-  , path: function(data) {
-      return this.put(new SVG.Path).plot(data)
+  , path: function(data, unbiased) {
+      return this.put(new SVG.Path(unbiased)).plot(data)
     }
     // Create image element, load image and set its size
   , image: function(source, width, height) {
@@ -1753,15 +1753,19 @@
   })
 
 
-  SVG.Polyline = function() {
+  SVG.Polyline = function(unbiased) {
     this.constructor.call(this, SVG.create('polyline'))
+    
+    this.unbiased = unbiased
   }
   
   // Inherit from SVG.Shape
   SVG.Polyline.prototype = new SVG.Shape
   
-  SVG.Polygon = function() {
+  SVG.Polygon = function(unbiased) {
     this.constructor.call(this, SVG.create('polygon'))
+    
+    this.unbiased = unbiased
   }
   
   // Inherit from SVG.Shape
@@ -1785,8 +1789,10 @@
     
   }) 
 
-  SVG.Path = function() {
+  SVG.Path = function(unbiased) {
     this.constructor.call(this, SVG.create('path'))
+    
+    this.unbiased = unbiased
   }
   
   // Inherit from SVG.Shape
@@ -1826,10 +1832,16 @@
       /* native plot */
       this._plot(data)
       
-      /* get and store the actual offset of the element */
+      /* store offset */
       this._offset = this.transform({ scaleX: 1, scaleY: 1 }).bbox()
-      this._offset.x -= this.trans.x
-      this._offset.y -= this.trans.y
+      
+      /* get and store the actual offset of the element */
+      if (this.unbiased) {
+        this._offset.x = this._offset.y = 0
+      } else {
+        this._offset.x -= this.trans.x
+        this._offset.y -= this.trans.y
+      }
       
       return this.transform({ scaleX: x, scaleY: y })
     }

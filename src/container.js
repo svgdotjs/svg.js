@@ -90,16 +90,16 @@ SVG.extend(SVG.Container, {
     return this.put(new SVG.Line().plot(x1, y1, x2, y2))
   }
   // Create a wrapped polyline element
-, polyline: function(points) {
-    return this.put(new SVG.Polyline).plot(points)
+, polyline: function(points, unbiased) {
+    return this.put(new SVG.Polyline(unbiased)).plot(points)
   }
   // Create a wrapped polygon element
-, polygon: function(points) {
-    return this.put(new SVG.Polygon).plot(points)
+, polygon: function(points, unbiased) {
+    return this.put(new SVG.Polygon(unbiased)).plot(points)
   }
   // Create a wrapped path element
-, path: function(data) {
-    return this.put(new SVG.Path).plot(data)
+, path: function(data, unbiased) {
+    return this.put(new SVG.Path(unbiased)).plot(data)
   }
   // Create image element, load image and set its size
 , image: function(source, width, height) {

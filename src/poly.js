@@ -1,12 +1,16 @@
-SVG.Polyline = function() {
+SVG.Polyline = function(unbiased) {
   this.constructor.call(this, SVG.create('polyline'))
+  
+  this.unbiased = unbiased
 }
 
 // Inherit from SVG.Shape
 SVG.Polyline.prototype = new SVG.Shape
 
-SVG.Polygon = function() {
+SVG.Polygon = function(unbiased) {
   this.constructor.call(this, SVG.create('polygon'))
+  
+  this.unbiased = unbiased
 }
 
 // Inherit from SVG.Shape

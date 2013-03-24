@@ -25,10 +25,16 @@ SVG.extend(SVG.Polyline, SVG.Polygon, SVG.Path, {
     /* native plot */
     this._plot(data)
     
-    /* get and store the actual offset of the element */
+    /* store offset */
     this._offset = this.transform({ scaleX: 1, scaleY: 1 }).bbox()
-    this._offset.x -= this.trans.x
-    this._offset.y -= this.trans.y
+    
+    /* get and store the actual offset of the element */
+    if (this.unbiased) {
+      this._offset.x = this._offset.y = 0
+    } else {
+      this._offset.x -= this.trans.x
+      this._offset.y -= this.trans.y
+    }
     
     return this.transform({ scaleX: x, scaleY: y })
   }
