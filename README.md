@@ -711,6 +711,7 @@ rect.clipWith(ellipse)
 
 _This functionality requires the clip.js module which is included in the default distribution._
 
+
 ## Arranging elements
 You can arrange elements within their parent SVG document using the following methods.
 
