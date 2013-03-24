@@ -6,99 +6,122 @@ SVG.FX = function(element) {
 //
 SVG.extend(SVG.FX, {
   // Add animation parameters and start animation
-  animate: function(duration, ease) {
-    /* ensure default duration and easing */
-    duration = duration == null ? 1000 : duration
-    ease = ease || '<>'
+  animate: function(d, ease, delay) {
+    var fx = this
     
-    var akeys, tkeys, skeys
-      , element   = this.target
-      , fx        = this
-      , start     = new Date().getTime()
-      , finish    = start + duration
+    /* dissect object if one is passed */
+    if (typeof d == 'object') {
+      delay = d.delay
+      ease = d.ease
+      d = d.duration
+    }
     
-    /* start animation */
-    this.interval = setInterval(function(){
-      // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-      var i, key
-        , time = new Date().getTime()
-        , pos = time > finish ? 1 : (time - start) / duration
+    /* delay animation */
+    this.timeout = setTimeout(function() {
       
-      /* collect attribute keys */
-      if (akeys == null) {
-        akeys = []
-        for (key in fx.attrs)
-          akeys.push(key)
-      }
+      /* ensure default duration and easing */
+      d = d == null ? 1000 : d
+      ease = ease || '<>'
       
-      /* collect transformation keys */
-      if (tkeys == null) {
-        tkeys = []
-        for (key in fx.trans)
-          tkeys.push(key)
-      }
+      var akeys, tkeys, skeys
+        , interval  = 1000 / 60
+        , element   = fx.target
+        , start     = new Date().getTime()
+        , finish    = start + d
+
+      /* start animation */
+      fx.interval = setInterval(function(){
+        // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
+        var i, key
+          , time = new Date().getTime()
+          , pos = time > finish ? 1 : (time - start) / d
+
+        /* collect attribute keys */
+        if (akeys == null) {
+          akeys = []
+          for (key in fx.attrs)
+            akeys.push(key)
+        }
+
+        /* collect transformation keys */
+        if (tkeys == null) {
+          tkeys = []
+          for (key in fx.trans)
+            tkeys.push(key)
+        }
+
+        /* collect style keys */
+        if (skeys == null) {
+          skeys = []
+          for (key in fx.styles)
+            skeys.push(key)
+        }
+
+        /* apply easing */
+        pos = ease == '<>' ?
+          (-Math.cos(pos * Math.PI) / 2) + 0.5 :
+        ease == '>' ?
+          Math.sin(pos * Math.PI / 2) :
+        ease == '<' ?
+          -Math.cos(pos * Math.PI / 2) + 1 :
+        ease == '-' ?
+          pos :
+        typeof ease == 'function' ?
+          ease(pos) :
+          pos
+
+        /* run all x-position properties */
+        if (fx._x)
+          element.x(fx._at(fx._x, pos))
+        else if (fx._cx)
+          element.cx(fx._at(fx._cx, pos))
+
+        /* run all y-position properties */
+        if (fx._y)
+          element.y(fx._at(fx._y, pos))
+        else if (fx._cy)
+          element.cy(fx._at(fx._cy, pos))
+
+        /* run all size properties */
+        if (fx._size)
+          element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+
+        /* run all viewbox properties */
+        if (fx._viewbox)
+          element.viewbox(
+            fx._at(fx._viewbox.x, pos)
+          , fx._at(fx._viewbox.y, pos)
+          , fx._at(fx._viewbox.width, pos)
+          , fx._at(fx._viewbox.height, pos)
+          )
+
+        /* animate attributes */
+        for (i = akeys.length - 1; i >= 0; i--)
+          element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
+
+        /* animate transformations */
+        for (i = tkeys.length - 1; i >= 0; i--)
+          element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+
+        /* animate styles */
+        for (i = skeys.length - 1; i >= 0; i--)
+          element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
+
+        /* callback for each keyframe */
+        if (fx._during)
+          fx._during.call(element, pos, function(from, to) {
+            return fx._at({ from: from, to: to }, pos)
+          })
+
+        /* finish off animation */
+        if (time > finish) {
+          clearInterval(fx.interval)
+          fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+        }
+
+      }, d > interval ? interval : d)
       
-      /* collect style keys */
-      if (skeys == null) {
-        skeys = []
-        for (key in fx.styles)
-          skeys.push(key)
-      }
-      
-      /* apply easing */
-      pos = ease == '<>' ?
-        (-Math.cos(pos * Math.PI) / 2) + 0.5 :
-      ease == '>' ?
-        Math.sin(pos * Math.PI / 2) :
-      ease == '<' ?
-        -Math.cos(pos * Math.PI / 2) + 1 :
-      ease == '-' ?
-        pos :
-      typeof ease == 'function' ?
-        ease(pos) :
-        pos
-      
-      /* run all x-position properties */
-      if (fx._x)
-        element.x(fx._at(fx._x, pos))
-      else if (fx._cx)
-        element.cx(fx._at(fx._cx, pos))
-      
-      /* run all y-position properties */
-      if (fx._y)
-        element.y(fx._at(fx._y, pos))
-      else if (fx._cy)
-        element.cy(fx._at(fx._cy, pos))
-      
-      /* run all size properties */
-      if (fx._size)
-        element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-      
-      /* animate attributes */
-      for (i = akeys.length - 1; i >= 0; i--)
-        element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
-      
-      /* animate transformations */
-      for (i = tkeys.length - 1; i >= 0; i--)
-        element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
-      
-      /* animate styles */
-      for (i = skeys.length - 1; i >= 0; i--)
-        element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
-      
-      /* callback for each keyframe */
-      if (fx._during)
-        fx._during.call(element, pos, function(from, to) {
-          return fx._at({ from: from, to: to }, pos)
-        })
-      
-      /* finish off animation */
-      if (time > finish) {
-        clearInterval(fx.interval)
-        fx._after ? fx._after.apply(element, [fx]) : fx.stop()
-      }
-      
-    }, duration > 10 ? 10 : duration)
+    }, delay || 0)
     
     return this
   }
@@ -153,29 +176,25 @@ SVG.extend(SVG.FX, {
   }
   // Animatable x-axis
 , x: function(x) {
-    var b = this.bbox()
-    this._x = { from: b.x, to: x }
+    this._x = { from: this.target.x(), to: x }
     
     return this
   }
   // Animatable y-axis
 , y: function(y) {
-    var b = this.bbox()
-    this._y = { from: b.y, to: y }
+    this._y = { from: this.target.y(), to: y }
     
     return this
   }
   // Animatable center x-axis
 , cx: function(x) {
-    var b = this.bbox()
-    this._cx = { from: b.cx, to: x }
+    this._cx = { from: this.target.cx(), to: x }
     
     return this
   }
   // Animatable center y-axis
 , cy: function(y) {
-    var b = this.bbox()
-    this._cy = { from: b.cy, to: y }
+    this._cy = { from: this.target.cy(), to: y }
     
     return this
   }
@@ -205,6 +224,21 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Add animatable viewbox
+, viewbox: function(x, y, width, height) {
+    if (this.target instanceof SVG.Container) {
+      var box = this.target.viewbox()
+      
+      this._viewbox = {
+        x:      { from: box.x,      to: x      }
+      , y:      { from: box.y,      to: y      }
+      , width:  { from: box.width,  to: width  }
+      , height: { from: box.height, to: height }
+      }
+    }
+    
+    return this
+  }
   // Add callback for each keyframe
 , during: function(during) {
     this._during = during
@@ -220,6 +254,7 @@ SVG.extend(SVG.FX, {
   // Stop running animation
 , stop: function() {
     /* stop current animation */
+    clearTimeout(this.timeout)
     clearInterval(this.interval)
     
     /* reset storage for properties that need animation */
@@ -233,10 +268,11 @@ SVG.extend(SVG.FX, {
     delete this._size
     delete this._after
     delete this._during
+    delete this._viewbox
     
     return this
   }
-  // Private: at position according to from and to
+  // Private: calculate position according to from and to
 , _at: function(o, pos) {
     /* number recalculation */
     return typeof o.from == 'number' ?
@@ -259,7 +295,7 @@ SVG.extend(SVG.FX, {
     
     /* convert FROM unit */
     match = SVG.regex.unit.exec(o.from.toString())
-    from = parseFloat(match[1])
+    from = parseFloat(match ? match[1] : 0)
     
     /* convert TO unit */
     match = SVG.regex.unit.exec(o.to)
@@ -291,12 +327,13 @@ SVG.extend(SVG.FX, {
 //
 SVG.extend(SVG.Element, {
   // Get fx module or create a new one, then animate with given duration and ease
-  animate: function(duration, ease) {
-    return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(duration, ease)
+  animate: function(d, ease, delay) {
+    return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(d, ease, delay)
   },
   // Stop current animation; this is an alias to the fx instance
   stop: function() {
-    this.fx.stop()
+    if (this.fx)
+      this.fx.stop()
     
     return this
   }

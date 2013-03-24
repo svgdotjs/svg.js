@@ -155,10 +155,10 @@ SVG.Color.test = function(color) {
 
 // Test if given value is a rgb object
 SVG.Color.isRgb = function(color) {
-  return typeof color.r == 'number'
+  return color && typeof color.r == 'number'
 }
 
 // Test if given value is a hsb object
 SVG.Color.isHsb = function(color) {
-  return typeof color.h == 'number'
+  return color && typeof color.h == 'number'
 }

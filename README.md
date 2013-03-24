@@ -50,13 +50,19 @@ if (SVG.supported) {
 
 ### ViewBox
 
-The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with arguments it will act as a setter:
+The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
 
 ```javascript
 draw.viewbox(0, 0, 297, 210)
 ```
 
-Without any attributes an instance of `SVG.ViewBox` will be returned:
+Alternatively you can also supply an object as the first argument:
+
+```javascript
+draw.viewbox({ x: 0, y: 0, width: 297, height: 210 })
+```
+
+Without any arguments an instance of `SVG.ViewBox` will be returned:
 
 ```javascript
 var box = draw.viewbox()
@@ -185,6 +191,15 @@ text.font({
 })
 ```
 
+## Referencing elements
+If you want to get an element created by svg.js by its id, you can use the `SVG.get()` method:
+
+```javascript
+var element = SVG.get('my_element')
+
+element.fill('#f06)
+```
+
 
 ## Manipulating elements
 
@@ -267,6 +282,14 @@ rect.transform({
 })
 ```
 
+Note that you can also apply transformations directly using the `attr()` method:
+
+```javascript
+rect.attr('transform', 'matrix(1,0.5,0.5,1,0,0)')
+```
+
+Although that would mean you can't use the `transform()` method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the `transform()` method.
+
 
 ### Style
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
@@ -323,6 +346,20 @@ rect.attr({ x: 20, y: 60 })
 
 Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
 
+The `text` element has one optional argument:
+
+```javascript
+// move(x, y, anchor)
+rect.move(200, 350, true)
+```
+
+The third argument can be used to move the text element by its anchor point rather than the calculated left top position. This can also be used on the individual axes:
+
+```javascript
+rect.x(200, true).y(350, true)
+```
+
+
 ### Center
 This is an extra method to move an element by its center:
 
@@ -335,6 +372,20 @@ This will have the same effect as:
 ```javascript
 rect.cx(150).cy(150)
 ```
+
+The `text` element has one optional argument:
+
+```javascript
+// center(x, y, anchor)
+rect.center(150, 150, true)
+```
+
+The third argument can be used to center the text element by its anchor point rather than the calculated center position. This can also be used on the individual axes:
+
+```javascript
+rect.cx(150, true).cy(150, true)
+```
+
 
 ### Size
 Set the size of an element by a given `width` and `height`:
@@ -393,7 +444,7 @@ As opposed to the native `getBBox()` method any translations used with the `tran
 
 ### Iterating over all children
 
-If you would iterate over all the `children()` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
+If you would iterate over all the `children` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
 
 ```javascript
 draw.each(function(i, children) {
@@ -423,10 +474,16 @@ Animating elements is very much the same as manipulating elements, the only diff
 rect.animate().move(150, 150)
 ```
 
-The `animate()` method will take two arguments. The first is `milliseconds`, the second `ease`:
+The `animate()` method will take three arguments. The first is `milliseconds`, the second `ease` and the third `delay`:
 
 ```javascript
-rect.animate(2000, '>').attr({ fill: '#f03' })
+rect.animate(2000, '>', 1000).attr({ fill: '#f03' })
+```
+
+Alternatively you can pass an object as the first argument:
+
+```javascript
+rect.animate({ ease: '<', delay: 1500 }).attr({ fill: '#f03' })
 ```
 
 By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`.
@@ -908,10 +965,8 @@ The SVG document can be extended by using:
 ```javascript
 SVG.extend(SVG.Doc, {
   paintAllPink: function() {
-    var children = this.children()
-    
-    for (var i = 0, l = children.length; i < l; i++) {
-      children[i].fill({ color: 'pink' })
+    for (var i = 0, l = this.children.length; i < l; i++) {
+      this.children[i].fill({ color: 'pink' })
     }
     
     return this

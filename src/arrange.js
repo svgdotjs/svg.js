@@ -20,7 +20,7 @@ SVG.extend(SVG.Element, {
   }
   // Send given element one step forward
 , forward: function() {
-    return this.parent.remove(this).put(this, this.position() + 1)
+    return this.parent.removeElement(this).put(this, this.position() + 1)
   }
   // Send given element one step backward
 , backward: function() {
@@ -29,20 +29,20 @@ SVG.extend(SVG.Element, {
     var i = this.position()
     
     if (i > 1)
-      this.parent.remove(this).add(this, i - 1)
+      this.parent.removeElement(this).add(this, i - 1)
     
     return this
   }
   // Send given element all the way to the front
 , front: function() {
-    return this.parent.remove(this).put(this)
+    return this.parent.removeElement(this).put(this)
   }
   // Send given element all the way to the back
 , back: function() {
     this.parent.level()
     
     if (this.position() > 1)
-      this.parent.remove(this).add(this, 0)
+      this.parent.removeElement(this).add(this, 0)
     
     return this
   }

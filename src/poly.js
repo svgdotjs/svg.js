@@ -1,21 +1,9 @@
-SVG.Poly = {
-  // Set polygon data with default zero point if no data is passed
-  plot: function(points) {
-    this.attr('points', points || '0,0')
-    
-    return this
-  }
-}
-
 SVG.Polyline = function() {
   this.constructor.call(this, SVG.create('polyline'))
 }
 
 // Inherit from SVG.Shape
 SVG.Polyline.prototype = new SVG.Shape
-
-// Add polygon-specific functions
-SVG.extend(SVG.Polyline, SVG.Poly)
 
 SVG.Polygon = function() {
   this.constructor.call(this, SVG.create('polygon'))
@@ -25,4 +13,19 @@ SVG.Polygon = function() {
 SVG.Polygon.prototype = new SVG.Shape
 
 // Add polygon-specific functions
-SVG.extend(SVG.Polygon, SVG.Poly)
+SVG.extend(SVG.Polyline, SVG.Polygon, {
+  // Private: Native plot
+  _plot: function(p) {
+    if (Array.isArray(p)) {
+      var i, l, points = []
+
+      for (i = 0, l = p.length; i < l; i++)
+        points.push(p[i].join(','))
+      
+      p = points.length == 0 ? points.join(' ') : '0,0'
+    }
+    
+    return this.attr('points', p || '0,0')
+  }
+  
+}) 

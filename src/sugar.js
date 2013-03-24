@@ -33,11 +33,11 @@ var _colorPrefix = function(type, attr) {
 
 SVG.extend(SVG.Element, SVG.FX, {
   // Rotation
-  rotate: function(deg, cx, cy) {
+  rotate: function(deg, x, y) {
     return this.transform({
       rotation: deg || 0
-    , cx: cx
-    , cy: cy
+    , cx: x
+    , cy: y
     })
   }
   // Skew

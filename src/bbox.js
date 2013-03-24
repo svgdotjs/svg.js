@@ -7,12 +7,12 @@ SVG.BBox = function(element) {
   this.x = box.x + element.trans.x
   this.y = box.y + element.trans.y
   
-  /* add the center */
-  this.cx = this.x + box.width / 2
-  this.cy = this.x + box.height / 2
-  
   /* plain width and height */
-  this.width  = box.width
-  this.height = box.height
+  this.width  = box.width * element.trans.scaleX
+  this.height = box.height * element.trans.scaleY
+  
+  /* add the center */
+  this.cx = this.x + this.width / 2
+  this.cy = this.y + this.height / 2
   
 }

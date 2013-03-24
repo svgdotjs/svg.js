@@ -3,8 +3,8 @@
 
 //
 SVG.Element = function(node) {
-  /* initialize attribute store with defaults */
-  this.attrs = SVG.default.attrs()
+  /* make stroke value accessible dynamically */
+  this._stroke = SVG.default.attrs.stroke
   
   /* initialize style store */
   this.styles = {}
@@ -15,28 +15,29 @@ SVG.Element = function(node) {
   /* keep reference to the element node */
   if (this.node = node) {
     this.type = node.nodeName
-    this.attrs.id = node.getAttribute('id')
+    this.node.instance = this
   }
-  
 }
 
 //
 SVG.extend(SVG.Element, {
   // Move over x-axis
   x: function(x) {
+    if (x) x /= this.trans.scaleX
     return this.attr('x', x)
   }
   // Move over y-axis
 , y: function(y) {
+    if (y) y /= this.trans.scaleY
     return this.attr('y', y)
   }
   // Move by center over x-axis
 , cx: function(x) {
-    return this.x(x - this.bbox().width / 2)
+    return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
   }
   // Move by center over y-axis
 , cy: function(y) {
-    return this.y(y - this.bbox().height / 2)
+    return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
   }
   // Move element to given x and y values
 , move: function(x, y) {
@@ -55,40 +56,30 @@ SVG.extend(SVG.Element, {
   }
   // Clone element
 , clone: function() {
-    var clone
+    var clone , attr
+      , type = this.type
     
-    /* if this is a wrapped shape */
-    if (this instanceof SVG.Wrap) {
-      /* build new wrapped shape */
-      clone = this.parent[this.child.node.nodeName]()
-      clone.attrs = this.attrs
-      
-      /* copy child attributes and transformations */
-      clone.child.trans = this.child.trans
-      clone.child.attr(this.child.attrs).transform({})
-      
-      /* re-plot shape */
-      if (clone.plot)
-        clone.plot(this.child.attrs[this.child instanceof SVG.Path ? 'd' : 'points'])
-      
-    } else {
-      var name = this.node.nodeName
-      
-      /* invoke shape method with shape-specific arguments */
-      clone = name == 'rect' ?
-        this.parent[name](this.attrs.width, this.attrs.height) :
-      name == 'ellipse' ?
-        this.parent[name](this.attrs.rx * 2, this.attrs.ry * 2) :
-      name == 'image' ?
-        this.parent[name](this.src) :
-      name == 'text' ?
-        this.parent[name](this.content) :
-      name == 'g' ?
-        this.parent.group() :
-        this.parent[name]()
-      
-      clone.attr(this.attrs)
-    }
+    /* invoke shape method with shape-specific arguments */
+    clone = type == 'rect' || type == 'ellipse' ?
+      this.parent[type](0,0) :
+    type == 'line' ?
+      this.parent[type](0,0,0,0) :
+    type == 'image' ?
+      this.parent[type](this.src) :
+    type == 'text' ?
+      this.parent[type](this.content) :
+    type == 'path' ?
+      this.parent[type](this.attr('d')) :
+    type == 'polyline' || type == 'polygon' ?
+      this.parent[type](this.attr('points')) :
+    type == 'g' ?
+      this.parent.group() :
+      this.parent[type]()
+    
+    /* apply attributes attributes */
+    attr = this.attr()
+    delete attr.id
+    clone.attr(attr)
     
     /* copy transformations */
     clone.trans = this.trans
@@ -99,28 +90,36 @@ SVG.extend(SVG.Element, {
   // Remove element
 , remove: function() {
     if (this.parent)
-      this.parent.remove(this)
+      this.parent.removeElement(this)
     
     return this
   }
   // Get parent document
-, doc: function() {
-    return this._parent(SVG.Doc)
-  }
-  // Get parent nested document
-, nested: function() {
-    return this._parent(SVG.Nested)
+, doc: function(type) {
+    return this._parent(type || SVG.Doc)
   }
   // Set svg element attribute
 , attr: function(a, v, n) {
-    if (arguments.length < 2) {
-      /* apply every attribute individually if an object is passed */
-      if (typeof a == 'object')
-        for (v in a)
-          this.attr(v, a[v])
+    if (a == null) {
+      /* get an object of attributes */
+      a = {}
+      v = this.node.attributes
+      for (n = v.length - 1; n >= 0; n--)
+        a[v[n].nodeName] = v[n].nodeValue
       
+      return a
+      
+    } else if (typeof a == 'object') {
+      /* apply every attribute individually if an object is passed */
+      for (v in a) this.attr(v, a[v])
+      
+    } else if (v === null) {
+        /* remove value */
+        this.node.removeAttribute(a)
+      
+    } else if (v == null) {
       /* act as a getter for style attributes */
-      else if (this._isStyle(a))
+      if (this._isStyle(a)) {
         return a == 'text' ?
                  this.content :
                a == 'leading' ?
@@ -128,41 +127,38 @@ SVG.extend(SVG.Element, {
                  this.style(a)
       
       /* act as a getter if the first and only argument is not an object */
-      else
-        return this.attrs[a] || this.node.getAttribute(a)
+      } else {
+        v = this.node.getAttribute(a)
+        return v == null ? 
+          SVG.default.attrs[a] :
+        SVG.regex.test(v, 'isNumber') ?
+          parseFloat(v) : v
+      }
     
-    } else if (v === null) {
-      /* remove value */
-      this.node.removeAttribute(a)
-      
     } else if (a == 'style') {
       /* redirect to the style method */
       return this.style(v)
     
     } else {
-      /* store value */
-      this.attrs[a] = v
-      
       /* treat x differently on text elements */
-      if (a == 'x' && this._isText()) {
-        for (var i = this.lines.length - 1; i >= 0; i--)
-          this.lines[i].attr(a, v)
+      if (a == 'x' && this instanceof SVG.Text)
+        for (n = this.lines.length - 1; n >= 0; n--)
+          this.lines[n].attr(a, v)
       
-      /* set the actual attribute */
-      } else {
-        /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
-        if (a == 'stroke-width')
-          this.attr('stroke', parseFloat(v) > 0 ? this.attrs.stroke : null)
+      /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
+      if (a == 'stroke-width')
+        this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
+      else if (a == 'stroke')
+        this._stroke = v
+      
+      /* ensure hex color */
+      if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
+        v = new SVG.Color(v).toHex()
         
-        /* ensure hex color */
-        if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
-          v = new SVG.Color(v).toHex()
-          
-        /* set give attribute on node */
-        n != null ?
-          this.node.setAttributeNS(n, a, v) :
-          this.node.setAttribute(a, v)
-      }
+      /* set give attribute on node */
+      n != null ?
+        this.node.setAttributeNS(n, a, v) :
+        this.node.setAttribute(a, v)
       
       /* if the passed argument belongs to the style as well, add it there */
       if (this._isStyle(a)) {
@@ -243,10 +239,15 @@ SVG.extend(SVG.Element, {
     
     /* add translation */
     if (o.x != 0 || o.y != 0)
-      transform.push('translate(' + o.x + ',' + o.y + ')')
+      transform.push('translate(' + o.x / o.scaleX + ',' + o.y / o.scaleY + ')')
+    
+    /* add offset translation */
+     if (this._offset)
+       transform.push('translate(' + (-this._offset.x) + ',' + (-this._offset.y) + ')')
     
     /* add only te required transformations */
-    this.node.setAttribute('transform', transform.join(' '))
+    if (transform.length > 0)
+      this.node.setAttribute('transform', transform.join(' '))
     
     return this
   }
@@ -277,7 +278,7 @@ SVG.extend(SVG.Element, {
         return this.styles[s]
       }
     
-    } else if (v === null) {
+    } else if (v === null || SVG.regex.test(v, 'isBlank')) {
       /* remove value */
       delete this.styles[s]
       
@@ -346,12 +347,8 @@ SVG.extend(SVG.Element, {
     return element
   }
   // Private: tester method for style detection
-, _isStyle: function(attr) {
-    return typeof attr == 'string' ? SVG.regex.isStyle.test(attr) : false
-  }
-  // Private: element type tester
-, _isText: function() {
-    return this instanceof SVG.Text
+, _isStyle: function(a) {
+    return typeof a == 'string' ? SVG.regex.test(a, 'isStyle') : false
   }
   // Private: parse a matrix string
 , _parseMatrix: function(o) {

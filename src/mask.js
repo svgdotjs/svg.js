@@ -6,7 +6,6 @@ SVG.Mask = function() {
 SVG.Mask.prototype = new SVG.Container
 
 SVG.extend(SVG.Element, {
-  
   // Distribute mask to svg element
   maskWith: function(element) {
     /* use given mask or create a new one */

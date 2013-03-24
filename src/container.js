@@ -7,55 +7,55 @@ SVG.Container.prototype = new SVG.Element
 
 //
 SVG.extend(SVG.Container, {
+  // Returns all child elements
+  children: function() {
+    return this._children || (this._children = [])
+  }
   // Add given element at a position
-  add: function(element, index) {
+, add: function(element, i) {
     if (!this.has(element)) {
       /* define insertion index if none given */
-      index = index == null ? this.children().length : index
+      i = i == null ? this.children().length : i
       
       /* remove references from previous parent */
       if (element.parent) {
-        var i = element.parent.children().indexOf(element)
-        element.parent.children().splice(i, 1)
+        var index = element.parent.children().indexOf(element)
+        element.parent.children().splice(index, 1)
       }
       
       /* add element references */
-      this.children().splice(index, 0, element)
-      this.node.insertBefore(element.node, this.node.childNodes[index] || null)
+      this.children().splice(i, 0, element)
+      this.node.insertBefore(element.node, this.node.childNodes[i] || null)
       element.parent = this
     }
     
     return this
   }
-  // Basically does the same as `add()` but returns the added element
-, put: function(element, index) {
-    this.add(element, index)
+  // Basically does the same as `add()` but returns the added element instead
+, put: function(element, i) {
+    this.add(element, i)
     return element
   }
   // Checks if the given element is a child
 , has: function(element) {
     return this.children().indexOf(element) >= 0
   }
-  // Returns all child elements
-, children: function() {
-    return this._children || (this._children = [])
-  }
   // Iterates over all children and invokes a given block
 , each: function(block) {
     var index,
         children = this.children()
-    
+  
     for (index = 0, length = children.length; index < length; index++)
       if (children[index] instanceof SVG.Shape)
         block.apply(children[index], [index, children])
-    
+  
     return this
   }
   // Remove a child element at a position
-, remove: function(element) {
-    var index = this.children().indexOf(element)
+, removeElement: function(element) {
+    var i = this.children().indexOf(element)
 
-    this.children().splice(index, 1)
+    this.children().splice(i, 1)
     this.node.removeChild(element.node)
     element.parent = null
     
@@ -63,15 +63,15 @@ SVG.extend(SVG.Container, {
   }
   // Returns defs element
 , defs: function() {
-    return this._defs || (this._defs = this.put(new SVG.Defs(), 0))
+    return this._defs || (this._defs = this.put(new SVG.Defs, 0))
   }
   // Re-level defs to first positon in element stack
 , level: function() {
-    return this.remove(this.defs()).put(this.defs(), 0)
+    return this.removeElement(this.defs()).put(this.defs(), 0)
   }
   // Create a group element
 , group: function() {
-    return this.put(new SVG.G())
+    return this.put(new SVG.G)
   }
   // Create a rect element
 , rect: function(width, height) {
@@ -91,15 +91,15 @@ SVG.extend(SVG.Container, {
   }
   // Create a wrapped polyline element
 , polyline: function(points) {
-    return this.put(new SVG.Wrap(new SVG.Polyline())).plot(points)
+    return this.put(new SVG.Polyline).plot(points)
   }
   // Create a wrapped polygon element
 , polygon: function(points) {
-    return this.put(new SVG.Wrap(new SVG.Polygon())).plot(points)
+    return this.put(new SVG.Polygon).plot(points)
   }
   // Create a wrapped path element
 , path: function(data) {
-    return this.put(new SVG.Wrap(new SVG.Path())).plot(data)
+    return this.put(new SVG.Path).plot(data)
   }
   // Create image element, load image and set its size
 , image: function(source, width, height) {
@@ -112,7 +112,7 @@ SVG.extend(SVG.Container, {
   }
   // Create nested svg document
 , nested: function() {
-    return this.put(new SVG.Nested())
+    return this.put(new SVG.Nested)
   }
   // Create gradient element in defs
 , gradient: function(type, block) {
@@ -124,7 +124,7 @@ SVG.extend(SVG.Container, {
   }
   // Create masking element
 , mask: function() {
-    return this.defs().put(new SVG.Mask())
+    return this.defs().put(new SVG.Mask)
   }
   // Get first child, skipping the defs node
 , first: function() {
@@ -135,20 +135,22 @@ SVG.extend(SVG.Container, {
     return this.children()[this.children().length - 1]
   }
   // Get the viewBox and calculate the zoom value
-, viewbox: function() {
-    /* act as a getter if there are no arguments */
+, viewbox: function(v) {
     if (arguments.length == 0)
+      /* act as a getter if there are no arguments */
       return new SVG.ViewBox(this)
     
     /* otherwise act as a setter */
-    return this.attr('viewBox', Array.prototype.slice.call(arguments).join(' '))
+    v = arguments.length == 1 ?
+      [v.x, v.y, v.width, v.height] :
+      Array.prototype.slice.call(arguments)
+    
+    return this.attr('viewBox', v.join(' '))
   }
   // Remove all elements in this container
 , clear: function() {
-    this._children = []
-    
-    while (this.node.hasChildNodes())
-      this.node.removeChild(this.node.lastChild)
+    for (var i = this.children().length - 1; i >= 0; i--)
+      this.removeElement(this.children()[i])
     
     return this
   }

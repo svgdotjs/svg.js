@@ -8,7 +8,7 @@ SVG.Text = function() {
   /* define default style */
   this.styles = {
     'font-size':    16
-  , 'font-family':  'Helvetica'
+  , 'font-family':  'Helvetica, Arial, sans-serif'
   , 'text-anchor':  'start'
   }
   
@@ -19,8 +19,37 @@ SVG.Text = function() {
 SVG.Text.prototype = new SVG.Shape
 
 SVG.extend(SVG.Text, {
+  // Move over x-axis
+  x: function(x, a) {
+    /* act as getter */
+    if (x == null) return a ? this.attr('x') : this.bbox().x
+    
+    /* set x taking anchor in mind */
+    if (!a) {
+      a = this.style('text-anchor')
+      x = a == 'start' ? x : a == 'end' ? x + this.bbox().width : x + this.bbox().width / 2
+    }
+    
+    return this.attr('x', x)
+  }
+  // Move center over x-axis
+, cx: function(x, a) {
+    return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
+  }
+  // Move center over y-axis
+, cy: function(y, a) {
+    return y == null ? this.bbox().cy : this.y(a ? y : y - this.bbox().height / 2)
+  }
+  // Move element to given x and y values
+, move: function(x, y, a) {
+    return this.x(x, a).y(y)
+  }
+  // Move element by its center
+, center: function(x, y, a) {
+    return this.cx(x, a).cy(y, a)
+  }
   // Set the text content
-  text: function(text) {
+, text: function(text) {
     /* act as getter */
     if (text == null)
       return this.content
@@ -38,8 +67,7 @@ SVG.extend(SVG.Text, {
     for (i = 0, il = lines.length; i < il; i++)
       this.tspan(lines[i])
       
-    /* set style */
-    return this.attr('style', this.style())
+    return this.attr('textLength', 1).attr('textLength', null)
   }
   // Create a tspan
 , tspan: function(text) {
@@ -50,17 +78,6 @@ SVG.extend(SVG.Text, {
     this.lines.push(tspan)
     
     return tspan.attr('style', this.style())
-  }
-  // Move element by its center
-, center: function(x, y) {
-    var anchor = this.style('text-anchor')
-      , box = this.bbox()
-      , x = anchor == 'start' ?
-          x - box.width / 2 :
-        anchor == 'end' ?
-          x + box.width / 2 : x
-    
-    return this.move(x, y - box.height / 2)
   }
   // Set font size
 , size: function(size) {
@@ -85,8 +102,8 @@ SVG.extend(SVG.Text, {
     /* define position of all lines */
     for (i = 0, il = this.lines.length; i < il; i++)
       this.lines[i].attr({
-        dy: size * this._leading - (i == 0 ? size * 0.3 : 0)
-      , x: (this.attrs.x || 0)
+        dy: size * this._leading - (i == 0 ? size * 0.276666666 : 0)
+      , x: (this.attr('x') || 0)
       , style: this.style()
       })
     

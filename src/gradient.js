@@ -52,8 +52,7 @@ SVG.extend(SVG.Gradient, {
 
 //
 SVG.extend(SVG.Defs, {
-  
-  /* define gradient */
+  // define gradient
   gradient: function(type, block) {
     var element = this.put(new SVG.Gradient(type))
     
@@ -78,8 +77,7 @@ SVG.Stop.prototype = new SVG.Element()
 
 //
 SVG.extend(SVG.Stop, {
-  
-  /* add color stops */
+  // add color stops
   update: function(o) {
     var index
       , attr = ['opacity', 'color']
@@ -90,7 +88,7 @@ SVG.extend(SVG.Stop, {
         this.style('stop-' + attr[index], o[attr[index]])
     
     /* set attributes */
-    return this.attr('offset', (o.offset != null ? o.offset : this.attrs.offset || 0) + '%')
+    return this.attr('offset', (o.offset != null ? o.offset : this.attr('offset')) + '%')
   }
   
 })

@@ -27,7 +27,7 @@ SVG.did  = 1000
 
 // Get next named element id
 SVG.eid = function(name) {
-  return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + 'Element' + (SVG.did++)
+  return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + (SVG.did++)
 }
 
 // Method for element creation
@@ -41,7 +41,7 @@ SVG.create = function(name) {
   return element
 }
 
-  // Method for extending objects
+// Method for extending objects
 SVG.extend = function() {
   var modules, methods, key, i
   
@@ -55,6 +55,12 @@ SVG.extend = function() {
     if (modules[i])
       for (key in methods)
         modules[i].prototype[key] = methods[key]
+}
+
+// Method for getting an eleemnt by id
+SVG.get = function(id) {
+  var node = document.getElementById(id)
+  if (node) return node.instance
 }
 
 // svg support test
