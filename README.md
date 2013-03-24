@@ -135,6 +135,13 @@ var polyline = draw.polyline('10,20 30,40 50,60')
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
 
+As an alternative an array of points will work as well:
+
+```javascript
+// polyline([[x,y], [x,y], [x,y]])
+var polyline = draw.polyline([[10,20], [30,40], [50,60]])
+```
+
 
 ### Polygon
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
