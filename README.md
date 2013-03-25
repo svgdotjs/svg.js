@@ -165,6 +165,15 @@ var path = draw.path('M10,20L30,40')
 For more details on path data strings, please refer to the SVG documentation:
 http://www.w3.org/TR/SVG/paths.html#PathData
 
+Note that paths will always be positioned at x=0, y=0 on creation. This is to make the unified `move()` api possible. Svg.js assumes you are creating a path to move it afterwards. If you need to constantly update your path you probably don't want to use the `move()` method at all. In that case you can create an "unbiased" path like so:
+
+```javascript
+// path('path data', unbiased)
+var path = draw.path('M10,20L30,40', true)
+```
+
+This logic is also applicable to polylines and polygons.
+
 
 ### Image
 When creating images the `width` and `height` values should be defined:

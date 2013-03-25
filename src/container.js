@@ -126,6 +126,10 @@ SVG.extend(SVG.Container, {
 , mask: function() {
     return this.defs().put(new SVG.Mask)
   }
+  // Create clipping element
+, clip: function() {
+    return this.defs().put(new SVG.Clip)
+  }
   // Get first child, skipping the defs node
 , first: function() {
     return this.children()[0] instanceof SVG.Defs ? this.children()[1] : this.children()[0]

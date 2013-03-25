@@ -255,7 +255,7 @@ SVG.extend(SVG.Element, {
 , style: function(s, v) {
     if (arguments.length == 0) {
       /* get full style */
-      return this.attr('style')
+      return this.attr('style') || ''
     
     } else if (arguments.length < 2) {
       /* apply every style individually if an object is passed */

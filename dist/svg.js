@@ -1,4 +1,4 @@
-/* svg.js v0.11-5-ga0076d7 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.11-6-g264c100 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -640,7 +640,7 @@
   , style: function(s, v) {
       if (arguments.length == 0) {
         /* get full style */
-        return this.attr('style')
+        return this.attr('style') || ''
       
       } else if (arguments.length < 2) {
         /* apply every style individually if an object is passed */
@@ -884,6 +884,10 @@
     // Create masking element
   , mask: function() {
       return this.defs().put(new SVG.Mask)
+    }
+    // Create clipping element
+  , clip: function() {
+      return this.defs().put(new SVG.Clip)
     }
     // Get first child, skipping the defs node
   , first: function() {
@@ -1419,7 +1423,7 @@
     
   })
 
-  SVG.Clip = function Clip() {
+  SVG.Clip = function() {
     this.constructor.call(this, SVG.create('clipPath'))
   }
   
@@ -1427,7 +1431,6 @@
   SVG.Clip.prototype = new SVG.Container
   
   SVG.extend(SVG.Element, {
-    
     // Distribute clipPath to svg element
     clipWith: function(element) {
       /* use given clip or create a new one */
@@ -1437,16 +1440,6 @@
     }
     
   })
-  
-  // Add container method
-  SVG.extend(SVG.Container, {
-    // Create clipping element
-    clip: function() {
-      return this.defs().put(new SVG.Clip)
-    }
-    
-  })
-
 
   SVG.Pattern = function(type) {
     this.constructor.call(this, SVG.create('pattern'))
