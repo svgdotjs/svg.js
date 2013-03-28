@@ -46,7 +46,7 @@ SVG.extend = function() {
   var modules, methods, key, i
   
   /* get list of modules */
-  modules = Array.prototype.slice.call(arguments)
+  modules = [].slice.call(arguments)
   
   /* get object with extensions */
   methods = modules.pop()

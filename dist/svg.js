@@ -1,4 +1,4 @@
-/* svg.js v0.11-6-g264c100 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.11-7-g7b0ba31 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -40,7 +40,7 @@
     var modules, methods, key, i
     
     /* get list of modules */
-    modules = Array.prototype.slice.call(arguments)
+    modules = [].slice.call(arguments)
     
     /* get object with extensions */
     methods = modules.pop()
@@ -906,14 +906,18 @@
       /* otherwise act as a setter */
       v = arguments.length == 1 ?
         [v.x, v.y, v.width, v.height] :
-        Array.prototype.slice.call(arguments)
+        [].slice.call(arguments)
       
       return this.attr('viewBox', v.join(' '))
     }
     // Remove all elements in this container
   , clear: function() {
+      /* remove children */
       for (var i = this.children().length - 1; i >= 0; i--)
         this.removeElement(this.children()[i])
+      
+      /* create new defs node */
+      this.defs()
       
       return this
     }

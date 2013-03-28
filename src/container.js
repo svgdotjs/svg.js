@@ -147,14 +147,18 @@ SVG.extend(SVG.Container, {
     /* otherwise act as a setter */
     v = arguments.length == 1 ?
       [v.x, v.y, v.width, v.height] :
-      Array.prototype.slice.call(arguments)
+      [].slice.call(arguments)
     
     return this.attr('viewBox', v.join(' '))
   }
   // Remove all elements in this container
 , clear: function() {
+    /* remove children */
     for (var i = this.children().length - 1; i >= 0; i--)
       this.removeElement(this.children()[i])
+    
+    /* create new defs node */
+    this.defs()
     
     return this
   }
