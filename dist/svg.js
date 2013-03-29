@@ -1,4 +1,4 @@
-/* svg.js v0.11-7-g7b0ba31 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.12 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1580,21 +1580,23 @@
 
 
   SVG.Doc = function(element) {
-    this.constructor.call(this, SVG.create('svg'))
-    
     /* ensure the presence of a html element */
     this.parent = typeof element == 'string' ?
       document.getElementById(element) :
       element
     
     /* set svg element attributes and create the <defs> node */
+    this.constructor
+      .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
+    
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
       .attr('xlink', SVG.xlink, SVG.ns)
       .defs()
     
     /* ensure correct rendering for safari */
-    this.stage()
+    if (this.parent.nodeName != 'svg')
+      this.stage()
   }
   
   // Inherits from SVG.Container

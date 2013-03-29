@@ -2,21 +2,23 @@
 
 //
 SVG.Doc = function(element) {
-  this.constructor.call(this, SVG.create('svg'))
-  
   /* ensure the presence of a html element */
   this.parent = typeof element == 'string' ?
     document.getElementById(element) :
     element
   
   /* set svg element attributes and create the <defs> node */
+  this.constructor
+    .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
+  
   this
     .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
     .attr('xlink', SVG.xlink, SVG.ns)
     .defs()
   
   /* ensure correct rendering for safari */
-  this.stage()
+  if (this.parent.nodeName != 'svg')
+    this.stage()
 }
 
 // Inherits from SVG.Container
