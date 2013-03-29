@@ -2,7 +2,7 @@
 SVG.ViewBox = function(element) {
   var x, y, width, height
     , box  = element.bbox()
-    , view = (element.attr('viewBox') || '').match(/[\d\.]+/g)
+    , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
   
   /* clone attributes */
   this.x      = box.x
@@ -14,8 +14,8 @@ SVG.ViewBox = function(element) {
     /* get width and height from viewbox */
     x      = parseFloat(view[0])
     y      = parseFloat(view[1])
-    width  = parseFloat(view[2]) - x
-    height = parseFloat(view[3]) - y
+    width  = parseFloat(view[2])
+    height = parseFloat(view[3])
     
     /* calculate zoom accoring to viewbox */
     this.zoom = ((this.width / this.height) > (width / height)) ?

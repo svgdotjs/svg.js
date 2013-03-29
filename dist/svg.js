@@ -1,4 +1,4 @@
-/* svg.js v0.12 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.12-3-g7eb8f79 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -329,7 +329,7 @@
   SVG.ViewBox = function(element) {
     var x, y, width, height
       , box  = element.bbox()
-      , view = (element.attr('viewBox') || '').match(/[\d\.]+/g)
+      , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
     
     /* clone attributes */
     this.x      = box.x
@@ -341,8 +341,8 @@
       /* get width and height from viewbox */
       x      = parseFloat(view[0])
       y      = parseFloat(view[1])
-      width  = parseFloat(view[2]) - x
-      height = parseFloat(view[3]) - y
+      width  = parseFloat(view[2])
+      height = parseFloat(view[3])
       
       /* calculate zoom accoring to viewbox */
       this.zoom = ((this.width / this.height) > (width / height)) ?
