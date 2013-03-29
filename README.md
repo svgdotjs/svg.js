@@ -90,6 +90,23 @@ var rect = nested.rect(200, 200)
 _This functionality requires the nested.js module which is included in the default distribution._
 
 
+### SVG document
+Svg.js also works outside of the html DOM, inside an SVG document for example:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<svg id="viewport" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+  <script type="text/javascript" xlink:href="svg.min.js"></script>
+  <script type="text/javascript">
+    <![CDATA[
+      var draw = SVG('viewport')
+      draw.rect(100,100).animate().fill('#f03').move(100,100)
+    ]]>
+  </script>
+</svg>
+```
+
+
 ## Elements
 
 ### Rect
