@@ -91,7 +91,7 @@ _This functionality requires the nested.js module which is included in the defau
 
 
 ### SVG document
-Svg.js also works outside of the html DOM, inside an SVG document for example:
+Svg.js also works outside of the HTML DOM, inside an SVG document for example:
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
