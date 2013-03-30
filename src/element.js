@@ -170,7 +170,7 @@ SVG.extend(SVG.Element, {
         
         /* rebuild if required */
         if (this.rebuild)
-          this.rebuild()
+          this.rebuild(a, v)
       }
     }
     

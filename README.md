@@ -1032,11 +1032,12 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 ## Plugins
 Here are a few nice plugins that are available for svg.js:
 
-- [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
-- [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
-- [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
+- [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 - [svg.export.js](https://github.com/wout/svg.export.js) export raw svg.
+- [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
+- [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
+- [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 
 
 ## Building
