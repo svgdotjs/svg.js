@@ -141,7 +141,7 @@ SVG.extend(SVG.Element, {
     
     } else {
       /* treat x differently on text elements */
-      if (a == 'x' && this instanceof SVG.Text)
+      if (a == 'x' && Array.isArray(this.lines))
         for (n = this.lines.length - 1; n >= 0; n--)
           this.lines[n].attr(a, v)
       
