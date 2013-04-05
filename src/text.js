@@ -13,6 +13,7 @@ SVG.Text = function() {
   }
   
   this._leading = 1.2
+  this._base = 0.276666666
 }
 
 // Inherit from SVG.Element
@@ -102,7 +103,7 @@ SVG.extend(SVG.Text, {
     /* define position of all lines */
     for (i = 0, il = this.lines.length; i < il; i++)
       this.lines[i].attr({
-        dy: size * this._leading - (i == 0 ? size * 0.276666666 : 0)
+        dy: size * this._leading - (i == 0 ? size * this._base : 0)
       , x: (this.attr('x') || 0)
       , style: this.style()
       })
