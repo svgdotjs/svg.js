@@ -93,7 +93,7 @@ SVG.extend(SVG.Text, {
     /* act as setter */
     this._leading = value
     
-    return this.rebuild()
+    return this.rebuild('leading', value)
   }
   // rebuild appearance type
 , rebuild: function() {
