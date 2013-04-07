@@ -122,7 +122,7 @@ SVG.extend(SVG.Element, {
       if (this._isStyle(a)) {
         return a == 'text' ?
                  this.content :
-               a == 'leading' ?
+               a == 'leading' && this.leading ?
                  this.leading() :
                  this.style(a)
       
@@ -164,7 +164,7 @@ SVG.extend(SVG.Element, {
       if (this._isStyle(a)) {
         a == 'text' ?
           this.text(v) :
-        a == 'leading' ?
+        a == 'leading' && this.leading ?
           this.leading(v) :
           this.style(a, v)
         
