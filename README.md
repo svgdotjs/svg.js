@@ -1036,7 +1036,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 - [svg.export.js](https://github.com/wout/svg.export.js) export raw svg.
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
-- [svg.math.js](https://github.com/otm/svg.math.js) a math extension.
+- [svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
 - [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 - [svg.textflow.js](https://github.com/wout/svg.textflow.js) create auto-wrapping textflow elements.
