@@ -26,7 +26,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
       for (i = 0, l = p.length; i < l; i++)
         points.push(p[i].join(','))
       
-      p = points.length == 0 ? points.join(' ') : '0,0'
+      p = points.length > 0 ? points.join(' ') : '0,0'
     }
     
     return this.attr('points', p || '0,0')
