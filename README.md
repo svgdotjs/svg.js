@@ -2,11 +2,11 @@
 
 A lightweight library for manipulating and animating SVG.
 
-Svg.js has no dependencies and aims to be as small as possible. The base library is 3k gzipped, with all bells and whistles about 6.5k.
+Svg.js has no dependencies and aims to be as small as possible. The base library is 4k gzipped, with all bells and whistles about 7k.
 
 Svg.js is licensed under the terms of the MIT License.
 
-See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://svgjs.com/docs) and [some action](http://svgjs.com/test).
+See [svgjs.com](http://svgjs.com) for an introduction and [some action](http://svgjs.com/test).
 
 ## Usage
 
