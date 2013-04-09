@@ -4,5 +4,5 @@
   ],
   "travis": false,
   "issues": true,
-  "color":  "#ff0066"
+  "theme":  "v1"
 }
