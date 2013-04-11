@@ -1,7 +1,17 @@
 
 SVG.BBox = function(element) {
   /* actual, native bounding box */
-  var box = element.node.getBBox()
+  var box
+  try {
+    box = element.node.getBBox()
+  } catch(err) {
+    box = {
+      x: element.node.clientLeft,
+      y: element.node.clientTop,
+      width: element.node.clientWidth,
+      height: element.node.clientHeight
+    }
+  }
   
   /* include translations on x an y */
   this.x = box.x + element.trans.x
