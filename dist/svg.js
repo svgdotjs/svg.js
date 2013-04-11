@@ -1,4 +1,4 @@
-/* svg.js v0.12-14-g6117eb4 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.12-20-g0ec7b9b - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -370,15 +370,26 @@
   })
 
   SVG.BBox = function(element) {
+    var box
+    
     /* actual, native bounding box */
-    var box = element.node.getBBox()
+    try {
+      box = element.node.getBBox()
+    } catch(e) {
+      box = {
+        x:      element.node.clientLeft
+      , y:      element.node.clientTop
+      , width:  element.node.clientWidth
+      , height: element.node.clientHeight
+      }
+    }
     
     /* include translations on x an y */
     this.x = box.x + element.trans.x
     this.y = box.y + element.trans.y
     
     /* plain width and height */
-    this.width  = box.width * element.trans.scaleX
+    this.width  = box.width  * element.trans.scaleX
     this.height = box.height * element.trans.scaleY
     
     /* add the center */

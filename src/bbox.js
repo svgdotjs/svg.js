@@ -1,15 +1,16 @@
 
 SVG.BBox = function(element) {
-  /* actual, native bounding box */
   var box
+  
+  /* actual, native bounding box */
   try {
     box = element.node.getBBox()
-  } catch(err) {
+  } catch(e) {
     box = {
-      x: element.node.clientLeft,
-      y: element.node.clientTop,
-      width: element.node.clientWidth,
-      height: element.node.clientHeight
+      x:      element.node.clientLeft
+    , y:      element.node.clientTop
+    , width:  element.node.clientWidth
+    , height: element.node.clientHeight
     }
   }
   
@@ -18,7 +19,7 @@ SVG.BBox = function(element) {
   this.y = box.y + element.trans.y
   
   /* plain width and height */
-  this.width  = box.width * element.trans.scaleX
+  this.width  = box.width  * element.trans.scaleX
   this.height = box.height * element.trans.scaleY
   
   /* add the center */

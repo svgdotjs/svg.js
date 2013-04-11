@@ -15,7 +15,7 @@ describe('Text', function() {
   
   describe('x()', function() {
     it('should return the value of x without an argument', function() {
-      expect(text.x()).toBe(0)
+      expect(approximately(text.x())).toBe(approximately(0))
     })
     it('should set the value of x with the first argument', function() {
       text.x(123)
@@ -48,17 +48,17 @@ describe('Text', function() {
   describe('cx()', function() {
     it('should return the value of cx without an argument', function() {
       var box = text.bbox()
-      expect(text.cx()).toBe(box.width / 2)
+      expect(approximately(text.cx())).toBe(approximately(box.width / 2))
     })
     it('should set the value of cx with the first argument', function() {
       text.cx(123)
       var box = text.bbox()
-      expect(box.cx).toBe(123)
+      expect(approximately(box.cx)).toBe(approximately(123))
     })
     it('should set the value of cx based on the anchor with the first argument', function() {
       text.cx(123, true)
       var box = text.bbox()
-      expect(box.cx).toBe(123)
+      expect(approximately(box.cx)).toBe(approximately(123))
     })
   })
   
@@ -91,7 +91,7 @@ describe('Text', function() {
     it('should set the cx and cy position', function() {
       text.center(321,567)
       var box = text.bbox()
-      expect(box.cx).toBe(321)
+      expect(approximately(box.cx)).toBe(approximately(321))
       expect(approximately(box.cy)).toBe(approximately(567))
     })
   })
