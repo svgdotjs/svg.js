@@ -178,7 +178,11 @@ SVG.extend(SVG.Element, {
   }
   // Manage transformations
 , transform: function(o, v) {
-    if (typeof o === 'string') {
+    if (arguments.length == 0) {
+      /* act as a getter if no argument is given */
+      return this.trans
+      
+    } else if (typeof o === 'string') {
       /* act as a getter if only one string argument is given */
       if (arguments.length < 2)
         return this.trans[o]
@@ -245,9 +249,8 @@ SVG.extend(SVG.Element, {
      if (this._offset)
        transform.push('translate(' + (-this._offset.x) + ',' + (-this._offset.y) + ')')
     
-    /* add only te required transformations */
-    if (transform.length > 0)
-      this.node.setAttribute('transform', transform.join(' '))
+    /* update transformations, even if there are none */
+    this.node.setAttribute('transform', transform.join(' '))
     
     return this
   }
