@@ -200,6 +200,15 @@ SVG.extend(SVG.Element, {
     /* parse matrix */
     o = this._parseMatrix(o)
     
+    /* ensure correct rotation center point */
+    if (o.rotation != null) {
+      if (o.cx == null)
+        o.cx = this.bbox().cx
+      
+      if (o.cy == null)
+        o.cy = this.bbox().cy
+    }
+    
     /* merge values */
     for (v in o)
       if (o[v] != null)
@@ -221,13 +230,8 @@ SVG.extend(SVG.Element, {
       transform.push('matrix(' + o.matrix + ')')
     
     /* add rotation */
-    if (o.rotation != 0) {
-      transform.push(
-        'rotate(' + o.rotation + ','
-      + (o.cx != null ? o.cx : this.bbox().cx) + ','
-      + (o.cy != null ? o.cy : this.bbox().cy) + ')'
-      )
-    }
+    if (o.rotation != 0)
+      transform.push('rotate(' + o.rotation + ',' + o.cx + ',' + o.cy + ')')
     
     /* add scale */
     if (o.scaleX != 1 || o.scaleY != 1)

@@ -1,4 +1,4 @@
-/* svg.js v0.13 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.13-1-g9aa9472 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -596,6 +596,15 @@
       /* parse matrix */
       o = this._parseMatrix(o)
       
+      /* ensure correct rotation center point */
+      if (o.rotation != null) {
+        if (o.cx == null)
+          o.cx = this.bbox().cx
+        
+        if (o.cy == null)
+          o.cy = this.bbox().cy
+      }
+      
       /* merge values */
       for (v in o)
         if (o[v] != null)
@@ -617,13 +626,8 @@
         transform.push('matrix(' + o.matrix + ')')
       
       /* add rotation */
-      if (o.rotation != 0) {
-        transform.push(
-          'rotate(' + o.rotation + ','
-        + (o.cx != null ? o.cx : this.bbox().cx) + ','
-        + (o.cy != null ? o.cy : this.bbox().cy) + ')'
-        )
-      }
+      if (o.rotation != 0)
+        transform.push('rotate(' + o.rotation + ',' + o.cx + ',' + o.cy + ')')
       
       /* add scale */
       if (o.scaleX != 1 || o.scaleY != 1)
