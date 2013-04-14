@@ -1,4 +1,4 @@
-/* svg.js v0.13-1-g9aa9472 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.13-4-g874a935 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -106,7 +106,7 @@
     
   }
 
-  SVG.default = {
+  SVG.defaults = {
     // Default matrix
     matrix:       '1,0,0,1,0,0'
     
@@ -116,23 +116,23 @@
       'fill-opacity':   1
     , 'stroke-opacity': 1
     , 'stroke-width':   0
-    , fill:     '#000'
-    , stroke:   '#000'
-    , opacity:  1
+    , fill:       '#000'
+    , stroke:     '#000'
+    , opacity:    1
       /* position */
-    , x:        0
-    , y:        0
-    , cx:       0
-    , cy:       0
+    , x:          0
+    , y:          0
+    , cx:         0
+    , cy:         0
       /* size */
-    , width:    0
-    , height:   0
+    , width:      0
+    , height:     0
       /* radius */
-    , r:        0
-    , rx:       0
-    , ry:       0
+    , r:          0
+    , rx:         0
+    , ry:         0
       /* gradient */
-    , offset:   0
+    , offset:     0
     }
     
     // Default transformation values
@@ -400,13 +400,13 @@
 
   SVG.Element = function(node) {
     /* make stroke value accessible dynamically */
-    this._stroke = SVG.default.attrs.stroke
+    this._stroke = SVG.defaults.attrs.stroke
     
     /* initialize style store */
     this.styles = {}
     
     /* initialize transformation store with defaults */
-    this.trans = SVG.default.trans()
+    this.trans = SVG.defaults.trans()
     
     /* keep reference to the element node */
     if (this.node = node) {
@@ -526,7 +526,7 @@
         } else {
           v = this.node.getAttribute(a)
           return v == null ? 
-            SVG.default.attrs[a] :
+            SVG.defaults.attrs[a] :
           SVG.regex.test(v, 'isNumber') ?
             parseFloat(v) : v
         }
@@ -622,7 +622,7 @@
       o = this.trans
       
       /* add matrix */
-      if (o.matrix != SVG.default.matrix)
+      if (o.matrix != SVG.defaults.matrix)
         transform.push('matrix(' + o.matrix + ')')
       
       /* add rotation */
@@ -650,7 +650,10 @@
          transform.push('translate(' + (-this._offset.x) + ',' + (-this._offset.y) + ')')
       
       /* update transformations, even if there are none */
-      this.node.setAttribute('transform', transform.join(' '))
+      if (transform.length == 0)
+        this.node.removeAttribute('transform')
+      else
+        this.node.setAttribute('transform', transform.join(' '))
       
       return this
     }

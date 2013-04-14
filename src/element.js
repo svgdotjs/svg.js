@@ -254,7 +254,10 @@ SVG.extend(SVG.Element, {
        transform.push('translate(' + (-this._offset.x) + ',' + (-this._offset.y) + ')')
     
     /* update transformations, even if there are none */
-    this.node.setAttribute('transform', transform.join(' '))
+    if (transform.length == 0)
+      this.node.removeAttribute('transform')
+    else
+      this.node.setAttribute('transform', transform.join(' '))
     
     return this
   }
