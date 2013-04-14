@@ -4,13 +4,13 @@
 //
 SVG.Element = function(node) {
   /* make stroke value accessible dynamically */
-  this._stroke = SVG.default.attrs.stroke
+  this._stroke = SVG.defaults.attrs.stroke
   
   /* initialize style store */
   this.styles = {}
   
   /* initialize transformation store with defaults */
-  this.trans = SVG.default.trans()
+  this.trans = SVG.defaults.trans()
   
   /* keep reference to the element node */
   if (this.node = node) {
@@ -130,7 +130,7 @@ SVG.extend(SVG.Element, {
       } else {
         v = this.node.getAttribute(a)
         return v == null ? 
-          SVG.default.attrs[a] :
+          SVG.defaults.attrs[a] :
         SVG.regex.test(v, 'isNumber') ?
           parseFloat(v) : v
       }
@@ -226,7 +226,7 @@ SVG.extend(SVG.Element, {
     o = this.trans
     
     /* add matrix */
-    if (o.matrix != SVG.default.matrix)
+    if (o.matrix != SVG.defaults.matrix)
       transform.push('matrix(' + o.matrix + ')')
     
     /* add rotation */
