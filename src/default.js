@@ -1,5 +1,5 @@
 
-SVG.default = {
+SVG.defaults = {
   // Default matrix
   matrix:       '1,0,0,1,0,0'
   
