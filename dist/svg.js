@@ -1,4 +1,4 @@
-/* svg.js v0.13-4-g874a935 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.13-5-g801a9e1 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -699,7 +699,10 @@
         s += v + ':' + this.styles[v] + ';'
       
       /* apply style */
-      this.node.setAttribute('style', s)
+      if (s == '')
+        this.node.removeAttribute('style')
+      else
+        this.node.setAttribute('style', s)
       
       return this
     }

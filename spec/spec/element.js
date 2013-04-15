@@ -60,6 +60,10 @@ describe('Element', function() {
       rect.attr('style', 'cursor:move;')
       expect(rect.node.getAttribute('style')).toBe('cursor:move;')
     })
+    it('should remove style attribute on node if the style is empty', function() {
+      rect.style('style', '')
+      expect(rect.node.getAttribute('style')).toBe(null)
+    })
   })
   
   describe('style()', function() {

@@ -303,7 +303,10 @@ SVG.extend(SVG.Element, {
       s += v + ':' + this.styles[v] + ';'
     
     /* apply style */
-    this.node.setAttribute('style', s)
+    if (s == '')
+      this.node.removeAttribute('style')
+    else
+      this.node.setAttribute('style', s)
     
     return this
   }
