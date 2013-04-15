@@ -64,6 +64,22 @@ describe('Element', function() {
       rect.style('style', '')
       expect(rect.node.getAttribute('style')).toBe(null)
     })
+    it('should act as a global getter when no arguments are given', function() {
+      rect.fill('#ff0066')
+      expect(rect.attr().fill).toBe('#ff0066')
+    })
+    it('should correctly parse numeric values as a global getter', function() {
+      rect.stroke({ width: 20 })
+      expect(rect.attr()['stroke-width']).toBe(20)
+    })
+    it('should correctly parse negative numeric values as a global getter', function() {
+      rect.x(-30)
+      expect(rect.attr().x).toBe(-30)
+    })
+    it('should leave unit values alone as a global getter', function() {
+      rect.attr('x', '69%')
+      expect(rect.attr().x).toBe('69%')
+    })
   })
   
   describe('style()', function() {

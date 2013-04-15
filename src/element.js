@@ -105,7 +105,7 @@ SVG.extend(SVG.Element, {
       a = {}
       v = this.node.attributes
       for (n = v.length - 1; n >= 0; n--)
-        a[v[n].nodeName] = v[n].nodeValue
+        a[v[n].nodeName] = SVG.regex.test(v[n].nodeValue, 'isNumber') ? parseFloat(v[n].nodeValue) : v[n].nodeValue
       
       return a
       

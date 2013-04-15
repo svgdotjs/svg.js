@@ -1,4 +1,4 @@
-/* svg.js v0.13-5-g801a9e1 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.13-6-gd0c34f7 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -501,7 +501,7 @@
         a = {}
         v = this.node.attributes
         for (n = v.length - 1; n >= 0; n--)
-          a[v[n].nodeName] = v[n].nodeValue
+          a[v[n].nodeName] = SVG.regex.test(v[n].nodeValue, 'isNumber') ? parseFloat(v[n].nodeValue) : v[n].nodeValue
         
         return a
         
