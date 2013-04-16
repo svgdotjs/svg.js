@@ -521,6 +521,14 @@ rect.animate({ ease: '<', delay: 1500 }).attr({ fill: '#f03' })
 
 By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`.
 
+If you want to control animation by an external event then set the duration to -1.  You can then control the animation by calling `animateTo(pos)` where pos is a number between 0 (beginning of animation) && 1 (end of animation):
+
+```javascript
+var animation = rect.animate(-1).move(150, 150) 
+animation.animateTo(0.33)
+```
+See demos\animation_external.html for an example of controlling the animation with a mouse drag event.
+
 ### Easing
 All available ease types are:
 

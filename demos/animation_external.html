@@ -1,0 +1,70 @@
+<html>
+<head>
+</head>
+<body onload="doit()">
+
+  <h1>Animation driven by external event</h1>
+  <p>For this demo the green block's animation is updated when the mouse is dragged within the black background</p>
+
+  <div id='canvas'></div>
+
+  <script src='../dist/svg.js'></script> 
+
+  <script>
+    var canvas = SVG('canvas').size("100%", "100%")
+    var background = canvas.rect(1024,768).fill('#000').back()
+    
+    var dragging = false
+    var rect = null
+    var anim = null
+    var pos = 0
+    var background_width = background.attr('width')
+
+    background.on('mousedown', mdown)
+    background.on('mouseup', mup)
+    background.on('mousemove', mmove)
+    
+    function startit() {
+      if (rect == null) {
+        rect = canvas.rect(200,200).move(50,50).fill('#0f0')
+        anim = rect.animate(-1).move(450,450)
+      }
+    }
+
+    function doit() {
+      var rect = canvas.rect(200,200).move(50,50).fill('#fff')
+      rect.animate().move(450,450).after(function() {rect.remove(); startit()})
+    }
+
+    function endit() {
+      rect.remove()
+      rect = null
+      anim = null
+      pos = 0
+      dragging = false
+    }
+
+    function mdown() {
+      // console.log('down')
+      dragging = true
+      if (rect==null) startit()
+    }
+
+    function mup() {
+      // console.log('up') 
+      dragging = false
+    }
+
+    function mmove(event) {
+      if (dragging===false) return
+      event = event || window.event
+      pos = event.x / background_width
+      // console.log(pos)
+      anim.animateTo(pos)
+      if (pos >= 1) endit()      
+    }
+
+  </script>
+
+</body>
+</html>
