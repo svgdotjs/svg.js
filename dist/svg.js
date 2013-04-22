@@ -1,4 +1,4 @@
-/* svg.js v0.13-6-gd0c34f7 - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.14 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -398,6 +398,49 @@
     
   }
 
+  SVG.RBox = function(element) {
+    var box, zoom
+      , e = element.doc().parent
+      , zoom = element.doc().viewbox().zoom
+    
+    /* actual, native bounding box */
+    box = element.node.getBoundingClientRect()
+    
+    /* get screen offset */
+    this.x = box.left
+    this.y = box.top
+    
+    /* subtract parent offset */
+    this.x -= e.offsetLeft
+    this.y -= e.offsetTop
+    
+    while (e = e.offsetParent) {
+      this.x -= e.offsetLeft
+      this.y -= e.offsetTop
+    }
+    
+    /* calculate cumulative zoom from svg documents */
+    e = element
+    while (e = e.parent) {
+      if (e.type == 'svg' && e.viewbox) {
+        zoom *= e.viewbox().zoom
+        this.x -= e.x() || 0
+        this.y -= e.y() || 0
+      }
+    }
+    
+    /* recalculate viewbox distortion */
+    this.x /= zoom
+    this.y /= zoom
+    this.width  = box.width  /= zoom
+    this.height = box.height /= zoom
+    
+    /* add the center */
+    this.cx = this.x + this.width  / 2
+    this.cy = this.y + this.height / 2
+    
+  }
+
   SVG.Element = function(node) {
     /* make stroke value accessible dynamically */
     this._stroke = SVG.defaults.attrs.stroke
@@ -556,7 +599,7 @@
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v)
         
-        /* if the passed argument belongs to the style as well, add it there */
+        /* if the passed argument belongs in the style as well, add it there */
         if (this._isStyle(a)) {
           a == 'text' ?
             this.text(v) :
@@ -596,15 +639,6 @@
       /* parse matrix */
       o = this._parseMatrix(o)
       
-      /* ensure correct rotation center point */
-      if (o.rotation != null) {
-        if (o.cx == null)
-          o.cx = this.bbox().cx
-        
-        if (o.cy == null)
-          o.cy = this.bbox().cy
-      }
-      
       /* merge values */
       for (v in o)
         if (o[v] != null)
@@ -627,7 +661,7 @@
       
       /* add rotation */
       if (o.rotation != 0)
-        transform.push('rotate(' + o.rotation + ',' + o.cx + ',' + o.cy + ')')
+        transform.push('rotate(' + o.rotation + ',' + (o.cx || this.bbox().cx) + ',' + (o.cy || this.bbox().cy) + ')')
       
       /* add scale */
       if (o.scaleX != 1 || o.scaleY != 1)
@@ -724,6 +758,10 @@
     // Get bounding box
   , bbox: function() {
       return new SVG.BBox(this)
+    }
+    // Get rect box
+  , rbox: function() {
+      return new SVG.RBox(this)
     }
     // Checks whether the given point inside the bounding box of the element
   , inside: function(x, y) {
@@ -1609,16 +1647,18 @@
       document.getElementById(element) :
       element
     
-    /* set svg element attributes and create the <defs> node */
+    /* If the target is an svg element, use that element as the main wrapper.
+       This allows svg.js to work with svg documents as well. */
     this.constructor
       .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
     
+    /* set svg element attributes and create the <defs> node */
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
       .attr('xlink', SVG.xlink, SVG.ns)
       .defs()
     
-    /* ensure correct rendering for safari */
+    /* ensure correct rendering */
     if (this.parent.nodeName != 'svg')
       this.stage()
   }
@@ -1626,44 +1666,68 @@
   // Inherits from SVG.Container
   SVG.Doc.prototype = new SVG.Container
   
-  // Hack for safari preventing text to be rendered in one line.
-  // Basically it sets the position of the svg node to absolute
-  // when the dom is loaded, and resets it to relative a few milliseconds later.
-  SVG.Doc.prototype.stage = function() {
-    var check
-      , element = this
-      , wrapper = document.createElement('div')
-    
-    /* set temp wrapper to position relative */
-    wrapper.style.cssText = 'position:relative;height:100%;'
-    
-    /* put element into wrapper */
-    element.parent.appendChild(wrapper)
-    wrapper.appendChild(element.node)
-    
-    /* check for dom:ready */
-    check = function() {
-      if (document.readyState === 'complete') {
-        element.style('position:absolute;')
-        setTimeout(function() {
-          /* set position back to relative */
-          element.style('position:relative;')
-          
-          /* remove temp wrapper */
-          element.parent.removeChild(element.node.parentNode)
-          element.node.parentNode.removeChild(element.node)
-          element.parent.appendChild(element.node)
-          
-        }, 5)
-      } else {
-        setTimeout(check, 10)
+  
+  SVG.extend(SVG.Doc, {
+    // Hack for safari preventing text to be rendered in one line.
+    // Basically it sets the position of the svg node to absolute
+    // when the dom is loaded, and resets it to relative a few milliseconds later.
+    // It also handles sub-pixel offset rendering properly.
+    stage: function() {
+      var check
+        , element = this
+        , wrapper = document.createElement('div')
+  
+      /* set temporary wrapper to position relative */
+      wrapper.style.cssText = 'position:relative;height:100%;'
+  
+      /* put element into wrapper */
+      element.parent.appendChild(wrapper)
+      wrapper.appendChild(element.node)
+  
+      /* check for dom:ready */
+      check = function() {
+        if (document.readyState === 'complete') {
+          element.style('position:absolute;')
+          setTimeout(function() {
+            /* set position back to relative */
+            element.style('position:relative;')
+  
+            /* remove temporary wrapper */
+            element.parent.removeChild(element.node.parentNode)
+            element.node.parentNode.removeChild(element.node)
+            element.parent.appendChild(element.node)
+  
+            /* after wrapping is done, fix sub-pixel offset */
+            element.fixSubPixelOffset()
+            
+            /* make sure sub-pixel offset is fixed every time the window is resized */
+            SVG.on(window, 'resize', function() {
+              element.fixSubPixelOffset()
+            })
+            
+          }, 5)
+        } else {
+          setTimeout(check, 10)
+        }
       }
+  
+      check()
+  
+      return this
+    }
+  
+    // Fix for possible sub-pixel offset. See:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+  , fixSubPixelOffset: function() {
+      var pos = this.node.getScreenCTM()
+    
+      this
+        .style('left', (-pos.e % 1) + 'px')
+        .style('top',  (-pos.f % 1) + 'px')
     }
     
-    check()
-    
-    return this
-  }
+  })
+
 
   SVG.Shape = function(element) {
     this.constructor.call(this, element)

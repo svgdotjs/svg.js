@@ -475,6 +475,16 @@ This will return an instance of `SVG.BBox` containing the following values:
 As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account. 
 
 
+### Rectagular box
+Is similar to `bbox()` but will give you the box around the exact representation of the element, taking all transformations into account.
+
+```javascript
+path.rbox()
+```
+
+This will return an instance of `SVG.RBox`.
+
+
 ### Iterating over all children
 
 If you would iterate over all the `children` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
@@ -1083,8 +1093,6 @@ To build the base library only including shapes:
 ``` sh
 rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] dist
 ```
-
-_The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_
 
 
 ## To-do
