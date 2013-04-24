@@ -12,7 +12,7 @@ SVG.regex = {
 , hex:          /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
   
   /* parse rgb value */
-, rgb:          /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
+, rgb:          /rgb\((\d+),(\d+),(\d+)\)/
   
   /* parse hsb value */
 , hsb:          /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
