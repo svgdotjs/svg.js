@@ -14,9 +14,9 @@ SVG.Color = function(color) {
       match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
       
       /* parse numeric values */
-      this.r = parseInt(m[1])
-      this.g = parseInt(m[2])
-      this.b = parseInt(m[3])
+      this.r = parseInt(match[1])
+      this.g = parseInt(match[2])
+      this.b = parseInt(match[3])
       
     } else if (SVG.regex.isHex.test(color)) {
       /* get hex values */
