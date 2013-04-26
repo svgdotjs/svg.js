@@ -107,8 +107,8 @@ SVG.extend(SVG.Container, {
     return this.put(new SVG.Image().load(source).size(width, height != null ? height : width))
   }
   // Create text element
-, text: function(text) {
-    return this.put(new SVG.Text().text(text))
+, text: function() {
+    return this.put(new SVG.Text)
   }
   // Create nested svg document
 , nested: function() {

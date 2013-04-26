@@ -30,7 +30,7 @@ SVG.regex = {
 , isCss:        /[^:]+:[^;]+;?/
   
   /* test css property */
-, isStyle:      /^font|text|leading|cursor/
+, isStyle:      /^font|cursor/
   
   /* test for blank string */
 , isBlank:      /^(\s+)?$/

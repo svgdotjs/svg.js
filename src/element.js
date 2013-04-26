@@ -66,8 +66,12 @@ SVG.extend(SVG.Element, {
       this.parent[type](0,0,0,0) :
     type == 'image' ?
       this.parent[type](this.src) :
+    type == '#text' ?
+      this.parent["textNode"](this.extractText()) :
     type == 'text' ?
-      this.parent[type](this.content) :
+      this.parent[type]() :
+    type == 'tspan' ?
+      this.parent[type]() :
     type == 'path' ?
       this.parent[type](this.attr('d')) :
     type == 'polyline' || type == 'polygon' ?
@@ -120,11 +124,7 @@ SVG.extend(SVG.Element, {
     } else if (v == null) {
       /* act as a getter for style attributes */
       if (this._isStyle(a)) {
-        return a == 'text' ?
-                 this.content :
-               a == 'leading' && this.leading ?
-                 this.leading() :
-                 this.style(a)
+        return this.style(a)
       
       /* act as a getter if the first and only argument is not an object */
       } else {
@@ -140,11 +140,6 @@ SVG.extend(SVG.Element, {
       return this.style(v)
     
     } else {
-      /* treat x differently on text elements */
-      if (a == 'x' && Array.isArray(this.lines))
-        for (n = this.lines.length - 1; n >= 0; n--)
-          this.lines[n].attr(a, v)
-      
       /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
       if (a == 'stroke-width')
         this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
@@ -162,15 +157,7 @@ SVG.extend(SVG.Element, {
       
       /* if the passed argument belongs in the style as well, add it there */
       if (this._isStyle(a)) {
-        a == 'text' ?
-          this.text(v) :
-        a == 'leading' && this.leading ?
-          this.leading(v) :
-          this.style(a, v)
-        
-        /* rebuild if required */
-        if (this.rebuild)
-          this.rebuild(a, v)
+        this.style(a, v)
       }
     }
     

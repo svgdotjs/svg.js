@@ -1,4 +1,4 @@
-/* svg.js v0.14 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.14-1-g11ded2f - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -96,7 +96,7 @@
   , isCss:        /[^:]+:[^;]+;?/
     
     /* test css property */
-  , isStyle:      /^font|text|leading|cursor/
+  , isStyle:      /^font|cursor/
     
     /* test for blank string */
   , isBlank:      /^(\s+)?$/
@@ -505,8 +505,12 @@
         this.parent[type](0,0,0,0) :
       type == 'image' ?
         this.parent[type](this.src) :
+      type == '#text' ?
+        this.parent["textNode"](this.extractText()) :
       type == 'text' ?
-        this.parent[type](this.content) :
+        this.parent[type]() :
+      type == 'tspan' ?
+        this.parent[type]() :
       type == 'path' ?
         this.parent[type](this.attr('d')) :
       type == 'polyline' || type == 'polygon' ?
@@ -559,11 +563,7 @@
       } else if (v == null) {
         /* act as a getter for style attributes */
         if (this._isStyle(a)) {
-          return a == 'text' ?
-                   this.content :
-                 a == 'leading' && this.leading ?
-                   this.leading() :
-                   this.style(a)
+          return this.style(a)
         
         /* act as a getter if the first and only argument is not an object */
         } else {
@@ -579,11 +579,6 @@
         return this.style(v)
       
       } else {
-        /* treat x differently on text elements */
-        if (a == 'x' && Array.isArray(this.lines))
-          for (n = this.lines.length - 1; n >= 0; n--)
-            this.lines[n].attr(a, v)
-        
         /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
         if (a == 'stroke-width')
           this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
@@ -601,15 +596,7 @@
         
         /* if the passed argument belongs in the style as well, add it there */
         if (this._isStyle(a)) {
-          a == 'text' ?
-            this.text(v) :
-          a == 'leading' && this.leading ?
-            this.leading(v) :
-            this.style(a, v)
-          
-          /* rebuild if required */
-          if (this.rebuild)
-            this.rebuild(a, v)
+          this.style(a, v)
         }
       }
       
@@ -928,8 +915,8 @@
       return this.put(new SVG.Image().load(source).size(width, height != null ? height : width))
     }
     // Create text element
-  , text: function(text) {
-      return this.put(new SVG.Text().text(text))
+  , text: function() {
+      return this.put(new SVG.Text)
     }
     // Create nested svg document
   , nested: function() {
@@ -1952,6 +1939,117 @@
     
   })
 
+  SVG.TextNode = function(text) {
+   this.constructor.call(this, document.createTextNode(text))
+  }
+   
+  // Inherit from SVG.Element
+  SVG.TextNode.prototype = new SVG.Element
+   
+  SVG.extend(SVG.TextNode, {
+   
+   extractText: function() {
+    return this.node.nodeValue != null ? this.node.nodeValue : ''
+   }
+   
+  })
+  
+  SVG.TextShape = function(element) {
+    this.constructor.call(this, element)
+  }
+  
+  // Inherit from SVG.Shape
+  SVG.TextShape.prototype = new SVG.Shape
+  
+  SVG.extend(SVG.TextShape, {
+    // Returns all child elements
+    children: function() {
+      return this._children || (this._children = [])
+    }
+    // Add given element at a position
+  , add: function(element, i) {
+      if (!this.has(element)) {
+        /* define insertion index if none given */
+        i = i == null ? this.children().length : i
+        
+        /* remove references from previous parent */
+        if (element.parent) {
+          var index = element.parent.children().indexOf(element)
+          element.parent.children().splice(index, 1)
+        }
+        
+        /* add element references */
+        this.children().splice(i, 0, element)
+        this.node.insertBefore(element.node, this.node.childNodes[i] || null)
+        element.parent = this
+      }
+      return this
+    }
+  , extractText: function() {
+     var t = [], 
+         arr = this.children()
+     for (var i = 0, l = arr.length; i < l; i++)
+      t[t.length] = arr[i].extractText()
+     return t.join("")
+    }
+  // Basically does the same as `add()` but returns the added element instead
+  , put: function(element, i) {
+      this.add(element, i)
+      return element
+    }
+    // Checks if the given element is a child
+  , has: function(element) {
+      return this.children().indexOf(element) >= 0
+    }
+    // Iterates over all children except text nodes and invokes a given block
+  , each: function(block) {
+      var index,
+          children = this.children()
+    
+      for (index = 0, length = children.length; index < length; index++)
+        if (children[index] instanceof SVG.TextShape)
+          block.apply(children[index], [index, children])
+    
+      return this
+    }
+    // Remove a child element at a position
+  , removeElement: function(element) {
+      var i = this.children().indexOf(element)
+  
+      this.children().splice(i, 1)
+      this.node.removeChild(element.node)
+      element.parent = null
+      
+      return this
+    }
+    // Create a group element
+  , tspan: function() {
+      return this.put(new SVG.TSpan)
+    }
+    // Create text element
+  , textNode: function(text) {
+      return this.put(new SVG.TextNode(text))
+    }
+    // Get first child, skipping the defs node
+  , first: function() {
+      return this.children()[0]
+    }
+    // Get the last child
+  , last: function() {
+      return this.children()[this.children().length - 1]
+    }
+    // Remove all elements in this container
+  , clear: function() {
+      /* remove children */
+      for (var i = this.children().length - 1; i >= 0; i--)
+        this.removeElement(this.children()[i])
+      
+      return this
+    }
+    
+  })
+  
+  // List font style attributes as they should be applied to style 
   var _styleAttr = ('size family weight stretch variant style').split(' ')
   
   SVG.Text = function() {
@@ -1963,13 +2061,10 @@
     , 'font-family':  'Helvetica, Arial, sans-serif'
     , 'text-anchor':  'start'
     }
-    
-    this._leading = 1.2
-    this._base = 0.276666666
   }
   
   // Inherit from SVG.Element
-  SVG.Text.prototype = new SVG.Shape
+  SVG.Text.prototype = new SVG.TextShape
   
   SVG.extend(SVG.Text, {
     // Move over x-axis
@@ -1985,6 +2080,19 @@
       
       return this.attr('x', x)
     }
+  // Move over y-axis
+  , y: function(y, a) {
+     /* act as getter */
+     if (y == null) return a ? this.attr('y') : this.bbox().y
+     
+     /* set y taking anchor in mind */
+     if (!a) {
+       a = this.style('text-anchor')
+       y = a == 'start' ? y : a == 'end' ? x + this.bbox().height : y + this.bbox().height / 2
+     }
+     
+     return this.attr('y', y)
+    }
     // Move center over x-axis
   , cx: function(x, a) {
       return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
@@ -1995,84 +2103,17 @@
     }
     // Move element to given x and y values
   , move: function(x, y, a) {
-      return this.x(x, a).y(y)
+      return this.x(x, a).y(y, a)
     }
     // Move element by its center
   , center: function(x, y, a) {
       return this.cx(x, a).cy(y, a)
     }
-    // Set the text content
-  , text: function(text) {
-      /* act as getter */
-      if (text == null)
-        return this.content
-      
-      /* remove existing lines */
-      this.clear()
-      
-      /* update the content */
-      this.content = SVG.regex.isBlank.test(text) ? 'text' : text
-      
-      var i, il
-        , lines = text.split('\n')
-      
-      /* build new lines */
-      for (i = 0, il = lines.length; i < il; i++)
-        this.tspan(lines[i])
-        
-      return this.attr('textLength', 1).attr('textLength', null)
-    }
-    // Create a tspan
-  , tspan: function(text) {
-      var tspan = new SVG.TSpan().text(text)
-      
-      /* add new tspan */
-      this.node.appendChild(tspan.node)
-      this.lines.push(tspan)
-      
-      return tspan.attr('style', this.style())
-    }
     // Set font size
   , size: function(size) {
       return this.attr('font-size', size)
     }
-    // Set / get leading
-  , leading: function(value) {
-      /* act as getter */
-      if (value == null)
-        return this._leading
-      
-      /* act as setter */
-      this._leading = value
-      
-      return this.rebuild('leading', value)
-    }
-    // rebuild appearance type
-  , rebuild: function() {
-      var i, il
-        , size = this.styles['font-size']
-      
-      /* define position of all lines */
-      for (i = 0, il = this.lines.length; i < il; i++)
-        this.lines[i].attr({
-          dy: size * this._leading - (i == 0 ? size * this._base : 0)
-        , x: (this.attr('x') || 0)
-        , style: this.style()
-        })
-      
-      return this
-    }
-    // Clear all lines
-  , clear: function() {
-      /* remove existing child nodes */
-      while (this.node.hasChildNodes())
-        this.node.removeChild(this.node.lastChild)
-      
-      this.lines = []
-      
-      return this
-    }
-    
+   
   })
   
   // tspan class
@@ -2081,18 +2122,8 @@
   }
   
   // Inherit from SVG.Shape
-  SVG.TSpan.prototype = new SVG.Shape
-  
-  // Include the container object
-  SVG.extend(SVG.TSpan, {
-    // Set text content
-    text: function(text) {
-      this.node.appendChild(document.createTextNode(text))
-      
-      return this
-    }
-    
-  })
+  SVG.TSpan.prototype = new SVG.Text
+
 
   SVG.Nested = function() {
     this.constructor.call(this, SVG.create('svg'))
