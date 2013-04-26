@@ -202,17 +202,24 @@ var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
 
 
 ### Text
-The first argument of a text element is the actual text content:
 ```javascript
-var text = draw.text("svg\nto\nthe\npoint.").move(300, 0)
+var text = draw.text().move(300, 0)
 ```
-Changing text afterwards is also possible with the `text()` method:
+To add actual text to the text node:
 ```javascript
-text.text('Brilliant!')
+text.textNode('Smashing!')
 ```
-To get the raw text content:
+Then add a TSpan node with it's own text:
 ```javascript
-text.content
+text.tspan().textNode('Amazing')
+```
+Clearing the node's content to restart adding text or tspan nodes:
+```javascript
+text.clear().textNode('Brilliant!')
+```
+To get the raw text content of a text or a tspan node(recurses on children nodes to extract their raw content too):
+```javascript
+text.extractText()
 ```
 The sugar.js module provides some syntax sugar specifically for this element type:
 ```javascript
