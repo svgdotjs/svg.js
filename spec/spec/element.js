@@ -149,7 +149,7 @@ describe('Element', function() {
   describe('data()', function() {
     it('should set a data attribute and convert value to json', function() {
       var rect = draw.rect(100,100).data('test', 'value')
-      expect(rect.node.getAttribute('data-test')).toBe('"value"')
+      expect(rect.node.getAttribute('data-test')).toBe('value')
     })
     it('should set a data attribute and not convert value to json if flagged raw', function() {
       var rect = draw.rect(100,100).data('test', 'value', true)
@@ -227,12 +227,12 @@ describe('Element', function() {
     it('should return the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(box.x).toBe(2)
-      expect(box.y).toBe(12)
-      expect(box.cx).toBe(54.5)
-      expect(box.cy).toBe(117)
-      expect(box.width).toBe(105)
-      expect(box.height).toBe(210)
+      expect(box.x).toBe(1)
+      expect(box.y).toBe(6)
+      expect(box.cx).toBe(27.25)
+      expect(box.cy).toBe(58.5)
+      expect(box.width).toBe(52.5)
+      expect(box.height).toBe(105)
     })
   })
   

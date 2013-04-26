@@ -152,7 +152,7 @@ SVG.extend(SVG.Element, {
         this._stroke = v
       
       /* ensure hex color */
-      if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
+      if (SVG.Color.test(v) || SVG.Color.isRgb(v))
         v = new SVG.Color(v).toHex()
         
       /* set give attribute on node */
@@ -311,7 +311,14 @@ SVG.extend(SVG.Element, {
       }
       
     } else {
-      this.attr('data-' + a, v === null ? null : r === true ? v : JSON.stringify(v))
+      this.attr(
+        'data-' + a
+      , v === null ?
+          null :
+        r === true || typeof v === 'string' || typeof v === 'number' ?
+          v :
+          JSON.stringify(v)
+      )
     }
     
     return this
