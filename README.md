@@ -501,9 +501,7 @@ Svg.js has a dedicated color module handling different types of colors. Accepted
 
 - hex string; three based (e.g. #f06) or six based (e.g. #ff0066)
 - rgb string; e.g. rgb(255, 0, 102)
-- hsb string; e.g. hsb(336, 100, 100)
 - rgb object; e.g. { r: 255, g: 0, b: 102 }
-- hsb object; e.g. { r: 336, g: 100, b: 100 }
 
 Note that when working with objects is important to provide all three values every time.
 
