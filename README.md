@@ -474,8 +474,15 @@ This will return an instance of `SVG.BBox` containing the following values:
 { height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
 ```
 
-As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account. 
+As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
 
+The `SVG.BBox` has one other nify little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
+
+```javascript
+var box1 = draw.rect(100,100).move(50,50)
+var box2 = draw.rect(100,100).move(200,200)
+var box3 = box1.merge(box2)
+```
 
 ### Rectagular box
 Is similar to `bbox()` but will give you the box around the exact representation of the element, taking all transformations into account.
