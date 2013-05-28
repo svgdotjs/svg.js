@@ -8,6 +8,8 @@ Svg.js is licensed under the terms of the MIT License.
 
 See [svgjs.com](http://svgjs.com) for an introduction and [some action](http://svgjs.com/test).
 
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=wout&url=https://github.com/wout/svg.js&title=svg.js&language=&tags=github&category=software)
+
 ## Usage
 
 ### Create a SVG document
