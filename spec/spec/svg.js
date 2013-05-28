@@ -85,6 +85,13 @@ describe('SVG', function() {
       
       expect(SVG.get(rect.attr('id'))).toBe(rect)
     })
+    it('should make have all the element\'s methods available', function() {
+      var element = draw.group()
+        , got = SVG.get(element.attr('id'))
+      
+      expect(got.transform()).toEqual(SVG.defaults.trans())
+      expect(got.attr()).toEqual(element.attr())
+    })
   })
   
 })

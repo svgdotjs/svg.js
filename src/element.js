@@ -178,6 +178,7 @@ SVG.extend(SVG.Element, {
   }
   // Manage transformations
 , transform: function(o, v) {
+    
     if (arguments.length == 0) {
       /* act as a getter if no argument is given */
       return this.trans

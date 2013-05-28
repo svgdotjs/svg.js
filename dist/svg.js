@@ -1,4 +1,4 @@
-/* svg.js v0.15-2-g80f89b2 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.16 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -291,61 +291,104 @@
 
   SVG.BBox = function(element) {
     var box
+  
+    /* initialize zero box */
+    this.x      = 0
+    this.y      = 0
+    this.width  = 0
+    this.height = 0
     
-    /* actual, native bounding box */
-    try {
-      box = element.node.getBBox()
-    } catch(e) {
-      box = {
-        x:      element.node.clientLeft
-      , y:      element.node.clientTop
-      , width:  element.node.clientWidth
-      , height: element.node.clientHeight
+    /* get values if element is given */
+    if (element) {
+      try {
+        /* actual, native bounding box */
+        box = element.node.getBBox()
+      } catch(e) {
+        /* fallback for some browsers */
+        box = {
+          x:      element.node.clientLeft
+        , y:      element.node.clientTop
+        , width:  element.node.clientWidth
+        , height: element.node.clientHeight
+        }
       }
+      
+      /* include translations on x an y */
+      this.x = box.x + element.trans.x
+      this.y = box.y + element.trans.y
+      
+      /* plain width and height */
+      this.width  = box.width  * element.trans.scaleX
+      this.height = box.height * element.trans.scaleY
     }
-    
-    /* include translations on x an y */
-    this.x = box.x + element.trans.x
-    this.y = box.y + element.trans.y
-    
-    /* plain width and height */
-    this.width  = box.width  * element.trans.scaleX
-    this.height = box.height * element.trans.scaleY
     
     /* add the center */
     this.cx = this.x + this.width / 2
     this.cy = this.y + this.height / 2
     
   }
+  
+  //
+  SVG.extend(SVG.BBox, {
+    // merge bounding box with another, return a new instance
+    merge: function(box) {
+      var b = new SVG.BBox()
+  
+      /* merge box */
+      b.x      = Math.min(this.x, box.x)
+      b.y      = Math.min(this.y, box.y)
+      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
+      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
+  
+      /* add the center */
+      b.cx = b.x + b.width / 2
+      b.cy = b.y + b.height / 2
+  
+      return b
+    }
+  
+  })
+  
+
 
   SVG.RBox = function(element) {
-    var box, zoom
-      , e = element.doc().parent
-      , zoom = element.doc().viewbox().zoom
+    var e, zoom
+      , box = {}
+  
+    /* initialize zero box */
+    this.x      = 0
+    this.y      = 0
+    this.width  = 0
+    this.height = 0
     
-    /* actual, native bounding box */
-    box = element.node.getBoundingClientRect()
-    
-    /* get screen offset */
-    this.x = box.left
-    this.y = box.top
-    
-    /* subtract parent offset */
-    this.x -= e.offsetLeft
-    this.y -= e.offsetTop
-    
-    while (e = e.offsetParent) {
+    if (element) {
+      e = element.doc().parent
+      zoom = element.doc().viewbox().zoom
+      
+      /* actual, native bounding box */
+      box = element.node.getBoundingClientRect()
+      
+      /* get screen offset */
+      this.x = box.left
+      this.y = box.top
+      
+      /* subtract parent offset */
       this.x -= e.offsetLeft
       this.y -= e.offsetTop
-    }
-    
-    /* calculate cumulative zoom from svg documents */
-    e = element
-    while (e = e.parent) {
-      if (e.type == 'svg' && e.viewbox) {
-        zoom *= e.viewbox().zoom
-        this.x -= e.x() || 0
-        this.y -= e.y() || 0
+      
+      while (e = e.offsetParent) {
+        this.x -= e.offsetLeft
+        this.y -= e.offsetTop
+      }
+      
+      /* calculate cumulative zoom from svg documents */
+      e = element
+      while (e = e.parent) {
+        if (e.type == 'svg' && e.viewbox) {
+          zoom *= e.viewbox().zoom
+          this.x -= e.x() || 0
+          this.y -= e.y() || 0
+        }
       }
     }
     
@@ -537,6 +580,7 @@
     }
     // Manage transformations
   , transform: function(o, v) {
+      
       if (arguments.length == 0) {
         /* act as a getter if no argument is given */
         return this.trans

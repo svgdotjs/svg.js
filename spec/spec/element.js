@@ -112,6 +112,10 @@ describe('Element', function() {
   })
   
   describe('transform()', function() {
+    it('should get the current transformations', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.transform()).toEqual(SVG.defaults.trans())
+    })
     it('should set the translation of and element', function() {
       var rect = draw.rect(100,100).transform({ x: 10, y: 10 })
       expect(rect.node.getAttribute('transform')).toBe('translate(10,10)')
@@ -179,33 +183,6 @@ describe('Element', function() {
       var rect = draw.rect(100,100)
       rect.remove()
       expect(draw.has(rect)).toBe(false)
-    })
-  })
-  
-  describe('bbox()', function() {
-    it('should return an instance of SVG.BBox', function() {
-      var rect = draw.rect(100,100)
-      expect(rect.bbox() instanceof SVG.BBox).toBe(true)
-    })
-    it('should return the correct bounding box', function() {
-      var rect = draw.rect(105,210).move(2,12)
-      var box = rect.bbox()
-      expect(box.x).toBe(2)
-      expect(box.y).toBe(12)
-      expect(box.cx).toBe(54.5)
-      expect(box.cy).toBe(117)
-      expect(box.width).toBe(105)
-      expect(box.height).toBe(210)
-    })
-    it('should return the correct bounding within a viewbox', function() {
-      var rect = draw.size(300,200).viewbox(150,100).rect(105,210).move(2,12)
-      var box = rect.bbox()
-      expect(box.x).toBe(2)
-      expect(box.y).toBe(12)
-      expect(box.cx).toBe(54.5)
-      expect(box.cy).toBe(117)
-      expect(box.width).toBe(105)
-      expect(box.height).toBe(210)
     })
   })
   
