@@ -476,7 +476,7 @@ This will return an instance of `SVG.BBox` containing the following values:
 
 As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
 
-The `SVG.BBox` has one other nify little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
+The `SVG.BBox` has one other nifty little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
 
 ```javascript
 var box1 = draw.rect(100,100).move(50,50)
