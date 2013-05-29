@@ -50,8 +50,15 @@ SVG.extend(SVG.Element, SVG.FX, {
   // Scale
 , scale: function(x, y) {
     return this.transform({
-      scaleX: x,
-      scaleY: y == null ? x : y
+      scaleX: x
+    , scaleY: y == null ? x : y
+    })
+  }
+  // Translate
+, translate: function(x, y) {
+    return this.transform({
+      x: x
+    , y: y
     })
   }
   // Matrix

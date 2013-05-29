@@ -94,6 +94,13 @@ describe('Polygon', function() {
       expect(box.height).toBe(polygon._offset.height * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      polygon.transform({ x: 12, y: 12 })
+      expect(polygon.node.getAttribute('transform')).toBe('translate(12,12) translate(0,0)')
+    })
+  })
   
 })
 

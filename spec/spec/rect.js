@@ -92,6 +92,13 @@ describe('Rect', function() {
       expect(box.height).toBe(rect.attr('height') * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      rect.transform({ x: 12, y: 12 })
+      expect(rect.node.getAttribute('transform')).toBe('translate(12,12)')
+    })
+  })
   
 })
 

@@ -123,7 +123,7 @@ var rect = draw.rect(100, 100)
 Ellipses, like rects, have two arguments, their `width` and `height`:
 
 ```javascript
-var ellipse = draw.ellipse(100, 100)
+var ellipse = draw.ellipse(200, 100)
 ```
 
 ### Circle
@@ -140,7 +140,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 
 ```javascript
-var line = draw.line(0, 0, 100, 150)
+var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
 
 
@@ -149,7 +149,7 @@ The polyline element defines a set of connected straight line segments. Typicall
 
 ```javascript
 // polyline('x,y x,y x,y')
-var polyline = draw.polyline('10,20 30,40 50,60')
+var polyline = draw.polyline('0,0 100,50 50,100').fill('none').stroke({ width: 1 })
 ```
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
@@ -158,7 +158,7 @@ As an alternative an array of points will work as well:
 
 ```javascript
 // polyline([[x,y], [x,y], [x,y]])
-var polyline = draw.polyline([[10,20], [30,40], [50,60]])
+var polyline = draw.polyline([[0,0], [100,50], [50,100]])
 ```
 
 
@@ -167,7 +167,7 @@ The polygon element, unlike the polyline element, defines a closed shape consist
 
 ```javascript
 // polygon('x,y x,y x,y')
-var polygon = draw.polygon('10,20 30,40 50,60')
+var polygon = draw.polygon('0,0 100,50 50,100').fill('none').stroke({ width: 1 })
 ```
 
 Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.
@@ -731,7 +731,7 @@ rect.maskWith(mask)
 If you want the masked object to be rendered at 100% you need to set the fill color of the masking object to white. But you might also want to use a gradient:
 
 ```javascript
-var gradient = image.parent.gradient('linear', function(stop) {
+var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 0, color: '#000' })
   stop.at({ offset: 100, color: '#fff' })
 })

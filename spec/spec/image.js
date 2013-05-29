@@ -92,6 +92,13 @@ describe('Image', function() {
       expect(box.height).toBe(image.attr('height') * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      image.transform({ x: 12, y: 12 })
+      expect(image.node.getAttribute('transform')).toBe('translate(12,12)')
+    })
+  })
   
 })
 
