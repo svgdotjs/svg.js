@@ -158,7 +158,7 @@ As an alternative an array of points will work as well:
 
 ```javascript
 // polyline([[x,y], [x,y], [x,y]])
-var polyline = draw.polyline([[0,0], [100,50], [50,100]])
+var polyline = draw.polyline([[0,0], [100,50], [50,100]]).fill('none').stroke({ width: 1 })
 ```
 
 
@@ -232,7 +232,7 @@ If you want to get an element created by svg.js by its id, you can use the `SVG.
 ```javascript
 var element = SVG.get('my_element')
 
-element.fill('#f06)
+element.fill('#f06')
 ```
 
 
@@ -702,6 +702,22 @@ The `skew()` method will take an `x` and `y` value:
 ```javascript
 // skew(x, y)
 rect.skew(0, 45)
+```
+
+### Scale
+The `scale()` method will take an `x` and `y` value:
+
+```javascript
+// scale(x, y)
+rect.scale(0.5, -1)
+```
+
+### Translate
+The `translate()` method will take an `x` and `y` value:
+
+```javascript
+// translate(x, y)
+rect.translate(0.5, -1)
 ```
 
 _This functionality requires the sugar.js module which is included in the default distribution._
