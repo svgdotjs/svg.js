@@ -302,7 +302,7 @@ rect.transform({
 , cy:       [y rotation point]
 
 , scaleX:   [scaling on x-axis]
-, scaleX:   [scaling on y-axis]
+, scaleY:   [scaling on y-axis]
 
 , skewX:    [skewing on x-axis]
 , skewY:    [skewing on y-axis]
