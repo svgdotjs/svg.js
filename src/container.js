@@ -156,10 +156,13 @@ SVG.extend(SVG.Container, {
     /* remove children */
     for (var i = this.children().length - 1; i >= 0; i--)
       this.removeElement(this.children()[i])
-    
-    /* create new defs node */
-    this.defs()
-    
+
+    /* remove defs node */
+    if (this._defs) {
+      this._defs.remove()
+      delete this._defs
+    }
+
     return this
   }
   

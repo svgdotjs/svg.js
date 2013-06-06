@@ -12,19 +12,13 @@ SVG.regex = {
 , hex:          /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
   
   /* parse rgb value */
-, rgb:          /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
-  
-  /* parse hsb value */
-, hsb:          /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
+, rgb:          /rgb\((\d+),(\d+),(\d+)\)/
   
   /* test hex value */
 , isHex:        /^#[a-f0-9]{3,6}$/i
   
   /* test rgb value */
 , isRgb:        /^rgb\(/
-  
-  /* test hsb value */
-, isHsb:        /^hsb\(/
   
   /* test css declaration */
 , isCss:        /[^:]+:[^;]+;?/

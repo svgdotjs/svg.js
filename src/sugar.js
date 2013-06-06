@@ -15,7 +15,7 @@ var _colorPrefix = function(type, attr) {
   extension[method] = function(o) {
     var indexOf
     
-    if (typeof o == 'string' || SVG.Color.isRgb(o) || SVG.Color.isHsb(o))
+    if (typeof o == 'string' || SVG.Color.isRgb(o))
       this.attr(method, o)
     
     else
@@ -50,8 +50,15 @@ SVG.extend(SVG.Element, SVG.FX, {
   // Scale
 , scale: function(x, y) {
     return this.transform({
-      scaleX: x,
-      scaleY: y == null ? x : y
+      scaleX: x
+    , scaleY: y == null ? x : y
+    })
+  }
+  // Translate
+, translate: function(x, y) {
+    return this.transform({
+      x: x
+    , y: y
     })
   }
   // Matrix

@@ -94,6 +94,13 @@ describe('Polyline', function() {
       expect(box.height).toBe(polyline._offset.height * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      polyline.transform({ x: 12, y: 12 })
+      expect(polyline.node.getAttribute('transform')).toBe('translate(12,12) translate(0,0)')
+    })
+  })
   
 })
 

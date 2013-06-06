@@ -112,6 +112,10 @@ describe('Element', function() {
   })
   
   describe('transform()', function() {
+    it('should get the current transformations', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.transform()).toEqual(SVG.defaults.trans())
+    })
     it('should set the translation of and element', function() {
       var rect = draw.rect(100,100).transform({ x: 10, y: 10 })
       expect(rect.node.getAttribute('transform')).toBe('translate(10,10)')
@@ -149,7 +153,7 @@ describe('Element', function() {
   describe('data()', function() {
     it('should set a data attribute and convert value to json', function() {
       var rect = draw.rect(100,100).data('test', 'value')
-      expect(rect.node.getAttribute('data-test')).toBe('"value"')
+      expect(rect.node.getAttribute('data-test')).toBe('value')
     })
     it('should set a data attribute and not convert value to json if flagged raw', function() {
       var rect = draw.rect(100,100).data('test', 'value', true)
@@ -182,18 +186,30 @@ describe('Element', function() {
     })
   })
   
-  describe('bbox()', function() {
-    it('should return an instance of SVG.BBox', function() {
+  describe('rbox()', function() {
+    it('should return an instance of SVG.RBox', function() {
       var rect = draw.rect(100,100)
-      expect(rect.bbox() instanceof SVG.BBox).toBe(true)
+      expect(rect.rbox() instanceof SVG.RBox).toBe(true)
     })
-    it('should return the correct bounding box', function() {
-      var rect = draw.rect(105,210).move(2,12)
-      var box = rect.bbox()
+    it('should return the correct rectangular box', function() {
+      var rect = draw.size(200,150).viewbox(0,0,200,150).rect(105,210).move(2,12)
+      var box = rect.rbox()
       expect(box.x).toBe(2)
       expect(box.y).toBe(12)
+      expect(box.cx).toBe(54.5)
+      expect(box.cy).toBe(117)
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
+    })
+    it('should return the correct rectangular box within a viewbox', function() {
+      var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
+      var box = rect.rbox()
+      expect(box.x).toBe(1)
+      expect(box.y).toBe(6)
+      expect(box.cx).toBe(27.25)
+      expect(box.cy).toBe(58.5)
+      expect(box.width).toBe(52.5)
+      expect(box.height).toBe(105)
     })
   })
   

@@ -93,6 +93,13 @@ describe('Ellipse', function() {
       expect(box.height).toBe(ellipse.attr('ry') * 2 * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      ellipse.transform({ x: 12, y: 12 })
+      expect(ellipse.node.getAttribute('transform')).toBe('translate(12,12)')
+    })
+  })
   
 })
 

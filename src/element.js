@@ -152,7 +152,7 @@ SVG.extend(SVG.Element, {
         this._stroke = v
       
       /* ensure hex color */
-      if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
+      if (SVG.Color.test(v) || SVG.Color.isRgb(v))
         v = new SVG.Color(v).toHex()
         
       /* set give attribute on node */
@@ -160,7 +160,7 @@ SVG.extend(SVG.Element, {
         this.node.setAttributeNS(n, a, v) :
         this.node.setAttribute(a, v)
       
-      /* if the passed argument belongs to the style as well, add it there */
+      /* if the passed argument belongs in the style as well, add it there */
       if (this._isStyle(a)) {
         a == 'text' ?
           this.text(v) :
@@ -178,6 +178,7 @@ SVG.extend(SVG.Element, {
   }
   // Manage transformations
 , transform: function(o, v) {
+    
     if (arguments.length == 0) {
       /* act as a getter if no argument is given */
       return this.trans
@@ -199,15 +200,6 @@ SVG.extend(SVG.Element, {
     
     /* parse matrix */
     o = this._parseMatrix(o)
-    
-    /* ensure correct rotation center point */
-    if (o.rotation != null) {
-      if (o.cx == null)
-        o.cx = this.bbox().cx
-      
-      if (o.cy == null)
-        o.cy = this.bbox().cy
-    }
     
     /* merge values */
     for (v in o)
@@ -231,7 +223,7 @@ SVG.extend(SVG.Element, {
     
     /* add rotation */
     if (o.rotation != 0)
-      transform.push('rotate(' + o.rotation + ',' + o.cx + ',' + o.cy + ')')
+      transform.push('rotate(' + o.rotation + ',' + (o.cx || this.bbox().cx) + ',' + (o.cy || this.bbox().cy) + ')')
     
     /* add scale */
     if (o.scaleX != 1 || o.scaleY != 1)
@@ -320,7 +312,14 @@ SVG.extend(SVG.Element, {
       }
       
     } else {
-      this.attr('data-' + a, v === null ? null : r === true ? v : JSON.stringify(v))
+      this.attr(
+        'data-' + a
+      , v === null ?
+          null :
+        r === true || typeof v === 'string' || typeof v === 'number' ?
+          v :
+          JSON.stringify(v)
+      )
     }
     
     return this
@@ -328,6 +327,10 @@ SVG.extend(SVG.Element, {
   // Get bounding box
 , bbox: function() {
     return new SVG.BBox(this)
+  }
+  // Get rect box
+, rbox: function() {
+    return new SVG.RBox(this)
   }
   // Checks whether the given point inside the bounding box of the element
 , inside: function(x, y) {

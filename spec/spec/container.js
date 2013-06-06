@@ -187,10 +187,10 @@ describe('Container', function() {
       expect(draw.children().length).toBe(0)
     })
     it('should create a new defs node', function() {
+      var oldDefs = draw.defs()
       draw.rect(100,100).maskWith(draw.circle(100, 100))
-      expect(draw._defs instanceof SVG.Defs).toBe(true)
       draw.clear()
-      expect(draw._defs instanceof SVG.Defs).toBe(true)
+      expect(draw.defs()).not.toBe(oldDefs)
     })
   })
   

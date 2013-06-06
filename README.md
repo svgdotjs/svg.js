@@ -8,6 +8,8 @@ Svg.js is licensed under the terms of the MIT License.
 
 See [svgjs.com](http://svgjs.com) for an introduction and [some action](http://svgjs.com/test).
 
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=wout&url=https://github.com/wout/svg.js&title=svg.js&language=&tags=github&category=software)
+
 ## Usage
 
 ### Create a SVG document
@@ -121,7 +123,7 @@ var rect = draw.rect(100, 100)
 Ellipses, like rects, have two arguments, their `width` and `height`:
 
 ```javascript
-var ellipse = draw.ellipse(100, 100)
+var ellipse = draw.ellipse(200, 100)
 ```
 
 ### Circle
@@ -138,7 +140,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 
 ```javascript
-var line = draw.line(0, 0, 100, 150)
+var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
 
 
@@ -147,7 +149,7 @@ The polyline element defines a set of connected straight line segments. Typicall
 
 ```javascript
 // polyline('x,y x,y x,y')
-var polyline = draw.polyline('10,20 30,40 50,60')
+var polyline = draw.polyline('0,0 100,50 50,100').fill('none').stroke({ width: 1 })
 ```
 
 Polyline strings consist of a list of points separated by spaces: `x,y x,y x,y`.
@@ -156,7 +158,7 @@ As an alternative an array of points will work as well:
 
 ```javascript
 // polyline([[x,y], [x,y], [x,y]])
-var polyline = draw.polyline([[10,20], [30,40], [50,60]])
+var polyline = draw.polyline([[0,0], [100,50], [50,100]]).fill('none').stroke({ width: 1 })
 ```
 
 
@@ -165,7 +167,7 @@ The polygon element, unlike the polyline element, defines a closed shape consist
 
 ```javascript
 // polygon('x,y x,y x,y')
-var polygon = draw.polygon('10,20 30,40 50,60')
+var polygon = draw.polygon('0,0 100,50 50,100').fill('none').stroke({ width: 1 })
 ```
 
 Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.
@@ -230,7 +232,7 @@ If you want to get an element created by svg.js by its id, you can use the `SVG.
 ```javascript
 var element = SVG.get('my_element')
 
-element.fill('#f06)
+element.fill('#f06')
 ```
 
 
@@ -300,7 +302,7 @@ rect.transform({
 , cy:       [y rotation point]
 
 , scaleX:   [scaling on x-axis]
-, scaleX:   [scaling on y-axis]
+, scaleY:   [scaling on y-axis]
 
 , skewX:    [skewing on x-axis]
 , skewY:    [skewing on y-axis]
@@ -472,7 +474,24 @@ This will return an instance of `SVG.BBox` containing the following values:
 { height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
 ```
 
-As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account. 
+As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
+
+The `SVG.BBox` has one other nifty little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
+
+```javascript
+var box1 = draw.rect(100,100).move(50,50)
+var box2 = draw.rect(100,100).move(200,200)
+var box3 = box1.merge(box2)
+```
+
+### Rectagular box
+Is similar to `bbox()` but will give you the box around the exact representation of the element, taking all transformations into account.
+
+```javascript
+path.rbox()
+```
+
+This will return an instance of `SVG.RBox`.
 
 
 ### Iterating over all children
@@ -491,9 +510,7 @@ Svg.js has a dedicated color module handling different types of colors. Accepted
 
 - hex string; three based (e.g. #f06) or six based (e.g. #ff0066)
 - rgb string; e.g. rgb(255, 0, 102)
-- hsb string; e.g. hsb(336, 100, 100)
 - rgb object; e.g. { r: 255, g: 0, b: 102 }
-- hsb object; e.g. { r: 336, g: 100, b: 100 }
 
 Note that when working with objects is important to provide all three values every time.
 
@@ -695,6 +712,22 @@ The `skew()` method will take an `x` and `y` value:
 rect.skew(0, 45)
 ```
 
+### Scale
+The `scale()` method will take an `x` and `y` value:
+
+```javascript
+// scale(x, y)
+rect.scale(0.5, -1)
+```
+
+### Translate
+The `translate()` method will take an `x` and `y` value:
+
+```javascript
+// translate(x, y)
+rect.translate(0.5, -1)
+```
+
 _This functionality requires the sugar.js module which is included in the default distribution._
 
 
@@ -722,7 +755,7 @@ rect.maskWith(mask)
 If you want the masked object to be rendered at 100% you need to set the fill color of the masking object to white. But you might also want to use a gradient:
 
 ```javascript
-var gradient = image.parent.gradient('linear', function(stop) {
+var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 0, color: '#000' })
   stop.at({ offset: 100, color: '#fff' })
 })
@@ -1091,8 +1124,6 @@ To build the base library only including shapes:
 ``` sh
 rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] dist
 ```
-
-_The Rakefile has been borrowed from [madrobby's](https://github.com/madrobby) [Zepto](https://github.com/madrobby/zepto)_
 
 
 ## To-do

@@ -98,6 +98,13 @@ describe('Line', function() {
       expect(box.height).toBe((line.attr('y1') - line.attr('y2')) * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      line.transform({ x: 12, y: 12 })
+      expect(line.node.getAttribute('transform')).toBe('translate(12,12)')
+    })
+  })
   
   describe('plot()', function() {
     it('should update the start and end points', function() {

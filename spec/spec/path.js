@@ -100,6 +100,13 @@ describe('Path', function() {
       expect(box.height).toBe(path._offset.height * 3.5)
     })
   })
+
+  describe('translate()', function() {
+    it('should set the translation of an element', function() {
+      path.transform({ x: 12, y: 12 })
+      expect(path.node.getAttribute('transform')).toBe('translate(12,12) translate(0,0)')
+    })
+  })
   
 })
 

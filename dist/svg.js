@@ -1,4 +1,5 @@
 /* svg.js v0.10-38-ga736acc - svg regex default color viewbox bbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.17 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -78,19 +79,13 @@
   , hex:          /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
     
     /* parse rgb value */
-  , rgb:          /rgb\((\d+),(\d+),(\d+),([\d\.]+)\)/
-    
-    /* parse hsb value */
-  , hsb:          /hsb\((\d+),(\d+),(\d+),([\d\.]+)\)/
+  , rgb:          /rgb\((\d+),(\d+),(\d+)\)/
     
     /* test hex value */
   , isHex:        /^#[a-f0-9]{3,6}$/i
     
     /* test rgb value */
   , isRgb:        /^rgb\(/
-    
-    /* test hsb value */
-  , isHsb:        /^hsb\(/
     
     /* test css declaration */
   , isCss:        /[^:]+:[^;]+;?/
@@ -177,9 +172,9 @@
         match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
         
         /* parse numeric values */
-        this.r = parseInt(m[1])
-        this.g = parseInt(m[2])
-        this.b = parseInt(m[3])
+        this.r = parseInt(match[1])
+        this.g = parseInt(match[2])
+        this.b = parseInt(match[3])
         
       } else if (SVG.regex.isHex.test(color)) {
         /* get hex values */
@@ -189,22 +184,14 @@
         this.r = parseInt(match[1], 16)
         this.g = parseInt(match[2], 16)
         this.b = parseInt(match[3], 16)
-      
-      } else if (SVG.regex.isHsb.test(color)) {
-        /* get hsb values */
-        match = SVG.regex.hsb.exec(color.replace(/\s/g,''))
-        
-        /* convert hsb to rgb */
-        color = this._hsbToRgb(match[1], match[2], match[3])
+  
       }
       
     } else if (typeof color == 'object') {
-      if (SVG.Color.isHsb(color))
-        color = this._hsbToRgb(color.h, color.s, color.b)
-      
       this.r = color.r
       this.g = color.g
       this.b = color.b
+      
     }
       
   }
@@ -231,66 +218,6 @@
            + (this.g / 255 * 0.59)
            + (this.b / 255 * 0.11)
     }
-    // Private: convert hsb to rgb
-  , _hsbToRgb: function(h, s, v) {
-      var vs, vsf
-      
-      /* process hue */
-      h = parseInt(h) % 360
-      if (h < 0) h += 360
-      
-      /* process saturation */
-      s = parseInt(s)
-      s = s > 100 ? 100 : s
-      
-      /* process brightness */
-      v = parseInt(v)
-      v = (v < 0 ? 0 : v > 100 ? 100 : v) * 255 / 100
-      
-      /* compile rgb */
-      vs = v * s / 100
-      vsf = (vs * ((h * 256 / 60) % 256)) / 256
-      
-      switch (Math.floor(h / 60)) {
-        case 0:
-          r = v
-          g = v - vs + vsf
-          b = v - vs
-        break
-        case 1:
-          r = v - vsf
-          g = v
-          b = v - vs
-        break
-        case 2:
-          r = v - vs
-          g = v
-          b = v - vs + vsf
-        break
-        case 3:
-          r = v - vs
-          g = v - vsf
-          b = v
-        break
-        case 4:
-          r = v - vs + vsf
-          g = v - vs
-          b = v
-        break
-        case 5:
-          r = v
-          g = v - vs
-          b = v - vsf
-        break
-      }
-      
-      /* parse values */
-      return {
-        r: Math.floor(r + 0.5)
-      , g: Math.floor(g + 0.5)
-      , b: Math.floor(b + 0.5)
-      }
-    }
     // Private: ensure to six-based hex 
   , _fullHex: function(hex) {
       return hex.length == 4 ?
@@ -313,17 +240,11 @@
     color += ''
     return SVG.regex.isHex.test(color)
         || SVG.regex.isRgb.test(color)
-        || SVG.regex.isHsb.test(color)
   }
   
   // Test if given value is a rgb object
   SVG.Color.isRgb = function(color) {
     return color && typeof color.r == 'number'
-  }
-  
-  // Test if given value is a hsb object
-  SVG.Color.isHsb = function(color) {
-    return color && typeof color.h == 'number'
   }
 
   SVG.ViewBox = function(element) {
@@ -371,29 +292,115 @@
 
   SVG.BBox = function(element) {
     var box
+  
+    /* initialize zero box */
+    this.x      = 0
+    this.y      = 0
+    this.width  = 0
+    this.height = 0
     
-    /* actual, native bounding box */
-    try {
-      box = element.node.getBBox()
-    } catch(e) {
-      box = {
-        x:      element.node.clientLeft
-      , y:      element.node.clientTop
-      , width:  element.node.clientWidth
-      , height: element.node.clientHeight
+    /* get values if element is given */
+    if (element) {
+      try {
+        /* actual, native bounding box */
+        box = element.node.getBBox()
+      } catch(e) {
+        /* fallback for some browsers */
+        box = {
+          x:      element.node.clientLeft
+        , y:      element.node.clientTop
+        , width:  element.node.clientWidth
+        , height: element.node.clientHeight
+        }
       }
+      
+      /* include translations on x an y */
+      this.x = box.x + element.trans.x
+      this.y = box.y + element.trans.y
+      
+      /* plain width and height */
+      this.width  = box.width  * element.trans.scaleX
+      this.height = box.height * element.trans.scaleY
     }
-    
-    /* include translations on x an y */
-    this.x = box.x + element.trans.x
-    this.y = box.y + element.trans.y
-    
-    /* plain width and height */
-    this.width  = box.width  * element.trans.scaleX
-    this.height = box.height * element.trans.scaleY
     
     /* add the center */
     this.cx = this.x + this.width / 2
+    this.cy = this.y + this.height / 2
+    
+  }
+  
+  //
+  SVG.extend(SVG.BBox, {
+    // merge bounding box with another, return a new instance
+    merge: function(box) {
+      var b = new SVG.BBox()
+  
+      /* merge box */
+      b.x      = Math.min(this.x, box.x)
+      b.y      = Math.min(this.y, box.y)
+      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
+      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
+  
+      /* add the center */
+      b.cx = b.x + b.width / 2
+      b.cy = b.y + b.height / 2
+  
+      return b
+    }
+  
+  })
+  
+
+
+  SVG.RBox = function(element) {
+    var e, zoom
+      , box = {}
+  
+    /* initialize zero box */
+    this.x      = 0
+    this.y      = 0
+    this.width  = 0
+    this.height = 0
+    
+    if (element) {
+      e = element.doc().parent
+      zoom = element.doc().viewbox().zoom
+      
+      /* actual, native bounding box */
+      box = element.node.getBoundingClientRect()
+      
+      /* get screen offset */
+      this.x = box.left
+      this.y = box.top
+      
+      /* subtract parent offset */
+      this.x -= e.offsetLeft
+      this.y -= e.offsetTop
+      
+      while (e = e.offsetParent) {
+        this.x -= e.offsetLeft
+        this.y -= e.offsetTop
+      }
+      
+      /* calculate cumulative zoom from svg documents */
+      e = element
+      while (e = e.parent) {
+        if (e.type == 'svg' && e.viewbox) {
+          zoom *= e.viewbox().zoom
+          this.x -= e.x() || 0
+          this.y -= e.y() || 0
+        }
+      }
+    }
+    
+    /* recalculate viewbox distortion */
+    this.x /= zoom
+    this.y /= zoom
+    this.width  = box.width  /= zoom
+    this.height = box.height /= zoom
+    
+    /* add the center */
+    this.cx = this.x + this.width  / 2
     this.cy = this.y + this.height / 2
     
   }
@@ -548,7 +555,7 @@
           this._stroke = v
         
         /* ensure hex color */
-        if (SVG.Color.test(v) || SVG.Color.isRgb(v) || SVG.Color.isHsb(v))
+        if (SVG.Color.test(v) || SVG.Color.isRgb(v))
           v = new SVG.Color(v).toHex()
           
         /* set give attribute on node */
@@ -556,7 +563,7 @@
           this.node.setAttributeNS(n, a, v) :
           this.node.setAttribute(a, v)
         
-        /* if the passed argument belongs to the style as well, add it there */
+        /* if the passed argument belongs in the style as well, add it there */
         if (this._isStyle(a)) {
           a == 'text' ?
             this.text(v) :
@@ -574,6 +581,7 @@
     }
     // Manage transformations
   , transform: function(o, v) {
+      
       if (arguments.length == 0) {
         /* act as a getter if no argument is given */
         return this.trans
@@ -595,15 +603,6 @@
       
       /* parse matrix */
       o = this._parseMatrix(o)
-      
-      /* ensure correct rotation center point */
-      if (o.rotation != null) {
-        if (o.cx == null)
-          o.cx = this.bbox().cx
-        
-        if (o.cy == null)
-          o.cy = this.bbox().cy
-      }
       
       /* merge values */
       for (v in o)
@@ -627,7 +626,7 @@
       
       /* add rotation */
       if (o.rotation != 0)
-        transform.push('rotate(' + o.rotation + ',' + o.cx + ',' + o.cy + ')')
+        transform.push('rotate(' + o.rotation + ',' + (o.cx || this.bbox().cx) + ',' + (o.cy || this.bbox().cy) + ')')
       
       /* add scale */
       if (o.scaleX != 1 || o.scaleY != 1)
@@ -716,7 +715,14 @@
         }
         
       } else {
-        this.attr('data-' + a, v === null ? null : r === true ? v : JSON.stringify(v))
+        this.attr(
+          'data-' + a
+        , v === null ?
+            null :
+          r === true || typeof v === 'string' || typeof v === 'number' ?
+            v :
+            JSON.stringify(v)
+        )
       }
       
       return this
@@ -724,6 +730,10 @@
     // Get bounding box
   , bbox: function() {
       return new SVG.BBox(this)
+    }
+    // Get rect box
+  , rbox: function() {
+      return new SVG.RBox(this)
     }
     // Checks whether the given point inside the bounding box of the element
   , inside: function(x, y) {
@@ -939,10 +949,13 @@
       /* remove children */
       for (var i = this.children().length - 1; i >= 0; i--)
         this.removeElement(this.children()[i])
-      
-      /* create new defs node */
-      this.defs()
-      
+  
+      /* remove defs node */
+      if (this._defs) {
+        this._defs.remove()
+        delete this._defs
+      }
+  
       return this
     }
     
@@ -1620,16 +1633,18 @@
       document.getElementById(element) :
       element
     
-    /* set svg element attributes and create the <defs> node */
+    /* If the target is an svg element, use that element as the main wrapper.
+       This allows svg.js to work with svg documents as well. */
     this.constructor
       .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
     
+    /* set svg element attributes and create the <defs> node */
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
       .attr('xlink', SVG.xlink, SVG.ns)
       .defs()
     
-    /* ensure correct rendering for safari */
+    /* ensure correct rendering */
     if (this.parent.nodeName != 'svg')
       this.stage()
   }
@@ -1637,44 +1652,68 @@
   // Inherits from SVG.Container
   SVG.Doc.prototype = new SVG.Container
   
-  // Hack for safari preventing text to be rendered in one line.
-  // Basically it sets the position of the svg node to absolute
-  // when the dom is loaded, and resets it to relative a few milliseconds later.
-  SVG.Doc.prototype.stage = function() {
-    var check
-      , element = this
-      , wrapper = document.createElement('div')
-    
-    /* set temp wrapper to position relative */
-    wrapper.style.cssText = 'position:relative;height:100%;'
-    
-    /* put element into wrapper */
-    element.parent.appendChild(wrapper)
-    wrapper.appendChild(element.node)
-    
-    /* check for dom:ready */
-    check = function() {
-      if (document.readyState === 'complete') {
-        element.style('position:absolute;')
-        setTimeout(function() {
-          /* set position back to relative */
-          element.style('position:relative;')
-          
-          /* remove temp wrapper */
-          element.parent.removeChild(element.node.parentNode)
-          element.node.parentNode.removeChild(element.node)
-          element.parent.appendChild(element.node)
-          
-        }, 5)
-      } else {
-        setTimeout(check, 10)
+  
+  SVG.extend(SVG.Doc, {
+    // Hack for safari preventing text to be rendered in one line.
+    // Basically it sets the position of the svg node to absolute
+    // when the dom is loaded, and resets it to relative a few milliseconds later.
+    // It also handles sub-pixel offset rendering properly.
+    stage: function() {
+      var check
+        , element = this
+        , wrapper = document.createElement('div')
+  
+      /* set temporary wrapper to position relative */
+      wrapper.style.cssText = 'position:relative;height:100%;'
+  
+      /* put element into wrapper */
+      element.parent.appendChild(wrapper)
+      wrapper.appendChild(element.node)
+  
+      /* check for dom:ready */
+      check = function() {
+        if (document.readyState === 'complete') {
+          element.style('position:absolute;')
+          setTimeout(function() {
+            /* set position back to relative */
+            element.style('position:relative;')
+  
+            /* remove temporary wrapper */
+            element.parent.removeChild(element.node.parentNode)
+            element.node.parentNode.removeChild(element.node)
+            element.parent.appendChild(element.node)
+  
+            /* after wrapping is done, fix sub-pixel offset */
+            element.fixSubPixelOffset()
+            
+            /* make sure sub-pixel offset is fixed every time the window is resized */
+            SVG.on(window, 'resize', function() {
+              element.fixSubPixelOffset()
+            })
+            
+          }, 5)
+        } else {
+          setTimeout(check, 10)
+        }
       }
+  
+      check()
+  
+      return this
+    }
+  
+    // Fix for possible sub-pixel offset. See:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+  , fixSubPixelOffset: function() {
+      var pos = this.node.getScreenCTM()
+    
+      this
+        .style('left', (-pos.e % 1) + 'px')
+        .style('top',  (-pos.f % 1) + 'px')
     }
     
-    check()
-    
-    return this
-  }
+  })
+
 
   SVG.Shape = function(element) {
     this.constructor.call(this, element)
@@ -2066,7 +2105,7 @@
     extension[method] = function(o) {
       var indexOf
       
-      if (typeof o == 'string' || SVG.Color.isRgb(o) || SVG.Color.isHsb(o))
+      if (typeof o == 'string' || SVG.Color.isRgb(o))
         this.attr(method, o)
       
       else
@@ -2101,8 +2140,15 @@
     // Scale
   , scale: function(x, y) {
       return this.transform({
-        scaleX: x,
-        scaleY: y == null ? x : y
+        scaleX: x
+      , scaleY: y == null ? x : y
+      })
+    }
+    // Translate
+  , translate: function(x, y) {
+      return this.transform({
+        x: x
+      , y: y
       })
     }
     // Matrix
