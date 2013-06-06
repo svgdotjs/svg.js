@@ -40,16 +40,34 @@ SVG.extend(SVG.Container, {
 , has: function(element) {
     return this.children().indexOf(element) >= 0
   }
-  // Iterates over all children and invokes a given block
-, each: function(block) {
-    var index,
+  // Iterates over all children and invokes a given block, set deep to true to recurse into child containers
+, each: function(block, deep) {
+    var index, length,
         children = this.children()
-  
-    for (index = 0, length = children.length; index < length; index++)
+
+    for (index = 0, length = children.length; index < length; index++) {
       if (children[index] instanceof SVG.Shape)
         block.apply(children[index], [index, children])
-  
+      if (deep && (children[index] instanceof SVG.Container))
+        children[index].each(block, deep)
+    }
+
     return this
+  }
+  // Retrieves the element with given id - searching only within this container
+, get: function(id) {
+    var result = null,
+        children = this.children()
+
+    for (var i=0; i < children.length; i++) {
+      if (children[i].attr('id') == id)
+        return children[i]
+      if (children[i] instanceof SVG.Container)
+        result = children[i].get(id)
+      if (result != null) return result
+    }
+
+    return null
   }
   // Remove a child element at a position
 , removeElement: function(element) {

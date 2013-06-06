@@ -1,4 +1,4 @@
-/* svg.js v0.17 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.15-12-gd193541 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -832,16 +832,34 @@
   , has: function(element) {
       return this.children().indexOf(element) >= 0
     }
-    // Iterates over all children and invokes a given block
-  , each: function(block) {
-      var index,
+    // Iterates over all children and invokes a given block, set deep to true to recurse into child containers
+  , each: function(block, deep) {
+      var index, length,
           children = this.children()
-    
-      for (index = 0, length = children.length; index < length; index++)
+  
+      for (index = 0, length = children.length; index < length; index++) {
         if (children[index] instanceof SVG.Shape)
           block.apply(children[index], [index, children])
-    
+        if (deep && (children[index] instanceof SVG.Container))
+          children[index].each(block, deep)
+      }
+  
       return this
+    }
+    // Retrieves the element with given id - searching only within this container
+  , get: function(id) {
+      var result = null,
+          children = this.children()
+  
+      for (var i=0; i < children.length; i++) {
+        if (children[i].attr('id') == id)
+          return children[i]
+        if (children[i] instanceof SVG.Container)
+          result = children[i].get(id)
+        if (result != null) return result
+      }
+  
+      return null
     }
     // Remove a child element at a position
   , removeElement: function(element) {
@@ -969,121 +987,132 @@
   SVG.extend(SVG.FX, {
     // Add animation parameters and start animation
     animate: function(d, ease, delay) {
-      var fx = this
-      
+      var akeys, tkeys, skeys
+        , fx = this
+        , element = fx.target
+     
       /* dissect object if one is passed */
       if (typeof d == 'object') {
         delay = d.delay
         ease = d.ease
         d = d.duration
       }
+  
+      /* ensure default duration and easing */
+      d = d == null ? 1000 : d
+      ease = ease || '<>'
+  
+      this.animateTo = function(pos) {
+        // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
+        var i, key
+  
+        pos = pos < 0 ? 0 :
+              pos > 1 ? 1 :
+              pos
+  
+        /* collect attribute keys */
+        if (akeys == null) {
+          akeys = []
+          for (key in fx.attrs)
+            akeys.push(key)
+        }
+  
+        /* collect transformation keys */
+        if (tkeys == null) {
+          tkeys = []
+          for (key in fx.trans)
+            tkeys.push(key)
+        }
+  
+        /* collect style keys */
+        if (skeys == null) {
+          skeys = []
+          for (key in fx.styles)
+            skeys.push(key)
+        }
+  
+        /* apply easing */
+        pos = ease == '<>' ?
+          (-Math.cos(pos * Math.PI) / 2) + 0.5 :
+        ease == '>' ?
+          Math.sin(pos * Math.PI / 2) :
+        ease == '<' ?
+          -Math.cos(pos * Math.PI / 2) + 1 :
+        ease == '-' ?
+          pos :
+        typeof ease == 'function' ?
+          ease(pos) :
+          pos
+  
+        /* run all x-position properties */
+        if (fx._x)
+          element.x(fx._at(fx._x, pos))
+        else if (fx._cx)
+          element.cx(fx._at(fx._cx, pos))
+  
+        /* run all y-position properties */
+        if (fx._y)
+          element.y(fx._at(fx._y, pos))
+        else if (fx._cy)
+          element.cy(fx._at(fx._cy, pos))
+  
+        /* run all size properties */
+        if (fx._size)
+          element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+  
+        /* run all viewbox properties */
+        if (fx._viewbox)
+          element.viewbox(
+            fx._at(fx._viewbox.x, pos)
+          , fx._at(fx._viewbox.y, pos)
+          , fx._at(fx._viewbox.width, pos)
+          , fx._at(fx._viewbox.height, pos)
+          )
+  
+        /* animate attributes */
+        for (i = akeys.length - 1; i >= 0; i--)
+          element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
+  
+        /* animate transformations */
+        for (i = tkeys.length - 1; i >= 0; i--)
+          element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+  
+        /* animate styles */
+        for (i = skeys.length - 1; i >= 0; i--)
+          element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
+  
+        /* callback for each keyframe */
+        if (fx._during)
+          fx._during.call(element, pos, function(from, to) {
+            return fx._at({ from: from, to: to }, pos)
+          })
+      }
       
-      /* delay animation */
-      this.timeout = setTimeout(function() {
-        
-        /* ensure default duration and easing */
-        d = d == null ? 1000 : d
-        ease = ease || '<>'
-        
-        var akeys, tkeys, skeys
-          , interval  = 1000 / 60
-          , element   = fx.target
-          , start     = new Date().getTime()
-          , finish    = start + d
+      if (d > 0) {
+        /* delay animation */
+        this.timeout = setTimeout(function() {
+          
+          var frame_interval  = 1000 / 60
+            , start     = new Date().getTime()
+            , finish    = start + d
+    
+          /* start animation */
+          fx.interval = setInterval(function(){
+            var time = new Date().getTime()
+              , pos = time > finish ? 1 : (time - start) / d
   
-        /* start animation */
-        fx.interval = setInterval(function(){
-          // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-          var i, key
-            , time = new Date().getTime()
-            , pos = time > finish ? 1 : (time - start) / d
-  
-          /* collect attribute keys */
-          if (akeys == null) {
-            akeys = []
-            for (key in fx.attrs)
-              akeys.push(key)
-          }
-  
-          /* collect transformation keys */
-          if (tkeys == null) {
-            tkeys = []
-            for (key in fx.trans)
-              tkeys.push(key)
-          }
-  
-          /* collect style keys */
-          if (skeys == null) {
-            skeys = []
-            for (key in fx.styles)
-              skeys.push(key)
-          }
-  
-          /* apply easing */
-          pos = ease == '<>' ?
-            (-Math.cos(pos * Math.PI) / 2) + 0.5 :
-          ease == '>' ?
-            Math.sin(pos * Math.PI / 2) :
-          ease == '<' ?
-            -Math.cos(pos * Math.PI / 2) + 1 :
-          ease == '-' ?
-            pos :
-          typeof ease == 'function' ?
-            ease(pos) :
-            pos
-  
-          /* run all x-position properties */
-          if (fx._x)
-            element.x(fx._at(fx._x, pos))
-          else if (fx._cx)
-            element.cx(fx._at(fx._cx, pos))
-  
-          /* run all y-position properties */
-          if (fx._y)
-            element.y(fx._at(fx._y, pos))
-          else if (fx._cy)
-            element.cy(fx._at(fx._cy, pos))
-  
-          /* run all size properties */
-          if (fx._size)
-            element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-  
-          /* run all viewbox properties */
-          if (fx._viewbox)
-            element.viewbox(
-              fx._at(fx._viewbox.x, pos)
-            , fx._at(fx._viewbox.y, pos)
-            , fx._at(fx._viewbox.width, pos)
-            , fx._at(fx._viewbox.height, pos)
-            )
-  
-          /* animate attributes */
-          for (i = akeys.length - 1; i >= 0; i--)
-            element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
-  
-          /* animate transformations */
-          for (i = tkeys.length - 1; i >= 0; i--)
-            element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
-  
-          /* animate styles */
-          for (i = skeys.length - 1; i >= 0; i--)
-            element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
-  
-          /* callback for each keyframe */
-          if (fx._during)
-            fx._during.call(element, pos, function(from, to) {
-              return fx._at({ from: from, to: to }, pos)
-            })
-  
-          /* finish off animation */
-          if (time > finish) {
-            clearInterval(fx.interval)
-            fx._after ? fx._after.apply(element, [fx]) : fx.stop()
-          }
-  
-        }, d > interval ? interval : d)
-        
-      }, delay || 0)
+            fx.animateTo(pos)
+    
+            /* finish off animation */
+            if (time > finish) {
+              clearInterval(fx.interval)
+              fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+            }
+    
+          }, d > frame_interval ? frame_interval : d)
+          
+        }, delay || 0)
+      }
       
       return this
     }
