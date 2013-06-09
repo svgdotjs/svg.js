@@ -19,6 +19,7 @@ SVG.Text = function() {
 // Inherit from SVG.Element
 SVG.Text.prototype = new SVG.Shape
 
+//
 SVG.extend(SVG.Text, {
   // Move over x-axis
   x: function(x, a) {
@@ -121,6 +122,15 @@ SVG.extend(SVG.Text, {
     return this
   }
   
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create text element
+  text: function(text) {
+    return this.put(new SVG.Text().text(text))
+  }
+
 })
 
 // tspan class

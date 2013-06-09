@@ -64,6 +64,15 @@ SVG.extend(SVG.Defs, {
   
 })
 
+//
+SVG.extend(SVG.Container, {
+  // Create gradient element in defs
+  gradient: function(type, block) {
+    return this.defs().gradient(type, block)
+  }
+  
+})
+
 
 SVG.Stop = function(stop) {
   this.constructor.call(this, SVG.create('stop'))

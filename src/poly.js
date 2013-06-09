@@ -32,4 +32,16 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
     return this.attr('points', p || '0,0')
   }
   
-}) 
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create a wrapped polyline element
+  polyline: function(points, unbiased) {
+    return this.put(new SVG.Polyline(unbiased)).plot(points)
+  }
+  // Create a wrapped polygon element
+, polygon: function(points, unbiased) {
+    return this.put(new SVG.Polygon(unbiased)).plot(points)
+  }
+})

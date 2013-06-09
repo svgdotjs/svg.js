@@ -5,6 +5,7 @@ SVG.Clip = function() {
 // Inherit from SVG.Container
 SVG.Clip.prototype = new SVG.Container
 
+//
 SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
@@ -14,4 +15,13 @@ SVG.extend(SVG.Element, {
     return this.attr('clip-path', 'url(#' + this.clip.attr('id') + ')')
   }
   
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create clipping element
+  clip: function() {
+    return this.defs().put(new SVG.Clip)
+  }
+
 })

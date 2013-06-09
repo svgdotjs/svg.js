@@ -54,3 +54,12 @@ SVG.extend(SVG.Line, {
   }
   
 })
+
+//
+SVG.extend(SVG.Container, {
+  // Create a line element
+  line: function(x1, y1, x2, y2) {
+    return this.put(new SVG.Line().plot(x1, y1, x2, y2))
+  }
+  
+})

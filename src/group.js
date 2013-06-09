@@ -5,6 +5,7 @@ SVG.G = function() {
 // Inherit from SVG.Container
 SVG.G.prototype = new SVG.Container
 
+//
 SVG.extend(SVG.G, {
   // Move over x-axis
   x: function(x) {
@@ -17,6 +18,15 @@ SVG.extend(SVG.G, {
   // Get defs
 , defs: function() {
     return this.doc().defs()
+  }
+  
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create a group element
+  group: function() {
+    return this.put(new SVG.G)
   }
   
 })

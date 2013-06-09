@@ -225,6 +225,23 @@ describe('Container', function() {
       
       expect(children).toEqual(group.children())
     })
+    it('should traverse recursively when set to deep', function() {
+      var children = []
+        , group = draw.group()
+      
+      draw.rect(100,200)
+      draw.circle(300)
+      
+      group.rect(100,100)
+      group.ellipse(100, 100)
+      group.polygon()
+      
+      draw.each(function() {
+        children.push(this)
+      }, true)
+      
+      expect(children.length).toEqual(draw.children().length + group.children().length)
+    })
   })
   
   describe('viewbox()', function() {

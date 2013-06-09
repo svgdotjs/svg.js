@@ -5,6 +5,7 @@ SVG.Mask = function() {
 // Inherit from SVG.Container
 SVG.Mask.prototype = new SVG.Container
 
+//
 SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
@@ -12,6 +13,15 @@ SVG.extend(SVG.Element, {
     this.mask = element instanceof SVG.Mask ? element : this.parent.mask().add(element)
     
     return this.attr('mask', 'url(#' + this.mask.attr('id') + ')')
+  }
+  
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create masking element
+  mask: function() {
+    return this.defs().put(new SVG.Mask)
   }
   
 })

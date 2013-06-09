@@ -504,6 +504,15 @@ draw.each(function(i, children) {
 })
 ```
 
+Deep traversing is also possible by passing true as the second argument:
+
+```javascript
+// draw.each(block, deep)
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' })
+}, true)
+```
+
 ## Colors
 
 Svg.js has a dedicated color module handling different types of colors. Accepted values are:
@@ -752,7 +761,7 @@ var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 100, color: '#fff' })
 })
 
-var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient.fill() })
+var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient })
 
 rect.maskWith(ellipse)
 ```
@@ -873,7 +882,7 @@ The from and to values are also expressed in percent.
 Finally, to use the gradient on an element:
 
 ```javascript
-rect.attr({ fill: gradient.fill() })
+rect.attr({ fill: gradient })
 ```
 
 Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
@@ -928,7 +937,7 @@ var pattern = draw.pattern(20, 20, function(add) {
   add.rect(10, 10).move(0, 10).fill({ color: '#000', opacity: 0.5 })
 })
 
-var circle = draw.circle(200, 200).fill(pattern.fill())
+var circle = draw.circle(200, 200).fill(pattern)
 ```
 
 This will fill the circle with a checkered pattern. There is a lot more to patterns. Please refer to the [Patterns section](http://www.w3.org/TR/SVG/pservers.html#Patterns) of the SVG specification.

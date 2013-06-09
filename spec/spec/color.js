@@ -7,14 +7,14 @@ describe('Color', function() {
 		expect(color.b).toBe(128)
 	})
 	
-	it('should correclty parse a 3-based hex string', function() {
+	it('should correclty parse a 3 digit hex string', function() {
 		var color = new SVG.Color('#f06')
 		expect(color.r).toBe(255)
 		expect(color.g).toBe(0)
 		expect(color.b).toBe(102)
 	})
 
-	it('should correclty parse a 6-based hex string', function() {
+	it('should correclty parse a 6 digit hex string', function() {
 		var color = new SVG.Color('#0066ff')
 		expect(color.r).toBe(0)
 		expect(color.g).toBe(102)

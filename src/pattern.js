@@ -16,10 +16,9 @@ SVG.extend(SVG.Pattern, {
 
 //
 SVG.extend(SVG.Defs, {
-  
-  /* define gradient */
+  // Define gradient
   pattern: function(width, height, block) {
-    var element = this.put(new SVG.Pattern())
+    var element = this.put(new SVG.Pattern)
     
     /* invoke passed block */
     block(element)
@@ -33,4 +32,13 @@ SVG.extend(SVG.Defs, {
     })
   }
   
-});
+})
+
+//
+SVG.extend(SVG.Container, {
+  // Create pattern element in defs
+  pattern: function(width, height, block) {
+    return this.defs().pattern(width, height, block)
+  }
+
+})

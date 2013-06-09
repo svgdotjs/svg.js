@@ -34,6 +34,7 @@ SVG.ViewBox = function(element) {
   
 }
 
+//
 SVG.extend(SVG.ViewBox, {
   // Parse viewbox to string
   toString: function() {
@@ -41,3 +42,4 @@ SVG.extend(SVG.ViewBox, {
   }
   
 })
+

@@ -140,6 +140,10 @@ SVG.extend(SVG.Element, {
       return this.style(v)
     
     } else {
+      /* process gradient or pattern fill */
+      if (typeof v.fill === 'function')
+        v = v.fill()
+
       /* treat x differently on text elements */
       if (a == 'x' && Array.isArray(this.lines))
         for (n = this.lines.length - 1; n >= 0; n--)
@@ -154,7 +158,7 @@ SVG.extend(SVG.Element, {
       /* ensure hex color */
       if (SVG.Color.test(v) || SVG.Color.isRgb(v))
         v = new SVG.Color(v).toHex()
-        
+
       /* set give attribute on node */
       n != null ?
         this.node.setAttributeNS(n, a, v) :

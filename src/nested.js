@@ -6,3 +6,12 @@ SVG.Nested = function() {
 
 // Inherit from SVG.Container
 SVG.Nested.prototype = new SVG.Container
+
+//
+SVG.extend(SVG.Container, {
+  // Create nested svg document
+  nested: function() {
+    return this.put(new SVG.Nested)
+  }
+  
+})

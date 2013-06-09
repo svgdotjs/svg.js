@@ -14,3 +14,12 @@ SVG.extend(SVG.Path, {
   }
   
 })
+
+//
+SVG.extend(SVG.Container, {
+  // Create a wrapped path element
+  path: function(data, unbiased) {
+    return this.put(new SVG.Path(unbiased)).plot(data)
+  }
+
+})

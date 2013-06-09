@@ -41,13 +41,17 @@ SVG.extend(SVG.Container, {
     return this.children().indexOf(element) >= 0
   }
   // Iterates over all children and invokes a given block
-, each: function(block) {
-    var index,
-        children = this.children()
-  
-    for (index = 0, length = children.length; index < length; index++)
-      if (children[index] instanceof SVG.Shape)
-        block.apply(children[index], [index, children])
+, each: function(block, deep) {
+    var i, il
+      , children = this.children()
+    
+    for (i = 0, il = children.length; i < il; i++) {
+      if (children[i] instanceof SVG.Shape)
+        block.apply(children[i], [i, children])
+
+      if (deep && (children[i] instanceof SVG.Container))
+        children[i].each(block, deep)
+    }
   
     return this
   }
@@ -68,67 +72,6 @@ SVG.extend(SVG.Container, {
   // Re-level defs to first positon in element stack
 , level: function() {
     return this.removeElement(this.defs()).put(this.defs(), 0)
-  }
-  // Create a group element
-, group: function() {
-    return this.put(new SVG.G)
-  }
-  // Create a rect element
-, rect: function(width, height) {
-    return this.put(new SVG.Rect().size(width, height))
-  }
-  // Create circle element, based on ellipse
-, circle: function(size) {
-    return this.ellipse(size, size)
-  }
-  // Create an ellipse
-, ellipse: function(width, height) {
-    return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
-  }
-  // Create a line element
-, line: function(x1, y1, x2, y2) {
-    return this.put(new SVG.Line().plot(x1, y1, x2, y2))
-  }
-  // Create a wrapped polyline element
-, polyline: function(points, unbiased) {
-    return this.put(new SVG.Polyline(unbiased)).plot(points)
-  }
-  // Create a wrapped polygon element
-, polygon: function(points, unbiased) {
-    return this.put(new SVG.Polygon(unbiased)).plot(points)
-  }
-  // Create a wrapped path element
-, path: function(data, unbiased) {
-    return this.put(new SVG.Path(unbiased)).plot(data)
-  }
-  // Create image element, load image and set its size
-, image: function(source, width, height) {
-    width = width != null ? width : 100
-    return this.put(new SVG.Image().load(source).size(width, height != null ? height : width))
-  }
-  // Create text element
-, text: function(text) {
-    return this.put(new SVG.Text().text(text))
-  }
-  // Create nested svg document
-, nested: function() {
-    return this.put(new SVG.Nested)
-  }
-  // Create gradient element in defs
-, gradient: function(type, block) {
-    return this.defs().gradient(type, block)
-  }
-  // Create pattern element in defs
-, pattern: function(width, height, block) {
-    return this.defs().pattern(width, height, block)
-  }
-  // Create masking element
-, mask: function() {
-    return this.defs().put(new SVG.Mask)
-  }
-  // Create clipping element
-, clip: function() {
-    return this.defs().put(new SVG.Clip)
   }
   // Get first child, skipping the defs node
 , first: function() {

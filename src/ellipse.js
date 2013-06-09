@@ -34,6 +34,19 @@ SVG.extend(SVG.Ellipse, {
   
 })
 
+//
+SVG.extend(SVG.Container, {
+  // Create circle element, based on ellipse
+  circle: function(size) {
+    return this.ellipse(size, size)
+  }
+  // Create an ellipse
+, ellipse: function(width, height) {
+    return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
+  }
+  
+})
+
 // Usage:
 
 //     draw.ellipse(200, 100)
