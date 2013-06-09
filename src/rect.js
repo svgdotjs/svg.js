@@ -11,6 +11,5 @@ SVG.extend(SVG.Container, {
   rect: function(width, height) {
     return this.put(new SVG.Rect().size(width, height))
   }
-  
 
 })

@@ -640,6 +640,19 @@ rect.animate(3000).move(100, 100).during(function(pos, morph) {
 })
 ```
 
+### Controlling animations externally
+Say you want to control the position of an animation with an external event than the `to()` method will proove very useful:
+
+```javascript
+var animate = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
+
+document.onmousemove = function(event) {
+  animate.to(event.clientX / 1000)
+}
+```
+
+In order to be able use the `to()` method the duration of the animation should be set to `'='`. The value passed as the first argument of `to()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
+
 
 ### After animation callback
 Finally, you can add callback methods using `after()`:
