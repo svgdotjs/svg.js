@@ -1163,4 +1163,4 @@ rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] 
 
 Visit the [svg.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
 
-Important: this library is still in alpha, therefore the API might be subject to change in the course of development.
+Important: this library is still in beta, therefore the API might be subject to change in the course of development.
