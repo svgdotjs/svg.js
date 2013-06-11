@@ -8,8 +8,6 @@ Svg.js is licensed under the terms of the MIT License.
 
 See [svgjs.com](http://svgjs.com) for an introduction and [some action](http://svgjs.com/test).
 
-<iframe style="border: 0; margin: 0; padding: 0; margin-right: 10px;" src="https://www.gittip.com/wout/widget.html" width="48px" height="20px"></iframe>
-
 ## Usage
 
 ### Create a SVG document
