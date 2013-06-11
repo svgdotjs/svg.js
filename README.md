@@ -8,6 +8,8 @@ Svg.js is licensed under the terms of the MIT License.
 
 See [svgjs.com](http://svgjs.com) for an introduction and [some action](http://svgjs.com/test).
 
+![Wout on Gittip](http://files.wout.co.uk/github/gittip.png)
+
 ## Usage
 
 ### Create a SVG document
