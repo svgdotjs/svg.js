@@ -40,6 +40,10 @@ SVG.extend(SVG.Container, {
 , has: function(element) {
     return this.children().indexOf(element) >= 0
   }
+  // Get a element at the given index
+, get: function(i) {
+    return this.children()[i]
+  }
   // Iterates over all children and invokes a given block
 , each: function(block, deep) {
     var i, il

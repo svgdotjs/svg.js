@@ -1,4 +1,4 @@
-/* svg.js v0.20-1-ga72b8a7 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.20-2-g9841728 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -925,6 +925,10 @@
   , has: function(element) {
       return this.children().indexOf(element) >= 0
     }
+    // Get a element at the given index
+  , get: function(i) {
+      return this.children()[i]
+    }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {
       var i, il
@@ -1650,10 +1654,6 @@
     // Return the fill id
   , fill: function() {
       return 'url(#' + this.attr('id') + ')'
-    }
-    // Get a stop at the given index
-  , get: function(i) {
-      return this.children()[i]
     }
     
   })

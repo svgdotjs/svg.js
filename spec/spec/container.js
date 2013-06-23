@@ -266,6 +266,19 @@ describe('Container', function() {
       expect(draw.viewbox().zoom).toEqual(100 / 50)
     })
   })
+
+  describe('get()', function() {
+    it('gets an element at a given index', function() {
+      draw.clear()
+      var rect = draw.rect(100,100)
+      var circle = draw.circle(100)
+      var line = draw.line(0,0,100,100)
+      expect(draw.get(0)).toBe(rect)
+      expect(draw.get(1)).toBe(circle)
+      expect(draw.get(2)).toBe(line)
+      expect(draw.get(3)).toBe(undefined)
+    })
+  })
   
   
 })

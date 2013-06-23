@@ -46,10 +46,6 @@ SVG.extend(SVG.Gradient, {
 , fill: function() {
     return 'url(#' + this.attr('id') + ')'
   }
-  // Get a stop at the given index
-, get: function(i) {
-    return this.children()[i]
-  }
   
 })
 
