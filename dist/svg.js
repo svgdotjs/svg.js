@@ -1,4 +1,4 @@
-/* svg.js v0.20 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.20-1-ga72b8a7 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2267,9 +2267,9 @@
     extension[method] = function(o) {
       var indexOf
       
-      if (typeof o == 'string' || SVG.Color.isRgb(o))
+      if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
         this.attr(method, o)
-      
+  
       else
         /* set all attributes from _fillAttr and _strokeAttr list */
         for (index = SVG['_' + method].length - 1; index >= 0; index--)

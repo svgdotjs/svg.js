@@ -15,9 +15,9 @@ var _colorPrefix = function(type, attr) {
   extension[method] = function(o) {
     var indexOf
     
-    if (typeof o == 'string' || SVG.Color.isRgb(o))
+    if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
       this.attr(method, o)
-    
+
     else
       /* set all attributes from _fillAttr and _strokeAttr list */
       for (index = SVG['_' + method].length - 1; index >= 0; index--)
