@@ -13,19 +13,19 @@ SVG.extend(SVG.Gradient, {
   // From position
   from: function(x, y) {
     return this.type == 'radial' ?
-      this.attr({ fx: x + '%', fy: y + '%' }) :
-      this.attr({ x1: x + '%', y1: y + '%' })
+      this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
+      this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
     return this.type == 'radial' ?
-      this.attr({ cx: x + '%', cy: y + '%' }) :
-      this.attr({ x2: x + '%', y2: y + '%' })
+      this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
+      this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }
   // Radius for radial gradient
-, radius: function(radius) {
+, radius: function(r) {
     return this.type == 'radial' ?
-      this.attr({ r: radius + '%' }) :
+      this.attr({ r: new SVG.Number(r) }) :
       this
   }
   // Add a color stop
@@ -35,8 +35,7 @@ SVG.extend(SVG.Gradient, {
   // Update gradient
 , update: function(block) {
     /* remove all stops */
-    while (this.node.hasChildNodes())
-      this.node.removeChild(this.node.lastChild)
+    this.clear()
     
     /* invoke passed block */
     block(this)
@@ -46,6 +45,10 @@ SVG.extend(SVG.Gradient, {
   // Return the fill id
 , fill: function() {
     return 'url(#' + this.attr('id') + ')'
+  }
+  // Get a stop at the given index
+, get: function(i) {
+    return this.children()[i]
   }
   
 })
@@ -82,22 +85,18 @@ SVG.Stop = function(stop) {
 }
 
 // Inherit from SVG.Element
-SVG.Stop.prototype = new SVG.Element()
+SVG.Stop.prototype = new SVG.Element
 
 //
 SVG.extend(SVG.Stop, {
   // add color stops
   update: function(o) {
-    var index
-      , attr = ['opacity', 'color']
-    
-    /* build style attribute */
-    for (index = attr.length - 1; index >= 0; index--)
-      if (o[attr[index]] != null)
-        this.style('stop-' + attr[index], o[attr[index]])
-    
     /* set attributes */
-    return this.attr('offset', (o.offset != null ? o.offset : this.attr('offset')) + '%')
+    if (o.opacity != null) this.attr('stop-opacity', o.opacity)
+    if (o.color   != null) this.attr('stop-color', o.color)
+    if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
+
+    return this
   }
   
 })

@@ -63,7 +63,7 @@ describe('Ellipse', function() {
   })
   
   describe('center()', function() {
-    it('should set the cx and cy position', function() {
+    it('sets the cx and cy position', function() {
       ellipse.center(321,567)
       var box = ellipse.bbox()
       expect(box.cx).toBe(321)
@@ -72,7 +72,7 @@ describe('Ellipse', function() {
   })
   
   describe('size()', function() {
-    it('should define the rx and ry of the element', function() {
+    it('defines the rx and ry of the element', function() {
       ellipse.size(987,654)
       expect(ellipse.node.getAttribute('rx')).toBe((987 / 2).toString())
       expect(ellipse.node.getAttribute('ry')).toBe((654 / 2).toString())

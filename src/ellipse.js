@@ -18,17 +18,17 @@ SVG.extend(SVG.Ellipse, {
   }
   // Move by center over x-axis
 , cx: function(x) {
-    return x == null ? this.attr('cx') : this.attr('cx', x / this.trans.scaleX)
+    return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.trans.scaleX))
   }
   // Move by center over y-axis
 , cy: function(y) {
-    return y == null ? this.attr('cy') : this.attr('cy', y / this.trans.scaleY)
+    return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.trans.scaleY))
   }
   // Custom size function
 , size: function(width, height) {
     return this.attr({
-      rx: width / 2,
-      ry: height / 2
+      rx: new SVG.Number(width).divide(2)
+    , ry: new SVG.Number(height).divide(2)
     })
   }
   
@@ -42,7 +42,7 @@ SVG.extend(SVG.Container, {
   }
   // Create an ellipse
 , ellipse: function(width, height) {
-    return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
+    return this.put(new SVG.Ellipse).size(width, height).move(0, 0)
   }
   
 })

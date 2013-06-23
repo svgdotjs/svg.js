@@ -250,6 +250,16 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Add animateable gradient update
+, update: function(o) {
+    if (this.target instanceof SVG.Stop) {
+      if (o.opacity != null) this.attr('stop-opacity', o.opacity)
+      if (o.color   != null) this.attr('stop-color', o.color)
+      if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
+    }
+
+    return this
+  }
   // Add callback for each keyframe
 , during: function(during) {
     this._during = during
@@ -291,7 +301,10 @@ SVG.extend(SVG.FX, {
     
     /* unit recalculation */
     SVG.regex.unit.test(o.to) ?
-      this._unit(o, pos) :
+      new SVG.Number(o.to)
+        .minus(new SVG.Number(o.from))
+        .times(pos)
+        .plus(new SVG.Number(o.from)) :
     
     /* color recalculation */
     o.to && (o.to.r || SVG.Color.test(o.to)) ?
@@ -299,19 +312,6 @@ SVG.extend(SVG.FX, {
     
     /* for all other values wait until pos has reached 1 to return the final value */
     pos < 1 ? o.from : o.to
-  }
-  // Private: tween unit
-, _unit: function(o, pos) {
-    var match, from
-    
-    /* convert FROM unit */
-    match = SVG.regex.unit.exec(o.from.toString())
-    from = parseFloat(match ? match[1] : 0)
-    
-    /* convert TO unit */
-    match = SVG.regex.unit.exec(o.to)
-    
-    return (from + (parseFloat(match[1]) - from) * pos) + match[2]
   }
   // Private: tween color
 , _color: function(o, pos) {

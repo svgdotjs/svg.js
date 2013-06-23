@@ -771,7 +771,7 @@ If you want the masked object to be rendered at 100% you need to set the fill co
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 0, color: '#000' })
-  stop.at({ offset: 100, color: '#fff' })
+  stop.at({ offset: 1, color: '#fff' })
 })
 
 var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient })
@@ -881,14 +881,14 @@ There are linear and radial gradients. The linear gradient can be created like t
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
   stop.at({ offset: 0, color: '#333', opacity: 1 })
-  stop.at({ offset: 100, color: '#fff', opacity: 1 })
+  stop.at({ offset: 1, color: '#fff', opacity: 1 })
 })
 ```
 
-The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is an integer expressed in percentage. To define the direction you can set from `x`, `y` and to `x`, `y`:
+The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`). To define the direction you can set from `x`, `y` and to `x`, `y`:
 
 ```javascript
-gradient.from(0, 0).to(0, 100)
+gradient.from(0, 0).to(0, 1)
 ```
 
 The from and to values are also expressed in percent.
@@ -903,18 +903,18 @@ Radial gradients have a `radius()` method to define the outermost radius to wher
 ```javascript
 var gradient = draw.gradient('radial', function(stop) {
   stop.at({ offset: 0, color: '#333', opacity: 1 })
-  stop.at({ offset: 100, color: '#fff', opacity: 1 })
+  stop.at({ offset: 1, color: '#fff', opacity: 1 })
 })
 
-gradient.from(50, 50).to(50, 50).radius(50)
+gradient.from(0.5, 0.5).to(0.5, 0.5).radius(0.5)
 ```
 
 A gradient can also be updated afterwards:
 
 ```javascript
 gradient.update(function(stop) {
-  stop.at({ offset: 10, color: '#333', opacity: 0.2 })
-  stop.at({ offset: 90, color: '#f03', opacity: 1 })
+  stop.at({ offset: 0.1, color: '#333', opacity: 0.2 })
+  stop.at({ offset: 0.9, color: '#f03', opacity: 1 })
 })
 ```
 
@@ -925,11 +925,23 @@ var s1, s2, s3
 
 draw.gradient('radial', function(stop) {
   s1 = stop.at({ offset: 0, color: '#000', opacity: 1 })
-  s2 = stop.at({ offset: 50, color: '#f03', opacity: 1 })
-  s3 = stop.at({ offset: 100, color: '#066', opacity: 1 })
+  s2 = stop.at({ offset: 0.5, color: '#f03', opacity: 1 })
+  s3 = stop.at({ offset: 1, color: '#066', opacity: 1 })
 })
 
-s1.update({ offset: 10, color: '#0f0', opacity: 1 })
+s1.update({ offset: 0.1, color: '#0f0', opacity: 1 })
+```
+
+The `get()` method makes it even easier to get a stop from an existing gradient:
+
+```javascript
+var gradient = draw.gradient('radial', function(stop) {
+  stop.at({ offset: 0, color: '#000', opacity: 1 })   // -> first
+  stop.at({ offset: 0.5, color: '#f03', opacity: 1 }) // -> second
+  stop.at({ offset: 1, color: '#066', opacity: 1 })   // -> third
+})
+
+var s1 = gradient.get(0) // -> returns "first" stop
 ```
 
 [W3Schools](http://www.w3schools.com/svg/svg_grad_linear.asp) has a great example page on how

@@ -1,4 +1,4 @@
-/* svg.js v0.19 - svg regex default color viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.20 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -79,7 +79,7 @@
     
     /* parse rgb value */
   , rgb:          /rgb\((\d+),(\d+),(\d+)\)/
-    
+  
     /* test hex value */
   , isHex:        /^#[a-f0-9]{3,6}$/i
     
@@ -97,6 +97,9 @@
     
     /* test for numeric string */
   , isNumber:     /^-?[\d\.]+$/
+  
+    /* test for percent value */
+  , isPercent:    /^-?[\d\.]+%$/
     
   }
 
@@ -110,23 +113,25 @@
       'fill-opacity':   1
     , 'stroke-opacity': 1
     , 'stroke-width':   0
-    , fill:       '#000'
-    , stroke:     '#000'
-    , opacity:    1
+    , fill:             '#000'
+    , stroke:           '#000'
+    , opacity:          1
       /* position */
-    , x:          0
-    , y:          0
-    , cx:         0
-    , cy:         0
-      /* size */
-    , width:      0
-    , height:     0
-      /* radius */
-    , r:          0
-    , rx:         0
-    , ry:         0
-      /* gradient */
-    , offset:     0
+    , x:                0
+    , y:                0
+    , cx:               0
+    , cy:               0
+      /* size */  
+    , width:            0
+    , height:           0
+      /* radius */  
+    , r:                0
+    , rx:               0
+    , ry:               0
+      /* gradient */  
+    , offset:           0
+    , 'stop-opacity':   1
+    , 'stop-color':     '#000'
     }
     
     // Default transformation values
@@ -245,6 +250,81 @@
   SVG.Color.isRgb = function(color) {
     return color && typeof color.r == 'number'
   }
+
+  SVG.Number = function(value) {
+  
+    /* initialize defaults */
+    this.value = 0
+    this.unit = ''
+  
+    /* parse value */
+    switch(typeof value) {
+      case 'number':
+        this.value = value
+      break
+      case 'string':
+        var match = value.match(SVG.regex.unit)
+  
+        /* make valu numeric */
+        this.value = parseFloat(match[1])
+    
+        /* normalize percent value */
+        if (match[2] == '%')
+          this.value /= 100
+    
+        /* store unit */
+        this.unit = match[2]
+  
+      break
+      default:
+        if (value instanceof SVG.Number) {
+          this.value = value.value
+          this.unit  = value.unit
+        }
+      break
+    }
+  }
+  
+  SVG.extend(SVG.Number, {
+    // Stringalize
+    toString: function() {
+      return (this.unit == '%' ? ~~(this.value * 100) : this.value) + this.unit
+    }
+  , // Convert to primitive
+    valueOf: function() {
+      return this.value
+    }
+    // Convert to different unit
+  , to: function(unit) {
+      if (typeof unit === 'string')
+        this.unit = unit
+  
+      return this
+    }
+    // Add number
+  , plus: function(number) {
+      this.value = this + new SVG.Number(number)
+  
+      return this
+    }
+    // Subtract number
+  , minus: function(number) {
+      return this.plus(-new SVG.Number(number))
+    }
+    // Multiply number
+  , times: function(number) {
+      this.value = this * new SVG.Number(number)
+  
+      return this
+    }
+    // Divide number
+  , divide: function(number) {
+      this.value = this / new SVG.Number(number)
+  
+      return this
+    }
+  
+  })
 
   SVG.ViewBox = function(element) {
     var x, y, width, height
@@ -428,12 +508,18 @@
   SVG.extend(SVG.Element, {
     // Move over x-axis
     x: function(x) {
-      if (x) x /= this.trans.scaleX
+      if (x) {
+        x = new SVG.Number(x)
+        x.value /= this.trans.scaleX
+      }
       return this.attr('x', x)
     }
     // Move over y-axis
   , y: function(y) {
-      if (y) y /= this.trans.scaleY
+      if (y) {
+        y = new SVG.Number(y)
+        y.value /= this.trans.scaleY
+      }
       return this.attr('y', y)
     }
     // Move by center over x-axis
@@ -455,8 +541,8 @@
     // Set element size to given width and height
   , size: function(width, height) { 
       return this.attr({
-        width:  width
-      , height: height
+        width:  new SVG.Number(width)
+      , height: new SVG.Number(height)
       })
     }
     // Clone element
@@ -1162,6 +1248,16 @@
       
       return this
     }
+    // Add animateable gradient update
+  , update: function(o) {
+      if (this.target instanceof SVG.Stop) {
+        if (o.opacity != null) this.attr('stop-opacity', o.opacity)
+        if (o.color   != null) this.attr('stop-color', o.color)
+        if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
+      }
+  
+      return this
+    }
     // Add callback for each keyframe
   , during: function(during) {
       this._during = during
@@ -1203,7 +1299,10 @@
       
       /* unit recalculation */
       SVG.regex.unit.test(o.to) ?
-        this._unit(o, pos) :
+        new SVG.Number(o.to)
+          .minus(new SVG.Number(o.from))
+          .times(pos)
+          .plus(new SVG.Number(o.from)) :
       
       /* color recalculation */
       o.to && (o.to.r || SVG.Color.test(o.to)) ?
@@ -1211,19 +1310,6 @@
       
       /* for all other values wait until pos has reached 1 to return the final value */
       pos < 1 ? o.from : o.to
-    }
-    // Private: tween unit
-  , _unit: function(o, pos) {
-      var match, from
-      
-      /* convert FROM unit */
-      match = SVG.regex.unit.exec(o.from.toString())
-      from = parseFloat(match ? match[1] : 0)
-      
-      /* convert TO unit */
-      match = SVG.regex.unit.exec(o.to)
-      
-      return (from + (parseFloat(match[1]) - from) * pos) + match[2]
     }
     // Private: tween color
   , _color: function(o, pos) {
@@ -1532,19 +1618,19 @@
     // From position
     from: function(x, y) {
       return this.type == 'radial' ?
-        this.attr({ fx: x + '%', fy: y + '%' }) :
-        this.attr({ x1: x + '%', y1: y + '%' })
+        this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
+        this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
     }
     // To position
   , to: function(x, y) {
       return this.type == 'radial' ?
-        this.attr({ cx: x + '%', cy: y + '%' }) :
-        this.attr({ x2: x + '%', y2: y + '%' })
+        this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
+        this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
     }
     // Radius for radial gradient
-  , radius: function(radius) {
+  , radius: function(r) {
       return this.type == 'radial' ?
-        this.attr({ r: radius + '%' }) :
+        this.attr({ r: new SVG.Number(r) }) :
         this
     }
     // Add a color stop
@@ -1554,8 +1640,7 @@
     // Update gradient
   , update: function(block) {
       /* remove all stops */
-      while (this.node.hasChildNodes())
-        this.node.removeChild(this.node.lastChild)
+      this.clear()
       
       /* invoke passed block */
       block(this)
@@ -1565,6 +1650,10 @@
     // Return the fill id
   , fill: function() {
       return 'url(#' + this.attr('id') + ')'
+    }
+    // Get a stop at the given index
+  , get: function(i) {
+      return this.children()[i]
     }
     
   })
@@ -1601,22 +1690,18 @@
   }
   
   // Inherit from SVG.Element
-  SVG.Stop.prototype = new SVG.Element()
+  SVG.Stop.prototype = new SVG.Element
   
   //
   SVG.extend(SVG.Stop, {
     // add color stops
     update: function(o) {
-      var index
-        , attr = ['opacity', 'color']
-      
-      /* build style attribute */
-      for (index = attr.length - 1; index >= 0; index--)
-        if (o[attr[index]] != null)
-          this.style('stop-' + attr[index], o[attr[index]])
-      
       /* set attributes */
-      return this.attr('offset', (o.offset != null ? o.offset : this.attr('offset')) + '%')
+      if (o.opacity != null) this.attr('stop-opacity', o.opacity)
+      if (o.color   != null) this.attr('stop-color', o.color)
+      if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
+  
+      return this
     }
     
   })
@@ -1753,17 +1838,17 @@
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.attr('cx') : this.attr('cx', x / this.trans.scaleX)
+      return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.trans.scaleX))
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.attr('cy') : this.attr('cy', y / this.trans.scaleY)
+      return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.trans.scaleY))
     }
     // Custom size function
   , size: function(width, height) {
       return this.attr({
-        rx: width / 2,
-        ry: height / 2
+        rx: new SVG.Number(width).divide(2)
+      , ry: new SVG.Number(height).divide(2)
       })
     }
     
@@ -1777,7 +1862,7 @@
     }
     // Create an ellipse
   , ellipse: function(width, height) {
-      return this.put(new SVG.Ellipse().size(width, height).move(0, 0))
+      return this.put(new SVG.Ellipse).size(width, height).move(0, 0)
     }
     
   })

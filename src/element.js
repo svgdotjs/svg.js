@@ -23,12 +23,18 @@ SVG.Element = function(node) {
 SVG.extend(SVG.Element, {
   // Move over x-axis
   x: function(x) {
-    if (x) x /= this.trans.scaleX
+    if (x) {
+      x = new SVG.Number(x)
+      x.value /= this.trans.scaleX
+    }
     return this.attr('x', x)
   }
   // Move over y-axis
 , y: function(y) {
-    if (y) y /= this.trans.scaleY
+    if (y) {
+      y = new SVG.Number(y)
+      y.value /= this.trans.scaleY
+    }
     return this.attr('y', y)
   }
   // Move by center over x-axis
@@ -50,8 +56,8 @@ SVG.extend(SVG.Element, {
   // Set element size to given width and height
 , size: function(width, height) { 
     return this.attr({
-      width:  width
-    , height: height
+      width:  new SVG.Number(width)
+    , height: new SVG.Number(height)
     })
   }
   // Clone element

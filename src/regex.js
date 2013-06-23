@@ -13,7 +13,7 @@ SVG.regex = {
   
   /* parse rgb value */
 , rgb:          /rgb\((\d+),(\d+),(\d+)\)/
-  
+
   /* test hex value */
 , isHex:        /^#[a-f0-9]{3,6}$/i
   
@@ -31,5 +31,8 @@ SVG.regex = {
   
   /* test for numeric string */
 , isNumber:     /^-?[\d\.]+$/
+
+  /* test for percent value */
+, isPercent:    /^-?[\d\.]+%$/
   
 }

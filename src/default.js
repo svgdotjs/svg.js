@@ -9,23 +9,25 @@ SVG.defaults = {
     'fill-opacity':   1
   , 'stroke-opacity': 1
   , 'stroke-width':   0
-  , fill:       '#000'
-  , stroke:     '#000'
-  , opacity:    1
+  , fill:             '#000'
+  , stroke:           '#000'
+  , opacity:          1
     /* position */
-  , x:          0
-  , y:          0
-  , cx:         0
-  , cy:         0
-    /* size */
-  , width:      0
-  , height:     0
-    /* radius */
-  , r:          0
-  , rx:         0
-  , ry:         0
-    /* gradient */
-  , offset:     0
+  , x:                0
+  , y:                0
+  , cx:               0
+  , cy:               0
+    /* size */  
+  , width:            0
+  , height:           0
+    /* radius */  
+  , r:                0
+  , rx:               0
+  , ry:               0
+    /* gradient */  
+  , offset:           0
+  , 'stop-opacity':   1
+  , 'stop-color':     '#000'
   }
   
   // Default transformation values
