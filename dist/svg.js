@@ -1,4 +1,4 @@
-/* svg.js v0.20-2-g9841728 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.20-3-g65f915f - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -110,28 +110,30 @@
     // Default attribute values
   , attrs: {
       /* fill and stroke */
-      'fill-opacity':   1
-    , 'stroke-opacity': 1
-    , 'stroke-width':   0
-    , fill:             '#000'
-    , stroke:           '#000'
-    , opacity:          1
+      'fill-opacity':     1
+    , 'stroke-opacity':   1
+    , 'stroke-width':     0
+    , 'stroke-linejoin':  'miter'
+    , 'stroke-linecap':   'butt'
+    , fill:               '#000'
+    , stroke:             '#000'
+    , opacity:            1
       /* position */
-    , x:                0
-    , y:                0
-    , cx:               0
-    , cy:               0
+    , x:                  0
+    , y:                  0
+    , cx:                 0
+    , cy:                 0
       /* size */  
-    , width:            0
-    , height:           0
+    , width:              0
+    , height:             0
       /* radius */  
-    , r:                0
-    , rx:               0
-    , ry:               0
+    , r:                  0
+    , rx:                 0
+    , ry:                 0
       /* gradient */  
-    , offset:           0
-    , 'stop-opacity':   1
-    , 'stop-color':     '#000'
+    , offset:             0
+    , 'stop-opacity':     1
+    , 'stop-color':       '#000'
     }
     
     // Default transformation values

@@ -47,16 +47,19 @@ describe('Element', function() {
       expect(rect.node.getAttribute('stroke-width')).toBe('11')
       expect(rect.attr('stroke-width')).toBe(11)
     })
-    it('should correctly parse negative numeric values as a getter', function() {
+    it('correctly parses negative numeric values as a getter', function() {
       rect.attr('x', -120)
       expect(rect.node.getAttribute('x')).toBe('-120')
       expect(rect.attr('x')).toBe(-120)
     })
-    it('should get the "style" attribute as a string', function() {
+    it('falls back on default values if attribute is not present', function() {
+      expect(rect.attr('stroke-linejoin')).toBe('miter')
+    })
+    it('gets the "style" attribute as a string', function() {
       rect.style('cursor', 'pointer')
       expect(rect.attr('style')).toBe('cursor:pointer;')
     })
-    it('should redirect to the style() method when setting a style string', function() {
+    it('redirects to the style() method when setting a style string', function() {
       rect.attr('style', 'cursor:move;')
       expect(rect.node.getAttribute('style')).toBe('cursor:move;')
     })
