@@ -1,4 +1,8 @@
 describe('Container', function() {
+
+  beforeEach(function() {
+    draw.clear()
+  })
   
   describe('rect()', function() {
     it('should increase children by 1', function() {
@@ -186,11 +190,11 @@ describe('Container', function() {
       draw.clear()
       expect(draw.children().length).toBe(0)
     })
-    it('should create a new defs node', function() {
+    it('should keep the defs node', function() {
       var oldDefs = draw.defs()
       draw.rect(100,100).maskWith(draw.circle(100, 100))
       draw.clear()
-      expect(draw.defs()).not.toBe(oldDefs)
+      expect(draw.defs()).toBe(oldDefs)
     })
   })
   
@@ -205,7 +209,6 @@ describe('Container', function() {
       draw.each(function() {
         children.push(this.type)
       })
-      
       expect(children).toEqual(['rect', 'ellipse', 'polygon'])
     })
     it('should only include the its own children', function() {

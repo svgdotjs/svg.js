@@ -28,6 +28,12 @@ SVG.extend(SVG.Container, {
       this.node.insertBefore(element.node, this.node.childNodes[i] || null)
       element.parent = this
     }
+
+    /* reposition defs */
+    if (this._defs) {
+      this.node.removeChild(this._defs.node)
+      this.node.appendChild(this._defs.node)
+    }
     
     return this
   }
@@ -50,7 +56,7 @@ SVG.extend(SVG.Container, {
       , children = this.children()
     
     for (i = 0, il = children.length; i < il; i++) {
-      if (children[i] instanceof SVG.Shape)
+      if (children[i] instanceof SVG.Element)
         block.apply(children[i], [i, children])
 
       if (deep && (children[i] instanceof SVG.Container))
@@ -69,13 +75,9 @@ SVG.extend(SVG.Container, {
     
     return this
   }
-  // Returns defs element
+  // Get defs
 , defs: function() {
-    return this._defs || (this._defs = this.put(new SVG.Defs, 0))
-  }
-  // Re-level defs to first positon in element stack
-, level: function() {
-    return this.removeElement(this.defs()).put(this.defs(), 0)
+    return this.doc().defs()
   }
   // Get first child, skipping the defs node
 , first: function() {
@@ -105,10 +107,8 @@ SVG.extend(SVG.Container, {
       this.removeElement(this.children()[i])
 
     /* remove defs node */
-    if (this._defs) {
-      this._defs.remove()
-      delete this._defs
-    }
+    if (this._defs)
+      this._defs.clear()
 
     return this
   }

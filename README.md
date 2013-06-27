@@ -359,6 +359,12 @@ rect.style()
 // => 'cursor:pointer;fill:#f03;'
 ```
 
+Explicitly deleting individual style definitions works the same as with the `attr()` method:
+
+```javascript
+rect.style('cursor', null)
+```
+
 
 ### Move 
 Move the element to a given `x` and `y` position by its upper left corner:
@@ -853,6 +859,19 @@ Get the previous sibling:
 rect.previous()
 ```
 
+Insert an element before another:
+
+```javascript
+// inserts circle before rect
+rect.before(circle)
+```
+
+Insert an element after another:
+
+```javascript
+// inserts circle after rect
+rect.after(circle)
+```
 
 _This functionality requires the arrange.js module which is included in the default distribution._
 

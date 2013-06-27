@@ -4,7 +4,7 @@ describe('BBox', function() {
     draw.clear()
   })
   
-  it('should create a new instance without passing an element', function() {
+  it('creates a new instance without passing an element', function() {
     var box = new SVG.BBox
     expect(box.x).toBe(0)
     expect(box.y).toBe(0)
@@ -15,7 +15,7 @@ describe('BBox', function() {
   })
   
   describe('merge()', function() {
-    it('should merge various bounding boxes', function() {
+    it('merges various bounding boxes', function() {
       var box1 = draw.rect(100,100).move(50,50).bbox()
       var box2 = draw.rect(100,100).move(300,400).bbox()
       var box3 = draw.rect(100,100).move(500,100).bbox()
@@ -27,7 +27,7 @@ describe('BBox', function() {
       expect(merged.width).toBe(550)
       expect(merged.height).toBe(450)
     })
-    it('should return a new bbox instance', function() {
+    it('returns a new bbox instance', function() {
       var box1 = draw.rect(100,100).move(50,50).bbox()
       var box2 = draw.rect(100,100).move(300,400).bbox()
       var merged = box1.merge(box2)

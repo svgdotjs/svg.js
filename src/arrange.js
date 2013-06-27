@@ -8,7 +8,9 @@ SVG.extend(SVG.Element, {
   }
   // Get the curent position siblings
 , position: function() {
-    return this.siblings().indexOf(this)
+    var siblings = this.siblings()
+
+    return siblings.indexOf(this)
   }
   // Get the next element (will return null if there is none)
 , next: function() {
@@ -20,17 +22,16 @@ SVG.extend(SVG.Element, {
   }
   // Send given element one step forward
 , forward: function() {
-    return this.parent.removeElement(this).put(this, this.position() + 1)
+    var i = this.position()
+    return this.parent.removeElement(this).put(this, i + 1)
   }
   // Send given element one step backward
 , backward: function() {
-    this.parent.level()
-    
     var i = this.position()
     
-    if (i > 1)
+    if (i > 0)
       this.parent.removeElement(this).add(this, i - 1)
-    
+
     return this
   }
   // Send given element all the way to the front
@@ -39,12 +40,30 @@ SVG.extend(SVG.Element, {
   }
   // Send given element all the way to the back
 , back: function() {
-    this.parent.level()
-    
     if (this.position() > 1)
       this.parent.removeElement(this).add(this, 0)
     
     return this
   }
-  
+  // Inserts a given element before the targeted element
+, before: function(element) {
+    element.remove()
+
+    var i = this.position()
+    
+    this.parent.add(element, i)
+
+    return this
+  }
+  // Insters a given element after the targeted element
+, after: function(element) {
+    element.remove()
+    
+    var i = this.position()
+    
+    this.parent.add(element, i + 1)
+
+    return this
+  }
+
 })

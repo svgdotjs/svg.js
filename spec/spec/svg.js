@@ -13,27 +13,27 @@ describe('SVG', function() {
       wrapper.parentNode.removeChild(wrapper)
     })
     
-    it('should create a new svg canvas', function() {
+    it('creates a new svg canvas', function() {
       expect(canvas.type).toBe('svg')
     })
-    it('should create an instance of SVG.Doc', function() {
+    it('creates an instance of SVG.Doc', function() {
       expect(canvas instanceof SVG.Doc).toBe(true)
     })
   })
   
   describe('create()', function() {
-    it('should create an element with given node name and return it', function() {
+    it('creates an element with given node name and return it', function() {
       var element = SVG.create('rect')
       
       expect(element.nodeName).toBe('rect')
     })
-    it('should increase the global id sequence', function() {
+    it('increases the global id sequence', function() {
       var did = SVG.did
         , element = SVG.create('rect')
       
       expect(did + 1).toBe(SVG.did)
     })
-    it('should add a unique id containing the node name', function() {
+    it('adds a unique id containing the node name', function() {
       var did = SVG.did
         , element = SVG.create('rect')
       
@@ -42,7 +42,7 @@ describe('SVG', function() {
   })
   
   describe('extend()', function() {
-    it('should add all functions in the given object to the target object', function() {
+    it('adds all functions in the given object to the target object', function() {
       SVG.extend(SVG.Rect, {
         soft: function() {
           return this.opacity(0.2)
@@ -52,7 +52,7 @@ describe('SVG', function() {
       expect(typeof SVG.Rect.prototype.soft).toBe('function')
       expect(draw.rect(100,100).soft().attr('opacity')).toBe(0.2)
     })
-    it('should accept and extend multiple modules at once', function() {
+    it('accepts and extend multiple modules at once', function() {
       SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Path, {
         soft: function() {
           return this.opacity(0.5)
@@ -66,7 +66,7 @@ describe('SVG', function() {
       expect(typeof SVG.Path.prototype.soft).toBe('function')
       expect(draw.path().soft().attr('opacity')).toBe(0.5)
     })
-    it('should ignone non existant objects', function() {
+    it('ignones non existant objects', function() {
       SVG.extend(SVG.Rect, SVG.Bogus, {
         soft: function() {
           return this.opacity(0.3)
@@ -80,12 +80,12 @@ describe('SVG', function() {
   })
   
   describe('get()', function() {
-    it('should get an element\'s instance by id', function() {
+    it('gets an element\'s instance by id', function() {
       var rect = draw.rect(111,333)
       
       expect(SVG.get(rect.attr('id'))).toBe(rect)
     })
-    it('should make have all the element\'s methods available', function() {
+    it('makes have all the element\'s methods available', function() {
       var element = draw.group()
         , got = SVG.get(element.attr('id'))
       

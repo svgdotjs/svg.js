@@ -15,11 +15,6 @@ SVG.extend(SVG.G, {
 , y: function(y) {
     return y == null ? this.trans.y : this.transform('y', y)
   }
-  // Get defs
-, defs: function() {
-    return this.doc().defs()
-  }
-  
 })
 
 //

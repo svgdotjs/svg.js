@@ -1,15 +1,9 @@
-/* svg.js v0.20-4-gb166969 - svg regex default color number viewbox bbox rbox element container fx event group arrange defs mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.21 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
     if (SVG.supported)
       return new SVG.Doc(element)
-  }
-  
-  // DEPRECATED!!! Use SVG() instead
-  this.svg = function(element) {
-    console.warn('WARNING: svg() is deprecated, please use SVG() instead.')
-    return SVG(element)
   }
   
   // Default namespaces
@@ -915,6 +909,12 @@
         this.node.insertBefore(element.node, this.node.childNodes[i] || null)
         element.parent = this
       }
+  
+      /* reposition defs */
+      if (this._defs) {
+        this.node.removeChild(this._defs.node)
+        this.node.appendChild(this._defs.node)
+      }
       
       return this
     }
@@ -937,7 +937,7 @@
         , children = this.children()
       
       for (i = 0, il = children.length; i < il; i++) {
-        if (children[i] instanceof SVG.Shape)
+        if (children[i] instanceof SVG.Element)
           block.apply(children[i], [i, children])
   
         if (deep && (children[i] instanceof SVG.Container))
@@ -956,13 +956,9 @@
       
       return this
     }
-    // Returns defs element
+    // Get defs
   , defs: function() {
-      return this._defs || (this._defs = this.put(new SVG.Defs, 0))
-    }
-    // Re-level defs to first positon in element stack
-  , level: function() {
-      return this.removeElement(this.defs()).put(this.defs(), 0)
+      return this.doc().defs()
     }
     // Get first child, skipping the defs node
   , first: function() {
@@ -992,10 +988,8 @@
         this.removeElement(this.children()[i])
   
       /* remove defs node */
-      if (this._defs) {
-        this._defs.remove()
-        delete this._defs
-      }
+      if (this._defs)
+        this._defs.clear()
   
       return this
     }
@@ -1420,6 +1414,13 @@
     }
   })
 
+  SVG.Defs = function() {
+    this.constructor.call(this, SVG.create('defs'))
+  }
+  
+  // Inherits from SVG.Container
+  SVG.Defs.prototype = new SVG.Container
+
   SVG.G = function() {
     this.constructor.call(this, SVG.create('g'))
   }
@@ -1437,11 +1438,6 @@
   , y: function(y) {
       return y == null ? this.trans.y : this.transform('y', y)
     }
-    // Get defs
-  , defs: function() {
-      return this.doc().defs()
-    }
-    
   })
   
   //
@@ -1460,7 +1456,9 @@
     }
     // Get the curent position siblings
   , position: function() {
-      return this.siblings().indexOf(this)
+      var siblings = this.siblings()
+  
+      return siblings.indexOf(this)
     }
     // Get the next element (will return null if there is none)
   , next: function() {
@@ -1472,17 +1470,16 @@
     }
     // Send given element one step forward
   , forward: function() {
-      return this.parent.removeElement(this).put(this, this.position() + 1)
+      var i = this.position()
+      return this.parent.removeElement(this).put(this, i + 1)
     }
     // Send given element one step backward
   , backward: function() {
-      this.parent.level()
-      
       var i = this.position()
       
-      if (i > 1)
+      if (i > 0)
         this.parent.removeElement(this).add(this, i - 1)
-      
+  
       return this
     }
     // Send given element all the way to the front
@@ -1491,22 +1488,33 @@
     }
     // Send given element all the way to the back
   , back: function() {
-      this.parent.level()
-      
       if (this.position() > 1)
         this.parent.removeElement(this).add(this, 0)
       
       return this
     }
-    
-  })
-
-  SVG.Defs = function() {
-    this.constructor.call(this, SVG.create('defs'))
-  }
+    // Inserts a given element before the targeted element
+  , before: function(element) {
+      element.remove()
   
-  // Inherits from SVG.Container
-  SVG.Defs.prototype = new SVG.Container
+      var i = this.position()
+      
+      this.parent.add(element, i)
+  
+      return this
+    }
+    // Insters a given element after the targeted element
+  , after: function(element) {
+      element.remove()
+      
+      var i = this.position()
+      
+      this.parent.add(element, i + 1)
+  
+      return this
+    }
+  
+  })
 
   SVG.Mask = function() {
     this.constructor.call(this, SVG.create('mask'))
@@ -1721,11 +1729,14 @@
     this.constructor
       .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
     
-    /* set svg element attributes and create the <defs> node */
+    /* set svg element attributes */
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
       .attr('xlink', SVG.xlink, SVG.ns)
-      .defs()
+    
+    /* create the <defs> node */
+    this._defs = new SVG.Defs
+    this.node.appendChild(this._defs.node)
     
     /* ensure correct rendering */
     if (this.parent.nodeName != 'svg')
@@ -1735,7 +1746,7 @@
   // Inherits from SVG.Container
   SVG.Doc.prototype = new SVG.Container
   
-  
+  //
   SVG.extend(SVG.Doc, {
     // Hack for safari preventing text to be rendered in one line.
     // Basically it sets the position of the svg node to absolute
@@ -1783,6 +1794,11 @@
       check()
   
       return this
+    }
+  
+    // Creates and returns defs element
+  , defs: function() {
+      return this._defs
     }
   
     // Fix for possible sub-pixel offset. See:

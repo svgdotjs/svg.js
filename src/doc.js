@@ -12,11 +12,14 @@ SVG.Doc = function(element) {
   this.constructor
     .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
   
-  /* set svg element attributes and create the <defs> node */
+  /* set svg element attributes */
   this
     .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
     .attr('xlink', SVG.xlink, SVG.ns)
-    .defs()
+  
+  /* create the <defs> node */
+  this._defs = new SVG.Defs
+  this.node.appendChild(this._defs.node)
   
   /* ensure correct rendering */
   if (this.parent.nodeName != 'svg')
@@ -26,7 +29,7 @@ SVG.Doc = function(element) {
 // Inherits from SVG.Container
 SVG.Doc.prototype = new SVG.Container
 
-
+//
 SVG.extend(SVG.Doc, {
   // Hack for safari preventing text to be rendered in one line.
   // Basically it sets the position of the svg node to absolute
@@ -74,6 +77,11 @@ SVG.extend(SVG.Doc, {
     check()
 
     return this
+  }
+
+  // Creates and returns defs element
+, defs: function() {
+    return this._defs
   }
 
   // Fix for possible sub-pixel offset. See:
