@@ -226,6 +226,24 @@ text.font({
 })
 ```
 
+### Use
+The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
+
+```javascript
+var rect = draw.rect(100, 100).fill('#f09')
+var use  = draw.use(rect).move(200, 200)
+```
+
+In the case of the example above two rects will appear on the svg canvas, the original and the `use` instance. In some cases you might want to hide the original element. the best way to do this is to create the original element in the defs node:
+
+```javascript
+var rect = draw.defs().rect(100, 100).fill('#f09')
+var use  = draw.use(rect).move(200, 200)
+```
+
+In this way the rect element acts as a library element. You can edit it but it won't be rendered.
+
+
 ## Referencing elements
 If you want to get an element created by svg.js by its id, you can use the `SVG.get()` method:
 

@@ -13,6 +13,12 @@ describe('Gradient', function() {
     it('returns the id of the gradient wrapped in url()', function() {
       expect(gradient.fill()).toBe('url(#' + gradient.attr('id') + ')')
     })
+  })
+
+  describe('toString()', function() {
+    it('returns the id of the gradient wrapped in url()', function() {
+      expect(gradient + '').toBe('url(#' + gradient.attr('id') + ')')
+    })
     it('is called when instance is passed as an attribute value', function() {
       rect.attr('fill', gradient)
       expect(rect.attr('fill')).toBe('url(#' + gradient.attr('id') + ')')

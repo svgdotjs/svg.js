@@ -7,10 +7,13 @@ SVG.Use.prototype = new SVG.Element
 
 //
 SVG.extend(SVG.Use, {
-  
-  // (re)load image
-  load: function(url) {
-    return (url ? this.attr('xlink:href', (this.src = url), SVG.xlink) : this)
+  // Use element as a reference
+  element: function(element) {
+    /* store target element */
+    this.target = element
+
+    /* set lined element */
+    return this.attr('xlink:href', '#' + element, SVG.xlink)
   }
   
 })
@@ -19,10 +22,7 @@ SVG.extend(SVG.Use, {
 SVG.extend(SVG.Container, {
   // Create a use element
   use: function(element) {
-    if (element instanceof SVG.Element)
-      element = element.id
-
-    return this.put(new SVG.Use().)
+    return this.put(new SVG.Use).element(element)
   }
 
 })

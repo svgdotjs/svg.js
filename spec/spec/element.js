@@ -190,11 +190,11 @@ describe('Element', function() {
   })
   
   describe('rbox()', function() {
-    it('should return an instance of SVG.RBox', function() {
+    it('returns an instance of SVG.RBox', function() {
       var rect = draw.rect(100,100)
       expect(rect.rbox() instanceof SVG.RBox).toBe(true)
     })
-    it('should return the correct rectangular box', function() {
+    it('returns the correct rectangular box', function() {
       var rect = draw.size(200,150).viewbox(0,0,200,150).rect(105,210).move(2,12)
       var box = rect.rbox()
       expect(box.x).toBe(2)
@@ -204,7 +204,7 @@ describe('Element', function() {
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
     })
-    it('should return the correct rectangular box within a viewbox', function() {
+    it('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
       expect(box.x).toBe(1)
@@ -217,18 +217,18 @@ describe('Element', function() {
   })
   
   describe('doc()', function() {
-    it('should return the parent document', function() {
+    it('returns the parent document', function() {
       var rect = draw.rect(100,100)
       expect(rect.doc()).toBe(draw)
     })
   })
   
   describe('parent', function() {
-    it('should contain the parent svg', function() {
+    it('contains the parent svg', function() {
       var rect = draw.rect(100,100)
       expect(rect.parent).toBe(draw)
     })
-    it('should contain the parent group when in a group', function() {
+    it('contains the parent group when in a group', function() {
       var group = draw.group()
         , rect = group.rect(100,100)
       expect(rect.parent).toBe(group)
@@ -236,16 +236,27 @@ describe('Element', function() {
   })
   
   describe('clone()', function() {
-    it('should make an exact copy of the element', function() {
+    it('makes  an exact copy of the element', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
       clone = rect.clone()
       expect(rect.attr('id', null).attr()).toEqual(clone.attr('id', null).attr())
     })
-    it('should assign a new id to the cloned element', function() {
+    it('assigns  a new id to the cloned element', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
       clone = rect.clone()
       expect(rect.attr('id')).not.toEqual(clone.attr('id'))
     })
   })
+
+  describe('toString()', function() {
+    it('returns the element id', function() {
+      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+      expect(rect + '').toBe(rect.attr('id'))
+    })
+  })
   
 })
+
+
+
+

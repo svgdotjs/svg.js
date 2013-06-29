@@ -185,16 +185,21 @@ describe('Container', function() {
   })
   
   describe('clear()', function() {
-    it('should remove all children', function() {
+    it('removes all children', function() {
       draw.rect(100,100)
       draw.clear()
       expect(draw.children().length).toBe(0)
     })
-    it('should keep the defs node', function() {
+    it('keeps the defs node', function() {
       var oldDefs = draw.defs()
       draw.rect(100,100).maskWith(draw.circle(100, 100))
       draw.clear()
       expect(draw.defs()).toBe(oldDefs)
+    })
+    it('clears all children in the defs node', function() {
+      draw.rect(100,100).maskWith(draw.circle(100, 100))
+      draw.clear()
+      expect(draw.defs().children().length).toBe(0)
     })
   })
   

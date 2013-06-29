@@ -11,6 +11,10 @@ SVG.extend(SVG.Pattern, {
   fill: function() {
     return 'url(#' + this.attr('id') + ')'
   }
+  // Alias string convertion to fill
+, toString: function() {
+    return this.fill()
+  }
   
 })
 

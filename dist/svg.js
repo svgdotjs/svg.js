@@ -1,4 +1,4 @@
-/* svg.js v0.22 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.23 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient use doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -627,10 +627,6 @@
         return this.style(v)
       
       } else {
-        /* process gradient or pattern fill */
-        if (typeof v.fill === 'function')
-          v = v.fill()
-  
         /* treat x differently on text elements */
         if (a == 'x' && Array.isArray(this.lines))
           for (n = this.lines.length - 1; n >= 0; n--)
@@ -843,6 +839,10 @@
     // Is element visible?
   , visible: function() {
       return this.style('display') != 'none'
+    }
+    // Return id on string conversion
+  , toString: function() {
+      return this.attr('id')
     }
     // Private: find svg parent by instance
   , _parent: function(parent) {
@@ -1643,6 +1643,10 @@
     fill: function() {
       return 'url(#' + this.attr('id') + ')'
     }
+    // Alias string convertion to fill
+  , toString: function() {
+      return this.fill()
+    }
     
   })
   
@@ -1723,6 +1727,10 @@
   , fill: function() {
       return 'url(#' + this.attr('id') + ')'
     }
+    // Alias string convertion to fill
+  , toString: function() {
+      return this.fill()
+    }
     
   })
   
@@ -1775,6 +1783,35 @@
   })
   
 
+
+  SVG.Use = function() {
+    this.constructor.call(this, SVG.create('use'))
+  }
+  
+  // Inherit from SVG.Shape
+  SVG.Use.prototype = new SVG.Element
+  
+  //
+  SVG.extend(SVG.Use, {
+    // Use element as a reference
+    element: function(element) {
+      /* store target element */
+      this.target = element
+  
+      /* set lined element */
+      return this.attr('xlink:href', '#' + element, SVG.xlink)
+    }
+    
+  })
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Create a use element
+    use: function(element) {
+      return this.put(new SVG.Use).element(element)
+    }
+  
+  })
 
   SVG.Doc = function(element) {
     /* ensure the presence of a html element */

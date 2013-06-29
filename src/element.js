@@ -146,10 +146,6 @@ SVG.extend(SVG.Element, {
       return this.style(v)
     
     } else {
-      /* process gradient or pattern fill */
-      if (typeof v.fill === 'function')
-        v = v.fill()
-
       /* treat x differently on text elements */
       if (a == 'x' && Array.isArray(this.lines))
         for (n = this.lines.length - 1; n >= 0; n--)
@@ -362,6 +358,10 @@ SVG.extend(SVG.Element, {
   // Is element visible?
 , visible: function() {
     return this.style('display') != 'none'
+  }
+  // Return id on string conversion
+, toString: function() {
+    return this.attr('id')
   }
   // Private: find svg parent by instance
 , _parent: function(parent) {
