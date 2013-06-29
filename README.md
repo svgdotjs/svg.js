@@ -785,11 +785,25 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient })
 rect.maskWith(ellipse)
 ```
 
-For your convenience, the masking element is also referenced in the masked element. This would be useful in case you want to change, or remove the mask:
+For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:
 
 ```javascript
-rect.mask.remove()
+rect.masker.fill('#fff')
 ```
+
+Unmasking the elements can be done with the `unmask()` method:
+
+```javascript
+rect.unmask()
+```
+
+Removing the mask alltogether will also `unmask()` all masked elements:
+
+```javascript
+rect.masker.remove()
+```
+
+The `unmask()` method returns the masking element. So if you would like to remove the 
 
 _This functionality requires the mask.js module which is included in the default distribution._
 
@@ -801,6 +815,24 @@ Clipping elements is exactly the same as masking elements:
 var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
 
 rect.clipWith(ellipse)
+```
+
+Similar to masking, the clipping element can be referenced in the clipped element:
+
+```javascript
+rect.clipper.move(20,30)
+```
+
+Unclipping the elements can be done with the `unclip()` method:
+
+```javascript
+rect.unclip()
+```
+
+Removing the clipPath alltogether will also `unclip()` all clipped elements:
+
+```javascript
+rect.clipper.remove()
 ```
 
 _This functionality requires the clip.js module which is included in the default distribution._

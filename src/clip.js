@@ -1,18 +1,47 @@
 SVG.Clip = function() {
   this.constructor.call(this, SVG.create('clipPath'))
+
+  /* keep references to clipped elements */
+  this.targets = []
 }
 
 // Inherit from SVG.Container
 SVG.Clip.prototype = new SVG.Container
 
 //
+SVG.extend(SVG.Clip, {
+  // Unclip all clipped elements and remove itself
+  remove: function() {
+    /* unclip all targets */
+    for (var i = this.targets.length - 1; i >= 0; i--)
+      if (this.targets[i])
+        this.targets[i].unclip()
+    delete this.targets
+
+    /* remove clipPath from parent */
+    this.parent.removeElement(this)
+    
+    return this
+  }
+})
+
+//
 SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
     /* use given clip or create a new one */
-    this.clip = element instanceof SVG.Clip ? element : this.parent.clip().add(element)
+    this.clipper = element instanceof SVG.Clip ? element : this.parent.clip().add(element)
+
+    /* store reverence on self in mask */
+    this.clipper.targets.push(this)
     
-    return this.attr('clip-path', 'url(#' + this.clip.attr('id') + ')')
+    /* apply mask */
+    return this.attr('clip-path', 'url(#' + this.clipper.attr('id') + ')')
+  }
+  // Unclip element
+, unclip: function() {
+    delete this.clipper
+    return this.attr('clip-path', null)
   }
   
 })

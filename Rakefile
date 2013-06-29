@@ -1,4 +1,4 @@
-SVGJS_VERSION = '0.21'
+SVGJS_VERSION = '0.22'
 
 # all available modules in the correct loading order
 MODULES = %w[ svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient doc shape rect ellipse line poly path plotable image text nested sugar ]
