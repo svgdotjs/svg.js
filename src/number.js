@@ -13,7 +13,7 @@ SVG.Number = function(value) {
     case 'string':
       var match = value.match(SVG.regex.unit)
 
-      /* make valu numeric */
+      /* make value numeric */
       this.value = parseFloat(match[1])
   
       /* normalize percent value */

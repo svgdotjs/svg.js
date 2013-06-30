@@ -23,6 +23,11 @@ describe('Number', function() {
       expect(number.value).toBe(0.99)
       expect(number.unit).toBe('%')
     })
+    it('parses a negative percent value', function() {
+      number = new SVG.Number('-89%')
+      expect(number.value).toBe(-0.89)
+      expect(number.unit).toBe('%')
+    })
 
   })
 

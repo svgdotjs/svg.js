@@ -6,7 +6,7 @@ SVG.regex = {
   }
   
   /* parse unit value */
-, unit:         /^([\d\.]+)([a-z%]{0,2})$/
+, unit:         /^(-?[\d\.]+)([a-z%]{0,2})$/
   
   /* parse hex value */
 , hex:          /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
