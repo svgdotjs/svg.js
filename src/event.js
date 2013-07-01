@@ -3,19 +3,15 @@
 //     rect.click(function() {
 //       this.fill({ color: '#f06' })
 //     })
-;[ 'click'
-, 'dblclick'
-, 'mousedown'
-, 'mouseup'
-, 'mouseover'
-, 'mouseout'
-, 'mousemove'
-, 'mouseenter'
-, 'mouseleave'
-, 'touchstart'
-, 'touchend'
-, 'touchmove'
-, 'touchcancel' ].forEach(function(event) {
+;[  'click'
+  , 'dblclick'
+  , 'mousedown'
+  , 'mouseup'
+  , 'mouseover'
+  , 'mouseout'
+  , 'mousemove'
+  , 'mouseenter'
+  , 'mouseleave' ].forEach(function(event) {
   
   /* add event to SVG.Element */
   SVG.Element.prototype[event] = function(f) {

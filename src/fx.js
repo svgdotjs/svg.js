@@ -335,6 +335,7 @@ SVG.extend(SVG.FX, {
   }
   
 })
+
 //
 SVG.extend(SVG.Element, {
   // Get fx module or create a new one, then animate with given duration and ease

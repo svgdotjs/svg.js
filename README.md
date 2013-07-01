@@ -943,6 +943,51 @@ group.add(rect)
 _This functionality requires the group.js module which is included in the default distribution._
 
 
+## Sets
+Sets are very useful if you want to modify or animate multiple elements at once. A set will accept all the same methods accessible on individual elements, even the ones that you add with your own plugins! Creating a set is exactly as you would expect:
+
+```javascript
+// create some elements
+var rect = draw.rect(100,100)
+var circle = draw.circle(100).move(100,100).fill('#f09')
+
+// create a set and add the elements
+var set = draw.set()
+set.add(rect, circle)
+
+// change the fill of all elements in the set at once
+set.fill('#ff0')
+```
+
+Sets work with animations as well:
+
+```javascript
+set.animate(3000).fill('#ff0')
+```
+
+A single element can be a member of many sets. Sets also don't have a structural representation, in fact they are just fancy array's.
+
+Iterating over all members in a set is the same as with svg containers:
+
+```javascript
+set.each(function(i) {
+  this.attr('id', 'shiny_new_id_' + i)
+})
+```
+
+To remove an element from a set:
+
+```javascript
+set.remove(rect)
+```
+
+Or to remove all elements fomr a set:
+
+```javascript
+set.clear()
+```
+
+
 ## Gradients
 
 There are linear and radial gradients. The linear gradient can be created like this:
@@ -1018,25 +1063,6 @@ var s1 = gradient.get(0) // -> returns "first" stop
 [radial gradients](http://www.w3schools.com/svg/svg_grad_radial.asp) work.
 
 _This functionality requires the gradient.js module which is included in the default distribution._
-
-
-## Patterns
-
-Patterns work very much like gradients, you only have to define the tile size:
-
-```javascript
-var pattern = draw.pattern(20, 20, function(add) {
-  add.rect(10, 10).fill('#000')
-  add.rect(10, 10).move(10, 0).fill({ color: '#000', opacity: 0.5 })
-  add.rect(10, 10).move(0, 10).fill({ color: '#000', opacity: 0.5 })
-})
-
-var circle = draw.circle(200, 200).fill(pattern)
-```
-
-This will fill the circle with a checkered pattern. There is a lot more to patterns. Please refer to the [Patterns section](http://www.w3.org/TR/SVG/pservers.html#Patterns) of the SVG specification.
-
-_This functionality requires the patterns.js module which is included in the default distribution._
 
 
 ## Events
@@ -1174,6 +1200,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
 - [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
+- [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 - [svg.textflow.js](https://github.com/wout/svg.textflow.js) create auto-wrapping textflow elements.
 
@@ -1217,7 +1244,7 @@ $ rake concat[-clip:group:arrange] dist
 To build the base library only including shapes:
 
 ``` sh
-rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] dist
+rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
 ```
 
 

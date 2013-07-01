@@ -1,4 +1,4 @@
-/* svg.js v0.23-2-g578c2bd - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient use doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.24 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -43,6 +43,10 @@
       if (modules[i])
         for (key in methods)
           modules[i].prototype[key] = methods[key]
+  
+    /* make sure SVG.Set inherits any newly added methods */
+    if (SVG.Set && SVG.Set.inherit)
+      SVG.Set.inherit()
   }
   
   // Method for getting an eleemnt by id
@@ -1335,6 +1339,7 @@
     }
     
   })
+  
   //
   SVG.extend(SVG.Element, {
     // Get fx module or create a new one, then animate with given duration and ease
@@ -1357,19 +1362,15 @@
   //     })
 
 
-  ;[ 'click'
-  , 'dblclick'
-  , 'mousedown'
-  , 'mouseup'
-  , 'mouseover'
-  , 'mouseout'
-  , 'mousemove'
-  , 'mouseenter'
-  , 'mouseleave'
-  , 'touchstart'
-  , 'touchend'
-  , 'touchmove'
-  , 'touchcancel' ].forEach(function(event) {
+  ;[  'click'
+    , 'dblclick'
+    , 'mousedown'
+    , 'mouseup'
+    , 'mouseover'
+    , 'mouseout'
+    , 'mousemove'
+    , 'mouseenter'
+    , 'mouseleave' ].forEach(function(event) {
     
     /* add event to SVG.Element */
     SVG.Element.prototype[event] = function(f) {
@@ -1628,55 +1629,6 @@
     // Create clipping element
     clip: function() {
       return this.defs().put(new SVG.Clip)
-    }
-  
-  })
-
-  SVG.Pattern = function(type) {
-    this.constructor.call(this, SVG.create('pattern'))
-  }
-  
-  // Inherit from SVG.Container
-  SVG.Pattern.prototype = new SVG.Container
-  
-  //
-  SVG.extend(SVG.Pattern, {
-    // Return the fill id
-    fill: function() {
-      return 'url(#' + this.attr('id') + ')'
-    }
-    // Alias string convertion to fill
-  , toString: function() {
-      return this.fill()
-    }
-    
-  })
-  
-  //
-  SVG.extend(SVG.Defs, {
-    // Define gradient
-    pattern: function(width, height, block) {
-      var element = this.put(new SVG.Pattern)
-      
-      /* invoke passed block */
-      block(element)
-      
-      return element.attr({
-        x:            0
-      , y:            0
-      , width:        width
-      , height:       height
-      , patternUnits: 'userSpaceOnUse'
-      })
-    }
-    
-  })
-  
-  //
-  SVG.extend(SVG.Container, {
-    // Create pattern element in defs
-    pattern: function(width, height, block) {
-      return this.defs().pattern(width, height, block)
     }
   
   })
@@ -2456,6 +2408,111 @@
       
     })
   }
+  
+
+
+  SVG.Set = function() {
+    /* set initial state */
+    this.clear()
+  }
+  
+  // Set FX class
+  SVG.SetFX = function(set) {
+    /* store reference to set */
+    this.set = set
+  }
+  
+  //
+  SVG.extend(SVG.Set, {
+    // Add element to set
+    add: function(element) {
+      this.members.push(element)
+  
+      return this
+    }
+    // Remove element from set
+  , remove: function(element) {
+      var i = this.members.indexOf(element)
+      
+      /* remove given child */
+      if (i > -1)
+        this.members.splice(i, 1)
+  
+      return this
+    }
+    // Iterate over all members
+  , each: function(block) {
+      for (var i = 0, il = this.members.length; i < il; i++)
+        block.apply(this.members[i], [i, this.members])
+  
+      return this
+    }
+    // Restore to defaults
+  , clear: function() {
+      /* initialize store */
+      this.members = []
+  
+      return this
+    }
+    // Default value
+  , valueOf: function() {
+      return this.members
+    }
+  
+  })
+  
+  
+  
+  // Alias methods
+  SVG.Set.inherit = function() {
+    var m
+      , methods = []
+    
+    /* gather shape methods */
+    for(var m in SVG.Shape.prototype)
+      if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
+        methods.push(m)
+  
+    /* apply shape aliasses */
+    methods.forEach(function(method) {
+      SVG.Set.prototype[method] = function() {
+        for (var i = 0, il = this.members.length; i < il; i++)
+          if (this.members[i] && typeof this.members[i][method] == 'function')
+            this.members[i][method].apply(this.members[i], arguments)
+  
+        return method == 'animate' ? (this.fx || (this.fx = new SVG.SetFX(this))) : this
+      }
+    })
+  
+    /* clear methods for the next round */
+    methods = []
+  
+    /* gather fx methods */
+    for(var m in SVG.FX.prototype)
+      if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.SetFX.prototype[m] != 'function')
+        methods.push(m)
+  
+    /* apply fx aliasses */
+    methods.forEach(function(method) {
+      SVG.SetFX.prototype[method] = function() {
+        for (var i = 0, il = this.set.members.length; i < il; i++)
+          this.set.members[i].fx[method].apply(this.set.members[i].fx, arguments)
+  
+        return this
+      }
+    })
+  }
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Create a new set
+    set: function() {
+      return new SVG.Set
+    }
+  
+  })
+  
+  
   
 
 
