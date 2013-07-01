@@ -13,16 +13,18 @@ SVG.Number = function(value) {
     case 'string':
       var match = value.match(SVG.regex.unit)
 
-      /* make value numeric */
-      this.value = parseFloat(match[1])
-  
-      /* normalize percent value */
-      if (match[2] == '%')
-        this.value /= 100
-  
-      /* store unit */
-      this.unit = match[2]
-
+      if (match) {
+        /* make value numeric */
+        this.value = parseFloat(match[1])
+    
+        /* normalize percent value */
+        if (match[2] == '%')
+          this.value /= 100
+    
+        /* store unit */
+        this.unit = match[2]
+      }
+      
     break
     default:
       if (value instanceof SVG.Number) {

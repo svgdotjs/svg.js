@@ -1221,11 +1221,6 @@ rake concat[-fx:-event:-group:-arrange:-mask:-pattern:-gradient:-nested:-sugar] 
 ```
 
 
-## To-do
-- Instance module
-- Text on path module (write text along paths)
-
-
 ## Compatibility
 
 ### Desktop

@@ -1,4 +1,4 @@
-/* svg.js v0.23-1-ge4fb852 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient use doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
+/* svg.js v0.23-2-g578c2bd - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip pattern gradient use doc shape rect ellipse line poly path plotable image text nested sugar - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -261,16 +261,18 @@
       case 'string':
         var match = value.match(SVG.regex.unit)
   
-        /* make value numeric */
-        this.value = parseFloat(match[1])
-    
-        /* normalize percent value */
-        if (match[2] == '%')
-          this.value /= 100
-    
-        /* store unit */
-        this.unit = match[2]
-  
+        if (match) {
+          /* make value numeric */
+          this.value = parseFloat(match[1])
+      
+          /* normalize percent value */
+          if (match[2] == '%')
+            this.value /= 100
+      
+          /* store unit */
+          this.unit = match[2]
+        }
+        
       break
       default:
         if (value instanceof SVG.Number) {
