@@ -959,7 +959,7 @@ set.add(rect).add(circle)
 set.fill('#ff0')
 ```
 
-A quite useful caracteristic of sets is tha ability to accept multiple elemetns at once:
+Quite a useful caracteristic of sets is the ability to accept multiple elements at once:
 
 ```javascript
 set.add(rect, circle)

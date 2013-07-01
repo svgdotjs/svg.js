@@ -6,6 +6,7 @@ MODULES = %w[ svg regex default color number viewbox bbox rbox element container
 # how many bytes in a "kilobyte"
 KILO = 1024
 
+# define default task
 task :default => :dist
 
 # module-aware file task
