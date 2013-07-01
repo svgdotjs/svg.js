@@ -1116,9 +1116,6 @@ Obviously unbinding is practically the same:
 SVG.off(window, 'click', click)
 ```
 
-Available events are `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchend`, `touchmove` and `touchcancel`.
-
-
 ## Data
 The `data()` method allows you to bind arbitrary objects, strings and numbers to SVG elements:
 
