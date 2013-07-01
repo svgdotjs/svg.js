@@ -27,6 +27,11 @@ describe('Set', function() {
       expect(set.valueOf()).toEqual([e1,e2,e3])
       expect(set.members.length).toBe(3)
     })
+    it('accepts multiple elements at once', function() {
+      set.add(e1, e2, e3, e4, e5)
+      expect(set.valueOf()).toEqual([e1, e2, e3, e4, e5])
+      expect(set.members.length).toBe(5)
+    })
   })
 
   describe('remove()', function() {

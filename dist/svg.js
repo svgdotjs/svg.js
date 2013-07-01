@@ -1,4 +1,4 @@
-/* svg.js v0.24 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set - svgjs.com/license */
+/* svg.js v0.24-1-g4a6da20 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2425,9 +2425,12 @@
   //
   SVG.extend(SVG.Set, {
     // Add element to set
-    add: function(element) {
-      this.members.push(element)
+    add: function() {
+      var i, il, elements = [].slice.call(arguments)
   
+      for (i = 0, il = elements.length; i < il; i++)
+        this.members.push(elements[i])
+      
       return this
     }
     // Remove element from set

@@ -12,9 +12,12 @@ SVG.SetFX = function(set) {
 //
 SVG.extend(SVG.Set, {
   // Add element to set
-  add: function(element) {
-    this.members.push(element)
+  add: function() {
+    var i, il, elements = [].slice.call(arguments)
 
+    for (i = 0, il = elements.length; i < il; i++)
+      this.members.push(elements[i])
+    
     return this
   }
   // Remove element from set

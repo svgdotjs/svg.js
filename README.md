@@ -953,10 +953,16 @@ var circle = draw.circle(100).move(100,100).fill('#f09')
 
 // create a set and add the elements
 var set = draw.set()
-set.add(rect, circle)
+set.add(rect).add(circle)
 
 // change the fill of all elements in the set at once
 set.fill('#ff0')
+```
+
+A quite useful caracteristic of sets is tha ability to accept multiple elemetns at once:
+
+```javascript
+set.add(rect, circle)
 ```
 
 Sets work with animations as well:
