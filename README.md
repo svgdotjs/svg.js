@@ -987,7 +987,7 @@ To remove an element from a set:
 set.remove(rect)
 ```
 
-Or to remove all elements fomr a set:
+Or to remove all elements from a set:
 
 ```javascript
 set.clear()
