@@ -1142,6 +1142,51 @@ rect.data('key', 'value', true)
 ```
 
 
+## Memory
+
+### Remember 
+Storing data in-memory is very much like setting attributes:
+
+```javascript
+rect.remember('oldBBox', rect.bbox())
+```
+
+Multiple values can also be remembered at once:
+
+```javascript
+rect.remember({
+  oldFill:    rect.attr('fill')
+, oldStroke:  rect.attr('stroke')
+})
+```
+
+To retrieve a memory
+
+```javascript
+rect.remember('oldBBox')
+```
+
+
+### Forget
+Erasing a single memory:
+
+```javascript
+rect.forget('oldBBox')
+```
+
+Or erasing multiple memories at once:
+
+
+```javascript
+rect.forget('oldFill', 'oldStroke')
+```
+
+And finally, just erasing the whole memory:
+
+```javascript
+rect.forget()
+```
+
 
 ## Extending functionality
 Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:

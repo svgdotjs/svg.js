@@ -11,8 +11,8 @@ SVG.defaults = {
   , 'stroke-width':     0
   , 'stroke-linejoin':  'miter'
   , 'stroke-linecap':   'butt'
-  , fill:               '#000'
-  , stroke:             '#000'
+  , fill:               '#000000'
+  , stroke:             '#000000'
   , opacity:            1
     /* position */
   , x:                  0
@@ -29,7 +29,7 @@ SVG.defaults = {
     /* gradient */  
   , offset:             0
   , 'stop-opacity':     1
-  , 'stop-color':       '#000'
+  , 'stop-color':       '#000000'
   }
   
   // Default transformation values

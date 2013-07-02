@@ -1,4 +1,4 @@
-/* svg.js v0.24-1-g4a6da20 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set - svgjs.com/license */
+/* svg.js v0.25 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -113,8 +113,8 @@
     , 'stroke-width':     0
     , 'stroke-linejoin':  'miter'
     , 'stroke-linecap':   'butt'
-    , fill:               '#000'
-    , stroke:             '#000'
+    , fill:               '#000000'
+    , stroke:             '#000000'
     , opacity:            1
       /* position */
     , x:                  0
@@ -131,7 +131,7 @@
       /* gradient */  
     , offset:             0
     , 'stop-opacity':     1
-    , 'stop-color':       '#000'
+    , 'stop-color':       '#000000'
     }
     
     // Default transformation values
@@ -2518,5 +2518,40 @@
   
   
 
+
+  SVG.extend(SVG.Element, {
+     // Initialize local memory object
+    _memory: {}
+  
+    // Remember arbitrary data
+  , remember: function(k, v) {
+      /* remember every item in an object individually */
+      if (typeof arguments[0] == 'object')
+        for (var v in k)
+          this.remember(v, k[v])
+  
+      /* retrieve memory */
+      else if (arguments.length == 1)
+        return this._memory[k]
+  
+      /* store memory */
+      else
+        this._memory[k] = v
+  
+      return this
+    }
+  
+    // Erase a given memory
+  , forget: function() {
+      if (arguments.length == 0)
+        this._memory = {}
+      else
+        for (var i = arguments.length - 1; i >= 0; i--)
+          delete this._memory[arguments[i]]
+  
+      return this
+    }
+  
+  })
 
 }).call(this);
