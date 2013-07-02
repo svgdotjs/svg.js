@@ -665,7 +665,7 @@ rect.animate(3000).move(100, 100).during(function(pos, morph) {
 ```
 
 ### Controlling animations externally
-Say you want to control the position of an animation with an external event than the `to()` method will proove very useful:
+Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
 
 ```javascript
 var animate = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
