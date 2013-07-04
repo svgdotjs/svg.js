@@ -1,4 +1,4 @@
-/* svg.js v0.25 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
+/* svg.js v0.26 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -103,7 +103,7 @@
 
   SVG.defaults = {
     // Default matrix
-    matrix:       '1,0,0,1,0,0'
+    matrix:       '1 0 0 1 0 0'
     
     // Default attribute values
   , attrs: {
@@ -646,12 +646,12 @@
         
         /* ensure hex color */
         if (SVG.Color.test(v) || SVG.Color.isRgb(v))
-          v = new SVG.Color(v).toHex()
+          v = new SVG.Color(v)
   
         /* set give attribute on node */
         n != null ?
-          this.node.setAttributeNS(n, a, v) :
-          this.node.setAttribute(a, v)
+          this.node.setAttributeNS(n, a, v.toString()) :
+          this.node.setAttribute(a, v.toString())
         
         /* if the passed argument belongs in the style as well, add it there */
         if (this._isStyle(a)) {
@@ -701,11 +701,11 @@
       
       /* compile matrix */
       this.trans.matrix = this.trans.a
-                  + ',' + this.trans.b
-                  + ',' + this.trans.c
-                  + ',' + this.trans.d
-                  + ',' + this.trans.e
-                  + ',' + this.trans.f
+                  + ' ' + this.trans.b
+                  + ' ' + this.trans.c
+                  + ' ' + this.trans.d
+                  + ' ' + this.trans.e
+                  + ' ' + this.trans.f
       
       /* alias current transformations */
       o = this.trans
@@ -716,11 +716,11 @@
       
       /* add rotation */
       if (o.rotation != 0)
-        transform.push('rotate(' + o.rotation + ',' + (o.cx == null ? this.bbox().cx : o.cx) + ',' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
+        transform.push('rotate(' + o.rotation + ' ' + (o.cx == null ? this.bbox().cx : o.cx) + ' ' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
       
       /* add scale */
       if (o.scaleX != 1 || o.scaleY != 1)
-        transform.push('scale(' + o.scaleX + ',' + o.scaleY + ')')
+        transform.push('scale(' + o.scaleX + ' ' + o.scaleY + ')')
       
       /* add skew on x axis */
       if (o.skewX != 0)
@@ -732,11 +732,11 @@
       
       /* add translation */
       if (o.x != 0 || o.y != 0)
-        transform.push('translate(' + o.x / o.scaleX + ',' + o.y / o.scaleY + ')')
+        transform.push('translate(' + o.x / o.scaleX + ' ' + o.y / o.scaleY + ')')
       
       /* add offset translation */
-       if (this._offset)
-         transform.push('translate(' + (-this._offset.x) + ',' + (-this._offset.y) + ')')
+       if (this._offset && this._offset.x != 0 && this._offset.y != 0)
+         transform.push('translate(' + (-this._offset.x) + ' ' + (-this._offset.y) + ')')
       
       /* update transformations, even if there are none */
       if (transform.length == 0)
@@ -1557,7 +1557,7 @@
       this.masker.targets.push(this)
       
       /* apply mask */
-      return this.attr('mask', 'url(#' + this.masker.attr('id') + ')')
+      return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
     }
     // Unmask element
   , unmask: function() {
@@ -1614,7 +1614,7 @@
       this.clipper.targets.push(this)
       
       /* apply mask */
-      return this.attr('clip-path', 'url(#' + this.clipper.attr('id') + ')')
+      return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
     }
     // Unclip element
   , unclip: function() {
@@ -1819,7 +1819,7 @@
           element.style('position:absolute;')
           setTimeout(function() {
             /* set position back to relative */
-            element.style('position:relative;')
+            element.style('position:relative;overflow:hidden;')
   
             /* remove temporary wrapper */
             element.parent.removeChild(element.node.parentNode)

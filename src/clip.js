@@ -36,7 +36,7 @@ SVG.extend(SVG.Element, {
     this.clipper.targets.push(this)
     
     /* apply mask */
-    return this.attr('clip-path', 'url(#' + this.clipper.attr('id') + ')')
+    return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
   }
   // Unclip element
 , unclip: function() {

@@ -57,7 +57,7 @@ describe('Group', function() {
   describe('move()', function() {
     it('sets the x and y position', function() {
       group.move(123,456)
-      expect(group.node.getAttribute('transform')).toBe('translate(123,456)')
+      expect(group.node.getAttribute('transform')).toBe('translate(123 456)')
     })
   })
   

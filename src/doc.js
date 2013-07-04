@@ -53,7 +53,7 @@ SVG.extend(SVG.Doc, {
         element.style('position:absolute;')
         setTimeout(function() {
           /* set position back to relative */
-          element.style('position:relative;')
+          element.style('position:relative;overflow:hidden;')
 
           /* remove temporary wrapper */
           element.parent.removeChild(element.node.parentNode)

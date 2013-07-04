@@ -104,7 +104,7 @@ describe('Path', function() {
   describe('translate()', function() {
     it('should set the translation of an element', function() {
       path.transform({ x: 12, y: 12 })
-      expect(path.node.getAttribute('transform')).toBe('translate(12,12) translate(0,0)')
+      expect(path.node.getAttribute('transform')).toBe('translate(12 12)')
     })
   })
   

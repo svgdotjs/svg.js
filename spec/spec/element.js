@@ -57,11 +57,11 @@ describe('Element', function() {
     })
     it('gets the "style" attribute as a string', function() {
       rect.style('cursor', 'pointer')
-      expect(rect.attr('style')).toBe('cursor:pointer;')
+      expect(stripped(rect.attr('style'))).toBe('cursor:pointer;')
     })
     it('redirects to the style() method when setting a style string', function() {
       rect.attr('style', 'cursor:move;')
-      expect(rect.node.getAttribute('style')).toBe('cursor:move;')
+      expect(stripped(rect.node.getAttribute('style'))).toBe('cursor:move;')
     })
     it('should remove style attribute on node if the style is empty', function() {
       rect.style('style', '')
@@ -88,11 +88,13 @@ describe('Element', function() {
   describe('style()', function() {
     it('should set the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
-      expect(rect.node.getAttribute('style')).toBe('cursor:crosshair;')
+      expect(stripped(rect.node.getAttribute('style'))).toBe('cursor:crosshair;')
     })
     it('should set multiple styles with an object as the first argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
-      expect(rect.node.getAttribute('style')).toBe('cursor:help;display:block;')
+      expect(stripped(rect.node.getAttribute('style'))).toMatch(/cursor:help;/)
+      expect(stripped(rect.node.getAttribute('style'))).toMatch(/display:block;/)
+      expect(stripped(rect.node.getAttribute('style')).length).toBe(('display:block;cursor:help;').length)
     })
     it('should get a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
@@ -100,15 +102,17 @@ describe('Element', function() {
     })
     it('should get a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
-      expect(rect.style()).toBe('cursor:s-resize;display:none;')
+      expect(stripped(rect.style())).toMatch(/display:none;/)
+      expect(stripped(rect.style())).toMatch(/cursor:s-resize;/)
+      expect(stripped(rect.style()).length).toBe(('cursor:s-resize;display:none;').length)
     })
     it('should remove a style if the value is an empty string', function() {
       var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
-      expect(rect.style()).toBe('cursor:n-resize;')
+      expect(stripped(rect.style())).toBe('cursor:n-resize;')
     })
     it('should remove a style if the value explicitly set to null', function() {
       var rect = draw.rect(100,100).style('cursor', 'w-resize')
-      expect(rect.style()).toBe('cursor:w-resize;')
+      expect(stripped(rect.style())).toBe('cursor:w-resize;')
       rect.style('cursor', null)
       expect(rect.style()).toBe('')
     })
@@ -121,15 +125,15 @@ describe('Element', function() {
     })
     it('should set the translation of and element', function() {
       var rect = draw.rect(100,100).transform({ x: 10, y: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('translate(10,10)')
+      expect(rect.node.getAttribute('transform')).toBe('translate(10 10)')
     })
     it('should set the scaleX of and element', function() {
       var rect = draw.rect(100,100).transform({ scaleX: 0.1 })
-      expect(rect.node.getAttribute('transform')).toBe('scale(0.1,1)')
+      expect(rect.node.getAttribute('transform')).toBe('scale(0.1 1)')
     })
     it('should set the scaleY of and element', function() {
       var rect = draw.rect(100,100).transform({ scaleY: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('scale(1,10)')
+      expect(rect.node.getAttribute('transform')).toBe('scale(1 10)')
     })
     it('should set the skewX of and element', function() {
       var rect = draw.rect(100,100).transform({ skewX: 0.1 })
@@ -141,15 +145,15 @@ describe('Element', function() {
     })
     it('should rotate the element around its centre if no rotation point is given', function() {
       var rect = draw.rect(100,100).transform({ rotation: 45 })
-      expect(rect.node.getAttribute('transform')).toBe('rotate(45,50,50)')
+      expect(rect.node.getAttribute('transform')).toBe('rotate(45 50 50)')
     })
     it('should rotate the element around the given rotation point', function() {
       var rect = draw.rect(100,100).transform({ rotation: 55, cx: 80, cy:2 })
-      expect(rect.node.getAttribute('transform')).toBe('rotate(55,80,2)')
+      expect(rect.node.getAttribute('transform')).toBe('rotate(55 80 2)')
     })
     it('should transform element using a matrix', function() {
       var rect = draw.rect(100,100).transform({ a: 0.5, c: 0.5 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,0,0)')
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5 0 0.5 1 0 0)')
     })
   })
   
@@ -197,22 +201,22 @@ describe('Element', function() {
     it('returns the correct rectangular box', function() {
       var rect = draw.size(200,150).viewbox(0,0,200,150).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(box.x).toBe(2)
-      expect(box.y).toBe(12)
-      expect(box.cx).toBe(54.5)
-      expect(box.cy).toBe(117)
-      expect(box.width).toBe(105)
-      expect(box.height).toBe(210)
+      expect(approximately(box.x)).toBe(approximately(2))
+      expect(approximately(box.y)).toBe(approximately(12))
+      expect(approximately(box.cx)).toBe(approximately(54).5)
+      expect(approximately(box.cy)).toBe(approximately(117))
+      expect(approximately(box.width)).toBe(approximately(105))
+      expect(approximately(box.height)).toBe(approximately(210))
     })
     it('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(box.x).toBe(1)
-      expect(box.y).toBe(6)
-      expect(box.cx).toBe(27.25)
-      expect(box.cy).toBe(58.5)
-      expect(box.width).toBe(52.5)
-      expect(box.height).toBe(105)
+      expect(approximately(box.x)).toBe(approximately(1))
+      expect(approximately(box.y)).toBe(approximately(6))
+      expect(approximately(box.cx)).toBe(approximately(27.25))
+      expect(approximately(box.cy)).toBe(approximately(58.5))
+      expect(approximately(box.width)).toBe(approximately(52.5))
+      expect(approximately(box.height)).toBe(approximately(105))
     })
   })
   

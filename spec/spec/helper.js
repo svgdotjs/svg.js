@@ -19,3 +19,8 @@ function approximately(number, precision) {
   
   return Math.round(number / precision) * precision
 }
+
+/* strip spaces from result */
+function stripped(string) {
+  return string.replace(/\s+/g, '')
+}

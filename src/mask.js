@@ -36,7 +36,7 @@ SVG.extend(SVG.Element, {
     this.masker.targets.push(this)
     
     /* apply mask */
-    return this.attr('mask', 'url(#' + this.masker.attr('id') + ')')
+    return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
   }
   // Unmask element
 , unmask: function() {

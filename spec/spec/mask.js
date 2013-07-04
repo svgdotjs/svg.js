@@ -20,7 +20,7 @@ describe('Mask', function() {
   })
 
   it('sets the "mask" attribute on the masked element with the mask id', function() {
-    expect(rect.attr('mask')).toBe('url(#' + circle.parent.attr('id') + ')')
+    expect(rect.attr('mask')).toBe('url("#' + circle.parent.attr('id') + '")')
   })
 
   it('references the mask element in the masked element', function() {

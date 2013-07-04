@@ -97,7 +97,7 @@ describe('Ellipse', function() {
   describe('translate()', function() {
     it('should set the translation of an element', function() {
       ellipse.transform({ x: 12, y: 12 })
-      expect(ellipse.node.getAttribute('transform')).toBe('translate(12,12)')
+      expect(ellipse.node.getAttribute('transform')).toBe('translate(12 12)')
     })
   })
   

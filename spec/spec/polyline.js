@@ -98,7 +98,7 @@ describe('Polyline', function() {
   describe('translate()', function() {
     it('should set the translation of an element', function() {
       polyline.transform({ x: 12, y: 12 })
-      expect(polyline.node.getAttribute('transform')).toBe('translate(12,12) translate(0,0)')
+      expect(polyline.node.getAttribute('transform')).toBe('translate(12 12)')
     })
   })
   
