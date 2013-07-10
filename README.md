@@ -1245,6 +1245,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
 - [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 - [svg.export.js](https://github.com/wout/svg.export.js) export raw SVG.
+- [svg.foreignobject.js](https://github.com/john-memloom/svg.foreignobject.js) foreignObject implementation (by john-memloom).
 - [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 - [svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
 - [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
