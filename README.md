@@ -871,7 +871,7 @@ Move element to the back:
 rect.back()
 ```
 
-Note that `back()` will move the element to position 1, not 0, because the `<defs>` node is already located at position 0.
+Note that `back()` will move the element to position 0.
 
 Move element one step forward:
 
