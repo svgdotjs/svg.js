@@ -1,4 +1,4 @@
-/* svg.js v0.26 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
+/* svg.js v0.26-2-gbd56387 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1491,7 +1491,7 @@
     }
     // Send given element all the way to the back
   , back: function() {
-      if (this.position() > 1)
+      if (this.position() > 0)
         this.parent.removeElement(this).add(this, 0)
       
       return this

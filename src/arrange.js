@@ -40,7 +40,7 @@ SVG.extend(SVG.Element, {
   }
   // Send given element all the way to the back
 , back: function() {
-    if (this.position() > 1)
+    if (this.position() > 0)
       this.parent.removeElement(this).add(this, 0)
     
     return this
