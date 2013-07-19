@@ -1,4 +1,4 @@
-/* svg.js v0.26-2-gbd56387 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
+/* svg.js v0.26-4-g66271de - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {

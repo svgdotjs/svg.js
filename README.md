@@ -1252,6 +1252,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 - [svg.textflow.js](https://github.com/wout/svg.textflow.js) create auto-wrapping textflow elements.
+- [svg.textPath.js](https://github.com/mistic100/svg.textPath.js) provides textPath support (by mistic100).
 
 
 ## Building
