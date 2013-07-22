@@ -13,7 +13,7 @@ SVG.extend(SVG.Use, {
     this.target = element
 
     /* set lined element */
-    return this.attr('xlink:href', '#' + element, SVG.xlink)
+    return this.attr('href', '#' + element, SVG.xlink)
   }
   
 })

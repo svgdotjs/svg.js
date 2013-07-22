@@ -1,7 +1,7 @@
 SVG.Path = function(unbiased) {
   this.constructor.call(this, SVG.create('path'))
   
-  this.unbiased = unbiased
+  this.unbiased = !!unbiased
 }
 
 // Inherit from SVG.Shape

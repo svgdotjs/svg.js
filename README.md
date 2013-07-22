@@ -25,7 +25,7 @@ This will generate the following output:
 
 ```html
 <div id="canvas">
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink" width="300" height="300">
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300">
 		<rect width="100" height="100" fill="#f06"></rect>
 	</svg>
 </div>
@@ -205,18 +205,25 @@ var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
 
 ### Text
 The first argument of a text element is the actual text content:
+
 ```javascript
 var text = draw.text("svg\nto\nthe\npoint.").move(300, 0)
 ```
+
 Changing text afterwards is also possible with the `text()` method:
+
 ```javascript
 text.text('Brilliant!')
 ```
+
 To get the raw text content:
+
 ```javascript
 text.content
 ```
+
 The sugar.js module provides some syntax sugar specifically for this element type:
+
 ```javascript
 text.font({
   family:   'Helvetica'
@@ -225,6 +232,33 @@ text.font({
 , leading:  1.5
 })
 ```
+
+### TextPath
+A nice feature in svg is the ability to run text along a path:
+
+```javascript
+var text = draw.text('We go up, then we go down, then up again').font({ size: 40 })
+text.path('M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
+```
+
+When calling the `path()` method on a text element, the text element is mutated into an intermediate between a text and a path element. From that point on the text element will also feature a `plot()` method to update the path:
+
+```javascript
+text.plot('M 300 500 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
+```
+
+Attributes specific to the `<textPath>` element can be applied to the textPath instance itself:
+
+```javascript
+text.textPath.attr('startOffset', 0.5)
+```
+
+And they can be animated as well of course:
+
+```javascript
+text.textPath.animate(3000).attr('startOffset', 0.8)
+```
+
 
 ### Use
 The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
@@ -1252,7 +1286,6 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 - [svg.textflow.js](https://github.com/wout/svg.textflow.js) create auto-wrapping textflow elements.
-- [svg.textPath.js](https://github.com/mistic100/svg.textPath.js) provides textPath support (by mistic100).
 
 
 ## Building

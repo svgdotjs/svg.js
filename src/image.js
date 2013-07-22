@@ -10,7 +10,7 @@ SVG.extend(SVG.Image, {
   
   // (re)load image
   load: function(url) {
-    return (url ? this.attr('xlink:href', (this.src = url), SVG.xlink) : this)
+    return (url ? this.attr('href', (this.src = url), SVG.xlink) : this)
   }
   
 })

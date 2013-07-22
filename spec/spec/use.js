@@ -11,7 +11,7 @@ describe('Use', function() {
   })
 
   it('sets the target element id to its href attribute', function() {
-    expect(use.attr('xlink:href')).toBe('#' + rect)
+    expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe('#' + rect)
   })
 
   it('stores a reference to the target element', function() {

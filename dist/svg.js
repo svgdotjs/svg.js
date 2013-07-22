@@ -1,4 +1,4 @@
-/* svg.js v0.26-4-g66271de - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text nested sugar set memory - svgjs.com/license */
+/* svg.js v0.27 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1753,7 +1753,7 @@
       this.target = element
   
       /* set lined element */
-      return this.attr('xlink:href', '#' + element, SVG.xlink)
+      return this.attr('href', '#' + element, SVG.xlink)
     }
     
   })
@@ -2056,7 +2056,7 @@
   SVG.Path = function(unbiased) {
     this.constructor.call(this, SVG.create('path'))
     
-    this.unbiased = unbiased
+    this.unbiased = !!unbiased
   }
   
   // Inherit from SVG.Shape
@@ -2133,7 +2133,7 @@
     
     // (re)load image
     load: function(url) {
-      return (url ? this.attr('xlink:href', (this.src = url), SVG.xlink) : this)
+      return (url ? this.attr('href', (this.src = url), SVG.xlink) : this)
     }
     
   })
@@ -2298,6 +2298,64 @@
       return this
     }
     
+  })
+
+  SVG.TextPath = function() {
+    this.constructor.call(this, SVG.create('textPath'))
+  }
+  
+  // Inherit from SVG.Element
+  SVG.TextPath.prototype = new SVG.Path
+  
+  //
+  SVG.extend(SVG.TextPath, {
+    text: function(text) {
+      /* remove children */
+      while (this.node.firstChild)
+        this.node.removeChild(this.node.firstChild)
+  
+      /* add text */
+      this.node.appendChild(document.createTextNode(text))
+  
+      return this.parent
+    }
+  })
+  
+  //
+  SVG.extend(SVG.Text, {
+    // Create path for text to run on
+    path: function(d) {
+      /* create textPath element */
+      this.textPath = new SVG.TextPath
+  
+      /* remove all child nodes */
+      while (this.node.firstChild)
+        this.node.removeChild(this.node.firstChild)
+  
+      /* add textPath element as child node */
+      this.node.appendChild(this.textPath.node)
+  
+      /* create path in defs */
+      this.track = this.doc().defs().path(d, true)
+  
+      /* create circular reference */
+      this.textPath.parent = this
+  
+      /* alias local text() method to textPath's text() method  */
+      this.text = function(text) {
+        return this.textPath.text(text)
+      }
+  
+      /* alias plot() method on track */
+      this.plot = function(d) {
+        this.track.plot(d)
+        return this
+      }
+  
+      /* link textPath to path and add content */
+      return this.textPath.attr('href', '#' + this.track, SVG.xlink).text(this.content)
+    }
+  
   })
 
   SVG.Nested = function() {
