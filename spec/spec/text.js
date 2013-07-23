@@ -82,7 +82,7 @@ describe('Text', function() {
   describe('move()', function() {
     it('should set the x and y position', function() {
       text.move(123,456)
-      expect(text.lines[0].node.getAttribute('x')).toBe('123')
+      expect(text.node.getAttribute('x')).toBe('123')
       expect(text.node.getAttribute('y')).toBe('456')
     })
   })

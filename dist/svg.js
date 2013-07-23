@@ -1,4 +1,4 @@
-/* svg.js v0.27 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
+/* svg.js v0.28 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -290,7 +290,7 @@
   SVG.extend(SVG.Number, {
     // Stringalize
     toString: function() {
-      return (this.unit == '%' ? ~~(this.value * 100) : this.value) + this.unit
+      return (this.unit == '%' ? this.value * 100 : this.value) + this.unit
     }
   , // Convert to primitive
     valueOf: function() {
@@ -2160,8 +2160,8 @@
     , 'text-anchor':  'start'
     }
     
-    this._leading = 1.2
-    this._base = 0.276666666
+    this._leading = new SVG.Number('1.2em')
+    this._rebuild = true
   }
   
   // Inherit from SVG.Element
@@ -2172,14 +2172,19 @@
     // Move over x-axis
     x: function(x, a) {
       /* act as getter */
-      if (x == null) return a ? this.attr('x') : this.bbox().x
+      if (x == null)
+        return a ? this.attr('x') : this.bbox().x
       
       /* set x taking anchor in mind */
       if (!a) {
         a = this.style('text-anchor')
         x = a == 'start' ? x : a == 'end' ? x + this.bbox().width : x + this.bbox().width / 2
       }
-      
+  
+      /* move lines as well if no textPath si present */
+      if (!this.textPath)
+        this.lines.each(function() { if (this.newLined) this.x(x) })
+  
       return this.attr('x', x)
     }
     // Move center over x-axis
@@ -2207,27 +2212,50 @@
       /* remove existing lines */
       this.clear()
       
-      /* update the content */
-      this.content = SVG.regex.isBlank.test(text) ? 'text' : text
-      
-      var i, il
-        , lines = text.split('\n')
-      
-      /* build new lines */
-      for (i = 0, il = lines.length; i < il; i++)
-        this.tspan(lines[i])
+      if (typeof text === 'function') {
+        this._rebuild = false
+  
+        text(this)
+  
+      } else {
+        this._rebuild = true
+  
+        /* make sure text is not blank */
+        text = SVG.regex.isBlank.test(text) ? 'text' : text
         
-      return this.attr('textLength', 1).attr('textLength', null)
+        var i, il
+          , lines = text.split('\n')
+        
+        /* build new lines */
+        for (i = 0, il = lines.length; i < il; i++)
+          this.tspan(lines[i]).newLine()
+  
+        this.rebuild()
+      }
+      
+      return this
     }
     // Create a tspan
   , tspan: function(text) {
-      var tspan = new SVG.TSpan().text(text)
+      var node  = this.textPath ? this.textPath.node : this.node
+        , tspan = new SVG.TSpan().text(text)
+        , style = this.style()
       
       /* add new tspan */
-      this.node.appendChild(tspan.node)
-      this.lines.push(tspan)
-      
-      return tspan.attr('style', this.style())
+      node.appendChild(tspan.node)
+      this.lines.add(tspan)
+  
+      /* add style if any */
+      if (!SVG.regex.isBlank.test(style))
+        tspan.style(style)
+  
+      /* store content */
+      this.content += text
+  
+      /* store text parent */
+      tspan.parent = this
+  
+      return tspan
     }
     // Set font size
   , size: function(size) {
@@ -2240,33 +2268,47 @@
         return this._leading
       
       /* act as setter */
+      value = new SVG.Number(value)
       this._leading = value
       
-      return this.rebuild('leading', value)
+      /* apply leading */
+      this.lines.each(function() {
+        if (this.newLined)
+          this.attr('dy', value)
+      })
+  
+      return this
     }
     // rebuild appearance type
   , rebuild: function() {
-      var i, il
-        , size = this.styles['font-size']
-      
+      var self = this
+  
       /* define position of all lines */
-      for (i = 0, il = this.lines.length; i < il; i++)
-        this.lines[i].attr({
-          dy: size * this._leading - (i == 0 ? size * this._base : 0)
-        , x: (this.attr('x') || 0)
-        , style: this.style()
+      if (this._rebuild) {
+        this.lines.attr({
+          x:      this.attr('x')
+        , dy:     this._leading
+        , style:  this.style()
         })
-      
+      }
+  
       return this
     }
     // Clear all lines
   , clear: function() {
+      var node = this.textPath ? this.textPath.node : this.node
+  
       /* remove existing child nodes */
-      while (this.node.hasChildNodes())
-        this.node.removeChild(this.node.lastChild)
+      while (node.hasChildNodes())
+        node.removeChild(node.lastChild)
       
-      this.lines = []
+      /* refresh lines */
+      delete this.lines
+      this.lines = new SVG.Set
       
+      /* initialize content */
+      this.content = ''
+  
       return this
     }
     
@@ -2276,9 +2318,9 @@
   SVG.extend(SVG.Container, {
     // Create text element
     text: function(text) {
-      return this.put(new SVG.Text().text(text))
+      return this.put(new SVG.Text).text(text)
     }
-  
+    
   })
   
   // tspan class
@@ -2297,29 +2339,31 @@
       
       return this
     }
-    
+    // Shortcut dx
+  , dx: function(dx) {
+      return this.attr('dx', dx)
+    }
+    // Shortcut dy
+  , dy: function(dy) {
+      return this.attr('dy', dy)
+    }
+    // Create new line
+  , newLine: function() {
+      this.newLined = true
+      this.parent.content += '\n'
+      this.dy(this.parent._leading)
+      return this.attr('x', this.parent.x())
+    }
+  
   })
+
 
   SVG.TextPath = function() {
     this.constructor.call(this, SVG.create('textPath'))
   }
   
   // Inherit from SVG.Element
-  SVG.TextPath.prototype = new SVG.Path
-  
-  //
-  SVG.extend(SVG.TextPath, {
-    text: function(text) {
-      /* remove children */
-      while (this.node.firstChild)
-        this.node.removeChild(this.node.firstChild)
-  
-      /* add text */
-      this.node.appendChild(document.createTextNode(text))
-  
-      return this.parent
-    }
-  })
+  SVG.TextPath.prototype = new SVG.Element
   
   //
   SVG.extend(SVG.Text, {
@@ -2328,9 +2372,9 @@
       /* create textPath element */
       this.textPath = new SVG.TextPath
   
-      /* remove all child nodes */
-      while (this.node.firstChild)
-        this.node.removeChild(this.node.firstChild)
+      /* move lines to textpath */
+      while(this.node.hasChildNodes())
+        this.textPath.node.appendChild(this.node.firstChild)
   
       /* add textPath element as child node */
       this.node.appendChild(this.textPath.node)
@@ -2341,19 +2385,15 @@
       /* create circular reference */
       this.textPath.parent = this
   
-      /* alias local text() method to textPath's text() method  */
-      this.text = function(text) {
-        return this.textPath.text(text)
-      }
-  
-      /* alias plot() method on track */
-      this.plot = function(d) {
-        this.track.plot(d)
-        return this
-      }
-  
       /* link textPath to path and add content */
-      return this.textPath.attr('href', '#' + this.track, SVG.xlink).text(this.content)
+      this.textPath.attr('href', '#' + this.track, SVG.xlink)
+  
+      return this
+    }
+    // Plot path if any
+  , plot: function(d) {
+      if (this.track) this.track.plot(d)
+      return this
     }
   
   })

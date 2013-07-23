@@ -38,7 +38,7 @@ SVG.Number = function(value) {
 SVG.extend(SVG.Number, {
   // Stringalize
   toString: function() {
-    return (this.unit == '%' ? ~~(this.value * 100) : this.value) + this.unit
+    return (this.unit == '%' ? this.value * 100 : this.value) + this.unit
   }
 , // Convert to primitive
   valueOf: function() {

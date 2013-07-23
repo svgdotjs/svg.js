@@ -24,11 +24,6 @@ describe('TextPath', function() {
 		it('stores a reference to the textPath', function() {
 			expect(text.path(data).textPath instanceof SVG.TextPath).toBe(true)
 		})
-		it('creates a plot() method on the text object', function() {
-			expect(typeof text.plot).toBe('undefined')
-			text.path(data)
-			expect(typeof text.plot).toBe('function')
-		})
 	})
 
 })

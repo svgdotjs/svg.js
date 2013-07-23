@@ -204,10 +204,27 @@ var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
 
 
 ### Text
-The first argument of a text element is the actual text content:
+Unlike html, text in svg is much harder to tame. There is no way to create flowing text, so newlines should be entered manually. In svg.js there are two ways to create text elements.
+
+The first and easiest method is to provide a string of text, split by newlines:
 
 ```javascript
-var text = draw.text("svg\nto\nthe\npoint.").move(300, 0)
+var text = draw.text("Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor.")
+```
+
+This will automatically create a block of text and insert newlines where necessary.
+
+The second method will give you much more control but requires a bit more code:
+
+```javascript
+var text = draw.text(function(add) {
+  add.tspan('Lorem ipsum dolor sit amet ').newLine()
+  add.tspan('consectetur').fill('#f06')
+  add.tspan('.')
+  add.tspan('Cras sodales imperdiet auctor.').newLine().dx(20)
+  add.tspan('Nunc ultrices lectus at erat').newLine()
+  add.tspan('dictum pharetra elementum ante').newLine()
+})
 ```
 
 Changing text afterwards is also possible with the `text()` method:
@@ -237,8 +254,14 @@ text.font({
 A nice feature in svg is the ability to run text along a path:
 
 ```javascript
-var text = draw.text('We go up, then we go down, then up again').font({ size: 40 })
-text.path('M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
+var text = draw.text(function(add) {
+  add.tspan('We go ')
+  add.tspan('up').fill('#f09').dy(-40)
+  add.tspan(', then we go down, then up again').dy(40)
+})
+text
+  .path('M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
+  .font({ size: 42.5, family: 'Verdana' })
 ```
 
 When calling the `path()` method on a text element, the text element is mutated into an intermediate between a text and a path element. From that point on the text element will also feature a `plot()` method to update the path:
