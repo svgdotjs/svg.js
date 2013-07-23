@@ -246,7 +246,7 @@ text.font({
   family:   'Helvetica'
 , size:     144
 , anchor:   'middle'
-, leading:  1.5
+, leading:  '1.5em'
 })
 ```
 
