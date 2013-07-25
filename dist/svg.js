@@ -1,4 +1,4 @@
-/* svg.js v0.28 - svg regex default color number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
+/* svg.js v0.29 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -251,6 +251,38 @@
     return color && typeof color.r == 'number'
   }
 
+  SVG.Array = function(array, fallback) {
+  	this.value = array || []
+  
+  	if (this.value.length == 0 && fallback)
+  		this.value = fallback
+  }
+  
+  SVG.extend(SVG.Array, {
+    // Convert array to string
+    toString: function() {
+      var array = []
+  
+      /* detect array type */
+      if (Array.isArray(this.value[0])) {
+      	/* it is a poly point string */
+      	for (var i = 0, il = this.value.length; i < il; i++)
+      		array.push(this.value[i].join(','))
+  	    
+      } else {
+      	/* it's a regular array */
+      	array = this.value
+      }
+  
+      return array.join(' ')
+    }
+    // Real value
+  , valueOf: function() {
+  		return this.value
+  	}
+  
+  })
+
   SVG.Number = function(value) {
   
     /* initialize defaults */
@@ -290,7 +322,7 @@
   SVG.extend(SVG.Number, {
     // Stringalize
     toString: function() {
-      return (this.unit == '%' ? this.value * 100 : this.value) + this.unit
+      return (this.unit == '%' ? ~~(this.value * 1e8) / 1e6 : this.value) + this.unit
     }
   , // Convert to primitive
     valueOf: function() {
@@ -644,9 +676,13 @@
         else if (a == 'stroke')
           this._stroke = v
         
-        /* ensure hex color */
+        /* ensure full hex color */
         if (SVG.Color.test(v) || SVG.Color.isRgb(v))
           v = new SVG.Color(v)
+  
+        /* parse array values */
+        else if (Array.isArray(v))
+          v = new SVG.Array(v)
   
         /* set give attribute on node */
         n != null ?
@@ -985,7 +1021,7 @@
         [v.x, v.y, v.width, v.height] :
         [].slice.call(arguments)
       
-      return this.attr('viewBox', v.join(' '))
+      return this.attr('viewBox', v)
     }
     // Remove all elements in this container
   , clear: function() {
@@ -2027,16 +2063,10 @@
   SVG.extend(SVG.Polyline, SVG.Polygon, {
     // Private: Native plot
     _plot: function(p) {
-      if (Array.isArray(p)) {
-        var i, l, points = []
-  
-        for (i = 0, l = p.length; i < l; i++)
-          points.push(p[i].join(','))
-        
-        p = points.length > 0 ? points.join(' ') : '0,0'
-      }
+      if (Array.isArray(p))
+        p = new SVG.Array(p, [[0,0]])
       
-      return this.attr('points', p || '0,0')
+      return this.attr('points', p)
     }
     
   })

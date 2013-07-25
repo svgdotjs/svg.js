@@ -20,16 +20,10 @@ SVG.Polygon.prototype = new SVG.Shape
 SVG.extend(SVG.Polyline, SVG.Polygon, {
   // Private: Native plot
   _plot: function(p) {
-    if (Array.isArray(p)) {
-      var i, l, points = []
-
-      for (i = 0, l = p.length; i < l; i++)
-        points.push(p[i].join(','))
-      
-      p = points.length > 0 ? points.join(' ') : '0,0'
-    }
+    if (Array.isArray(p))
+      p = new SVG.Array(p, [[0,0]])
     
-    return this.attr('points', p || '0,0')
+    return this.attr('points', p)
   }
   
 })

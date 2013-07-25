@@ -157,9 +157,13 @@ SVG.extend(SVG.Element, {
       else if (a == 'stroke')
         this._stroke = v
       
-      /* ensure hex color */
+      /* ensure full hex color */
       if (SVG.Color.test(v) || SVG.Color.isRgb(v))
         v = new SVG.Color(v)
+
+      /* parse array values */
+      else if (Array.isArray(v))
+        v = new SVG.Array(v)
 
       /* set give attribute on node */
       n != null ?

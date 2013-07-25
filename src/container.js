@@ -98,7 +98,7 @@ SVG.extend(SVG.Container, {
       [v.x, v.y, v.width, v.height] :
       [].slice.call(arguments)
     
-    return this.attr('viewBox', v.join(' '))
+    return this.attr('viewBox', v)
   }
   // Remove all elements in this container
 , clear: function() {
