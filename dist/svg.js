@@ -1,4 +1,4 @@
-/* svg.js v0.29 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
+/* svg.js v0.26-10-g0685d55 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -767,8 +767,15 @@
         transform.push('skewY(' + o.skewY + ')')
       
       /* add translation */
-      if (o.x != 0 || o.y != 0)
-        transform.push('translate(' + o.x / o.scaleX + ' ' + o.y / o.scaleY + ')')
+      if (o.x != 0 || o.y != 0) {
+            var x = o.x / o.scaleX;
+            var y = o.y / o.scaleY;
+  
+            x = ( isFinite(x) && !isNaN(x)) ? x : 0
+            y = ( isFinite(y) && !isNaN(y)) ? y : 0
+  
+            transform.push('translate(' + x + ' ' + y + ')')
+        }
       
       /* add offset translation */
        if (this._offset && this._offset.x != 0 && this._offset.y != 0)
@@ -2681,5 +2688,10 @@
     }
   
   })
+
+
+  if (define !== undefined && define !== null && typeof define === 'function') define(function(){
+      return SVG;
+  });
 
 }).call(this);
