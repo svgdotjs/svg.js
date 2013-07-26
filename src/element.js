@@ -161,6 +161,10 @@ SVG.extend(SVG.Element, {
       if (SVG.Color.test(v) || SVG.Color.isRgb(v))
         v = new SVG.Color(v)
 
+      /* ensure correct numeric values */
+      else if (typeof v === 'number')
+        v = new SVG.Number(v)
+
       /* parse array values */
       else if (Array.isArray(v))
         v = new SVG.Array(v)
@@ -249,7 +253,7 @@ SVG.extend(SVG.Element, {
     
     /* add translation */
     if (o.x != 0 || o.y != 0)
-      transform.push('translate(' + o.x / o.scaleX + ' ' + o.y / o.scaleY + ')')
+      transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
     
     /* add offset translation */
      if (this._offset && this._offset.x != 0 && this._offset.y != 0)

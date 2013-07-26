@@ -1,4 +1,4 @@
-/* svg.js v0.29 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory - svgjs.com/license */
+/* svg.js v0.30 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -292,7 +292,8 @@
     /* parse value */
     switch(typeof value) {
       case 'number':
-        this.value = value
+        /* ensure a valid numeric value */
+        this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? Number.MIN_VALUE : Number.MAX_VALUE) : value
       break
       case 'string':
         var match = value.match(SVG.regex.unit)
@@ -465,8 +466,6 @@
     }
   
   })
-  
-
 
   SVG.RBox = function(element) {
     var e, zoom
@@ -680,6 +679,10 @@
         if (SVG.Color.test(v) || SVG.Color.isRgb(v))
           v = new SVG.Color(v)
   
+        /* ensure correct numeric values */
+        else if (typeof v === 'number')
+          v = new SVG.Number(v)
+  
         /* parse array values */
         else if (Array.isArray(v))
           v = new SVG.Array(v)
@@ -768,7 +771,7 @@
       
       /* add translation */
       if (o.x != 0 || o.y != 0)
-        transform.push('translate(' + o.x / o.scaleX + ' ' + o.y / o.scaleY + ')')
+        transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
       
       /* add offset translation */
        if (this._offset && this._offset.x != 0 && this._offset.y != 0)
@@ -1898,7 +1901,6 @@
     
   })
 
-
   SVG.Shape = function(element) {
     this.constructor.call(this, element)
   }
@@ -2681,5 +2683,10 @@
     }
   
   })
+
+  if (typeof define === 'function' && define.amd)
+    define(function() { return SVG })
+  else if (typeof exports !== 'undefined')
+    exports.SVG = SVG
 
 }).call(this);

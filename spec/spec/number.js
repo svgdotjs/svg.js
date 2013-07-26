@@ -28,6 +28,18 @@ describe('Number', function() {
       expect(number.value).toBe(-0.89)
       expect(number.unit).toBe('%')
     })
+    it('falls back to 0 if given value is NaN', function() {
+      number = new SVG.Number(NaN)
+      expect(number.value).toBe(0)
+    })
+    it('falls back to maximum value if given number is positive infinite', function() {
+      number = new SVG.Number(1.7976931348623157E+10308)
+      expect(number.value).toBe(Number.MAX_VALUE)
+    })
+    it('falls back to minimum value if given number is negative infinite', function() {
+      number = new SVG.Number(-1.7976931348623157E+10308)
+      expect(number.value).toBe(Number.MIN_VALUE)
+    })
 
   })
 

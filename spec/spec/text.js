@@ -99,7 +99,7 @@ describe('Text', function() {
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       text.size(50)
-      expect(text.style('font-size')).toBe(50)
+      expect(text.style('font-size').valueOf()).toBe(50)
     })
   })
 

@@ -8,7 +8,8 @@ SVG.Number = function(value) {
   /* parse value */
   switch(typeof value) {
     case 'number':
-      this.value = value
+      /* ensure a valid numeric value */
+      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? Number.MIN_VALUE : Number.MAX_VALUE) : value
     break
     case 'string':
       var match = value.match(SVG.regex.unit)

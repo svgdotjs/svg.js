@@ -58,4 +58,3 @@ SVG.extend(SVG.BBox, {
   }
 
 })
-
