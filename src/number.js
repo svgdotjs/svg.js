@@ -9,7 +9,7 @@ SVG.Number = function(value) {
   switch(typeof value) {
     case 'number':
       /* ensure a valid numeric value */
-      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? Number.MIN_VALUE : Number.MAX_VALUE) : value
+      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
     break
     case 'string':
       var match = value.match(SVG.regex.unit)
