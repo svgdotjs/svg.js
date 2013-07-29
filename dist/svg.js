@@ -1,4 +1,4 @@
-/* svg.js v0.30 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.26-12-ga75a660 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -293,7 +293,7 @@
     switch(typeof value) {
       case 'number':
         /* ensure a valid numeric value */
-        this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? Number.MIN_VALUE : Number.MAX_VALUE) : value
+        this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
       break
       case 'string':
         var match = value.match(SVG.regex.unit)

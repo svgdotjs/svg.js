@@ -33,12 +33,12 @@ describe('Number', function() {
       expect(number.value).toBe(0)
     })
     it('falls back to maximum value if given number is positive infinite', function() {
-      number = new SVG.Number(1.7976931348623157E+10308)
-      expect(number.value).toBe(Number.MAX_VALUE)
+      number = new SVG.Number(Number.POSITIVE_INFINITY)
+      expect(number.value).toBe(3.4E+38)
     })
     it('falls back to minimum value if given number is negative infinite', function() {
-      number = new SVG.Number(-1.7976931348623157E+10308)
-      expect(number.value).toBe(Number.MIN_VALUE)
+      number = new SVG.Number(Number.NEGATIVE_INFINITY)
+      expect(number.value).toBe(-3.4E+38)
     })
 
   })
