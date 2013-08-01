@@ -1,5 +1,5 @@
 
-SVG.extend(SVG.Polyline, SVG.Polygon, SVG.Path, {
+SVG.extend(SVG.Path, {
   // Move over x-axis
   x: function(x) {
     return x == null ? this.bbox().x : this.transform('x', x)

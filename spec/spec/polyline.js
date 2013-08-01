@@ -82,16 +82,18 @@ describe('Polyline', function() {
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box = polyline.scale(2).bbox()
+      var box1 = polyline.bbox()
+        , box2 = polyline.scale(2).bbox()
       
-      expect(box.width).toBe(polyline._offset.width * 2)
-      expect(box.height).toBe(polyline._offset.height * 2)
+      expect(box2.width).toBe(box1.width * 2)
+      expect(box2.height).toBe(box1.height * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box = polyline.scale(2, 3.5).bbox()
+      var box1 = polyline.bbox()
+        , box2 = polyline.scale(2, 3.5).bbox()
       
-      expect(box.width).toBe(polyline._offset.width * 2)
-      expect(box.height).toBe(polyline._offset.height * 3.5)
+      expect(box2.width).toBe(box1.width * 2)
+      expect(box2.height).toBe(box1.height * 3.5)
     })
   })
 

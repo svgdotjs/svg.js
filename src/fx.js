@@ -34,6 +34,34 @@ SVG.extend(SVG.FX, {
         akeys = []
         for (key in fx.attrs)
           akeys.push(key)
+
+        /* make sure morphable elements are scaled, translated and morphed all together */
+        if (element.morphArray) {
+          /* get destination */
+          var box
+            , p = new element.morphArray(fx._plot || element.points.toString())
+
+          /* add size */
+          if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
+
+          /* add movement */
+          box = p.bbox()
+          if (fx._x) p.move(fx._x.to, box.y)
+          else if (fx._cx) p.move(fx._cx.to - box.width / 2, box.y)
+
+          box = p.bbox()
+          if (fx._y) p.move(box.x, fx._y.to)
+          else if (fx._cy) p.move(box.x, fx._cy.to - box.height / 2)
+
+          /* delete element oriented changes */
+          delete fx._x
+          delete fx._y
+          delete fx._cx
+          delete fx._cy
+          delete fx._size
+
+          fx._plot = element.points.morph(p)
+        }
       }
 
       /* collect transformation keys */
@@ -78,6 +106,10 @@ SVG.extend(SVG.FX, {
       /* run all size properties */
       if (fx._size)
         element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+
+      /* run plot function */
+      if (fx._plot)
+        element.plot(fx._plot.at(pos))
 
       /* run all viewbox properties */
       if (fx._viewbox)
@@ -125,6 +157,9 @@ SVG.extend(SVG.FX, {
   
           /* finish off animation */
           if (time > finish) {
+            if (fx._plot)
+              element.plot(new SVG.PointArray(fx._plot.destination).settle())
+
             clearInterval(fx.interval)
             fx._after ? fx._after.apply(element, [fx]) : fx.stop()
           }
@@ -235,6 +270,12 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Add animatable plot
+, plot: function(p) {
+    this._plot = p
+
+    return this
+  }
   // Add animatable viewbox
 , viewbox: function(x, y, width, height) {
     if (this.target instanceof SVG.Container) {
@@ -287,6 +328,7 @@ SVG.extend(SVG.FX, {
     delete this._cx
     delete this._cy
     delete this._size
+    delete this._plot
     delete this._after
     delete this._during
     delete this._viewbox

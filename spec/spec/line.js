@@ -56,10 +56,11 @@ describe('Line', function() {
   describe('move()', function() {
     it('should set the x and y position', function() {
       line.move(123,456)
-      expect(line.node.getAttribute('x1')).toBe('123')
-      expect(line.node.getAttribute('y1')).toBe('556')
-      expect(line.node.getAttribute('x2')).toBe('223')
-      expect(line.node.getAttribute('y2')).toBe('456')
+      var box = line.bbox()
+      expect(box.x).toBe(123)
+      expect(box.y + box.height).toBe(556)
+      expect(box.x + box.width).toBe(223)
+      expect(box.y).toBe(456)
     })
   })
   
@@ -67,35 +68,38 @@ describe('Line', function() {
     it('should set the cx and cy position', function() {
       line.center(321,567)
       var box = line.bbox()
-      expect(line.node.getAttribute('x1')).toBe('271')
-      expect(line.node.getAttribute('y1')).toBe('617')
-      expect(line.node.getAttribute('x2')).toBe('371')
-      expect(line.node.getAttribute('y2')).toBe('517')
+      expect(box.x).toBe(271)
+      expect(box.y + box.height).toBe(617)
+      expect(box.x + box.width).toBe(371)
+      expect(box.y).toBe(517)
     })
   })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       line.size(987,654)
-      expect(line.node.getAttribute('x1')).toBe('0')
-      expect(line.node.getAttribute('y1')).toBe('654')
-      expect(line.node.getAttribute('x2')).toBe('987')
-      expect(line.node.getAttribute('y2')).toBe('0')
+      var box = line.bbox()
+      expect(box.x).toBe(0)
+      expect(box.y + box.height).toBe(654)
+      expect(box.x + box.width).toBe(987)
+      expect(box.y).toBe(0)
     })
   })
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box = line.scale(2).bbox()
+      var box1 = line.bbox()
+        , box2 = line.scale(2).bbox()
       
-      expect(box.width).toBe((line.attr('x2') - line.attr('x1')) * 2)
-      expect(box.height).toBe((line.attr('y1') - line.attr('y2')) * 2)
+      expect(box2.width).toBe(box1.width * 2)
+      expect(box2.height).toBe(box1.height * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box = line.scale(2, 3.5).bbox()
+      var box1 = line.bbox()
+        , box2 = line.scale(2,3.5).bbox() 
       
-      expect(box.width).toBe((line.attr('x2') - line.attr('x1')) * 2)
-      expect(box.height).toBe((line.attr('y1') - line.attr('y2')) * 3.5)
+      expect(box2.width).toBe(box1.width * 2)
+      expect(box2.height).toBe(box1.height * 3.5)
     })
   })
 
@@ -109,10 +113,11 @@ describe('Line', function() {
   describe('plot()', function() {
     it('should update the start and end points', function() {
       line.plot(100,200,300,400)
-      expect(line.node.getAttribute('x1')).toBe('100')
-      expect(line.node.getAttribute('y1')).toBe('200')
-      expect(line.node.getAttribute('x2')).toBe('300')
-      expect(line.node.getAttribute('y2')).toBe('400')
+      var box = line.bbox()
+      expect(box.x).toBe(100)
+      expect(box.y).toBe(200)
+      expect(box.x + box.width).toBe(300)
+      expect(box.y + box.height).toBe(400)
     })
   })
   

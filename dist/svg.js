@@ -1,4 +1,4 @@
-/* svg.js v0.30 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.31 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -252,36 +252,202 @@
   }
 
   SVG.Array = function(array, fallback) {
-  	this.value = array || []
+    array = (array || []).valueOf()
   
-  	if (this.value.length == 0 && fallback)
-  		this.value = fallback
+    /* if array is empty and fallback is provided, use fallback */
+    if (array.length == 0 && fallback)
+      array = fallback.valueOf()
+  
+    /* parse array */
+    this.value = this.parse(array)
   }
   
   SVG.extend(SVG.Array, {
-    // Convert array to string
-    toString: function() {
-      var array = []
+    // Make array morphable
+    morph: function(array) {
+      this.destination = this.parse(array)
   
-      /* detect array type */
-      if (Array.isArray(this.value[0])) {
-      	/* it is a poly point string */
-      	for (var i = 0, il = this.value.length; i < il; i++)
-      		array.push(this.value[i].join(','))
-  	    
-      } else {
-      	/* it's a regular array */
-      	array = this.value
+      /* normalize length of arrays */
+      if (this.value.length != this.destination.length) {
+        var lastValue       = this.value[this.value.length - 1]
+          , lastDestination = this.destination[this.destination.length - 1]
+  
+        while(this.value.length > this.destination.length)
+          this.destination.push(lastDestination)
+        while(this.value.length < this.destination.length)
+          this.value.push(lastValue)
       }
   
-      return array.join(' ')
+      return this
+    }
+    // Clean up any duplicate points
+  , settle: function() {
+      var i, seen = []
+  
+      /* find all unique values */
+      for (i = this.value.length - 1; i >= 0; i--)
+        if (seen.indexOf(this.value[i]) == -1)
+          seen.push(this.value[i])
+  
+      /* set new value */
+      return this.value = seen
+    }
+    // Get morphed array at given position
+  , at: function(pos) {
+      /* make sure a destination is defined */
+      if (!this.destination) return this
+  
+      /* generate morphed array */
+      for (var i = 0, il = this.value.length, array = []; i < il; i++)
+        array.push(this.value[i] + (this.destination[i] - this.value[i]) * pos)
+  
+      return new SVG.Array(array)
+    }
+    // Convert array to string
+  , toString: function() {
+      return this.value.join(' ')
     }
     // Real value
   , valueOf: function() {
-  		return this.value
-  	}
+      return this.value
+    }
+    // Parse whitespace separated string
+  , parse: function(array) {
+      array = array.valueOf()
+  
+      /* if already is an array, no need to parse it */
+      if (Array.isArray(array)) return array
+  
+      return this.split(array)
+    }
+    // Strip unnecessary whitespace
+  , split: function(string) {
+      return string.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g,'').split(' ') 
+    }
   
   })
+  
+  // Poly points array
+  SVG.PointArray = function() {
+    this.constructor.apply(this, arguments)
+  }
+  
+  // Inherit from SVG.Array
+  SVG.PointArray.prototype = new SVG.Array
+  
+  SVG.extend(SVG.PointArray, {
+    // Convert array to string
+    toString: function() {
+      /* convert to a poly point string */
+      for (var i = 0, il = this.value.length, array = []; i < il; i++)
+        array.push(this.value[i].join(','))
+  
+      return array.join(' ')
+    }
+    // Get morphed array at given position
+  , at: function(pos) {
+      /* make sure a destination is defined */
+      if (!this.destination) return this
+  
+      /* generate morphed point string */
+      for (var i = 0, il = this.value.length, array = []; i < il; i++)
+        array.push([
+          this.value[i][0] + (this.destination[i][0] - this.value[i][0]) * pos
+        , this.value[i][1] + (this.destination[i][1] - this.value[i][1]) * pos
+        ])
+  
+      return new SVG.PointArray(array)
+    }
+    // Parse point string
+  , parse: function(array) {
+      array = array.valueOf()
+  
+      /* if already is an array, no need to parse it */
+      if (Array.isArray(array)) return array
+  
+      /* split points */
+      array = this.split(array)
+  
+      /* parse points */
+      for (var i = 0, il = array.length, p, points = []; i < il; i++) {
+        p = array[i].split(',')
+        points.push([parseFloat(p[0]), parseFloat(p[1])])
+      }
+  
+      return points
+    }
+    // Move point string
+  , move: function(x, y) {
+      var box = this.bbox()
+  
+      /* get relative offset */
+      x -= box.x
+      y -= box.y
+  
+      /* move every point */
+      for (var i = this.value.length - 1; i >= 0; i--)
+        this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
+  
+      return this
+    }
+    // Resize poly string
+  , size: function(width, height) {
+      var i, box = this.bbox()
+  
+      /* recalculate position of all points according to new size */
+      for (i = this.value.length - 1; i >= 0; i--) {
+        this.value[i][0] = ((this.value[i][0] - box.x) * width)  / box.width  + box.x
+        this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.x
+      }
+  
+      return this
+    }
+    // Get bounding box of points
+  , bbox: function() {
+      if (this.value.length == 0)
+        return { x: 0, y: 0, width: 0, height: 0 }
+  
+      var i
+      , x = this.value[0][0]
+      , y = this.value[0][1]
+      , box = { x: x, y: y }
+      
+      /* find position */
+      for (i = this.value.length - 1; i >= 0; i--) {
+        if (this.value[i][0] < box.x)
+          box.x = this.value[i][0]
+        if (this.value[i][1] < box.y)
+          box.y = this.value[i][1]
+        if (this.value[i][0] > x)
+          x = this.value[i][0]
+        if (this.value[i][1] > y)
+          y = this.value[i][1]
+      }
+  
+      /* calculate size */
+      box.width  = x - box.x
+      box.height = y - box.y
+  
+      return box
+    }
+  
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
 
   SVG.Number = function(value) {
   
@@ -293,7 +459,7 @@
     switch(typeof value) {
       case 'number':
         /* ensure a valid numeric value */
-        this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? Number.MIN_VALUE : Number.MAX_VALUE) : value
+        this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
       break
       case 'string':
         var match = value.match(SVG.regex.unit)
@@ -1077,6 +1243,34 @@
           akeys = []
           for (key in fx.attrs)
             akeys.push(key)
+  
+          /* make sure morphable elements are scaled, translated and morphed all together */
+          if (element.morphArray) {
+            /* get destination */
+            var box
+              , p = new element.morphArray(fx._plot || element.points.toString())
+  
+            /* add size */
+            if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
+  
+            /* add movement */
+            box = p.bbox()
+            if (fx._x) p.move(fx._x.to, box.y)
+            else if (fx._cx) p.move(fx._cx.to - box.width / 2, box.y)
+  
+            box = p.bbox()
+            if (fx._y) p.move(box.x, fx._y.to)
+            else if (fx._cy) p.move(box.x, fx._cy.to - box.height / 2)
+  
+            /* delete element oriented changes */
+            delete fx._x
+            delete fx._y
+            delete fx._cx
+            delete fx._cy
+            delete fx._size
+  
+            fx._plot = element.points.morph(p)
+          }
         }
   
         /* collect transformation keys */
@@ -1121,6 +1315,10 @@
         /* run all size properties */
         if (fx._size)
           element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+  
+        /* run plot function */
+        if (fx._plot)
+          element.plot(fx._plot.at(pos))
   
         /* run all viewbox properties */
         if (fx._viewbox)
@@ -1168,6 +1366,9 @@
     
             /* finish off animation */
             if (time > finish) {
+              if (fx._plot)
+                element.plot(new SVG.PointArray(fx._plot.destination).settle())
+  
               clearInterval(fx.interval)
               fx._after ? fx._after.apply(element, [fx]) : fx.stop()
             }
@@ -1278,6 +1479,12 @@
       
       return this
     }
+    // Add animatable plot
+  , plot: function(p) {
+      this._plot = p
+  
+      return this
+    }
     // Add animatable viewbox
   , viewbox: function(x, y, width, height) {
       if (this.target instanceof SVG.Container) {
@@ -1330,6 +1537,7 @@
       delete this._cx
       delete this._cy
       delete this._size
+      delete this._plot
       delete this._after
       delete this._during
       delete this._viewbox
@@ -2043,19 +2251,15 @@
   })
 
 
-  SVG.Polyline = function(unbiased) {
+  SVG.Polyline = function() {
     this.constructor.call(this, SVG.create('polyline'))
-    
-    this.unbiased = unbiased
   }
   
   // Inherit from SVG.Shape
   SVG.Polyline.prototype = new SVG.Shape
   
-  SVG.Polygon = function(unbiased) {
+  SVG.Polygon = function() {
     this.constructor.call(this, SVG.create('polygon'))
-    
-    this.unbiased = unbiased
   }
   
   // Inherit from SVG.Shape
@@ -2063,26 +2267,42 @@
   
   // Add polygon-specific functions
   SVG.extend(SVG.Polyline, SVG.Polygon, {
-    // Private: Native plot
-    _plot: function(p) {
-      if (Array.isArray(p))
-        p = new SVG.Array(p, [[0,0]])
-      
-      return this.attr('points', p)
+    // Define morphable array
+    morphArray:  SVG.PointArray
+    // Plot new path
+  , plot: function(p) {
+      return this.attr('points', (this.points = new SVG.PointArray(p, [[0,0]])))
     }
-    
+    // Move by left top corner
+  , move: function(x, y) {
+      return this.attr('points', this.points.move(x, y))
+    }
+    // Move by left top corner over x-axis
+  , x: function(x) {
+      return x == null ? this.bbox().x : this.move(x, this.bbox().y)
+    }
+    // Move by left top corner over y-axis
+  , y: function(y) {
+      return y == null ? this.bbox().y : this.move(this.bbox().x, y)
+    }
+    // Set element size to given width and height
+  , size: function(width, height) {
+      return this.attr('points', this.points.size(width, height))
+    }
+  
   })
   
   //
   SVG.extend(SVG.Container, {
     // Create a wrapped polyline element
-    polyline: function(points, unbiased) {
-      return this.put(new SVG.Polyline(unbiased)).plot(points)
+    polyline: function(p) {
+      return this.put(new SVG.Polyline).plot(p)
     }
     // Create a wrapped polygon element
-  , polygon: function(points, unbiased) {
-      return this.put(new SVG.Polygon(unbiased)).plot(points)
+  , polygon: function(p) {
+      return this.put(new SVG.Polygon).plot(p)
     }
+  
   })
 
   SVG.Path = function(unbiased) {
@@ -2111,7 +2331,7 @@
   
   })
 
-  SVG.extend(SVG.Polyline, SVG.Polygon, SVG.Path, {
+  SVG.extend(SVG.Path, {
     // Move over x-axis
     x: function(x) {
       return x == null ? this.bbox().x : this.transform('x', x)

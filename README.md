@@ -161,6 +161,18 @@ As an alternative an array of points will work as well:
 var polyline = draw.polyline([[0,0], [100,50], [50,100]]).fill('none').stroke({ width: 1 })
 ```
 
+Polylines can be updated using the `plot()` method:
+
+```javascript
+polyline.plot([[0,0], [100,50], [50,100], [150,50], [200,50]])
+```
+
+The `plot()` method can also be animated:
+
+```javascript
+polyline.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]])
+```
+
 
 ### Polygon
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
