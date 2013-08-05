@@ -1,4 +1,4 @@
-/* svg.js v0.31 - svg regex default color array number viewbox bbox rbox element container fx event defs group arrange mask clip gradient use doc shape rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.32 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1090,16 +1090,16 @@
     
   })
 
-  SVG.Container = function(element) {
+  SVG.Parent = function(element) {
     this.constructor.call(this, element)
   }
   
   // Inherit from SVG.Element
-  SVG.Container.prototype = new SVG.Element
+  SVG.Parent.prototype = new SVG.Element
   
   //
-  SVG.extend(SVG.Container, {
-    // Returns all child elements
+  SVG.extend(SVG.Parent, {
+  	// Returns all child elements
     children: function() {
       return this._children || (this._children = [])
     }
@@ -1142,6 +1142,14 @@
   , get: function(i) {
       return this.children()[i]
     }
+    // Get first child, skipping the defs node
+  , first: function() {
+      return this.children()[0]
+    }
+    // Get the last child
+  , last: function() {
+      return this.children()[this.children().length - 1]
+    }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {
       var i, il
@@ -1167,31 +1175,6 @@
       
       return this
     }
-    // Get defs
-  , defs: function() {
-      return this.doc().defs()
-    }
-    // Get first child, skipping the defs node
-  , first: function() {
-      return this.children()[0] instanceof SVG.Defs ? this.children()[1] : this.children()[0]
-    }
-    // Get the last child
-  , last: function() {
-      return this.children()[this.children().length - 1]
-    }
-    // Get the viewBox and calculate the zoom value
-  , viewbox: function(v) {
-      if (arguments.length == 0)
-        /* act as a getter if there are no arguments */
-        return new SVG.ViewBox(this)
-      
-      /* otherwise act as a setter */
-      v = arguments.length == 1 ?
-        [v.x, v.y, v.width, v.height] :
-        [].slice.call(arguments)
-      
-      return this.attr('viewBox', v)
-    }
     // Remove all elements in this container
   , clear: function() {
       /* remove children */
@@ -1203,6 +1186,34 @@
         this._defs.clear()
   
       return this
+    }
+   , // Get defs
+    defs: function() {
+      return this.doc().defs()
+    }
+  })
+
+  SVG.Container = function(element) {
+    this.constructor.call(this, element)
+  }
+  
+  // Inherit from SVG.Parent
+  SVG.Container.prototype = new SVG.Parent
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Get the viewBox and calculate the zoom value
+    viewbox: function(v) {
+      if (arguments.length == 0)
+        /* act as a getter if there are no arguments */
+        return new SVG.ViewBox(this)
+      
+      /* otherwise act as a setter */
+      v = arguments.length == 1 ?
+        [v.x, v.y, v.width, v.height] :
+        [].slice.call(arguments)
+      
+      return this.attr('viewBox', v)
     }
     
   })
@@ -1985,35 +1996,6 @@
   
 
 
-  SVG.Use = function() {
-    this.constructor.call(this, SVG.create('use'))
-  }
-  
-  // Inherit from SVG.Shape
-  SVG.Use.prototype = new SVG.Element
-  
-  //
-  SVG.extend(SVG.Use, {
-    // Use element as a reference
-    element: function(element) {
-      /* store target element */
-      this.target = element
-  
-      /* set lined element */
-      return this.attr('href', '#' + element, SVG.xlink)
-    }
-    
-  })
-  
-  //
-  SVG.extend(SVG.Container, {
-    // Create a use element
-    use: function(element) {
-      return this.put(new SVG.Use).element(element)
-    }
-  
-  })
-
   SVG.Doc = function(element) {
     /* ensure the presence of a html element */
     this.parent = typeof element == 'string' ?
@@ -2115,6 +2097,35 @@
   
   // Inherit from SVG.Element
   SVG.Shape.prototype = new SVG.Element
+
+  SVG.Use = function() {
+    this.constructor.call(this, SVG.create('use'))
+  }
+  
+  // Inherit from SVG.Shape
+  SVG.Use.prototype = new SVG.Shape
+  
+  //
+  SVG.extend(SVG.Use, {
+    // Use element as a reference
+    element: function(element) {
+      /* store target element */
+      this.target = element
+  
+      /* set lined element */
+      return this.attr('href', '#' + element, SVG.xlink)
+    }
+    
+  })
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Create a use element
+    use: function(element) {
+      return this.put(new SVG.Use).element(element)
+    }
+  
+  })
 
   SVG.Rect = function() {
     this.constructor.call(this, SVG.create('rect'))
@@ -2382,12 +2393,10 @@
   
   //
   SVG.extend(SVG.Image, {
-    
     // (re)load image
     load: function(url) {
       return (url ? this.attr('href', (this.src = url), SVG.xlink) : this)
     }
-    
   })
   
   //
@@ -2696,7 +2705,7 @@
       return this
     }
     
-    SVG.extend(SVG.Shape, SVG.FX, extension)
+    SVG.extend(SVG.Element, SVG.FX, extension)
     
   })
   

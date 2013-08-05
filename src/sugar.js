@@ -27,7 +27,7 @@ var _colorPrefix = function(type, attr) {
     return this
   }
   
-  SVG.extend(SVG.Shape, SVG.FX, extension)
+  SVG.extend(SVG.Element, SVG.FX, extension)
   
 })
 

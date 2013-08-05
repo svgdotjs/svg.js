@@ -7,12 +7,10 @@ SVG.Image.prototype = new SVG.Shape
 
 //
 SVG.extend(SVG.Image, {
-  
   // (re)load image
   load: function(url) {
     return (url ? this.attr('href', (this.src = url), SVG.xlink) : this)
   }
-  
 })
 
 //

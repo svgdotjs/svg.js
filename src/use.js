@@ -3,7 +3,7 @@ SVG.Use = function() {
 }
 
 // Inherit from SVG.Shape
-SVG.Use.prototype = new SVG.Element
+SVG.Use.prototype = new SVG.Shape
 
 //
 SVG.extend(SVG.Use, {
