@@ -294,6 +294,12 @@ And they can be animated as well of course:
 text.textPath.animate(3000).attr('startOffset', 0.8)
 ```
 
+Referencing the linked path element directly:
+
+```javascript
+var path = text.track
+```
+
 
 ### Use
 The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
@@ -314,12 +320,43 @@ In this way the rect element acts as a library element. You can edit it but it w
 
 
 ## Referencing elements
+
+### By id
 If you want to get an element created by svg.js by its id, you can use the `SVG.get()` method:
 
 ```javascript
 var element = SVG.get('my_element')
 
 element.fill('#f06')
+```
+
+### By class name
+There is no DOM querying system built into svg.js but [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) will hep you achieve this. Here is an example:
+
+```javascript
+/* add elements */
+var draw   = SVG('canvas')
+var group  = draw.group().attr('class', 'my-group')
+var rect   = group.rect(100,100).attr('class', 'my-element')
+var circle = group.circle(100).attr('class', 'my-element').move(100, 100)
+
+/* get elements in group */
+var elements = $('#canvas g.my-group .my-element').each(function() {
+  this.instance.animate().fill('#f09')
+})
+```
+
+### Circluar reference
+Every element instance within svg.js has a reference to the actual `node`:
+
+```javascript
+element.node
+```
+
+Similarly, the node carries a reference to the svg.js `instance`:
+
+```javascript
+node.instance
 ```
 
 
@@ -626,7 +663,7 @@ Animating elements is very much the same as manipulating elements, the only diff
 rect.animate().move(150, 150)
 ```
 
-The `animate()` method will take three arguments. The first is `milliseconds`, the second `ease` and the third `delay`:
+The `animate()` method will take three arguments. The first is `duration`, the second `ease` and the third `delay`:
 
 ```javascript
 rect.animate(2000, '>', 1000).attr({ fill: '#f03' })
@@ -638,7 +675,7 @@ Alternatively you can pass an object as the first argument:
 rect.animate({ ease: '<', delay: 1500 }).attr({ fill: '#f03' })
 ```
 
-By default `milliseconds` will be set to `1000`, `ease` will be set to `<>`.
+By default `duration` will be set to `1000`, `ease` will be set to `<>`.
 
 ### Easing
 All available ease types are:
