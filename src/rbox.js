@@ -51,3 +51,24 @@ SVG.RBox = function(element) {
   this.cy = this.y + this.height / 2
   
 }
+
+//
+SVG.extend(SVG.RBox, {
+  // merge rect box with another, return a new instance
+  merge: function(box) {
+    var b = new SVG.RBox()
+
+    /* merge box */
+    b.x      = Math.min(this.x, box.x)
+    b.y      = Math.min(this.y, box.y)
+    b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
+    b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
+
+    /* add the center */
+    b.cx = b.x + b.width / 2
+    b.cy = b.y + b.height / 2
+
+    return b
+  }
+
+})
