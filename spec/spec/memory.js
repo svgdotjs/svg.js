@@ -1,8 +1,9 @@
 describe('Memory', function () {
-  var rect
+  var rect, circle
 
   beforeEach(function() {
     rect = draw.rect(100,120)
+    circle = draw.circle(100)
   })
 
   afterEach(function() {
@@ -23,6 +24,12 @@ describe('Memory', function () {
     it('acts as a getter with one string argument', function() {
       rect.remember('opacity', 0.85)
       expect(rect.remember('opacity')).toBe(0.85)
+    })
+    it('saves values to individual objects', function() {
+      rect.remember('opacity', 0.85)
+      circle.remember('opacity', 0.5)
+      expect(rect.remember('opacity')).toBe(0.85)
+      expect(circle.remember('opacity')).toBe(0.5)
     })
   })
 
