@@ -1,4 +1,4 @@
-/* svg.js v0.32-5-g0ceb9b2 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.32-6-g74614e0 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -535,8 +535,8 @@
     /* clone attributes */
     this.x      = box.x
     this.y      = box.y
-    this.width  = element.node.getBoundingClientRect().width
-    this.height = element.node.getBoundingClientRect().height
+    this.width  = element.node.clientWidth  || element.node.getBoundingClientRect().width
+    this.height = element.node.clientHeight || element.node.getBoundingClientRect().height
     
     if (view) {
       /* get width and height from viewbox */
@@ -570,8 +570,6 @@
     }
     
   })
-  
-
 
   SVG.BBox = function(element) {
     var box
