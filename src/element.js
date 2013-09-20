@@ -237,7 +237,7 @@ SVG.extend(SVG.Element, {
     
     /* add rotation */
     if (o.rotation != 0)
-      transform.push('rotate(' + o.rotation + ' ' + (o.cx == null ? this.bbox().cx : o.cx) + ' ' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
+      transform.push('rotate(' + o.rotation + ' ' + (o.cx == undefined ? this.bbox().cx : o.cx) + ' ' + (o.cy == undefined ? this.bbox().cy : o.cy) + ')')
     
     /* add scale */
     if (o.scaleX != 1 || o.scaleY != 1)
