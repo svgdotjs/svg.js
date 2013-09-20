@@ -1,4 +1,4 @@
-/* svg.js v0.32-6-g74614e0 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.32-7-gdf8db4b - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -940,7 +940,7 @@
       
       /* add rotation */
       if (o.rotation != 0)
-        transform.push('rotate(' + o.rotation + ' ' + (o.cx == null ? this.bbox().cx : o.cx) + ' ' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
+        transform.push('rotate(' + o.rotation + ' ' + (o.cx == undefined ? this.bbox().cx : o.cx) + ' ' + (o.cy == undefined ? this.bbox().cy : o.cy) + ')')
       
       /* add scale */
       if (o.scaleX != 1 || o.scaleY != 1)
