@@ -561,6 +561,14 @@ rect.size(200, 300)
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
+### Size (centered)
+Set the size of an element by a given `width` and `height`, but maintains the
+center:
+
+```javascript
+rect.sizeCentered(200, 300)
+```
+
 ### Hide and show
 We all love to have a little hide:
 

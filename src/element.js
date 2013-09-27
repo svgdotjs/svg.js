@@ -60,6 +60,11 @@ SVG.extend(SVG.Element, {
     , height: new SVG.Number(height)
     })
   }
+  // Same as size, but maintains the center
+, sizeCentered: function(width, height) {
+    var cx = this.cx(), cy = this.cy();
+    return this.size(width,height).cx(cx).cy(cy);
+  }
   // Clone element
 , clone: function() {
     var clone , attr
