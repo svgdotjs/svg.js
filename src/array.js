@@ -30,10 +30,8 @@ SVG.extend(SVG.Array, {
   }
   // Clean up any duplicate points
 , settle: function() {
-    var i, seen = []
-
     /* find all unique values */
-    for (i = this.value.length - 1; i >= 0; i--)
+    for (var i = 0, il = this.value.length, seen = []; i < il; i++)
       if (seen.indexOf(this.value[i]) == -1)
         seen.push(this.value[i])
 
