@@ -156,7 +156,7 @@ SVG.extend(SVG.FX, {
           fx.to(pos)
   
           /* finish off animation */
-          if (time > finish) {
+          if (pos === 1) {
             if (fx._plot)
               element.plot(new SVG.PointArray(fx._plot.destination).settle())
 
