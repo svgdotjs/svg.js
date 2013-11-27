@@ -88,10 +88,12 @@ SVG.extend(SVG.Doc, {
   // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
 , fixSubPixelOffset: function() {
     var pos = this.node.getScreenCTM()
-  
-    this
-      .style('left', (-pos.e % 1) + 'px')
-      .style('top',  (-pos.f % 1) + 'px')
+
+    if (pos) {
+      this
+        .style('left', (-pos.e % 1) + 'px')
+        .style('top',  (-pos.f % 1) + 'px')
+    }
   }
   
 })

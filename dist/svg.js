@@ -1,4 +1,4 @@
-/* svg.js v0.32-6-g74614e0 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.32-7-gdf8db4b - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2102,10 +2102,12 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
   , fixSubPixelOffset: function() {
       var pos = this.node.getScreenCTM()
-    
-      this
-        .style('left', (-pos.e % 1) + 'px')
-        .style('top',  (-pos.f % 1) + 'px')
+  
+      if (pos) {
+        this
+          .style('left', (-pos.e % 1) + 'px')
+          .style('top',  (-pos.f % 1) + 'px')
+      }
     }
     
   })
