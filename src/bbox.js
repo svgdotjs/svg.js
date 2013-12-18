@@ -1,4 +1,3 @@
-
 SVG.BBox = function(element) {
   var box
 
@@ -24,8 +23,8 @@ SVG.BBox = function(element) {
     }
     
     /* include translations on x an y */
-    this.x = box.x + element.trans.x
-    this.y = box.y + element.trans.y
+    this.x = box.x * element.trans.scaleX + element.trans.x
+    this.y = box.y * element.trans.scaleY + element.trans.y
     
     /* plain width and height */
     this.width  = box.width  * element.trans.scaleX
