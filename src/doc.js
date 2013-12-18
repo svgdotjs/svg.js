@@ -55,10 +55,14 @@ SVG.extend(SVG.Doc, {
           /* set position back to relative */
           element.style('position:relative;overflow:hidden;')
 
+          /* save defs */
+          element.node.removeChild(element._defs.node)
           /* remove temporary wrapper */
           element.parent.removeChild(element.node.parentNode)
           element.node.parentNode.removeChild(element.node)
           element.parent.appendChild(element.node)
+          element.node.appendChild(element._defs.node)
+
 
           /* after wrapping is done, fix sub-pixel offset */
           element.fixSubPixelOffset()
