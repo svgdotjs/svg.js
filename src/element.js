@@ -1,4 +1,3 @@
-
 // ### Used by nearly every other module
 
 //
@@ -343,8 +342,8 @@ SVG.extend(SVG.Element, {
     return new SVG.BBox(this)
   }
   // Get rect box
-, rbox: function() {
-    return new SVG.RBox(this)
+, rbox: function(relative) {
+    return new SVG.RBox(this, relative)
   }
   // Checks whether the given point inside the bounding box of the element
 , inside: function(x, y) {
