@@ -10,42 +10,23 @@ SVG.RBox = function(element) {
   this.height = 0
   
   if (element) {
-    e = element.doc().parent
-    zoom = element.doc().viewbox().zoom
-    
+    var p        = element.node.ownerSVGElement.createSVGPoint(),
+        relative = relative || element.node.ownerSVGElement
     /* actual, native bounding box */
     box = element.node.getBoundingClientRect()
-    
+    p.x = box.left
+    p.y = box.top
     /* get screen offset */
-    this.x = box.left
-    this.y = box.top
-    
-    /* subtract parent offset */
-    this.x -= e.offsetLeft
-    this.y -= e.offsetTop
-    
-    while (e = e.offsetParent) {
-      this.x -= e.offsetLeft
-      this.y -= e.offsetTop
-    }
-    
-    /* calculate cumulative zoom from svg documents */
-    e = element
-    while (e = e.parent) {
-      if (e.type == 'svg' && e.viewbox) {
-        zoom *= e.viewbox().zoom
-        this.x -= e.x() || 0
-        this.y -= e.y() || 0
-      }
-    }
+    p = p.matrixTransform(relative.getScreenCTM().inverse())
+    this.x = p.x
+    this.y = p.y
+    p.x = box.right
+    p.y = box.bottom
+    p = p.matrixTransform(relative.getScreenCTM().inverse())
+    this.width  = p.x - this.x
+    this.height = p.y - this.y
   }
-  
-  /* recalculate viewbox distortion */
-  this.x /= zoom
-  this.y /= zoom
-  this.width  = box.width  /= zoom
-  this.height = box.height /= zoom
-  
+
   /* add the center */
   this.cx = this.x + this.width  / 2
   this.cy = this.y + this.height / 2
