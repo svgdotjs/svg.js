@@ -1,5 +1,5 @@
 // Get the rectangular box of a given element
-SVG.RBox = function(element) {
+SVG.RBox = function(element, relative) {
   var e, zoom
     , box = {}
 
