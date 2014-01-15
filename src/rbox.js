@@ -11,7 +11,7 @@ SVG.RBox = function(element, relative) {
   
   if (element) {
     var p        = element.node.ownerSVGElement.createSVGPoint(),
-        relative = relative || element.node.ownerSVGElement
+        relative = relative?relative.node?element.node.ownerSVGElement
     /* actual, native bounding box */
     box = element.node.getBoundingClientRect()
     p.x = box.left
