@@ -19,6 +19,7 @@ SVG.Doc = function(element) {
   
   /* create the <defs> node */
   this._defs = new SVG.Defs
+  this._defs.parent = this
   this.node.appendChild(this._defs.node)
   
   /* ensure correct rendering */
