@@ -354,7 +354,7 @@ element.fill('#f06')
 ```
 
 ### By class name
-There is no DOM querying system built into svg.js but [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) will hep you achieve this. Here is an example:
+There is no DOM querying system built into svg.js but [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) will help you achieve this. Here is an example:
 
 ```javascript
 /* add elements */
