@@ -133,8 +133,9 @@ SVG.extend(SVG.PointArray, {
     y -= box.y
 
     /* move every point */
-    for (var i = this.value.length - 1; i >= 0; i--)
-      this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
+    if (!isNaN(x) && !isNaN(y))
+      for (var i = this.value.length - 1; i >= 0; i--)
+        this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
 
     return this
   }

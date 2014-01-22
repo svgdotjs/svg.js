@@ -1,4 +1,4 @@
-/* svg.js v0.33-6-gc967856 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.33-7-g0bec3f4 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -385,8 +385,9 @@
       y -= box.y
   
       /* move every point */
-      for (var i = this.value.length - 1; i >= 0; i--)
-        this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
+      if (!isNaN(x) && !isNaN(y))
+        for (var i = this.value.length - 1; i >= 0; i--)
+          this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
   
       return this
     }
