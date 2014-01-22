@@ -1417,7 +1417,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
 - [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
-- [svg.topath.js](https://github.com/wout/svg.shapes.js) to convert any other shape to a path.
+- [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
 
 
 ## Building
