@@ -70,6 +70,30 @@ describe('Polyline', function() {
       expect(box.y).toBe(517)
     })
   })
+
+  describe('width()', function() {
+    it('sets the width and height of the element', function() {
+      polyline.width(987)
+      var box = polyline.bbox()
+      expect(approximately(box.width, 0.1)).toBe(987)
+    })
+    it('gets the width and height of the element without an argument', function() {
+      polyline.width(789)
+      expect(approximately(polyline.width(), 0.1)).toBe(789)
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height and height of the element', function() {
+      polyline.height(987)
+      var box = polyline.bbox()
+      expect(approximately(box.height, 0.1)).toBe(987)
+    })
+    it('gets the height and height of the element without an argument', function() {
+      polyline.height(789)
+      expect(approximately(polyline.height(), 0.1)).toBe(789)
+    })
+  })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {

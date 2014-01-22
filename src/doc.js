@@ -19,7 +19,11 @@ SVG.Doc = function(element) {
   
   /* create the <defs> node */
   this._defs = new SVG.Defs
+  this._defs.parent = this
   this.node.appendChild(this._defs.node)
+
+  /* turno of sub pixel offset by default */
+  this.doSubPixelOffsetFix = false
   
   /* ensure correct rendering */
   if (this.parent.nodeName != 'svg')
@@ -61,11 +65,11 @@ SVG.extend(SVG.Doc, {
           element.parent.appendChild(element.node)
 
           /* after wrapping is done, fix sub-pixel offset */
-          element.fixSubPixelOffset()
+          element.subPixelOffsetFix()
           
           /* make sure sub-pixel offset is fixed every time the window is resized */
           SVG.on(window, 'resize', function() {
-            element.fixSubPixelOffset()
+            element.subPixelOffsetFix()
           })
           
         }, 5)
@@ -86,12 +90,23 @@ SVG.extend(SVG.Doc, {
 
   // Fix for possible sub-pixel offset. See:
   // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+, subPixelOffsetFix: function() {
+    if (this.doSubPixelOffsetFix) {
+      var pos = this.node.getScreenCTM()
+      
+      if (pos)
+        this
+          .style('left', (-pos.e % 1) + 'px')
+          .style('top',  (-pos.f % 1) + 'px')
+    }
+    
+    return this
+  }
+
 , fixSubPixelOffset: function() {
-    var pos = this.node.getScreenCTM()
-  
-    this
-      .style('left', (-pos.e % 1) + 'px')
-      .style('top',  (-pos.f % 1) + 'px')
+    this.doSubPixelOffsetFix = true
+
+    return this
   }
   
 })

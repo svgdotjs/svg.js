@@ -35,13 +35,21 @@ SVG.extend(SVG.Line, {
     var half = this.bbox().height / 2
     return y == null ? this.y() + half : this.y(y - half)
   }
+  // Set width of element
+, width: function(width) {
+    var b = this.bbox()
+
+    return width == null ? b.width : this.attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
+  }
+  // Set height of element
+, height: function(height) {
+    var b = this.bbox()
+
+    return height == null ? b.height : this.attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+  }
   // Set line size by width and height
 , size: function(width, height) {
-    var b = this.bbox()
-    
-    return this
-      .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
-      .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+    return this.width(width).height(height)
   }
   // Set path data
 , plot: function(x1, y1, x2, y2) {

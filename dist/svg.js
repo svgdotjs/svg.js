@@ -1,4 +1,4 @@
-/* svg.js v0.32-6-g74614e0 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path plotable image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.33 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -756,8 +756,16 @@
   , center: function(x, y) {
       return this.cx(x).cy(y)
     }
+    // Set width of element
+  , width: function(width) {
+      return this.attr('width', width)
+    }
+    // Set height of element
+  , height: function(height) {
+      return this.attr('height', height)
+    }
     // Set element size to given width and height
-  , size: function(width, height) { 
+  , size: function(width, height) {
       return this.attr({
         width:  new SVG.Number(width)
       , height: new SVG.Number(height)
@@ -802,6 +810,12 @@
         this.parent.removeElement(this)
       
       return this
+    }
+    // Replace element
+  , replace: function(element) {
+      this.after(element).remove()
+  
+      return element
     }
     // Get parent document
   , doc: function(type) {
@@ -2033,7 +2047,11 @@
     
     /* create the <defs> node */
     this._defs = new SVG.Defs
+    this._defs.parent = this
     this.node.appendChild(this._defs.node)
+  
+    /* turno of sub pixel offset by default */
+    this.doSubPixelOffsetFix = false
     
     /* ensure correct rendering */
     if (this.parent.nodeName != 'svg')
@@ -2075,11 +2093,11 @@
             element.parent.appendChild(element.node)
   
             /* after wrapping is done, fix sub-pixel offset */
-            element.fixSubPixelOffset()
+            element.subPixelOffsetFix()
             
             /* make sure sub-pixel offset is fixed every time the window is resized */
             SVG.on(window, 'resize', function() {
-              element.fixSubPixelOffset()
+              element.subPixelOffsetFix()
             })
             
           }, 5)
@@ -2100,12 +2118,23 @@
   
     // Fix for possible sub-pixel offset. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+  , subPixelOffsetFix: function() {
+      if (this.doSubPixelOffsetFix) {
+        var pos = this.node.getScreenCTM()
+        
+        if (pos)
+          this
+            .style('left', (-pos.e % 1) + 'px')
+            .style('top',  (-pos.f % 1) + 'px')
+      }
+      
+      return this
+    }
+  
   , fixSubPixelOffset: function() {
-      var pos = this.node.getScreenCTM()
-    
-      this
-        .style('left', (-pos.e % 1) + 'px')
-        .style('top',  (-pos.f % 1) + 'px')
+      this.doSubPixelOffsetFix = true
+  
+      return this
     }
     
   })
@@ -2187,6 +2216,14 @@
   , cy: function(y) {
       return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.trans.scaleY))
     }
+    // Set width of element
+  , width: function(width) {
+      return width == null ? this.attr('rx') * 2 : this.attr('rx', new SVG.Number(width).divide(2))
+    }
+    // Set height of element
+  , height: function(height) {
+      return height == null ? this.attr('ry') * 2 : this.attr('ry', new SVG.Number(height).divide(2))
+    }
     // Custom size function
   , size: function(width, height) {
       return this.attr({
@@ -2251,13 +2288,21 @@
       var half = this.bbox().height / 2
       return y == null ? this.y() + half : this.y(y - half)
     }
+    // Set width of element
+  , width: function(width) {
+      var b = this.bbox()
+  
+      return width == null ? b.width : this.attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
+    }
+    // Set height of element
+  , height: function(height) {
+      var b = this.bbox()
+  
+      return height == null ? b.height : this.attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+    }
     // Set line size by width and height
   , size: function(width, height) {
-      var b = this.bbox()
-      
-      return this
-        .attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
-        .attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+      return this.width(width).height(height)
     }
     // Set path data
   , plot: function(x1, y1, x2, y2) {
@@ -2315,6 +2360,18 @@
   , y: function(y) {
       return y == null ? this.bbox().y : this.move(this.bbox().x, y)
     }
+    // Set width of element
+  , width: function(width) {
+      var b = this.bbox()
+  
+      return width == null ? b.width : this.size(width, b.height)
+    }
+    // Set height of element
+  , height: function(height) {
+      var b = this.bbox()
+  
+      return height == null ? b.height : this.size(b.width, height) 
+    }
     // Set element size to given width and height
   , size: function(width, height) {
       return this.attr('points', this.points.size(width, height))
@@ -2345,23 +2402,6 @@
   SVG.Path.prototype = new SVG.Shape
   
   SVG.extend(SVG.Path, {
-    // Private: Native plot
-    _plot: function(data) {
-      return this.attr('d', data || 'M0,0')
-    }
-    
-  })
-  
-  //
-  SVG.extend(SVG.Container, {
-    // Create a wrapped path element
-    path: function(data, unbiased) {
-      return this.put(new SVG.Path(unbiased)).plot(data)
-    }
-  
-  })
-
-  SVG.extend(SVG.Path, {
     // Move over x-axis
     x: function(x) {
       return x == null ? this.bbox().x : this.transform('x', x)
@@ -2369,6 +2409,18 @@
     // Move over y-axis
   , y: function(y) {
       return y == null ? this.bbox().y : this.transform('y', y)
+    }
+    // Set width of element
+  , width: function(width) {
+      var b = this.bbox()
+  
+      return width == null ? b.width : this.size(width, b.height)
+    }
+    // Set height of element
+  , height: function(height) {
+      var b = this.bbox()
+  
+      return height == null ? b.height : this.size(b.width, height)
     }
     // Set the actual size in pixels
   , size: function(width, height) {
@@ -2400,7 +2452,20 @@
       
       return this.transform({ scaleX: x, scaleY: y })
     }
+    // Private: Native plot
+  , _plot: function(data) {
+      return this.attr('d', data || 'M0,0')
+    }
     
+  })
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Create a wrapped path element
+    path: function(data, unbiased) {
+      return this.put(new SVG.Path(unbiased)).plot(data)
+    }
+  
   })
 
   SVG.Image = function() {
@@ -2765,6 +2830,15 @@
     // Opacity
   , opacity: function(value) {
       return this.attr('opacity', value)
+    }
+  
+  })
+  
+  //
+  SVG.extend(SVG.Rect, SVG.Ellipse, {
+    // Add x and y radius
+    radius: function(x, y) {
+      return this.attr({ rx: x, ry: y || x })
     }
   
   })

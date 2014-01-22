@@ -53,8 +53,16 @@ SVG.extend(SVG.Element, {
 , center: function(x, y) {
     return this.cx(x).cy(y)
   }
+  // Set width of element
+, width: function(width) {
+    return this.attr('width', width)
+  }
+  // Set height of element
+, height: function(height) {
+    return this.attr('height', height)
+  }
   // Set element size to given width and height
-, size: function(width, height) { 
+, size: function(width, height) {
     return this.attr({
       width:  new SVG.Number(width)
     , height: new SVG.Number(height)
@@ -99,6 +107,12 @@ SVG.extend(SVG.Element, {
       this.parent.removeElement(this)
     
     return this
+  }
+  // Replace element
+, replace: function(element) {
+    this.after(element).remove()
+
+    return element
   }
   // Get parent document
 , doc: function(type) {

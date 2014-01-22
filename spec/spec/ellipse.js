@@ -52,6 +52,19 @@ describe('Ellipse', function() {
       expect(box.cy).toBe(345)
     })
   })
+
+  describe('radius()', function() {
+    it('should set the rx and ry', function() {
+      ellipse.radius(10,20)
+      expect(ellipse.node.getAttribute('rx')).toBe('10')
+      expect(ellipse.node.getAttribute('ry')).toBe('20')
+    })
+    it('should set the rx and ry if only rx given', function() {
+      ellipse.radius(30)
+      expect(ellipse.node.getAttribute('rx')).toBe('30')
+      expect(ellipse.node.getAttribute('ry')).toBe('30')
+    })
+  })
   
   describe('move()', function() {
     it('should set the x and y position', function() {
@@ -68,6 +81,26 @@ describe('Ellipse', function() {
       var box = ellipse.bbox()
       expect(box.cx).toBe(321)
       expect(box.cy).toBe(567)
+    })
+  })
+
+  describe('width()', function() {
+    it('sets the width of the element', function() {
+      ellipse.width(82)
+      expect(ellipse.node.getAttribute('rx')).toBe('41')
+    })
+    it('gets the width of the element if the argument is null', function() {
+      expect((ellipse.width() / 2).toString()).toBe(ellipse.node.getAttribute('rx'))
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height of the element', function() {
+      ellipse.height(1236)
+      expect(ellipse.node.getAttribute('ry')).toBe('618')
+    })
+    it('gets the height of the element if the argument is null', function() {
+      expect((ellipse.height() / 2).toString()).toBe(ellipse.node.getAttribute('ry'))
     })
   })
   

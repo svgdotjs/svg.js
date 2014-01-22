@@ -69,6 +69,26 @@ describe('Image', function() {
       expect(box.cy).toBe(567)
     })
   })
+
+  describe('width()', function() {
+    it('sets the width of the element', function() {
+      image.width(789)
+      expect(image.node.getAttribute('width')).toBe('789')
+    })
+    it('gets the width of the element if the argument is null', function() {
+      expect(image.width().toString()).toBe(image.node.getAttribute('width'))
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height of the element', function() {
+      image.height(1236)
+      expect(image.node.getAttribute('height')).toBe('1236')
+    })
+    it('gets the height of the element if the argument is null', function() {
+      expect(image.height().toString()).toBe(image.node.getAttribute('height'))
+    })
+  })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {

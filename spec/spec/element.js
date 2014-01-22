@@ -203,7 +203,7 @@ describe('Element', function() {
       var box = rect.rbox()
       expect(approximately(box.x)).toBe(approximately(2))
       expect(approximately(box.y)).toBe(approximately(12))
-      expect(approximately(box.cx)).toBe(approximately(54).5)
+      expect(approximately(box.cx)).toBe(approximately(54.5))
       expect(approximately(box.cy)).toBe(approximately(117))
       expect(approximately(box.width)).toBe(approximately(105))
       expect(approximately(box.height)).toBe(approximately(210))
@@ -256,6 +256,31 @@ describe('Element', function() {
     it('returns the element id', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
       expect(rect + '').toBe(rect.attr('id'))
+    })
+  })
+
+  describe('replace()', function() {
+    it('replaces the original element by another given element', function() {
+      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+      var circle = draw.circle(200)
+      var rectIndex = draw.children().indexOf(rect)
+
+      rect.replace(circle)
+      
+      expect(rectIndex).toBe(draw.children().indexOf(circle))
+    })
+    it('removes the original element', function() {
+      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+
+      rect.replace(draw.circle(200))
+      
+      expect(draw.has(rect)).toBe(false)
+    })
+    it('returns the new element', function() {
+      var circle  = draw.circle(200)
+      var element = draw.rect(100,100).center(321,567).fill('#f06').replace(circle)
+      
+      expect(element).toBe(circle)
     })
   })
   

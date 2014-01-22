@@ -17,24 +17,24 @@ See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://do
 Use the `SVG()` function to create a SVG document within a given html element:
 
 ```javascript
-var draw = SVG('canvas').size(300, 300)
+var draw = SVG('drawing').size(300, 300)
 var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 ```
 The first argument can either be an id of the element or the selected element itself.
 This will generate the following output:
 
 ```html
-<div id="canvas">
+<div id="drawing">
 	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300">
 		<rect width="100" height="100" fill="#f06"></rect>
 	</svg>
 </div>
 ```
 
-By default the svg canvas follows the dimensions of its parent, in this case `#canvas`:
+By default the svg drawing follows the dimensions of its parent, in this case `#drawing`:
 
 ```javascript
-var draw = SVG('canvas').size('100%', '100%')
+var draw = SVG('drawing').size('100%', '100%')
 ```
 
 ### Checking for SVG support
@@ -43,7 +43,7 @@ By default this library assumes the client's browser supports SVG. You can test 
 
 ```javascript
 if (SVG.supported) {
-  var draw = SVG('canvas')
+  var draw = SVG('drawing')
   var rect = draw.rect(100, 100)
 } else {
   alert('SVG not supported')
@@ -77,7 +77,7 @@ var box = draw.viewbox()
 var zoom = box.zoom
 ```
 
-If the size of the viewbox equals the size of the svg canvas, the zoom value will be 1.
+If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.
 
 ### Nested svg
 With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
@@ -97,15 +97,22 @@ Svg.js also works outside of the HTML DOM, inside an SVG document for example:
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<svg id="viewport" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+<svg id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
   <script type="text/javascript" xlink:href="svg.min.js"></script>
   <script type="text/javascript">
     <![CDATA[
-      var draw = SVG('viewport')
+      var draw = SVG('drawing')
       draw.rect(100,100).animate().fill('#f03').move(100,100)
     ]]>
   </script>
 </svg>
+```
+
+### Sub pixel offset fix
+By default wub pixel offset won't be corrected. To enable it, call the `fixSubPixelOffset()` method:
+
+```javascript
+var draw = SVG('drawing').fixSubPixelOffset()
 ```
 
 
@@ -116,6 +123,18 @@ Rects have two arguments, their `width` and `height`:
 
 ```javascript
 var rect = draw.rect(100, 100)
+```
+
+Rects can also have rounded corners:
+
+```javascript
+rect.radius(10)
+```
+
+This will set the `rx` and `ry` attributes to `10`. To set `rx` and `ry` individually:
+
+```javascript
+rect.radius(10, 20)
 ```
 
 
@@ -203,7 +222,11 @@ Note that paths will always be positioned at x=0, y=0 on creation. This is to ma
 var path = draw.path('M10,20L30,40', true)
 ```
 
-This logic is also applicable to polylines and polygons.
+Paths can be updated using the `plot()` method:
+
+```javascript
+path.plot('M100,200L300,400')
+```
 
 
 ### Image
@@ -309,7 +332,7 @@ var rect = draw.rect(100, 100).fill('#f09')
 var use  = draw.use(rect).move(200, 200)
 ```
 
-In the case of the example above two rects will appear on the svg canvas, the original and the `use` instance. In some cases you might want to hide the original element. the best way to do this is to create the original element in the defs node:
+In the case of the example above two rects will appear on the svg drawing, the original and the `use` instance. In some cases you might want to hide the original element. the best way to do this is to create the original element in the defs node:
 
 ```javascript
 var rect = draw.defs().rect(100, 100).fill('#f09')
@@ -335,13 +358,13 @@ There is no DOM querying system built into svg.js but [jQuery](http://jquery.com
 
 ```javascript
 /* add elements */
-var draw   = SVG('canvas')
+var draw   = SVG('drawing')
 var group  = draw.group().attr('class', 'my-group')
 var rect   = group.rect(100,100).attr('class', 'my-element')
 var circle = group.circle(100).attr('class', 'my-element').move(100, 100)
 
 /* get elements in group */
-var elements = $('#canvas g.my-group .my-element').each(function() {
+var elements = $('#drawing g.my-group .my-element').each(function() {
   this.instance.animate().fill('#f09')
 })
 ```
@@ -561,6 +584,34 @@ rect.size(200, 300)
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
+
+### Width
+Set only width of an element:
+
+```javascript
+rect.width(200)
+```
+
+This method also acts as a getter:
+
+```javascript
+rect.width() //-> returns 200
+```
+
+### Height
+Set only height of an element:
+
+```javascript
+rect.height(325)
+```
+
+This method also acts as a getter:
+
+```javascript
+rect.height() //-> returns 325
+```
+
+
 ### Hide and show
 We all love to have a little hide:
 
@@ -590,6 +641,14 @@ To remove all elements in the svg document:
 
 ```javascript
 draw.clear()
+```
+
+
+### Replacing elements
+This method will replace the called element with the given element in the same position in the stack:
+
+```javascript
+rect.replace(draw.circle(100))
 ```
 
 
@@ -1358,6 +1417,7 @@ Here are a few nice plugins that are available for svg.js:
 - [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
 - [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 - [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
+- [svg.topath.js](https://github.com/wout/svg.shapes.js) to convert any other shape to a path.
 
 
 ## Building

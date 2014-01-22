@@ -262,8 +262,8 @@ describe('Container', function() {
       expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
     })
     it('should accept negative values', function() {
-      draw.size(100,100).viewbox(-100,-100,-50,-50)
-      expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 -50 -50')
+      draw.size(100,100).viewbox(-100,-100,50,50)
+      expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 50 50')
     })
     it('should get the viewbox if no arguments are given', function() {
       draw.viewbox(0,0,100,100)

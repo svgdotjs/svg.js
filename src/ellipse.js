@@ -24,6 +24,14 @@ SVG.extend(SVG.Ellipse, {
 , cy: function(y) {
     return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.trans.scaleY))
   }
+  // Set width of element
+, width: function(width) {
+    return width == null ? this.attr('rx') * 2 : this.attr('rx', new SVG.Number(width).divide(2))
+  }
+  // Set height of element
+, height: function(height) {
+    return height == null ? this.attr('ry') * 2 : this.attr('ry', new SVG.Number(height).divide(2))
+  }
   // Custom size function
 , size: function(width, height) {
     return this.attr({

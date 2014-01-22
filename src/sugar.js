@@ -72,6 +72,15 @@ SVG.extend(SVG.Element, SVG.FX, {
 
 })
 
+//
+SVG.extend(SVG.Rect, SVG.Ellipse, {
+  // Add x and y radius
+  radius: function(x, y) {
+    return this.attr({ rx: x, ry: y || x })
+  }
+
+})
+
 
 if (SVG.Text) {
   SVG.extend(SVG.Text, SVG.FX, {

@@ -32,6 +32,18 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
 , y: function(y) {
     return y == null ? this.bbox().y : this.move(this.bbox().x, y)
   }
+  // Set width of element
+, width: function(width) {
+    var b = this.bbox()
+
+    return width == null ? b.width : this.size(width, b.height)
+  }
+  // Set height of element
+, height: function(height) {
+    var b = this.bbox()
+
+    return height == null ? b.height : this.size(b.width, height) 
+  }
   // Set element size to given width and height
 , size: function(width, height) {
     return this.attr('points', this.points.size(width, height))
