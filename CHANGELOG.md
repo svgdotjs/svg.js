@@ -1,4 +1,4 @@
-# v0.33
+# v0.33 (22/01/2014)
 
 - added `has()` method to `SVG.Set`
 - added `width()` and `height()` as setter and getter methods on all shapes
