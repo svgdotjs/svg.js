@@ -7,8 +7,8 @@ SVG.ViewBox = function(element) {
   /* clone attributes */
   this.x      = box.x
   this.y      = box.y
-  this.width  = element.node.clientWidth  || element.node.getBoundingClientRect().width
-  this.height = element.node.clientHeight || element.node.getBoundingClientRect().height
+  this.width  = element.node.clientWidth  || element.attr('width')
+  this.height = element.node.clientHeight || element.attr('height')
   
   if (view) {
     /* get width and height from viewbox */
