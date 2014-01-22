@@ -109,7 +109,7 @@ Svg.js also works outside of the HTML DOM, inside an SVG document for example:
 ```
 
 ### Sub pixel offset fix
-By default wub pixel offset won't be corrected. To enable it, call the `fixSubPixelOffset()` method:
+By default sub pixel offset won't be corrected. To enable it, call the `fixSubPixelOffset()` method:
 
 ```javascript
 var draw = SVG('drawing').fixSubPixelOffset()
