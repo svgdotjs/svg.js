@@ -342,6 +342,33 @@ var use  = draw.use(rect).move(200, 200)
 In this way the rect element acts as a library element. You can edit it but it won't be rendered.
 
 
+### Hyperlink
+A hyperlink or `<a>` tag creates a container that enables a link on all children:
+
+```javascript
+var link = draw.link('http://svgjs.com')
+var rect = link.rect(100, 100)
+```
+
+The link url can be updated with the `to()` method:
+
+```javascript
+link.to('http://apple.com')
+```
+
+Furthermore, the link element has a `show()` method to create the `xlink:show` attribute:
+
+```javascript
+link.show('replace')
+```
+
+And the `target()` method to create the `target` attribute:
+
+```javascript
+link.target('_blank')
+```
+
+
 ## Referencing elements
 
 ### By id

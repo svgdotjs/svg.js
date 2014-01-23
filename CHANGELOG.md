@@ -1,8 +1,11 @@
+# v0.35 (23/01/2014)
+
+- added `SVG.A` element
+
 # v0.34 (23/01/2014)
 
 - added `pause()` and `play()` to `SVG.FX` module
 - storing animation values in `situation` object
-
 
 # v0.33 (22/01/2014)
 

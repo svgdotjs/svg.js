@@ -1,4 +1,4 @@
-/* svg.js v0.34 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.35 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2821,6 +2821,39 @@
     // Create nested svg document
     nested: function() {
       return this.put(new SVG.Nested)
+    }
+    
+  })
+
+  SVG.A = function() {
+    this.constructor.call(this, SVG.create('a'))
+  }
+  
+  // Inherit from SVG.Parent
+  SVG.A.prototype = new SVG.Container
+  
+  //
+  SVG.extend(SVG.A, {
+    // Link url
+    to: function(url) {
+      return this.attr('href', url, SVG.xlink)
+    }
+    // Link show attribute
+  , show: function(target) {
+      return this.attr('show', target, SVG.xlink)
+    }
+    // Link target attribute
+  , target: function(target) {
+      return this.attr('target', target)
+    }
+  
+  })
+  
+  //
+  SVG.extend(SVG.Container, {
+    // Create a hyperlink element
+    link: function(url) {
+      return this.put(new SVG.A).to(url)
     }
     
   })
