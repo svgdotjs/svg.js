@@ -781,6 +781,16 @@ You can also animate non-numeric unit values unsing the `attr()` method:
 rect.animate().attr('x', '10%').animate().attr('x', '50%')
 ```
 
+### Pausing and playing animations
+Pausing and playing an animations is fairly straightforward:
+
+```javascript
+rect.animate().move(200, 200)
+
+rect.mouseenter(function() { this.pause() })
+rect.mouseleave(function() { this.play() })
+```
+
 ### Stopping animations
 Animations can be stopped in two ways.
 
@@ -797,6 +807,8 @@ rect.animate().move(200, 200)
 
 rect.animate().center(200, 200)
 ```
+
+Stopping an animation is irreversable.
 
 ### Synchronising animations
 If you want to perform your own actions during the animations you can use the `during()` method:

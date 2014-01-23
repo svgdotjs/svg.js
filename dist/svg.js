@@ -1,4 +1,4 @@
-/* svg.js v0.33-7-g0bec3f4 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
+/* svg.js v0.34 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1411,29 +1411,39 @@
       if (typeof d === 'number') {
         /* delay animation */
         this.timeout = setTimeout(function() {
-          var interval  = 1000 / 60
-            , start     = new Date().getTime()
-            , finish    = start + d
-    
+          var start = new Date().getTime()
+  
+          /* initialize situation object */
+          fx.situation = {
+            interval: 1000 / 60
+          , start:    start
+          , play:     true
+          , finish:   start + d
+          , duration: d
+          }
+  
           /* start animation */
           fx.interval = setInterval(function(){
-            // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-            var time = new Date().getTime()
-              , pos = time > finish ? 1 : (time - start) / d
-    
-            /* process values */
-            fx.to(pos)
-    
-            /* finish off animation */
-            if (time > finish) {
-              if (fx._plot)
-                element.plot(new SVG.PointArray(fx._plot.destination).settle())
   
-              clearInterval(fx.interval)
-              fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+            if (fx.situation.play === true) {
+              // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
+              var time = new Date().getTime()
+                , pos = time > fx.situation.finish ? 1 : (time - fx.situation.start) / d
+              
+              /* process values */
+              fx.to(pos)
+              
+              /* finish off animation */
+              if (time > fx.situation.finish) {
+                if (fx._plot)
+                  element.plot(new SVG.PointArray(fx._plot.destination).settle())
+  
+                clearInterval(fx.interval)
+                fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+              }
             }
-    
-          }, d > interval ? interval : d)
+            
+          }, d > fx.situation.interval ? fx.situation.interval : d)
           
         }, delay || 0)
       }
@@ -1589,9 +1599,11 @@
       clearInterval(this.interval)
       
       /* reset storage for properties that need animation */
-      this.attrs  = {}
-      this.trans  = {}
-      this.styles = {}
+      this.attrs     = {}
+      this.trans     = {}
+      this.styles    = {}
+      this.situation = {}
+  
       delete this._x
       delete this._y
       delete this._cx
@@ -1601,7 +1613,28 @@
       delete this._after
       delete this._during
       delete this._viewbox
-      
+  
+      return this
+    }
+    // Pause running animation
+  , pause: function() {
+      if (this.situation.play === true) {
+        this.situation.play  = false
+        this.situation.pause = new Date().getTime()
+      }
+  
+      return this
+    }
+    // Play running animation
+  , play: function() {
+      if (this.situation.play === false) {
+        var pause = new Date().getTime() - this.situation.pause
+        
+        this.situation.finish += pause
+        this.situation.start  += pause
+        this.situation.play    = true
+      }
+  
       return this
     }
     // Private: calculate position according to from and to
@@ -1652,14 +1685,29 @@
     // Get fx module or create a new one, then animate with given duration and ease
     animate: function(d, ease, delay) {
       return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(d, ease, delay)
-    },
+    }
     // Stop current animation; this is an alias to the fx instance
-    stop: function() {
+  , stop: function() {
       if (this.fx)
         this.fx.stop()
       
       return this
     }
+    // Pause current animation
+  , pause: function() {
+      if (this.fx)
+        this.fx.pause()
+  
+      return this
+    }
+    // Play paused current animation
+  , play: function() {
+      if (this.fx)
+        this.fx.play()
+  
+      return this
+    }
+  
     
   })
   // Usage:
