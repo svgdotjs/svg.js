@@ -724,7 +724,7 @@ rect.height() //-> returns 325
 ```
 
 
-### Hide and show
+### Hide, show and visible
 We all love to have a little hide:
 
 ```javascript
@@ -741,6 +741,16 @@ To check if the element is visible:
 ```javascript
 rect.visible()
 ```
+
+### Cloning elements
+To make an exact copy of an element the `clone()` method comes in handy:
+
+```javascript
+var clone = rect.clone()
+```
+
+This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
+
 
 ### Removing elements
 Pretty straightforward:
@@ -878,6 +888,17 @@ path.rbox()
 
 This will return an instance of `SVG.RBox`.
 
+### Inside
+To check if a given point is inside the bounding box of an element you can use the `inside()` method:
+
+```javascript
+var rect = draw.rect(100, 100).move(50, 50)
+
+rect.inside(25, 30) //-> returns false
+rect.inside(60, 70) //-> returns true
+```
+
+Note: the `x` and `y` positions are tested against the relative position of the element. Any offset on the parent element is not taken into account.
 
 ## Colors
 
@@ -922,12 +943,13 @@ All available ease types are:
 - `>`: ease out
 - `<`: ease in
 - `-`: linear
+- `=`: external control
 - a function
 
 For the latter, here is an example of the default `<>` function:
 
 ```javascript
-function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5; }
+function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5 }
 ```
 
 For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
@@ -1120,6 +1142,19 @@ The `translate()` method will take an `x` and `y` value:
 ```javascript
 // translate(x, y)
 rect.translate(0.5, -1)
+```
+
+### Radius
+Rects and ellipses have a `radius()` method. On rects it defines rounded corners, on ellipses the radii:
+
+```javascript
+rect.radius(10)
+```
+
+This will set the `rx` and `ry` attributes to `10`. To set `rx` and `ry` individually:
+
+```javascript
+rect.radius(10, 20)
 ```
 
 _This functionality requires the sugar.js module which is included in the default distribution._
