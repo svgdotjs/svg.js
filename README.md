@@ -224,6 +224,12 @@ The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
 
+Updating a line is done with the `plot()` method:
+
+```javascript
+line.plot(50, 30, 100, 150)
+```
+
 _Javascript inheritance stack: `SVG.Line` < `SVG.Shape` < `SVG.Element`_
 
 ### Polyline
@@ -443,7 +449,7 @@ var elements = $('#drawing g.my-group .my-element').each(function() {
 })
 ```
 
-### Circluar reference
+## Circluar reference
 Every element instance within svg.js has a reference to the actual `node`:
 
 ```javascript
@@ -456,8 +462,10 @@ Similarly, the node carries a reference to the svg.js `instance`:
 node.instance
 ```
 
-### Parent reference
+## Parent reference
 Every element has a reference to its parent:
+
+### Parent
 
 ```javascript
 element.parent
@@ -471,6 +479,7 @@ var draw = SVG('drawing')
 draw.parent //-> returns the wrappig html element with id 'drawing'
 ```
 
+### Doc
 For more specific parent filtering the `doc()` method can be used:
 
 ```javascript
@@ -492,6 +501,69 @@ rect.doc()           //-> returns draw
 rect.doc(SVG.Doc)    //-> returns draw
 rect.doc(SVG.Nested) //-> returns nested
 rect.doc(SVG.G)      //-> returns group
+```
+
+## Child references
+
+### First
+To get the first child of a parent element:
+
+```javascript
+draw.first()
+```
+
+### Last
+To get the last child of a parent element:
+
+```javascript
+draw.last()
+```
+
+### Children
+An array of all children will can be retreives with the `children` method:
+
+```javascript
+draw.children()
+```
+
+### Each
+The `each()` allows you to iterate over the all children of a parent element:
+
+```javascript
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' })
+})
+```
+
+Deep traversing is also possible by passing true as the second argument:
+
+```javascript
+// draw.each(block, deep)
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' })
+}, true)
+```
+
+### Has
+Checking the existence of an element within a parent:
+
+```javascript
+var rect  = draw.rect(100, 50)
+var group = draw.group()
+
+draw.has(rect)  //-> returns true
+group.has(rect) //-> returns false
+```
+
+### Get
+Get an element on a given position in the children array:
+
+```javascript
+var rect   = draw.rect(20, 30)
+var circle = draw.circle(50)
+
+draw.get(0) //-> returns rect
+draw.get(1) //-> returns circle
 ```
 
 
@@ -773,25 +845,6 @@ This method will replace the called element with the given element in the same p
 rect.replace(draw.circle(100))
 ```
 
-
-### Iterating over all children
-
-If you would iterate over all the `children` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
-
-```javascript
-draw.each(function(i, children) {
-  this.fill({ color: '#f06' })
-})
-```
-
-Deep traversing is also possible by passing true as the second argument:
-
-```javascript
-// draw.each(block, deep)
-draw.each(function(i, children) {
-  this.fill({ color: '#f06' })
-}, true)
-```
 
 ## Inserting elements
 
@@ -1446,6 +1499,8 @@ _This functionality requires the gradient.js module which is included in the def
 
 
 ## Events
+
+### Basic events
 Events can be bound to elements as follows:
 
 ```javascript
@@ -1460,12 +1515,15 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
+All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
+
+### Event listeners
 You can also bind event listeners to elements:
 
 ```javascript
 var click = function() {
   rect.fill({ color: '#f06' })
-};
+}
 
 rect.on('click', click)
 ```
