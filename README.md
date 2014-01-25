@@ -456,6 +456,44 @@ Similarly, the node carries a reference to the svg.js `instance`:
 node.instance
 ```
 
+### Parent reference
+Every element has a reference to its parent:
+
+```javascript
+element.parent
+```
+
+Even the main svg document:
+
+```javascript
+var draw = SVG('drawing')
+
+draw.parent //-> returns the wrappig html element with id 'drawing'
+```
+
+For more specific parent filtering the `doc()` method can be used:
+
+```javascript
+var draw = SVG('drawing')
+var rect = draw.rect(100, 100)
+
+rect.doc() //-> returns draw
+```
+
+Alternatively a class can be passed as the first argument:
+
+```javascript
+var draw   = SVG('drawing')
+var nested = draw.nested()
+var group  = nested.group()
+var rect   = group.rect(100, 100)
+
+rect.doc()           //-> returns draw
+rect.doc(SVG.Doc)    //-> returns draw
+rect.doc(SVG.Nested) //-> returns nested
+rect.doc(SVG.G)      //-> returns group
+```
+
 
 ## Manipulating elements
 
