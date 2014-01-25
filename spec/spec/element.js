@@ -192,6 +192,26 @@ describe('Element', function() {
       expect(draw.has(rect)).toBe(false)
     })
   })
+
+  describe('addTo()', function() {
+    it('adds an element to a given parent and returns itself', function() {
+      var rect  = draw.rect(100,100)
+        , group = draw.group()
+
+      expect(rect.addTo(group)).toBe(rect)
+      expect(rect.parent).toBe(group)
+    })
+  })
+
+  describe('putIn()', function() {
+    it('adds an element to a given parent and returns parent', function() {
+      var rect  = draw.rect(100,100)
+        , group = draw.group()
+
+      expect(rect.putIn(group)).toBe(group)
+      expect(rect.parent).toBe(group)
+    })
+  })
   
   describe('rbox()', function() {
     it('returns an instance of SVG.RBox', function() {

@@ -50,47 +50,6 @@ if (SVG.supported) {
 }
 ```
 
-### ViewBox
-
-The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
-
-```javascript
-draw.viewbox(0, 0, 297, 210)
-```
-
-Alternatively you can also supply an object as the first argument:
-
-```javascript
-draw.viewbox({ x: 0, y: 0, width: 297, height: 210 })
-```
-
-Without any arguments an instance of `SVG.ViewBox` will be returned:
-
-```javascript
-var box = draw.viewbox()
-```
-
-But the best thing about the `viewbox()` method is that you can get the zoom of the viewbox:
-
-```javascript
-var box = draw.viewbox()
-var zoom = box.zoom
-```
-
-If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.
-
-### Nested svg
-With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
-
-```javascript
-var nested = draw.nested()
-
-var rect = nested.rect(200, 200)
-```
-
-
-_This functionality requires the nested.js module which is included in the default distribution._
-
 
 ### SVG document
 Svg.js also works outside of the HTML DOM, inside an SVG document for example:
@@ -115,6 +74,104 @@ By default sub pixel offset won't be corrected. To enable it, call the `fixSubPi
 var draw = SVG('drawing').fixSubPixelOffset()
 ```
 
+## Parent elements
+
+### Main svg document
+The main svg.js initializer function creates a root svg node in the given element and retuns an instance of `SVG.Doc`:
+
+```javascript
+var draw = SVG('drawing')
+```
+
+_Javascript inheritance stack: `SVG.Doc` < `SVG.Container` < `SVG.Parent`_
+
+### Nested svg
+With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:
+
+```javascript
+var nested = draw.nested()
+
+var rect = nested.rect(200, 200)
+```
+
+_Javascript inheritance stack: `SVG.Nested` < `SVG.Container` < `SVG.Parent`_
+
+### Groups
+Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
+
+```javascript
+var group = draw.group()
+group.path('M10,20L30,40')
+```
+
+Existing elements from the svg document can also be added to a group:
+
+```javascript
+group.add(rect)
+```
+
+_Javascript inheritance stack: `SVG.G` < `SVG.Container` < `SVG.Parent`_
+
+### Hyperlink
+A hyperlink or `<a>` tag creates a container that enables a link on all children:
+
+```javascript
+var link = draw.link('http://svgjs.com')
+var rect = link.rect(100, 100)
+```
+
+The link url can be updated with the `to()` method:
+
+```javascript
+link.to('http://apple.com')
+```
+
+Furthermore, the link element has a `show()` method to create the `xlink:show` attribute:
+
+```javascript
+link.show('replace')
+```
+
+And the `target()` method to create the `target` attribute:
+
+```javascript
+link.target('_blank')
+```
+
+Elements can also be linked the other way around with the `linkTo()` method:
+
+```javascript
+rect.linkTo('http://svgjs.com')
+```
+
+Alternatively a block can be passed instead of a url for more options on the link element:
+
+```javascript
+rect.linkTo(function(link) {
+  link.to('http://svgjs.com').target('_blank')
+})
+```
+
+
+_Javascript inheritance stack: `SVG.A` < `SVG.Container` < `SVG.Parent`_
+
+### Defs
+The `<defs>` element is a container element for referenced elements. Elements that are descendants of a ‘defs’ are not rendered directly. The `<defs>` node lives in the main `<svg>` document and can be accessed with the `defs()` method:
+
+```javascript
+var defs = draw.defs()
+```
+
+The defs are also availabel on any other element through the `doc()` method:
+
+```javascript
+var defs = rect.doc().defs()
+```
+
+The defs node works exactly the same as groups.
+
+_Javascript inheritance stack: `SVG.Defs` < `SVG.Container` < `SVG.Parent`_
+
 
 ## Elements
 
@@ -137,6 +194,8 @@ This will set the `rx` and `ry` attributes to `10`. To set `rx` and `ry` individ
 rect.radius(10, 20)
 ```
 
+_Javascript inheritance stack: `SVG.Rect` < `SVG.Shape` < `SVG.Element`_
+
 
 ### Ellipse
 Ellipses, like rects, have two arguments, their `width` and `height`:
@@ -145,6 +204,8 @@ Ellipses, like rects, have two arguments, their `width` and `height`:
 var ellipse = draw.ellipse(200, 100)
 ```
 
+_Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
+
 ### Circle
 The only argument necessary for a circle is the diameter:
 
@@ -152,8 +213,9 @@ The only argument necessary for a circle is the diameter:
 var circle = draw.circle(100)
 ```
 
-_Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
+_Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 
+_Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
 
 ### Line
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
@@ -162,6 +224,7 @@ The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
 
+_Javascript inheritance stack: `SVG.Line` < `SVG.Shape` < `SVG.Element`_
 
 ### Polyline
 The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
@@ -192,6 +255,7 @@ The `plot()` method can also be animated:
 polyline.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]])
 ```
 
+_Javascript inheritance stack: `SVG.Polyline` < `SVG.Shape` < `SVG.Element`_
 
 ### Polygon
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
@@ -203,6 +267,7 @@ var polygon = draw.polygon('0,0 100,50 50,100').fill('none').stroke({ width: 1 }
 
 Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.
 
+_Javascript inheritance stack: `SVG.Polygon` < `SVG.Shape` < `SVG.Element`_
 
 ### Path
 The path string is similar to the polygon string but much more complex in order to support curves:
@@ -228,6 +293,8 @@ Paths can be updated using the `plot()` method:
 path.plot('M100,200L300,400')
 ```
 
+_Javascript inheritance stack: `SVG.Path` < `SVG.Shape` < `SVG.Element`_
+
 
 ### Image
 When creating images the `width` and `height` values should be defined:
@@ -236,6 +303,8 @@ When creating images the `width` and `height` values should be defined:
 // image(src, width, height)
 var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
 ```
+
+_Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
 
 
 ### Text
@@ -285,6 +354,8 @@ text.font({
 })
 ```
 
+_Javascript inheritance stack: `SVG.Text` < `SVG.Shape` < `SVG.Element`_
+
 ### TextPath
 A nice feature in svg is the ability to run text along a path:
 
@@ -323,6 +394,8 @@ Referencing the linked path element directly:
 var path = text.track
 ```
 
+_Javascript inheritance stack: `SVG.TextPath` < `SVG.Element`_
+
 
 ### Use
 The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
@@ -341,33 +414,7 @@ var use  = draw.use(rect).move(200, 200)
 
 In this way the rect element acts as a library element. You can edit it but it won't be rendered.
 
-
-### Hyperlink
-A hyperlink or `<a>` tag creates a container that enables a link on all children:
-
-```javascript
-var link = draw.link('http://svgjs.com')
-var rect = link.rect(100, 100)
-```
-
-The link url can be updated with the `to()` method:
-
-```javascript
-link.to('http://apple.com')
-```
-
-Furthermore, the link element has a `show()` method to create the `xlink:show` attribute:
-
-```javascript
-link.show('replace')
-```
-
-And the `target()` method to create the `target` attribute:
-
-```javascript
-link.target('_blank')
-```
-
+_Javascript inheritance stack: `SVG.Use` < `SVG.Shape` < `SVG.Element`_
 
 ## Referencing elements
 
@@ -664,7 +711,7 @@ Pretty straightforward:
 rect.remove()
 ```
 
-To remove all elements in the svg document:
+To remove all elements from a parent element:
 
 ```javascript
 draw.clear()
@@ -678,6 +725,90 @@ This method will replace the called element with the given element in the same p
 rect.replace(draw.circle(100))
 ```
 
+
+### Iterating over all children
+
+If you would iterate over all the `children` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
+
+```javascript
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' })
+})
+```
+
+Deep traversing is also possible by passing true as the second argument:
+
+```javascript
+// draw.each(block, deep)
+draw.each(function(i, children) {
+  this.fill({ color: '#f06' })
+}, true)
+```
+
+## Inserting elements
+
+### Add
+Elements can be moved between parents via the `add()` method on any parent:
+
+```javascript
+var rect = draw.rect()
+var group = draw.group()
+
+group.add(rect) //-> returns group
+```
+
+### Put
+Where the `add()` method returns the parent itself, the `put()` method returns the given element:
+
+```javascript
+group.put(rect) //-> returns rect
+```
+
+### AddTo
+Similarly to the `add()` method on a parent element, elements have the `addTo()` method:
+
+```javascript
+rect.addTo(group) //-> returns rect
+```
+
+### AddTo
+Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
+
+```javascript
+rect.putIn(group) //-> returns group
+```
+
+
+## Geometry
+
+### ViewBox
+
+The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
+
+```javascript
+draw.viewbox(0, 0, 297, 210)
+```
+
+Alternatively you can also supply an object as the first argument:
+
+```javascript
+draw.viewbox({ x: 0, y: 0, width: 297, height: 210 })
+```
+
+Without any arguments an instance of `SVG.ViewBox` will be returned:
+
+```javascript
+var box = draw.viewbox()
+```
+
+But the best thing about the `viewbox()` method is that you can get the zoom of the viewbox:
+
+```javascript
+var box = draw.viewbox()
+var zoom = box.zoom
+```
+
+If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.
 
 ### Bounding box
 
@@ -710,25 +841,6 @@ path.rbox()
 This will return an instance of `SVG.RBox`.
 
 
-### Iterating over all children
-
-If you would iterate over all the `children` of the svg document, you might notice also the `<defs>` and `<g>` elements will be included. To iterate the shapes only, you can use the `each()` method: 
-
-```javascript
-draw.each(function(i, children) {
-  this.fill({ color: '#f06' })
-})
-```
-
-Deep traversing is also possible by passing true as the second argument:
-
-```javascript
-// draw.each(block, deep)
-draw.each(function(i, children) {
-  this.fill({ color: '#f06' })
-}, true)
-```
-
 ## Colors
 
 Svg.js has a dedicated color module handling different types of colors. Accepted values are:
@@ -738,6 +850,8 @@ Svg.js has a dedicated color module handling different types of colors. Accepted
 - rgb object; e.g. { r: 255, g: 0, b: 102 }
 
 Note that when working with objects is important to provide all three values every time.
+
+Colors in svg.js have their own class `SVG.Color` and can therefore be easily extended.
 
 
 ## Animating elements
@@ -1128,23 +1242,6 @@ rect.after(circle)
 ```
 
 _This functionality requires the arrange.js module which is included in the default distribution._
-
-
-## Grouping elements
-Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
-
-```javascript
-var group = draw.group()
-group.path('M10,20L30,40')
-```
-
-Existing elements from the svg document can also be added to a group:
-
-```javascript
-group.add(rect)
-```
-
-_This functionality requires the group.js module which is included in the default distribution._
 
 
 ## Sets

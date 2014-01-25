@@ -30,3 +30,19 @@ SVG.extend(SVG.Container, {
   }
   
 })
+
+//
+SVG.extend(SVG.Element, {
+  // Create a hyperlink element
+  linkTo: function(url) {
+    var link = new SVG.A
+
+    if (typeof url == 'function')
+      url.call(link, link)
+    else
+      link.to(url)
+
+    return this.parent.put(link).put(this)
+  }
+  
+})

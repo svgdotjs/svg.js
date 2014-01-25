@@ -1,4 +1,4 @@
-/* svg.js v0.35 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
+/* svg.js v0.36 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -832,6 +832,14 @@
       this.after(element).remove()
   
       return element
+    }
+    // Add element to given container and return self
+  , addTo: function(parent) {
+      return parent.put(this)
+    }
+    // Add element to given container and return container
+  , putIn: function(parent) {
+      return parent.add(this)
     }
     // Get parent document
   , doc: function(type) {
@@ -2854,6 +2862,22 @@
     // Create a hyperlink element
     link: function(url) {
       return this.put(new SVG.A).to(url)
+    }
+    
+  })
+  
+  //
+  SVG.extend(SVG.Element, {
+    // Create a hyperlink element
+    linkTo: function(url) {
+      var link = new SVG.A
+  
+      if (typeof url == 'function')
+        url.call(link, link)
+      else
+        link.to(url)
+  
+      return this.parent.put(link).put(this)
     }
     
   })

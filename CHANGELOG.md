@@ -1,6 +1,11 @@
+# v0.36 (25/01/2014)
+
+- added `linkTo()`, `addTo()` and `putIn()` methods on `SVG.Element`
+- provided more detailed documentation on parent elements
+
 # v0.35 (23/01/2014)
 
-- added `SVG.A` element
+- added `SVG.A` element with the `link()`
 
 # v0.34 (23/01/2014)
 

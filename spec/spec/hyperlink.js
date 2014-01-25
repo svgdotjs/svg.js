@@ -36,4 +36,26 @@ describe('Hyperlink', function() {
     })
   })
 
+  describe('SVG.Element', function() {
+    var element
+
+    beforeEach(function() {
+      element = draw.rect(100,100)
+    })
+
+    describe('linkTo()', function() {
+      it('wraps the called element in a link with given url', function() {
+        element.linkTo(url)
+        expect(element.parent.attr('href')).toBe(url)
+      })
+      it('wraps the called element in a link with given block', function() {
+        element.linkTo(function(link) {
+          link.to(url).target('_blank')
+        })
+        expect(element.parent.attr('href')).toBe(url)
+        expect(element.parent.attr('target')).toBe('_blank')
+      })
+    })
+  })
+
 })

@@ -114,6 +114,14 @@ SVG.extend(SVG.Element, {
 
     return element
   }
+  // Add element to given container and return self
+, addTo: function(parent) {
+    return parent.put(this)
+  }
+  // Add element to given container and return container
+, putIn: function(parent) {
+    return parent.add(this)
+  }
   // Get parent document
 , doc: function(type) {
     return this._parent(type || SVG.Doc)
