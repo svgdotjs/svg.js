@@ -789,7 +789,7 @@ draw.each(function(i, children) {
 Elements can be moved between parents via the `add()` method on any parent:
 
 ```javascript
-var rect = draw.rect()
+var rect = draw.rect(100, 100)
 var group = draw.group()
 
 group.add(rect) //-> returns group
@@ -809,7 +809,7 @@ Similarly to the `add()` method on a parent element, elements have the `addTo()`
 rect.addTo(group) //-> returns rect
 ```
 
-### AddTo
+### PutIn
 Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
 
 ```javascript
