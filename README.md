@@ -1215,6 +1215,8 @@ _This functionality requires the sugar.js module which is included in the defaul
 
 
 ## Masking elements
+
+### MaskWith
 The easiest way to mask is to use a single element:
 
 ```javascript
@@ -1223,6 +1225,7 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
 rect.maskWith(ellipse)
 ```
 
+### Mask
 But you can also use multiple elements:
 
 ```javascript
@@ -1247,25 +1250,34 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient })
 rect.maskWith(ellipse)
 ```
 
-For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:
-
-```javascript
-rect.masker.fill('#fff')
-```
-
+### Unmask
 Unmasking the elements can be done with the `unmask()` method:
 
 ```javascript
 rect.unmask()
 ```
 
-Removing the mask alltogether will also `unmask()` all masked elements:
+The `unmask()` method returns the masking element.
+
+### Remove
+Removing the mask alltogether will also `unmask()` all masked elements as well:
+
+```javascript
+mask.remove()
+```
+
+Or:
 
 ```javascript
 rect.masker.remove()
 ```
 
-The `unmask()` method returns the masking element. So if you would like to remove the 
+### References
+For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:
+
+```javascript
+rect.masker.fill('#fff')
+```
 
 _This functionality requires the mask.js module which is included in the default distribution._
 
@@ -1303,56 +1315,63 @@ _This functionality requires the clip.js module which is included in the default
 ## Arranging elements
 You can arrange elements within their parent SVG document using the following methods.
 
+### Front
 Move element to the front:
 
 ```javascript
 rect.front()
 ```
 
+### Back
 Move element to the back:
 
 ```javascript
 rect.back()
 ```
 
-Note that `back()` will move the element to position 0.
-
+### Forward
 Move element one step forward:
 
 ```javascript
 rect.forward()
 ```
 
+### Backward
 Move element one step backward:
 
 ```javascript
 rect.backward()
 ```
 
+### Siblings
 The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:
 
 ```javascript
 rect.siblings()
 ```
 
+### Position
 Get the position (a number) of rect between its siblings:
 
 ```javascript
 rect.position()
 ```
 
+### Next
 Get the next sibling:
 
 ```javascript
 rect.next()
 ```
 
+### Previous
 Get the previous sibling:
 
 ```javascript
 rect.previous()
 ```
 
+### Before
 Insert an element before another:
 
 ```javascript
@@ -1360,6 +1379,7 @@ Insert an element before another:
 rect.before(circle)
 ```
 
+### After
 Insert an element after another:
 
 ```javascript
@@ -1386,20 +1406,22 @@ set.add(rect).add(circle)
 set.fill('#ff0')
 ```
 
-Quite a useful caracteristic of sets is the ability to accept multiple elements at once:
+A single element can be a member of many sets. Sets also don't have a structural representation, in fact they are just fancy array's.
+
+### Add
+Add an element to a set:
+
+```javascript
+set.add(rect)
+```
+
+Quite a useful feature of sets is the ability to accept multiple elements at once:
 
 ```javascript
 set.add(rect, circle)
 ```
 
-Sets work with animations as well:
-
-```javascript
-set.animate(3000).fill('#ff0')
-```
-
-A single element can be a member of many sets. Sets also don't have a structural representation, in fact they are just fancy array's.
-
+### Each
 Iterating over all members in a set is the same as with svg containers:
 
 ```javascript
@@ -1408,16 +1430,38 @@ set.each(function(i) {
 })
 ```
 
+### Has
+Determine if an element is member of the set:
+
+```javascript
+set.has(rect) //-> returns true of false
+```
+
+### Has
+Get the element at a given index:
+
+```javascript
+set.get(1)
+```
+
+### Remove
 To remove an element from a set:
 
 ```javascript
 set.remove(rect)
 ```
 
+### Clear
 Or to remove all elements from a set:
 
 ```javascript
 set.clear()
+```
+
+Sets work with animations as well:
+
+```javascript
+set.animate(3000).fill('#ff0')
 ```
 
 
