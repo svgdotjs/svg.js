@@ -505,28 +505,28 @@ rect.doc(SVG.G)      //-> returns group
 
 ## Child references
 
-### First
+### first()
 To get the first child of a parent element:
 
 ```javascript
 draw.first()
 ```
 
-### Last
+### last()
 To get the last child of a parent element:
 
 ```javascript
 draw.last()
 ```
 
-### Children
+### children()
 An array of all children will can be retreives with the `children` method:
 
 ```javascript
 draw.children()
 ```
 
-### Each
+### each()
 The `each()` allows you to iterate over the all children of a parent element:
 
 ```javascript
@@ -544,7 +544,7 @@ draw.each(function(i, children) {
 }, true)
 ```
 
-### Has
+### has()
 Checking the existence of an element within a parent:
 
 ```javascript
@@ -555,7 +555,7 @@ draw.has(rect)  //-> returns true
 group.has(rect) //-> returns false
 ```
 
-### Get
+### get()
 Get an element on a given position in the children array:
 
 ```javascript
@@ -569,7 +569,7 @@ draw.get(1) //-> returns circle
 
 ## Manipulating elements
 
-### Attributes
+### attr()
 You can get and set an element's attributes directly using `attr()`.
 
 Get a single attribute:
@@ -604,7 +604,7 @@ rect.attr('fill', null)
 
 
 
-### Transform
+### transform()
 With the `transform()` method elements can be scaled, rotated, translated and skewed:
 
 ```javascript
@@ -657,7 +657,7 @@ rect.attr('transform', 'matrix(1,0.5,0.5,1,0,0)')
 Although that would mean you can't use the `transform()` method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the `transform()` method.
 
 
-### Style
+### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
 
 ```javascript
@@ -697,7 +697,7 @@ rect.style('cursor', null)
 ```
 
 
-### Move 
+### move(), x() and y()
 Move the element to a given `x` and `y` position by its upper left corner:
 
 ```javascript
@@ -732,7 +732,7 @@ rect.x(200, true).y(350, true)
 ```
 
 
-### Center
+### center(), cx() and cy()
 This is an extra method to move an element by its center:
 
 ```javascript
@@ -759,7 +759,7 @@ rect.cx(150, true).cy(150, true)
 ```
 
 
-### Size
+### size()
 Set the size of an element by a given `width` and `height`:
 
 ```javascript
@@ -769,7 +769,7 @@ rect.size(200, 300)
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
 
-### Width
+### width()
 Set only width of an element:
 
 ```javascript
@@ -782,7 +782,7 @@ This method also acts as a getter:
 rect.width() //-> returns 200
 ```
 
-### Height
+### height()
 Set only height of an element:
 
 ```javascript
@@ -796,7 +796,7 @@ rect.height() //-> returns 325
 ```
 
 
-### Hide, show and visible
+### hide(), show() and visible()
 We all love to have a little hide:
 
 ```javascript
@@ -814,7 +814,7 @@ To check if the element is visible:
 rect.visible()
 ```
 
-### Cloning elements
+### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
 
 ```javascript
@@ -824,21 +824,21 @@ var clone = rect.clone()
 This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
 
 
-### Removing elements
+### remove()
 Pretty straightforward:
 
 ```javascript
 rect.remove()
 ```
 
+### clear()
 To remove all elements from a parent element:
 
 ```javascript
 draw.clear()
 ```
 
-
-### Replacing elements
+### replace()
 This method will replace the called element with the given element in the same position in the stack:
 
 ```javascript
@@ -848,7 +848,7 @@ rect.replace(draw.circle(100))
 
 ## Inserting elements
 
-### Add
+### add()
 Elements can be moved between parents via the `add()` method on any parent:
 
 ```javascript
@@ -858,21 +858,21 @@ var group = draw.group()
 group.add(rect) //-> returns group
 ```
 
-### Put
+### put()
 Where the `add()` method returns the parent itself, the `put()` method returns the given element:
 
 ```javascript
 group.put(rect) //-> returns rect
 ```
 
-### AddTo
+### addTo()
 Similarly to the `add()` method on a parent element, elements have the `addTo()` method:
 
 ```javascript
 rect.addTo(group) //-> returns rect
 ```
 
-### PutIn
+### putIn()
 Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
 
 ```javascript
@@ -882,7 +882,7 @@ rect.putIn(group) //-> returns group
 
 ## Geometry
 
-### ViewBox
+### viewBox()
 
 The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
 
@@ -911,7 +911,7 @@ var zoom = box.zoom
 
 If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.
 
-### Bounding box
+### bbox()
 
 ```javascript
 path.bbox()
@@ -932,7 +932,7 @@ var box2 = draw.rect(100,100).move(200,200)
 var box3 = box1.merge(box2)
 ```
 
-### Rectagular box
+### rbox()
 Is similar to `bbox()` but will give you the box around the exact representation of the element, taking all transformations into account.
 
 ```javascript
@@ -941,7 +941,7 @@ path.rbox()
 
 This will return an instance of `SVG.RBox`.
 
-### Inside
+### inside()
 To check if a given point is inside the bounding box of an element you can use the `inside()` method:
 
 ```javascript
@@ -968,7 +968,7 @@ Colors in svg.js have their own class `SVG.Color` and can therefore be easily ex
 
 ## Animating elements
 
-### Invoking an animation
+### animate()
 Animating elements is very much the same as manipulating elements, the only difference is you have to include the `animate()` method:
 
 ```javascript
@@ -989,7 +989,7 @@ rect.animate({ ease: '<', delay: 1500 }).attr({ fill: '#f03' })
 
 By default `duration` will be set to `1000`, `ease` will be set to `<>`.
 
-### Easing
+### easing
 All available ease types are:
 
 - `<>`: ease in and out
@@ -1035,7 +1035,7 @@ You can also animate non-numeric unit values unsing the `attr()` method:
 rect.animate().attr('x', '10%').animate().attr('x', '50%')
 ```
 
-### Pausing and playing animations
+### pause() and play()
 Pausing and playing an animations is fairly straightforward:
 
 ```javascript
@@ -1045,7 +1045,7 @@ rect.mouseenter(function() { this.pause() })
 rect.mouseleave(function() { this.play() })
 ```
 
-### Stopping animations
+### stop()
 Animations can be stopped in two ways.
 
 By calling the `stop()` method:
@@ -1064,7 +1064,7 @@ rect.animate().center(200, 200)
 
 Stopping an animation is irreversable.
 
-### Synchronising animations
+### during()
 If you want to perform your own actions during the animations you can use the `during()` method:
 
 ```javascript
@@ -1095,6 +1095,15 @@ rect.animate(3000).move(100, 100).during(function(pos, morph) {
 })
 ```
 
+### after()
+Finally, you can add callback methods using `after()`:
+
+```javascript
+rect.animate(3000).move(100, 100).after(function() {
+  this.animate().attr({ fill: '#f06' })
+})
+```
+
 ### Controlling animations externally
 Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
 
@@ -1108,16 +1117,6 @@ document.onmousemove = function(event) {
 
 In order to be able use the `to()` method the duration of the animation should be set to `'='`. The value passed as the first argument of `to()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
 
-
-### After animation callback
-Finally, you can add callback methods using `after()`:
-
-```javascript
-rect.animate(3000).move(100, 100).after(function() {
-  this.animate().attr({ fill: '#f06' })
-})
-```
-
 _This functionality requires the fx.js module which is included in the default distribution._
 
 
@@ -1125,7 +1124,7 @@ _This functionality requires the fx.js module which is included in the default d
 
 Fill and stroke are used quite often. Therefore two convenience methods are provided:
 
-### Fill
+### fill()
 The `fill()` method is a pretty alternative to the `attr()` method:
 
 ```javascript
@@ -1138,7 +1137,7 @@ A single hex string will work as well:
 rect.fill('#f06')
 ```
 
-### Stroke
+### stroke()
 The `stroke()` method is similar to `fill()`:
 
 ```javascript
@@ -1151,14 +1150,14 @@ Like fill, a single hex string will work as well:
 rect.stroke('#f06')
 ```
 
-### Opacity
+### opacity()
 To set the overall opacity of an element:
 
 ```javascript
 rect.opacity(0.5)
 ```
 
-### Rotate
+### rotate()
 The `rotate()` method will automatically rotate elements according to the center of the element:
 
 ```javascript
@@ -1173,7 +1172,7 @@ Although you can also define a specific rotation point:
 rect.rotate(45, 50, 50)
 ```
 
-### Skew
+### skew()
 The `skew()` method will take an `x` and `y` value:
 
 ```javascript
@@ -1181,7 +1180,7 @@ The `skew()` method will take an `x` and `y` value:
 rect.skew(0, 45)
 ```
 
-### Scale
+### scale()
 The `scale()` method will take an `x` and `y` value:
 
 ```javascript
@@ -1189,7 +1188,7 @@ The `scale()` method will take an `x` and `y` value:
 rect.scale(0.5, -1)
 ```
 
-### Translate
+### translate()
 The `translate()` method will take an `x` and `y` value:
 
 ```javascript
@@ -1197,7 +1196,7 @@ The `translate()` method will take an `x` and `y` value:
 rect.translate(0.5, -1)
 ```
 
-### Radius
+### radius()
 Rects and ellipses have a `radius()` method. On rects it defines rounded corners, on ellipses the radii:
 
 ```javascript
@@ -1216,7 +1215,7 @@ _This functionality requires the sugar.js module which is included in the defaul
 
 ## Masking elements
 
-### MaskWith
+### maskWith()
 The easiest way to mask is to use a single element:
 
 ```javascript
@@ -1225,7 +1224,7 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
 rect.maskWith(ellipse)
 ```
 
-### Mask
+### mask()
 But you can also use multiple elements:
 
 ```javascript
@@ -1250,7 +1249,7 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: gradient })
 rect.maskWith(ellipse)
 ```
 
-### Unmask
+### unmask()
 Unmasking the elements can be done with the `unmask()` method:
 
 ```javascript
@@ -1259,7 +1258,7 @@ rect.unmask()
 
 The `unmask()` method returns the masking element.
 
-### Remove
+### remove()
 Removing the mask alltogether will also `unmask()` all masked elements as well:
 
 ```javascript
@@ -1315,63 +1314,63 @@ _This functionality requires the clip.js module which is included in the default
 ## Arranging elements
 You can arrange elements within their parent SVG document using the following methods.
 
-### Front
+### front()
 Move element to the front:
 
 ```javascript
 rect.front()
 ```
 
-### Back
+### back()
 Move element to the back:
 
 ```javascript
 rect.back()
 ```
 
-### Forward
+### forward()
 Move element one step forward:
 
 ```javascript
 rect.forward()
 ```
 
-### Backward
+### backward()
 Move element one step backward:
 
 ```javascript
 rect.backward()
 ```
 
-### Siblings
+### siblings()
 The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:
 
 ```javascript
 rect.siblings()
 ```
 
-### Position
+### position()
 Get the position (a number) of rect between its siblings:
 
 ```javascript
 rect.position()
 ```
 
-### Next
+### next()
 Get the next sibling:
 
 ```javascript
 rect.next()
 ```
 
-### Previous
+### previous()
 Get the previous sibling:
 
 ```javascript
 rect.previous()
 ```
 
-### Before
+### before()
 Insert an element before another:
 
 ```javascript
@@ -1379,7 +1378,7 @@ Insert an element before another:
 rect.before(circle)
 ```
 
-### After
+### after()
 Insert an element after another:
 
 ```javascript
@@ -1408,7 +1407,7 @@ set.fill('#ff0')
 
 A single element can be a member of many sets. Sets also don't have a structural representation, in fact they are just fancy array's.
 
-### Add
+### add()
 Add an element to a set:
 
 ```javascript
@@ -1421,7 +1420,7 @@ Quite a useful feature of sets is the ability to accept multiple elements at onc
 set.add(rect, circle)
 ```
 
-### Each
+### each()
 Iterating over all members in a set is the same as with svg containers:
 
 ```javascript
@@ -1430,28 +1429,28 @@ set.each(function(i) {
 })
 ```
 
-### Has
+### has()
 Determine if an element is member of the set:
 
 ```javascript
 set.has(rect) //-> returns true of false
 ```
 
-### Has
+### get()
 Get the element at a given index:
 
 ```javascript
 set.get(1)
 ```
 
-### Remove
+### remove()
 To remove an element from a set:
 
 ```javascript
 set.remove(rect)
 ```
 
-### Clear
+### clear()
 Or to remove all elements from a set:
 
 ```javascript
@@ -1620,7 +1619,7 @@ rect.data('key', 'value', true)
 
 ## Memory
 
-### Remember 
+### remember() 
 Storing data in-memory is very much like setting attributes:
 
 ```javascript
@@ -1643,7 +1642,7 @@ rect.remember('oldBBox')
 ```
 
 
-### Forget
+### forget()
 Erasing a single memory:
 
 ```javascript
