@@ -44,6 +44,14 @@ SVG.extend(SVG.Set, {
 
     return this
   }
+  // Checks if a given element is present in set
+, has: function(element) {
+    return this.members.indexOf(element) >= 0
+  }
+  // Get member at given index
+, get: function(i) {
+    return this.members[i]
+  }
   // Default value
 , valueOf: function() {
     return this.members

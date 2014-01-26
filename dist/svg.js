@@ -1,4 +1,4 @@
-/* svg.js v0.36 - svg regex default color array number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
+/* svg.js v0.37 - svg regex default color array pointarray number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -327,7 +327,8 @@
   
   })
   
-  // Poly points array
+
+
   SVG.PointArray = function() {
     this.constructor.apply(this, arguments)
   }
@@ -433,22 +434,6 @@
     }
   
   })
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
 
   SVG.Number = function(value) {
   
@@ -3029,6 +3014,14 @@
       this.members = []
   
       return this
+    }
+    // Checks if a given element is present in set
+  , has: function(element) {
+      return this.members.indexOf(element) >= 0
+    }
+    // Get member at given index
+  , get: function(i) {
+      return this.members[i]
     }
     // Default value
   , valueOf: function() {

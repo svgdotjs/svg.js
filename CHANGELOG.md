@@ -1,3 +1,8 @@
+# v0.37 (26/01/2014)
+
+- added `get()` to `SVG.Set`
+- moved `SVG.PointArray` to a separate file
+
 # v0.36 (25/01/2014)
 
 - added `linkTo()`, `addTo()` and `putIn()` methods on `SVG.Element`

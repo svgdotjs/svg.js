@@ -73,6 +73,20 @@ describe('Set', function() {
     })
   })
 
+  describe('get()', function() {
+    it('returns member ar given index', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+      expect(set.get(2)).toBe(e3)
+    })
+  })
+
+  describe('has()', function() {
+    it('checks if a given element is present in set', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+      expect(set.has(e4)).toBe(true)
+    })
+  })
+
   describe('valueOf()', function() {
     it('returns the members array', function() {
       set.add(e1)
