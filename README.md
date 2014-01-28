@@ -960,12 +960,45 @@ Note: the `x` and `y` positions are tested against the relative position of the 
 Svg.js has a dedicated color module handling different types of colors. Accepted values are:
 
 - hex string; three based (e.g. #f06) or six based (e.g. #ff0066)
+```javascript
+var color = new SVG.Color('#f06')
+```
 - rgb string; e.g. rgb(255, 0, 102)
+```javascript
+var color = new SVG.Color('rgb(255, 0, 102)')
+```
 - rgb object; e.g. { r: 255, g: 0, b: 102 }
+```javascript
+var color = new SVG.Color({ r: 255, g: 0, b: 102 })
+```
 
 Note that when working with objects is important to provide all three values every time.
 
-Colors in svg.js have their own class `SVG.Color` and can therefore be easily extended.
+The `SVG.Color` instance has a few methods of its own.
+
+### toHex()
+Get hex value:
+
+```javascript
+color.toHex() //-> returns '#ff0066'
+```
+
+### toRgb()
+Get rgb string value:
+
+```javascript
+color.toRgb() //-> returns 'rgb(255,0,102)'
+```
+
+### brightness()
+Get the brightness of a color:
+
+```javascript
+color.brightness() //-> returns 0.344
+```
+
+This is the perceived brighness where `0` is black and `1` is white.
+
 
 
 ## Animating elements
