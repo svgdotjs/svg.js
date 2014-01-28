@@ -449,13 +449,15 @@ var elements = $('#drawing g.my-group .my-element').each(function() {
 })
 ```
 
-## Circluar reference
+## Circular reference
 Every element instance within svg.js has a reference to the actual `node`:
 
+### node
 ```javascript
 element.node
 ```
 
+### instance
 Similarly, the node carries a reference to the svg.js `instance`:
 
 ```javascript
@@ -465,7 +467,7 @@ node.instance
 ## Parent reference
 Every element has a reference to its parent:
 
-### Parent
+### parent
 
 ```javascript
 element.parent
@@ -479,7 +481,7 @@ var draw = SVG('drawing')
 draw.parent //-> returns the wrappig html element with id 'drawing'
 ```
 
-### Doc
+### doc()
 For more specific parent filtering the `doc()` method can be used:
 
 ```javascript
