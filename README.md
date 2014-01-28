@@ -1007,7 +1007,7 @@ function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5 }
 
 For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
 
-### Animatable methods
+### Animatable method chain
 Note that the `animate()` method will not return the targeted element but an instance of SVG.FX which will take the following methods:
 
 Of course `attr()`:
@@ -1032,7 +1032,7 @@ rect.animate().rotate(45).skew(25, 0)
 
 You can also animate non-numeric unit values unsing the `attr()` method:
 ```javascript
-rect.animate().attr('x', '10%').animate().attr('x', '50%')
+rect.attr('x', '10%').animate().attr('x', '50%')
 ```
 
 ### pause() and play()
@@ -1104,7 +1104,7 @@ rect.animate(3000).move(100, 100).after(function() {
 })
 ```
 
-### Controlling animations externally
+### to()
 Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
 
 ```javascript
@@ -1466,6 +1466,7 @@ set.animate(3000).fill('#ff0')
 
 ## Gradients
 
+### gradient()
 There are linear and radial gradients. The linear gradient can be created like this:
 
 ```javascript
@@ -1475,19 +1476,23 @@ var gradient = draw.gradient('linear', function(stop) {
 })
 ```
 
-The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`). To define the direction you can set from `x`, `y` and to `x`, `y`:
+### at()
+The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`). 
+
+```javascript
+stop.at({ offset: 0, color: '#333', opacity: 1 })
+```
+
+### from() and to()
+To define the direction you can set from `x`, `y` and to `x`, `y`:
 
 ```javascript
 gradient.from(0, 0).to(0, 1)
 ```
 
 The from and to values are also expressed in percent.
-Finally, to use the gradient on an element:
 
-```javascript
-rect.attr({ fill: gradient })
-```
-
+### radius()
 Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
 
 ```javascript
@@ -1499,6 +1504,7 @@ var gradient = draw.gradient('radial', function(stop) {
 gradient.from(0.5, 0.5).to(0.5, 0.5).radius(0.5)
 ```
 
+### update()
 A gradient can also be updated afterwards:
 
 ```javascript
@@ -1522,6 +1528,7 @@ draw.gradient('radial', function(stop) {
 s1.update({ offset: 0.1, color: '#0f0', opacity: 1 })
 ```
 
+### get()
 The `get()` method makes it even easier to get a stop from an existing gradient:
 
 ```javascript
@@ -1532,6 +1539,19 @@ var gradient = draw.gradient('radial', function(stop) {
 })
 
 var s1 = gradient.get(0) // -> returns "first" stop
+```
+
+### fill()
+Finally, to use the gradient on an element:
+
+```javascript
+rect.attr({ fill: gradient })
+```
+
+By passing the gradient instance as the fill on any element, the `fill()` method will be called:
+
+```javascript
+gradient.fill() //-> returns 'url(#SvgjsGradient1234)'
 ```
 
 [W3Schools](http://www.w3schools.com/svg/svg_grad_linear.asp) has a great example page on how
@@ -1561,6 +1581,7 @@ rect.click(null)
 All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
 
 ### Event listeners
+
 You can also bind event listeners to elements:
 
 ```javascript
