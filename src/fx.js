@@ -153,9 +153,9 @@ SVG.extend(SVG.FX, {
         , duration: d
         }
 
-        /* start animation */
-        fx.interval = setInterval(function(){
-
+        /* render function */
+        fx.render = function(){
+          
           if (fx.situation.play === true) {
             // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
             var time = new Date().getTime()
@@ -169,12 +169,25 @@ SVG.extend(SVG.FX, {
               if (fx._plot)
                 element.plot(new SVG.PointArray(fx._plot.destination).settle())
 
-              clearInterval(fx.interval)
-              fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+              if (fx._loop === true || (typeof fx._loop == 'number' && fx._loop > 1)) {
+                if (typeof fx._loop == 'number')
+                  --fx._loop
+                fx.animate(d, ease, delay)
+              } else {
+                fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+              }
+
+            } else {
+              requestAnimFrame(fx.render)
             }
+          } else {
+            requestAnimFrame(fx.render)
           }
           
-        }, d > fx.situation.interval ? fx.situation.interval : d)
+        }
+
+        /* start animation */
+        fx.render()
         
       }, delay || 0)
     }
@@ -323,6 +336,12 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Make loopable
+, loop: function(times) {
+    this._loop = times || true
+
+    return this
+  }
   // Stop running animation
 , stop: function() {
     /* stop current animation */
@@ -341,6 +360,7 @@ SVG.extend(SVG.FX, {
     delete this._cy
     delete this._size
     delete this._plot
+    delete this._loop
     delete this._after
     delete this._during
     delete this._viewbox
@@ -446,3 +466,12 @@ SVG.extend(SVG.Element, {
 //     rect.animate(1500, '>').move(200, 300).after(function() {
 //       this.fill({ color: '#f06' })
 //     })
+
+
+// Shim layer with setTimeout fallback by Paul Irish
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function (c) { window.setTimeout(c, 1000 / 60) }
+})()

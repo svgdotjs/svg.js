@@ -1,3 +1,8 @@
+# v0.38 (28/01/2014)
+
+- added `loop()` method to `SVG.FX`
+- switched from `setInterval` to `requestAnimFrame` for animations
+
 # v0.37 (26/01/2014)
 
 - added `get()` to `SVG.Set`
@@ -14,7 +19,7 @@
 
 # v0.34 (23/01/2014)
 
-- added `pause()` and `play()` to `SVG.FX` module
+- added `pause()` and `play()` to `SVG.FX`
 - storing animation values in `situation` object
 
 # v0.33 (22/01/2014)

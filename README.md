@@ -1121,6 +1121,19 @@ rect.animate(3000).move(100, 100).during(function(pos, morph) {
 })
 ```
 
+### loop()
+By default the `loop()` method creates and eternal loop:
+
+```javascript
+rect.animate(3000).move(100, 100).loop()
+```
+
+But the loop can also be apredefined number of times:
+
+```javascript
+rect.animate(3000).move(100, 100).loop(5)
+```
+
 ### after()
 Finally, you can add callback methods using `after()`:
 
@@ -1129,6 +1142,8 @@ rect.animate(3000).move(100, 100).after(function() {
   this.animate().attr({ fill: '#f06' })
 })
 ```
+
+Note that the `after()` method will never be called if the animation is looping eternally. 
 
 ### to()
 Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
