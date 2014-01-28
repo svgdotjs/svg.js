@@ -1128,7 +1128,7 @@ By default the `loop()` method creates and eternal loop:
 rect.animate(3000).move(100, 100).loop()
 ```
 
-But the loop can also be apredefined number of times:
+But the loop can also be a predefined number of times:
 
 ```javascript
 rect.animate(3000).move(100, 100).loop(5)
