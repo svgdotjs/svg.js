@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-2-ga52a1d7 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-3-g0a16576 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -711,11 +711,11 @@
           break
           case 'A':
             s = {
-              r1:           seg.r1
-            , r2:           seg.r2
-            , angle:        seg.angle
-            , largeArcFlag: seg.largeArcFlag
-            , sweepFlag:    seg.sweepFlag
+              r1: seg.r1
+            , r2: seg.r2
+            , a:  seg.angle
+            , l:  seg.largeArcFlag
+            , s:  seg.sweepFlag
             }
           break
         }

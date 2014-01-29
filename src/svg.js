@@ -1,7 +1,7 @@
 
 // Use the `SVG()` function to create a SVG document within a given html element. The first argument can either be an id of the element or the selected element itself.
 //
-//     var draw = SVG('paper').size(300, 300)
+//     var draw = SVG('drawing').size(300, 300)
 //     var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 
 

@@ -264,11 +264,11 @@ SVG.extend(SVG.PathArray, {
         break
         case 'A':
           s = {
-            r1:           seg.r1
-          , r2:           seg.r2
-          , angle:        seg.angle
-          , largeArcFlag: seg.largeArcFlag
-          , sweepFlag:    seg.sweepFlag
+            r1: seg.r1
+          , r2: seg.r2
+          , a:  seg.angle
+          , l:  seg.largeArcFlag
+          , s:  seg.sweepFlag
           }
         break
       }
