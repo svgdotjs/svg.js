@@ -1,7 +1,10 @@
-/* svg.js v1.0rc1 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-2-ga52a1d7 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
+    if (!SVG.parser)
+      SVG.prepare()
+  
     if (SVG.supported)
       return new SVG.Doc(element)
   }
@@ -50,22 +53,14 @@
       SVG.Set.inherit()
   }
   
-  // Method for getting an eleemnt by id
+  // Method for getting an element by id
   SVG.get = function(id) {
     var node = document.getElementById(id)
     if (node) return node.instance
   }
   
-  // svg support test
-  SVG.supported = (function() {
-    return !! document.createElementNS &&
-           !! document.createElementNS(SVG.ns,'svg').createSVGRect
-  })()
-  
-  if (!SVG.supported) return false
-  
   // Initialize parsing element
-  SVG.parser = (function() {
+  SVG.prepare = function() {
     /* select document body and create svg element*/
     var body = document.getElementsByTagName('body')[0] || document.getElementsByTagName('svg')[0]
       , svg  = SVG.create('svg')
@@ -83,15 +78,23 @@
     svg.appendChild(poly)
     svg.appendChild(path)
   
-    /* return parser object */
-    return {
+    /* create parser object */
+    SVG.parser = {
       body: body
     , doc:  svg
     , poly: poly
     , path: path
     }
   
+  }
+  
+  // svg support test
+  SVG.supported = (function() {
+    return !! document.createElementNS &&
+           !! document.createElementNS(SVG.ns,'svg').createSVGRect
   })()
+  
+  if (!SVG.supported) return false
 
   SVG.regex = {
     /* test a given value */
