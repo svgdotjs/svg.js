@@ -1799,16 +1799,16 @@ The dynamic representation:
 new SVG.PointArray([[0, 0], [100, 100]])
 ```
 
-Note that every instance of `SVG.Polyline` and `SVG.Polygon` carry a reference to the `SVG.PointArray` instance:
+Note that every instance of `SVG.Polyline` and `SVG.Polygon` carries a reference to the `SVG.PointArray` instance:
 
 ```javascript
 polygon.array //-> returns the SVG.PointArray instance
 ```
 
-_`SVG.PointArray` inherits from `SVG.Array`_
+_Javascript inheritance stack: `SVG.PointArray` < `SVG.Array`_
 
 ### SVG.PathArray
-Path arrays carry object with the representation of the path string:
+Path arrays carry objects representing every point in a path string:
 
 ```javascript
 'M 0 0 L 100 100 z'
@@ -1830,7 +1830,7 @@ Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray
 polygon.array //-> returns the SVG.PointArray instance
 ```
 
-_`SVG.PathArray` inherits from `SVG.Array`_
+_Javascript inheritance stack: `SVG.PathArray` < `SVG.Array`_
 
 
 ### morph()
