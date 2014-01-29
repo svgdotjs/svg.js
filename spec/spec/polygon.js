@@ -102,6 +102,18 @@ describe('Polygon', function() {
       expect(approximately(box.width, 0.1)).toBe(987)
       expect(approximately(box.height, 0.1)).toBe(654)
     })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = polygon.bbox()
+      polygon.size(500)
+      expect(polygon.width()).toBe(500)
+      expect(polygon.width() / polygon.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = polygon.bbox()
+      polygon.size(null, 525)
+      expect(polygon.height()).toBe(525)
+      expect(polygon.width() / polygon.height()).toBe(box.width / box.height)
+    })
   })
   
   describe('scale()', function() {

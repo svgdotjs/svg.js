@@ -110,6 +110,18 @@ describe('Ellipse', function() {
       expect(ellipse.node.getAttribute('rx')).toBe((987 / 2).toString())
       expect(ellipse.node.getAttribute('ry')).toBe((654 / 2).toString())
     })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = ellipse.bbox()
+      ellipse.size(500)
+      expect(ellipse.width()).toBe(500)
+      expect(ellipse.width() / ellipse.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = ellipse.bbox()
+      ellipse.size(null, 525)
+      expect(ellipse.height()).toBe(525)
+      expect(ellipse.width() / ellipse.height()).toBe(box.width / box.height)
+    })
   })
   
   describe('scale()', function() {

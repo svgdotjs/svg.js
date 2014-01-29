@@ -109,6 +109,18 @@ describe('Rect', function() {
       expect(rect.node.getAttribute('width')).toBe('987')
       expect(rect.node.getAttribute('height')).toBe('654')
     })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = rect.bbox()
+      rect.size(500)
+      expect(rect.width()).toBe(500)
+      expect(rect.width() / rect.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = rect.bbox()
+      rect.size(null, 525)
+      expect(rect.height()).toBe(525)
+      expect(rect.width() / rect.height()).toBe(box.width / box.height)
+    })
   })
   
   describe('scale()', function() {

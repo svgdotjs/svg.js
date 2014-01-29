@@ -96,6 +96,18 @@ describe('Image', function() {
       expect(image.node.getAttribute('width')).toBe('987')
       expect(image.node.getAttribute('height')).toBe('654')
     })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = image.bbox()
+      image.size(500)
+      expect(image.width()).toBe(500)
+      expect(image.width() / image.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = image.bbox()
+      image.size(null, 525)
+      expect(image.height()).toBe(525)
+      expect(image.width() / image.height()).toBe(box.width / box.height)
+    })
   })
   
   describe('scale()', function() {

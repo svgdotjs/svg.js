@@ -34,9 +34,11 @@ SVG.extend(SVG.Ellipse, {
   }
   // Custom size function
 , size: function(width, height) {
+    var p = this._proportionalSize(width, height)
+
     return this.attr({
-      rx: new SVG.Number(width).divide(2)
-    , ry: new SVG.Number(height).divide(2)
+      rx: new SVG.Number(p.width).divide(2)
+    , ry: new SVG.Number(p.height).divide(2)
     })
   }
   

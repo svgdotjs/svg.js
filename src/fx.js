@@ -36,10 +36,10 @@ SVG.extend(SVG.FX, {
           akeys.push(key)
 
         /* make sure morphable elements are scaled, translated and morphed all together */
-        if (element.morphArray) {
+        if (element.morphArray && akeys.indexOf('points') > -1) {
           /* get destination */
           var box
-            , p = new element.morphArray(fx._plot || element.points.toString())
+            , p = new element.morphArray(fx._plot || element.array)
 
           /* add size */
           if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
@@ -60,7 +60,7 @@ SVG.extend(SVG.FX, {
           delete fx._cy
           delete fx._size
 
-          fx._plot = element.points.morph(p)
+          fx._plot = element.array.morph(p)
         }
       }
 
@@ -90,26 +90,34 @@ SVG.extend(SVG.FX, {
       typeof ease == 'function' ?
         ease(pos) :
         pos
-
-      /* run all x-position properties */
-      if (fx._x)
-        element.x(fx._at(fx._x, pos))
-      else if (fx._cx)
-        element.cx(fx._at(fx._cx, pos))
-
-      /* run all y-position properties */
-      if (fx._y)
-        element.y(fx._at(fx._y, pos))
-      else if (fx._cy)
-        element.cy(fx._at(fx._cy, pos))
-
-      /* run all size properties */
-      if (fx._size)
-        element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-
+      
       /* run plot function */
-      if (fx._plot)
+      if (fx._plot) {
         element.plot(fx._plot.at(pos))
+
+      } else {
+        if (element.array)
+          element.array.cache()
+
+        /* run all x-position properties */
+        if (fx._x)
+          element.x(fx._at(fx._x, pos))
+        else if (fx._cx)
+          element.cx(fx._at(fx._cx, pos))
+
+        /* run all y-position properties */
+        if (fx._y)
+          element.y(fx._at(fx._y, pos))
+        else if (fx._cy)
+          element.cy(fx._at(fx._cy, pos))
+
+        /* run all size properties */
+        if (fx._size)
+          element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+
+        if (element.array)
+          element.array.uncache()
+      }
 
       /* run all viewbox properties */
       if (fx._viewbox)

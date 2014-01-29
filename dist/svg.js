@@ -1,4 +1,4 @@
-/* svg.js v0.38 - svg regex default color array pointarray number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set memory loader - svgjs.com/license */
+/* svg.js v1.0rc1 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -7,7 +7,8 @@
   }
   
   // Default namespaces
-  SVG.ns = 'http://www.w3.org/2000/svg'
+  SVG.ns    = 'http://www.w3.org/2000/svg'
+  SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
   SVG.xlink = 'http://www.w3.org/1999/xlink'
   
   // Element id sequence
@@ -62,6 +63,35 @@
   })()
   
   if (!SVG.supported) return false
+  
+  // Initialize parsing element
+  SVG.parser = (function() {
+    /* select document body and create svg element*/
+    var body = document.getElementsByTagName('body')[0] || document.getElementsByTagName('svg')[0]
+      , svg  = SVG.create('svg')
+      , poly = SVG.create('polygon')
+      , path = SVG.create('path')
+  
+    /* make svg element presently invisible to ensure geometry  */
+    svg.setAttributeNS(SVG.xmlns, 'xmlns:xlink', SVG.xlink)
+    svg.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%')
+    svg.setAttribute('width', '2')
+    svg.setAttribute('height', '2')
+  
+    /* build node structure */
+    body.appendChild(svg)
+    svg.appendChild(poly)
+    svg.appendChild(path)
+  
+    /* return parser object */
+    return {
+      body: body
+    , doc:  svg
+    , poly: poly
+    , path: path
+    }
+  
+  })()
 
   SVG.regex = {
     /* test a given value */
@@ -282,10 +312,8 @@
     }
     // Clean up any duplicate points
   , settle: function() {
-      var i, seen = []
-  
       /* find all unique values */
-      for (i = this.value.length - 1; i >= 0; i--)
+      for (var i = 0, il = this.value.length, seen = []; i < il; i++)
         if (seen.indexOf(this.value[i]) == -1)
           seen.push(this.value[i])
   
@@ -406,32 +434,323 @@
     }
     // Get bounding box of points
   , bbox: function() {
-      if (this.value.length == 0)
-        return { x: 0, y: 0, width: 0, height: 0 }
+      if (this._cachedBBox) return this._cachedBBox
   
-      var i
-      , x = this.value[0][0]
-      , y = this.value[0][1]
-      , box = { x: x, y: y }
+      SVG.parser.poly.setAttribute('points', this.toString())
+  
+      return SVG.parser.poly.getBBox()
+    }
+  
+  })
+
+  SVG.PathArray = function(array, fallback) {
+    this.constructor.call(this, array, fallback)
+  }
+  
+  // Inherit from SVG.Array
+  SVG.PathArray.prototype = new SVG.Array
+  
+  SVG.extend(SVG.PathArray, {
+    // Convert array to string
+    toString: function() {
+      for (var s, i = 0, il = this.value.length, array = []; i < il; i++) {
+        s = [this.value[i].type]
+        
+        switch(this.value[i].type) {
+          case 'H':
+            s.push(this.value[i].x)
+          break
+          case 'V':
+            s.push(this.value[i].y)
+          break
+          case 'M':
+          case 'L':
+          case 'T':
+          case 'S':
+          case 'Q':
+          case 'C':
+            if (/[QC]/.test(this.value[i].type))
+              s.push(this.value[i].x1, this.value[i].y1)
+            if (/[CS]/.test(this.value[i].type))
+              s.push(this.value[i].x2, this.value[i].y2)
+  
+            s.push(this.value[i].x, this.value[i].y)
+  
+          break
+          case 'A':
+            s.push(
+              this.value[i].rx
+            , this.value[i].ry
+            , this.value[i].angle
+            , this.value[i].largeArcFlag
+            , this.value[i].sweepFlag
+            , this.value[i].x
+            , this.value[i].y
+            )
+          break
+        }
+  
+        /* add to array */
+        array.push(s.join(' '))
+      }
       
-      /* find position */
-      for (i = this.value.length - 1; i >= 0; i--) {
-        if (this.value[i][0] < box.x)
-          box.x = this.value[i][0]
-        if (this.value[i][1] < box.y)
-          box.y = this.value[i][1]
-        if (this.value[i][0] > x)
-          x = this.value[i][0]
-        if (this.value[i][1] > y)
-          y = this.value[i][1]
+      return array.join(' ')
+    }
+    // Move path string
+  , move: function(x, y) {
+  		/* get bounding box of current situation */
+  		var box = this.bbox()
+  		
+      /* get relative offset */
+      x -= box.x
+      y -= box.y
+  
+      if (!isNaN(x) && !isNaN(y)) {
+        /* move every point */
+        for (var i = this.value.length - 1; i >= 0; i--) {
+          switch (this.value[i].type) {
+            case 'H':
+              /* move along x axis only */
+              this.value[i].x += x
+            break
+            case 'V':
+              /* move along y axis only */
+              this.value[i].y += y
+            break
+            case 'M':
+            case 'L':
+            case 'T':
+            case 'S':
+            case 'Q':
+            case 'C':
+              /* move first point along x and y axes */
+              this.value[i].x += x
+              this.value[i].y += y
+  
+              /* move third points along x and y axes */
+              if (/[CQ]/.test(this.value[i].type)) {
+                this.value[i].x1 += x
+                this.value[i].y1 += y
+              }
+  
+              /* move second points along x and y axes */
+              if (/[CS]/.test(this.value[i].type)) {
+                this.value[i].x2 += x
+                this.value[i].y2 += y
+              }
+  
+            break
+            case 'A':
+              /* only move position values */
+              this.value[i].x += x
+              this.value[i].y += y
+            break
+          }
+        }
       }
   
-      /* calculate size */
-      box.width  = x - box.x
-      box.height = y - box.y
-  
-      return box
+      return this
     }
+    // Resize path string
+  , size: function(width, height) {
+  		/* get bounding box of current situation */
+  		var box = this.bbox()
+  
+      /* recalculate position of all points according to new size */
+      for (var i = this.value.length - 1; i >= 0; i--) {
+        switch (this.value[i].type) {
+          case 'H':
+            /* move along x axis only */
+            this.value[i].x = ((this.value[i].x - box.x) * width)  / box.width  + box.x
+          break
+          case 'V':
+            /* move along y axis only */
+            this.value[i].y = ((this.value[i].y - box.y) * height) / box.height + box.y
+          break
+          case 'M':
+          case 'L':
+          case 'T':
+          case 'S':
+          case 'Q':
+          case 'C':
+            this.value[i].x = ((this.value[i].x - box.x) * width)  / box.width  + box.x
+            this.value[i].y = ((this.value[i].y - box.y) * height) / box.height + box.y
+  
+            /* move third points along x and y axes */
+            if (/[CQ]/.test(this.value[i].type)) {
+              this.value[i].x1 = ((this.value[i].x1 - box.x) * width)  / box.width  + box.x
+              this.value[i].y1 = ((this.value[i].y1 - box.y) * height) / box.height + box.y
+            }
+  
+            /* move second points along x and y axes */
+            if (/[CS]/.test(this.value[i].type)) {
+              this.value[i].x2 = ((this.value[i].x2 - box.x) * width)  / box.width  + box.x
+              this.value[i].y2 = ((this.value[i].y2 - box.y) * height) / box.height + box.y
+            }
+  
+          break
+          case 'A':
+            /* resize radii */
+            this.value[i].values.rx = (this.value[i].values.rx * width)  / box.width
+            this.value[i].values.ry = (this.value[i].values.ry * height) / box.height
+  
+            /* move position values */
+            this.value[i].values.x = ((this.value[i].values.x - box.x) * width)  / box.width  + box.x
+            this.value[i].values.y = ((this.value[i].values.y - box.y) * height) / box.height + box.y
+          break
+        }
+      }
+  
+      return this
+    }
+    // Absolutize and parse path to array
+  , parse: function(array) {
+      array = array.valueOf()
+  
+      /* if already is an array, no need to parse it */
+      if (Array.isArray(array)) return array
+  
+      /* prepare for parsing */
+      var i, il, x0, y0, x1, y1, x2, y2, s, seg, segs
+        , x = 0
+        , y = 0
+      
+      /* populate working path */
+      SVG.parser.path.setAttribute('d', array)
+      
+      /* get segments */
+      segs = SVG.parser.path.pathSegList
+  
+      for (i = 0, il = segs.numberOfItems; i < il; ++i) {
+        seg = segs.getItem(i)
+        s = seg.pathSegTypeAsLetter
+  
+        if (/[MLHVCSQTA]/.test(s)) {
+          if ('x' in seg) x = seg.x
+          if ('y' in seg) y = seg.y
+  
+        } else {
+          if ('x1' in seg) x1 = x + seg.x1
+          if ('x2' in seg) x2 = x + seg.x2
+          if ('y1' in seg) y1 = y + seg.y1
+          if ('y2' in seg) y2 = y + seg.y2
+          if ('x'  in seg) x += seg.x
+          if ('y'  in seg) y += seg.y
+  
+          switch(s){
+            case 'm': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegMovetoAbs(x, y), i)
+            break
+            case 'l': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoAbs(x, y), i)
+            break
+            case 'h': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoHorizontalAbs(x), i)
+            break
+            case 'v': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoVerticalAbs(y), i)
+            break
+            case 'c': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2), i)
+            break
+            case 's': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicSmoothAbs(x, y, x2, y2), i)
+            break
+            case 'q': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticAbs(x, y, x1, y1), i)
+            break
+            case 't': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticSmoothAbs(x, y), i)
+            break
+            case 'a': 
+              segs.replaceItem(SVG.parser.path.createSVGPathSegArcAbs(x, y, seg.r1, seg.r2, seg.angle, seg.largeArcFlag, seg.sweepFlag), i) 
+            break
+            case 'z':
+            case 'Z':
+              x = x0
+              y = y0
+            break
+          }
+        }
+  
+        /* record the start of a subpath */
+        if (/[Mm]/.test(s)) {
+          x0 = x
+          y0 = y
+        }
+      }
+  
+      /* build internal representation */
+      array = []
+      segs = SVG.parser.path.pathSegList
+      
+      for (i = 0, il = segs.numberOfItems; i < il; ++i) {
+        seg = segs.getItem(i)
+        s = {}
+  
+        switch (seg.pathSegTypeAsLetter) {
+          case 'M':
+          case 'L':
+          case 'T':
+          case 'S':
+          case 'Q':
+          case 'C':
+            if (/[QC]/.test(seg.pathSegTypeAsLetter)) {
+              s.x1 = seg.x1
+              s.y1 = seg.y1
+            }
+  
+            if (/[SC]/.test(seg.pathSegTypeAsLetter)) {
+              s.x2 = seg.x2
+              s.y2 = seg.y2
+            }
+  
+          break
+          case 'A':
+            s = {
+              r1:           seg.r1
+            , r2:           seg.r2
+            , angle:        seg.angle
+            , largeArcFlag: seg.largeArcFlag
+            , sweepFlag:    seg.sweepFlag
+            }
+          break
+        }
+  
+        /* make the letter, x and y values accessible as key/values */
+        s.type = seg.pathSegTypeAsLetter
+        s.x = seg.x
+        s.y = seg.y
+  
+        /* store segment */
+        array.push(s)
+      }
+      
+      return array
+    }
+    // Get bounding box of path
+  , bbox: function() {
+  		if (this._cachedBBox) return this._cachedBBox
+  
+      SVG.parser.path.setAttribute('d', this.toString())
+  
+      return SVG.parser.path.getBBox()
+    }
+  
+  })
+
+  SVG.extend(SVG.PointArray, SVG.PathArray, {
+  	// Cache bbox
+    cache: function() {
+  		this._cachedBBox = this.uncache().bbox()
+  
+  		return this
+    }
+    // Remove cache
+  , uncache: function() {
+  		delete this._cachedBBox
+  		return this
+  	}
   
   })
 
@@ -767,9 +1086,11 @@
     }
     // Set element size to given width and height
   , size: function(width, height) {
+      var p = this._proportionalSize(width, height)
+  
       return this.attr({
-        width:  new SVG.Number(width)
-      , height: new SVG.Number(height)
+        width:  new SVG.Number(p.width)
+      , height: new SVG.Number(p.height)
       })
     }
     // Clone element
@@ -981,10 +1302,6 @@
       if (o.x != 0 || o.y != 0)
         transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
       
-      /* add offset translation */
-       if (this._offset && this._offset.x != 0 && this._offset.y != 0)
-         transform.push('translate(' + (-this._offset.x) + ' ' + (-this._offset.y) + ')')
-      
       /* update transformations, even if there are none */
       if (transform.length == 0)
         this.node.removeAttribute('transform')
@@ -1039,28 +1356,6 @@
         this.node.removeAttribute('style')
       else
         this.node.setAttribute('style', s)
-      
-      return this
-    }
-    // Store data values on svg nodes
-  , data: function(a, v, r) {
-      if (arguments.length < 2) {
-        try {
-          return JSON.parse(this.attr('data-' + a))
-        } catch(e) {
-          return this.attr('data-' + a)
-        }
-        
-      } else {
-        this.attr(
-          'data-' + a
-        , v === null ?
-            null :
-          r === true || typeof v === 'string' || typeof v === 'number' ?
-            v :
-            JSON.stringify(v)
-        )
-      }
       
       return this
     }
@@ -1128,6 +1423,22 @@
       }
       
       return o
+    }
+    // Private: calculate proportional width and height values when necessary
+  , _proportionalSize: function(width, height) {
+      if (width == null || height == null) {
+        var box = this.bbox()
+  
+        if (height == null)
+          height = box.height / box.width * width
+        else if (width == null)
+          width = box.width / box.height * height
+      }
+      
+      return {
+        width:  width
+      , height: height
+      }
     }
     
   })
@@ -1298,10 +1609,10 @@
             akeys.push(key)
   
           /* make sure morphable elements are scaled, translated and morphed all together */
-          if (element.morphArray) {
+          if (element.morphArray && akeys.indexOf('points') > -1) {
             /* get destination */
             var box
-              , p = new element.morphArray(fx._plot || element.points.toString())
+              , p = new element.morphArray(fx._plot || element.array)
   
             /* add size */
             if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
@@ -1322,7 +1633,7 @@
             delete fx._cy
             delete fx._size
   
-            fx._plot = element.points.morph(p)
+            fx._plot = element.array.morph(p)
           }
         }
   
@@ -1352,26 +1663,34 @@
         typeof ease == 'function' ?
           ease(pos) :
           pos
-  
-        /* run all x-position properties */
-        if (fx._x)
-          element.x(fx._at(fx._x, pos))
-        else if (fx._cx)
-          element.cx(fx._at(fx._cx, pos))
-  
-        /* run all y-position properties */
-        if (fx._y)
-          element.y(fx._at(fx._y, pos))
-        else if (fx._cy)
-          element.cy(fx._at(fx._cy, pos))
-  
-        /* run all size properties */
-        if (fx._size)
-          element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-  
+        
         /* run plot function */
-        if (fx._plot)
+        if (fx._plot) {
           element.plot(fx._plot.at(pos))
+  
+        } else {
+          if (element.array)
+            element.array.cache()
+  
+          /* run all x-position properties */
+          if (fx._x)
+            element.x(fx._at(fx._x, pos))
+          else if (fx._cx)
+            element.cx(fx._at(fx._cx, pos))
+  
+          /* run all y-position properties */
+          if (fx._y)
+            element.y(fx._at(fx._y, pos))
+          else if (fx._cy)
+            element.cy(fx._at(fx._cy, pos))
+  
+          /* run all size properties */
+          if (fx._size)
+            element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+  
+          if (element.array)
+            element.array.uncache()
+        }
   
         /* run all viewbox properties */
         if (fx._viewbox)
@@ -2128,7 +2447,7 @@
     /* set svg element attributes */
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
-      .attr('xlink', SVG.xlink, SVG.ns)
+      .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
     
     /* create the <defs> node */
     this._defs = new SVG.Defs
@@ -2311,9 +2630,11 @@
     }
     // Custom size function
   , size: function(width, height) {
+      var p = this._proportionalSize(width, height)
+  
       return this.attr({
-        rx: new SVG.Number(width).divide(2)
-      , ry: new SVG.Number(height).divide(2)
+        rx: new SVG.Number(p.width).divide(2)
+      , ry: new SVG.Number(p.height).divide(2)
       })
     }
     
@@ -2387,7 +2708,9 @@
     }
     // Set line size by width and height
   , size: function(width, height) {
-      return this.width(width).height(height)
+      var p = this._proportionalSize(width, height)
+  
+      return this.width(p.width).height(p.height)
     }
     // Set path data
   , plot: function(x1, y1, x2, y2) {
@@ -2431,11 +2754,11 @@
     morphArray:  SVG.PointArray
     // Plot new path
   , plot: function(p) {
-      return this.attr('points', (this.points = new SVG.PointArray(p, [[0,0]])))
+      return this.attr('points', (this.array = new SVG.PointArray(p, [[0,0]])))
     }
     // Move by left top corner
   , move: function(x, y) {
-      return this.attr('points', this.points.move(x, y))
+      return this.attr('points', this.array.move(x, y))
     }
     // Move by left top corner over x-axis
   , x: function(x) {
@@ -2459,7 +2782,9 @@
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      return this.attr('points', this.points.size(width, height))
+      var p = this._proportionalSize(width, height)
+  
+      return this.attr('points', this.array.size(p.width, p.height))
     }
   
   })
@@ -2477,78 +2802,52 @@
   
   })
 
-  SVG.Path = function(unbiased) {
+  SVG.Path = function() {
     this.constructor.call(this, SVG.create('path'))
-    
-    this.unbiased = !!unbiased
   }
   
   // Inherit from SVG.Shape
   SVG.Path.prototype = new SVG.Shape
   
   SVG.extend(SVG.Path, {
-    // Move over x-axis
-    x: function(x) {
-      return x == null ? this.bbox().x : this.transform('x', x)
+    // Plot new poly points
+    plot: function(p) {
+      return this.attr('d', (this.array = new SVG.PathArray(p, [{ type:'M',x:0,y:0 }])))
     }
-    // Move over y-axis
+    // Move by left top corner
+  , move: function(x, y) {
+      return this.attr('d', this.array.move(x, y))
+    }
+    // Move by left top corner over x-axis
+  , x: function(x) {
+      return x == null ? this.bbox().x : this.move(x, this.bbox().y)
+    }
+    // Move by left top corner over y-axis
   , y: function(y) {
-      return y == null ? this.bbox().y : this.transform('y', y)
+      return y == null ? this.bbox().y : this.move(this.bbox().x, y)
+    }
+    // Set element size to given width and height
+  , size: function(width, height) {
+      var p = this._proportionalSize(width, height)
+      
+      return this.attr('d', this.array.size(p.width, p.height))
     }
     // Set width of element
   , width: function(width) {
-      var b = this.bbox()
-  
-      return width == null ? b.width : this.size(width, b.height)
+      return width == null ? this.bbox().width : this.size(width, this.bbox().height)
     }
     // Set height of element
   , height: function(height) {
-      var b = this.bbox()
+      return height == null ? this.bbox().height : this.size(this.bbox().width, height)
+    }
   
-      return height == null ? b.height : this.size(b.width, height)
-    }
-    // Set the actual size in pixels
-  , size: function(width, height) {
-      var scale = width / this._offset.width
-      
-      return this.transform({
-        scaleX: scale
-      , scaleY: height != null ? height / this._offset.height : scale
-      })
-    }
-    // Set path data
-  , plot: function(data) {
-      var x = this.trans.scaleX
-        , y = this.trans.scaleY
-      
-      /* native plot */
-      this._plot(data)
-      
-      /* store offset */
-      this._offset = this.transform({ scaleX: 1, scaleY: 1 }).bbox()
-      
-      /* get and store the actual offset of the element */
-      if (this.unbiased) {
-        this._offset.x = this._offset.y = 0
-      } else {
-        this._offset.x -= this.trans.x
-        this._offset.y -= this.trans.y
-      }
-      
-      return this.transform({ scaleX: x, scaleY: y })
-    }
-    // Private: Native plot
-  , _plot: function(data) {
-      return this.attr('d', data || 'M0,0')
-    }
-    
   })
   
   //
   SVG.extend(SVG.Container, {
     // Create a wrapped path element
-    path: function(data, unbiased) {
-      return this.put(new SVG.Path(unbiased)).plot(data)
+    path: function(d) {
+      return this.put(new SVG.Path).plot(d)
     }
   
   })
@@ -3112,6 +3411,35 @@
   
   
 
+
+  SVG.extend(SVG.Element, {
+  	// Store data values on svg nodes
+    data: function(a, v, r) {
+    	if (typeof a == 'object') {
+    		for (v in a)
+    			this.data(v, a[v])
+  
+      } else if (arguments.length < 2) {
+        try {
+          return JSON.parse(this.attr('data-' + a))
+        } catch(e) {
+          return this.attr('data-' + a)
+        }
+        
+      } else {
+        this.attr(
+          'data-' + a
+        , v === null ?
+            null :
+          r === true || typeof v === 'string' || typeof v === 'number' ?
+            v :
+            JSON.stringify(v)
+        )
+      }
+      
+      return this
+    }
+  })
 
   SVG.extend(SVG.Element, {
     // Remember arbitrary data

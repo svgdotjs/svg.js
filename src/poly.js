@@ -18,11 +18,11 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   morphArray:  SVG.PointArray
   // Plot new path
 , plot: function(p) {
-    return this.attr('points', (this.points = new SVG.PointArray(p, [[0,0]])))
+    return this.attr('points', (this.array = new SVG.PointArray(p, [[0,0]])))
   }
   // Move by left top corner
 , move: function(x, y) {
-    return this.attr('points', this.points.move(x, y))
+    return this.attr('points', this.array.move(x, y))
   }
   // Move by left top corner over x-axis
 , x: function(x) {
@@ -46,7 +46,9 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
   // Set element size to given width and height
 , size: function(width, height) {
-    return this.attr('points', this.points.size(width, height))
+    var p = this._proportionalSize(width, height)
+
+    return this.attr('points', this.array.size(p.width, p.height))
   }
 
 })

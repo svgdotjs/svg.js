@@ -102,6 +102,18 @@ describe('Polyline', function() {
       expect(approximately(box.width, 0.1)).toBe(987)
       expect(approximately(box.height, 0.1)).toBe(654)
     })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = polyline.bbox()
+      polyline.size(500)
+      expect(polyline.width()).toBe(500)
+      expect(polyline.width() / polyline.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = polyline.bbox()
+      polyline.size(null, 525)
+      expect(polyline.height()).toBe(525)
+      expect(polyline.width() / polyline.height()).toBe(box.width / box.height)
+    })
   })
   
   describe('scale()', function() {

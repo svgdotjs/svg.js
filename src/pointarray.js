@@ -76,31 +76,11 @@ SVG.extend(SVG.PointArray, {
   }
   // Get bounding box of points
 , bbox: function() {
-    if (this.value.length == 0)
-      return { x: 0, y: 0, width: 0, height: 0 }
+    if (this._cachedBBox) return this._cachedBBox
 
-    var i
-    , x = this.value[0][0]
-    , y = this.value[0][1]
-    , box = { x: x, y: y }
-    
-    /* find position */
-    for (i = this.value.length - 1; i >= 0; i--) {
-      if (this.value[i][0] < box.x)
-        box.x = this.value[i][0]
-      if (this.value[i][1] < box.y)
-        box.y = this.value[i][1]
-      if (this.value[i][0] > x)
-        x = this.value[i][0]
-      if (this.value[i][1] > y)
-        y = this.value[i][1]
-    }
+    SVG.parser.poly.setAttribute('points', this.toString())
 
-    /* calculate size */
-    box.width  = x - box.x
-    box.height = y - box.y
-
-    return box
+    return SVG.parser.poly.getBBox()
   }
 
 })

@@ -15,7 +15,7 @@ SVG.Doc = function(element) {
   /* set svg element attributes */
   this
     .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
-    .attr('xlink', SVG.xlink, SVG.ns)
+    .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
   
   /* create the <defs> node */
   this._defs = new SVG.Defs

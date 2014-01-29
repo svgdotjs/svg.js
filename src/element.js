@@ -63,9 +63,11 @@ SVG.extend(SVG.Element, {
   }
   // Set element size to given width and height
 , size: function(width, height) {
+    var p = this._proportionalSize(width, height)
+
     return this.attr({
-      width:  new SVG.Number(width)
-    , height: new SVG.Number(height)
+      width:  new SVG.Number(p.width)
+    , height: new SVG.Number(p.height)
     })
   }
   // Clone element
@@ -277,10 +279,6 @@ SVG.extend(SVG.Element, {
     if (o.x != 0 || o.y != 0)
       transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
     
-    /* add offset translation */
-     if (this._offset && this._offset.x != 0 && this._offset.y != 0)
-       transform.push('translate(' + (-this._offset.x) + ' ' + (-this._offset.y) + ')')
-    
     /* update transformations, even if there are none */
     if (transform.length == 0)
       this.node.removeAttribute('transform')
@@ -335,28 +333,6 @@ SVG.extend(SVG.Element, {
       this.node.removeAttribute('style')
     else
       this.node.setAttribute('style', s)
-    
-    return this
-  }
-  // Store data values on svg nodes
-, data: function(a, v, r) {
-    if (arguments.length < 2) {
-      try {
-        return JSON.parse(this.attr('data-' + a))
-      } catch(e) {
-        return this.attr('data-' + a)
-      }
-      
-    } else {
-      this.attr(
-        'data-' + a
-      , v === null ?
-          null :
-        r === true || typeof v === 'string' || typeof v === 'number' ?
-          v :
-          JSON.stringify(v)
-      )
-    }
     
     return this
   }
@@ -424,6 +400,22 @@ SVG.extend(SVG.Element, {
     }
     
     return o
+  }
+  // Private: calculate proportional width and height values when necessary
+, _proportionalSize: function(width, height) {
+    if (width == null || height == null) {
+      var box = this.bbox()
+
+      if (height == null)
+        height = box.height / box.width * width
+      else if (width == null)
+        width = box.width / box.height * height
+    }
+    
+    return {
+      width:  width
+    , height: height
+    }
   }
   
 })

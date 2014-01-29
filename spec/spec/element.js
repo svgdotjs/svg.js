@@ -158,23 +158,34 @@ describe('Element', function() {
   })
   
   describe('data()', function() {
-    it('should set a data attribute and convert value to json', function() {
+    it('sets a data attribute and convert value to json', function() {
       var rect = draw.rect(100,100).data('test', 'value')
       expect(rect.node.getAttribute('data-test')).toBe('value')
     })
-    it('should set a data attribute and not convert value to json if flagged raw', function() {
+    it('sets a data attribute and not convert value to json if flagged raw', function() {
       var rect = draw.rect(100,100).data('test', 'value', true)
       expect(rect.node.getAttribute('data-test')).toBe('value')
     })
-    it('should get data value in ony one argument is passed', function() {
+    it('sets multiple data attributes and convert values to json when an object is passed', function() {
+      var rect = draw.rect(100,100).data({
+        forbidden: 'fruit'
+      , multiple: {
+          values: 'in'
+        , an: 'object'
+        }
+      })
+      expect(rect.node.getAttribute('data-forbidden')).toBe('fruit')
+      expect(rect.node.getAttribute('data-multiple')).toEqual('{"values":"in","an":"object"}')
+    })
+    it('gets data value if only one argument is passed', function() {
       var rect = draw.rect(100,100).data('test', 101)
       expect(rect.data('test')).toBe(101)
     })
-    it('should maintain data type for a number', function() {
+    it('maintains data type for a number', function() {
       var rect = draw.rect(100,100).data('test', 101)
       expect(typeof rect.data('test')).toBe('number')
     })
-    it('should maintain data type for an object', function() {
+    it('maintains data type for an object', function() {
       var rect = draw.rect(100,100).data('test', { string: 'value', array: [1,2,3] })
       expect(typeof rect.data('test')).toBe('object')
       expect(Array.isArray(rect.data('test').array)).toBe(true) 

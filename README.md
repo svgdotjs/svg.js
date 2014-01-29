@@ -279,18 +279,7 @@ _Javascript inheritance stack: `SVG.Polygon` < `SVG.Shape` < `SVG.Element`_
 The path string is similar to the polygon string but much more complex in order to support curves:
 
 ```javascript
-// path('path data')
 var path = draw.path('M10,20L30,40')
-```
-
-For more details on path data strings, please refer to the SVG documentation:
-http://www.w3.org/TR/SVG/paths.html#PathData
-
-Note that paths will always be positioned at x=0, y=0 on creation. This is to make the unified `move()` api possible. Svg.js assumes you are creating a path to move it afterwards. If you need to constantly update your path you probably don't want to use the `move()` method at all. In that case you can create an "unbiased" path like so:
-
-```javascript
-// path('path data', unbiased)
-var path = draw.path('M10,20L30,40', true)
 ```
 
 Paths can be updated using the `plot()` method:
@@ -300,6 +289,9 @@ path.plot('M100,200L300,400')
 ```
 
 _Javascript inheritance stack: `SVG.Path` < `SVG.Shape` < `SVG.Element`_
+
+For more details on path data strings, please refer to the SVG documentation:
+http://www.w3.org/TR/SVG/paths.html#PathData
 
 
 ### Image
@@ -768,6 +760,18 @@ Set the size of an element by a given `width` and `height`:
 rect.size(200, 300)
 ```
 
+Proporional resizing is also possible by leaving out `height`:
+
+```javascript
+rect.size(200)
+```
+
+Or by passing `null` as the value for `width`:
+
+```javascript
+rect.size(null, 200)
+```
+
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
 
@@ -921,7 +925,7 @@ path.bbox()
 This will return an instance of `SVG.BBox` containing the following values:
 
 ```javascript
-{ height: 20, width: 20, y: 20, x: 10, cx: 30, cy: 20 } 
+{ width: 20, height: 20, x: 10, y: 20, cx: 30, cy: 20 } 
 ```
 
 As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
@@ -954,42 +958,6 @@ rect.inside(60, 70) //-> returns true
 ```
 
 Note: the `x` and `y` positions are tested against the relative position of the element. Any offset on the parent element is not taken into account.
-
-## Colors
-
-Svg.js has a dedicated color module handling different types of colors. Accepted values are:
-
-- hex string; three based (e.g. #f06) or six based (e.g. #ff0066) `new SVG.Color('#f06')`
-- rgb string; e.g. rgb(255, 0, 102) `new SVG.Color('rgb(255, 0, 102)')`
-- rgb object; e.g. { r: 255, g: 0, b: 102 } `new SVG.Color({ r: 255, g: 0, b: 102 })`
-
-Note that when working with objects is important to provide all three values every time.
-
-The `SVG.Color` instance has a few methods of its own.
-
-### toHex()
-Get hex value:
-
-```javascript
-color.toHex() //-> returns '#ff0066'
-```
-
-### toRgb()
-Get rgb string value:
-
-```javascript
-color.toRgb() //-> returns 'rgb(255,0,102)'
-```
-
-### brightness()
-Get the brightness of a color:
-
-```javascript
-color.brightness() //-> returns 0.344
-```
-
-This is the perceived brighness where `0` is black and `1` is white.
-
 
 
 ## Animating elements
@@ -1312,7 +1280,7 @@ Or:
 rect.masker.remove()
 ```
 
-### References
+### masker
 For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:
 
 ```javascript
@@ -1323,30 +1291,52 @@ _This functionality requires the mask.js module which is included in the default
 
 
 ## Clipping elements
-Clipping elements is exactly the same as masking elements:
+Clipping elements works exactly the same as masking elements. The only difference is that clipped elements will adopt the geometry of the clipping element. Therefore events are only triggered when entering the clipping element whereas with masks the masked element triggers the event. Another difference is that masks can define opacity with their fill color and clipPaths don't.
 
+### clipWith()
 ```javascript
-var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
+var ellipse = draw.ellipse(80, 40).move(10, 10)
 
 rect.clipWith(ellipse)
 ```
 
-Similar to masking, the clipping element can be referenced in the clipped element:
+### clip()
+Clip multiple elements:
 
 ```javascript
-rect.clipper.move(20,30)
+var ellipse = draw.ellipse(80, 40).move(10, 10)
+var text = draw.text('SVG.JS').move(10, 10).font({ size: 36 })
+
+var clip = draw.clip().add(text).add(ellipse)
+
+rect.clipWith(clip)
 ```
 
+### unclip()
 Unclipping the elements can be done with the `unclip()` method:
 
 ```javascript
 rect.unclip()
 ```
 
-Removing the clipPath alltogether will also `unclip()` all clipped elements:
+### remove()
+Removing the clip alltogether will also `unclip()` all clipped elements as well:
+
+```javascript
+clip.remove()
+```
+
+Or:
 
 ```javascript
 rect.clipper.remove()
+```
+
+### clipper
+For your convenience, the clipping element is also referenced in the clipped element. This can be useful in case you want to change the clipPath:
+
+```javascript
+rect.clipper.move(10, 10)
 ```
 
 _This functionality requires the clip.js module which is included in the default distribution._
@@ -1602,76 +1592,42 @@ gradient.fill() //-> returns 'url(#SvgjsGradient1234)'
 _This functionality requires the gradient.js module which is included in the default distribution._
 
 
-## Events
-
-### Basic events
-Events can be bound to elements as follows:
-
-```javascript
-rect.click(function() {
-  this.fill({ color: '#f06' })
-})
-```
-
-Removing it is quite as easy:
-
-```javascript
-rect.click(null)
-```
-
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
-
-### Event listeners
-
-You can also bind event listeners to elements:
-
-```javascript
-var click = function() {
-  rect.fill({ color: '#f06' })
-}
-
-rect.on('click', click)
-```
-
-Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
-
-Unbinding events is just as easy:
-
-```javascript
-rect.off('click', click)
-```
-
-But there is more to event listeners. You can bind events to html elements as well:
-
-```javascript
-SVG.on(window, 'click', click)
-```
-
-Obviously unbinding is practically the same:
-
-```javascript
-SVG.off(window, 'click', click)
-```
-
 ## Data
+
+### Setting
 The `data()` method allows you to bind arbitrary objects, strings and numbers to SVG elements:
 
 ```javascript
 rect.data('key', { value: { data: 0.3 }})
 ```
 
+Or set multiple values at once:
+
+```javascript
+rect.data({
+  forbidden: 'fruit'
+, multiple: {
+    values: 'in'
+  , an: 'object'
+  }
+})
+```
+
+### Getting
 Fetching the values is similar to the `attr()` method:
 
 ```javascript
 rect.data('key')
 ```
 
+### Removing
 Removing the data altogether:
 
 ```javascript
 rect.data('key', null)
 ```
 
+### Sustaining data types
 Your values will always be stored as JSON and in some cases this might not be desirable. If you want to store the value as-is, just pass true as the third argument:
 
 ```javascript
@@ -1724,8 +1680,224 @@ And finally, just erasing the whole memory:
 rect.forget()
 ```
 
+## Events
+
+### Basic events
+Events can be bound to elements as follows:
+
+```javascript
+rect.click(function() {
+  this.fill({ color: '#f06' })
+})
+```
+
+Removing it is quite as easy:
+
+```javascript
+rect.click(null)
+```
+
+All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
+
+### Event listeners
+
+You can also bind event listeners to elements:
+
+```javascript
+var click = function() {
+  rect.fill({ color: '#f06' })
+}
+
+rect.on('click', click)
+```
+
+Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
+
+Unbinding events is just as easy:
+
+```javascript
+rect.off('click', click)
+```
+
+But there is more to event listeners. You can bind events to html elements as well:
+
+```javascript
+SVG.on(window, 'click', click)
+```
+
+Obviously unbinding is practically the same:
+
+```javascript
+SVG.off(window, 'click', click)
+```
+
+## Colors
+
+Svg.js has a dedicated color module handling different types of colors. Accepted values are:
+
+- hex string; three based (e.g. #f06) or six based (e.g. #ff0066) `new SVG.Color('#f06')`
+- rgb string; e.g. rgb(255, 0, 102) `new SVG.Color('rgb(255, 0, 102)')`
+- rgb object; e.g. { r: 255, g: 0, b: 102 } `new SVG.Color({ r: 255, g: 0, b: 102 })`
+
+Note that when working with objects is important to provide all three values every time.
+
+The `SVG.Color` instance has a few methods of its own.
+
+### toHex()
+Get hex value:
+
+```javascript
+color.toHex() //-> returns '#ff0066'
+```
+
+### toRgb()
+Get rgb string value:
+
+```javascript
+color.toRgb() //-> returns 'rgb(255,0,102)'
+```
+
+### brightness()
+Get the brightness of a color:
+
+```javascript
+color.brightness() //-> returns 0.344
+```
+
+This is the perceived brighness where `0` is black and `1` is white.
+
+
+## Arrays
+In svg.js every value list string can be cast and passed as an array. This makes writing them more convenient but also adds a lot of key functionality to them.
+
+### SVG.Array
+Is for simple, whitespace separated value strings:
+
+```javascript
+'0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0'
+```
+
+Can also be passed like this in a more manageable format:
+
+```javascript
+new SVG.Array([ .343,  .669, .119, 0,   0 
+              , .249, -.626, .130, 0,   0
+              , .172,  .334, .111, 0,   0
+              , .000,  .000, .000, 1,  -0 ])
+```
+
+### SVG.PointArray 
+Is a bit more complex and is used for polyline and polygon elements. This is a poly-point string:
+
+```javascript
+'0,0 100,100'
+```
+
+The dynamic representation:
+
+```javascript
+new SVG.PointArray([[0, 0], [100, 100]])
+```
+
+Note that every instance of `SVG.Polyline` and `SVG.Polygon` carry a reference to the `SVG.PointArray` instance:
+
+```javascript
+polygon.array //-> returns the SVG.PointArray instance
+```
+
+_`SVG.PointArray` inherits from `SVG.Array`_
+
+### SVG.PathArray
+Path arrays carry object with the representation of the path string:
+
+```javascript
+'M 0 0 L 100 100 z'
+```
+
+The dynamic representation:
+
+```javascript
+new SVG.PathArray([
+  { type: 'M', x: 0, y: 0 }
+, { type: 'L', x: 100, y: 100 }
+, { type: 'z' }
+])
+```
+
+Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray` instance:
+
+```javascript
+polygon.array //-> returns the SVG.PointArray instance
+```
+
+_`SVG.PathArray` inherits from `SVG.Array`_
+
+
+### morph()
+In order to animate array values the `morph()` method lets you pass a destination value. This can be either the string value, a plain array or an instance of the same type of svg.js array:
+
+```javascript
+var array = new SVG.PointArray([[0, 0], [100, 100]])
+array.morph('100,0 0,100 200,200')
+```
+
+This method will prepare the array ensuring both the source and destination arrays have the same length.
+
+Note that this method is currently not available on `SVG.PathArray` but will be soon.
+
+### at()
+This method will morph the array to a given position between `0` and `1`. Continuing with the previous example:
+
+```javascript
+array.at(0.27).toString() //-> returns '27,0 73,100 127,127'
+```
+
+Note that this method is currently not available on `SVG.PathArray` but will be soon.
+
+### settle()
+When morphing is done the `settle()` method will eliminate any transitional points like duplicates:
+
+```javascript
+array.settle()
+```
+
+Note that this method is currently not available on `SVG.PathArray` but will be soon.
+
+### move()
+Moves geometry of the array with the given `x` and `y` values:
+
+```javascript
+var array = new SVG.PointArray([[0, 0], [100, 100]])
+array.move(33,75)
+array.toString() //-> returns '33,75 133,175'
+```
+
+Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
+
+### size()
+Resizes geometry of the array by the given `width` and `height` values:
+
+```javascript
+var array = new SVG.PointArray([[0, 0], [100, 100]])
+array.move(100,100).size(222,333)
+array.toString() //-> returns '100,100 322,433'
+```
+
+Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
+
+### bbox()
+Gets the bounding box of the geometry of the array:
+
+```javascript
+array.bbox()
+```
+
+Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
+
 
 ## Extending functionality
+
+### SVG.extend
 Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 
 ```javascript
@@ -1775,21 +1947,41 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 ```
 
 
-
 ## Plugins
 Here are a few nice plugins that are available for svg.js:
 
-- [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
-- [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
-- [svg.export.js](https://github.com/wout/svg.export.js) export raw SVG.
-- [svg.filter.js](https://github.com/wout/svg.filter.js) adding svg filters to elements.
-- [svg.foreignobject.js](https://github.com/john-memloom/svg.foreignobject.js) foreignObject implementation (by john-memloom).
-- [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
-- [svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
-- [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
-- [svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
-- [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
-- [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
+### draggable
+[svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
+
+### easing
+[svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
+
+### export
+[svg.export.js](https://github.com/wout/svg.export.js) export raw SVG.
+
+### filter
+[svg.filter.js](https://github.com/wout/svg.filter.js) adding svg filters to elements.
+
+### foreignobject
+[svg.foreignobject.js](https://github.com/john-memloom/svg.foreignobject.js) foreignObject implementation (by john-memloom).
+
+### import
+[svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
+
+### math
+[svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
+
+### path
+[svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
+
+### pattern
+[svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
+
+### shapes
+[svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
+
+### topath
+[svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
 
 
 ## Building

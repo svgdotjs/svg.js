@@ -1,3 +1,12 @@
+# v1.0rc1 (30/01/2014)
+
+- added `SVG.PathArray` for real path transformations
+- removed `unbiased` system for paths
+- added caching on `SVG.PointArray` and `SVG.PathArray` for animations
+- enabled proportional resizing on `size()` method with `null` for either `width` or `height` values
+- moved data module to separate file
+- `data()` method now accepts object for for multiple key / value assignments
+
 # v0.38 (28/01/2014)
 
 - added `loop()` method to `SVG.FX`

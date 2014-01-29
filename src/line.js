@@ -49,7 +49,9 @@ SVG.extend(SVG.Line, {
   }
   // Set line size by width and height
 , size: function(width, height) {
-    return this.width(width).height(height)
+    var p = this._proportionalSize(width, height)
+
+    return this.width(p.width).height(p.height)
   }
   // Set path data
 , plot: function(x1, y1, x2, y2) {

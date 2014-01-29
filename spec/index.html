@@ -8,10 +8,11 @@
   <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
   
   <style type="text/css" media="screen">
-    #canvas {
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
+    #drawing {
+      width: 500px;
+      height: 500px;
+      position: absolute;
+      z-index: -10;
     }
   </style>
 
@@ -27,7 +28,6 @@
 <script src="../dist/svg.js" type="text/javascript" charset="utf-8"></script>
 
 <!-- include spec files here... -->
-<script type="text/javascript" src="spec/helper.js"></script>
 <script type="text/javascript" src="spec/svg.js"></script>
 <script type="text/javascript" src="spec/container.js"></script>
 <script type="text/javascript" src="spec/element.js"></script>
@@ -83,5 +83,7 @@
 
   })();
 </script>
+
+<script type="text/javascript" src="spec/helper.js"></script>
 
 </html>

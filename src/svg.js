@@ -13,7 +13,8 @@ this.SVG = function(element) {
 }
 
 // Default namespaces
-SVG.ns = 'http://www.w3.org/2000/svg'
+SVG.ns    = 'http://www.w3.org/2000/svg'
+SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
 
 // Element id sequence
@@ -68,3 +69,32 @@ SVG.supported = (function() {
 })()
 
 if (!SVG.supported) return false
+
+// Initialize parsing element
+SVG.parser = (function() {
+  /* select document body and create svg element*/
+  var body = document.getElementsByTagName('body')[0] || document.getElementsByTagName('svg')[0]
+    , svg  = SVG.create('svg')
+    , poly = SVG.create('polygon')
+    , path = SVG.create('path')
+
+  /* make svg element presently invisible to ensure geometry  */
+  svg.setAttributeNS(SVG.xmlns, 'xmlns:xlink', SVG.xlink)
+  svg.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%')
+  svg.setAttribute('width', '2')
+  svg.setAttribute('height', '2')
+
+  /* build node structure */
+  body.appendChild(svg)
+  svg.appendChild(poly)
+  svg.appendChild(path)
+
+  /* return parser object */
+  return {
+    body: body
+  , doc:  svg
+  , poly: poly
+  , path: path
+  }
+
+})()
