@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-3-g0a16576 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-4-gf6fc666 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2060,6 +2060,34 @@
             function (c) { window.setTimeout(c, 1000 / 60) }
   })()
 
+  SVG.extend(SVG.Element, SVG.FX, {
+    // Relative methods
+    relative: function() {
+      var b, e = this
+  
+      return {
+        // Move over x axis
+        x: function(x) {
+          b = e.bbox()
+  
+          return e.x(b.x + (x || 0))
+        }
+        // Move over y axis
+      , y: function(y) {
+          b = e.bbox()
+  
+          return e.y(b.y + (y || 0))
+        }
+        // Move over x and y axes
+      , move: function(x, y) {
+          this.x(x)
+          return this.y(y)
+        }
+      }
+    }
+  
+  })
+
   ;[  'click'
     , 'dblclick'
     , 'mousedown'
@@ -3356,6 +3384,28 @@
     // Default value
   , valueOf: function() {
       return this.members
+    }
+    // Get the bounding box of all members included or empty box if set has no items
+  , bbox: function(){
+      var box = new SVG.BBox()
+  
+      /* return an empty box of there are no members */
+      if (this.members.length == 0)
+        return box
+  
+      /* get the first rbox and update the target bbox */
+      var rbox = this.members[0].rbox()
+      box.x      = rbox.x
+      box.y      = rbox.y
+      box.width  = rbox.width
+      box.height = rbox.height
+  
+      this.each(function() {
+        /* user rbox for correct position and visual representation */
+        box = box.merge(this.rbox())
+      })
+  
+      return box
     }
   
   })

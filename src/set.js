@@ -56,6 +56,28 @@ SVG.extend(SVG.Set, {
 , valueOf: function() {
     return this.members
   }
+  // Get the bounding box of all members included or empty box if set has no items
+, bbox: function(){
+    var box = new SVG.BBox()
+
+    /* return an empty box of there are no members */
+    if (this.members.length == 0)
+      return box
+
+    /* get the first rbox and update the target bbox */
+    var rbox = this.members[0].rbox()
+    box.x      = rbox.x
+    box.y      = rbox.y
+    box.width  = rbox.width
+    box.height = rbox.height
+
+    this.each(function() {
+      /* user rbox for correct position and visual representation */
+      box = box.merge(this.rbox())
+    })
+
+    return box
+  }
 
 })
 

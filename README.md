@@ -725,6 +725,17 @@ The third argument can be used to move the text element by its anchor point rath
 rect.x(200, true).y(350, true)
 ```
 
+### relative()
+The `move()`, `x()` and `y()` methods move an element to an absolute position. With the `relative()` method, elements can be moved relatively to their current position. This can be done by calling the `relative()` method before the `move()`, `x()` or `y()` methods in the method chain:
+
+```javascript
+rect.move(100, 100).relative().move(20, -50)
+```
+
+This will set the `x` position of the element to `120` and the `y` position to `50`.
+
+It works the same way for `relative().x()` and  `relative().y()`.
+
 
 ### center(), cx() and cy()
 This is an extra method to move an element by its center:
@@ -1472,6 +1483,13 @@ Get the element at a given index:
 
 ```javascript
 set.get(1)
+```
+
+### bbox()
+Get the bounding box of all elements in the set:
+
+```javascript
+set.bbox()
 ```
 
 ### remove()

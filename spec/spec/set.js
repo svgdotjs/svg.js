@@ -2,8 +2,9 @@ describe('Set', function() {
   var set, e1, e2, e3, e4, e5
 
   beforeEach(function() {
+    draw.attr('viewBox', null)
     set = draw.set()
-    e1  = draw.rect(100,100).attr('id', 'e1')
+    e1  = draw.rect(100,100).attr('id', 'e1').move(200,250)
     e2  = draw.ellipse(100,100).attr('id', 'e2')
     e3  = draw.line(0,0,100,100).attr('id', 'e3')
     e4  = draw.circle(50).attr('id', 'e4')
@@ -91,6 +92,32 @@ describe('Set', function() {
     it('returns the members array', function() {
       set.add(e1)
       expect(set.valueOf()).toBe(set.members)
+    })
+  })
+
+  describe('bbox()', function() {
+    it('returns the bounding box of all elements', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+
+      var box = set.bbox()
+
+      expect(box.x).toBe(0)
+      expect(box.y).toBe(0)
+      expect(box.width).toBe(300)
+      expect(box.height).toBe(350)
+    })
+    it('returns an instance of SVG.BBox', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+
+      expect(set.bbox() instanceof SVG.BBox).toBe(true)
+    })
+    it('returns an empty bounding box wiht no members', function() {
+      var box = set.bbox()
+
+      expect(box.x).toBe(0)
+      expect(box.y).toBe(0)
+      expect(box.width).toBe(0)
+      expect(box.height).toBe(0)
     })
   })
 
