@@ -538,6 +538,8 @@ draw.each(function(i, children) {
 }, true)
 ```
 
+Note that `this` refers to the current child element.
+
 ### has()
 Checking the existence of an element within a parent:
 
@@ -1501,6 +1503,8 @@ set.each(function(i) {
   this.attr('id', 'shiny_new_id_' + i)
 })
 ```
+
+Note that `this` refers to the current child element.
 
 ### has()
 Determine if an element is member of the set:
