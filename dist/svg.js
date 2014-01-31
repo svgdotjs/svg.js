@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-7-gb095d29 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-11-ga77685a - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -764,21 +764,6 @@
   
       return SVG.parser.path.getBBox()
     }
-  
-  })
-
-  SVG.extend(SVG.PointArray, SVG.PathArray, {
-  	// Cache bbox
-    cache: function() {
-  		this._cachedBBox = this.uncache().bbox()
-  
-  		return this
-    }
-    // Remove cache
-  , uncache: function() {
-  		delete this._cachedBBox
-  		return this
-  	}
   
   })
 
@@ -1697,9 +1682,6 @@
           element.plot(fx._plot.at(pos))
   
         } else {
-          if (element.array)
-            element.array.cache()
-  
           /* run all x-position properties */
           if (fx._x)
             element.x(fx._at(fx._x, pos))
@@ -1715,9 +1697,6 @@
           /* run all size properties */
           if (fx._size)
             element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-  
-          if (element.array)
-            element.array.uncache()
         }
   
         /* run all viewbox properties */

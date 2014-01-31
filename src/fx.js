@@ -96,9 +96,6 @@ SVG.extend(SVG.FX, {
         element.plot(fx._plot.at(pos))
 
       } else {
-        if (element.array)
-          element.array.cache()
-
         /* run all x-position properties */
         if (fx._x)
           element.x(fx._at(fx._x, pos))
@@ -114,9 +111,6 @@ SVG.extend(SVG.FX, {
         /* run all size properties */
         if (fx._size)
           element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-
-        if (element.array)
-          element.array.uncache()
       }
 
       /* run all viewbox properties */
