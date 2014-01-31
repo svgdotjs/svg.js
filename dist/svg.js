@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-4-gf6fc666 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-5-gbd7e10c - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2057,6 +2057,7 @@
     return  window.requestAnimationFrame       ||
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame    ||
+            window.msRequestAnimationFrame     ||
             function (c) { window.setTimeout(c, 1000 / 60) }
   })()
 
