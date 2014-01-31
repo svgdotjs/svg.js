@@ -698,20 +698,6 @@ Move the element to a given `x` and `y` position by its upper left corner:
 rect.move(200, 350)
 ```
 
-This will have the same effect as:
-
-```javascript
-rect.x(200).y(350)
-```
-
-Note that you can also use the following code to move elements around:
-
-```javascript
-rect.attr({ x: 20, y: 60 })
-``` 
-
-Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
-
 The `text` element has one optional argument:
 
 ```javascript
@@ -719,10 +705,40 @@ The `text` element has one optional argument:
 rect.move(200, 350, true)
 ```
 
-The third argument can be used to move the text element by its anchor point rather than the calculated left top position. This can also be used on the individual axes:
+The third argument can be used to move the text element by its anchor point rather than the calculated left top position.
+
+Note that you can also use the following code to move some elements (like images and rects) around:
 
 ```javascript
-rect.x(200, true).y(350, true)
+rect.attr({ x: 20, y: 60 })
+``` 
+
+Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
+
+### x()
+Move element only along x-axis by its upper left corner:
+
+```javascript
+rect.x(200)
+```
+
+Without an argument the `x()` method serves as a getter as well:
+
+```javascript
+rect.x() //-> returns 200
+```
+
+### y()
+Move element only along y-axis by its upper left corner:
+
+```javascript
+rect.y(350)
+```
+
+Without an argument the `y()` method serves as a getter as well:
+
+```javascript
+rect.y() //-> returns 350
 ```
 
 ### relative()
@@ -737,17 +753,11 @@ This will set the `x` position of the element to `120` and the `y` position to `
 It works the same way for `relative().x()` and  `relative().y()`.
 
 
-### center(), cx() and cy()
+### center()
 This is an extra method to move an element by its center:
 
 ```javascript
 rect.center(150, 150)
-```
-
-This will have the same effect as:
-
-```javascript
-rect.cx(150).cy(150)
 ```
 
 The `text` element has one optional argument:
@@ -757,12 +767,33 @@ The `text` element has one optional argument:
 rect.center(150, 150, true)
 ```
 
-The third argument can be used to center the text element by its anchor point rather than the calculated center position. This can also be used on the individual axes:
+The third argument can be used to center the text element by its anchor point rather than the calculated center position.
+
+### cx()
+Move element only along x-axis by its center:
 
 ```javascript
-rect.cx(150, true).cy(150, true)
+rect.cx(200)
 ```
 
+Without an argument the `cx()` method serves as a getter as well:
+
+```javascript
+rect.cx() //-> returns 200
+```
+
+### cy()
+Move element only along y-axis by its center:
+
+```javascript
+rect.cy(350)
+```
+
+Without an argument the `cy()` method serves as a getter as well:
+
+```javascript
+rect.cy() //-> returns 350
+```
 
 ### size()
 Set the size of an element by a given `width` and `height`:
