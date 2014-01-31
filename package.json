@@ -6,7 +6,7 @@
 , "keywords":     ["svg", "vector", "graphics", "animation"]
 , "author":       "Wout Fierens <wout@impinc.co.uk>"
 , "main":         "dist/svg.js"
-, "version":      "v0.37"
+, "version":      "1.0rc1"
 , "jam": {
     "include": [
       "dist/svg.js"
