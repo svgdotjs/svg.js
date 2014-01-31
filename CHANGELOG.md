@@ -8,6 +8,7 @@
 - `data()` method now accepts object for for multiple key / value assignments
 - added `bbox()` method to `SVG.Set`
 - added `relative()` method for moves relative to the current position
+- added `morph()` and `at()` methods to `SVG.Color` for color morphing
 
 # v0.38 (28/01/2014)
 

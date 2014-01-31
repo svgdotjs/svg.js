@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-5-gbd7e10c - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-7-gb095d29 - svg regex default color array pointarray patharray arraycache number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -255,6 +255,24 @@
            + (this.g / 255 * 0.59)
            + (this.b / 255 * 0.11)
     }
+    // Make color morphable
+  , morph: function(color) {
+      this.destination = new SVG.Color(color)
+  
+      return this
+    }
+    // Get morphed color at given position
+  , at: function(pos) {
+      /* make sure a destination is defined */
+      if (!this.destination) return this
+  
+      /* generate morphed array */
+      return new SVG.Color({
+        r: ~~(this.r + (this.destination.r - this.r) * pos)
+      , g: ~~(this.g + (this.destination.g - this.g) * pos)
+      , b: ~~(this.b + (this.destination.b - this.b) * pos)
+      })
+    }
     // Private: ensure to six-based hex 
   , _fullHex: function(hex) {
       return hex.length == 4 ?
@@ -282,6 +300,13 @@
   // Test if given value is a rgb object
   SVG.Color.isRgb = function(color) {
     return color && typeof color.r == 'number'
+                 && typeof color.g == 'number'
+                 && typeof color.b == 'number'
+  }
+  
+  // Test if given value is a color
+  SVG.Color.isColor = function(color) {
+    return SVG.Color.isRgb(color) || SVG.Color.test(color)
   }
 
   SVG.Array = function(array, fallback) {
@@ -1784,12 +1809,17 @@
     }
     // Add animatable attributes
   , attr: function(a, v, n) {
-      if (typeof a == 'object')
+      if (typeof a == 'object') {
         for (var key in a)
           this.attr(key, a[key])
       
-      else
-        this.attrs[a] = { from: this.target.attr(a), to: v }
+      } else {
+        var from = this.target.attr(a)
+  
+        this.attrs[a] = SVG.Color.isColor(from) ?
+          new SVG.Color(from).morph(v) :
+          { from: from, to: v }
+      }
       
       return this
     }
@@ -1986,31 +2016,10 @@
           .plus(new SVG.Number(o.from)) :
       
       /* color recalculation */
-      o.to && (o.to.r || SVG.Color.test(o.to)) ?
-        this._color(o, pos) :
+      o instanceof SVG.Color ? o.at(pos) :
       
       /* for all other values wait until pos has reached 1 to return the final value */
       pos < 1 ? o.from : o.to
-    }
-    // Private: tween color
-  , _color: function(o, pos) {
-      var from, to
-      
-      /* normalise pos */
-      pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
-      
-      /* convert FROM */
-      from = new SVG.Color(o.from)
-      
-      /* convert TO hex to rgb */
-      to = new SVG.Color(o.to)
-      
-      /* tween color and return hex */
-      return new SVG.Color({
-        r: ~~(from.r + (to.r - from.r) * pos)
-      , g: ~~(from.g + (to.g - from.g) * pos)
-      , b: ~~(from.b + (to.b - from.b) * pos)
-      }).toHex()
     }
     
   })

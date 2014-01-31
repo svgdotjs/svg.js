@@ -1782,6 +1782,22 @@ Get the brightness of a color:
 color.brightness() //-> returns 0.344
 ```
 
+### morph()
+Make a color morphable:
+
+```javascript
+color.morph('#000')
+```
+
+### at()
+Get morphable color at given position:
+
+```javascript
+var color = new SVG.Color('#ff0066').morph('#000')
+color.at(0.5).toHex() //-> '#7f0033'
+```
+
+
 This is the perceived brighness where `0` is black and `1` is white.
 
 

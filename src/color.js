@@ -60,6 +60,24 @@ SVG.extend(SVG.Color, {
          + (this.g / 255 * 0.59)
          + (this.b / 255 * 0.11)
   }
+  // Make color morphable
+, morph: function(color) {
+    this.destination = new SVG.Color(color)
+
+    return this
+  }
+  // Get morphed color at given position
+, at: function(pos) {
+    /* make sure a destination is defined */
+    if (!this.destination) return this
+
+    /* generate morphed array */
+    return new SVG.Color({
+      r: ~~(this.r + (this.destination.r - this.r) * pos)
+    , g: ~~(this.g + (this.destination.g - this.g) * pos)
+    , b: ~~(this.b + (this.destination.b - this.b) * pos)
+    })
+  }
   // Private: ensure to six-based hex 
 , _fullHex: function(hex) {
     return hex.length == 4 ?
@@ -87,4 +105,11 @@ SVG.Color.test = function(color) {
 // Test if given value is a rgb object
 SVG.Color.isRgb = function(color) {
   return color && typeof color.r == 'number'
+               && typeof color.g == 'number'
+               && typeof color.b == 'number'
+}
+
+// Test if given value is a color
+SVG.Color.isColor = function(color) {
+  return SVG.Color.isRgb(color) || SVG.Color.test(color)
 }
