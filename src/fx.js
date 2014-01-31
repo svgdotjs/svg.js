@@ -36,10 +36,10 @@ SVG.extend(SVG.FX, {
           akeys.push(key)
 
         /* make sure morphable elements are scaled, translated and morphed all together */
-        if (element.morphArray && akeys.indexOf('points') > -1) {
+        if (element.morphArray && (fx._plot || akeys.indexOf('points') > -1)) {
           /* get destination */
           var box
-            , p = new element.morphArray(fx._plot || element.array)
+            , p = new element.morphArray(fx._plot || fx.attrs.points || element.array)
 
           /* add size */
           if (fx._size) p.size(fx._size.width.to, fx._size.height.to)

@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-11-ga77685a - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc1-12-g165ca9c - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1622,10 +1622,10 @@
             akeys.push(key)
   
           /* make sure morphable elements are scaled, translated and morphed all together */
-          if (element.morphArray && akeys.indexOf('points') > -1) {
+          if (element.morphArray && (fx._plot || akeys.indexOf('points') > -1)) {
             /* get destination */
             var box
-              , p = new element.morphArray(fx._plot || element.array)
+              , p = new element.morphArray(fx._plot || fx.attrs.points || element.array)
   
             /* add size */
             if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
