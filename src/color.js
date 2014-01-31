@@ -71,6 +71,9 @@ SVG.extend(SVG.Color, {
     /* make sure a destination is defined */
     if (!this.destination) return this
 
+    /* normalise pos */
+    pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
+
     /* generate morphed array */
     return new SVG.Color({
       r: ~~(this.r + (this.destination.r - this.r) * pos)
