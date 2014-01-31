@@ -11,5 +11,13 @@
     "svg"
   ],
   "license": "MIT",
-  "ignore": ["dist/!(svg*.js)"]
+  "ignore": [
+    "**/.*",
+    "spec/",
+    "src/",
+    "Gemfile",
+    "Gemfile.lock",
+    "package.json",
+    "Rakefile"
+  ]
 }
