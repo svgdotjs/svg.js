@@ -561,6 +561,7 @@ var group = draw.group()
 draw.index(rect)  //-> returns 0
 group.index(rect) //-> returns -1
 ```
+###### `returns`: a number equal to or higher than `0`, `-1` if not found
 
 ### get()
 Get an element on a given position in the children array:
@@ -572,6 +573,15 @@ var circle = draw.circle(50)
 draw.get(0) //-> returns rect
 draw.get(1) //-> returns circle
 ```
+###### `returns`: an element
+
+### clear()
+To remove all elements from a parent element:
+
+```javascript
+draw.clear()
+```
+###### `returns`: itself
 
 
 ## Manipulating elements
@@ -856,24 +866,29 @@ This method also acts as a getter:
 rect.height() //-> returns 325
 ```
 
-
-### hide(), show() and visible()
-We all love to have a little hide:
+### hide()
+Hide element:
 
 ```javascript
 rect.hide()
 ```
+###### `returns`: itself
 
-and show:
+### show()
+Show element:
 
 ```javascript
 rect.show()
 ```
+###### `returns`: itself
 
+### visible()
 To check if the element is visible:
+
 ```javascript
 rect.visible()
 ```
+###### `returns`: `true` or `false`
 
 ### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
@@ -881,9 +896,9 @@ To make an exact copy of an element the `clone()` method comes in handy:
 ```javascript
 var clone = rect.clone()
 ```
+###### `returns`: a new element
 
 This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
-
 
 ### remove()
 Pretty straightforward:
@@ -891,13 +906,7 @@ Pretty straightforward:
 ```javascript
 rect.remove()
 ```
-
-### clear()
-To remove all elements from a parent element:
-
-```javascript
-draw.clear()
-```
+###### `returns`: itself
 
 ### replace()
 This method will replace the called element with the given element in the same position in the stack:
@@ -905,6 +914,7 @@ This method will replace the called element with the given element in the same p
 ```javascript
 rect.replace(draw.circle(100))
 ```
+###### `returns`: the element passed as argument
 
 
 ## Inserting elements
