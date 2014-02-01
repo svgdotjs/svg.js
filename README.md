@@ -498,7 +498,7 @@ Every element has a reference to its parent:
 element.parent
 ```
 
-__`returns`: <span color="pink">element</span>__
+__`returns`: <span style="color:#f06">`element`</span>__
 
 Even the main svg document:
 
