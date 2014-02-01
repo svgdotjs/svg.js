@@ -665,6 +665,7 @@ rect.attr('fill', null)
 ```
 
 `getter`__`returns`: value__
+
 `setter`__`returns`: itself__
 
 
@@ -720,8 +721,9 @@ rect.attr('transform', 'matrix(1,0.5,0.5,1,0,0)')
 
 Although that would mean you can't use the `transform()` method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the `transform()` method.
 
-__`returns`: number [getter]__
-__`returns`: itself [setter]__
+`getter`__`returns`: number__
+
+`setter`__`returns`: itself__
 
 ### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
@@ -762,8 +764,9 @@ Explicitly deleting individual style definitions works the same as with the `att
 rect.style('cursor', null)
 ```
 
-__`returns`: value [getter]__
-__`returns`: itself [setter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 
 ### move()
@@ -805,8 +808,9 @@ Without an argument the `x()` method serves as a getter as well:
 rect.x() //-> returns 200
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### y()
 Move element only along y-axis by its upper left corner:
@@ -821,8 +825,9 @@ Without an argument the `y()` method serves as a getter as well:
 rect.y() //-> returns 350
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### relative()
 The `move()`, `x()` and `y()` methods move an element to an absolute position. With the `relative()` method, elements can be moved relatively to their current position. This can be done by calling the `relative()` method before the `move()`, `x()` or `y()` methods in the method chain:
@@ -869,8 +874,9 @@ Without an argument the `cx()` method serves as a getter as well:
 rect.cx() //-> returns 200
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### cy()
 Move element only along y-axis by its center:
@@ -885,8 +891,9 @@ Without an argument the `cy()` method serves as a getter as well:
 rect.cy() //-> returns 350
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### size()
 Set the size of an element by a given `width` and `height`:
@@ -924,8 +931,9 @@ This method also acts as a getter:
 rect.width() //-> returns 200
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### height()
 Set only height of an element:
@@ -940,8 +948,9 @@ This method also acts as a getter:
 rect.height() //-> returns 325
 ```
 
-__`returns`: itself [setter]__
-__`returns`: number [getter]__
+`getter`__`returns`: value__
+
+`setter`__`returns`: itself__
 
 ### hide()
 Hide element:
@@ -1072,8 +1081,9 @@ var zoom = box.zoom
 
 If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.
 
-__`returns`: `SVG.ViewBox` [getter]__
-__`returns`: itself [setter]__
+`getter`__`returns`: `SVG.ViewBox`__
+
+`setter`__`returns`: itself__
 
 ### bbox()
 
