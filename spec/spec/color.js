@@ -68,6 +68,14 @@ describe('Color', function() {
 			expect(morphed.g).toBe(255)
 			expect(morphed.b).toBe(255)
 		})
+
+		it('morphes color to 0 with lower values', function() {
+			var destination = new SVG.Color('#fff')
+			var morphed = color.morph(destination).at(-3)
+			expect(morphed.r).toBe(0)
+			expect(morphed.g).toBe(102)
+			expect(morphed.b).toBe(255)
+		})
 	})
 
 })

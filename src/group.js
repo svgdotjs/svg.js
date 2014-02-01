@@ -15,6 +15,15 @@ SVG.extend(SVG.G, {
 , y: function(y) {
     return y == null ? this.trans.y : this.transform('y', y)
   }
+  // Move by center over x-axis
+, cx: function(x) {
+    return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
+  }
+  // Move by center over y-axis
+, cy: function(y) {
+    return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
+  }
+  
 })
 
 //

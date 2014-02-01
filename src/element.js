@@ -39,11 +39,11 @@ SVG.extend(SVG.Element, {
   }
   // Move by center over x-axis
 , cx: function(x) {
-    return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
+    return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
   }
   // Move by center over y-axis
 , cy: function(y) {
-    return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
+    return y == null ? this.y() + this.height() / 2 : this.y(y - this.height() / 2)
   }
   // Move element to given x and y values
 , move: function(x, y) {

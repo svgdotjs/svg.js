@@ -1,6 +1,8 @@
 # v1.0rc2 (01/02/2014)
 
 - added `index()` method to `SVG.Parent` and `SVG.Set`
+- modified `cx()` and `cy()` methods on elements with native `x`, `y`, `width` and `height` attributes for better performance
+- added `morph()` and `at()` methods to `SVG.Number` for unit morphing
 
 # v1.0rc1 (31/01/2014)
 

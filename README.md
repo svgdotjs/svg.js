@@ -2030,9 +2030,87 @@ Obviously unbinding is practically the same:
 SVG.off(window, 'click', click)
 ```
 
+## Numbers
+
+Numbers in svg.js have a dedicated number class to be able to process sting values. Creating a new number is simple:
+
+```javascript
+var number = new SVG.Number('78%')
+number.plus('3%').toString() //-> returns '81%'
+number.valueOf() //-> returns 0.81
+```
+
+Operators are defined as methods on the `SVG.Number` instance.
+
+### plus()
+Addition:
+
+```javascript
+number.plus('3%')
+```
+
+__`returns`: `itself`__
+
+### minus()
+Subtraction:
+
+```javascript
+number.minus('3%')
+```
+
+__`returns`: `itself`__
+
+### times()
+Multiplication:
+
+```javascript
+number.times(2)
+```
+
+__`returns`: `itself`__
+
+### divide()
+Division:
+
+```javascript
+number.divide('3%')
+```
+
+__`returns`: `itself`__
+
+### to()
+Change number to another unit:
+
+```javascript
+number.to('px')
+```
+
+__`returns`: `itself`__
+
+### morph()
+Make a number morphable:
+
+```javascript
+number.morph('11%')
+```
+
+__`returns`: `itself`__
+
+
+### at()
+Get morphable number at given position:
+
+```javascript
+var number = new SVG.Number('79%').morph('3%')
+number.at(0.55).toString() //-> '37.2%'
+```
+
+__`returns`: `SVG.Number`__
+
+
 ## Colors
 
-Svg.js has a dedicated color module handling different types of colors. Accepted values are:
+Svg.js has a dedicated color class handling different types of colors. Accepted values are:
 
 - hex string; three based (e.g. #f06) or six based (e.g. #ff0066) `new SVG.Color('#f06')`
 - rgb string; e.g. rgb(255, 0, 102) `new SVG.Color('rgb(255, 0, 102)')`

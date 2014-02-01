@@ -3,7 +3,6 @@ SVG.FX = function(element) {
   this.target = element
 }
 
-//
 SVG.extend(SVG.FX, {
   // Add animation parameters and start animation
   animate: function(d, ease, delay) {
@@ -98,46 +97,46 @@ SVG.extend(SVG.FX, {
       } else {
         /* run all x-position properties */
         if (fx._x)
-          element.x(fx._at(fx._x, pos))
+          element.x(at(fx._x, pos))
         else if (fx._cx)
-          element.cx(fx._at(fx._cx, pos))
+          element.cx(at(fx._cx, pos))
 
         /* run all y-position properties */
         if (fx._y)
-          element.y(fx._at(fx._y, pos))
+          element.y(at(fx._y, pos))
         else if (fx._cy)
-          element.cy(fx._at(fx._cy, pos))
+          element.cy(at(fx._cy, pos))
 
         /* run all size properties */
         if (fx._size)
-          element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
+          element.size(at(fx._size.width, pos), at(fx._size.height, pos))
       }
 
       /* run all viewbox properties */
       if (fx._viewbox)
         element.viewbox(
-          fx._at(fx._viewbox.x, pos)
-        , fx._at(fx._viewbox.y, pos)
-        , fx._at(fx._viewbox.width, pos)
-        , fx._at(fx._viewbox.height, pos)
+          at(fx._viewbox.x, pos)
+        , at(fx._viewbox.y, pos)
+        , at(fx._viewbox.width, pos)
+        , at(fx._viewbox.height, pos)
         )
 
       /* animate attributes */
       for (i = akeys.length - 1; i >= 0; i--)
-        element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
+        element.attr(akeys[i], at(fx.attrs[akeys[i]], pos))
 
       /* animate transformations */
       for (i = tkeys.length - 1; i >= 0; i--)
-        element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+        element.transform(tkeys[i], at(fx.trans[tkeys[i]], pos))
 
       /* animate styles */
       for (i = skeys.length - 1; i >= 0; i--)
-        element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
+        element.style(skeys[i], at(fx.styles[skeys[i]], pos))
 
       /* callback for each keyframe */
       if (fx._during)
         fx._during.call(element, pos, function(from, to) {
-          return fx._at({ from: from, to: to }, pos)
+          return at({ from: from, to: to }, pos)
         })
     }
     
@@ -201,7 +200,7 @@ SVG.extend(SVG.FX, {
     return this.target.bbox()
   }
   // Add animatable attributes
-, attr: function(a, v, n) {
+, attr: function(a, v) {
     if (typeof a == 'object') {
       for (var key in a)
         this.attr(key, a[key])
@@ -211,6 +210,8 @@ SVG.extend(SVG.FX, {
 
       this.attrs[a] = SVG.Color.isColor(from) ?
         new SVG.Color(from).morph(v) :
+      SVG.regex.unit.test(from) ?
+        new SVG.Number(from).morph(v) :
         { from: from, to: v }
     }
     
@@ -395,29 +396,9 @@ SVG.extend(SVG.FX, {
 
     return this
   }
-  // Private: calculate position according to from and to
-, _at: function(o, pos) {
-    /* number recalculation */
-    return typeof o.from == 'number' ?
-      o.from + (o.to - o.from) * pos :
-    
-    /* unit recalculation */
-    SVG.regex.unit.test(o.to) ?
-      new SVG.Number(o.to)
-        .minus(new SVG.Number(o.from))
-        .times(pos)
-        .plus(new SVG.Number(o.from)) :
-    
-    /* color recalculation */
-    o instanceof SVG.Color ? o.at(pos) :
-    
-    /* for all other values wait until pos has reached 1 to return the final value */
-    pos < 1 ? o.from : o.to
-  }
   
 })
 
-//
 SVG.extend(SVG.Element, {
   // Get fx module or create a new one, then animate with given duration and ease
   animate: function(d, ease, delay) {
@@ -444,15 +425,21 @@ SVG.extend(SVG.Element, {
 
     return this
   }
-
   
 })
-// Usage:
 
-//     rect.animate(1500, '>').move(200, 300).after(function() {
-//       this.fill({ color: '#f06' })
-//     })
-
+// Calculate position according to from and to
+function at(o, pos) {
+  /* number recalculation (don't bother converting to SVG.Number for performance reasons) */
+  return typeof o.from == 'number' ?
+    o.from + (o.to - o.from) * pos :
+  
+  /* instance recalculation */
+  o instanceof SVG.Color || o instanceof SVG.Number ? o.at(pos) :
+  
+  /* for all other values wait until pos has reached 1 to return the final value */
+  pos < 1 ? o.from : o.to
+}
 
 // Shim layer with setTimeout fallback by Paul Irish
 window.requestAnimFrame = (function(){
