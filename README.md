@@ -479,7 +479,7 @@ Every element instance within svg.js has a reference to the actual `node`:
 ```javascript
 element.node
 ```
-__`returns`: node__
+__`returns`: `node`__
 
 ### instance
 Similarly, the node carries a reference to the svg.js `instance`:
@@ -487,7 +487,7 @@ Similarly, the node carries a reference to the svg.js `instance`:
 ```javascript
 node.instance
 ```
-__`returns`: element__
+__`returns`: `element`__
 
 ## Parent reference
 Every element has a reference to its parent:
@@ -498,7 +498,7 @@ Every element has a reference to its parent:
 element.parent
 ```
 
-__`returns`: <span style="color:#f06">`element`</span>__
+__`returns`: `element`__
 
 Even the main svg document:
 
@@ -508,7 +508,7 @@ var draw = SVG('drawing')
 draw.parent //-> returns the wrappig html element with id 'drawing'
 ```
 
-__`returns`: node__
+__`returns`: `node`__
 
 
 ### doc()
@@ -534,7 +534,7 @@ rect.doc(SVG.Doc)    //-> returns draw
 rect.doc(SVG.Nested) //-> returns nested
 rect.doc(SVG.G)      //-> returns group
 ```
-__`returns`: element__
+__`returns`: `element`__
 
 ## Child references
 
@@ -544,7 +544,7 @@ To get the first child of a parent element:
 ```javascript
 draw.first()
 ```
-__`returns`: element__
+__`returns`: `element`__
 
 ### last()
 To get the last child of a parent element:
@@ -552,7 +552,7 @@ To get the last child of a parent element:
 ```javascript
 draw.last()
 ```
-__`returns`: element__
+__`returns`: `element`__
 
 ### children()
 An array of all children will can be retreives with the `children` method:
@@ -582,7 +582,7 @@ draw.each(function(i, children) {
 
 Note that `this` refers to the current child element.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### has()
 Checking the existence of an element within a parent:
@@ -594,7 +594,7 @@ var group = draw.group()
 draw.has(rect)  //-> returns true
 group.has(rect) //-> returns false
 ```
-__`returns`: boolean__
+__`returns`: `boolean`__
 
 ### index()
 Returns the index of given element and retuns -1 when it is not a child:
@@ -606,7 +606,7 @@ var group = draw.group()
 draw.index(rect)  //-> returns 0
 group.index(rect) //-> returns -1
 ```
-__`returns`: number__
+__`returns`: `number`__
 
 ### get()
 Get an element on a given position in the children array:
@@ -618,7 +618,7 @@ var circle = draw.circle(50)
 draw.get(0) //-> returns rect
 draw.get(1) //-> returns circle
 ```
-__`returns`: element__
+__`returns`: `element`__
 
 ### clear()
 To remove all elements from a parent element:
@@ -626,7 +626,7 @@ To remove all elements from a parent element:
 ```javascript
 draw.clear()
 ```
-__`returns`: itself__
+__`returns`: `itself`__
 
 
 ## Manipulating elements
@@ -664,9 +664,9 @@ Explicitly remove an attribute:
 rect.attr('fill', null)
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 
 ### transform()
@@ -721,9 +721,9 @@ rect.attr('transform', 'matrix(1,0.5,0.5,1,0,0)')
 
 Although that would mean you can't use the `transform()` method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the `transform()` method.
 
-`getter`__`returns`: number__
+`getter`__`returns`: `number`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
@@ -764,9 +764,9 @@ Explicitly deleting individual style definitions works the same as with the `att
 rect.style('cursor', null)
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 
 ### move()
@@ -793,7 +793,7 @@ rect.attr({ x: 20, y: 60 })
 
 Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### x()
 Move element only along x-axis by its upper left corner:
@@ -808,9 +808,9 @@ Without an argument the `x()` method serves as a getter as well:
 rect.x() //-> returns 200
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### y()
 Move element only along y-axis by its upper left corner:
@@ -825,9 +825,9 @@ Without an argument the `y()` method serves as a getter as well:
 rect.y() //-> returns 350
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### relative()
 The `move()`, `x()` and `y()` methods move an element to an absolute position. With the `relative()` method, elements can be moved relatively to their current position. This can be done by calling the `relative()` method before the `move()`, `x()` or `y()` methods in the method chain:
@@ -840,7 +840,7 @@ This will set the `x` position of the element to `120` and the `y` position to `
 
 It works the same way for `relative().x()` and  `relative().y()`.
 
-__`returns`: object__
+__`returns`: `object`__
 
 
 ### center()
@@ -859,7 +859,7 @@ rect.center(150, 150, true)
 
 The third argument can be used to center the text element by its anchor point rather than the calculated center position.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### cx()
 Move element only along x-axis by its center:
@@ -874,9 +874,9 @@ Without an argument the `cx()` method serves as a getter as well:
 rect.cx() //-> returns 200
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### cy()
 Move element only along y-axis by its center:
@@ -891,9 +891,9 @@ Without an argument the `cy()` method serves as a getter as well:
 rect.cy() //-> returns 350
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### size()
 Set the size of an element by a given `width` and `height`:
@@ -916,7 +916,7 @@ rect.size(null, 200)
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### width()
 Set only width of an element:
@@ -931,9 +931,9 @@ This method also acts as a getter:
 rect.width() //-> returns 200
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### height()
 Set only height of an element:
@@ -948,9 +948,9 @@ This method also acts as a getter:
 rect.height() //-> returns 325
 ```
 
-`getter`__`returns`: value__
+`getter`__`returns`: `value`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### hide()
 Hide element:
@@ -959,7 +959,7 @@ Hide element:
 rect.hide()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### show()
 Show element:
@@ -968,7 +968,7 @@ Show element:
 rect.show()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### visible()
 To check if the element is visible:
@@ -977,7 +977,7 @@ To check if the element is visible:
 rect.visible()
 ```
 
-__`returns`: boolean__
+__`returns`: `boolean`__
 
 ### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
@@ -986,7 +986,7 @@ To make an exact copy of an element the `clone()` method comes in handy:
 var clone = rect.clone()
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
 
@@ -997,7 +997,7 @@ Pretty straightforward:
 rect.remove()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### replace()
 This method will replace the called element with the given element in the same position in the stack:
@@ -1006,7 +1006,7 @@ This method will replace the called element with the given element in the same p
 rect.replace(draw.circle(100))
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 
 ## Inserting elements
@@ -1021,7 +1021,7 @@ var group = draw.group()
 group.add(rect) //-> returns group
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### put()
 Where the `add()` method returns the parent itself, the `put()` method returns the given element:
@@ -1030,7 +1030,7 @@ Where the `add()` method returns the parent itself, the `put()` method returns t
 group.put(rect) //-> returns rect
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 ### addTo()
 Similarly to the `add()` method on a parent element, elements have the `addTo()` method:
@@ -1039,7 +1039,7 @@ Similarly to the `add()` method on a parent element, elements have the `addTo()`
 rect.addTo(group) //-> returns rect
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### putIn()
 Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
@@ -1048,7 +1048,7 @@ Similarly to the `put()` method on a parent element, elements have the `putIn()`
 rect.putIn(group) //-> returns group
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 ## Geometry
 
@@ -1083,7 +1083,7 @@ If the size of the viewbox equals the size of the svg drawing, the zoom value wi
 
 `getter`__`returns`: `SVG.ViewBox`__
 
-`setter`__`returns`: itself__
+`setter`__`returns`: `itself`__
 
 ### bbox()
 
@@ -1129,7 +1129,7 @@ rect.inside(60, 70) //-> returns true
 
 Note: the `x` and `y` positions are tested against the relative position of the element. Any offset on the parent element is not taken into account.
 
-__`returns`: boolean__
+__`returns`: `boolean`__
 
 
 ## Animating elements
@@ -1213,7 +1213,7 @@ rect.animate().move(200, 200)
 rect.mouseenter(function() { this.pause() })
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### play()
 Will start playing a paused animation:
@@ -1224,7 +1224,7 @@ rect.animate().move(200, 200)
 rect.mouseenter(function() { this.pause() })
 rect.mouseleave(function() { this.play() })
 ```
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### stop()
 Animations can be stopped in two ways.
@@ -1245,7 +1245,7 @@ rect.animate().center(200, 200)
 
 Stopping an animation is irreversable.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### during()
 If you want to perform your own actions during the animations you can use the `during()` method:
@@ -1343,7 +1343,7 @@ A single hex string will work as well:
 rect.fill('#f06')
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### stroke()
 The `stroke()` method is similar to `fill()`:
@@ -1358,7 +1358,7 @@ Like fill, a single hex string will work as well:
 rect.stroke('#f06')
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### opacity()
 To set the overall opacity of an element:
@@ -1367,7 +1367,7 @@ To set the overall opacity of an element:
 rect.opacity(0.5)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### rotate()
 The `rotate()` method will automatically rotate elements according to the center of the element:
@@ -1384,7 +1384,7 @@ Although you can also define a specific rotation point:
 rect.rotate(45, 50, 50)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### skew()
 The `skew()` method will take an `x` and `y` value:
@@ -1394,7 +1394,7 @@ The `skew()` method will take an `x` and `y` value:
 rect.skew(0, 45)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### scale()
 The `scale()` method will take an `x` and `y` value:
@@ -1404,7 +1404,7 @@ The `scale()` method will take an `x` and `y` value:
 rect.scale(0.5, -1)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### translate()
 The `translate()` method will take an `x` and `y` value:
@@ -1429,7 +1429,7 @@ rect.radius(10, 20)
 
 _This functionality requires the sugar.js module which is included in the default distribution._
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 
 ## Masking elements
@@ -1443,7 +1443,7 @@ var ellipse = draw.ellipse(80, 40).move(10, 10).fill({ color: '#fff' })
 rect.maskWith(ellipse)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### mask()
 But you can also use multiple elements:
@@ -1481,7 +1481,7 @@ rect.unmask()
 
 The `unmask()` method returns the masking element.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### remove()
 Removing the mask alltogether will also `unmask()` all masked elements as well:
@@ -1490,7 +1490,7 @@ Removing the mask alltogether will also `unmask()` all masked elements as well:
 mask.remove()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### masker
 For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:
@@ -1512,7 +1512,7 @@ var ellipse = draw.ellipse(80, 40).move(10, 10)
 rect.clipWith(ellipse)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### clip()
 Clip multiple elements:
@@ -1535,7 +1535,7 @@ Unclipping the elements can be done with the `unclip()` method:
 rect.unclip()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### remove()
 Removing the clip alltogether will also `unclip()` all clipped elements as well:
@@ -1544,7 +1544,7 @@ Removing the clip alltogether will also `unclip()` all clipped elements as well:
 clip.remove()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### clipper
 For your convenience, the clipping element is also referenced in the clipped element. This can be useful in case you want to change the clipPath:
@@ -1566,7 +1566,7 @@ Move element to the front:
 rect.front()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### back()
 Move element to the back:
@@ -1575,7 +1575,7 @@ Move element to the back:
 rect.back()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### forward()
 Move element one step forward:
@@ -1584,7 +1584,7 @@ Move element one step forward:
 rect.forward()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### backward()
 Move element one step backward:
@@ -1593,7 +1593,7 @@ Move element one step backward:
 rect.backward()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### siblings()
 The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:
@@ -1611,7 +1611,7 @@ Get the position (a number) of rect between its siblings:
 rect.position()
 ```
 
-__`returns`: number__
+__`returns`: `number`__
 
 ### next()
 Get the next sibling:
@@ -1620,7 +1620,7 @@ Get the next sibling:
 rect.next()
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 ### previous()
 Get the previous sibling:
@@ -1629,7 +1629,7 @@ Get the previous sibling:
 rect.previous()
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 ### before()
 Insert an element before another:
@@ -1639,7 +1639,7 @@ Insert an element before another:
 rect.before(circle)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### after()
 Insert an element after another:
@@ -1649,7 +1649,7 @@ Insert an element after another:
 rect.after(circle)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 _This functionality requires the arrange.js module which is included in the default distribution._
 
@@ -1685,7 +1685,7 @@ Quite a useful feature of sets is the ability to accept multiple elements at onc
 set.add(rect, circle)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### each()
 Iterating over all members in a set is the same as with svg containers:
@@ -1698,7 +1698,7 @@ set.each(function(i) {
 
 Note that `this` refers to the current child element.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### has()
 Determine if an element is member of the set:
@@ -1707,7 +1707,7 @@ Determine if an element is member of the set:
 set.has(rect)
 ```
 
-__`returns`: boolean__
+__`returns`: `boolean`__
 
 ### index()
 Returns the index of a given element in the set.
@@ -1716,7 +1716,7 @@ Returns the index of a given element in the set.
 set.index(rect) //-> -1 if element is not a member
 ```
 
-__`returns`: number__
+__`returns`: `number`__
 
 ### get()
 Get the element at a given index:
@@ -1725,7 +1725,7 @@ Get the element at a given index:
 set.get(1)
 ```
 
-__`returns`: element__
+__`returns`: `element`__
 
 ### bbox()
 Get the bounding box of all elements in the set:
@@ -1743,7 +1743,7 @@ To remove an element from a set:
 set.remove(rect)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### clear()
 Or to remove all elements from a set:
@@ -1752,7 +1752,7 @@ Or to remove all elements from a set:
 set.clear()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### animate()
 Sets work with animations as well:
@@ -1785,7 +1785,7 @@ The `offset` and `color` parameters are required for stops, `opacity` is optiona
 stop.at({ offset: 0, color: '#333', opacity: 1 })
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### from() and to()
 To define the direction you can set from `x`, `y` and to `x`, `y`:
@@ -1796,7 +1796,7 @@ gradient.from(0, 0).to(0, 1)
 
 The from and to values are also expressed in percent.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### radius()
 Radial gradients have a `radius()` method to define the outermost radius to where the inner color should develop:
@@ -1810,7 +1810,7 @@ var gradient = draw.gradient('radial', function(stop) {
 gradient.from(0.5, 0.5).to(0.5, 0.5).radius(0.5)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### update()
 A gradient can also be updated afterwards:
@@ -1836,7 +1836,7 @@ draw.gradient('radial', function(stop) {
 s1.update({ offset: 0.1, color: '#0f0', opacity: 1 })
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### get()
 The `get()` method makes it even easier to get a stop from an existing gradient:
@@ -1872,7 +1872,7 @@ gradient.fill() //-> returns 'url(#SvgjsGradient1234)'
 
 _This functionality requires the gradient.js module which is included in the default distribution._
 
-__`returns`: value__
+__`returns`: `value`__
 
 ## Data
 
@@ -1895,7 +1895,7 @@ rect.data({
 })
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### Getting
 Fetching the values is similar to the `attr()` method:
@@ -1904,7 +1904,7 @@ Fetching the values is similar to the `attr()` method:
 rect.data('key')
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### Removing
 Removing the data altogether:
@@ -1913,7 +1913,7 @@ Removing the data altogether:
 rect.data('key', null)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### Sustaining data types
 Your values will always be stored as JSON and in some cases this might not be desirable. If you want to store the value as-is, just pass true as the third argument:
@@ -1922,7 +1922,7 @@ Your values will always be stored as JSON and in some cases this might not be de
 rect.data('key', 'value', true)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 
 ## Memory
@@ -1949,7 +1949,7 @@ To retrieve a memory
 rect.remember('oldBBox')
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### forget()
 Erasing a single memory:
@@ -1971,7 +1971,7 @@ And finally, just erasing the whole memory:
 rect.forget()
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ## Events
 
@@ -1992,7 +1992,7 @@ rect.click(null)
 
 All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### Event listeners
 
@@ -2006,7 +2006,7 @@ var click = function() {
 rect.on('click', click)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
 
@@ -2016,7 +2016,7 @@ Unbinding events is just as easy:
 rect.off('click', click)
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 But there is more to event listeners. You can bind events to html elements as well:
 
@@ -2069,7 +2069,7 @@ color.brightness() //-> returns 0.344
 
 This is the perceived brighness where `0` is black and `1` is white.
 
-__`returns`: number__
+__`returns`: `number`__
 
 ### morph()
 Make a color morphable:
@@ -2078,7 +2078,7 @@ Make a color morphable:
 color.morph('#000')
 ```
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### at()
 Get morphable color at given position:
@@ -2169,7 +2169,7 @@ This method will prepare the array ensuring both the source and destination arra
 
 Note that this method is currently not available on `SVG.PathArray` but will be soon.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### at()
 This method will morph the array to a given position between `0` and `1`. Continuing with the previous example:
@@ -2191,7 +2191,7 @@ array.settle()
 
 Note that this method is currently not available on `SVG.PathArray` but will be soon.
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### move()
 Moves geometry of the array with the given `x` and `y` values:
@@ -2204,7 +2204,7 @@ array.toString() //-> returns '33,75 133,175'
 
 Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### size()
 Resizes geometry of the array by the given `width` and `height` values:
@@ -2217,7 +2217,7 @@ array.toString() //-> returns '100,100 322,433'
 
 Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
 
-__`returns`: itself__
+__`returns`: `itself`__
 
 ### bbox()
 Gets the bounding box of the geometry of the array:
@@ -2228,7 +2228,7 @@ array.bbox()
 
 Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
 
-__`returns`: object__
+__`returns`: `object`__
 
 
 ## Extending functionality
