@@ -664,8 +664,8 @@ Explicitly remove an attribute:
 rect.attr('fill', null)
 ```
 
-__`returns`: value [getter]__
-__`returns`: itself [setter]__
+`getter`__`returns`: value__
+`setter`__`returns`: itself__
 
 
 ### transform()
