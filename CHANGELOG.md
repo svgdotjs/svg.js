@@ -1,3 +1,7 @@
+# v1.0rc2 (01/02/2014)
+
+- added `index()` method to `SVG.Parent` and `SVG.Set`
+
 # v1.0rc1 (31/01/2014)
 
 - added `SVG.PathArray` for real path transformations

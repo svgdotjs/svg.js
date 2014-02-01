@@ -88,6 +88,17 @@ describe('Set', function() {
     })
   })
 
+  describe('index()', function() {
+    it('returns the index of a given element within the set', function() {
+      set.add(e1).add(e2).add(e3).add(e5)
+      expect(set.index(e1)).toBe(0)
+      expect(set.index(e2)).toBe(1)
+      expect(set.index(e3)).toBe(2)
+      expect(set.index(e4)).toBe(-1)
+      expect(set.index(e5)).toBe(3)
+    })
+  })
+
   describe('valueOf()', function() {
     it('returns the members array', function() {
       set.add(e1)

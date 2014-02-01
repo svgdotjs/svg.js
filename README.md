@@ -551,6 +551,17 @@ draw.has(rect)  //-> returns true
 group.has(rect) //-> returns false
 ```
 
+### index()
+Returns the index of given element and retuns -1 when it is not a child:
+
+```javascript
+var rect  = draw.rect(100, 50)
+var group = draw.group()
+
+draw.index(rect)  //-> returns 0
+group.index(rect) //-> returns -1
+```
+
 ### get()
 Get an element on a given position in the children array:
 
@@ -1511,6 +1522,13 @@ Determine if an element is member of the set:
 
 ```javascript
 set.has(rect) //-> returns true of false
+```
+
+### index()
+Returns the index of a given element in the set.
+
+```javascript
+set.index(rect) //-> -1 if element is not a member
 ```
 
 ### get()

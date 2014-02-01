@@ -22,7 +22,7 @@ SVG.extend(SVG.Set, {
   }
   // Remove element from set
 , remove: function(element) {
-    var i = this.members.indexOf(element)
+    var i = this.index(element)
     
     /* remove given child */
     if (i > -1)
@@ -46,7 +46,11 @@ SVG.extend(SVG.Set, {
   }
   // Checks if a given element is present in set
 , has: function(element) {
-    return this.members.indexOf(element) >= 0
+    return this.index(element) >= 0
+  }
+  // retuns index of given element in set
+, index: function(element) {
+    return this.members.indexOf(element)
   }
   // Get member at given index
 , get: function(i) {

@@ -8,9 +8,7 @@ SVG.extend(SVG.Element, {
   }
   // Get the curent position siblings
 , position: function() {
-    var siblings = this.siblings()
-
-    return siblings.indexOf(this)
+    return this.parent.index(this)
   }
   // Get the next element (will return null if there is none)
 , next: function() {

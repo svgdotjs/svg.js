@@ -18,10 +18,8 @@ SVG.extend(SVG.Parent, {
       i = i == null ? this.children().length : i
       
       /* remove references from previous parent */
-      if (element.parent) {
-        var index = element.parent.children().indexOf(element)
-        element.parent.children().splice(index, 1)
-      }
+      if (element.parent)
+        element.parent.children().splice(element.parent.index(element), 1)
       
       /* add element references */
       this.children().splice(i, 0, element)
@@ -44,7 +42,11 @@ SVG.extend(SVG.Parent, {
   }
   // Checks if the given element is a child
 , has: function(element) {
-    return this.children().indexOf(element) >= 0
+    return this.index(element) >= 0
+  }
+  // Gets index of given element
+, index: function(element) {
+    return this.children().indexOf(element)
   }
   // Get a element at the given index
 , get: function(i) {
@@ -75,9 +77,7 @@ SVG.extend(SVG.Parent, {
   }
   // Remove a child element at a position
 , removeElement: function(element) {
-    var i = this.children().indexOf(element)
-
-    this.children().splice(i, 1)
+    this.children().splice(this.index(element), 1)
     this.node.removeChild(element.node)
     element.parent = null
     

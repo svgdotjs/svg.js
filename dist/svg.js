@@ -1,4 +1,4 @@
-/* svg.js v1.0rc1-13-ga7288d9 - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc2 - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1479,10 +1479,8 @@
         i = i == null ? this.children().length : i
         
         /* remove references from previous parent */
-        if (element.parent) {
-          var index = element.parent.children().indexOf(element)
-          element.parent.children().splice(index, 1)
-        }
+        if (element.parent)
+          element.parent.children().splice(element.parent.index(element), 1)
         
         /* add element references */
         this.children().splice(i, 0, element)
@@ -1505,7 +1503,11 @@
     }
     // Checks if the given element is a child
   , has: function(element) {
-      return this.children().indexOf(element) >= 0
+      return this.index(element) >= 0
+    }
+    // Gets index of given element
+  , index: function(element) {
+      return this.children().indexOf(element)
     }
     // Get a element at the given index
   , get: function(i) {
@@ -1536,9 +1538,7 @@
     }
     // Remove a child element at a position
   , removeElement: function(element) {
-      var i = this.children().indexOf(element)
-  
-      this.children().splice(i, 1)
+      this.children().splice(this.index(element), 1)
       this.node.removeChild(element.node)
       element.parent = null
       
@@ -2177,9 +2177,7 @@
     }
     // Get the curent position siblings
   , position: function() {
-      var siblings = this.siblings()
-  
-      return siblings.indexOf(this)
+      return this.parent.index(this)
     }
     // Get the next element (will return null if there is none)
   , next: function() {
@@ -3343,7 +3341,7 @@
     }
     // Remove element from set
   , remove: function(element) {
-      var i = this.members.indexOf(element)
+      var i = this.index(element)
       
       /* remove given child */
       if (i > -1)
@@ -3367,7 +3365,11 @@
     }
     // Checks if a given element is present in set
   , has: function(element) {
-      return this.members.indexOf(element) >= 0
+      return this.index(element) >= 0
+    }
+    // retuns index of given element in set
+  , index: function(element) {
+      return this.members.indexOf(element)
     }
     // Get member at given index
   , get: function(i) {

@@ -287,7 +287,34 @@ describe('Container', function() {
       expect(draw.get(3)).toBe(undefined)
     })
   })
+
+  describe('has()', function() {
+    it('determines if a given element is a child of the parent', function() {
+      var rect = draw.rect(100,100)
+      var circle = draw.circle(100)
+      var group = draw.group()
+      var line = group.line(0,0,100,100)
+      expect(draw.has(rect)).toBe(true)
+      expect(draw.has(circle)).toBe(true)
+      expect(draw.has(group)).toBe(true)
+      expect(draw.has(line)).toBe(false)
+      expect(group.has(line)).toBe(true)
+    })
+  })
   
+  describe('index()', function() {
+    it('determines the index of given element', function() {
+      var rect = draw.rect(100,100)
+      var circle = draw.circle(100)
+      var group = draw.group()
+      var line = group.line(0,0,100,100)
+      expect(draw.index(rect)).toBe(0)
+      expect(draw.index(circle)).toBe(1)
+      expect(draw.index(group)).toBe(2)
+      expect(draw.index(line)).toBe(-1)
+      expect(group.index(line)).toBe(0)
+    })
+  })
   
 })
 
