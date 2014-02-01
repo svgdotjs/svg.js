@@ -805,7 +805,8 @@ Without an argument the `x()` method serves as a getter as well:
 rect.x() //-> returns 200
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### y()
 Move element only along y-axis by its upper left corner:
@@ -820,7 +821,8 @@ Without an argument the `y()` method serves as a getter as well:
 rect.y() //-> returns 350
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### relative()
 The `move()`, `x()` and `y()` methods move an element to an absolute position. With the `relative()` method, elements can be moved relatively to their current position. This can be done by calling the `relative()` method before the `move()`, `x()` or `y()` methods in the method chain:
@@ -867,7 +869,8 @@ Without an argument the `cx()` method serves as a getter as well:
 rect.cx() //-> returns 200
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### cy()
 Move element only along y-axis by its center:
@@ -882,7 +885,8 @@ Without an argument the `cy()` method serves as a getter as well:
 rect.cy() //-> returns 350
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### size()
 Set the size of an element by a given `width` and `height`:
@@ -920,7 +924,8 @@ This method also acts as a getter:
 rect.width() //-> returns 200
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### height()
 Set only height of an element:
@@ -935,7 +940,8 @@ This method also acts as a getter:
 rect.height() //-> returns 325
 ```
 
-__`returns`: number__
+__`returns`: itself [setter]__
+__`returns`: number [getter]__
 
 ### hide()
 Hide element:
