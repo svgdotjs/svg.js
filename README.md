@@ -2032,7 +2032,7 @@ SVG.off(window, 'click', click)
 
 ## Numbers
 
-Numbers in svg.js have a dedicated number class to be able to process sting values. Creating a new number is simple:
+Numbers in svg.js have a dedicated number class to be able to process string values. Creating a new number is simple:
 
 ```javascript
 var number = new SVG.Number('78%')
