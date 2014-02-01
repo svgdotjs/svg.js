@@ -693,7 +693,7 @@ rect.style('cursor', null)
 ```
 
 
-### move(), x() and y()
+### move()
 Move the element to a given `x` and `y` position by its upper left corner:
 
 ```javascript
