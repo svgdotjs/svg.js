@@ -560,7 +560,7 @@ An array of all children will can be retreives with the `children` method:
 ```javascript
 draw.children()
 ```
-__`returns`: array__
+__`returns`: `array`__
 
 ### each()
 The `each()` allows you to iterate over the all children of a parent element:
@@ -1602,7 +1602,7 @@ The arrange.js module brings some additional methods. To get all siblings of rec
 rect.siblings()
 ```
 
-__`returns`: array__
+__`returns`: `array`__
 
 ### position()
 Get the position (a number) of rect between its siblings:
