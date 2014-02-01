@@ -561,7 +561,7 @@ var group = draw.group()
 draw.index(rect)  //-> returns 0
 group.index(rect) //-> returns -1
 ```
-###### `returns`: a number equal to or higher than `0`, `-1` if not found
+__`returns`: a number equal to or higher than `0`, `-1` if not found__
 
 ### get()
 Get an element on a given position in the children array:
@@ -573,7 +573,7 @@ var circle = draw.circle(50)
 draw.get(0) //-> returns rect
 draw.get(1) //-> returns circle
 ```
-###### `returns`: an element
+__`returns`: an element__
 
 ### clear()
 To remove all elements from a parent element:
@@ -581,7 +581,7 @@ To remove all elements from a parent element:
 ```javascript
 draw.clear()
 ```
-###### `returns`: itself
+__`returns`: itself__
 
 
 ## Manipulating elements
@@ -872,7 +872,7 @@ Hide element:
 ```javascript
 rect.hide()
 ```
-###### `returns`: itself
+__`returns`: itself__
 
 ### show()
 Show element:
@@ -880,7 +880,7 @@ Show element:
 ```javascript
 rect.show()
 ```
-###### `returns`: itself
+__`returns`: itself__
 
 ### visible()
 To check if the element is visible:
@@ -888,7 +888,7 @@ To check if the element is visible:
 ```javascript
 rect.visible()
 ```
-###### `returns`: `true` or `false`
+__`returns`: `true` or `false`__
 
 ### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
@@ -896,7 +896,7 @@ To make an exact copy of an element the `clone()` method comes in handy:
 ```javascript
 var clone = rect.clone()
 ```
-###### `returns`: a new element
+__`returns`: a new element__
 
 This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
 
@@ -906,7 +906,7 @@ Pretty straightforward:
 ```javascript
 rect.remove()
 ```
-###### `returns`: itself
+__`returns`: itself__
 
 ### replace()
 This method will replace the called element with the given element in the same position in the stack:
@@ -914,7 +914,7 @@ This method will replace the called element with the given element in the same p
 ```javascript
 rect.replace(draw.circle(100))
 ```
-###### `returns`: the element passed as argument
+__`returns`: the element passed as argument__
 
 
 ## Inserting elements
