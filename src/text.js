@@ -67,7 +67,7 @@ SVG.extend(SVG.Text, {
     if (typeof text === 'function') {
       this._rebuild = false
 
-      text(this)
+      text.call(this, this)
 
     } else {
       this._rebuild = true

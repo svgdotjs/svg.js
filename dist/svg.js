@@ -1,4 +1,4 @@
-/* svg.js v1.0rc2-14-ge156610 - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc2-15-g3754d89 - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2964,7 +2964,7 @@
       if (typeof text === 'function') {
         this._rebuild = false
   
-        text(this)
+        text.call(this, this)
   
       } else {
         this._rebuild = true
