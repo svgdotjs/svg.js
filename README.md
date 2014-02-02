@@ -2229,7 +2229,7 @@ new SVG.PathArray([
 Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray` instance:
 
 ```javascript
-polygon.array //-> returns the SVG.PointArray instance
+path.array //-> returns the SVG.PathArray instance
 ```
 
 _Javascript inheritance stack: `SVG.PathArray` < `SVG.Array`_
