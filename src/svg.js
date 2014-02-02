@@ -69,29 +69,15 @@ SVG.get = function(id) {
 SVG.prepare = function() {
   /* select document body and create svg element*/
   var body = document.getElementsByTagName('body')[0] || document.getElementsByTagName('svg')[0]
-    , svg  = SVG.create('svg')
-    , poly = SVG.create('polygon')
-    , path = SVG.create('path')
-
-  /* make svg element presently invisible to ensure geometry  */
-  svg.setAttributeNS(SVG.xmlns, 'xmlns:xlink', SVG.xlink)
-  svg.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%')
-  svg.setAttribute('width', '2')
-  svg.setAttribute('height', '2')
-
-  /* build node structure */
-  body.appendChild(svg)
-  svg.appendChild(poly)
-  svg.appendChild(path)
+    , draw = new SVG.Doc(body).size(2, 2).style('opacity:0;position:fixed;left:100%;top:100%;')
 
   /* create parser object */
   SVG.parser = {
     body: body
-  , doc:  svg
-  , poly: poly
-  , path: path
+  , draw: draw
+  , poly: draw.polygon().node
+  , path: draw.path().node
   }
-
 }
 
 // svg support test

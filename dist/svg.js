@@ -1,4 +1,4 @@
-/* svg.js v1.0rc2-11-ga19bbab - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc2-14-ge156610 - svg regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -63,29 +63,15 @@
   SVG.prepare = function() {
     /* select document body and create svg element*/
     var body = document.getElementsByTagName('body')[0] || document.getElementsByTagName('svg')[0]
-      , svg  = SVG.create('svg')
-      , poly = SVG.create('polygon')
-      , path = SVG.create('path')
-  
-    /* make svg element presently invisible to ensure geometry  */
-    svg.setAttributeNS(SVG.xmlns, 'xmlns:xlink', SVG.xlink)
-    svg.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%')
-    svg.setAttribute('width', '2')
-    svg.setAttribute('height', '2')
-  
-    /* build node structure */
-    body.appendChild(svg)
-    svg.appendChild(poly)
-    svg.appendChild(path)
+      , draw = new SVG.Doc(body).size(2, 2).style('opacity:0;position:fixed;left:100%;top:100%;')
   
     /* create parser object */
     SVG.parser = {
       body: body
-    , doc:  svg
-    , poly: poly
-    , path: path
+    , draw: draw
+    , poly: draw.polygon().node
+    , path: draw.path().node
     }
-  
   }
   
   // svg support test
