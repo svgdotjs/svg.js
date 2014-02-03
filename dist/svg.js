@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-2-g78bbbfe - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-3-g8dcb37d - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -804,6 +804,8 @@
           /* normalize percent value */
           if (match[2] == '%')
             this.value /= 100
+          else if (match[2] == 's')
+            this.value *= 1000
       
           /* store unit */
           this.unit = match[2]
@@ -822,7 +824,13 @@
   SVG.extend(SVG.Number, {
     // Stringalize
     toString: function() {
-      return (this.unit == '%' ? ~~(this.value * 1e8) / 1e6 : this.value) + this.unit
+      return (
+        this.unit == '%' ?
+          ~~(this.value * 1e8) / 1e6:
+        this.unit == 's' ?
+          this.value / 1e3 :
+          this.value
+      ) + this.unit
     }
   , // Convert to primitive
     valueOf: function() {
@@ -1647,7 +1655,7 @@
       }
   
       /* ensure default duration and easing */
-      d = d == null ? 1000 : d
+      d = d == null ? 1000 : new SVG.Number(d).valueOf()
       ease = ease || '<>'
   
       /* process values */

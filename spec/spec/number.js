@@ -22,6 +22,11 @@ describe('Number', function() {
       expect(number.value).toBe(0.99)
       expect(number.unit).toBe('%')
     })
+    it('parses a seconds value', function() {
+      number = new SVG.Number('2s')
+      expect(number.value).toBe(2000)
+      expect(number.unit).toBe('s')
+    })
     it('parses a negative percent value', function() {
       number = new SVG.Number('-89%')
       expect(number.value).toBe(-0.89)
@@ -54,6 +59,11 @@ describe('Number', function() {
       number.value = 1.36
       number.unit = '%' 
       expect(number.toString()).toBe('136%')
+    })
+    it('converts second values properly', function() {
+      number.value = 2500
+      number.unit = 's' 
+      expect(number.toString()).toBe('2.5s')
     })
   })
 

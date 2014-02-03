@@ -21,6 +21,8 @@ SVG.Number = function(value) {
         /* normalize percent value */
         if (match[2] == '%')
           this.value /= 100
+        else if (match[2] == 's')
+          this.value *= 1000
     
         /* store unit */
         this.unit = match[2]
@@ -39,7 +41,13 @@ SVG.Number = function(value) {
 SVG.extend(SVG.Number, {
   // Stringalize
   toString: function() {
-    return (this.unit == '%' ? ~~(this.value * 1e8) / 1e6 : this.value) + this.unit
+    return (
+      this.unit == '%' ?
+        ~~(this.value * 1e8) / 1e6:
+      this.unit == 's' ?
+        this.value / 1e3 :
+        this.value
+    ) + this.unit
   }
 , // Convert to primitive
   valueOf: function() {
