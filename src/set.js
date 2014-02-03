@@ -1,91 +1,102 @@
-SVG.Set = function() {
-  /* set initial state */
-  this.clear()
-}
+SVG.Set = SVG.invent({
+  // Initialize
+  create: function() {
+    /* set initial state */
+    this.clear()
+  }
 
-// Set FX class
-SVG.SetFX = function(set) {
-  /* store reference to set */
-  this.set = set
-}
+  // Add class methods
+, extend: {
+    // Add element to set
+    add: function() {
+      var i, il, elements = [].slice.call(arguments)
 
-//
-SVG.extend(SVG.Set, {
-  // Add element to set
-  add: function() {
-    var i, il, elements = [].slice.call(arguments)
+      for (i = 0, il = elements.length; i < il; i++)
+        this.members.push(elements[i])
+      
+      return this
+    }
+    // Remove element from set
+  , remove: function(element) {
+      var i = this.index(element)
+      
+      /* remove given child */
+      if (i > -1)
+        this.members.splice(i, 1)
 
-    for (i = 0, il = elements.length; i < il; i++)
-      this.members.push(elements[i])
-    
-    return this
-  }
-  // Remove element from set
-, remove: function(element) {
-    var i = this.index(element)
-    
-    /* remove given child */
-    if (i > -1)
-      this.members.splice(i, 1)
+      return this
+    }
+    // Iterate over all members
+  , each: function(block) {
+      for (var i = 0, il = this.members.length; i < il; i++)
+        block.apply(this.members[i], [i, this.members])
 
-    return this
-  }
-  // Iterate over all members
-, each: function(block) {
-    for (var i = 0, il = this.members.length; i < il; i++)
-      block.apply(this.members[i], [i, this.members])
+      return this
+    }
+    // Restore to defaults
+  , clear: function() {
+      /* initialize store */
+      this.members = []
 
-    return this
-  }
-  // Restore to defaults
-, clear: function() {
-    /* initialize store */
-    this.members = []
+      return this
+    }
+    // Checks if a given element is present in set
+  , has: function(element) {
+      return this.index(element) >= 0
+    }
+    // retuns index of given element in set
+  , index: function(element) {
+      return this.members.indexOf(element)
+    }
+    // Get member at given index
+  , get: function(i) {
+      return this.members[i]
+    }
+    // Default value
+  , valueOf: function() {
+      return this.members
+    }
+    // Get the bounding box of all members included or empty box if set has no items
+  , bbox: function(){
+      var box = new SVG.BBox()
 
-    return this
-  }
-  // Checks if a given element is present in set
-, has: function(element) {
-    return this.index(element) >= 0
-  }
-  // retuns index of given element in set
-, index: function(element) {
-    return this.members.indexOf(element)
-  }
-  // Get member at given index
-, get: function(i) {
-    return this.members[i]
-  }
-  // Default value
-, valueOf: function() {
-    return this.members
-  }
-  // Get the bounding box of all members included or empty box if set has no items
-, bbox: function(){
-    var box = new SVG.BBox()
+      /* return an empty box of there are no members */
+      if (this.members.length == 0)
+        return box
 
-    /* return an empty box of there are no members */
-    if (this.members.length == 0)
+      /* get the first rbox and update the target bbox */
+      var rbox = this.members[0].rbox()
+      box.x      = rbox.x
+      box.y      = rbox.y
+      box.width  = rbox.width
+      box.height = rbox.height
+
+      this.each(function() {
+        /* user rbox for correct position and visual representation */
+        box = box.merge(this.rbox())
+      })
+
       return box
+    }
+  }
+  
+  // Add parent method
+, construct: {
+    // Create a new set
+    set: function() {
+      return new SVG.Set
+    }
+  }
+})
 
-    /* get the first rbox and update the target bbox */
-    var rbox = this.members[0].rbox()
-    box.x      = rbox.x
-    box.y      = rbox.y
-    box.width  = rbox.width
-    box.height = rbox.height
-
-    this.each(function() {
-      /* user rbox for correct position and visual representation */
-      box = box.merge(this.rbox())
-    })
-
-    return box
+SVG.SetFX = SVG.invent({
+  // Initialize node
+  create: function(set) {
+    /* store reference to set */
+    this.set = set
   }
 
 })
-
-
 
 // Alias methods
 SVG.Set.inherit = function() {
@@ -126,15 +137,5 @@ SVG.Set.inherit = function() {
     }
   })
 }
-
-//
-SVG.extend(SVG.Container, {
-  // Create a new set
-  set: function() {
-    return new SVG.Set
-  }
-
-})
-
 
 

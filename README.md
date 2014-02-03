@@ -2311,7 +2311,61 @@ __`returns`: `object`__
 
 ## Extending functionality
 
-### SVG.extend
+### SVG.invent()
+Creating your own custom elements with svg.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the size. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
+
+```javascript
+SVG.Rounded = SVG.invent({
+  // Define the type of element that should be created
+  create: 'rect'
+
+  // Specify from which existing class this shape inherits
+, inherit: SVG.Shape
+
+  // Add custom methods to invented shape
+, extend: {
+    // Create method to proportionally scale the rounded corners
+    size: function(width, height) {
+      return this.attr({
+        width:  width
+      , height: height
+      , rx:     width / 5
+      , ry:     height / 5
+      })
+    }
+  }
+
+  // Add create method to parent elements
+, construct: {
+    // Create a rounded element
+    rounded: function(width, height) {
+      return this.put(new SVG.Rounded).size(width, height)
+    }
+    
+  }
+})
+```
+
+To create the element in your drawing:
+
+```javascript
+var rounded = draw.rounded(200, 100)
+```
+
+That's, the invention is now ready to be used!
+
+The `SVG.invent()` function always expectes an object. The object accepts the following configuration values:
+
+- `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
+- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, SVG.Rect`, ...); `[optional]`
+- `extend`: an object with the methods that should eb applied to the element's prototype; `[optional]`
+- `construct`: an objects with the methods to create the element on the parent element; `[optional]`
+- `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
+
+Svg.js uses the `SVG.invent()` function`to create all internal elements, so have a look at the source to see how this function is used in various ways.
+
+
+### SVG.extend()
 Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 
 ```javascript

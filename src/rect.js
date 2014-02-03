@@ -1,15 +1,17 @@
-SVG.Rect = function() {
-  this.constructor.call(this, SVG.create('rect'))
-}
+SVG.Rect = SVG.invent({
+	// Initialize node
+  create: 'rect'
 
-// Inherit from SVG.Shape
-SVG.Rect.prototype = new SVG.Shape
-
-//
-SVG.extend(SVG.Container, {
-  // Create a rect element
-  rect: function(width, height) {
-    return this.put(new SVG.Rect().size(width, height))
-  }
-
+	// Inherit from
+, inherit: SVG.Shape
+	
+	// Add parent method
+, construct: {
+  	// Create a rect element
+  	rect: function(width, height) {
+  	  return this.put(new SVG.Rect().size(width, height))
+  	}
+  	
+	}
+	
 })

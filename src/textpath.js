@@ -1,39 +1,42 @@
-SVG.TextPath = function() {
-  this.constructor.call(this, SVG.create('textPath'))
-}
+SVG.TextPath = SVG.invent({
+  // Initialize node
+  create: 'textPath'
 
-// Inherit from SVG.Element
-SVG.TextPath.prototype = new SVG.Element
+  // Inherit from
+, inherit: SVG.Element
 
-//
-SVG.extend(SVG.Text, {
-  // Create path for text to run on
-  path: function(d) {
-    /* create textPath element */
-    this.textPath = new SVG.TextPath
+  // Define parent class
+, parent: SVG.Text
 
-    /* move lines to textpath */
-    while(this.node.hasChildNodes())
-      this.textPath.node.appendChild(this.node.firstChild)
+  // Add parent method
+, construct: {
+    // Create path for text to run on
+    path: function(d) {
+      /* create textPath element */
+      this.textPath = new SVG.TextPath
 
-    /* add textPath element as child node */
-    this.node.appendChild(this.textPath.node)
+      /* move lines to textpath */
+      while(this.node.hasChildNodes())
+        this.textPath.node.appendChild(this.node.firstChild)
 
-    /* create path in defs */
-    this.track = this.doc().defs().path(d, true)
+      /* add textPath element as child node */
+      this.node.appendChild(this.textPath.node)
 
-    /* create circular reference */
-    this.textPath.parent = this
+      /* create path in defs */
+      this.track = this.doc().defs().path(d, true)
 
-    /* link textPath to path and add content */
-    this.textPath.attr('href', '#' + this.track, SVG.xlink)
+      /* create circular reference */
+      this.textPath.parent = this
 
-    return this
+      /* link textPath to path and add content */
+      this.textPath.attr('href', '#' + this.track, SVG.xlink)
+
+      return this
+    }
+    // Plot path if any
+  , plot: function(d) {
+      if (this.track) this.track.plot(d)
+      return this
+    }
   }
-  // Plot path if any
-, plot: function(d) {
-    if (this.track) this.track.plot(d)
-    return this
-  }
-
 })

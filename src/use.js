@@ -1,28 +1,27 @@
-SVG.Use = function() {
-  this.constructor.call(this, SVG.create('use'))
-}
+SVG.Use = SVG.invent({
+  // Initialize node
+  create: 'use'
 
-// Inherit from SVG.Shape
-SVG.Use.prototype = new SVG.Shape
+  // Inherit from
+, inherit: SVG.Shape
 
-//
-SVG.extend(SVG.Use, {
-  // Use element as a reference
-  element: function(element) {
-    /* store target element */
-    this.target = element
+  // Add class methods
+, extend: {
+    // Use element as a reference
+    element: function(element) {
+      /* store target element */
+      this.target = element
 
-    /* set lined element */
-    return this.attr('href', '#' + element, SVG.xlink)
+      /* set lined element */
+      return this.attr('href', '#' + element, SVG.xlink)
+    }
   }
   
-})
-
-//
-SVG.extend(SVG.Container, {
-  // Create a use element
-  use: function(element) {
-    return this.put(new SVG.Use).element(element)
+  // Add parent method
+, construct: {
+    // Create a use element
+    use: function(element) {
+      return this.put(new SVG.Use).element(element)
+    }
   }
-
 })

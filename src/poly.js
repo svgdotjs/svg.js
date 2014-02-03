@@ -1,16 +1,34 @@
-SVG.Polyline = function() {
-  this.constructor.call(this, SVG.create('polyline'))
-}
+SVG.Polyline = SVG.invent({
+  // Initialize node
+  create: 'polyline'
 
-// Inherit from SVG.Shape
-SVG.Polyline.prototype = new SVG.Shape
+  // Inherit from
+, inherit: SVG.Shape
+  
+  // Add parent method
+, construct: {
+    // Create a wrapped polyline element
+    polyline: function(p) {
+      return this.put(new SVG.Polyline).plot(p)
+    }
+  }
+})
 
-SVG.Polygon = function() {
-  this.constructor.call(this, SVG.create('polygon'))
-}
+SVG.Polygon = SVG.invent({
+  // Initialize node
+  create: 'polygon'
 
-// Inherit from SVG.Shape
-SVG.Polygon.prototype = new SVG.Shape
+  // Inherit from
+, inherit: SVG.Shape
+  
+  // Add parent method
+, construct: {
+    // Create a wrapped polygon element
+    polygon: function(p) {
+      return this.put(new SVG.Polygon).plot(p)
+    }
+  }
+})
 
 // Add polygon-specific functions
 SVG.extend(SVG.Polyline, SVG.Polygon, {
@@ -49,19 +67,6 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
     var p = this._proportionalSize(width, height)
 
     return this.attr('points', this.array.size(p.width, p.height))
-  }
-
-})
-
-//
-SVG.extend(SVG.Container, {
-  // Create a wrapped polyline element
-  polyline: function(p) {
-    return this.put(new SVG.Polyline).plot(p)
-  }
-  // Create a wrapped polygon element
-, polygon: function(p) {
-    return this.put(new SVG.Polygon).plot(p)
   }
 
 })

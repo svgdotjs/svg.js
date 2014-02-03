@@ -1,6 +1,10 @@
-SVG.Shape = function(element) {
-  this.constructor.call(this, element)
-}
+SVG.Shape = SVG.invent({
+  // Initialize node
+  create: function(element) {
+	  this.constructor.call(this, element)
+	}
 
-// Inherit from SVG.Element
-SVG.Shape.prototype = new SVG.Element
+  // Inherit from
+, inherit: SVG.Element
+
+})

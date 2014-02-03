@@ -1,3 +1,9 @@
+# v1.0rc3 (03/02/2014)
+
+- fix for html-less documents
+- added the `SVG.invent` function to ease invention of new elements
+- using `SVG.invent` to generate core shapes as well for leaner code
+
 # v1.0rc2 (01/02/2014)
 
 - added `index()` method to `SVG.Parent` and `SVG.Set`
