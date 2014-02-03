@@ -335,13 +335,30 @@ SVG.Element = SVG.invent({
       
       return this
     }
+
+  , addClass: function(newCls) {
+      var cls = this.node.getAttribute("class");
+      //addClass / removeClass for svg
+      if(!cls || !~cls.indexOf(newCls)) {
+        this.node.setAttribute("class", (cls?cls+" ":"")+newCls);
+      }
+      return this;
+    }
+  , removeClass: function(oldCls) {
+      var cls = this.node.getAttribute("class");
+      if(cls && ~cls.indexOf(oldCls)) {
+        this.node.setAttribute("class", cls?cls.replace(new RegExp(oldCls+"($\|\\s)"), ""):"");
+      }
+      return this;
+    }
+
     // Get bounding box
   , bbox: function() {
       return new SVG.BBox(this)
     }
     // Get rect box
-  , rbox: function() {
-      return new SVG.RBox(this)
+  , rbox: function(relative) {
+      return new SVG.RBox(this, relative)
     }
     // Checks whether the given point inside the bounding box of the element
   , inside: function(x, y) {
@@ -382,24 +399,47 @@ SVG.Element = SVG.invent({
       return typeof a == 'string' ? SVG.regex.test(a, 'isStyle') : false
     }
     // Private: parse a matrix string
-  , _parseMatrix: function(o) {
-      if (o.matrix) {
-        /* split matrix string */
-        var m = o.matrix.replace(/\s/g, '').split(',')
-        
-        /* pasrse values */
-        if (m.length == 6) {
-          o.a = parseFloat(m[0])
-          o.b = parseFloat(m[1])
-          o.c = parseFloat(m[2])
-          o.d = parseFloat(m[3])
-          o.e = parseFloat(m[4])
-          o.f = parseFloat(m[5])
+  , _parseMatrix: (function() {
+      var deltaTransformPoint = function(matrix, point)  {
+        return [
+          point[0] * matrix.a + point[1] * matrix.c,
+          point[0] * matrix.b + point[1] * matrix.d
+        ];
+      };
+      return function(o) {
+        if(o.matrix && o.matrix !== SVG.defaults.matrix) {
+          if(_.isString(o.matrix)) {
+            o.matrix = _.reduce(o.matrix.split(/[,\s]+/), function(o, curr, idx) {
+              o[String.fromCharCode(97+idx)] = curr;
+              return o;
+            }, {});
+          }
+          // calculate delta transform point
+          var px    = deltaTransformPoint(o.matrix, [0, 1]),
+          py    = deltaTransformPoint(o.matrix, [1, 0]),
+          // calculate skew
+          skewX = ((180 / Math.PI) * Math.atan2(px[1], px[0]) - 90),
+          skewY = ((180 / Math.PI) * Math.atan2(py[1], py[0])),
+          scaleX= Math.sqrt(o.matrix.a * o.matrix.a + o.matrix.b * o.matrix.b),
+          scaleY= Math.sqrt(o.matrix.c * o.matrix.c + o.matrix.d * o.matrix.d);
+
+          return {
+            matrix:		SVG.defaults.matrix,
+            x:			  o.matrix.e,
+            y:			  o.matrix.f,
+            scaleX:   scaleX,
+            scaleY:   scaleY,
+            //skewX:  skewX,
+            //skewY:  skewY,
+            rotation: skewX, // rotation is the same as skew x
+            cx:       0,
+            cy:       0
+          };
         }
-      }
-      
-      return o
-    }
+        return o;
+      };
+    })()
+
     // Private: calculate proportional width and height values when necessary
   , _proportionalSize: function(width, height) {
       if (width == null || height == null) {

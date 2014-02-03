@@ -1,58 +1,44 @@
 // Get the rectangular box of a given element
-SVG.RBox = function(element) {
-  var e, zoom
-    , box = {}
-
+SVG.RBox = function(element, relative) {
   /* initialize zero box */
-  this.x      = 0
-  this.y      = 0
-  this.width  = 0
-  this.height = 0
-  
+  this.x = this.y = this.width = this.height = null;
+
   if (element) {
-    e = element.doc().parent
-    zoom = element.doc().viewbox().zoom
-    
-    /* actual, native bounding box */
-    box = element.node.getBoundingClientRect()
-    
-    /* get screen offset */
-    this.x = box.left
-    this.y = box.top
-    
-    /* subtract parent offset */
-    this.x -= e.offsetLeft
-    this.y -= e.offsetTop
-    
-    while (e = e.offsetParent) {
-      this.x -= e.offsetLeft
-      this.y -= e.offsetTop
-    }
-    
-    /* calculate cumulative zoom from svg documents */
-    e = element
-    while (e = e.parent) {
-      if (e.type == 'svg' && e.viewbox) {
-        zoom *= e.viewbox().zoom
-        this.x -= e.x() || 0
-        this.y -= e.y() || 0
+    var svg     = element.node.ownerSVGElement || element.node,
+    p     = svg.createSVGPoint(),
+    relative  = relative?relative.node:element.node.ownerSVGElement,
+    matrix    = element.node.getTransformToElement(relative),
+    box     = element.node.getBBox(),
+    frame   = [[box.x, box.y], [box.x+box.width, box.y], [box.x+box.width, box.y+box.height], [box.x, box.y+box.height]],
+    right   = null,
+    bottom    = null;
+
+    for(var i = 0; i<4; i++) {
+      p.x = frame[i][0];
+      p.y = frame[i][1];
+      p = p.matrixTransform(matrix);
+      if(this.x === null || p.x < this.x) {
+        this.x = p.x;
+      }
+      if(this.y === null || p.y < this.y) {
+        this.y = p.y;
+      }
+      if(right === null || p.x > right) {
+        right = p.x;
+      }
+      if(bottom === null || p.y > bottom) {
+        bottom = p.y;
       }
     }
+    this.width  = right - this.x;
+    this.height = bottom - this.y;
   }
-  
-  /* recalculate viewbox distortion */
-  this.x /= zoom
-  this.y /= zoom
-  this.width  = box.width  /= zoom
-  this.height = box.height /= zoom
-  
+
   /* add the center */
-  this.cx = this.x + this.width  / 2
-  this.cy = this.y + this.height / 2
-  
+  this.cx = this.x + this.width  / 2;
+  this.cy = this.y + this.height / 2;
 }
 
-//
 SVG.extend(SVG.RBox, {
   // merge rect box with another, return a new instance
   merge: function(box) {
