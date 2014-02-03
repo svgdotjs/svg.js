@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-3-g8dcb37d - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-4-g189f009 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1827,7 +1827,7 @@
           /* start animation */
           fx.render()
           
-        }, delay || 0)
+        }, new SVG.Number(delay).valueOf())
       }
       
       return this

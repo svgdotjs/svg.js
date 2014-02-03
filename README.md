@@ -1205,7 +1205,7 @@ rect.animate(2000, '>', 1000).attr({ fill: '#f03' })
 Alternatively you can pass an object as the first argument:
 
 ```javascript
-rect.animate({ ease: '<', delay: 1500 }).attr({ fill: '#f03' })
+rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' })
 ```
 
 By default `duration` will be set to `1000`, `ease` will be set to `<>`.

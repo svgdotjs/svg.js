@@ -190,7 +190,7 @@ SVG.extend(SVG.FX, {
         /* start animation */
         fx.render()
         
-      }, delay || 0)
+      }, new SVG.Number(delay).valueOf())
     }
     
     return this
