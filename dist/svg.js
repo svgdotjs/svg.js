@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-2-g78bbbfe - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2909,6 +2909,10 @@
       // Set height of element
     , height: function(height) {
         return height == null ? this.bbox().height : this.size(this.bbox().width, height)
+      }
+      // Get path length
+    , length: function() {
+        return this.node.getTotalLength()
       }
     }
     

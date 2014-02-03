@@ -1131,6 +1131,15 @@ Note: the `x` and `y` positions are tested against the relative position of the 
 
 __`returns`: `boolean`__
 
+### length()
+Get the total lengthof a path element:
+
+```javascript
+var length = path.length()
+```
+
+__`returns`: `number`__
+
 
 ## Animating elements
 
