@@ -2335,7 +2335,7 @@ SVG.Rounded = SVG.invent({
     }
   }
 
-  // Add create method to parent elements
+  // Add method to parent elements
 , construct: {
     // Create a rounded element
     rounded: function(width, height) {
@@ -2357,12 +2357,12 @@ That's, the invention is now ready to be used!
 The `SVG.invent()` function always expectes an object. The object accepts the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
-- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, SVG.Rect`, ...); `[optional]`
+- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional]`
 - `extend`: an object with the methods that should eb applied to the element's prototype; `[optional]`
 - `construct`: an objects with the methods to create the element on the parent element; `[optional]`
 - `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
 
-Svg.js uses the `SVG.invent()` function`to create all internal elements, so have a look at the source to see how this function is used in various ways.
+Svg.js uses the `SVG.invent()` function to create all internal elements, so have a look at the source to see how this function is used in various ways.
 
 
 ### SVG.extend()
