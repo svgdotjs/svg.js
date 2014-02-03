@@ -1,27 +1,38 @@
-SVG.Clip = function() {
-  this.constructor.call(this, SVG.create('clipPath'))
+SVG.Clip = SVG.invent({
+  // Initialize node
+  create: function() {
+    this.constructor.call(this, SVG.create('clipPath'))
 
-  /* keep references to clipped elements */
-  this.targets = []
-}
+    /* keep references to clipped elements */
+    this.targets = []
+  }
 
-// Inherit from SVG.Container
-SVG.Clip.prototype = new SVG.Container
+  // Inherit from
+, inherit: SVG.Container
 
-//
-SVG.extend(SVG.Clip, {
-  // Unclip all clipped elements and remove itself
-  remove: function() {
-    /* unclip all targets */
-    for (var i = this.targets.length - 1; i >= 0; i--)
-      if (this.targets[i])
-        this.targets[i].unclip()
-    delete this.targets
+  // Add class methods
+, extend: {
+    // Unclip all clipped elements and remove itself
+    remove: function() {
+      /* unclip all targets */
+      for (var i = this.targets.length - 1; i >= 0; i--)
+        if (this.targets[i])
+          this.targets[i].unclip()
+      delete this.targets
 
-    /* remove clipPath from parent */
-    this.parent.removeElement(this)
-    
-    return this
+      /* remove clipPath from parent */
+      this.parent.removeElement(this)
+      
+      return this
+    }
+  }
+  
+  // Add parent method
+, construct: {
+    // Create clipping element
+    clip: function() {
+      return this.defs().put(new SVG.Clip)
+    }
   }
 })
 
@@ -44,13 +55,4 @@ SVG.extend(SVG.Element, {
     return this.attr('clip-path', null)
   }
   
-})
-
-//
-SVG.extend(SVG.Container, {
-  // Create clipping element
-  clip: function() {
-    return this.defs().put(new SVG.Clip)
-  }
-
 })

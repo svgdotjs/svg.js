@@ -3,7 +3,6 @@ SVG.FX = function(element) {
   this.target = element
 }
 
-//
 SVG.extend(SVG.FX, {
   // Add animation parameters and start animation
   animate: function(d, ease, delay) {
@@ -36,10 +35,10 @@ SVG.extend(SVG.FX, {
           akeys.push(key)
 
         /* make sure morphable elements are scaled, translated and morphed all together */
-        if (element.morphArray) {
+        if (element.morphArray && (fx._plot || akeys.indexOf('points') > -1)) {
           /* get destination */
           var box
-            , p = new element.morphArray(fx._plot || element.points.toString())
+            , p = new element.morphArray(fx._plot || fx.attrs.points || element.array)
 
           /* add size */
           if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
@@ -60,7 +59,7 @@ SVG.extend(SVG.FX, {
           delete fx._cy
           delete fx._size
 
-          fx._plot = element.points.morph(p)
+          fx._plot = element.array.morph(p)
         }
       }
 
@@ -90,81 +89,106 @@ SVG.extend(SVG.FX, {
       typeof ease == 'function' ?
         ease(pos) :
         pos
-
-      /* run all x-position properties */
-      if (fx._x)
-        element.x(fx._at(fx._x, pos))
-      else if (fx._cx)
-        element.cx(fx._at(fx._cx, pos))
-
-      /* run all y-position properties */
-      if (fx._y)
-        element.y(fx._at(fx._y, pos))
-      else if (fx._cy)
-        element.cy(fx._at(fx._cy, pos))
-
-      /* run all size properties */
-      if (fx._size)
-        element.size(fx._at(fx._size.width, pos), fx._at(fx._size.height, pos))
-
+      
       /* run plot function */
-      if (fx._plot)
+      if (fx._plot) {
         element.plot(fx._plot.at(pos))
+
+      } else {
+        /* run all x-position properties */
+        if (fx._x)
+          element.x(at(fx._x, pos))
+        else if (fx._cx)
+          element.cx(at(fx._cx, pos))
+
+        /* run all y-position properties */
+        if (fx._y)
+          element.y(at(fx._y, pos))
+        else if (fx._cy)
+          element.cy(at(fx._cy, pos))
+
+        /* run all size properties */
+        if (fx._size)
+          element.size(at(fx._size.width, pos), at(fx._size.height, pos))
+      }
 
       /* run all viewbox properties */
       if (fx._viewbox)
         element.viewbox(
-          fx._at(fx._viewbox.x, pos)
-        , fx._at(fx._viewbox.y, pos)
-        , fx._at(fx._viewbox.width, pos)
-        , fx._at(fx._viewbox.height, pos)
+          at(fx._viewbox.x, pos)
+        , at(fx._viewbox.y, pos)
+        , at(fx._viewbox.width, pos)
+        , at(fx._viewbox.height, pos)
         )
 
       /* animate attributes */
       for (i = akeys.length - 1; i >= 0; i--)
-        element.attr(akeys[i], fx._at(fx.attrs[akeys[i]], pos))
+        element.attr(akeys[i], at(fx.attrs[akeys[i]], pos))
 
       /* animate transformations */
       for (i = tkeys.length - 1; i >= 0; i--)
-        element.transform(tkeys[i], fx._at(fx.trans[tkeys[i]], pos))
+        element.transform(tkeys[i], at(fx.trans[tkeys[i]], pos))
 
       /* animate styles */
       for (i = skeys.length - 1; i >= 0; i--)
-        element.style(skeys[i], fx._at(fx.styles[skeys[i]], pos))
+        element.style(skeys[i], at(fx.styles[skeys[i]], pos))
 
       /* callback for each keyframe */
       if (fx._during)
         fx._during.call(element, pos, function(from, to) {
-          return fx._at({ from: from, to: to }, pos)
+          return at({ from: from, to: to }, pos)
         })
     }
     
     if (typeof d === 'number') {
       /* delay animation */
       this.timeout = setTimeout(function() {
-        var interval  = 1000 / 60
-          , start     = new Date().getTime()
-          , finish    = start + d
-  
-        /* start animation */
-        fx.interval = setInterval(function(){
-          // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
-          var time = new Date().getTime()
-            , pos = time > finish ? 1 : (time - start) / d
-  
-          /* process values */
-          fx.to(pos)
-  
-          /* finish off animation */
-          if (time > finish) {
-            if (fx._plot)
-              element.plot(new SVG.PointArray(fx._plot.destination).settle())
+        var start = new Date().getTime()
 
-            clearInterval(fx.interval)
-            fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+        /* initialize situation object */
+        fx.situation = {
+          interval: 1000 / 60
+        , start:    start
+        , play:     true
+        , finish:   start + d
+        , duration: d
+        }
+
+        /* render function */
+        fx.render = function(){
+          
+          if (fx.situation.play === true) {
+            // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
+            var time = new Date().getTime()
+              , pos = time > fx.situation.finish ? 1 : (time - fx.situation.start) / d
+            
+            /* process values */
+            fx.to(pos)
+            
+            /* finish off animation */
+            if (time > fx.situation.finish) {
+              if (fx._plot)
+                element.plot(new SVG.PointArray(fx._plot.destination).settle())
+
+              if (fx._loop === true || (typeof fx._loop == 'number' && fx._loop > 1)) {
+                if (typeof fx._loop == 'number')
+                  --fx._loop
+                fx.animate(d, ease, delay)
+              } else {
+                fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+              }
+
+            } else {
+              requestAnimFrame(fx.render)
+            }
+          } else {
+            requestAnimFrame(fx.render)
           }
-  
-        }, d > interval ? interval : d)
+          
+        }
+
+        /* start animation */
+        fx.render()
         
       }, delay || 0)
     }
@@ -176,13 +200,20 @@ SVG.extend(SVG.FX, {
     return this.target.bbox()
   }
   // Add animatable attributes
-, attr: function(a, v, n) {
-    if (typeof a == 'object')
+, attr: function(a, v) {
+    if (typeof a == 'object') {
       for (var key in a)
         this.attr(key, a[key])
     
-    else
-      this.attrs[a] = { from: this.target.attr(a), to: v }
+    } else {
+      var from = this.target.attr(a)
+
+      this.attrs[a] = SVG.Color.isColor(from) ?
+        new SVG.Color(from).morph(v) :
+      SVG.regex.unit.test(from) ?
+        new SVG.Number(from).morph(v) :
+        { from: from, to: v }
+    }
     
     return this
   }
@@ -313,6 +344,12 @@ SVG.extend(SVG.FX, {
     
     return this
   }
+  // Make loopable
+, loop: function(times) {
+    this._loop = times || true
+
+    return this
+  }
   // Stop running animation
 , stop: function() {
     /* stop current animation */
@@ -320,81 +357,95 @@ SVG.extend(SVG.FX, {
     clearInterval(this.interval)
     
     /* reset storage for properties that need animation */
-    this.attrs  = {}
-    this.trans  = {}
-    this.styles = {}
+    this.attrs     = {}
+    this.trans     = {}
+    this.styles    = {}
+    this.situation = {}
+
     delete this._x
     delete this._y
     delete this._cx
     delete this._cy
     delete this._size
     delete this._plot
+    delete this._loop
     delete this._after
     delete this._during
     delete this._viewbox
-    
+
     return this
   }
-  // Private: calculate position according to from and to
-, _at: function(o, pos) {
-    /* number recalculation */
-    return typeof o.from == 'number' ?
-      o.from + (o.to - o.from) * pos :
-    
-    /* unit recalculation */
-    SVG.regex.unit.test(o.to) ?
-      new SVG.Number(o.to)
-        .minus(new SVG.Number(o.from))
-        .times(pos)
-        .plus(new SVG.Number(o.from)) :
-    
-    /* color recalculation */
-    o.to && (o.to.r || SVG.Color.test(o.to)) ?
-      this._color(o, pos) :
-    
-    /* for all other values wait until pos has reached 1 to return the final value */
-    pos < 1 ? o.from : o.to
+  // Pause running animation
+, pause: function() {
+    if (this.situation.play === true) {
+      this.situation.play  = false
+      this.situation.pause = new Date().getTime()
+    }
+
+    return this
   }
-  // Private: tween color
-, _color: function(o, pos) {
-    var from, to
-    
-    /* normalise pos */
-    pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
-    
-    /* convert FROM */
-    from = new SVG.Color(o.from)
-    
-    /* convert TO hex to rgb */
-    to = new SVG.Color(o.to)
-    
-    /* tween color and return hex */
-    return new SVG.Color({
-      r: ~~(from.r + (to.r - from.r) * pos)
-    , g: ~~(from.g + (to.g - from.g) * pos)
-    , b: ~~(from.b + (to.b - from.b) * pos)
-    }).toHex()
+  // Play running animation
+, play: function() {
+    if (this.situation.play === false) {
+      var pause = new Date().getTime() - this.situation.pause
+      
+      this.situation.finish += pause
+      this.situation.start  += pause
+      this.situation.play    = true
+    }
+
+    return this
   }
   
 })
 
-//
 SVG.extend(SVG.Element, {
   // Get fx module or create a new one, then animate with given duration and ease
   animate: function(d, ease, delay) {
     return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(d, ease, delay)
-  },
+  }
   // Stop current animation; this is an alias to the fx instance
-  stop: function() {
+, stop: function() {
     if (this.fx)
       this.fx.stop()
     
     return this
   }
+  // Pause current animation
+, pause: function() {
+    if (this.fx)
+      this.fx.pause()
+
+    return this
+  }
+  // Play paused current animation
+, play: function() {
+    if (this.fx)
+      this.fx.play()
+
+    return this
+  }
   
 })
-// Usage:
 
-//     rect.animate(1500, '>').move(200, 300).after(function() {
-//       this.fill({ color: '#f06' })
-//     })
+// Calculate position according to from and to
+function at(o, pos) {
+  /* number recalculation (don't bother converting to SVG.Number for performance reasons) */
+  return typeof o.from == 'number' ?
+    o.from + (o.to - o.from) * pos :
+  
+  /* instance recalculation */
+  o instanceof SVG.Color || o instanceof SVG.Number ? o.at(pos) :
+  
+  /* for all other values wait until pos has reached 1 to return the final value */
+  pos < 1 ? o.from : o.to
+}
+
+// Shim layer with setTimeout fallback by Paul Irish
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.msRequestAnimationFrame     ||
+          function (c) { window.setTimeout(c, 1000 / 60) }
+})()

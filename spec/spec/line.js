@@ -74,6 +74,34 @@ describe('Line', function() {
       expect(box.y).toBe(517)
     })
   })
+
+  describe('width()', function() {
+    it('sets the width of the element', function() {
+      line.width(400)
+      var box = line.bbox()
+      expect(box.x).toBe(0)
+      expect(box.x + box.width).toBe(400)
+    })
+    it('get the width of the element without argument', function() {
+      line.width(123)
+      var box = line.bbox()
+      expect(line.width()).toBe(box.width)
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height of the element', function() {
+      line.height(300)
+      var box = line.bbox()
+      expect(box.y).toBe(0)
+      expect(box.y + box.height).toBe(300)
+    })
+    it('gets the height of the element without argument', function() {
+      line.height(456)
+      var box = line.bbox()
+      expect(line.height()).toBe(box.height)
+    })
+  })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {
@@ -83,6 +111,18 @@ describe('Line', function() {
       expect(box.y + box.height).toBe(654)
       expect(box.x + box.width).toBe(987)
       expect(box.y).toBe(0)
+    })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = line.bbox()
+      line.size(500)
+      expect(line.width()).toBe(500)
+      expect(line.width() / line.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = line.bbox()
+      line.size(null, 525)
+      expect(line.height()).toBe(525)
+      expect(line.width() / line.height()).toBe(box.width / box.height)
     })
   })
   

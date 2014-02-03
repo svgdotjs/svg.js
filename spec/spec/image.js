@@ -69,12 +69,44 @@ describe('Image', function() {
       expect(box.cy).toBe(567)
     })
   })
+
+  describe('width()', function() {
+    it('sets the width of the element', function() {
+      image.width(789)
+      expect(image.node.getAttribute('width')).toBe('789')
+    })
+    it('gets the width of the element if the argument is null', function() {
+      expect(image.width().toString()).toBe(image.node.getAttribute('width'))
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height of the element', function() {
+      image.height(1236)
+      expect(image.node.getAttribute('height')).toBe('1236')
+    })
+    it('gets the height of the element if the argument is null', function() {
+      expect(image.height().toString()).toBe(image.node.getAttribute('height'))
+    })
+  })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       image.size(987,654)
       expect(image.node.getAttribute('width')).toBe('987')
       expect(image.node.getAttribute('height')).toBe('654')
+    })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = image.bbox()
+      image.size(500)
+      expect(image.width()).toBe(500)
+      expect(image.width() / image.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = image.bbox()
+      image.size(null, 525)
+      expect(image.height()).toBe(525)
+      expect(image.width() / image.height()).toBe(box.width / box.height)
     })
   })
   

@@ -1,19 +1,19 @@
 
-// Use the `SVG()` function to create a SVG document within a given html element. The first argument can either be an id of the element or the selected element itself.
-//
-//     var draw = SVG('paper').size(300, 300)
-//     var rect = draw.rect(100, 100).attr({ fill: '#f06' })
-
-
-
 // The main wrapping element
 this.SVG = function(element) {
-  if (SVG.supported)
-    return new SVG.Doc(element)
+  if (SVG.supported) {
+    element = new SVG.Doc(element)
+
+    if (!SVG.parser)
+      SVG.prepare(element)
+
+    return element
+  }
 }
 
 // Default namespaces
-SVG.ns = 'http://www.w3.org/2000/svg'
+SVG.ns    = 'http://www.w3.org/2000/svg'
+SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
 
 // Element id sequence
@@ -55,10 +55,25 @@ SVG.extend = function() {
     SVG.Set.inherit()
 }
 
-// Method for getting an eleemnt by id
+// Method for getting an element by id
 SVG.get = function(id) {
   var node = document.getElementById(id)
   if (node) return node.instance
+}
+
+// Initialize parsing element
+SVG.prepare = function(element) {
+  /* select document body and create invisible svg element */
+  var body = document.getElementsByTagName('body')[0]
+    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 2)
+
+  /* create parser object */
+  SVG.parser = {
+    body: body || element.parent
+  , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
+  , poly: draw.polygon().node
+  , path: draw.path().node
+  }
 }
 
 // svg support test

@@ -45,13 +45,6 @@ SVG.extend(SVG.Number, {
   valueOf: function() {
     return this.value
   }
-  // Convert to different unit
-, to: function(unit) {
-    if (typeof unit === 'string')
-      this.unit = unit
-
-    return this
-  }
   // Add number
 , plus: function(number) {
     this.value = this + new SVG.Number(number)
@@ -73,6 +66,30 @@ SVG.extend(SVG.Number, {
     this.value = this / new SVG.Number(number)
 
     return this
+  }
+  // Convert to different unit
+, to: function(unit) {
+    if (typeof unit === 'string')
+      this.unit = unit
+
+    return this
+  }
+  // Make number morphable
+, morph: function(number) {
+    this.destination = new SVG.Number(number)
+
+    return this
+  }
+  // Get morphed number at given position
+, at: function(pos) {
+    /* make sure a destination is defined */
+    if (!this.destination) return this
+
+    /* generate morphed number */
+    return new SVG.Number(this.destination)
+        .minus(this)
+        .times(pos)
+        .plus(this)
   }
 
 })

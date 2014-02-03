@@ -1,9 +1,18 @@
 describe('Gradient', function() {
-  var rect = draw.rect(100,100)
-    , gradient = draw.gradient('linear', function(stop) {
+  var rect, gradient
+
+  beforeEach(function() {
+    rect = draw.rect(100,100)
+    gradient = draw.gradient('linear', function(stop) {
       stop.at({ offset: 0, color: '#333', opacity: 1 })
       stop.at({ offset: 1, color: '#fff', opacity: 1 })
     })
+  })
+
+  afterEach(function() {
+    rect.remove()
+    gradient.remove()
+  })
   
   it('is an instance of SVG.Gradient', function() {
     expect(gradient instanceof SVG.Gradient).toBe(true)

@@ -70,6 +70,30 @@ describe('Polygon', function() {
       expect(box.y).toBe(517)
     })
   })
+
+  describe('width()', function() {
+    it('sets the width and height of the element', function() {
+      polygon.width(987)
+      var box = polygon.bbox()
+      expect(approximately(box.width, 0.1)).toBe(987)
+    })
+    it('gets the width and height of the element without an argument', function() {
+      polygon.width(789)
+      expect(approximately(polygon.width(), 0.1)).toBe(789)
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height and height of the element', function() {
+      polygon.height(987)
+      var box = polygon.bbox()
+      expect(approximately(box.height, 0.1)).toBe(987)
+    })
+    it('gets the height and height of the element without an argument', function() {
+      polygon.height(789)
+      expect(approximately(polygon.height(), 0.1)).toBe(789)
+    })
+  })
   
   describe('size()', function() {
     it('should define the width and height of the element', function() {
@@ -77,6 +101,18 @@ describe('Polygon', function() {
       var box = polygon.bbox()
       expect(approximately(box.width, 0.1)).toBe(987)
       expect(approximately(box.height, 0.1)).toBe(654)
+    })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = polygon.bbox()
+      polygon.size(500)
+      expect(polygon.width()).toBe(500)
+      expect(polygon.width() / polygon.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = polygon.bbox()
+      polygon.size(null, 525)
+      expect(polygon.height()).toBe(525)
+      expect(polygon.width() / polygon.height()).toBe(box.width / box.height)
     })
   })
   

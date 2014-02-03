@@ -1,14 +1,31 @@
 
 SVG.ViewBox = function(element) {
   var x, y, width, height
+    , wm   = 1 /* width multiplier */
+    , hm   = 1 /* height multiplier */
     , box  = element.bbox()
     , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
+
+  /* get dimensions of current node */
+  width  = new SVG.Number(element.width())
+  height = new SVG.Number(element.height())
+
+  /* find nearest non-percentual dimensions */
+  while (width.unit == '%') {
+    wm *= width.value
+    width = new SVG.Number(element instanceof SVG.Doc ? element.parent.offsetWidth : element.width())
+  }
+  while (height.unit == '%') {
+    hm *= height.value
+    height = new SVG.Number(element instanceof SVG.Doc ? element.parent.offsetHeight : element.height())
+  }
   
-  /* clone attributes */
+  /* ensure defaults */
   this.x      = box.x
   this.y      = box.y
-  this.width  = element.node.clientWidth  || element.node.getBoundingClientRect().width
-  this.height = element.node.clientHeight || element.node.getBoundingClientRect().height
+  this.width  = width  * wm
+  this.height = height * hm
+  this.zoom   = 1
   
   if (view) {
     /* get width and height from viewbox */
@@ -27,10 +44,8 @@ SVG.ViewBox = function(element) {
     this.y      = y
     this.width  = width
     this.height = height
+    
   }
-  
-  /* ensure a default zoom value */
-  this.zoom = this.zoom || 1
   
 }
 

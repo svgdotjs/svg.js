@@ -158,23 +158,34 @@ describe('Element', function() {
   })
   
   describe('data()', function() {
-    it('should set a data attribute and convert value to json', function() {
+    it('sets a data attribute and convert value to json', function() {
       var rect = draw.rect(100,100).data('test', 'value')
       expect(rect.node.getAttribute('data-test')).toBe('value')
     })
-    it('should set a data attribute and not convert value to json if flagged raw', function() {
+    it('sets a data attribute and not convert value to json if flagged raw', function() {
       var rect = draw.rect(100,100).data('test', 'value', true)
       expect(rect.node.getAttribute('data-test')).toBe('value')
     })
-    it('should get data value in ony one argument is passed', function() {
+    it('sets multiple data attributes and convert values to json when an object is passed', function() {
+      var rect = draw.rect(100,100).data({
+        forbidden: 'fruit'
+      , multiple: {
+          values: 'in'
+        , an: 'object'
+        }
+      })
+      expect(rect.node.getAttribute('data-forbidden')).toBe('fruit')
+      expect(rect.node.getAttribute('data-multiple')).toEqual('{"values":"in","an":"object"}')
+    })
+    it('gets data value if only one argument is passed', function() {
       var rect = draw.rect(100,100).data('test', 101)
       expect(rect.data('test')).toBe(101)
     })
-    it('should maintain data type for a number', function() {
+    it('maintains data type for a number', function() {
       var rect = draw.rect(100,100).data('test', 101)
       expect(typeof rect.data('test')).toBe('number')
     })
-    it('should maintain data type for an object', function() {
+    it('maintains data type for an object', function() {
       var rect = draw.rect(100,100).data('test', { string: 'value', array: [1,2,3] })
       expect(typeof rect.data('test')).toBe('object')
       expect(Array.isArray(rect.data('test').array)).toBe(true) 
@@ -192,6 +203,26 @@ describe('Element', function() {
       expect(draw.has(rect)).toBe(false)
     })
   })
+
+  describe('addTo()', function() {
+    it('adds an element to a given parent and returns itself', function() {
+      var rect  = draw.rect(100,100)
+        , group = draw.group()
+
+      expect(rect.addTo(group)).toBe(rect)
+      expect(rect.parent).toBe(group)
+    })
+  })
+
+  describe('putIn()', function() {
+    it('adds an element to a given parent and returns parent', function() {
+      var rect  = draw.rect(100,100)
+        , group = draw.group()
+
+      expect(rect.putIn(group)).toBe(group)
+      expect(rect.parent).toBe(group)
+    })
+  })
   
   describe('rbox()', function() {
     it('returns an instance of SVG.RBox', function() {
@@ -203,7 +234,7 @@ describe('Element', function() {
       var box = rect.rbox()
       expect(approximately(box.x)).toBe(approximately(2))
       expect(approximately(box.y)).toBe(approximately(12))
-      expect(approximately(box.cx)).toBe(approximately(54).5)
+      expect(approximately(box.cx)).toBe(approximately(54.5))
       expect(approximately(box.cy)).toBe(approximately(117))
       expect(approximately(box.width)).toBe(approximately(105))
       expect(approximately(box.height)).toBe(approximately(210))
@@ -257,6 +288,64 @@ describe('Element', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
       expect(rect + '').toBe(rect.attr('id'))
     })
+  })
+
+  describe('replace()', function() {
+    it('replaces the original element by another given element', function() {
+      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+      var circle = draw.circle(200)
+      var rectIndex = draw.children().indexOf(rect)
+
+      rect.replace(circle)
+      
+      expect(rectIndex).toBe(draw.children().indexOf(circle))
+    })
+    it('removes the original element', function() {
+      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+
+      rect.replace(draw.circle(200))
+      
+      expect(draw.has(rect)).toBe(false)
+    })
+    it('returns the new element', function() {
+      var circle  = draw.circle(200)
+      var element = draw.rect(100,100).center(321,567).fill('#f06').replace(circle)
+      
+      expect(element).toBe(circle)
+    })
+  })
+
+  describe('relative()', function() {
+    var rect
+
+    beforeEach(function() {
+      rect = draw.rect(100,100).move(50,60)
+    })
+
+    afterEach(function() {
+      draw.clear()
+    })
+    
+    describe('x()', function() {
+      it('moves the x positon of the element', function() {
+        rect.relative().x(100)
+        expect(rect.node.getAttribute('x')).toBe('150')
+      })
+    })
+    describe('y()', function() {
+      it('moves the y positon of the element', function() {
+        rect.relative().x(120)
+        expect(rect.node.getAttribute('x')).toBe('170')
+      })
+    })
+    describe('move()', function() {
+      it('moves the x and y positon of the element', function() {
+        rect.relative().move(80, 25)
+        expect(rect.node.getAttribute('x')).toBe('130')
+        expect(rect.node.getAttribute('y')).toBe('85')
+      })
+    })
+    
   })
   
 })

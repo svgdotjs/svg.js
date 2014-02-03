@@ -52,6 +52,19 @@ describe('Rect', function() {
       expect(box.cy).toBe(345)
     })
   })
+
+  describe('radius()', function() {
+    it('should set the rx and ry', function() {
+      rect.radius(10,20)
+      expect(rect.node.getAttribute('rx')).toBe('10')
+      expect(rect.node.getAttribute('ry')).toBe('20')
+    })
+    it('should set the rx and ry if only rx given', function() {
+      rect.radius(30)
+      expect(rect.node.getAttribute('rx')).toBe('30')
+      expect(rect.node.getAttribute('ry')).toBe('30')
+    })
+  })
   
   describe('move()', function() {
     it('should set the x and y position', function() {
@@ -70,11 +83,43 @@ describe('Rect', function() {
     })
   })
   
+  describe('width()', function() {
+    it('sets the width of the element', function() {
+      rect.width(789)
+      expect(rect.node.getAttribute('width')).toBe('789')
+    })
+    it('gets the width of the element if the argument is null', function() {
+      expect(rect.width().toString()).toBe(rect.node.getAttribute('width'))
+    })
+  })
+
+  describe('height()', function() {
+    it('sets the height of the element', function() {
+      rect.height(1236)
+      expect(rect.node.getAttribute('height')).toBe('1236')
+    })
+    it('gets the height of the element if the argument is null', function() {
+      expect(rect.height().toString()).toBe(rect.node.getAttribute('height'))
+    })
+  })
+
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       rect.size(987,654)
       expect(rect.node.getAttribute('width')).toBe('987')
       expect(rect.node.getAttribute('height')).toBe('654')
+    })
+    it('defines the width and height proportionally with only the width value given', function() {
+      var box = rect.bbox()
+      rect.size(500)
+      expect(rect.width()).toBe(500)
+      expect(rect.width() / rect.height()).toBe(box.width / box.height)
+    })
+    it('defines the width and height proportionally with only the height value given', function() {
+      var box = rect.bbox()
+      rect.size(null, 525)
+      expect(rect.height()).toBe(525)
+      expect(rect.width() / rect.height()).toBe(box.width / box.height)
     })
   })
   
