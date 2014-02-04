@@ -37,9 +37,9 @@ SVG.extend(SVG.PathArray, {
           s.push(
             this.value[i].rx
           , this.value[i].ry
-          , this.value[i].angle
-          , this.value[i].largeArcFlag
-          , this.value[i].sweepFlag
+          , this.value[i].a
+          , this.value[i].l
+          , this.value[i].s
           , this.value[i].x
           , this.value[i].y
           )
@@ -286,8 +286,6 @@ SVG.extend(SVG.PathArray, {
   }
   // Get bounding box of path
 , bbox: function() {
-		if (this._cachedBBox) return this._cachedBBox
-
     SVG.parser.path.setAttribute('d', this.toString())
 
     return SVG.parser.path.getBBox()

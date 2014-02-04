@@ -4,6 +4,7 @@
 - added the `SVG.invent` function to ease invention of new elements
 - using `SVG.invent` to generate core shapes as well for leaner code
 - added second values for `animate('2s')`
+- fix for arcs in patharray `toString()` method
 
 # v1.0rc2 (01/02/2014)
 

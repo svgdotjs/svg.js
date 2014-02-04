@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-4-g189f009 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-5-gce16057 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -524,9 +524,9 @@
             s.push(
               this.value[i].rx
             , this.value[i].ry
-            , this.value[i].angle
-            , this.value[i].largeArcFlag
-            , this.value[i].sweepFlag
+            , this.value[i].a
+            , this.value[i].l
+            , this.value[i].s
             , this.value[i].x
             , this.value[i].y
             )
@@ -773,8 +773,6 @@
     }
     // Get bounding box of path
   , bbox: function() {
-  		if (this._cachedBBox) return this._cachedBBox
-  
       SVG.parser.path.setAttribute('d', this.toString())
   
       return SVG.parser.path.getBBox()
