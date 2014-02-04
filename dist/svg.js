@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-6-gef026b3 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-7-g5c9f99f - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -3193,7 +3193,7 @@
         this.node.appendChild(this.textPath.node)
   
         /* create path in defs */
-        this.track = this.doc().defs().path(d, true)
+        this.track = this.doc().defs().path(d)
   
         /* create circular reference */
         this.textPath.parent = this

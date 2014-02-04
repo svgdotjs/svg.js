@@ -23,7 +23,7 @@ SVG.TextPath = SVG.invent({
       this.node.appendChild(this.textPath.node)
 
       /* create path in defs */
-      this.track = this.doc().defs().path(d, true)
+      this.track = this.doc().defs().path(d)
 
       /* create circular reference */
       this.textPath.parent = this
