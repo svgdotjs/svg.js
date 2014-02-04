@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-5-gce16057 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js v1.0rc3-6-gef026b3 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -522,11 +522,11 @@
           break
           case 'A':
             s.push(
-              this.value[i].rx
-            , this.value[i].ry
-            , this.value[i].a
-            , this.value[i].l
-            , this.value[i].s
+              this.value[i].r1
+            , this.value[i].r2
+            , this.value[i].a || 0
+            , this.value[i].l || 0
+            , this.value[i].s || 0
             , this.value[i].x
             , this.value[i].y
             )
@@ -634,8 +634,8 @@
           break
           case 'A':
             /* resize radii */
-            this.value[i].values.rx = (this.value[i].values.rx * width)  / box.width
-            this.value[i].values.ry = (this.value[i].values.ry * height) / box.height
+            this.value[i].values.r1 = (this.value[i].values.r1 * width)  / box.width
+            this.value[i].values.r2 = (this.value[i].values.r2 * height) / box.height
   
             /* move position values */
             this.value[i].values.x = ((this.value[i].values.x - box.x) * width)  / box.width  + box.x
