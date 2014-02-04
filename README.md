@@ -318,12 +318,32 @@ http://www.w3.org/TR/SVG/paths.html#PathData
 
 
 ### Image
-When creating images the `width` and `height` values should be defined:
+Creating images is as you might expect:
 
 ```javascript
-// image(src, width, height)
-var image = draw.image('/path/to/image.jpg', 200, 200).move(100, 100)
+var image = draw.image('/path/to/image.jpg')
 ```
+
+If you know the size of the image, those parameters can be passed as the second and third arguments:
+
+```javascript
+var image = draw.image('/path/to/image.jpg', 200, 300)
+```
+
+If you don't know the size of the image, obviously you will have to wait for the image to be `loaded`:
+
+```javascript
+var image = draw.image('/path/to/image.jpg').loaded(function(loader) {
+  this.size(loader.width, loader.height)
+})
+```
+
+The returned `loader` object as first the argument of the loaded method contains four values:
+- `width`
+- `height`
+- `ratio` (width / height)
+- `url`
+
 
 __`returns`: `SVG.Image`__
 
@@ -1352,6 +1372,18 @@ A single hex string will work as well:
 rect.fill('#f06')
 ```
 
+Last but not least, you can also use an image as fill, simply by passing an image url:
+
+```javascript
+rect.fill('images/shade.jpg')
+```
+
+Or if you want more control over the size of the image, you can pass an image instance as well:
+
+```javascript
+rect.fill(draw.image('images/shade.jpg', 20, 20))
+```
+
 __`returns`: `itself`__
 
 ### stroke()
@@ -1365,6 +1397,18 @@ Like fill, a single hex string will work as well:
 
 ```javascript
 rect.stroke('#f06')
+```
+
+Not unlike the `fill()` method, you can also use an image as stroke, simply by passing an image url:
+
+```javascript
+rect.stroke('images/shade.jpg')
+```
+
+Or if you want more control over the size of the image, you can pass an image instance as well:
+
+```javascript
+rect.stroke(draw.image('images/shade.jpg', 20, 20))
 ```
 
 __`returns`: `itself`__
@@ -1869,6 +1913,12 @@ Finally, to use the gradient on an element:
 rect.attr({ fill: gradient })
 ```
 
+Or:
+
+```javascript
+rect.fill(gradient)
+```
+
 By passing the gradient instance as the fill on any element, the `fill()` method will be called:
 
 ```javascript
@@ -1882,6 +1932,59 @@ gradient.fill() //-> returns 'url(#SvgjsGradient1234)'
 _This functionality requires the gradient.js module which is included in the default distribution._
 
 __`returns`: `value`__
+
+
+## Patterns
+
+### pattern()
+Creating a pattern is very similar to creating gradients
+
+```javascript
+var pattern = draw.pattern(20, 20, function(add) {
+  add.rect(20,20).fill('#f06')
+  add.rect(10,10)
+  add.rect(10,10).move(10,10)
+})
+```
+
+This creates a checkered pattern of 20 x 20 pixels. You can add any available element to your pattern.
+
+__`returns`: `SVG.Pattern`__
+
+
+### update()
+A pattern can also be updated afterwards:
+
+```javascript
+pattern.update(function(add) {
+  add.circle(15).center(10,10)
+})
+```
+
+__`returns`: `itself`__
+
+
+### fill()
+Finally, to use the pattern on an element:
+
+```javascript
+rect.attr({ fill: pattern })
+```
+
+Or:
+
+```javascript
+rect.fill(pattern)
+```
+
+By passing the pattern instance as the fill on any element, the `fill()` method will be called on th pattern instance:
+
+```javascript
+pattern.fill() //-> returns 'url(#SvgjsPattern1234)'
+```
+
+__`returns`: `value`__
+
 
 ## Data
 
@@ -2449,9 +2552,6 @@ Here are a few nice plugins that are available for svg.js:
 
 ### path
 [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
-
-### pattern
-[svg.pattern.js](https://github.com/wout/svg.pattern.js) add fill patterns.
 
 ### shapes
 [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.

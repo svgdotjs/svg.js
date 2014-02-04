@@ -17,6 +17,11 @@ describe('Gradient', function() {
   it('is an instance of SVG.Gradient', function() {
     expect(gradient instanceof SVG.Gradient).toBe(true)
   })
+
+  it('allows creation of a new gradient without block', function() {
+    gradient = draw.gradient('linear')
+    expect(gradient.children().length).toBe(0)
+  })
   
   describe('fill()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
@@ -77,7 +82,7 @@ describe('Gradient', function() {
       })
       expect(gradient.children().length).toBe(2)
     })
-
+    
   })
 
   describe('get()', function() {

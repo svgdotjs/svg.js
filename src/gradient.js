@@ -32,7 +32,7 @@ SVG.Gradient = SVG.invent({
     }
     // Add a color stop
   , at: function(stop) {
-      return this.put(new SVG.Stop().update(stop))
+      return this.put(new SVG.Stop).update(stop)
     }
     // Update gradient
   , update: function(block) {
@@ -40,7 +40,8 @@ SVG.Gradient = SVG.invent({
       this.clear()
       
       /* invoke passed block */
-      block(this)
+      if (typeof block == 'function')
+        block.call(this, this)
       
       return this
     }
@@ -66,12 +67,7 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Defs, {
   // define gradient
   gradient: function(type, block) {
-    var element = this.put(new SVG.Gradient(type))
-    
-    /* invoke passed block */
-    block(element)
-    
-    return element
+    return this.put(new SVG.Gradient(type)).update(block)
   }
   
 })

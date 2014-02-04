@@ -34,5 +34,8 @@ SVG.regex = {
 
   /* test for percent value */
 , isPercent:    /^-?[\d\.]+%$/
+
+  /* test for image url */
+, isImage:      /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
   
 }

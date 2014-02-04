@@ -1,4 +1,4 @@
-/* svg.js v1.0rc3-7-g5c9f99f - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js 1.0.0-rc.4 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -143,6 +143,9 @@
   
     /* test for percent value */
   , isPercent:    /^-?[\d\.]+%$/
+  
+    /* test for image url */
+  , isImage:      /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
     
   }
 
@@ -1256,6 +1259,17 @@
             this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
           else if (a == 'stroke')
             this._stroke = v
+  
+          /* convert image fill and stroke to patterns */
+          if (a == 'fill' || a == 'stroke') {
+            if (SVG.regex.isImage.test(v))
+              v = this.doc().defs().image(v, 0, 0)
+  
+            if (v instanceof SVG.Image)
+              v = this.doc().defs().pattern(0, 0, function() {
+                this.add(v)
+              })
+          }
           
           /* ensure full hex color */
           if (SVG.Color.test(v) || SVG.Color.isRgb(v))
@@ -2430,7 +2444,7 @@
       }
       // Add a color stop
     , at: function(stop) {
-        return this.put(new SVG.Stop().update(stop))
+        return this.put(new SVG.Stop).update(stop)
       }
       // Update gradient
     , update: function(block) {
@@ -2438,7 +2452,8 @@
         this.clear()
         
         /* invoke passed block */
-        block(this)
+        if (typeof block == 'function')
+          block.call(this, this)
         
         return this
       }
@@ -2464,12 +2479,7 @@
   SVG.extend(SVG.Defs, {
     // define gradient
     gradient: function(type, block) {
-      var element = this.put(new SVG.Gradient(type))
-      
-      /* invoke passed block */
-      block(element)
-      
-      return element
+      return this.put(new SVG.Gradient(type)).update(block)
     }
     
   })
@@ -2496,6 +2506,59 @@
   
   })
 
+
+  SVG.Pattern = SVG.invent({
+    // Initialize node
+    create: 'pattern'
+  
+    // Inherit from
+  , inherit: SVG.Container
+  
+    // Add class methods
+  , extend: {
+      // Return the fill id
+  	  fill: function() {
+  	    return 'url(#' + this.attr('id') + ')'
+  	  }
+  	  // Update pattern by rebuilding
+  	, update: function(block) {
+  			/* remove content */
+        this.clear()
+        
+        /* invoke passed block */
+        if (typeof block == 'function')
+        	block.call(this, this)
+        
+        return this
+  		}
+  	  // Alias string convertion to fill
+  	, toString: function() {
+  	    return this.fill()
+  	  }
+    }
+    
+    // Add parent method
+  , construct: {
+      // Create pattern element in defs
+  	  pattern: function(width, height, block) {
+  	    return this.defs().pattern(width, height, block)
+  	  }
+    }
+  })
+  
+  SVG.extend(SVG.Defs, {
+    // Define gradient
+    pattern: function(width, height, block) {
+      return this.put(new SVG.Pattern).update(block).attr({
+        x:            0
+      , y:            0
+      , width:        width
+      , height:       height
+      , patternUnits: 'userSpaceOnUse'
+      })
+    }
+  
+  })
 
   SVG.Doc = SVG.invent({
     // Initialize node
@@ -2942,7 +3005,39 @@
   , extend: {
       // (re)load image
       load: function(url) {
-        return (url ? this.attr('href', (this.src = url), SVG.xlink) : this)
+        if (!url) return this
+  
+        var self = this
+          , img  = document.createElement('img')
+        
+        /* preload image */
+        img.onload = function() {
+          var p = self.doc(SVG.Pattern)
+  
+          /* ensure image size */
+          if (self.width() == 0 && self.height() == 0)
+            self.size(img.width, img.height)
+  
+          /* ensure pattern size if not set */
+          if (p && p.width() == 0 && p.height() == 0)
+            p.size(self.width(), self.height())
+          
+          /* callback */
+          if (typeof self._loaded == 'function')
+            self._loaded.call(self, {
+              width:  img.width
+            , height: img.height
+            , ratio:  img.width / img.height
+            , url:    url
+            })
+        }
+  
+        return this.attr('href', (img.src = this.src = url), SVG.xlink)
+      }
+      // Add loade callback
+    , loaded: function(loaded) {
+        this._loaded = loaded
+        return this
       }
     }
     
@@ -2950,8 +3045,7 @@
   , construct: {
       // Create image element, load image and set its size
       image: function(source, width, height) {
-        width = width != null ? width : 100
-        return this.put(new SVG.Image().load(source).size(width, height != null ? height : width))
+        return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
       }
     }
   })

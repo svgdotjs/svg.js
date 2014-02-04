@@ -1,7 +1,7 @@
 SVGJS_VERSION = 'v1.0rc3'
 
 # all available modules in the correct loading order
-MODULES = %w[ svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader ]
+MODULES = %w[ svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader ]
 
 # how many bytes in a "kilobyte"
 KILO = 1024
