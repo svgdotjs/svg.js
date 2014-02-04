@@ -2361,9 +2361,10 @@ To create the element in your drawing:
 var rounded = draw.rounded(200, 100)
 ```
 
-That's, the invention is now ready to be used!
+That's it, the invention is now ready to be used!
 
-The `SVG.invent()` function always expectes an object. The object accepts the following configuration values:
+#### Accepted values
+The `SVG.invent()` function always expectes an object. The object can have the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
 - `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional]`
@@ -2380,7 +2381,7 @@ Svg.js has a modular structure. It is very easy to add you own methods at differ
 ```javascript
 SVG.extend(SVG.Shape, {
   paintRed: function() {
-    return this.fill({ color: 'red' })
+    return this.fill('red')
   }
 })
 ```
@@ -2390,7 +2391,7 @@ Now all shapes will have the paintRed method available. Say we want to have the 
 ```javascript
 SVG.extend(SVG.Ellipse, {
   paintRed: function() {
-    return this.fill({ color: 'orangered' })
+    return this.fill('orangered')
   }
 })
 
@@ -2404,11 +2405,9 @@ The SVG document can be extended by using:
 ```javascript
 SVG.extend(SVG.Doc, {
   paintAllPink: function() {
-    for (var i = 0, l = this.children.length; i < l; i++) {
-      this.children[i].fill({ color: 'pink' })
-    }
-    
-    return this
+    this.each(function() {
+      this.fill('pink')
+    })
   }
 })
 ```
@@ -2417,7 +2416,7 @@ You can also extend multiple elements at once:
 ```javascript
 SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
   paintRed: function() {
-    return this.fill({ color: 'orangered' })
+    return this.fill('orangered')
   }
 })
 
