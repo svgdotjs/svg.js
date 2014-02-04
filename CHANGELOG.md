@@ -1,6 +1,6 @@
 # 1.0.0-rc.4 (04/02/2014)
 
-- switched to `MAJOR`.`MINOR`.`PATCH` versioning format to play nide with package managers
+- switched to `MAJOR`.`MINOR`.`PATCH` versioning format to play nice with package managers
 - made svg.pattern.js part of the core library
 - automatic pattern creation by passing an image url or instance as `fill` attribute on elements
 - added `loaded()` method to image tag
