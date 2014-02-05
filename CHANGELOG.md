@@ -4,6 +4,7 @@
 - made svg.pattern.js part of the core library
 - automatic pattern creation by passing an image url or instance as `fill` attribute on elements
 - added `loaded()` method to image tag
+- fix in `animate('=').to()`
 
 # v1.0rc3 (03/02/2014)
 

@@ -18,7 +18,7 @@ SVG.extend(SVG.FX, {
     }
 
     /* ensure default duration and easing */
-    d = d == null ? 1000 : new SVG.Number(d).valueOf()
+    d = d == '=' ? d : d == null ? 1000 : new SVG.Number(d).valueOf()
     ease = ease || '<>'
 
     /* process values */
