@@ -37,9 +37,9 @@ SVG.extend(SVG.PathArray, {
           s.push(
             this.value[i].r1
           , this.value[i].r2
-          , this.value[i].a || 0
-          , this.value[i].l || 0
-          , this.value[i].s || 0
+          , this.value[i].a
+          , this.value[i].l === true ? 1 : 0
+          , this.value[i].s === true ? 1 : 0
           , this.value[i].x
           , this.value[i].y
           )

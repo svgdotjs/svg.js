@@ -158,6 +158,10 @@ describe('Path', function() {
       path = path.plot('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
       expect(path.node.getAttribute('d')).toBe('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
     })
+    it('renders path array correctly to string', function() {
+      path = path.plot('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
+      expect(path.node.getAttribute('d')).toBe('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
+    })
   })
 
   describe('length()', function() {
