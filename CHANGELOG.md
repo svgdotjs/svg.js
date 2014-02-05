@@ -5,6 +5,8 @@
 - automatic pattern creation by passing an image url or instance as `fill` attribute on elements
 - added `loaded()` method to image tag
 - fix in `animate('=').to()`
+- added `pointAt()` method to `SVG.Path`, wrapping the native `getPointAtLength()`
+- moved `length()` method to sugar module
 
 # v1.0rc3 (03/02/2014)
 
@@ -13,6 +15,7 @@
 - using `SVG.invent` to generate core shapes as well for leaner code
 - added second values for `animate('2s')`
 - fix for arcs in patharray `toString()` method
+- added `length()` mehtod to path, wrapping the native `getTotalLength()`
 
 # v1.0rc2 (01/02/2014)
 

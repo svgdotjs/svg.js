@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.4-2-g6d76750 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js 1.0.0-rc.4-3-gc51d352 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2979,10 +2979,7 @@
     , height: function(height) {
         return height == null ? this.bbox().height : this.size(this.bbox().width, height)
       }
-      // Get path length
-    , length: function() {
-        return this.node.getTotalLength()
-      }
+      
     }
     
     // Add parent method
@@ -3445,7 +3442,6 @@
   
   })
   
-  //
   SVG.extend(SVG.Rect, SVG.Ellipse, {
     // Add x and y radius
     radius: function(x, y) {
@@ -3454,23 +3450,32 @@
   
   })
   
+  SVG.extend(SVG.Path, {
+    // Get path length
+    length: function() {
+      return this.node.getTotalLength()
+    }
+    // Get point at length
+  , pointAt: function(length) {
+      return this.node.getPointAtLength(length)
+    }
   
-  if (SVG.Text) {
-    SVG.extend(SVG.Text, SVG.FX, {
-      // Set font 
-      font: function(o) {
-        for (var key in o)
-          key == 'anchor' ?
-            this.attr('text-anchor', o[key]) :
-          _styleAttr.indexOf(key) > -1 ?
-            this.attr('font-'+ key, o[key]) :
-            this.attr(key, o[key])
-        
-        return this
-      }
+  })
+  
+  SVG.extend(SVG.Text, SVG.FX, {
+    // Set font 
+    font: function(o) {
+      for (var key in o)
+        key == 'anchor' ?
+          this.attr('text-anchor', o[key]) :
+        _styleAttr.indexOf(key) > -1 ?
+          this.attr('font-'+ key, o[key]) :
+          this.attr(key, o[key])
       
-    })
-  }
+      return this
+    }
+    
+  })
   
 
 

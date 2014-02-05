@@ -72,7 +72,6 @@ SVG.extend(SVG.Element, SVG.FX, {
 
 })
 
-//
 SVG.extend(SVG.Rect, SVG.Ellipse, {
   // Add x and y radius
   radius: function(x, y) {
@@ -81,21 +80,30 @@ SVG.extend(SVG.Rect, SVG.Ellipse, {
 
 })
 
+SVG.extend(SVG.Path, {
+  // Get path length
+  length: function() {
+    return this.node.getTotalLength()
+  }
+  // Get point at length
+, pointAt: function(length) {
+    return this.node.getPointAtLength(length)
+  }
 
-if (SVG.Text) {
-  SVG.extend(SVG.Text, SVG.FX, {
-    // Set font 
-    font: function(o) {
-      for (var key in o)
-        key == 'anchor' ?
-          this.attr('text-anchor', o[key]) :
-        _styleAttr.indexOf(key) > -1 ?
-          this.attr('font-'+ key, o[key]) :
-          this.attr(key, o[key])
-      
-      return this
-    }
+})
+
+SVG.extend(SVG.Text, SVG.FX, {
+  // Set font 
+  font: function(o) {
+    for (var key in o)
+      key == 'anchor' ?
+        this.attr('text-anchor', o[key]) :
+      _styleAttr.indexOf(key) > -1 ?
+        this.attr('font-'+ key, o[key]) :
+        this.attr(key, o[key])
     
-  })
-}
+    return this
+  }
+  
+})
 
