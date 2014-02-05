@@ -7,6 +7,7 @@
 - fix in `animate('=').to()`
 - added `pointAt()` method to `SVG.Path`, wrapping the native `getPointAtLength()`
 - moved `length()` method to sugar module
+- fix for arcs in patharray `toString()` method
 
 # v1.0rc3 (03/02/2014)
 
