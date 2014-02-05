@@ -267,8 +267,8 @@ SVG.extend(SVG.PathArray, {
             r1: seg.r1
           , r2: seg.r2
           , a:  seg.angle
-          , l:  seg.largeArcFlag
-          , s:  seg.sweepFlag
+          , l:  seg.largeArcFlag|0 /* convert bool to int - see #145 */
+          , s:  seg.sweepFlag|0 /* convert bool to int - see #145 */
           }
         break
       }
