@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.4-5-g7bb2ec3 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js 1.0.0-rc.4-9-g6841c32 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -528,8 +528,8 @@
               this.value[i].r1
             , this.value[i].r2
             , this.value[i].a
-            , this.value[i].l === true ? 1 : 0
-            , this.value[i].s === true ? 1 : 0
+            , this.value[i].l
+            , this.value[i].s
             , this.value[i].x
             , this.value[i].y
             )
@@ -757,8 +757,8 @@
               r1: seg.r1
             , r2: seg.r2
             , a:  seg.angle
-            , l:  seg.largeArcFlag
-            , s:  seg.sweepFlag
+            , l:  seg.largeArcFlag|0
+            , s:  seg.sweepFlag|0
             }
           break
         }

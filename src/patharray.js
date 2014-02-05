@@ -38,8 +38,8 @@ SVG.extend(SVG.PathArray, {
             this.value[i].r1
           , this.value[i].r2
           , this.value[i].a
-          , this.value[i].l === true ? 1 : 0
-          , this.value[i].s === true ? 1 : 0
+          , this.value[i].l
+          , this.value[i].s
           , this.value[i].x
           , this.value[i].y
           )
@@ -267,8 +267,8 @@ SVG.extend(SVG.PathArray, {
             r1: seg.r1
           , r2: seg.r2
           , a:  seg.angle
-          , l:  seg.largeArcFlag|0 /* convert bool to int - see #145 */
-          , s:  seg.sweepFlag|0 /* convert bool to int - see #145 */
+          , l:  seg.largeArcFlag|0
+          , s:  seg.sweepFlag|0
           }
         break
       }
