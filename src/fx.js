@@ -135,9 +135,9 @@ SVG.extend(SVG.FX, {
 
       /* callback for each keyframe */
       if (fx._during)
-        fx._during.call(element, pos, function(from, to) {
-          return at({ from: from, to: to }, pos)
-        })
+  			((fx._during.fn)?fx._during.fn: fx._during).call((fx._during.scope)?fx._during.scope:element, pos, function(from, to) {
+			    return at({ from: from, to: to }, pos)
+	  		})
     }
     
     if (typeof d === 'number') {
@@ -175,7 +175,7 @@ SVG.extend(SVG.FX, {
                   --fx._loop
                 fx.animate(d, ease, delay)
               } else {
-                fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+					      fx._after ? ((fx._after.fn)?fx._after.fn: fx._after).apply((fx._after.scope)?fx._after.scope:element, [fx]) : fx.stop()
               }
 
             } else {
