@@ -1,28 +1,25 @@
 // Define list of available attributes for stroke and fill
-SVG._stroke = ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset']
-SVG._fill   = ['color', 'opacity', 'rule']
-
-
-// Prepend correct color prefix
-var _colorPrefix = function(type, attr) {
-  return attr == 'color' ? type : type + '-' + attr
+var sugar = {
+  stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset']
+, fill:   ['color', 'opacity', 'rule']
+, prefix: function(t, a) {
+    return a == 'color' ? t : t + '-' + a
+  }
 }
 
 /* Add sugar for fill and stroke */
-;['fill', 'stroke'].forEach(function(method) {
-  var extension = {}
+;['fill', 'stroke'].forEach(function(m) {
+  var i, extension = {}
   
-  extension[method] = function(o) {
-    var indexOf
-    
+  extension[m] = function(o) {
     if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
-      this.attr(method, o)
+      this.attr(m, o)
 
     else
-      /* set all attributes from _fillAttr and _strokeAttr list */
-      for (index = SVG['_' + method].length - 1; index >= 0; index--)
-        if (o[SVG['_' + method][index]] != null)
-          this.attr(_colorPrefix(method, SVG['_' + method][index]), o[SVG['_' + method][index]])
+      /* set all attributes from sugar.fill and sugar.stroke list */
+      for (i = sugar[m].length - 1; i >= 0; i--)
+        if (o[sugar[m][i]] != null)
+          this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
     
     return this
   }
@@ -72,7 +69,7 @@ SVG.extend(SVG.Element, SVG.FX, {
 
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, {
+SVG.extend(SVG.Rect, SVG.Ellipse, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
     return this.attr({ rx: x, ry: y || x })
@@ -95,12 +92,14 @@ SVG.extend(SVG.Path, {
 SVG.extend(SVG.Text, SVG.FX, {
   // Set font 
   font: function(o) {
-    for (var key in o)
-      key == 'anchor' ?
-        this.attr('text-anchor', o[key]) :
-      _styleAttr.indexOf(key) > -1 ?
-        this.attr('font-'+ key, o[key]) :
-        this.attr(key, o[key])
+    for (var k in o)
+      k == 'leading' ?
+        this.leading(o[k]) :
+      k == 'anchor' ?
+        this.attr('text-anchor', o[k]) :
+      k == 'size' || k == 'family' || k == 'weight' || k == 'stretch' || k == 'variant' || k == 'style' ?
+        this.attr('font-'+ k, o[k]) :
+        this.attr(k, o[k])
     
     return this
   }

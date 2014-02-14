@@ -1,3 +1,18 @@
+# 1.0.0-rc.5 (14/02/2014)
+
+- added `plain()` method to `SVG.Text` element to add plain text content, without tspans
+- added `plain()` method to parent elements to create a text element without tspans
+- updated `SVG.TSpan` to accept nested tspan elements, not unlike the `text()` method in `SVG.Text`
+- removed the `relative()` method in favour of `dx()`, `dy()` and `dmove()`
+- switched form objects to arrays in `SVG.PathArray` for compatibility with other libraries and better performance on parsing and rendering (up-to 48% faster than 1.0.0-rc.4)
+- refined docs on element-specific methods and `SVG.PathArray` structure
+- added `build()` to enable/disable build mode
+- removed verbose style application to tspans
+- reworked `leading()` implementation to be more font-size "aware"
+- refactored the `attr` method on `SVG.Element`
+- applied Helvetica as default font
+- building `SVG.FX` class with `SVG.invent()` function
+
 # 1.0.0-rc.4 (04/02/2014)
 
 - switched to `MAJOR`.`MINOR`.`PATCH` versioning format to play nice with package managers

@@ -61,6 +61,34 @@ describe('Polygon', function() {
       expect(box.y).toBe(456)
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      polygon.move(50,60)
+      polygon.dx(100)
+      var box = polygon.bbox()
+      expect(box.x).toBe(150)
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      polygon.move(50, 60)
+      polygon.dy(120)
+      var box = polygon.bbox()
+      expect(box.y).toBe(180)
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      polygon.move(50,60)
+      polygon.dmove(80, 25)
+      var box = polygon.bbox()
+      expect(box.x).toBe(130)
+      expect(box.y).toBe(85)
+    })
+  })
   
   describe('center()', function() {
     it('should set the cx and cy position', function() {

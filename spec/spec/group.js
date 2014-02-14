@@ -69,6 +69,30 @@ describe('Group', function() {
       expect(box.cy).toBe(567)
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      group.move(50,60)
+      group.dx(100)
+      expect(group.node.getAttribute('transform')).toBe('translate(150 60)')
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      group.move(50,60)
+      group.dy(120)
+      expect(group.node.getAttribute('transform')).toBe('translate(50 180)')
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      group.move(50, 60)
+      group.dmove(80, 25)
+      expect(group.node.getAttribute('transform')).toBe('translate(130 85)')
+    })
+  })
   
 
 })

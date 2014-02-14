@@ -181,16 +181,18 @@ __`returns`: `SVG.Defs`__
 
 _Javascript inheritance stack: `SVG.Defs` < `SVG.Container` < `SVG.Parent`_
 
-
-## Elements
-
-### Rect
+## Rect
 Rects have two arguments, their `width` and `height`:
 
 ```javascript
 var rect = draw.rect(100, 100)
 ```
 
+__`returns`: `SVG.Rect`__
+
+_Javascript inheritance stack: `SVG.Rect` < `SVG.Shape` < `SVG.Element`_
+
+### radius()
 Rects can also have rounded corners:
 
 ```javascript
@@ -203,12 +205,10 @@ This will set the `rx` and `ry` attributes to `10`. To set `rx` and `ry` individ
 rect.radius(10, 20)
 ```
 
-__`returns`: `SVG.Rect`__
-
-_Javascript inheritance stack: `SVG.Rect` < `SVG.Shape` < `SVG.Element`_
+__`returns`: `itself`__
 
 
-### Ellipse
+## Ellipse
 Ellipses, like rects, have two arguments, their `width` and `height`:
 
 ```javascript
@@ -219,7 +219,16 @@ __`returns`: `SVG.Ellipse`__
 
 _Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 
-### Circle
+### radius()
+Ellipses can also be redefined by their radii:
+
+```javascript
+rect.radius(75, 50)
+```
+
+__`returns`: `itself`__
+
+## Circle
 The only argument necessary for a circle is the diameter:
 
 ```javascript
@@ -232,24 +241,36 @@ _Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 
 _Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
 
-### Line
+### radius()
+Circles can also be redefined by their radius:
+
+```javascript
+rect.radius(75)
+```
+
+__`returns`: `itself`__
+
+## Line
 The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
 
 ```javascript
 var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
 
+__`returns`: `SVG.Line`__
+
+_Javascript inheritance stack: `SVG.Line` < `SVG.Shape` < `SVG.Element`_
+
+### plot()
 Updating a line is done with the `plot()` method:
 
 ```javascript
 line.plot(50, 30, 100, 150)
 ```
 
-__`returns`: `SVG.Line`__
+__`returns`: `itself`__
 
-_Javascript inheritance stack: `SVG.Line` < `SVG.Shape` < `SVG.Element`_
-
-### Polyline
+## Polyline
 The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
 
 ```javascript
@@ -266,6 +287,11 @@ As an alternative an array of points will work as well:
 var polyline = draw.polyline([[0,0], [100,50], [50,100]]).fill('none').stroke({ width: 1 })
 ```
 
+__`returns`: `SVG.Polyline`__
+
+_Javascript inheritance stack: `SVG.Polyline` < `SVG.Shape` < `SVG.Element`_
+
+### plot()
 Polylines can be updated using the `plot()` method:
 
 ```javascript
@@ -278,11 +304,9 @@ The `plot()` method can also be animated:
 polyline.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]])
 ```
 
-__`returns`: `SVG.Polyline`__
+__`returns`: `itself`__
 
-_Javascript inheritance stack: `SVG.Polyline` < `SVG.Shape` < `SVG.Element`_
-
-### Polygon
+## Polygon
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
 
 ```javascript
@@ -296,17 +320,26 @@ __`returns`: `SVG.Polygon`__
 
 _Javascript inheritance stack: `SVG.Polygon` < `SVG.Shape` < `SVG.Element`_
 
-### Path
+### plot()
+Like polylines, polygons can be updated using the `plot()` method:
+
+```javascript
+polygon.plot([[0,0], [100,50], [50,100], [150,50], [200,50]])
+```
+
+The `plot()` method can also be animated:
+
+```javascript
+polygon.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]])
+```
+
+__`returns`: `itself`__
+
+## Path
 The path string is similar to the polygon string but much more complex in order to support curves:
 
 ```javascript
 var path = draw.path('M10,20L30,40')
-```
-
-Paths can be updated using the `plot()` method:
-
-```javascript
-path.plot('M100,200L300,400')
 ```
 
 __`returns`: `SVG.Path`__
@@ -316,8 +349,16 @@ _Javascript inheritance stack: `SVG.Path` < `SVG.Shape` < `SVG.Element`_
 For more details on path data strings, please refer to the SVG documentation:
 http://www.w3.org/TR/SVG/paths.html#PathData
 
+### plot()
+Paths can be updated using the `plot()` method:
 
-### Image
+```javascript
+path.plot('M100,200L300,400')
+```
+
+__`returns`: `itself`__
+
+## Image
 Creating images is as you might expect:
 
 ```javascript
@@ -330,6 +371,20 @@ If you know the size of the image, those parameters can be passed as the second 
 var image = draw.image('/path/to/image.jpg', 200, 300)
 ```
 
+__`returns`: `SVG.Image`__
+
+_Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
+
+### load()
+Loading another image can be done with the `load()` method:
+
+```javascript
+draw.image('/path/to/another/image.jpg')
+```
+
+__`returns`: `itself`__
+
+### loaded()
 If you don't know the size of the image, obviously you will have to wait for the image to be `loaded`:
 
 ```javascript
@@ -344,13 +399,10 @@ The returned `loader` object as first the argument of the loaded method contains
 - `ratio` (width / height)
 - `url`
 
-
-__`returns`: `SVG.Image`__
-
-_Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
+__`returns`: `itself`__
 
 
-### Text
+## Text
 Unlike html, text in svg is much harder to tame. There is no way to create flowing text, so newlines should be entered manually. In svg.js there are two ways to create text elements.
 
 The first and easiest method is to provide a string of text, split by newlines:
@@ -374,18 +426,54 @@ var text = draw.text(function(add) {
 })
 ```
 
+If you want to go the other way and don't want to add tspans at all, just one line of text, you can use the `plain()` method instead:
+
+```javascript
+var text = draw.plain('Lorem ipsum dolor sit amet consectetur.')
+```
+
+This is a shortcut to the `plain` method on the `SVG.Text` instance which doesn't render newlines at all.
+
+_Javascript inheritance stack: `SVG.Text` < `SVG.Shape` < `SVG.Element`_
+
+__`returns`: `SVG.Text`__
+
+### text()
 Changing text afterwards is also possible with the `text()` method:
 
 ```javascript
 text.text('Brilliant!')
 ```
 
+__`returns`: `itself`__
+
 To get the raw text content:
 
 ```javascript
-text.content
+text.text()
 ```
 
+__`returns`: `string`__
+
+### tspan()
+Just adding one tspan is also possible:
+
+```javascript
+text.tspan(' on a train...').fill('#f06')
+```
+
+__`returns`: `SVG.TSpan`__
+
+### plain()
+If the content of the element doesn't need any stying or multiple lines, it might be sufficient to just add some plain text:
+
+```javascript
+text.plain('I do not have any expectations.')
+```
+
+__`returns`: `itself`__
+
+### font()
 The sugar.js module provides some syntax sugar specifically for this element type:
 
 ```javascript
@@ -397,11 +485,122 @@ text.font({
 })
 ```
 
-__`returns`: `SVG.Text`__
+__`returns`: `itself`__
 
-_Javascript inheritance stack: `SVG.Text` < `SVG.Shape` < `SVG.Element`_
+### leading()
+As opposed to html, where leading is defined by `line-height`, svg does not have a natural leading equivalent. In svg, lines are not defined naturally. They are defined by `<tspan>` nodes with a `dy` attribute defining the line height and a `x` value resetting the line to the `x` position of the parent text element. But you can also have many nodes in one line defining a different `y`, `dy`, `x` or even `dx` value. This gives us a lot of freedom, but also a lot more responsibility. We have to decide when a new line is defined, where it starts, what its offset is and what it's height is. The `leading()` method in svg.js tries to ease the pain by giving you behaviour that is much closer to html. In combination with newline separated text, it works just like html:
 
-### TextPath
+```javascript
+var text = draw.text("Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor.")
+text.leading(1.3)
+```
+
+This will render a text element with a tspan element for each line, with a `dy` value of `130%` of the font size.
+
+Note that the `leading()` method assumes that every first level tspan in a text node represents a new line. Using `leading()` on text elements containing multiple tspans in one line (e.g. without a wrapping tspan defining a new line) will render scrambeled. So it is advisable to use this method with care, preferably only when throwing newline separated text at the text element or calling the `newLine()` method on every first level tspan added in the block passed as argument to the text element.
+
+__`returns`: `itself`__
+
+### clear()
+Clear all the contents of the called text element:
+
+```javascript
+text.clear()
+```
+
+__`returns`: `itself`__
+
+## TSpan
+The tspan elements are only available inside text elements or inside other tspan elements. In svg.js they have a class of their own:
+
+_Javascript inheritance stack: `SVG.TSpan` < `SVG.Shape` < `SVG.Element`_
+
+### text()
+Update the content of the tspan. This can be done by either passing a string:
+
+
+```javascript
+tspan.text('Just a string.')
+```
+
+Which will basicly call the `plain()` method.
+
+Or by passing a block to add more specific content inside the called tspan:
+
+```javascript
+tspan.text(function(add) {
+  add.plain('Just plain text.')
+  add.tspan('Fancy text wrapped in a tspan.').fill('#f06')
+  add.tspan(function(addMore) {
+    addMore.tspan('And you can doo deeper and deeper...')
+  })
+})
+```
+
+__`returns`: `itself`__
+
+### tspan()
+Add a nested tspan:
+
+```javascript
+tspan.tspan('I am a child of my parent').fill('#f06')
+```
+
+__`returns`: `SVG.TSpan`__
+
+### plain()
+Just adds some plain text:
+
+```javascript
+tspan.plain('I do not have any expectations.')
+```
+
+__`returns`: `itself`__
+
+### dx()
+Define the dynamic `x` value of the element, much like a html element with `position:relative` and `left` defined:
+
+```javascript
+tspan.dx(30)
+```
+
+__`returns`: `itself`__
+
+### dy()
+Define the dynamic `y` value of the element, much like a html element with `position:relative` and `top` defined:
+
+```javascript
+tspan.dy(30)
+```
+
+__`returns`: `itself`__
+
+### newLine()
+The `newLine()` is a convenience method for adding a new line with a `dy` attribute using the current "leading":
+
+```javascript
+var text = draw.text(function(add) {
+  add.tspan('Lorem ipsum dolor sit amet ').newLine()
+  add.tspan('consectetur').fill('#f06')
+  add.tspan('.')
+  add.tspan('Cras sodales imperdiet auctor.').newLine().dx(20)
+  add.tspan('Nunc ultrices lectus at erat').newLine()
+  add.tspan('dictum pharetra elementum ante').newLine()
+})
+```
+
+__`returns`: `itself`__
+
+### clear()
+Clear all the contents of the called tspan element:
+
+```javascript
+tspan.clear()
+```
+
+__`returns`: `itself`__
+
+## TextPath
 A nice feature in svg is the ability to run text along a path:
 
 ```javascript
@@ -433,18 +632,19 @@ And they can be animated as well of course:
 text.textPath.animate(3000).attr('startOffset', 0.8)
 ```
 
+__`returns`: `SVG.TextPath`__
+
+_Javascript inheritance stack: `SVG.TextPath` < `SVG.Element`_
+
+### track
 Referencing the linked path element directly:
 
 ```javascript
 var path = text.track
 ```
 
-__`returns`: `SVG.TextPath`__
 
-_Javascript inheritance stack: `SVG.TextPath` < `SVG.Element`_
-
-
-### Use
+## Use
 The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
 
 ```javascript
@@ -464,6 +664,7 @@ In this way the rect element acts as a library element. You can edit it but it w
 __`returns`: `SVG.Use`__
 
 _Javascript inheritance stack: `SVG.Use` < `SVG.Shape` < `SVG.Element`_
+
 
 ## Referencing elements
 
@@ -796,15 +997,6 @@ Move the element to a given `x` and `y` position by its upper left corner:
 rect.move(200, 350)
 ```
 
-The `text` element has one optional argument:
-
-```javascript
-// move(x, y, anchor)
-rect.move(200, 350, true)
-```
-
-The third argument can be used to move the text element by its anchor point rather than the calculated left top position.
-
 Note that you can also use the following code to move some elements (like images and rects) around:
 
 ```javascript
@@ -849,19 +1041,32 @@ rect.y() //-> returns 350
 
 `setter`__`returns`: `itself`__
 
-### relative()
-The `move()`, `x()` and `y()` methods move an element to an absolute position. With the `relative()` method, elements can be moved relatively to their current position. This can be done by calling the `relative()` method before the `move()`, `x()` or `y()` methods in the method chain:
+### dmove()
+Move the element to a given `x` and `y` position relative to its current position:
 
 ```javascript
-rect.move(100, 100).relative().move(20, -50)
+rect.dmove(10, 30)
 ```
 
-This will set the `x` position of the element to `120` and the `y` position to `50`.
+__`returns`: `itself`__
 
-It works the same way for `relative().x()` and  `relative().y()`.
+### dx()
+Move element only along x-axis relative to its current position:
 
-__`returns`: `object`__
+```javascript
+rect.dx(200)
+```
 
+__`returns`: `itself`__
+
+### dx()
+Move element only along y-axis relative to its current position:
+
+```javascript
+rect.dy(200)
+```
+
+__`returns`: `itself`__
 
 ### center()
 This is an extra method to move an element by its center:
@@ -869,15 +1074,6 @@ This is an extra method to move an element by its center:
 ```javascript
 rect.center(150, 150)
 ```
-
-The `text` element has one optional argument:
-
-```javascript
-// center(x, y, anchor)
-rect.center(150, 150, true)
-```
-
-The third argument can be used to center the text element by its anchor point rather than the calculated center position.
 
 __`returns`: `itself`__
 
@@ -935,6 +1131,8 @@ rect.size(null, 200)
 ```
 
 Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
+
+There is one exceptions though, the `SVG.Text` only takes one argument and applies the given value to the `font-size` attribute.
 
 __`returns`: `itself`__
 
@@ -1849,7 +2047,18 @@ stop.at({ offset: 0, color: '#333', opacity: 1 })
 
 __`returns`: `itself`__
 
-### from() and to()
+### from()
+To define the direction you can set from `x`, `y` and to `x`, `y`:
+
+```javascript
+gradient.from(0, 0).to(0, 1)
+```
+
+The from and to values are also expressed in percent.
+
+__`returns`: `itself`__
+
+### to()
 To define the direction you can set from `x`, `y` and to `x`, `y`:
 
 ```javascript
@@ -2319,7 +2528,10 @@ Is a bit more complex and is used for polyline and polygon elements. This is a p
 The dynamic representation:
 
 ```javascript
-new SVG.PointArray([[0, 0], [100, 100]])
+[
+  [0, 0]
+, [100, 100]
+]
 ```
 
 Note that every instance of `SVG.Polyline` and `SVG.Polygon` carries a reference to the `SVG.PointArray` instance:
@@ -2331,20 +2543,20 @@ polygon.array //-> returns the SVG.PointArray instance
 _Javascript inheritance stack: `SVG.PointArray` < `SVG.Array`_
 
 ### SVG.PathArray
-Path arrays carry objects representing every point in a path string:
+Path arrays carry arrays representing every segment in a path string:
 
 ```javascript
-'M 0 0 L 100 100 z'
+'M0 0L100 100z'
 ```
 
 The dynamic representation:
 
 ```javascript
-new SVG.PathArray([
-  { type: 'M', x: 0, y: 0 }
-, { type: 'L', x: 100, y: 100 }
-, { type: 'z' }
-])
+[
+  ['M', 0, 0]
+, ['L', 100, 100]
+, ['z']
+]
 ```
 
 Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray` instance:
@@ -2354,7 +2566,6 @@ path.array //-> returns the SVG.PathArray instance
 ```
 
 _Javascript inheritance stack: `SVG.PathArray` < `SVG.Array`_
-
 
 ### morph()
 In order to animate array values the `morph()` method lets you pass a destination value. This can be either the string value, a plain array or an instance of the same type of svg.js array:
@@ -2433,7 +2644,7 @@ __`returns`: `object`__
 ## Extending functionality
 
 ### SVG.invent()
-Creating your own custom elements with svg.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the size. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
+Creating your own custom elements with svg.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the height of the element. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
 
 ```javascript
 SVG.Rounded = SVG.invent({
@@ -2450,7 +2661,7 @@ SVG.Rounded = SVG.invent({
       return this.attr({
         width:  width
       , height: height
-      , rx:     width / 5
+      , rx:     height / 5
       , ry:     height / 5
       })
     }
@@ -2479,8 +2690,8 @@ That's it, the invention is now ready to be used!
 The `SVG.invent()` function always expectes an object. The object can have the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
-- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional]`
-- `extend`: an object with the methods that should eb applied to the element's prototype; `[optional]`
+- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
+- `extend`: an object with the methods that should be applied to the element's prototype; `[optional]`
 - `construct`: an objects with the methods to create the element on the parent element; `[optional]`
 - `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
 
@@ -2510,7 +2721,7 @@ SVG.extend(SVG.Ellipse, {
 ```
 The complete inheritance stack for `SVG.Ellipse` is:
 
-_SVG.Ellipse < SVG.Shape < SVG.Element_
+_`SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 
 The SVG document can be extended by using:
 
@@ -2531,7 +2742,6 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
     return this.fill('orangered')
   }
 })
-
 ```
 
 

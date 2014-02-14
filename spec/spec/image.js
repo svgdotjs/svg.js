@@ -60,6 +60,31 @@ describe('Image', function() {
       expect(image.node.getAttribute('y')).toBe('456')
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      image.move(50,60)
+      image.dx(100)
+      expect(image.node.getAttribute('x')).toBe('150')
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      image.move(50,60)
+      image.dy(120)
+      expect(image.node.getAttribute('y')).toBe('180')
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      image.move(50,60)
+      image.dmove(80, 25)
+      expect(image.node.getAttribute('x')).toBe('130')
+      expect(image.node.getAttribute('y')).toBe('85')
+    })
+  })
   
   describe('center()', function() {
     it('should set the cx and cy position', function() {

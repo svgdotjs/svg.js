@@ -1,21 +1,15 @@
 
-// List font style attributes as they should be applied to style 
-var _styleAttr = ('size family weight stretch variant style').split(' ')
-
 SVG.Text = SVG.invent({
   // Initialize node
   create: function() {
     this.constructor.call(this, SVG.create('text'))
     
-    /* define default style */
-    this.styles = {
-      'font-size':    16
-    , 'font-family':  'Helvetica, Arial, sans-serif'
-    , 'text-anchor':  'start'
-    }
-    
-    this._leading = new SVG.Number('1.2em')
-    this._rebuild = true
+    this._leading = new SVG.Number(1.3) /* store leading value for rebuilding */
+    this._rebuild = true                /* enable automatic updating of dy values */
+    this._build   = false               /* disable build mode for adding multiple lines */
+
+    /* set default font */
+    this.attr('font-family', SVG.defaults.attrs['font-family'])
   }
 
   // Inherit from
@@ -24,96 +18,68 @@ SVG.Text = SVG.invent({
   // Add class methods
 , extend: {
     // Move over x-axis
-    x: function(x, a) {
+    x: function(x) {
       /* act as getter */
       if (x == null)
-        return a ? this.attr('x') : this.bbox().x
+        return this.attr('x')
       
-      /* set x taking anchor in mind */
-      if (!a) {
-        a = this.style('text-anchor')
-        x = a == 'start' ? x : a == 'end' ? x + this.bbox().width : x + this.bbox().width / 2
-      }
-
-      /* move lines as well if no textPath si present */
+      /* move lines as well if no textPath is present */
       if (!this.textPath)
         this.lines.each(function() { if (this.newLined) this.x(x) })
 
       return this.attr('x', x)
     }
+    // Move over y-axis
+  , y: function(y) {
+      /* act as getter */
+      if (y == null)
+        return this.attr('y')
+
+      return this.attr('y', y + this.attr('y') - this.bbox().y)
+    }
     // Move center over x-axis
-  , cx: function(x, a) {
+  , cx: function(x) {
       return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
     }
     // Move center over y-axis
-  , cy: function(y, a) {
-      return y == null ? this.bbox().cy : this.y(a ? y : y - this.bbox().height / 2)
+  , cy: function(y) {
+      return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
     }
     // Move element to given x and y values
-  , move: function(x, y, a) {
-      return this.x(x, a).y(y)
+  , move: function(x, y) {
+      return this.x(x).y(y)
     }
     // Move element by its center
-  , center: function(x, y, a) {
-      return this.cx(x, a).cy(y, a)
+  , center: function(x, y) {
+      return this.cx(x).cy(y)
     }
     // Set the text content
   , text: function(text) {
       /* act as getter */
-      if (text == null)
-        return this.content
+      if (!text) return this.content
       
-      /* remove existing lines */
-      this.clear()
+      /* remove existing content */
+      this.clear().build(true)
       
       if (typeof text === 'function') {
-        this._rebuild = false
-
+        /* call block */
         text.call(this, this)
 
       } else {
-        this._rebuild = true
-
-        /* make sure text is not blank */
-        text = SVG.regex.isBlank.test(text) ? 'text' : text
-        
-        var i, il
-          , lines = text.split('\n')
+        /* store text and make sure text is not blank */
+        text = (this.content = (SVG.regex.isBlank.test(text) ? 'text' : text)).split('\n')
         
         /* build new lines */
-        for (i = 0, il = lines.length; i < il; i++)
-          this.tspan(lines[i]).newLine()
-
-        this.rebuild()
+        for (var i = 0, il = text.length; i < il; i++)
+          this.tspan(text[i]).newLine()
       }
       
-      return this
-    }
-    // Create a tspan
-  , tspan: function(text) {
-      var node  = this.textPath ? this.textPath.node : this.node
-        , tspan = new SVG.TSpan().text(text)
-        , style = this.style()
-      
-      /* add new tspan */
-      node.appendChild(tspan.node)
-      this.lines.add(tspan)
-
-      /* add style if any */
-      if (!SVG.regex.isBlank.test(style))
-        tspan.style(style)
-
-      /* store content */
-      this.content += text
-
-      /* store text parent */
-      tspan.parent = this
-
-      return tspan
+      /* disable build mode and rebuild lines */
+      return this.build(false).rebuild()
     }
     // Set font size
   , size: function(size) {
-      return this.attr('font-size', size)
+      return this.attr('font-size', size).rebuild()
     }
     // Set / get leading
   , leading: function(value) {
@@ -122,47 +88,34 @@ SVG.Text = SVG.invent({
         return this._leading
       
       /* act as setter */
-      value = new SVG.Number(value)
-      this._leading = value
+      this._leading = new SVG.Number(value)
       
-      /* apply leading */
-      this.lines.each(function() {
-        if (this.newLined)
-          this.attr('dy', value)
-      })
-
-      return this
+      return this.rebuild()
     }
-    // rebuild appearance type
-  , rebuild: function() {
+    // Rebuild appearance type
+  , rebuild: function(rebuild) {
       var self = this
+
+      /* store new rebuild flag if given */
+      if (typeof rebuild == 'boolean')
+        this._rebuild = rebuild
 
       /* define position of all lines */
       if (this._rebuild) {
-        this.lines.attr({
-          x:      this.attr('x')
-        , dy:     this._leading
-        , style:  this.style()
+        this.lines.each(function() {
+          if (this.newLined) {
+            if (!this.textPath)
+              this.attr('x', self.attr('x'))
+            this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
+          }
         })
       }
 
       return this
     }
-    // Clear all lines
-  , clear: function() {
-      var node = this.textPath ? this.textPath.node : this.node
-
-      /* remove existing child nodes */
-      while (node.hasChildNodes())
-        node.removeChild(node.lastChild)
-      
-      /* refresh lines */
-      delete this.lines
-      this.lines = new SVG.Set
-      
-      /* initialize content */
-      this.content = ''
-
+    // Enable / disable build mode
+  , build: function(build) {
+      this._build = !!build
       return this
     }
   }
@@ -173,7 +126,12 @@ SVG.Text = SVG.invent({
     text: function(text) {
       return this.put(new SVG.Text).text(text)
     }
+    // Create plain text element
+  , plain: function(text) {
+      return this.put(new SVG.Text).plain(text)
+    }
   }
+
 })
 
 SVG.TSpan = SVG.invent({
@@ -187,8 +145,8 @@ SVG.TSpan = SVG.invent({
 , extend: {
     // Set text content
     text: function(text) {
-      this.node.appendChild(document.createTextNode(text))
-      
+      typeof text === 'function' ? text.call(this, this) : this.plain(text)
+
       return this
     }
     // Shortcut dx
@@ -201,12 +159,66 @@ SVG.TSpan = SVG.invent({
     }
     // Create new line
   , newLine: function() {
+      /* fetch text parent */
+      var t = this.doc(SVG.Text)
+
+      /* mark new line */
       this.newLined = true
-      this.parent.content += '\n'
-      this.dy(this.parent._leading)
-      return this.attr('x', this.parent.x())
+
+      /* apply new hy¡n */
+      return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
     }
   }
   
+})
+
+SVG.extend(SVG.Text, SVG.TSpan, {
+  // Create plain text node
+  plain: function(text) {
+    /* clear if build mode is disabled */
+    if (this._build === false)
+      this.clear()
+
+    /* create text node */
+    this.node.appendChild(document.createTextNode((this.content = text)))
+    
+    return this
+  }
+  // Create a tspan
+, tspan: function(text) {
+    var node  = (this.textPath || this).node
+      , tspan = new SVG.TSpan
+
+    /* clear if build mode is disabled */
+    if (this._build === false)
+      this.clear()
+    
+    /* add new tspan and reference */
+    node.appendChild(tspan.node)
+    tspan.parent = this
+
+    /* only first level tspans are considered to be "lines" */
+    if (this instanceof SVG.Text)
+      this.lines.add(tspan)
+
+    return tspan.text(text)
+  }
+  // Clear all lines
+, clear: function() {
+    var node = (this.textPath || this).node
+
+    /* remove existing child nodes */
+    while (node.hasChildNodes())
+      node.removeChild(node.lastChild)
+    
+    /* reset content references  */
+    if (this instanceof SVG.Text) {
+      delete this.lines
+      this.lines = new SVG.Set
+      this.content = ''
+    }
+    
+    return this
+  }
 })
 

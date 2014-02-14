@@ -147,33 +147,18 @@ SVG.Element = SVG.invent({
           this.node.removeAttribute(a)
         
       } else if (v == null) {
-        /* act as a getter for style attributes */
-        if (this._isStyle(a)) {
-          return a == 'text' ?
-                   this.content :
-                 a == 'leading' && this.leading ?
-                   this.leading() :
-                   this.style(a)
-        
         /* act as a getter if the first and only argument is not an object */
-        } else {
-          v = this.node.getAttribute(a)
-          return v == null ? 
-            SVG.defaults.attrs[a] :
-          SVG.regex.test(v, 'isNumber') ?
-            parseFloat(v) : v
-        }
+        v = this.node.getAttribute(a)
+        return v == null ? 
+          SVG.defaults.attrs[a] :
+        SVG.regex.test(v, 'isNumber') ?
+          parseFloat(v) : v
       
       } else if (a == 'style') {
         /* redirect to the style method */
         return this.style(v)
       
       } else {
-        /* treat x differently on text elements */
-        if (a == 'x' && Array.isArray(this.lines))
-          for (n = this.lines.length - 1; n >= 0; n--)
-            this.lines[n].attr(a, v)
-        
         /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
         if (a == 'stroke-width')
           this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
@@ -192,7 +177,7 @@ SVG.Element = SVG.invent({
         }
         
         /* ensure full hex color */
-        if (SVG.Color.test(v) || SVG.Color.isRgb(v))
+        if (SVG.Color.isColor(v))
           v = new SVG.Color(v)
 
         /* ensure correct numeric values */
@@ -203,23 +188,21 @@ SVG.Element = SVG.invent({
         else if (Array.isArray(v))
           v = new SVG.Array(v)
 
-        /* set give attribute on node */
-        n != null ?
-          this.node.setAttributeNS(n, a, v.toString()) :
-          this.node.setAttribute(a, v.toString())
-        
-        /* if the passed argument belongs in the style as well, add it there */
-        if (this._isStyle(a)) {
-          a == 'text' ?
-            this.text(v) :
-          a == 'leading' && this.leading ?
-            this.leading(v) :
-            this.style(a, v)
-          
-          /* rebuild if required */
-          if (this.rebuild)
-            this.rebuild(a, v)
+        /* if the passed attribute is leading... */
+        if (a == 'leading') {
+          /* ... call the leading method instead */
+          if (this.leading)
+            this.leading(v)
+        } else {
+          /* set give attribute on node */
+          n != null ?
+            this.node.setAttributeNS(n, a, v.toString()) :
+            this.node.setAttribute(a, v.toString())
         }
+        
+        /* rebuild if required */
+        if (this.rebuild && (a == 'font-size' || a == 'x'))
+          this.rebuild(a, v)
       }
       
       return this
@@ -387,10 +370,6 @@ SVG.Element = SVG.invent({
         element = element.parent
 
       return element
-    }
-    // Private: tester method for style detection
-  , _isStyle: function(a) {
-      return typeof a == 'string' ? SVG.regex.test(a, 'isStyle') : false
     }
     // Private: parse a matrix string
   , _parseMatrix: function(o) {

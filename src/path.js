@@ -9,7 +9,7 @@ SVG.Path = SVG.invent({
 , extend: {
     // Plot new poly points
     plot: function(p) {
-      return this.attr('d', (this.array = new SVG.PathArray(p, [{ type:'M',x:0,y:0 }])))
+      return this.attr('d', (this.array = new SVG.PathArray(p, [['M', 0, 0]])))
     }
     // Move by left top corner
   , move: function(x, y) {

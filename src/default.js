@@ -30,6 +30,10 @@ SVG.defaults = {
   , offset:             0
   , 'stop-opacity':     1
   , 'stop-color':       '#000000'
+    /* text */
+  , 'font-size':        16
+  , 'font-family':      'Helvetica, Arial, sans-serif'
+  , 'text-anchor':      'start'
   }
   
   // Default transformation values

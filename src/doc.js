@@ -21,11 +21,11 @@ SVG.Doc = SVG.invent({
     this._defs.parent = this
     this.node.appendChild(this._defs.node)
 
-    /* turno of sub pixel offset by default */
-    this.doSubPixelOffsetFix = false
+    /* turn off sub pixel offset by default */
+    this.doSpof = false
     
     /* ensure correct rendering */
-    if (this.parent.nodeName != 'svg')
+    if (this.parent != this.node)
       this.stage()
   }
 
@@ -34,50 +34,20 @@ SVG.Doc = SVG.invent({
 
   // Add class methods
 , extend: {
-    // Hack for safari preventing text to be rendered in one line.
-    // Basically it sets the position of the svg node to absolute
-    // when the dom is loaded, and resets it to relative a few milliseconds later.
-    // It also handles sub-pixel offset rendering properly.
+    /* enable drawing */
     stage: function() {
-      var check
-        , element = this
-        , wrapper = document.createElement('div')
+      var element = this
 
-      /* set temporary wrapper to position relative */
-      wrapper.style.cssText = 'position:relative;height:100%;'
+      /* insert element */
+      this.parent.appendChild(this.node)
 
-      /* put element into wrapper */
-      element.parent.appendChild(wrapper)
-      wrapper.appendChild(element.node)
-
-      /* check for dom:ready */
-      check = function() {
-        if (document.readyState === 'complete') {
-          element.style('position:absolute;')
-          setTimeout(function() {
-            /* set position back to relative */
-            element.style('position:relative;overflow:hidden;')
-
-            /* remove temporary wrapper */
-            element.parent.removeChild(element.node.parentNode)
-            element.node.parentNode.removeChild(element.node)
-            element.parent.appendChild(element.node)
-
-            /* after wrapping is done, fix sub-pixel offset */
-            element.subPixelOffsetFix()
-            
-            /* make sure sub-pixel offset is fixed every time the window is resized */
-            SVG.on(window, 'resize', function() {
-              element.subPixelOffsetFix()
-            })
-            
-          }, 5)
-        } else {
-          setTimeout(check, 10)
-        }
-      }
-
-      check()
+      /* fix sub-pixel offset */
+      element.spof()
+      
+      /* make sure sub-pixel offset is fixed every time the window is resized */
+      SVG.on(window, 'resize', function() {
+        element.spof()
+      })
 
       return this
     }
@@ -89,8 +59,8 @@ SVG.Doc = SVG.invent({
 
     // Fix for possible sub-pixel offset. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , subPixelOffsetFix: function() {
-      if (this.doSubPixelOffsetFix) {
+  , spof: function() {
+      if (this.doSpof) {
         var pos = this.node.getScreenCTM()
         
         if (pos)
@@ -102,8 +72,9 @@ SVG.Doc = SVG.invent({
       return this
     }
 
+    // Enable sub-pixel offset
   , fixSubPixelOffset: function() {
-      this.doSubPixelOffsetFix = true
+      this.doSpof = true
 
       return this
     }

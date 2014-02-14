@@ -76,8 +76,6 @@ SVG.extend(SVG.PointArray, {
   }
   // Get bounding box of points
 , bbox: function() {
-    if (this._cachedBBox) return this._cachedBBox
-
     SVG.parser.poly.setAttribute('points', this.toString())
 
     return SVG.parser.poly.getBBox()

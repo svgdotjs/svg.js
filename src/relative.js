@@ -1,28 +1,16 @@
 //
 SVG.extend(SVG.Element, SVG.FX, {
-  // Relative methods
-  relative: function() {
-    var b, e = this
-
-    return {
-      // Move over x axis
-      x: function(x) {
-        b = e.bbox()
-
-        return e.x(b.x + (x || 0))
-      }
-      // Move over y axis
-    , y: function(y) {
-        b = e.bbox()
-
-        return e.y(b.y + (y || 0))
-      }
-      // Move over x and y axes
-    , move: function(x, y) {
-        this.x(x)
-        return this.y(y)
-      }
-    }
+  // Relative move over x axis
+  dx: function(x) {
+    return this.x(this.x() + x)
+  }
+  // Relative move over y axis
+, dy: function(y) {
+    return this.y(this.y() + y)
+  }
+  // Relative move over x and y axes
+, dmove: function(x, y) {
+    return this.dx(x).dy(y)
   }
 
 })

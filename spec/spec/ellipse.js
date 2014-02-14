@@ -74,6 +74,31 @@ describe('Ellipse', function() {
       expect(box.y).toBe(456)
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      ellipse.move(50,60)
+      ellipse.dx(100)
+      expect(ellipse.node.getAttribute('cx')).toBe('270')
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      ellipse.move(50,60)
+      ellipse.dy(120)
+      expect(ellipse.node.getAttribute('cy')).toBe('225')
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      ellipse.move(50,60)
+      ellipse.dmove(80, 25)
+      expect(ellipse.node.getAttribute('cx')).toBe('250')
+      expect(ellipse.node.getAttribute('cy')).toBe('130')
+    })
+  })
   
   describe('center()', function() {
     it('sets the cx and cy position', function() {

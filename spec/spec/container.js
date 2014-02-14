@@ -165,22 +165,42 @@ describe('Container', function() {
   })
   
   describe('text()', function() {
-    it('should increase children by 1', function() {
+    it('increases children by 1', function() {
       var initial = draw.children().length
       draw.text(loremIpsum)
       expect(draw.children().length).toBe(initial + 1)
     })
-    it('should create a rect', function() {
+    it('creates a text element', function() {
       expect(draw.text(loremIpsum).type).toBe('text')
     })
-    it('should create an instance of SVG.Rect', function() {
+    it('creates an instance of SVG.Rect', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Text).toBe(true)
     })
-    it('should be an instance of SVG.Shape', function() {
+    it('is an instance of SVG.Shape', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Shape).toBe(true)
     })
-    it('should be an instance of SVG.Element', function() {
+    it('is an instance of SVG.Element', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Element).toBe(true)
+    })
+  })
+
+  describe('plain()', function() {
+    it('increases children by 1', function() {
+      var initial = draw.children().length
+      draw.plain(loremIpsum)
+      expect(draw.children().length).toBe(initial + 1)
+    })
+    it('creates a plain element', function() {
+      expect(draw.plain(loremIpsum).type).toBe('text')
+    })
+    it('creates an instance of SVG.Rect', function() {
+      expect(draw.plain(loremIpsum) instanceof SVG.Text).toBe(true)
+    })
+    it('is an instance of SVG.Shape', function() {
+      expect(draw.plain(loremIpsum) instanceof SVG.Shape).toBe(true)
+    })
+    it('is an instance of SVG.Element', function() {
+      expect(draw.plain(loremIpsum) instanceof SVG.Element).toBe(true)
     })
   })
   

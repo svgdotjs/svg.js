@@ -314,39 +314,6 @@ describe('Element', function() {
       expect(element).toBe(circle)
     })
   })
-
-  describe('relative()', function() {
-    var rect
-
-    beforeEach(function() {
-      rect = draw.rect(100,100).move(50,60)
-    })
-
-    afterEach(function() {
-      draw.clear()
-    })
-    
-    describe('x()', function() {
-      it('moves the x positon of the element', function() {
-        rect.relative().x(100)
-        expect(rect.node.getAttribute('x')).toBe('150')
-      })
-    })
-    describe('y()', function() {
-      it('moves the y positon of the element', function() {
-        rect.relative().x(120)
-        expect(rect.node.getAttribute('x')).toBe('170')
-      })
-    })
-    describe('move()', function() {
-      it('moves the x and y positon of the element', function() {
-        rect.relative().move(80, 25)
-        expect(rect.node.getAttribute('x')).toBe('130')
-        expect(rect.node.getAttribute('y')).toBe('85')
-      })
-    })
-    
-  })
   
 })
 

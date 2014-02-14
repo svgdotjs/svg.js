@@ -63,6 +63,42 @@ describe('Line', function() {
       expect(box.y).toBe(456)
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      line.move(50,60)
+      line.dx(100)
+      var box = line.bbox()
+      expect(box.x).toBe(150)
+      expect(box.y + box.height).toBe(160)
+      expect(box.x + box.width).toBe(250)
+      expect(box.y).toBe(60)
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      line.move(50, 60)
+      line.dy(120)
+      var box = line.bbox()
+      expect(box.x).toBe(50)
+      expect(box.y + box.height).toBe(280)
+      expect(box.x + box.width).toBe(150)
+      expect(box.y).toBe(180)
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      line.move(50,60)
+      line.dmove(80, 25)
+      var box = line.bbox()
+      expect(box.x).toBe(130)
+      expect(box.y + box.height).toBe(185)
+      expect(box.x + box.width).toBe(230)
+      expect(box.y).toBe(85)
+    })
+  })
   
   describe('center()', function() {
     it('should set the cx and cy position', function() {

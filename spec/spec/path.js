@@ -67,6 +67,34 @@ describe('Path', function() {
       expect(box.y).toBe(456)
     })
   })
+
+  describe('dx()', function() {
+    it('moves the x positon of the element relative to the current position', function() {
+      path.move(50,60)
+      path.dx(100)
+      var box = path.bbox()
+      expect(box.x).toBe(150)
+    })
+  })
+
+  describe('dy()', function() {
+    it('moves the y positon of the element relative to the current position', function() {
+      path.move(50, 60)
+      path.dy(120)
+      var box = path.bbox()
+      expect(box.y).toBe(180)
+    })
+  })
+
+  describe('dmove()', function() {
+    it('moves the x and y positon of the element relative to the current position', function() {
+      path.move(50,60)
+      path.dmove(80, 25)
+      var box = path.bbox()
+      expect(box.x).toBe(130)
+      expect(box.y).toBe(85)
+    })
+  })
   
   describe('center()', function() {
     it('should set the cx and cy position', function() {
@@ -149,18 +177,18 @@ describe('Path', function() {
   describe('plot()', function() {
     it('falls back to a single point without an argument', function() {
       path = draw.path()
-      expect(path.node.getAttribute('d')).toBe('M 0 0')
+      expect(path.node.getAttribute('d')).toBe('M0 0 ')
     })
   })
 
   describe('toString()', function() {
     it('renders path array correctly to string', function() {
-      path = path.plot('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
-      expect(path.node.getAttribute('d')).toBe('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
+      path = path.plot('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60 ')
+      expect(path.node.getAttribute('d')).toBe('M50 60A60 60 0 0 0 50 -60H100V100L20 30C10 20 30 40 50 60 ')
     })
     it('renders path array correctly to string', function() {
-      path = path.plot('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
-      expect(path.node.getAttribute('d')).toBe('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60')
+      path = path.plot('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60 ')
+      expect(path.node.getAttribute('d')).toBe('M50 60A60 60 1 1 0 50 -60H100V100L20 30C10 20 30 40 50 60 ')
     })
   })
 

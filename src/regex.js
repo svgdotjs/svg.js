@@ -23,9 +23,6 @@ SVG.regex = {
   /* test css declaration */
 , isCss:        /[^:]+:[^;]+;?/
   
-  /* test css property */
-, isStyle:      /^font|text|leading|cursor/
-  
   /* test for blank string */
 , isBlank:      /^(\s+)?$/
   

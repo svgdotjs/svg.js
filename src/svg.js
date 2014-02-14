@@ -66,13 +66,17 @@ SVG.prepare = function(element) {
   /* select document body and create invisible svg element */
   var body = document.getElementsByTagName('body')[0]
     , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 2)
+    , path = SVG.create('path')
+
+  /* insert parsers */
+  draw.node.appendChild(path)
 
   /* create parser object */
   SVG.parser = {
     body: body || element.parent
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
-  , poly: draw.polygon().node
-  , path: draw.path().node
+  , poly: draw.polyline().node
+  , path: path
   }
 }
 
