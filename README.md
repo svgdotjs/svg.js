@@ -2534,6 +2534,15 @@ The dynamic representation:
 ]
 ```
 
+Precompiling it as a `SVG.PointArray`:
+
+```javascript
+new SVG.PointArray([
+  [0, 0]
+, [100, 100]
+])
+```
+
 Note that every instance of `SVG.Polyline` and `SVG.Polygon` carries a reference to the `SVG.PointArray` instance:
 
 ```javascript
@@ -2559,11 +2568,60 @@ The dynamic representation:
 ]
 ```
 
+Precompiling it as a `SVG.PathArray`:
+
+```javascript
+new SVG.PathArray([
+  ['M', 0, 0]
+, ['L', 100, 100]
+, ['z']
+])
+```
+
 Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray` instance:
 
 ```javascript
 path.array //-> returns the SVG.PathArray instance
 ```
+
+#### Syntax
+The syntax for patharrays is very predictable. They are basically literal representations in the form of two dimentional arrays.
+
+##### Move To
+Original syntax is `M0 0` or `m0 0`. The svg.js syntax `['M',0,0]` or `['m',0,0]`.
+
+##### Line To
+Original syntax is `L100 100` or `l100 100`. The svg.js syntax `['L',100,100]` or `['l',100,100]`.
+
+##### Horizontal line
+Original syntax is `H200` or `h200`. The svg.js syntax `['H',200]` or `['h',200]`.
+
+##### Vertical line
+Original syntax is `V300` or `v300`. The svg.js syntax `['V',300]` or `['v',300]`.
+
+##### Bezier curve
+Original syntax is `C20 20 40 20 50 10` or `c20 20 40 20 50 10`. The svg.js syntax `['C',20,20,40,20,50,10]` or `['c',20,20,40,20,50,10]`.
+
+Or mirrored with `S`:
+
+Original syntax is `S40 20 50 10` or `s40 20 50 10`. The svg.js syntax `['S',40,20,50,10]` or `['s',40,20,50,10]`.
+
+Or quadratic with `Q`:
+
+Original syntax is `Q20 20 50 10` or `q20 20 50 10`. The svg.js syntax `['Q',20,20,50,10]` or `['q',20,20,50,10]`.
+
+Or a complete shortcut with `T`:
+
+Original syntax is `T50 10` or `t50 10`. The svg.js syntax `['T',50,10]` or `['t',50,10]`.
+
+##### Arc
+Original syntax is `A 30 50 0 0 1 162 163` or `a 30 50 0 0 1 162 163`. The svg.js syntax `['A',30,50,0,0,1,162,163]` or `['a',30,50,0,0,1,162,163]`.
+
+##### Close
+Original syntax is `Z` or `z`. The svg.js syntax `['Z']` or `['z']`.
+
+The best documentation on paths can be found at https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths.
+
 
 _Javascript inheritance stack: `SVG.PathArray` < `SVG.Array`_
 
