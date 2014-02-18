@@ -1059,7 +1059,7 @@ rect.dx(200)
 
 __`returns`: `itself`__
 
-### dx()
+### dy()
 Move element only along y-axis relative to its current position:
 
 ```javascript
