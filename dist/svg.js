@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.5 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js 1.0.0-rc.5-4-g9995c05 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2060,7 +2060,12 @@
     , 'mouseout'
     , 'mousemove'
     , 'mouseenter'
-    , 'mouseleave' ].forEach(function(event) {
+    , 'mouseleave'
+    , 'touchstart'
+    , 'touchmove'
+    , 'touchleave'
+    , 'touchend'
+    , 'touchcancel' ].forEach(function(event) {
     
     /* add event to SVG.Element */
     SVG.Element.prototype[event] = function(f) {

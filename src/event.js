@@ -11,7 +11,12 @@
   , 'mouseout'
   , 'mousemove'
   , 'mouseenter'
-  , 'mouseleave' ].forEach(function(event) {
+  , 'mouseleave'
+  , 'touchstart'
+  , 'touchmove'
+  , 'touchleave'
+  , 'touchend'
+  , 'touchcancel' ].forEach(function(event) {
   
   /* add event to SVG.Element */
   SVG.Element.prototype[event] = function(f) {

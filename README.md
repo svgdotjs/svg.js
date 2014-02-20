@@ -501,6 +501,25 @@ Note that the `leading()` method assumes that every first level tspan in a text 
 
 __`returns`: `itself`__
 
+### build()
+The `build()` can be used to enable / disable build mode. With build mode disabled, the `plain()` and `tspan()` methods will first call the `clear()` bethod before adding the new content. So when build mode is enabled, `plain()` and `tspan()` will append the new content to the existing content. When passing a block to the `text()` method, build mode is toggled automatically before and after the block is called. But in some cases it might be useful to be able to toggle it manually:
+
+
+```javascript
+var text = draw.text('This is just the start, ')
+
+text.build(true)  // enables build mode
+
+var tspan = text.tspan('something pink in the middle ').fill('#00ff97')
+text.plain('and again boring at the end.')
+
+text.build(false) // disables build mode
+
+tspan.animate('2s').fill('#f06')
+```
+
+__`returns`: `itself`__
+
 ### clear()
 Clear all the contents of the called text element:
 
@@ -2320,7 +2339,7 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter` and `mouseleave`.
+All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchmove`, `touchleave`, `touchend`, `touchcancel`.
 
 __`returns`: `itself`__
 
