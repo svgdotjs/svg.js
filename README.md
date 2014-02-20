@@ -2339,7 +2339,7 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchmove`, `touchleave`, `touchend`, `touchcancel`.
+All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
 
 __`returns`: `itself`__
 
