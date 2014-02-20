@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.5-4-g9995c05 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
+/* svg.js 1.0.0-rc.5-6-g2a986d0 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2373,8 +2373,8 @@
           this
       }
       // Add a color stop
-    , at: function(stop) {
-        return this.put(new SVG.Stop).update(stop)
+    , at: function(offset, color, opacity) {
+        return this.put(new SVG.Stop).update(offset, color, opacity)
       }
       // Update gradient
     , update: function(block) {
@@ -2425,6 +2425,14 @@
   , extend: {
       // add color stops
       update: function(o) {
+        if (typeof o == 'number' || o instanceof SVG.Number) {
+          o = {
+            offset:  arguments[0]
+          , color:   arguments[1]
+          , opacity: arguments[2]
+          }
+        }
+  
         /* set attributes */
         if (o.opacity != null) this.attr('stop-opacity', o.opacity)
         if (o.color   != null) this.attr('stop-color', o.color)

@@ -82,6 +82,19 @@ describe('Gradient', function() {
       })
       expect(gradient.children().length).toBe(2)
     })
+
+    it('accepts multiple aruments on fixed positions', function() {
+      gradient = draw.gradient('linear', function(stop) {
+        s1 = stop.at(0.11, '#333')
+        s2 = stop.at(0.94, '#fff', 0.5)
+      })
+      expect(gradient.children().length).toBe(2)
+      expect(s1.attr('offset')).toBe(0.11)
+      expect(s1.attr('stop-color')).toBe('#333333')
+      expect(s2.attr('offset')).toBe(0.94)
+      expect(s2.attr('stop-color')).toBe('#ffffff')
+      expect(s2.attr('stop-opacity')).toBe(0.5)
+    })
     
   })
 

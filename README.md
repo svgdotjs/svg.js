@@ -2050,8 +2050,8 @@ There are linear and radial gradients. The linear gradient can be created like t
 
 ```javascript
 var gradient = draw.gradient('linear', function(stop) {
-  stop.at({ offset: 0, color: '#333', opacity: 1 })
-  stop.at({ offset: 1, color: '#fff', opacity: 1 })
+  stop.at(0, '#333')
+  stop.at(1, '#fff')
 })
 ```
 
@@ -2059,6 +2059,12 @@ __`returns`: `SVG.Gradient`__
 
 ### at()
 The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`). 
+
+```javascript
+stop.at(0, '#333')
+```
+
+or
 
 ```javascript
 stop.at({ offset: 0, color: '#333', opacity: 1 })
@@ -2093,8 +2099,8 @@ Radial gradients have a `radius()` method to define the outermost radius to wher
 
 ```javascript
 var gradient = draw.gradient('radial', function(stop) {
-  stop.at({ offset: 0, color: '#333', opacity: 1 })
-  stop.at({ offset: 1, color: '#fff', opacity: 1 })
+  stop.at(0, '#333')
+  stop.at(1, '#fff')
 })
 
 gradient.from(0.5, 0.5).to(0.5, 0.5).radius(0.5)
@@ -2107,8 +2113,8 @@ A gradient can also be updated afterwards:
 
 ```javascript
 gradient.update(function(stop) {
-  stop.at({ offset: 0.1, color: '#333', opacity: 0.2 })
-  stop.at({ offset: 0.9, color: '#f03', opacity: 1 })
+  stop.at(0.1, '#333', 0.2)
+  stop.at(0.9, '#f03', 1)
 })
 ```
 
@@ -2118,12 +2124,12 @@ And even a single stop can be updated:
 var s1, s2, s3
 
 draw.gradient('radial', function(stop) {
-  s1 = stop.at({ offset: 0, color: '#000', opacity: 1 })
-  s2 = stop.at({ offset: 0.5, color: '#f03', opacity: 1 })
-  s3 = stop.at({ offset: 1, color: '#066', opacity: 1 })
+  s1 = stop.at(0, '#000')
+  s2 = stop.at(0.5, '#f03')
+  s3 = stop.at(1, '#066')
 })
 
-s1.update({ offset: 0.1, color: '#0f0', opacity: 1 })
+s1.update(0.1, '#0f0', 1)
 ```
 
 __`returns`: `itself`__
