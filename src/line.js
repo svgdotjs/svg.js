@@ -49,7 +49,7 @@ SVG.Line = SVG.invent({
     }
     // Set line size by width and height
   , size: function(width, height) {
-      var p = this._proportionalSize(width, height)
+      var p = proportionalSize(this.bbox(), width, height)
 
       return this.width(p.width).height(p.height)
     }

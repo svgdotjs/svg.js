@@ -1,36 +1,42 @@
 describe('Array', function () {
+	var array
 
 	it('parses a matrix array correctly to string', function() {
-		var array = new SVG.Array([ .343,  .669, .119, 0,   0 
+		array = new SVG.Array([ .343,  .669, .119, 0,   0 
 					 										, .249, -.626, .130, 0,   0
 					 										, .172,  .334, .111, 0,   0
 					 										, .000,  .000, .000, 1,  -0 ])
 
 		expect(array + '').toBe('0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0')
 	})
-
+	describe('reverse()', function() {
+		it('reverses the array', function() {
+			array = new SVG.Array([1 ,2 ,3, 4, 5]).reverse()
+			expect(array.value).toEqual([5, 4, 3, 2, 1])
+		})
+		it('returns itself', function() {
+			array = new SVG.Array()
+			expect(array.reverse()).toBe(array)
+		})
+	})
 })
 
 
 describe('PointArray', function () {
-
 	it('parses a string to a point array', function() {
 		var array = new SVG.PointArray('0,1 -.05,7.95 1000.0001,-200.222')
 
 		expect(array.valueOf()).toEqual([[0, 1], [-0.05, 7.95], [1000.0001, -200.222]])
 	})
-
 	it('parses a points array correctly to string', function() {
 		var array = new SVG.PointArray([[0,.15], [-100,-3.141592654], [50,100]])
 
 		expect(array + '').toBe('0,0.15 -100,-3.141592654 50,100')
 	})
-
 })
 
-/* toUpperCase() for Firefox */
 describe('PathArray', function () {
-	var p1, p2
+	var p1, p2, p3
 
 	beforeEach(function() {
 		p1 = new SVG.PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')

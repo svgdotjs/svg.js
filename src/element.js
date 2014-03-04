@@ -4,14 +4,11 @@ SVG.Element = SVG.invent({
   create: function(node) {
     /* make stroke value accessible dynamically */
     this._stroke = SVG.defaults.attrs.stroke
-    
-    /* initialize style store */
-    this.styles = {}
-    
+
     /* initialize transformation store with defaults */
     this.trans = SVG.defaults.trans()
     
-    /* keep reference to the element node */
+    /* create circular reference */
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
@@ -22,7 +19,7 @@ SVG.Element = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      if (x) {
+      if (x != null) {
         x = new SVG.Number(x)
         x.value /= this.trans.scaleX
       }
@@ -30,7 +27,7 @@ SVG.Element = SVG.invent({
     }
     // Move over y-axis
   , y: function(y) {
-      if (y) {
+      if (y != null) {
         y = new SVG.Number(y)
         y.value /= this.trans.scaleY
       }
@@ -62,7 +59,7 @@ SVG.Element = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = this._proportionalSize(width, height)
+      var p = proportionalSize(this.bbox(), width, height)
 
       return this.attr({
         width:  new SVG.Number(p.width)
@@ -134,7 +131,7 @@ SVG.Element = SVG.invent({
         a = {}
         v = this.node.attributes
         for (n = v.length - 1; n >= 0; n--)
-          a[v[n].nodeName] = SVG.regex.test(v[n].nodeValue, 'isNumber') ? parseFloat(v[n].nodeValue) : v[n].nodeValue
+          a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue) ? parseFloat(v[n].nodeValue) : v[n].nodeValue
         
         return a
         
@@ -151,7 +148,7 @@ SVG.Element = SVG.invent({
         v = this.node.getAttribute(a)
         return v == null ? 
           SVG.defaults.attrs[a] :
-        SVG.regex.test(v, 'isNumber') ?
+        SVG.regex.isNumber.test(v) ?
           parseFloat(v) : v
       
       } else if (a == 'style') {
@@ -176,14 +173,14 @@ SVG.Element = SVG.invent({
             })
         }
         
-        /* ensure full hex color */
-        if (SVG.Color.isColor(v))
-          v = new SVG.Color(v)
-
-        /* ensure correct numeric values */
-        else if (typeof v === 'number')
+        /* ensure correct numeric values (also accepts NaN and Infinity) */
+        if (typeof v === 'number')
           v = new SVG.Number(v)
 
+        /* ensure full hex color */
+        else if (SVG.Color.isColor(v))
+          v = new SVG.Color(v)
+        
         /* parse array values */
         else if (Array.isArray(v))
           v = new SVG.Array(v)
@@ -194,8 +191,8 @@ SVG.Element = SVG.invent({
           if (this.leading)
             this.leading(v)
         } else {
-          /* set give attribute on node */
-          n != null ?
+          /* set given attribute on node */
+          typeof n === 'string' ?
             this.node.setAttributeNS(n, a, v.toString()) :
             this.node.setAttribute(a, v.toString())
         }
@@ -230,7 +227,7 @@ SVG.Element = SVG.invent({
       var transform = []
       
       /* parse matrix */
-      o = this._parseMatrix(o)
+      o = parseMatrix(o)
       
       /* merge values */
       for (v in o)
@@ -284,7 +281,7 @@ SVG.Element = SVG.invent({
   , style: function(s, v) {
       if (arguments.length == 0) {
         /* get full style */
-        return this.attr('style') || ''
+        return this.node.style.cssText || ''
       
       } else if (arguments.length < 2) {
         /* apply every style individually if an object is passed */
@@ -296,36 +293,18 @@ SVG.Element = SVG.invent({
           s = s.split(';')
 
           /* apply every definition individually */
-          for (var i = 0; i < s.length; i++) {
-            v = s[i].split(':')
-
-            if (v.length == 2)
-              this.style(v[0].replace(/\s+/g, ''), v[1].replace(/^\s+/,'').replace(/\s+$/,''))
+          for (v = 0; v < s.length; v++) {
+            v = s[v].split(':')
+            this.style(v[0].replace(/\s+/g, ''), v[1])
           }
         } else {
           /* act as a getter if the first and only argument is not an object */
-          return this.styles[s]
+          return this.node.style[camelCase(s)]
         }
       
-      } else if (v === null || SVG.regex.test(v, 'isBlank')) {
-        /* remove value */
-        delete this.styles[s]
-        
       } else {
-        /* store value */
-        this.styles[s] = v
+        this.node.style[camelCase(s)] = v === null || SVG.regex.isBlank.test(v) ? null : v
       }
-      
-      /* rebuild style string */
-      s = ''
-      for (v in this.styles)
-        s += v + ':' + this.styles[v] + ';'
-      
-      /* apply style */
-      if (s == '')
-        this.node.removeAttribute('style')
-      else
-        this.node.setAttribute('style', s)
       
       return this
     }
@@ -371,41 +350,5 @@ SVG.Element = SVG.invent({
 
       return element
     }
-    // Private: parse a matrix string
-  , _parseMatrix: function(o) {
-      if (o.matrix) {
-        /* split matrix string */
-        var m = o.matrix.replace(/\s/g, '').split(',')
-        
-        /* pasrse values */
-        if (m.length == 6) {
-          o.a = parseFloat(m[0])
-          o.b = parseFloat(m[1])
-          o.c = parseFloat(m[2])
-          o.d = parseFloat(m[3])
-          o.e = parseFloat(m[4])
-          o.f = parseFloat(m[5])
-        }
-      }
-      
-      return o
-    }
-    // Private: calculate proportional width and height values when necessary
-  , _proportionalSize: function(width, height) {
-      if (width == null || height == null) {
-        var box = this.bbox()
-
-        if (height == null)
-          height = box.height / box.width * width
-        else if (width == null)
-          width = box.width / box.height * height
-      }
-      
-      return {
-        width:  width
-      , height: height
-      }
-    }
   }
-  
 })

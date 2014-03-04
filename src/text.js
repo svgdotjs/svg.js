@@ -4,9 +4,9 @@ SVG.Text = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('text'))
     
-    this._leading = new SVG.Number(1.3) /* store leading value for rebuilding */
-    this._rebuild = true                /* enable automatic updating of dy values */
-    this._build   = false               /* disable build mode for adding multiple lines */
+    this._leading = new SVG.Number(1.3)    /* store leading value for rebuilding */
+    this._rebuild = true                   /* enable automatic updating of dy values */
+    this._build   = false                  /* disable build mode for adding multiple lines */
 
     /* set default font */
     this.attr('font-family', SVG.defaults.attrs['font-family'])
@@ -31,11 +31,13 @@ SVG.Text = SVG.invent({
     }
     // Move over y-axis
   , y: function(y) {
+      var o = this.attr('y') - this.bbox().y
+
       /* act as getter */
       if (y == null)
-        return this.attr('y')
+        return this.attr('y') - o
 
-      return this.attr('y', y + this.attr('y') - this.bbox().y)
+      return this.attr('y', y + o)
     }
     // Move center over x-axis
   , cx: function(x) {
@@ -44,14 +46,6 @@ SVG.Text = SVG.invent({
     // Move center over y-axis
   , cy: function(y) {
       return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
-    }
-    // Move element to given x and y values
-  , move: function(x, y) {
-      return this.x(x).y(y)
-    }
-    // Move element by its center
-  , center: function(x, y) {
-      return this.cx(x).cy(y)
     }
     // Set the text content
   , text: function(text) {

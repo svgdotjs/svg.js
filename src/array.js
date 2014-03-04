@@ -70,6 +70,12 @@ SVG.extend(SVG.Array, {
 , split: function(string) {
     return string.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g,'').split(' ') 
   }
+  // Reverse array
+, reverse: function() {
+    this.value.reverse()
+
+    return this
+  }
 
 })
 

@@ -33,7 +33,7 @@ SVG.Ellipse = SVG.invent({
     }
     // Custom size function
   , size: function(width, height) {
-      var p = this._proportionalSize(width, height)
+      var p = proportionalSize(this.bbox(), width, height)
 
       return this.attr({
         rx: new SVG.Number(p.width).divide(2)

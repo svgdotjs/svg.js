@@ -64,7 +64,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
   // Set element size to given width and height
 , size: function(width, height) {
-    var p = this._proportionalSize(width, height)
+    var p = proportionalSize(this.bbox(), width, height)
 
     return this.attr('points', this.array.size(p.width, p.height))
   }

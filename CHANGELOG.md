@@ -1,3 +1,16 @@
+# 1.0.0-rc.6 (03/03/2014)
+
+- fine-tuned text element positioning
+- fixed a bug in text `dy()` method
+- added `leading()` method to `SVG.FX`
+- removed internal representation for `style`
+- added `reverse()` method to `SVG.Array` (and thereby also to `SVG.PointArray` and `SVG.PathArray`)
+- added `fulfill` option to `stop()` method in `SVG.FX` to finalise animations
+- calling `at()` method directly on morphable svg.js instances in `SVG.FX` module
+- moved most `_private` methods to local named functions
+- moved helpers to a separate file
+- added more output values to `bbox()` and `rbox()` methods
+
 # 1.0.0-rc.5 (14/02/2014)
 
 - added `plain()` method to `SVG.Text` element to add plain text content, without tspans

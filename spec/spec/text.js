@@ -1,6 +1,6 @@
 // IMPORTANT!!!
-// The native getBBox() on text elements is not accurate to the pixel.
-// Therefore some values are treated with the approximately() function.
+// The native getBBox() on text elements isn't always accurate in the decimals.
+// Therefore sometimes some rounding is used to make test work as expected.
 
 describe('Text', function() {
   var text
@@ -15,50 +15,50 @@ describe('Text', function() {
   
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
-      expect(approximately(text.x())).toBe(approximately(0))
+      expect(text.x()).toBe(0)
     })
     it('sets the value of x with the first argument', function() {
       text.x(123)
       var box = text.bbox()
-      expect(approximately(box.x, 5)).toBe(approximately(123, 5))
+      expect(box.x).toBe(123)
     })
     it('sets the value of x based on the anchor with the first argument', function() {
       text.x(123, true)
       var box = text.bbox()
-      expect(approximately(box.x, 5)).toBe(approximately(123, 5))
+      expect(box.x).toBe(123)
     })
   })
   
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
-      expect(text.y()).toBe(0)
+      expect(text.y(0).y()).toBe(0)
     })
     it('sets the value of y with the first argument', function() {
       text.y(345)
       var box = text.bbox()
-      expect(approximately(box.y, 5)).toBe(approximately(345, 5))
+      expect(box.y).toBe(345)
     })
     it('sets the value of y based on the anchor with the first argument', function() {
       text.y(345, true)
       var box = text.bbox()
-      expect(approximately(box.y, 5)).toBe(approximately(345, 5))
+      expect(box.y).toBe(345)
     })
   })
   
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       var box = text.bbox()
-      expect(approximately(text.cx())).toBe(approximately(box.width / 2))
+      expect(text.cx()).toBe(box.width / 2)
     })
     it('sets the value of cx with the first argument', function() {
       text.cx(123)
       var box = text.bbox()
-      expect(approximately(box.cx, 5)).toBe(approximately(123, 5))
+      expect(box.cx).toBe(123)
     })
     it('sets the value of cx based on the anchor with the first argument', function() {
       text.cx(123, true)
       var box = text.bbox()
-      expect(approximately(box.cx, 5)).toBe(approximately(123, 5))
+      expect(box.cx).toBe(123)
     })
   })
   
@@ -70,7 +70,7 @@ describe('Text', function() {
     it('sets the value of cy with the first argument', function() {
       text.cy(345)
       var box = text.bbox()
-      expect(approximately(box.cy, 5)).toBe(approximately(345, 5))
+      expect(Math.round(box.cy * 10) / 10).toBe(345)
     })
   })
   
@@ -87,8 +87,8 @@ describe('Text', function() {
     it('sets the cx and cy position', function() {
       text.center(321,567)
       var box = text.bbox()
-      expect(approximately(box.cx, 5)).toBe(approximately(321, 5))
-      expect(approximately(box.cy, 6)).toBe(approximately(567, 6))
+      expect(box.cx).toBe(321)
+      expect(Math.round(box.cy * 10) / 10).toBe(567)
     })
   })
   

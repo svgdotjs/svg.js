@@ -6,36 +6,34 @@ SVG.Number = function(value) {
   this.unit = ''
 
   /* parse value */
-  switch(typeof value) {
-    case 'number':
-      /* ensure a valid numeric value */
-      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
-    break
-    case 'string':
-      var match = value.match(SVG.regex.unit)
+  if (typeof value === 'number') {
+    /* ensure a valid numeric value */
+    this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
-      if (match) {
-        /* make value numeric */
-        this.value = parseFloat(match[1])
+  } else if (typeof value === 'string') {
+    var match = value.match(SVG.regex.unit)
+
+    if (match) {
+      /* make value numeric */
+      this.value = parseFloat(match[1])
     
-        /* normalize percent value */
-        if (match[2] == '%')
-          this.value /= 100
-        else if (match[2] == 's')
-          this.value *= 1000
+      /* normalize percent value */
+      if (match[2] == '%')
+        this.value /= 100
+      else if (match[2] == 's')
+        this.value *= 1000
     
-        /* store unit */
-        this.unit = match[2]
-      }
-      
-    break
-    default:
-      if (value instanceof SVG.Number) {
-        this.value = value.value
-        this.unit  = value.unit
-      }
-    break
+      /* store unit */
+      this.unit = match[2]
+    }
+
+  } else {
+    if (value instanceof SVG.Number) {
+      this.value = value.value
+      this.unit  = value.unit
+    }
   }
+
 }
 
 SVG.extend(SVG.Number, {
@@ -93,7 +91,7 @@ SVG.extend(SVG.Number, {
     /* make sure a destination is defined */
     if (!this.destination) return this
 
-    /* generate morphed number */
+    /* generate new morphed number */
     return new SVG.Number(this.destination)
         .minus(this)
         .times(pos)

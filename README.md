@@ -529,6 +529,10 @@ text.clear()
 
 __`returns`: `itself`__
 
+### lines
+All added tspans are stored in the `lines` reference, which is an instance of `SVG.Set`.
+
+
 ## TSpan
 The tspan elements are only available inside text elements or inside other tspan elements. In svg.js they have a class of their own:
 
@@ -1330,7 +1334,7 @@ path.bbox()
 This will return an instance of `SVG.BBox` containing the following values:
 
 ```javascript
-{ width: 20, height: 20, x: 10, y: 20, cx: 30, cy: 20 } 
+{ width: 20, height: 20, x: 10, y: 20, cx: 20, cy: 30, x2: 30, y2: 40 } 
 ```
 
 As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
@@ -1496,6 +1500,14 @@ Or by invoking another animation:
 rect.animate().move(200, 200)
 
 rect.animate().center(200, 200)
+```
+
+By calling `stop()`, the transition is left at its current position. By passing `true` as the first argument to `stop()`, the animation will be fulfilled instantly:
+
+```javascript
+rect.animate().move(200, 200)
+
+rect.stop(true)
 ```
 
 Stopping an animation is irreversable.
@@ -2709,6 +2721,17 @@ array.toString() //-> returns '100,100 322,433'
 ```
 
 Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
+
+__`returns`: `itself`__
+
+### reverse()
+Reverses the order of the array:
+
+```javascript
+var array = new SVG.PointArray([[0, 0], [100, 100]])
+array.reverse()
+array.toString() //-> returns '100,100 0,0'
+```
 
 __`returns`: `itself`__
 

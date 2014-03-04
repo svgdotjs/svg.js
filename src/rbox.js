@@ -46,9 +46,8 @@ SVG.RBox = function(element) {
   this.width  = box.width  /= zoom
   this.height = box.height /= zoom
   
-  /* add the center */
-  this.cx = this.x + this.width  / 2
-  this.cy = this.y + this.height / 2
+  /* add center, right and bottom */
+  boxProperties(this)
   
 }
 
@@ -64,9 +63,8 @@ SVG.extend(SVG.RBox, {
     b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
     b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
 
-    /* add the center */
-    b.cx = b.x + b.width / 2
-    b.cy = b.y + b.height / 2
+    /* add center, right and bottom */
+    boxProperties(b)
 
     return b
   }

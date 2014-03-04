@@ -6,7 +6,7 @@
 , "keywords":     ["svg", "vector", "graphics", "animation"]
 , "author":       "Wout Fierens <wout@impinc.co.uk>"
 , "main":         "dist/svg.js"
-, "version":      "1.0.0-rc.5"
+, "version":      "1.0.0-rc.6"
 , "jam": {
     "include": [
       "dist/svg.js"
@@ -17,8 +17,8 @@
 , "maintainers": [
     {
       "name":     "Wout Fierens"
-    , "email":    "wout@impinc.co.uk"
-    , "web":      "http://impinc.co.uk"
+    , "email":    "wout@woutfierens.com"
+    , "web":      "http://woutfierens.com"
     }
   ]
 , "licenses": [

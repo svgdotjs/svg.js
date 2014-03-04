@@ -27,7 +27,7 @@ SVG.Image = SVG.invent({
           p.size(self.width(), self.height())
         
         /* callback */
-        if (typeof self._loaded == 'function')
+        if (typeof self._loaded === 'function')
           self._loaded.call(self, {
             width:  img.width
           , height: img.height
@@ -52,4 +52,5 @@ SVG.Image = SVG.invent({
       return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
     }
   }
+
 })

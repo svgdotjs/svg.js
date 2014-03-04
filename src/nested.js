@@ -12,7 +12,7 @@ SVG.Nested = SVG.invent({
   // Add parent method
 , construct: {
     // Create nested svg document
-  nested: function() {
+    nested: function() {
       return this.put(new SVG.Nested)
     }
   }

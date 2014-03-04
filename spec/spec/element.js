@@ -57,15 +57,16 @@ describe('Element', function() {
     })
     it('gets the "style" attribute as a string', function() {
       rect.style('cursor', 'pointer')
-      expect(stripped(rect.attr('style'))).toBe('cursor:pointer;')
+      expect(rect.node.style.cursor).toBe('pointer')
     })
     it('redirects to the style() method when setting a style string', function() {
       rect.attr('style', 'cursor:move;')
-      expect(stripped(rect.node.getAttribute('style'))).toBe('cursor:move;')
+      expect(rect.node.style.cursor).toBe('move')
     })
     it('should remove style attribute on node if the style is empty', function() {
-      rect.style('style', '')
-      expect(rect.node.getAttribute('style')).toBe(null)
+      rect.style('cursor', 'move')
+      rect.style('cursor', '')
+      expect(rect.style.cursor).toBe(undefined)
     })
     it('should act as a global getter when no arguments are given', function() {
       rect.fill('#ff0066')

@@ -100,29 +100,33 @@ SVG.FX = SVG.invent({
         } else {
           /* run all x-position properties */
           if (fx._x)
-            element.x(at(fx._x, pos))
+            element.x(fx._x.at(pos))
           else if (fx._cx)
-            element.cx(at(fx._cx, pos))
+            element.cx(fx._cx.at(pos))
 
           /* run all y-position properties */
           if (fx._y)
-            element.y(at(fx._y, pos))
+            element.y(fx._y.at(pos))
           else if (fx._cy)
-            element.cy(at(fx._cy, pos))
+            element.cy(fx._cy.at(pos))
 
           /* run all size properties */
           if (fx._size)
-            element.size(at(fx._size.width, pos), at(fx._size.height, pos))
+            element.size(fx._size.width.at(pos), fx._size.height.at(pos))
         }
 
         /* run all viewbox properties */
         if (fx._viewbox)
           element.viewbox(
-            at(fx._viewbox.x, pos)
-          , at(fx._viewbox.y, pos)
-          , at(fx._viewbox.width, pos)
-          , at(fx._viewbox.height, pos)
+            fx._viewbox.x.at(pos)
+          , fx._viewbox.y.at(pos)
+          , fx._viewbox.width.at(pos)
+          , fx._viewbox.height.at(pos)
           )
+
+        /* run leading property */
+        if (fx._leading)
+          element.leading(fx._leading.at(pos))
 
         /* animate attributes */
         for (i = akeys.length - 1; i >= 0; i--)
@@ -158,7 +162,7 @@ SVG.FX = SVG.invent({
           }
 
           /* render function */
-          fx.render = function(){
+          fx.render = function() {
             
             if (fx.situation.play === true) {
               // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
@@ -224,7 +228,7 @@ SVG.FX = SVG.invent({
   , transform: function(o, v) {
       if (arguments.length == 1) {
         /* parse matrix string */
-        o = this.target._parseMatrix(o)
+        o = parseMatrix(o)
         
         /* dlete matrixstring from object */
         delete o.matrix
@@ -256,25 +260,25 @@ SVG.FX = SVG.invent({
     }
     // Animatable x-axis
   , x: function(x) {
-      this._x = { from: this.target.x(), to: x }
+      this._x = new SVG.Number(this.target.x()).morph(x)
       
       return this
     }
     // Animatable y-axis
   , y: function(y) {
-      this._y = { from: this.target.y(), to: y }
+      this._y = new SVG.Number(this.target.y()).morph(y)
       
       return this
     }
     // Animatable center x-axis
   , cx: function(x) {
-      this._cx = { from: this.target.cx(), to: x }
+      this._cx = new SVG.Number(this.target.cx()).morph(x)
       
       return this
     }
     // Animatable center y-axis
   , cy: function(y) {
-      this._cy = { from: this.target.cy(), to: y }
+      this._cy = new SVG.Number(this.target.cy()).morph(y)
       
       return this
     }
@@ -297,8 +301,8 @@ SVG.FX = SVG.invent({
         var box = this.target.bbox()
 
         this._size = {
-          width:  { from: box.width,  to: width  }
-        , height: { from: box.height, to: height }
+          width:  new SVG.Number(box.width).morph(width)
+        , height: new SVG.Number(box.height).morph(height)
         }
       }
       
@@ -310,16 +314,23 @@ SVG.FX = SVG.invent({
 
       return this
     }
+    // Add leading method
+  , leading: function(value) {
+      if (this.target._leading)
+        this._leading = new SVG.Number(this.target._leading).morph(value)
+
+      return this
+    }
     // Add animatable viewbox
   , viewbox: function(x, y, width, height) {
       if (this.target instanceof SVG.Container) {
         var box = this.target.viewbox()
         
         this._viewbox = {
-          x:      { from: box.x,      to: x      }
-        , y:      { from: box.y,      to: y      }
-        , width:  { from: box.width,  to: width  }
-        , height: { from: box.height, to: height }
+          x:      new SVG.Number(box.x).morph(x)
+        , y:      new SVG.Number(box.y).morph(y)
+        , width:  new SVG.Number(box.width).morph(width)
+        , height: new SVG.Number(box.height).morph(height)
         }
       }
       
@@ -354,28 +365,35 @@ SVG.FX = SVG.invent({
       return this
     }
     // Stop running animation
-  , stop: function() {
-      /* stop current animation */
-      clearTimeout(this.timeout)
-      clearInterval(this.interval)
+  , stop: function(fulfill) {
+      /* fulfill animation */
+      if (fulfill === true) {
+        this.animate(0)
+
+      } else {
+        /* stop current animation */
+        clearTimeout(this.timeout)
+
+        /* reset storage for properties that need animation */
+        this.attrs     = {}
+        this.trans     = {}
+        this.styles    = {}
+        this.situation = {}
+
+        /* delete destinations */
+        delete this._x
+        delete this._y
+        delete this._cx
+        delete this._cy
+        delete this._size
+        delete this._plot
+        delete this._loop
+        delete this._after
+        delete this._during
+        delete this._leading
+        delete this._viewbox
+      }
       
-      /* reset storage for properties that need animation */
-      this.attrs     = {}
-      this.trans     = {}
-      this.styles    = {}
-      this.situation = {}
-
-      delete this._x
-      delete this._y
-      delete this._cx
-      delete this._cy
-      delete this._size
-      delete this._plot
-      delete this._loop
-      delete this._after
-      delete this._during
-      delete this._viewbox
-
       return this
     }
     // Pause running animation
@@ -412,9 +430,9 @@ SVG.FX = SVG.invent({
       return (this.fx || (this.fx = new SVG.FX(this))).stop().animate(d, ease, delay)
     }
     // Stop current animation; this is an alias to the fx instance
-  , stop: function() {
+  , stop: function(fulfill) {
       if (this.fx)
-        this.fx.stop()
+        this.fx.stop(fulfill)
       
       return this
     }
@@ -435,25 +453,3 @@ SVG.FX = SVG.invent({
     
   }
 })
-
-// Calculate position according to from and to
-function at(o, pos) {
-  /* number recalculation (don't bother converting to SVG.Number for performance reasons) */
-  return typeof o.from == 'number' ?
-    o.from + (o.to - o.from) * pos :
-  
-  /* instance recalculation */
-  o instanceof SVG.Color || o instanceof SVG.Number ? o.at(pos) :
-  
-  /* for all other values wait until pos has reached 1 to return the final value */
-  pos < 1 ? o.from : o.to
-}
-
-// Shim layer with setTimeout fallback by Paul Irish
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.msRequestAnimationFrame     ||
-          function (c) { window.setTimeout(c, 1000 / 60) }
-})()
