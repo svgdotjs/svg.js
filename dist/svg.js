@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.6 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.6-1-g1286e3d - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -2836,7 +2836,7 @@
   , construct: {
       // Create image element, load image and set its size
       image: function(source, width, height) {
-        return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
+        return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
       }
     }
   

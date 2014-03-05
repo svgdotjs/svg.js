@@ -49,7 +49,7 @@ SVG.Image = SVG.invent({
 , construct: {
     // Create image element, load image and set its size
     image: function(source, width, height) {
-      return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
+      return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
     }
   }
 
