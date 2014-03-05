@@ -2854,6 +2854,9 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 ## Plugins
 Here are a few nice plugins that are available for svg.js:
 
+### absorb
+[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into a svg.js instance.
+
 ### draggable
 [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
 
