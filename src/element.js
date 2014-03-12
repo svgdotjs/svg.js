@@ -1,4 +1,3 @@
-
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
@@ -293,7 +292,7 @@ SVG.Element = SVG.invent({
           s = s.split(';')
 
           /* apply every definition individually */
-          for (i = 0; i < s.length; i++) {
+          for (int i = 0; i < s.length; i++) {
             v = s[i].split(':')
             this.style(v[0].replace(/\s+/g, ''), v[1])
           }
