@@ -1,3 +1,4 @@
+
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
