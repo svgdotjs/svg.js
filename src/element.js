@@ -101,8 +101,14 @@ SVG.Element = SVG.invent({
     }
     // Remove element
   , remove: function() {
-      if (this.parent)
-        this.parent.removeElement(this)
+      if (this.parent) {
+        if(this.parent.removeElement)
+            this.parent.removeElement(this)
+        else if(this.parent.removeChild)
+            this.parent.removeChild(this.node)
+        
+        delete this.parent
+      }
       
       return this
     }
