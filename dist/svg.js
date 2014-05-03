@@ -1279,7 +1279,7 @@
           }
         
         } else {
-          this.node.style[camelCase(s)] = v === null || SVG.regex.isBlank.test(v) ? null : v
+          this.node.style[camelCase(s)] = v === null || SVG.regex.isBlank.test(v) ? '' : v
         }
         
         return this
