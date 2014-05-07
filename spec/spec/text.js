@@ -110,7 +110,7 @@ describe('Text', function() {
     it('adds content in a nested tspan', function() {
       text.text('It is a bear!')
       expect(text.node.childNodes[0].nodeType).toBe(1)
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('It is a bear!')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('It is a bear!')
     })
     it('creates multiple lines with a newline separated string', function() {
       text.text('It is\nJUST\na bear!')
@@ -136,9 +136,9 @@ describe('Text', function() {
         add.plain('hut')
       })
       expect(text.node.childNodes[0].nodeType).toBe(1)
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('mastaba')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('mastaba')
       expect(text.node.childNodes[1].nodeType).toBe(3)
-      expect(text.node.childNodes[1].nodeValue).toBe('hut')
+      expect(text.node.childNodes[1].value).toBe('hut')
     })
   })
 
@@ -146,12 +146,12 @@ describe('Text', function() {
     it('adds content without a tspan', function() {
       text.plain('It is a bear!')
       expect(text.node.childNodes[0].nodeType).toBe(3)
-      expect(text.node.childNodes[0].nodeValue).toBe('It is a bear!')
+      expect(text.node.childNodes[0].value).toBe('It is a bear!')
     })
     it('clears content before adding new content', function() {
       text.plain('It is not a bear!')
       expect(text.node.childNodes.length).toBe(1)
-      expect(text.node.childNodes[0].nodeValue).toBe('It is not a bear!')
+      expect(text.node.childNodes[0].value).toBe('It is not a bear!')
     })
     it('stores the text value in the content reference', function() {
       text.plain('Just plain text!')
@@ -163,12 +163,12 @@ describe('Text', function() {
     it('adds content in a tspan', function() {
       text.tspan('It is a bear!')
       expect(text.node.childNodes[0].nodeType).toBe(1)
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('It is a bear!')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('It is a bear!')
     })
     it('clears content before adding new content', function() {
       text.tspan('It is not a bear!')
       expect(text.node.childNodes.length).toBe(1)
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('It is not a bear!')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('It is not a bear!')
     })
   })
 
@@ -202,38 +202,30 @@ describe('Text', function() {
       text.clear().build(true)
       text.plain('A great piece!')
       text.plain('Another great piece!')
-      expect(text.node.childNodes[0].nodeValue).toBe('A great piece!')
-      expect(text.node.childNodes[1].nodeValue).toBe('Another great piece!')
+      expect(text.node.childNodes[0].value).toBe('A great piece!')
+      expect(text.node.childNodes[1].value).toBe('Another great piece!')
     })
     it('enables adding multiple tspan nodes when given true', function() {
       text.clear().build(true)
       text.tspan('A great piece!')
       text.tspan('Another great piece!')
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('A great piece!')
-      expect(text.node.childNodes[1].childNodes[0].nodeValue).toBe('Another great piece!')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('A great piece!')
+      expect(text.node.childNodes[1].childNodes[0].value).toBe('Another great piece!')
     })
     it('disables adding multiple plain text nodes when given false', function() {
       text.clear().build(true)
       text.plain('A great piece!')
       text.build(false).plain('Another great piece!')
-      expect(text.node.childNodes[0].nodeValue).toBe('Another great piece!')
+      expect(text.node.childNodes[0].value).toBe('Another great piece!')
       expect(text.node.childNodes[1]).toBe(undefined)
     })
     it('disables adding multiple tspan nodes when given false', function() {
       text.clear().build(true)
       text.tspan('A great piece!')
       text.build(false).tspan('Another great piece!')
-      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('Another great piece!')
+      expect(text.node.childNodes[0].childNodes[0].value).toBe('Another great piece!')
       expect(text.node.childNodes[1]).toBe(undefined)
     })
   })
   
 })
-
-
-
-
-
-
-
-
