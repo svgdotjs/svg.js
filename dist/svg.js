@@ -1107,7 +1107,7 @@
           a = {}
           v = this.node.attributes
           for (n = v.length - 1; n >= 0; n--)
-            a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue) ? parseFloat(v[n].nodeValue) : v[n].nodeValue
+            a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].value) ? parseFloat(v[n].value) : v[n].value
           
           return a
           
