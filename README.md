@@ -1293,7 +1293,7 @@ __`returns`: `element`__
 
 ## Geometry
 
-### viewBox()
+### viewbox()
 
 The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
 
