@@ -1,6 +1,6 @@
 
 // The main wrapping element
-this.SVG = function(element) {
+var SVG = this.SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
 
