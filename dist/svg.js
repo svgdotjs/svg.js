@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.6-1-g1286e3d - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.6-5-g8e44d11 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1317,6 +1317,46 @@
     , toString: function() {
         return this.attr('id')
       }
+      // Return array of classes on the node
+    , classes: function() {
+        classAttr = this.node.getAttribute('class')
+        if (classAttr === null) {
+          return []
+        } else {
+          return classAttr.split(/\s+/)
+        }
+      }
+      // Return true if class exists on the node, false otherwise
+    , hasClass: function(className) {
+        return this.classes().indexOf(className) != -1
+      }
+      // Add class to the node
+    , addClass: function(className) {
+        if (!(this.hasClass(className))) {
+          classArray = this.classes()
+          classArray.push(className)
+          this.node.setAttribute('class', classArray.join(' '))
+        }
+        return this
+      }
+      // Remove class from the node
+    , removeClass: function(className) {
+        if (this.hasClass(className)) {
+          classArray = this.classes().filter(function(c) {
+            return c != className
+          })
+          this.node.setAttribute('class', classArray.join(' '))
+        }
+        return this
+      }
+      // Toggle the presence of a class on the node
+    , toggleClass: function(className) {
+        if (this.hasClass(className)) {
+          this.removeClass(className)
+        } else {
+          this.addClass(className)
+        }
+      }
       // Private: find svg parent by instance
     , _parent: function(parent) {
         var element = this
@@ -1328,6 +1368,7 @@
       }
     }
   })
+
 
   SVG.Parent = SVG.invent({
     // Initialize node
