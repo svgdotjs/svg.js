@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.6-6-g5fd4a57 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.6-7-g41f6d9b - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1323,7 +1323,7 @@
         if (classAttr === null) {
           return []
         } else {
-          return classAttr.split(/\s+/)
+          return classAttr.trim().split(/\s+/)
         }
       }
       // Return true if class exists on the node, false otherwise

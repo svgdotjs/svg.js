@@ -347,7 +347,7 @@ SVG.Element = SVG.invent({
       if (classAttr === null) {
         return []
       } else {
-        return classAttr.split(/\s+/)
+        return classAttr.trim().split(/\s+/)
       }
     }
     // Return true if class exists on the node, false otherwise
