@@ -382,6 +382,7 @@ SVG.Element = SVG.invent({
       } else {
         this.addClass(className)
       }
+      return this
     }
     // Private: find svg parent by instance
   , _parent: function(parent) {

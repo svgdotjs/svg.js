@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.6-7-g41f6d9b - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.6-8-g63d8846 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1358,6 +1358,7 @@
         } else {
           this.addClass(className)
         }
+        return this
       }
       // Private: find svg parent by instance
     , _parent: function(parent) {

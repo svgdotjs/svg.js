@@ -391,5 +391,10 @@ describe('Element', function() {
       element.toggleClass('one')
       expect(element.hasClass('one')).toBeFalsy()
     })
+
+    it('returns the svg instance', function() {
+      var element = draw.rect(100,100)
+      expect(element.toggleClass('one')).toEqual(element)
+    })
   })
 })
