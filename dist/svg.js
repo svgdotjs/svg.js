@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.6-5-g8e44d11 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.6-6-g5fd4a57 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   this.SVG = function(element) {
@@ -1319,7 +1319,7 @@
       }
       // Return array of classes on the node
     , classes: function() {
-        classAttr = this.node.getAttribute('class')
+        var classAttr = this.node.getAttribute('class')
         if (classAttr === null) {
           return []
         } else {
@@ -1332,6 +1332,7 @@
       }
       // Add class to the node
     , addClass: function(className) {
+        var classArray
         if (!(this.hasClass(className))) {
           classArray = this.classes()
           classArray.push(className)
@@ -1341,6 +1342,7 @@
       }
       // Remove class from the node
     , removeClass: function(className) {
+        var classArray
         if (this.hasClass(className)) {
           classArray = this.classes().filter(function(c) {
             return c != className

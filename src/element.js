@@ -343,7 +343,7 @@ SVG.Element = SVG.invent({
     }
     // Return array of classes on the node
   , classes: function() {
-      classAttr = this.node.getAttribute('class')
+      var classAttr = this.node.getAttribute('class')
       if (classAttr === null) {
         return []
       } else {
@@ -356,6 +356,7 @@ SVG.Element = SVG.invent({
     }
     // Add class to the node
   , addClass: function(className) {
+      var classArray
       if (!(this.hasClass(className))) {
         classArray = this.classes()
         classArray.push(className)
@@ -365,6 +366,7 @@ SVG.Element = SVG.invent({
     }
     // Remove class from the node
   , removeClass: function(className) {
+      var classArray
       if (this.hasClass(className)) {
         classArray = this.classes().filter(function(c) {
           return c != className
