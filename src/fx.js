@@ -368,8 +368,10 @@ SVG.FX = SVG.invent({
   , stop: function(fulfill) {
       /* fulfill animation */
       if (fulfill === true) {
-        this.animate(0)
-
+        this.animate(0);
+        if (this._after) {
+          this._after.apply(this);
+        }
       } else {
         /* stop current animation */
         clearTimeout(this.timeout)
