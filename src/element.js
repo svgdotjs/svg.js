@@ -341,6 +341,49 @@ SVG.Element = SVG.invent({
   , toString: function() {
       return this.attr('id')
     }
+    // Return array of classes on the node
+  , classes: function() {
+      var classAttr = this.node.getAttribute('class')
+      if (classAttr === null) {
+        return []
+      } else {
+        return classAttr.trim().split(/\s+/)
+      }
+    }
+    // Return true if class exists on the node, false otherwise
+  , hasClass: function(className) {
+      return this.classes().indexOf(className) != -1
+    }
+    // Add class to the node
+  , addClass: function(className) {
+      var classArray
+      if (!(this.hasClass(className))) {
+        classArray = this.classes()
+        classArray.push(className)
+        this.node.setAttribute('class', classArray.join(' '))
+      }
+      return this
+    }
+    // Remove class from the node
+  , removeClass: function(className) {
+      var classArray
+      if (this.hasClass(className)) {
+        classArray = this.classes().filter(function(c) {
+          return c != className
+        })
+        this.node.setAttribute('class', classArray.join(' '))
+      }
+      return this
+    }
+    // Toggle the presence of a class on the node
+  , toggleClass: function(className) {
+      if (this.hasClass(className)) {
+        this.removeClass(className)
+      } else {
+        this.addClass(className)
+      }
+      return this
+    }
     // Private: find svg parent by instance
   , _parent: function(parent) {
       var element = this

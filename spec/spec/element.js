@@ -315,9 +315,86 @@ describe('Element', function() {
       expect(element).toBe(circle)
     })
   })
-  
+
+  describe('classes()', function() {
+    it('returns an array of classes on the node', function() {
+      var element = draw.rect(100,100)
+      element.node.setAttribute('class', 'one two')
+      expect(element.classes()).toEqual(['one', 'two'])
+    })
+  })
+
+  describe('hasClass()', function() {
+    it('returns true if the node has the class', function() {
+      var element = draw.rect(100,100)
+      element.node.setAttribute('class', 'one')
+      expect(element.hasClass('one')).toBeTruthy()
+    })
+
+    it('returns false if the node does not have the class', function() {
+      var element = draw.rect(100,100)
+      element.node.setAttribute('class', 'one')
+      expect(element.hasClass('two')).toBeFalsy()
+    })
+  })
+
+  describe('addClass()', function() {
+    it('adds the class to the node', function() {
+      var element = draw.rect(100,100)
+      element.addClass('one')
+      expect(element.hasClass('one')).toBeTruthy()
+    })
+
+    it('does not add duplicate classes', function() {
+      var element = draw.rect(100,100)
+      element.addClass('one')
+      element.addClass('one')
+      expect(element.node.getAttribute('class')).toEqual('one')
+    })
+
+    it('returns the svg instance', function() {
+      var element = draw.rect(100,100)
+      expect(element.addClass('one')).toEqual(element)
+    })
+  })
+
+  describe('removeClass()', function() {
+    it('removes the class from the node when the class exists', function() {
+      var element = draw.rect(100,100)
+      element.addClass('one')
+      element.removeClass('one')
+      expect(element.hasClass('one')).toBeFalsy()
+    })
+
+    it('does nothing when the class does not exist', function() {
+      var element = draw.rect(100,100)
+      element.removeClass('one')
+      expect(element.hasClass('one')).toBeFalsy()
+    })
+
+    it('returns the element', function() {
+      var element = draw.rect(100,100)
+      expect(element.removeClass('one')).toEqual(element)
+    })
+  })
+
+  describe('toggleClass()', function() {
+    it('adds the class when it does not already exist', function(){
+      var element = draw.rect(100,100)
+      element.toggleClass('one')
+      expect(element.hasClass('one')).toBeTruthy()
+    })
+
+    it('removes the class when it already exists', function(){
+      var element = draw.rect(100,100)
+      element.addClass('one')
+      element.toggleClass('one')
+      expect(element.hasClass('one')).toBeFalsy()
+    })
+
+    it('returns the svg instance', function() {
+      var element = draw.rect(100,100)
+      expect(element.toggleClass('one')).toEqual(element)
+    })
+  })
 })
-
-
-
-
