@@ -1,8 +1,4 @@
-// ### Manage events on elements
-
-//     rect.click(function() {
-//       this.fill({ color: '#f06' })
-//     })
+// Add events to elements
 ;[  'click'
   , 'dblclick'
   , 'mousedown'
@@ -31,20 +27,23 @@
   
 })
 
+// Initialize events stack
+SVG.events = {}
+
+// Event constructor
+SVG.registerEvent = function(event) {
+  if (!SVG.events[event])
+    SVG.events[event] = new Event(event)
+}
+
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
-  if (node.addEventListener)
-    node.addEventListener(event, listener, false)
-  else
-    node.attachEvent('on' + event, listener)
+  node.addEventListener(event, listener.bind(node.instance || node), false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  if (node.removeEventListener)
-    node.removeEventListener(event, listener, false)
-  else
-    node.detachEvent('on' + event, listener)
+  node.removeEventListener(event, listener.bind(node.instance || node), false)
 }
 
 //
@@ -59,6 +58,12 @@ SVG.extend(SVG.Element, {
 , off: function(event, listener) {
     SVG.off(this.node, event, listener)
     
+    return this
+  }
+  // Fire given event
+, fire: function(event) {
+    this.node.dispatchEvent(SVG.events[event])
+
     return this
   }
 })

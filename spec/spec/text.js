@@ -33,15 +33,17 @@ describe('Text', function() {
     it('returns the value of y without an argument', function() {
       expect(text.y(0).y()).toBe(0)
     })
+    it('returns the value of y when y is a percentual value', function() {
+      expect(text.y('45%').y()).toBe('45%')
+    })
     it('sets the value of y with the first argument', function() {
       text.y(345)
       var box = text.bbox()
       expect(box.y).toBe(345)
     })
-    it('sets the value of y based on the anchor with the first argument', function() {
-      text.y(345, true)
-      var box = text.bbox()
-      expect(box.y).toBe(345)
+    it('sets the value of y with a percent value', function() {
+      text.y('40%')
+      expect(text.node.getAttribute('y')).toBe('40%')
     })
   })
   
@@ -111,6 +113,11 @@ describe('Text', function() {
       text.text('It is a bear!')
       expect(text.node.childNodes[0].nodeType).toBe(1)
       expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('It is a bear!')
+    })
+    it('adds content in a nested tspan even with an empty string', function() {
+      text.text('')
+      expect(text.node.childNodes[0].nodeType).toBe(1)
+      expect(text.node.childNodes[0].childNodes[0].nodeValue).toBe('')
     })
     it('creates multiple lines with a newline separated string', function() {
       text.text('It is\nJUST\na bear!')

@@ -520,6 +520,16 @@ tspan.animate('2s').fill('#f06')
 
 __`returns`: `itself`__
 
+### rebuild()
+This is an internal callback that probably never needs to be called manually. Basically it rebuilds the text element whenerver `font-size` and `x` attributes or the `leading()` of the text element are modified. This method also acts a setter to enable or disable rebuilding:
+
+```javascript
+text.rebuild(false) //-> disables rebuilding
+text.rebuild(true)  //-> enables rebuilding and instantaneously rebuilds the text element
+```
+
+__`returns`: `itself`__
+
 ### clear()
 Clear all the contents of the called text element:
 
@@ -532,6 +542,14 @@ __`returns`: `itself`__
 ### lines
 All added tspans are stored in the `lines` reference, which is an instance of `SVG.Set`.
 
+### events
+The text element has one event. It is fired every time the `rebuild()` method is called:
+
+```javascript
+text.on('rebuild', function() {
+  // whatever you need to do after rebuilding
+})
+```
 
 ## TSpan
 The tspan elements are only available inside text elements or inside other tspan elements. In svg.js they have a class of their own:
@@ -1012,6 +1030,50 @@ rect.style('cursor', null)
 
 `setter`__`returns`: `itself`__
 
+### classes()
+Fetches an array of css classes on the node:
+
+```javascript
+rect.classes()
+```
+
+`getter`__`returns`: `array`__
+
+### hasClass()
+Test the presence of a given css class:
+
+```javascript
+rect.hasClass('purple-rain')
+```
+
+`getter`__`returns`: `boolean`__
+
+### addClass()
+Adds a given css class:
+
+```javascript
+rect.addClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
+
+### removeClass()
+Removes a given css class:
+
+```javascript
+rect.removeClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
+
+### toggleClass()
+Toggles a given css class:
+
+```javascript
+rect.toggleClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
 
 ### move()
 Move the element to a given `x` and `y` position by its upper left corner:
@@ -1293,7 +1355,7 @@ __`returns`: `element`__
 
 ## Geometry
 
-### viewBox()
+### viewbox()
 
 The `viewBox` attribute of an `<svg>` element can be managed with the `viewbox()` method. When supplied with four arguments it will act as a setter:
 
@@ -2362,20 +2424,17 @@ All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseov
 __`returns`: `itself`__
 
 ### Event listeners
-
 You can also bind event listeners to elements:
 
 ```javascript
 var click = function() {
-  rect.fill({ color: '#f06' })
+  this.fill({ color: '#f06' })
 }
 
 rect.on('click', click)
 ```
 
 __`returns`: `itself`__
-
-Note that the context of event listeners is not the same as events, which are applied directly to the element. Therefore `this` will not refer to the element when using event listeners.
 
 Unbinding events is just as easy:
 
@@ -2396,6 +2455,32 @@ Obviously unbinding is practically the same:
 ```javascript
 SVG.off(window, 'click', click)
 ```
+
+### Custom events
+You can even create your own events.
+
+The only thing you need to do is register your own event:
+
+```javascript
+SVG.registerEvent('my:event')
+```
+
+Next you can add an event listener for your newly created event:
+```javascript
+rect.on('my:event', function() {
+  alert('ta-da!')
+})
+```
+
+Now you are ready to fire the event whenever you need:
+
+```javascript
+function whenSomethingHappens() {
+  rect.fire('my:event') 
+}
+```
+
+_Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `wicked:event` for example would be better than something generic like `svg:event`._
 
 ## Numbers
 
@@ -2886,6 +2971,21 @@ Here are a few nice plugins that are available for svg.js:
 
 ### topath
 [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
+
+
+## Contributing
+All contributions are very welcome but please make sure you:
+
+- maintain the coding style
+  - _indentation_ of 2 spaces
+  - no tailing _semicolons_
+  - use one line _comments_ to describe any additions
+  - look around and you'll know what to do
+- write at least on spec example per implementation or modification
+
+Before tunning the specs you will need to build the library.
+
+Be aware that pull requests without specs will be declined.
 
 
 ## Building

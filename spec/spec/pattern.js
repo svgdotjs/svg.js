@@ -37,6 +37,10 @@ describe('Pattern', function() {
       rect.attr('fill', pattern)
       expect(rect.attr('fill')).toBe('url(#' + pattern.attr('id') + ')')
     })
+    it('is called when instance is passed in a fill() method', function() {
+      rect.fill(pattern)
+      expect(rect.attr('fill')).toBe('url(#' + pattern.attr('id') + ')')
+    })
   })
 
   describe('update()', function() {

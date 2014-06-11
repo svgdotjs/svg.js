@@ -1,6 +1,6 @@
 
 // The main wrapping element
-this.SVG = function(element) {
+var SVG = this.SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
 
@@ -65,7 +65,7 @@ SVG.get = function(id) {
 SVG.prepare = function(element) {
   /* select document body and create invisible svg element */
   var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 2)
+    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
     , path = SVG.create('path')
 
   /* insert parsers */

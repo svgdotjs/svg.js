@@ -1,3 +1,15 @@
+# 1.0.0-rc.7 (11/06/2014)
+
+- calling `after()` when calling `stop(true)` (fulfill flag) [thanks @vird]
+- added `classes()`, `hasClass()`, `addClass()`, `removeClass()` and `toggleClass()` [thanks @pklingem]
+- fixed a bug where `Element#style()` would not save empty values in IE11 [thanks @Shtong]
+- fixed `SVG is not defined error` [thanks @anvaka]
+- fixed a bug in `move()`on text elements with a string based value
+- binding events listeners to svg.js instance
+- text element fires `rebuild` event whenever the `rebuild()` method is called
+- fix for `text()` method on text element when acting as getter [thanks @Lochemage]
+- fix in `style()` method with a css string [thanks @TobiasHeckel]
+
 # 1.0.0-rc.6 (03/03/2014)
 
 - fine-tuned text element positioning
@@ -35,7 +47,7 @@
 - fix in `animate('=').to()`
 - added `pointAt()` method to `SVG.Path`, wrapping the native `getPointAtLength()`
 - moved `length()` method to sugar module
-- fix for arcs in patharray `toString()` method
+- fix for arcs in patharray `toString()` method [thanks @dotnetCarpenter]
 
 # v1.0rc3 (03/02/2014)
 

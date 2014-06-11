@@ -1,7 +1,7 @@
-/* svg.js 1.0.0-rc.6-8-g63d8846 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.7-3-g791f436 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
-  this.SVG = function(element) {
+  var SVG = this.SVG = function(element) {
     if (SVG.supported) {
       element = new SVG.Doc(element)
   
@@ -66,7 +66,7 @@
   SVG.prepare = function(element) {
     /* select document body and create invisible svg element */
     var body = document.getElementsByTagName('body')[0]
-      , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 2)
+      , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
       , path = SVG.create('path')
   
     /* insert parsers */
@@ -88,6 +88,7 @@
   })()
   
   if (!SVG.supported) return false
+
 
   SVG.invent = function(config) {
   	/* create element initializer */
@@ -143,6 +144,9 @@
     /* test for image url */
   , isImage:      /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
     
+    /* test for namespaced event */
+  , isEvent:      /^[\w]+:[\w]+$/
+  
   }
 
   SVG.defaults = {
@@ -467,7 +471,7 @@
       /* recalculate position of all points according to new size */
       for (i = this.value.length - 1; i >= 0; i--) {
         this.value[i][0] = ((this.value[i][0] - box.x) * width)  / box.width  + box.x
-        this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.x
+        this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.y
       }
   
       return this
@@ -1269,8 +1273,8 @@
             s = s.split(';')
   
             /* apply every definition individually */
-            for (v = 0; v < s.length; v++) {
-              v = s[v].split(':')
+            for (var i = 0; i < s.length; i++) {
+              v = s[i].split(':')
               this.style(v[0].replace(/\s+/g, ''), v[1])
             }
           } else {
@@ -1879,7 +1883,11 @@
     , stop: function(fulfill) {
         /* fulfill animation */
         if (fulfill === true) {
+  
           this.animate(0)
+  
+          if (this._after)
+            this._after.apply(this.target, [this])
   
         } else {
           /* stop current animation */
@@ -1965,6 +1973,7 @@
     }
   })
 
+
   SVG.extend(SVG.Element, SVG.FX, {
     // Relative move over x axis
     dx: function(x) {
@@ -2009,20 +2018,23 @@
     
   })
   
+  // Initialize events stack
+  SVG.events = {}
+  
+  // Event constructor
+  SVG.registerEvent = function(event) {
+    if (!SVG.events[event])
+      SVG.events[event] = new Event(event)
+  }
+  
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {
-    if (node.addEventListener)
-      node.addEventListener(event, listener, false)
-    else
-      node.attachEvent('on' + event, listener)
+    node.addEventListener(event, listener.bind(node.instance || node), false)
   }
   
   // Add event unbinder in the SVG namespace
   SVG.off = function(node, event, listener) {
-    if (node.removeEventListener)
-      node.removeEventListener(event, listener, false)
-    else
-      node.detachEvent('on' + event, listener)
+    node.removeEventListener(event, listener.bind(node.instance || node), false)
   }
   
   //
@@ -2037,6 +2049,12 @@
   , off: function(event, listener) {
       SVG.off(this.node, event, listener)
       
+      return this
+    }
+    // Fire given event
+  , fire: function(event) {
+      this.node.dispatchEvent(SVG.events[event])
+  
       return this
     }
   })
@@ -2918,13 +2936,14 @@
       }
       // Move over y-axis
     , y: function(y) {
-        var o = this.attr('y') - this.bbox().y
+        var oy = this.attr('y')
+          , o  = typeof oy === 'number' ? oy - this.bbox().y : 0
   
         /* act as getter */
         if (y == null)
-          return this.attr('y') - o
+          return typeof oy === 'number' ? oy - o : oy
   
-        return this.attr('y', y + o)
+        return this.attr('y', typeof y === 'number' ? y + o : y)
       }
       // Move center over x-axis
     , cx: function(x) {
@@ -2937,7 +2956,7 @@
       // Set the text content
     , text: function(text) {
         /* act as getter */
-        if (!text) return this.content
+        if (typeof text === 'undefined') return this.content
         
         /* remove existing content */
         this.clear().build(true)
@@ -2948,7 +2967,7 @@
   
         } else {
           /* store text and make sure text is not blank */
-          text = (this.content = (SVG.regex.isBlank.test(text) ? 'text' : text)).split('\n')
+          text = (this.content = text).split('\n')
           
           /* build new lines */
           for (var i = 0, il = text.length; i < il; i++)
@@ -2975,14 +2994,14 @@
       }
       // Rebuild appearance type
     , rebuild: function(rebuild) {
-        var self = this
-  
         /* store new rebuild flag if given */
         if (typeof rebuild == 'boolean')
           this._rebuild = rebuild
   
         /* define position of all lines */
         if (this._rebuild) {
+          var self = this
+          
           this.lines.each(function() {
             if (this.newLined) {
               if (!this.textPath)
@@ -2990,6 +3009,8 @@
               this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
             }
           })
+  
+          this.fire('rebuild')
         }
   
         return this
@@ -3103,6 +3124,8 @@
     }
   })
   
+  // Register rebuild event
+  SVG.registerEvent('rebuild')
 
 
   SVG.TextPath = SVG.invent({

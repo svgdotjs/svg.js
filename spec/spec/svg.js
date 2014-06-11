@@ -1,23 +1,23 @@
 describe('SVG', function() {
   
   describe('()', function() {
-    var canvas, wrapper
+    var drawing, wrapper
     
     beforeEach(function() {
       wrapper = document.createElement('div')
       document.getElementsByTagName('body')[0].appendChild(wrapper)
-      canvas = SVG(wrapper)
+      drawing = SVG(wrapper)
     })
     
     afterEach(function() {
       wrapper.parentNode.removeChild(wrapper)
     })
     
-    it('creates a new svg canvas', function() {
-      expect(canvas.type).toBe('svg')
+    it('creates a new svg drawing', function() {
+      expect(drawing.type).toBe('svg')
     })
     it('creates an instance of SVG.Doc', function() {
-      expect(canvas instanceof SVG.Doc).toBe(true)
+      expect(drawing instanceof SVG.Doc).toBe(true)
     })
   })
   

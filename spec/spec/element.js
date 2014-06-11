@@ -89,13 +89,13 @@ describe('Element', function() {
   describe('style()', function() {
     it('should set the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
-      expect(stripped(rect.node.getAttribute('style'))).toBe('cursor:crosshair;')
+      expect(stripped(rect.node.style.cssText)).toBe('cursor:crosshair;')
     })
     it('should set multiple styles with an object as the first argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
-      expect(stripped(rect.node.getAttribute('style'))).toMatch(/cursor:help;/)
-      expect(stripped(rect.node.getAttribute('style'))).toMatch(/display:block;/)
-      expect(stripped(rect.node.getAttribute('style')).length).toBe(('display:block;cursor:help;').length)
+      expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
+      expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
+      expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
     })
     it('should get a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })

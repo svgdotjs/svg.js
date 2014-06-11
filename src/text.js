@@ -31,13 +31,14 @@ SVG.Text = SVG.invent({
     }
     // Move over y-axis
   , y: function(y) {
-      var o = this.attr('y') - this.bbox().y
+      var oy = this.attr('y')
+        , o  = typeof oy === 'number' ? oy - this.bbox().y : 0
 
       /* act as getter */
       if (y == null)
-        return this.attr('y') - o
+        return typeof oy === 'number' ? oy - o : oy
 
-      return this.attr('y', y + o)
+      return this.attr('y', typeof y === 'number' ? y + o : y)
     }
     // Move center over x-axis
   , cx: function(x) {
@@ -50,7 +51,7 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       /* act as getter */
-      if (!text) return this.content
+      if (typeof text === 'undefined') return this.content
       
       /* remove existing content */
       this.clear().build(true)
@@ -61,7 +62,7 @@ SVG.Text = SVG.invent({
 
       } else {
         /* store text and make sure text is not blank */
-        text = (this.content = (SVG.regex.isBlank.test(text) ? 'text' : text)).split('\n')
+        text = (this.content = text).split('\n')
         
         /* build new lines */
         for (var i = 0, il = text.length; i < il; i++)
@@ -88,14 +89,14 @@ SVG.Text = SVG.invent({
     }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
-      var self = this
-
       /* store new rebuild flag if given */
       if (typeof rebuild == 'boolean')
         this._rebuild = rebuild
 
       /* define position of all lines */
       if (this._rebuild) {
+        var self = this
+        
         this.lines.each(function() {
           if (this.newLined) {
             if (!this.textPath)
@@ -103,6 +104,8 @@ SVG.Text = SVG.invent({
             this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
           }
         })
+
+        this.fire('rebuild')
       }
 
       return this
@@ -216,3 +219,5 @@ SVG.extend(SVG.Text, SVG.TSpan, {
   }
 })
 
+// Register rebuild event
+SVG.registerEvent('rebuild')

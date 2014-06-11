@@ -69,7 +69,7 @@ SVG.extend(SVG.PointArray, {
     /* recalculate position of all points according to new size */
     for (i = this.value.length - 1; i >= 0; i--) {
       this.value[i][0] = ((this.value[i][0] - box.x) * width)  / box.width  + box.x
-      this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.x
+      this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.y
     }
 
     return this

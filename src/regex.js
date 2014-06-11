@@ -30,4 +30,7 @@ SVG.regex = {
   /* test for image url */
 , isImage:      /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
   
+  /* test for namespaced event */
+, isEvent:      /^[\w]+:[\w]+$/
+
 }
