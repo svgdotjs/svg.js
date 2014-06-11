@@ -50,7 +50,7 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       /* act as getter */
-      if (!text) return this.content
+      if (typeof text === 'undefined') return this.content
       
       /* remove existing content */
       this.clear().build(true)
@@ -61,11 +61,17 @@ SVG.Text = SVG.invent({
 
       } else {
         /* store text and make sure text is not blank */
-        text = (this.content = (SVG.regex.isBlank.test(text) ? 'text' : text)).split('\n')
-        
+        text = (this.content = (text)).split('\n')
+
         /* build new lines */
-        for (var i = 0, il = text.length; i < il; i++)
-          this.tspan(text[i]).newLine()
+        if (text.length > 0) {
+          this.tspan(text[0]);
+          for (var i = 1, il = text.length; i < il; i++)
+            this.tspan(text[i]).newLine()
+        }
+        else {
+          this.tspan(text);
+        }
       }
       
       /* disable build mode and rebuild lines */
