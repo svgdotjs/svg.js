@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.7-3-g791f436 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.7-6-gd00bb30 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -2018,8 +2018,9 @@
     
   })
   
-  // Initialize events stack
+  // Initialize events and listeners stack
   SVG.events = {}
+  SVG.listeners = {}
   
   // Event constructor
   SVG.registerEvent = function(event) {
@@ -2029,12 +2030,15 @@
   
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {
-    node.addEventListener(event, listener.bind(node.instance || node), false)
+    var l = listener.bind(node.instance || node)
+    SVG.listeners[listener] = l
+    node.addEventListener(event, l, false)
   }
   
   // Add event unbinder in the SVG namespace
   SVG.off = function(node, event, listener) {
-    node.removeEventListener(event, listener.bind(node.instance || node), false)
+    node.removeEventListener(event, SVG.listeners[listener], false)
+    delete SVG.listeners[listener]
   }
   
   //

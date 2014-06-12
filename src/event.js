@@ -27,8 +27,9 @@
   
 })
 
-// Initialize events stack
+// Initialize events and listeners stack
 SVG.events = {}
+SVG.listeners = {}
 
 // Event constructor
 SVG.registerEvent = function(event) {
@@ -38,12 +39,15 @@ SVG.registerEvent = function(event) {
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
-  node.addEventListener(event, listener.bind(node.instance || node), false)
+  var l = listener.bind(node.instance || node)
+  SVG.listeners[listener] = l
+  node.addEventListener(event, l, false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  node.removeEventListener(event, listener.bind(node.instance || node), false)
+  node.removeEventListener(event, SVG.listeners[listener], false)
+  delete SVG.listeners[listener]
 }
 
 //
