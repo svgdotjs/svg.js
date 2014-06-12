@@ -1,5 +1,6 @@
 .DS_Store
-public/
+public
+site/
 bleed/
 obsolete/
 test/

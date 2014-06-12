@@ -2981,9 +2981,9 @@ All contributions are very welcome but please make sure you:
   - no tailing _semicolons_
   - use one line _comments_ to describe any additions
   - look around and you'll know what to do
-- write at least on spec example per implementation or modification
+- write at least one spec example per implementation or modification
 
-Before tunning the specs you will need to build the library.
+Before running the specs you will need to build the library.
 
 Be aware that pull requests without specs will be declined.
 
