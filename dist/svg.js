@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.7-6-gd00bb30 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.8-3-g7eca094 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -954,6 +954,10 @@
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     
+    /* offset by window scroll position, because getBoundingClientRect changes when window is scrolled */
+    this.x += window.scrollX;
+    this.y += window.scrollY;
+  
     /* add center, right and bottom */
     boxProperties(this)
     
@@ -978,6 +982,7 @@
     }
   
   })
+
 
   SVG.Element = SVG.invent({
     // Initialize node
