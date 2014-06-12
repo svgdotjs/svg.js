@@ -46,6 +46,10 @@ SVG.RBox = function(element) {
   this.width  = box.width  /= zoom
   this.height = box.height /= zoom
   
+  /* offset by window scroll position, because getBoundingClientRect changes when window is scrolled */
+  this.x += window.scrollX;
+  this.y += window.scrollY;
+
   /* add center, right and bottom */
   boxProperties(this)
   
