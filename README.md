@@ -2977,14 +2977,14 @@ Here are a few nice plugins that are available for svg.js:
 All contributions are very welcome but please make sure you:
 
 - maintain the coding style
-  - _indentation_ of 2 spaces
-  - no tailing _semicolons_
-  - use one line _comments_ to describe any additions
+  - __indentation__ of 2 spaces
+  - no tailing __semicolons__
+  - single __quotes__
+  - use one line __comments__ to describe any additions
   - look around and you'll know what to do
 - write at least one spec example per implementation or modification
 
 Before running the specs you will need to build the library.
-
 Be aware that pull requests without specs will be declined.
 
 
