@@ -1,3 +1,8 @@
+# 1.0.0-rc.8 (12/06/2014)
+
+- fixed bug in `SVG.off`
+
+
 # 1.0.0-rc.7 (11/06/2014)
 
 - calling `after()` when calling `stop(true)` (fulfill flag) [thanks @vird]
