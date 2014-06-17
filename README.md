@@ -2409,6 +2409,43 @@ Finally, to get a marker instance from the target element reference:
 path.reference('marker-end')
 ```
 
+### ref()
+By default the `refX` and `refY` attributes of a marker are set to respectively half the `width` nd `height` values. To define the refX and refY of a marker differently:
+
+```javascript
+marker.ref(5, 5)
+```
+
+### update()
+Updating the contents of a marker will `clear()` the existing content and add the content defined in the block passed as the first argument:
+
+```javascript
+marker.update(function(add) {
+  add.circle(10)
+})
+```
+
+### width()
+Defines the `markerWidth` attribute:
+
+```javascript
+marker.width(10)
+```
+
+### height()
+Defines the `markerHeight` attribute:
+
+```javascript
+marker.height(10)
+```
+
+### size()
+Defines the `markerWidth` and `markerHeight` attributes:
+
+```javascript
+marker.size(10, 10)
+```
+
 
 ## Data
 
