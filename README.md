@@ -918,7 +918,7 @@ In cases where an element is linked to another element through an attribute, the
 ```javascript
 use.reference('href') //-> returns used element instance
 // or
-rect.reference('fill') //-> returns gradient instance
+rect.reference('fill') //-> returns gradient or pattern instance for example
 // or
 circle.reference('clip-path') //-> returns clip instance
 ```
