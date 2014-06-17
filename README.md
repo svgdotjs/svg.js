@@ -2410,10 +2410,10 @@ path.reference('marker-end')
 ```
 
 ### ref()
-By default the `refX` and `refY` attributes of a marker are set to respectively half the `width` nd `height` values. To define the refX and refY of a marker differently:
+By default the `refX` and `refY` attributes of a marker are set to respectively half the `width` nd `height` values. To define the `refX` and `refY` of a marker differently:
 
 ```javascript
-marker.ref(5, 5)
+marker.ref(2, 7)
 ```
 
 ### update()
