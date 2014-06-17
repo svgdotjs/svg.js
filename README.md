@@ -725,6 +725,21 @@ __`returns`: `SVG.Use`__
 
 _Javascript inheritance stack: `SVG.Use` < `SVG.Shape` < `SVG.Element`_
 
+## Symbol
+Not unlike the `group` element, the `symbol` element is a container element. The only difference between symbols and groups is that symbols are not rendered. Therefore a `symbol` element is ideal in combination with the `use` element:
+
+
+```javascript
+var symbol = draw.symbol()
+symbol.rect(100, 100).fill('#f09')
+
+var use  = draw.use(symbol).move(200, 200)
+```
+
+__`returns`: `SVG.Symbol`__
+
+_Javascript inheritance stack: `SVG.Use` < `SVG.Container` < `SVG.Symbol`_
+
 
 ## Referencing elements
 
@@ -2409,12 +2424,15 @@ Finally, to get a marker instance from the target element reference:
 path.reference('marker-end')
 ```
 
+
 ### ref()
 By default the `refX` and `refY` attributes of a marker are set to respectively half the `width` nd `height` values. To define the `refX` and `refY` of a marker differently:
 
 ```javascript
 marker.ref(2, 7)
 ```
+
+__`returns`: `itself`__
 
 ### update()
 Updating the contents of a marker will `clear()` the existing content and add the content defined in the block passed as the first argument:
@@ -2425,12 +2443,16 @@ marker.update(function(add) {
 })
 ```
 
+__`returns`: `itself`__
+
 ### width()
 Defines the `markerWidth` attribute:
 
 ```javascript
 marker.width(10)
 ```
+
+__`returns`: `itself`__
 
 ### height()
 Defines the `markerHeight` attribute:
@@ -2439,12 +2461,16 @@ Defines the `markerHeight` attribute:
 marker.height(10)
 ```
 
+__`returns`: `itself`__
+
 ### size()
 Defines the `markerWidth` and `markerHeight` attributes:
 
 ```javascript
 marker.size(10, 10)
 ```
+
+__`returns`: `itself`__
 
 
 ## Data
