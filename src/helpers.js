@@ -114,6 +114,13 @@ function parseMatrix(o) {
   return o
 }
 
+// Get id from reference string
+function idFromReference(url) {
+  var m = url.toString().match(SVG.regex.reference)
+
+  if (m) return m[1]
+}
+
 // Shim layer with setTimeout fallback by Paul Irish
 window.requestAnimFrame = (function(){
   return  window.requestAnimationFrame       ||

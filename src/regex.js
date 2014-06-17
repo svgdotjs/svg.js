@@ -8,6 +8,9 @@ SVG.regex = {
   
   /* parse rgb value */
 , rgb:          /rgb\((\d+),(\d+),(\d+)\)/
+  
+  /* parse reference id */
+, reference:    /#([a-z0-9\-_]+)/i
 
   /* test hex value */
 , isHex:        /^#[a-f0-9]{3,6}$/i

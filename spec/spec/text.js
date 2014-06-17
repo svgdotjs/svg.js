@@ -20,12 +20,12 @@ describe('Text', function() {
     it('sets the value of x with the first argument', function() {
       text.x(123)
       var box = text.bbox()
-      expect(box.x).toBe(123)
+      expect(approximately(box.x)).toBe(123)
     })
     it('sets the value of x based on the anchor with the first argument', function() {
       text.x(123, true)
       var box = text.bbox()
-      expect(box.x).toBe(123)
+      expect(approximately(box.x)).toBe(123)
     })
   })
   
@@ -50,17 +50,17 @@ describe('Text', function() {
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       var box = text.bbox()
-      expect(text.cx()).toBe(box.width / 2)
+      expect(approximately(text.cx())).toBe(approximately(box.width / 2))
     })
     it('sets the value of cx with the first argument', function() {
       text.cx(123)
       var box = text.bbox()
-      expect(box.cx).toBe(123)
+      expect(approximately(box.cx)).toBe(123)
     })
     it('sets the value of cx based on the anchor with the first argument', function() {
       text.cx(123, true)
       var box = text.bbox()
-      expect(box.cx).toBe(123)
+      expect(approximately(box.cx)).toBe(123)
     })
   })
   
@@ -80,8 +80,8 @@ describe('Text', function() {
     it('sets the x and y position', function() {
       text.move(123,456)
       var box = text.bbox()
-      expect(box.x).toBe(123)
-      expect(box.y).toBe(456)
+      expect(approximately(box.x)).toBe(123)
+      expect(approximately(box.y)).toBe(456)
     })
   })
   
@@ -89,8 +89,8 @@ describe('Text', function() {
     it('sets the cx and cy position', function() {
       text.center(321,567)
       var box = text.bbox()
-      expect(box.cx).toBe(321)
-      expect(Math.round(box.cy * 10) / 10).toBe(567)
+      expect(approximately(box.cx)).toBe(321)
+      expect(approximately(box.cy)).toBe(567)
     })
   })
   
@@ -199,8 +199,17 @@ describe('Text', function() {
     it('clears the stored content value', function() {
       text.text('Stored locally.')
       expect(text.content).toBe('Stored locally.')
-      text.clear()
-      expect(text.content).toBe('')
+    })
+  })
+
+  describe('length()', function() {
+    it('gets total length of text', function() {
+      text.text(function(add) {
+        add.tspan('The first.')
+        add.tspan('The second.')
+        add.tspan('The third.')
+      })
+      expect(text.length()).toBe(text.lines.get(0).length() + text.lines.get(1).length() + text.lines.get(2).length())
     })
   })
   

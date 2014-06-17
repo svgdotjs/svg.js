@@ -15,7 +15,7 @@ loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras soda
 
 /* approximately helper */
 function approximately(number, precision) {
-  precision = precision == null ? 2.5 : precision
+  precision = precision == null ? 1.5 : precision
   
   return Math.round(number / precision) * precision
 }

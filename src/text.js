@@ -217,6 +217,10 @@ SVG.extend(SVG.Text, SVG.TSpan, {
     
     return this
   }
+  // Get length of text element
+, length: function() {
+    return this.node.getComputedTextLength()
+  }
 })
 
 // Register rebuild event

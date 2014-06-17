@@ -16,7 +16,7 @@ describe('Set', function() {
   })
 
   it('creates the set method on SVG.Container instances', function() {
-    expect(draw.set() instanceof SVG.Set).toBe(true)
+    expect(draw.set() instanceof SVG.Set).toBeTruthy()
   })
 
   describe('add()', function() {
@@ -75,16 +75,30 @@ describe('Set', function() {
   })
 
   describe('get()', function() {
-    it('returns member ar given index', function() {
+    it('returns member at given index', function() {
       set.add(e1).add(e2).add(e3).add(e4).add(e5)
       expect(set.get(2)).toBe(e3)
+    })
+  })
+
+  describe('first()', function() {
+    it('returns first member', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+      expect(set.first()).toBe(e1)
+    })
+  })
+
+  describe('last()', function() {
+    it('returns last member', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+      expect(set.last()).toBe(e5)
     })
   })
 
   describe('has()', function() {
     it('checks if a given element is present in set', function() {
       set.add(e1).add(e2).add(e3).add(e4).add(e5)
-      expect(set.has(e4)).toBe(true)
+      expect(set.has(e4)).toBeTruthy()
     })
   })
 
@@ -120,7 +134,7 @@ describe('Set', function() {
     it('returns an instance of SVG.BBox', function() {
       set.add(e1).add(e2).add(e3).add(e4).add(e5)
 
-      expect(set.bbox() instanceof SVG.BBox).toBe(true)
+      expect(set.bbox() instanceof SVG.BBox).toBeTruthy()
     })
     it('returns an empty bounding box wiht no members', function() {
       var box = set.bbox()

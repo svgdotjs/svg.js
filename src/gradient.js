@@ -47,7 +47,7 @@ SVG.Gradient = SVG.invent({
     }
     // Return the fill id
   , fill: function() {
-      return 'url(#' + this.attr('id') + ')'
+      return 'url(#' + this.id() + ')'
     }
     // Alias string convertion to fill
   , toString: function() {

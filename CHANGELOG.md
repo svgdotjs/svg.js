@@ -1,8 +1,24 @@
+# 1.0.0-rc.10 (27/06/2014)
+
+- remove internal references everywhere -> __TODO!__
+- rework transformation to be chainable and more true to native SVG -> __TODO!__
+- implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js -> __TODO!__
+- fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
+- fixed infinite loop in viewbox when element has a percentage width / height [thanks @shabegger] -> __TO MERGE!__
+
+# 1.0.0-rc.9 (17/06/2014)
+
+- added `SVG.Marker`
+- added `SVG.Symbol`
+- added `first()` and `last()` methods to `SVG.Set`
+- added `length()` method to `SVG.Text` and `SVG.TSpan` to calculate total text length
+- `SVG.get()` will now also fetch elements with a `xlink:href="#elementId"` or `url(#elementId)` value given
+- added `reference()` method to get referenced elements from a given attribute value
+
 # 1.0.0-rc.8 (12/06/2014)
 
 - fixed bug in `SVG.off`
 - fixed offset by window scroll position in `rbox()` [thanks @bryhoyt]
-
 
 # 1.0.0-rc.7 (11/06/2014)
 

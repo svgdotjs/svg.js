@@ -9,7 +9,7 @@ SVG.Pattern = SVG.invent({
 , extend: {
     // Return the fill id
 	  fill: function() {
-	    return 'url(#' + this.attr('id') + ')'
+	    return 'url(#' + this.id() + ')'
 	  }
 	  // Update pattern by rebuilding
 	, update: function(block) {

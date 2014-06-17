@@ -1,7 +1,7 @@
-SVGJS_VERSION = '1.0.0-rc.8'
+SVGJS_VERSION = '1.0.0-rc.9'
 
 # all available modules in the correct loading order
-MODULES = %w[ svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers ]
+MODULES = %w[ svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers ]
 
 # how many bytes in a "kilobyte"
 KILO = 1024
@@ -136,13 +136,6 @@ task :check_whitespace do
     File.open(file, 'r') {|f| f.each_with_index {|ln, num| flunk.call(file, num + 1) if ln.chomp =~ /\s+$/ } }
   end
   fail if flunked
-end
-
-desc "Generate docco documentation from source files"
-task :docco do
-  verbose false do
-    sh 'docco', *Dir['src/*.js']
-  end
 end
 
 # svg.js version number + git sha if available

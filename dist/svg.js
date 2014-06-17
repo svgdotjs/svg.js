@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.8-3-g7eca094 - svg inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape use rect ellipse line poly path image text textpath nested hyperlink sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.9 - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -56,12 +56,6 @@
       SVG.Set.inherit()
   }
   
-  // Method for getting an element by id
-  SVG.get = function(id) {
-    var node = document.getElementById(id)
-    if (node) return node.instance
-  }
-  
   // Initialize parsing element
   SVG.prepare = function(element) {
     /* select document body and create invisible svg element */
@@ -89,6 +83,11 @@
   
   if (!SVG.supported) return false
 
+
+  SVG.get = function(id) {
+    var node = document.getElementById(idFromReference(id) || id)
+    if (node) return node.instance
+  }
 
   SVG.invent = function(config) {
   	/* create element initializer */
@@ -122,6 +121,9 @@
     
     /* parse rgb value */
   , rgb:          /rgb\((\d+),(\d+),(\d+)\)/
+    
+    /* parse reference id */
+  , reference:    /#([a-z0-9\-_]+)/i
   
     /* test hex value */
   , isHex:        /^#[a-f0-9]{3,6}$/i
@@ -1046,10 +1048,9 @@
     , size: function(width, height) {
         var p = proportionalSize(this.bbox(), width, height)
   
-        return this.attr({
-          width:  new SVG.Number(p.width)
-        , height: new SVG.Number(p.height)
-        })
+        return this
+          .width(new SVG.Number(p.width))
+          .height(new SVG.Number(p.height))
       }
       // Clone element
     , clone: function() {
@@ -1293,6 +1294,10 @@
         
         return this
       }
+      // Get / set id
+    , id: function(id) {
+        return this.attr('id', id)
+      }
       // Get bounding box
     , bbox: function() {
         return new SVG.BBox(this)
@@ -1368,6 +1373,10 @@
           this.addClass(className)
         }
         return this
+      }
+      // Get referenced element form attribute value
+    , reference: function(attr) {
+        return SVG.get(this.attr(attr))
       }
       // Private: find svg parent by instance
     , _parent: function(parent) {
@@ -2074,6 +2083,7 @@
   
     // Inherit from
   , inherit: SVG.Container
+    
   })
 
   SVG.G = SVG.invent({
@@ -2345,7 +2355,7 @@
       }
       // Return the fill id
     , fill: function() {
-        return 'url(#' + this.attr('id') + ')'
+        return 'url(#' + this.id() + ')'
       }
       // Alias string convertion to fill
     , toString: function() {
@@ -2412,7 +2422,7 @@
   , extend: {
       // Return the fill id
   	  fill: function() {
-  	    return 'url(#' + this.attr('id') + ')'
+  	    return 'url(#' + this.id() + ')'
   	  }
   	  // Update pattern by rebuilding
   	, update: function(block) {
@@ -2548,6 +2558,23 @@
     // Inherit from
   , inherit: SVG.Element
   
+  })
+
+  SVG.Symbol = SVG.invent({
+    // Initialize node
+    create: 'symbol'
+  
+    // Inherit from
+  , inherit: SVG.Container
+  
+    // Add parent method
+  , construct: {
+      // Create a new symbol
+      symbol: function() {
+        return this.defs().put(new SVG.Symbol)
+      }
+    }
+    
   })
 
   SVG.Use = SVG.invent({
@@ -3131,6 +3158,10 @@
       
       return this
     }
+    // Get length of text element
+  , length: function() {
+      return this.node.getComputedTextLength()
+    }
   })
   
   // Register rebuild event
@@ -3243,6 +3274,87 @@
         link.to(url)
   
       return this.parent.put(link).put(this)
+    }
+    
+  })
+
+  SVG.Marker = SVG.invent({
+    // Initialize node
+    create: 'marker'
+  
+    // Inherit from
+  , inherit: SVG.Container
+  
+    // Add class methods
+  , extend: {
+      // Set width of element
+      width: function(width) {
+        return this.attr('markerWidth', width)
+      }
+      // Set height of element
+    , height: function(height) {
+        return this.attr('markerHeight', height)
+      }
+      // Set marker refX and refY
+    , ref: function(x, y) {
+        return this.attr('refX', x).attr('refY', y)
+      }
+      // Update marker
+    , update: function(block) {
+        /* remove all content */
+        this.clear()
+        
+        /* invoke passed block */
+        if (typeof block == 'function')
+          block.call(this, this)
+        
+        return this
+      }
+      // Return the fill id
+    , toString: function() {
+        return 'url(#' + this.id() + ')'
+      }
+    }
+  
+    // Add parent method
+  , construct: {
+      marker: function(width, height, block) {
+        // Create marker element in defs
+        return this.defs().marker(width, height, block)
+      }
+    }
+  
+  })
+  
+  SVG.extend(SVG.Defs, {
+    // Create marker
+    marker: function(width, height, block) {
+      // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
+      return this.put(new SVG.Marker)
+        .size(width, height)
+        .ref(width / 2, height / 2)
+        .viewbox(0, 0, width, height)
+        .attr('orient', 'auto')
+        .update(block)
+    }
+    
+  })
+  
+  SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path, {
+    // Create and attach markers
+    marker: function(marker, width, height, block) {
+      var attr = ['marker']
+  
+      // Build attribute name
+      if (marker != 'all') attr.push(marker)
+      attr = attr.join('-')
+  
+      // Set marker attribute
+      marker = arguments[1] instanceof SVG.Marker ?
+        arguments[1] :
+        this.doc().marker(width, height, block)
+      
+      return this.attr(attr, marker)
     }
     
   })
@@ -3409,6 +3521,14 @@
       // Get member at given index
     , get: function(i) {
         return this.members[i]
+      }
+      // Get first member
+    , first: function() {
+        return this.get(0)
+      }
+      // Get last member
+    , last: function() {
+        return this.get(this.members.length - 1)
       }
       // Default value
     , valueOf: function() {
@@ -3683,6 +3803,13 @@
     }
     
     return o
+  }
+  
+  // Get id from reference string
+  function idFromReference(url) {
+    var m = url.toString().match(SVG.regex.reference)
+  
+    if (m) return m[1]
   }
   
   // Shim layer with setTimeout fallback by Paul Irish

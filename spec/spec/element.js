@@ -85,6 +85,22 @@ describe('Element', function() {
       expect(rect.attr().x).toBe('69%')
     })
   })
+
+  describe('id()', function() {
+    var rect
+    
+    beforeEach(function() {
+      rect = draw.rect(100,100)
+    })
+    
+    it('gets the value if the id attribute without an argument', function() {
+      expect(rect.id()).toBe(rect.attr('id'))
+    })
+    it('sets the value of the id', function() {
+      rect.id('new_id')
+      expect(rect.attr('id')).toBe('new_id')
+    })
+  })
   
   describe('style()', function() {
     it('should set the style with key and value arguments', function() {
@@ -384,17 +400,27 @@ describe('Element', function() {
       element.toggleClass('one')
       expect(element.hasClass('one')).toBeTruthy()
     })
-
     it('removes the class when it already exists', function(){
       var element = draw.rect(100,100)
       element.addClass('one')
       element.toggleClass('one')
       expect(element.hasClass('one')).toBeFalsy()
     })
-
     it('returns the svg instance', function() {
       var element = draw.rect(100,100)
       expect(element.toggleClass('one')).toEqual(element)
+    })
+  })
+
+  describe('reference()', function() {
+    it('gets a referenced element from a given attribute', function() {
+      var rect = draw.defs().rect(100, 100)
+        , use  = draw.use(rect)
+        , mark = draw.marker(10, 10)
+        , path = draw.path(svgPath).marker('end', mark)
+
+      expect(use.reference('href')).toBe(rect)
+      expect(path.reference('marker-end')).toBe(mark)
     })
   })
 })

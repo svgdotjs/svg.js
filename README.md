@@ -339,7 +339,7 @@ __`returns`: `itself`__
 The path string is similar to the polygon string but much more complex in order to support curves:
 
 ```javascript
-var path = draw.path('M10,20L30,40')
+draw.path('M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
 ```
 
 __`returns`: `SVG.Path`__
@@ -539,6 +539,16 @@ text.clear()
 
 __`returns`: `itself`__
 
+### length()
+Gets the total computed text length of all tspans together:
+
+```javascript
+text.length()
+```
+
+__`returns`: `number`__
+
+
 ### lines
 All added tspans are stored in the `lines` reference, which is an instance of `SVG.Set`.
 
@@ -640,6 +650,15 @@ tspan.clear()
 ```
 
 __`returns`: `itself`__
+
+### length()
+Gets the total computed text length:
+
+```javascript
+tspan.length()
+```
+
+__`returns`: `number`__
 
 ## TextPath
 A nice feature in svg is the ability to run text along a path:
@@ -889,6 +908,20 @@ To remove all elements from a parent element:
 draw.clear()
 ```
 __`returns`: `itself`__
+
+
+## Attribute references
+
+### reference()
+In cases where an element is linked to another element through an attribute, the linked element instance can be fetched with the `reference()` method. The only thing required is the attribute name:
+
+```javascript
+use.reference('href') //-> returns used element instance
+// or
+rect.reference('fill') //-> returns gradient instance
+// or
+circle.reference('clip-path') //-> returns clip instance
+```
 
 
 ## Manipulating elements
@@ -2072,10 +2105,28 @@ set.index(rect) //-> -1 if element is not a member
 __`returns`: `number`__
 
 ### get()
-Get the element at a given index:
+Gets the element at a given index:
 
 ```javascript
 set.get(1)
+```
+
+__`returns`: `element`__
+
+### first()
+Gets the first element:
+
+```javascript
+set.first()
+```
+
+__`returns`: `element`__
+
+### last()
+Gets the last element:
+
+```javascript
+set.last()
 ```
 
 __`returns`: `element`__
@@ -2117,7 +2168,7 @@ set.animate(3000).fill('#ff0')
 __`returns`: `SVG.SetFX`__
 
 
-## Gradients
+## Gradient
 
 ### gradient()
 There are linear and radial gradients. The linear gradient can be created like this:
@@ -2251,7 +2302,7 @@ _This functionality requires the gradient.js module which is included in the def
 __`returns`: `value`__
 
 
-## Patterns
+## Pattern
 
 ### pattern()
 Creating a pattern is very similar to creating gradients
@@ -2301,6 +2352,62 @@ pattern.fill() //-> returns 'url(#SvgjsPattern1234)'
 ```
 
 __`returns`: `value`__
+
+
+## Marker
+
+### marker()
+Markers can be added to every individual point of a `line`, `polyline`, `polygon` and `path`. There are three types of markers: `start`, `mid` and `end`. Where `start` represents the first point, `end` the last and `mid` every point in between.
+
+```javascript
+var path = draw.path('M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100z')
+
+path.fill('none').stroke({ width: 1 })
+
+path.marker('start', 10, 10, function(add) {
+  add.circle(10).fill('#f06')
+})
+path.marker('mid', 10, 10, function(add) {
+  add.rect(10, 10)
+})
+path.marker('end', 20, 20, function(add) {
+  add.circle(6).center(4, 5)
+  add.circle(6).center(4, 15)
+  add.circle(6).center(16, 10)
+
+  this.fill('#0f6')
+})
+```
+
+The `marker()` method can be used in three ways. Firstly, a marker can be created on any container element (e.g. svg, nested, group, ...). This is useful if you plan to reuse the marker many times so it will create a marker in the defs but not show it yet:
+
+```javascript
+var marker = draw.marker(10, 10, function() {
+  add.rect(10, 10)
+})
+```
+
+Secondly a marker can be created and applied directly on its target element:
+
+```javascript
+path.marker('start', 10, 10, function() {
+  add.circle(10).fill('#f06')
+})
+```
+
+This will create a marker in the defs and apply it directly. Note that the first argument defines the position of the marker and that there are four arguments as opposed to three with the first example.
+
+Lastly, if a marker is created for reuse on a container element, it can be applied directly on the target element:
+
+```javascript
+path.marker('mid', marker)
+```
+
+Finally, to get a marker instance from the target element reference:
+
+```javascript
+path.reference('marker-end')
+```
 
 
 ## Data

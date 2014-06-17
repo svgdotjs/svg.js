@@ -5,4 +5,5 @@ SVG.Defs = SVG.invent({
 
   // Inherit from
 , inherit: SVG.Container
+  
 })

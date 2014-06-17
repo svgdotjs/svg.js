@@ -52,6 +52,14 @@ SVG.Set = SVG.invent({
   , get: function(i) {
       return this.members[i]
     }
+    // Get first member
+  , first: function() {
+      return this.get(0)
+    }
+    // Get last member
+  , last: function() {
+      return this.get(this.members.length - 1)
+    }
     // Default value
   , valueOf: function() {
       return this.members

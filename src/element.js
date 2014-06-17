@@ -61,10 +61,9 @@ SVG.Element = SVG.invent({
   , size: function(width, height) {
       var p = proportionalSize(this.bbox(), width, height)
 
-      return this.attr({
-        width:  new SVG.Number(p.width)
-      , height: new SVG.Number(p.height)
-      })
+      return this
+        .width(new SVG.Number(p.width))
+        .height(new SVG.Number(p.height))
     }
     // Clone element
   , clone: function() {
@@ -308,6 +307,10 @@ SVG.Element = SVG.invent({
       
       return this
     }
+    // Get / set id
+  , id: function(id) {
+      return this.attr('id', id)
+    }
     // Get bounding box
   , bbox: function() {
       return new SVG.BBox(this)
@@ -383,6 +386,10 @@ SVG.Element = SVG.invent({
         this.addClass(className)
       }
       return this
+    }
+    // Get referenced element form attribute value
+  , reference: function(attr) {
+      return SVG.get(this.attr(attr))
     }
     // Private: find svg parent by instance
   , _parent: function(parent) {

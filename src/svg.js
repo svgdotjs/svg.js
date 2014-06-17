@@ -55,12 +55,6 @@ SVG.extend = function() {
     SVG.Set.inherit()
 }
 
-// Method for getting an element by id
-SVG.get = function(id) {
-  var node = document.getElementById(id)
-  if (node) return node.instance
-}
-
 // Initialize parsing element
 SVG.prepare = function(element) {
   /* select document body and create invisible svg element */

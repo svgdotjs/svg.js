@@ -79,19 +79,4 @@ describe('SVG', function() {
     })
   })
   
-  describe('get()', function() {
-    it('gets an element\'s instance by id', function() {
-      var rect = draw.rect(111,333)
-      
-      expect(SVG.get(rect.attr('id'))).toBe(rect)
-    })
-    it('makes have all the element\'s methods available', function() {
-      var element = draw.group()
-        , got = SVG.get(element.attr('id'))
-      
-      expect(got.transform()).toEqual(SVG.defaults.trans())
-      expect(got.attr()).toEqual(element.attr())
-    })
-  })
-  
 })
