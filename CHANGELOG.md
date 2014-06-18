@@ -1,4 +1,4 @@
-# 1.0.0-rc.10 (27/06/2014)
+# 1.0.0-rc.10 (?/?/2014)
 
 - remove internal references everywhere -> __TODO!__
 - rework transformation to be chainable and more true to native SVG -> __TODO!__
