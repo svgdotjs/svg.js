@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.9 - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-4-gf47dddc - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -798,6 +798,8 @@
       , hm   = 1 /* height multiplier */
       , box  = element.bbox()
       , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
+      , we   = element
+      , he   = element
   
     /* get dimensions of current node */
     width  = new SVG.Number(element.width())
@@ -806,11 +808,13 @@
     /* find nearest non-percentual dimensions */
     while (width.unit == '%') {
       wm *= width.value
-      width = new SVG.Number(element instanceof SVG.Doc ? element.parent.offsetWidth : element.width())
+      width = new SVG.Number(we instanceof SVG.Doc ? we.parent.offsetWidth : we.parent.width())
+      we = we.parent
     }
     while (height.unit == '%') {
       hm *= height.value
-      height = new SVG.Number(element instanceof SVG.Doc ? element.parent.offsetHeight : element.height())
+      height = new SVG.Number(he instanceof SVG.Doc ? he.parent.offsetHeight : he.parent.height())
+      he = he.parent
     }
     
     /* ensure defaults */

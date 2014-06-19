@@ -5,8 +5,8 @@ SVG.ViewBox = function(element) {
     , hm   = 1 /* height multiplier */
     , box  = element.bbox()
     , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
-    , wElement = element
-    , hElement = element
+    , we   = element
+    , he   = element
 
   /* get dimensions of current node */
   width  = new SVG.Number(element.width())
@@ -15,13 +15,13 @@ SVG.ViewBox = function(element) {
   /* find nearest non-percentual dimensions */
   while (width.unit == '%') {
     wm *= width.value
-    width = new SVG.Number(wElement instanceof SVG.Doc ? wElement.parent.offsetWidth : wElement.parent.width())
-    wElement = wElement.parent
+    width = new SVG.Number(we instanceof SVG.Doc ? we.parent.offsetWidth : we.parent.width())
+    we = we.parent
   }
   while (height.unit == '%') {
     hm *= height.value
-    height = new SVG.Number(hElement instanceof SVG.Doc ? hElement.parent.offsetHeight : hElement.parent.height())
-    hElement = hElement.parent
+    height = new SVG.Number(he instanceof SVG.Doc ? he.parent.offsetHeight : he.parent.height())
+    he = he.parent
   }
   
   /* ensure defaults */

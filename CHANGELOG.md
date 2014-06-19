@@ -4,7 +4,7 @@
 - rework transformation to be chainable and more true to native SVG -> __TODO!__
 - implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
-- fixed infinite loop in viewbox when element has a percentage width / height [thanks @shabegger] -> __TO MERGE!__
+- added support to clone manually built text elements -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 
@@ -14,6 +14,7 @@
 - added `length()` method to `SVG.Text` and `SVG.TSpan` to calculate total text length
 - `SVG.get()` will now also fetch elements with a `xlink:href="#elementId"` or `url(#elementId)` value given
 - added `reference()` method to get referenced elements from a given attribute value
+- fixed infinite loop in viewbox when element has a percentage width / height [thanks @shabegger]
 
 # 1.0.0-rc.8 (12/06/2014)
 
