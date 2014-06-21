@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-8-g0bb294a - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-9-g1953dbc - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {

@@ -7,7 +7,7 @@
 - added support to clone manually built text elements -> __TODO!__
 - using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]
 - added polyfill for IE9 and IE10 custom events [thanks @Fuzzyma]
-- added DOM query selector with the `select()` method on parent elements
+- added DOM query selector with the `select()` method globally or on parent elements
 
 # 1.0.0-rc.9 (17/06/2014)
 
