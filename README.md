@@ -752,7 +752,27 @@ var element = SVG.get('my_element')
 element.fill('#f06')
 ```
 
-### By class name
+### By CSS selector
+There are two ways to select elements using CSS selectors.
+
+The first is to search globally. This will search in all svg elements in a document and return them in an instance of `SVG.Set`:
+
+```javascript
+var elements = SVG.select('rect.my-class')
+
+elements.fill('#f06')
+```
+
+The second is to search within a parent element:
+
+```javascript
+var elements = group.select('rect.my-class')
+
+elements.x(100)
+```
+
+
+### Using jQuery
 There is no DOM querying system built into svg.js but [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) will help you achieve this. Here is an example:
 
 ```javascript
@@ -786,12 +806,12 @@ node.instance
 __`returns`: `element`__
 
 ## Parent reference
-Every element has a reference to its parent:
+Every element has a reference to its parent with the `parent()` method:
 
-### parent
+### parent()
 
 ```javascript
-element.parent
+element.parent()
 ```
 
 __`returns`: `element`__
@@ -801,10 +821,10 @@ Even the main svg document:
 ```javascript
 var draw = SVG('drawing')
 
-draw.parent //-> returns the wrappig html element with id 'drawing'
+draw.parent() //-> returns the wrappig html element with id 'drawing'
 ```
 
-__`returns`: `node`__
+__`returns`: `HTMLNode`__
 
 
 ### doc()

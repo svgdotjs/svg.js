@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-7-g629a01b - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-8-g0bb294a - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -83,26 +83,6 @@
   
   if (!SVG.supported) return false
 
-
-  SVG.get = function(id) {
-    var node = document.getElementById(idFromReference(id) || id)
-    if (node) return SVG.adopt(node)
-  }
-  
-  // Select elements by query string
-  SVG.select = function(query, parent) {
-    return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
-      return SVG.adopt(node)
-    })
-  }
-  
-  SVG.extend(SVG.Parent, {
-    // Scoped select method
-    select: function(query) {
-      return SVG.select(query, this.node)
-    }
-  
-  })
 
   SVG.invent = function(config) {
   	/* create element initializer */
@@ -3533,9 +3513,9 @@
 
   SVG.Set = SVG.invent({
     // Initialize
-    create: function() {
-      /* set initial state */
-      this.clear()
+    create: function(members) {
+      // Set initial state
+      Array.isArray(members) ?this.members = members : this.clear()
     }
   
     // Add class methods
@@ -3624,8 +3604,8 @@
     // Add parent method
   , construct: {
       // Create a new set
-      set: function() {
-        return new SVG.Set
+      set: function(members) {
+        return new SVG.Set(members)
       }
     }
   })
@@ -3744,6 +3724,28 @@
     // Initialize or return local memory object
   , memory: function() {
       return this._memory || (this._memory = {})
+    }
+  
+  })
+
+  SVG.get = function(id) {
+    var node = document.getElementById(idFromReference(id) || id)
+    if (node) return SVG.adopt(node)
+  }
+  
+  // Select elements by query string
+  SVG.select = function(query, parent) {
+    return new SVG.Set(
+      SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+        return SVG.adopt(node)
+      })
+    )
+  }
+  
+  SVG.extend(SVG.Parent, {
+    // Scoped select method
+    select: function(query) {
+      return SVG.select(query, this.node)
     }
   
   })

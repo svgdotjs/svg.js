@@ -1,8 +1,8 @@
 # 1.0.0-rc.10 (?/?/2014)
 
-- remove internal references everywhere -> __TODO!__
+- remove structural references everywhere
 - rework transformation to be chainable and more true to native SVG -> __TODO!__
-- implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js -> __TODO!__
+- implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added support to clone manually built text elements -> __TODO!__
 - using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]

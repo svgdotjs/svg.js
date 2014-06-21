@@ -1,8 +1,8 @@
 SVG.Set = SVG.invent({
   // Initialize
-  create: function() {
-    /* set initial state */
-    this.clear()
+  create: function(members) {
+    // Set initial state
+    Array.isArray(members) ?this.members = members : this.clear()
   }
 
   // Add class methods
@@ -91,8 +91,8 @@ SVG.Set = SVG.invent({
   // Add parent method
 , construct: {
     // Create a new set
-    set: function() {
-      return new SVG.Set
+    set: function(members) {
+      return new SVG.Set(members)
     }
   }
 })

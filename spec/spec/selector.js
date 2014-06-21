@@ -23,5 +23,36 @@ describe('Selector', function() {
       expect(SVG.get(path.attr('marker-end'))).toBe(mark)
     })
   })
+
+  describe('select()', function() {
+    var e1, e2, e3, e4 ,e5
+
+    beforeEach(function() {
+      e1 = draw.rect(100, 100).addClass('selectable-element')
+      e2 = draw.rect(100, 100).addClass('unselectable-element')
+      e3 = draw.rect(100, 100).addClass('selectable-element')
+      e4 = draw.rect(100, 100).addClass('unselectable-element')
+      e5 = draw.rect(100, 100).addClass('selectable-element')
+    })
+    it('gets all elements with a given class name', function() {
+      expect(SVG.select('rect.selectable-element').valueOf()).toEqual([e1, e3, e5])
+    })
+    it('returns an instance of SVG.Set', function() {
+      expect(SVG.select('rect.selectable-element') instanceof SVG.Set).toBe(true)
+    })
+  })
+
+  describe('Parent#select()', function() {
+    it('gets all elements with a given class name inside a given element', function() {
+      var group = draw.group()
+        , e1 = draw.rect(100, 100).addClass('selectable-element')
+        , e2 = draw.rect(100, 100).addClass('unselectable-element')
+        , e3 = group.rect(100, 100).addClass('selectable-element')
+        , e4 = draw.rect(100, 100).addClass('unselectable-element')
+        , e5 = group.rect(100, 100).addClass('selectable-element')
+
+      expect(group.select('rect.selectable-element').valueOf()).toEqual([e3, e5])
+    })
+  })
   
 })

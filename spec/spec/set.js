@@ -19,6 +19,12 @@ describe('Set', function() {
     expect(draw.set() instanceof SVG.Set).toBeTruthy()
   })
 
+  it('creates a set with initial value', function() {
+    var members = [1, 2, 4]
+
+    expect(draw.set(members).valueOf()).toBe(members)
+  })  
+
   describe('add()', function() {
     it('returns the set instance', function() {
       expect(set.add(e1)).toBe(set)
