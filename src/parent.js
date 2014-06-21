@@ -79,9 +79,8 @@ SVG.Parent = SVG.invent({
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
       
-      // Ensure new defs node
-      if (this instanceof SVG.Doc)
-        this.defs()
+      // Remove defs reference
+      delete this._defs
 
       return this
     }

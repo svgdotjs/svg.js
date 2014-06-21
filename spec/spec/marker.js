@@ -47,7 +47,7 @@ describe('Marker', function() {
         this.ref(5, 6)
       })
 
-      marker = path.marker('mid')
+      marker = path.marker('mid', 10, 10)
     })
 
     it('creates an instance of SVG.Marker', function() {

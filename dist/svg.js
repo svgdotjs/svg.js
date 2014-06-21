@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-6-g19b6fd4 - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-7-g629a01b - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -1523,10 +1523,9 @@
         // Remove children
         while(this.node.hasChildNodes())
           this.node.removeChild(this.node.lastChild)
-        console.log(this.node.childNodes.length)
-        // Ensure new defs node
-        if (this instanceof SVG.Doc)
-          this.defs()
+        
+        // Remove defs reference
+        delete this._defs
   
         return this
       }
@@ -2188,8 +2187,17 @@
     }
     // Send given element one step forward
   , forward: function() {
-      var i = this.position()
-      return this.parent().removeElement(this).put(this, i + 1)
+      var i = this.position() + 1
+        , p = this.parent()
+  
+      // Move node one step forward
+      p.removeElement(this).add(this, i)
+  
+      // Make sure defs node is always at the top
+      if (p instanceof SVG.Doc)
+        p.node.appendChild(p.defs().node)
+  
+      return this
     }
     // Send given element one step backward
   , backward: function() {
@@ -2202,7 +2210,16 @@
     }
     // Send given element all the way to the front
   , front: function() {
-      return this.parent().removeElement(this).put(this)
+      var p = this.parent()
+  
+      // Move node forward
+      p.node.appendChild(this.node)
+  
+      // Make sure defs node is always at the top
+      if (p instanceof SVG.Doc)
+        p.node.appendChild(p.defs().node)
+  
+      return this
     }
     // Send given element all the way to the back
   , back: function() {
