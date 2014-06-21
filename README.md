@@ -1927,7 +1927,7 @@ var clip = draw.clip().add(text).add(ellipse)
 rect.clipWith(clip)
 ```
 
-__`returns`: `SVG.Clip`__
+__`returns`: `SVG.ClipPath`__
 
 ### unclip()
 Unclipping the elements can be done with the `unclip()` method:

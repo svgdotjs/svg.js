@@ -13,7 +13,7 @@ describe('Doc', function() {
       expect(draw.defs()).toBe(draw._defs)
     })
     it('references parent node', function(){
-      expect(draw.defs().parent).toBe(draw)
+      expect(draw.defs().parent()).toBe(draw)
     })
   })
   

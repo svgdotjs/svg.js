@@ -10,7 +10,7 @@ SVG.RBox = function(element) {
   this.height = 0
   
   if (element) {
-    e = element.doc().parent
+    e = element.doc().parent()
     zoom = element.doc().viewbox().zoom
     
     /* actual, native bounding box */
@@ -31,7 +31,7 @@ SVG.RBox = function(element) {
     
     /* calculate cumulative zoom from svg documents */
     e = element
-    while (e = e.parent) {
+    while (e = e.parent()) {
       if (e.type == 'svg' && e.viewbox) {
         zoom *= e.viewbox().zoom
         this.x -= e.x() || 0

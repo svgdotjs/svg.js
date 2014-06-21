@@ -1,4 +1,4 @@
-SVG.Clip = SVG.invent({
+SVG.ClipPath = SVG.invent({
   // Initialize node
   create: function() {
     this.constructor.call(this, SVG.create('clipPath'))
@@ -21,7 +21,7 @@ SVG.Clip = SVG.invent({
       delete this.targets
 
       /* remove clipPath from parent */
-      this.parent.removeElement(this)
+      this.parent().removeElement(this)
       
       return this
     }
@@ -31,7 +31,7 @@ SVG.Clip = SVG.invent({
 , construct: {
     // Create clipping element
     clip: function() {
-      return this.defs().put(new SVG.Clip)
+      return this.defs().put(new SVG.ClipPath)
     }
   }
 })
@@ -41,7 +41,7 @@ SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
     /* use given clip or create a new one */
-    this.clipper = element instanceof SVG.Clip ? element : this.parent.clip().add(element)
+    this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     /* store reverence on self in mask */
     this.clipper.targets.push(this)

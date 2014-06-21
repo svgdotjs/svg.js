@@ -210,11 +210,11 @@ describe('Container', function() {
       draw.clear()
       expect(draw.children().length).toBe(0)
     })
-    it('keeps the defs node', function() {
+    it('creates a new defs node', function() {
       var oldDefs = draw.defs()
       draw.rect(100,100).maskWith(draw.circle(100, 100))
       draw.clear()
-      expect(draw.defs()).toBe(oldDefs)
+      expect(draw.defs()).not.toBe(oldDefs)
     })
     it('clears all children in the defs node', function() {
       draw.rect(100,100).maskWith(draw.circle(100, 100))
@@ -336,6 +336,12 @@ describe('Container', function() {
     })
   })
   
+  describe('parent()', function() {
+    it('returns th parent element instance', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.parent()).toBe(rect.node.parentNode.instance)
+    })
+  })
 })
 
 

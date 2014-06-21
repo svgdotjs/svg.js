@@ -34,7 +34,7 @@ SVG.listeners = {}
 // Event constructor
 SVG.registerEvent = function(event) {
   if (!SVG.events[event])
-    SVG.events[event] = new Event(event)
+    SVG.events[event] = new CustomEvent(event)
 }
 
 // Add event binder in the SVG namespace
@@ -65,8 +65,15 @@ SVG.extend(SVG.Element, {
     return this
   }
   // Fire given event
-, fire: function(event) {
+, fire: function(event, data) {
+    // Add detail data to event
+    SVG.events[event].detail = data
+    
+    // Dispatch event
     this.node.dispatchEvent(SVG.events[event])
+
+    // Remove detail
+    delete SVG.events[event].detail
 
     return this
   }

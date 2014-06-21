@@ -16,7 +16,7 @@ describe('Marker', function() {
     })
 
     it('creates marker in defs', function() {
-      expect(marker.parent instanceof SVG.Defs).toBeTruthy()
+      expect(marker.parent() instanceof SVG.Defs).toBeTruthy()
     })
 
     describe('marker()', function() {

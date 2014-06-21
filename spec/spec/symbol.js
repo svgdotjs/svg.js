@@ -10,7 +10,7 @@ describe('Symbol', function() {
   })
 
   it('creates symbol in defs', function() {
-    expect(symbol.parent instanceof SVG.Defs).toBeTruthy()
+    expect(symbol.parent() instanceof SVG.Defs).toBeTruthy()
   })
 
 })

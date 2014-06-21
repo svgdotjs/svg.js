@@ -21,7 +21,7 @@ SVG.Mask = SVG.invent({
       delete this.targets
 
       /* remove mask from parent */
-      this.parent.removeElement(this)
+      this.parent().removeElement(this)
       
       return this
     }
@@ -41,7 +41,7 @@ SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
     /* use given mask or create a new one */
-    this.masker = element instanceof SVG.Mask ? element : this.parent.mask().add(element)
+    this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     /* store reverence on self in mask */
     this.masker.targets.push(this)

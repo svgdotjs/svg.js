@@ -11,7 +11,9 @@ SVG.Parent = SVG.invent({
 , extend: {
     // Returns all child elements
     children: function() {
-      return this._children || (this._children = [])
+      return SVG.utils.map(this.node.childNodes, function(node) {
+        return SVG.adopt(node)
+      })
     }
     // Add given element at a position
   , add: function(element, i) {
@@ -19,22 +21,10 @@ SVG.Parent = SVG.invent({
         /* define insertion index if none given */
         i = i == null ? this.children().length : i
         
-        /* remove references from previous parent */
-        if (element.parent)
-          element.parent.children().splice(element.parent.index(element), 1)
-        
         /* add element references */
-        this.children().splice(i, 0, element)
         this.node.insertBefore(element.node, this.node.childNodes[i] || null)
-        element.parent = this
       }
 
-      /* reposition defs */
-      if (this._defs) {
-        this.node.removeChild(this._defs.node)
-        this.node.appendChild(this._defs.node)
-      }
-      
       return this
     }
     // Basically does the same as `add()` but returns the added element instead
@@ -79,25 +69,22 @@ SVG.Parent = SVG.invent({
     }
     // Remove a child element at a position
   , removeElement: function(element) {
-      this.children().splice(this.index(element), 1)
       this.node.removeChild(element.node)
-      element.parent = null
       
       return this
     }
     // Remove all elements in this container
   , clear: function() {
-      /* remove children */
-      for (var i = this.children().length - 1; i >= 0; i--)
-        this.removeElement(this.children()[i])
+      // Remove children
+      while(this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild)
 
-      /* remove defs node */
-      if (this._defs)
-        this._defs.clear()
+      // Remove defs cache reference
+      delete this._defs
 
       return this
     }
-   , // Get defs
+  , // Get defs
     defs: function() {
       return this.doc().defs()
     }

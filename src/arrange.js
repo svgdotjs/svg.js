@@ -4,11 +4,11 @@
 SVG.extend(SVG.Element, {
   // Get all siblings, including myself
   siblings: function() {
-    return this.parent.children()
+    return this.parent().children()
   }
   // Get the curent position siblings
 , position: function() {
-    return this.parent.index(this)
+    return this.parent().index(this)
   }
   // Get the next element (will return null if there is none)
 , next: function() {
@@ -21,25 +21,25 @@ SVG.extend(SVG.Element, {
   // Send given element one step forward
 , forward: function() {
     var i = this.position()
-    return this.parent.removeElement(this).put(this, i + 1)
+    return this.parent().removeElement(this).put(this, i + 1)
   }
   // Send given element one step backward
 , backward: function() {
     var i = this.position()
     
     if (i > 0)
-      this.parent.removeElement(this).add(this, i - 1)
+      this.parent().removeElement(this).add(this, i - 1)
 
     return this
   }
   // Send given element all the way to the front
 , front: function() {
-    return this.parent.removeElement(this).put(this)
+    return this.parent().removeElement(this).put(this)
   }
   // Send given element all the way to the back
 , back: function() {
     if (this.position() > 0)
-      this.parent.removeElement(this).add(this, 0)
+      this.parent().removeElement(this).add(this, 0)
     
     return this
   }
@@ -49,7 +49,7 @@ SVG.extend(SVG.Element, {
 
     var i = this.position()
     
-    this.parent.add(element, i)
+    this.parent().add(element, i)
 
     return this
   }
@@ -59,7 +59,7 @@ SVG.extend(SVG.Element, {
     
     var i = this.position()
     
-    this.parent.add(element, i + 1)
+    this.parent().add(element, i + 1)
 
     return this
   }

@@ -5,6 +5,9 @@
 - implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added support to clone manually built text elements -> __TODO!__
+- using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]
+- added polyfill for IE9 and IE10 custom events [thanks @Fuzzyma]
+- added DOM query selector with the `select()` method on parent elements
 
 # 1.0.0-rc.9 (17/06/2014)
 

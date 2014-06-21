@@ -227,7 +227,7 @@ describe('Element', function() {
         , group = draw.group()
 
       expect(rect.addTo(group)).toBe(rect)
-      expect(rect.parent).toBe(group)
+      expect(rect.parent()).toBe(group)
     })
   })
 
@@ -237,7 +237,7 @@ describe('Element', function() {
         , group = draw.group()
 
       expect(rect.putIn(group)).toBe(group)
-      expect(rect.parent).toBe(group)
+      expect(rect.parent()).toBe(group)
     })
   })
   
@@ -278,12 +278,12 @@ describe('Element', function() {
   describe('parent', function() {
     it('contains the parent svg', function() {
       var rect = draw.rect(100,100)
-      expect(rect.parent).toBe(draw)
+      expect(rect.parent()).toBe(draw)
     })
     it('contains the parent group when in a group', function() {
       var group = draw.group()
         , rect = group.rect(100,100)
-      expect(rect.parent).toBe(group)
+      expect(rect.parent()).toBe(group)
     })
   })
   

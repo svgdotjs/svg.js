@@ -5,6 +5,11 @@ function camelCase(s) {
   })
 }
 
+// Capitalize first letter of a string
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 // Ensure to six-based hex 
 function fullHex(hex) {
   return hex.length == 4 ?

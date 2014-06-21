@@ -67,7 +67,7 @@ SVG.prepare = function(element) {
 
   /* create parser object */
   SVG.parser = {
-    body: body || element.parent
+    body: body || element.parent()
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
   , poly: draw.polyline().node
   , path: path

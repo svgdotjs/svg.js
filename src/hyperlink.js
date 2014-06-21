@@ -40,7 +40,7 @@ SVG.extend(SVG.Element, {
     else
       link.to(url)
 
-    return this.parent.put(link).put(this)
+    return this.parent().put(link).put(this)
   }
   
 })

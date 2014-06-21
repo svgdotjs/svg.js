@@ -192,7 +192,6 @@ SVG.extend(SVG.Text, SVG.TSpan, {
     
     /* add new tspan and reference */
     node.appendChild(tspan.node)
-    tspan.parent = this
 
     /* only first level tspans are considered to be "lines" */
     if (this instanceof SVG.Text)

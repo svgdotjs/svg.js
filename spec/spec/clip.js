@@ -11,20 +11,20 @@ describe('ClipPath', function() {
     draw.clear()
   })
 
-  it('moves the masking element to a new clip node', function() {
-    expect(circle.parent instanceof SVG.Clip).toBe(true)
+  it('moves the clipping element to a new clip node', function() {
+    expect(circle.parent() instanceof SVG.ClipPath).toBe(true)
   })
   
   it('creates the clip node in the defs node', function() {
-    expect(circle.parent.parent).toBe(draw.defs())
+    expect(circle.parent().parent()).toBe(draw.defs())
   })
 
   it('sets the "clip-path" attribute on the cliped element with the clip id', function() {
-    expect(rect.attr('clip-path')).toBe('url("#' + circle.parent.attr('id') + '")')
+    expect(rect.attr('clip-path')).toBe('url("#' + circle.parent().attr('id') + '")')
   })
 
   it('references the clip element in the masked element', function() {
-    expect(rect.clipper).toBe(circle.parent)
+    expect(rect.clipper).toBe(circle.parent())
   })
 
   it('references the clipped element in the clipPath target list', function() {

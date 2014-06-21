@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-4-gf47dddc - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-5-gbb0e6be - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -68,7 +68,7 @@
   
     /* create parser object */
     SVG.parser = {
-      body: body || element.parent
+      body: body || element.parent()
     , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
     , poly: draw.polyline().node
     , path: path
@@ -86,8 +86,23 @@
 
   SVG.get = function(id) {
     var node = document.getElementById(idFromReference(id) || id)
-    if (node) return node.instance
+    if (node) return SVG.adopt(node)
   }
+  
+  // Select elements by query string
+  SVG.select = function(query, parent) {
+    return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+      return SVG.adopt(node)
+    })
+  }
+  
+  SVG.extend(SVG.Parent, {
+    // Scoped select method
+    select: function(query) {
+      return SVG.select(query, this.node)
+    }
+  
+  })
 
   SVG.invent = function(config) {
   	/* create element initializer */
@@ -110,6 +125,29 @@
   		SVG.extend(config.parent || SVG.Container, config.construct)
   
   	return initializer
+  }
+
+  SVG.adopt = function(node) {
+    // Make sure a node isn't already adopted
+    if (node.instance) return node.instance
+  
+    // Initialize variables
+    var element
+  
+    // Adopt with element-specific settings
+    if (node.nodeName == 'svg')
+      element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
+    else if (node.nodeName == 'lineairGradient')
+      element = new SVG.Gradient('lineair')
+    else if (node.nodeName == 'radialGradient')
+      element = new SVG.Gradient('radial')
+    else
+      element = new SVG[capitalize(node.nodeName)]
+  
+    // Ensure references
+    element.type = node.nodeName
+    element.node = node
+    return node.instance = element
   }
 
   SVG.regex = {
@@ -148,6 +186,21 @@
     
     /* test for namespaced event */
   , isEvent:      /^[\w]+:[\w]+$/
+  
+  }
+
+  SVG.utils = {
+    // Map function
+    map: function(array, block) {
+      var i
+        , il = array.length
+        , result = []
+  
+      for (i = 0; i < il; i++)
+        result.push(block(array[i]))
+      
+      return result
+    }
   
   }
 
@@ -808,13 +861,13 @@
     /* find nearest non-percentual dimensions */
     while (width.unit == '%') {
       wm *= width.value
-      width = new SVG.Number(we instanceof SVG.Doc ? we.parent.offsetWidth : we.parent.width())
-      we = we.parent
+      width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
+      we = we.parent()
     }
     while (height.unit == '%') {
       hm *= height.value
-      height = new SVG.Number(he instanceof SVG.Doc ? he.parent.offsetHeight : he.parent.height())
-      he = he.parent
+      height = new SVG.Number(he instanceof SVG.Doc ? he.parent().offsetHeight : he.parent().height())
+      he = he.parent()
     }
     
     /* ensure defaults */
@@ -924,7 +977,7 @@
     this.height = 0
     
     if (element) {
-      e = element.doc().parent
+      e = element.doc().parent()
       zoom = element.doc().viewbox().zoom
       
       /* actual, native bounding box */
@@ -945,7 +998,7 @@
       
       /* calculate cumulative zoom from svg documents */
       e = element
-      while (e = e.parent) {
+      while (e = e.parent()) {
         if (e.type == 'svg' && e.viewbox) {
           zoom *= e.viewbox().zoom
           this.x -= e.x() || 0
@@ -1063,20 +1116,20 @@
         
         /* invoke shape method with shape-specific arguments */
         clone = type == 'rect' || type == 'ellipse' ?
-          this.parent[type](0,0) :
+          this.parent()[type](0,0) :
         type == 'line' ?
-          this.parent[type](0,0,0,0) :
+          this.parent()[type](0,0,0,0) :
         type == 'image' ?
-          this.parent[type](this.src) :
+          this.parent()[type](this.src) :
         type == 'text' ?
-          this.parent[type](this.content) :
+          this.parent()[type](this.content) :
         type == 'path' ?
-          this.parent[type](this.attr('d')) :
+          this.parent()[type](this.attr('d')) :
         type == 'polyline' || type == 'polygon' ?
-          this.parent[type](this.attr('points')) :
+          this.parent()[type](this.attr('points')) :
         type == 'g' ?
-          this.parent.group() :
-          this.parent[type]()
+          this.parent().group() :
+          this.parent()[type]()
         
         /* apply attributes attributes */
         attr = this.attr()
@@ -1091,8 +1144,8 @@
       }
       // Remove element
     , remove: function() {
-        if (this.parent)
-          this.parent.removeElement(this)
+        if (this.parent())
+          this.parent().removeElement(this)
         
         return this
       }
@@ -1112,7 +1165,7 @@
       }
       // Get parent document
     , doc: function(type) {
-        return this._parent(type || SVG.Doc)
+        return this.parent(type || SVG.Doc)
       }
       // Set svg element attribute
     , attr: function(a, v, n) {
@@ -1337,59 +1390,54 @@
       }
       // Return array of classes on the node
     , classes: function() {
-        var classAttr = this.node.getAttribute('class')
-        if (classAttr === null) {
-          return []
-        } else {
-          return classAttr.trim().split(/\s+/)
-        }
+        var attr = this.attr('class')
+  
+        return attr == null ? [] : attr.trim().split(/\s+/)
       }
       // Return true if class exists on the node, false otherwise
-    , hasClass: function(className) {
-        return this.classes().indexOf(className) != -1
+    , hasClass: function(name) {
+        return this.classes().indexOf(name) != -1
       }
       // Add class to the node
-    , addClass: function(className) {
-        var classArray
-        if (!(this.hasClass(className))) {
-          classArray = this.classes()
-          classArray.push(className)
-          this.node.setAttribute('class', classArray.join(' '))
+    , addClass: function(name) {
+        if (!this.hasClass(name)) {
+          var array = this.classes()
+          array.push(name)
+          this.attr('class', array.join(' '))
         }
+  
         return this
       }
       // Remove class from the node
-    , removeClass: function(className) {
-        var classArray
-        if (this.hasClass(className)) {
-          classArray = this.classes().filter(function(c) {
-            return c != className
+    , removeClass: function(name) {
+        if (this.hasClass(name)) {
+          var array = this.classes().filter(function(c) {
+            return c != name
           })
-          this.node.setAttribute('class', classArray.join(' '))
+          this.attr('class', array.join(' '))
         }
+  
         return this
       }
       // Toggle the presence of a class on the node
-    , toggleClass: function(className) {
-        if (this.hasClass(className)) {
-          this.removeClass(className)
-        } else {
-          this.addClass(className)
-        }
-        return this
+    , toggleClass: function(name) {
+        return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
       }
       // Get referenced element form attribute value
     , reference: function(attr) {
         return SVG.get(this.attr(attr))
       }
-      // Private: find svg parent by instance
-    , _parent: function(parent) {
-        var element = this
-        
-        while (element != null && !(element instanceof parent))
-          element = element.parent
+      // Returns the parent element instance
+    , parent: function(type) {
+        // Get parent element
+        var parent = SVG.adopt(this.node.parentNode)
   
-        return element
+        // If a specific type is given, find a parent with that class
+        if (type)
+          while (!(parent instanceof type))
+            parent = SVG.adopt(parent.node.parentNode)
+  
+        return parent
       }
     }
   })
@@ -1408,7 +1456,9 @@
   , extend: {
       // Returns all child elements
       children: function() {
-        return this._children || (this._children = [])
+        return SVG.utils.map(this.node.childNodes, function(node) {
+          return SVG.adopt(node)
+        })
       }
       // Add given element at a position
     , add: function(element, i) {
@@ -1416,22 +1466,10 @@
           /* define insertion index if none given */
           i = i == null ? this.children().length : i
           
-          /* remove references from previous parent */
-          if (element.parent)
-            element.parent.children().splice(element.parent.index(element), 1)
-          
           /* add element references */
-          this.children().splice(i, 0, element)
           this.node.insertBefore(element.node, this.node.childNodes[i] || null)
-          element.parent = this
         }
   
-        /* reposition defs */
-        if (this._defs) {
-          this.node.removeChild(this._defs.node)
-          this.node.appendChild(this._defs.node)
-        }
-        
         return this
       }
       // Basically does the same as `add()` but returns the added element instead
@@ -1476,25 +1514,22 @@
       }
       // Remove a child element at a position
     , removeElement: function(element) {
-        this.children().splice(this.index(element), 1)
         this.node.removeChild(element.node)
-        element.parent = null
         
         return this
       }
       // Remove all elements in this container
     , clear: function() {
-        /* remove children */
-        for (var i = this.children().length - 1; i >= 0; i--)
-          this.removeElement(this.children()[i])
+        // Remove children
+        while(this.node.hasChildNodes())
+          this.node.removeChild(this.node.lastChild)
   
-        /* remove defs node */
-        if (this._defs)
-          this._defs.clear()
+        // Remove defs cache reference
+        delete this._defs
   
         return this
       }
-     , // Get defs
+    , // Get defs
       defs: function() {
         return this.doc().defs()
       }
@@ -2043,7 +2078,7 @@
   // Event constructor
   SVG.registerEvent = function(event) {
     if (!SVG.events[event])
-      SVG.events[event] = new Event(event)
+      SVG.events[event] = new CustomEvent(event)
   }
   
   // Add event binder in the SVG namespace
@@ -2074,8 +2109,15 @@
       return this
     }
     // Fire given event
-  , fire: function(event) {
+  , fire: function(event, data) {
+      // Add detail data to event
+      SVG.events[event].detail = data
+      
+      // Dispatch event
       this.node.dispatchEvent(SVG.events[event])
+  
+      // Remove detail
+      delete SVG.events[event].detail
   
       return this
     }
@@ -2129,11 +2171,11 @@
   SVG.extend(SVG.Element, {
     // Get all siblings, including myself
     siblings: function() {
-      return this.parent.children()
+      return this.parent().children()
     }
     // Get the curent position siblings
   , position: function() {
-      return this.parent.index(this)
+      return this.parent().index(this)
     }
     // Get the next element (will return null if there is none)
   , next: function() {
@@ -2146,25 +2188,25 @@
     // Send given element one step forward
   , forward: function() {
       var i = this.position()
-      return this.parent.removeElement(this).put(this, i + 1)
+      return this.parent().removeElement(this).put(this, i + 1)
     }
     // Send given element one step backward
   , backward: function() {
       var i = this.position()
       
       if (i > 0)
-        this.parent.removeElement(this).add(this, i - 1)
+        this.parent().removeElement(this).add(this, i - 1)
   
       return this
     }
     // Send given element all the way to the front
   , front: function() {
-      return this.parent.removeElement(this).put(this)
+      return this.parent().removeElement(this).put(this)
     }
     // Send given element all the way to the back
   , back: function() {
       if (this.position() > 0)
-        this.parent.removeElement(this).add(this, 0)
+        this.parent().removeElement(this).add(this, 0)
       
       return this
     }
@@ -2174,7 +2216,7 @@
   
       var i = this.position()
       
-      this.parent.add(element, i)
+      this.parent().add(element, i)
   
       return this
     }
@@ -2184,7 +2226,7 @@
       
       var i = this.position()
       
-      this.parent.add(element, i + 1)
+      this.parent().add(element, i + 1)
   
       return this
     }
@@ -2214,7 +2256,7 @@
         delete this.targets
   
         /* remove mask from parent */
-        this.parent.removeElement(this)
+        this.parent().removeElement(this)
         
         return this
       }
@@ -2234,7 +2276,7 @@
     // Distribute mask to svg element
     maskWith: function(element) {
       /* use given mask or create a new one */
-      this.masker = element instanceof SVG.Mask ? element : this.parent.mask().add(element)
+      this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
   
       /* store reverence on self in mask */
       this.masker.targets.push(this)
@@ -2251,7 +2293,7 @@
   })
 
 
-  SVG.Clip = SVG.invent({
+  SVG.ClipPath = SVG.invent({
     // Initialize node
     create: function() {
       this.constructor.call(this, SVG.create('clipPath'))
@@ -2274,7 +2316,7 @@
         delete this.targets
   
         /* remove clipPath from parent */
-        this.parent.removeElement(this)
+        this.parent().removeElement(this)
         
         return this
       }
@@ -2284,7 +2326,7 @@
   , construct: {
       // Create clipping element
       clip: function() {
-        return this.defs().put(new SVG.Clip)
+        return this.defs().put(new SVG.ClipPath)
       }
     }
   })
@@ -2294,7 +2336,7 @@
     // Distribute clipPath to svg element
     clipWith: function(element) {
       /* use given clip or create a new one */
-      this.clipper = element instanceof SVG.Clip ? element : this.parent.clip().add(element)
+      this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
   
       /* store reverence on self in mask */
       this.clipper.targets.push(this)
@@ -2471,32 +2513,24 @@
   SVG.Doc = SVG.invent({
     // Initialize node
     create: function(element) {
-      /* ensure the presence of a html element */
-      this.parent = typeof element == 'string' ?
+      /* ensure the presence of a dom element */
+      element = typeof element == 'string' ?
         document.getElementById(element) :
         element
       
       /* If the target is an svg element, use that element as the main wrapper.
          This allows svg.js to work with svg documents as well. */
-      this.constructor
-        .call(this, this.parent.nodeName == 'svg' ? this.parent : SVG.create('svg'))
+      if (element.nodeName == 'svg') {
+        this.constructor.call(this, element)
+      } else {
+        this.constructor.call(this, SVG.create('svg'))
+        element.appendChild(this.node)
+      }
       
       /* set svg element attributes */
       this
         .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
-      
-      /* create the <defs> node */
-      this._defs = new SVG.Defs
-      this._defs.parent = this
-      this.node.appendChild(this._defs.node)
-  
-      /* turn off sub pixel offset by default */
-      this.doSpof = false
-      
-      /* ensure correct rendering */
-      if (this.parent != this.node)
-        this.stage()
     }
   
     // Inherit from
@@ -2504,54 +2538,61 @@
   
     // Add class methods
   , extend: {
-      /* enable drawing */
-      stage: function() {
-        var element = this
-  
-        /* insert element */
-        this.parent.appendChild(this.node)
-  
-        /* fix sub-pixel offset */
-        element.spof()
-        
-        /* make sure sub-pixel offset is fixed every time the window is resized */
-        SVG.on(window, 'resize', function() {
-          element.spof()
-        })
-  
-        return this
-      }
-  
       // Creates and returns defs element
-    , defs: function() {
+      defs: function() {
+        if (!this._defs) {
+          var defs
+  
+          // Find or create a defs element in this instance
+          if (defs = this.node.getElementsByTagName('defs')[0])
+            this._defs = SVG.adopt(defs)
+          else
+            this._defs = new SVG.Defs
+  
+          // Make sure the defs node is at the end of the stack
+          this.node.appendChild(this._defs.node)
+        }
+  
         return this._defs
       }
-  
-      // Fix for possible sub-pixel offset. See:
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-    , spof: function() {
-        if (this.doSpof) {
-          var pos = this.node.getScreenCTM()
-          
-          if (pos)
-            this
-              .style('left', (-pos.e % 1) + 'px')
-              .style('top',  (-pos.f % 1) + 'px')
-        }
-        
-        return this
-      }
-  
-      // Enable sub-pixel offset
-    , fixSubPixelOffset: function() {
-        this.doSpof = true
-  
-        return this
+      // custom parent method
+    , parent: function() {
+        return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
       }
     }
     
   })
 
+
+  SVG.extend(SVG.Doc, {
+    // Callback
+    spof: function() {
+      if (this.doSpof) {
+        var pos = this.node.getScreenCTM()
+        
+        if (pos)
+          this
+            .style('left', (-pos.e % 1) + 'px')
+            .style('top',  (-pos.f % 1) + 'px')
+      }
+      
+      return this
+    }
+  
+    // Sub-pixel offset enabler
+  , fixSubPixelOffset: function() {
+      var self = this
+  
+      // Enable spof
+      this.doSpof = true
+  
+      // Make sure sub-pixel offset is fixed every time the window is resized
+      SVG.on(window, 'resize', function() { self.spof() })
+  
+      return this.spof()
+    }
+    
+  })
 
   SVG.Shape = SVG.invent({
     // Initialize node
@@ -3137,7 +3178,6 @@
       
       /* add new tspan and reference */
       node.appendChild(tspan.node)
-      tspan.parent = this
   
       /* only first level tspans are considered to be "lines" */
       if (this instanceof SVG.Text)
@@ -3277,7 +3317,7 @@
       else
         link.to(url)
   
-      return this.parent.put(link).put(this)
+      return this.parent().put(link).put(this)
     }
     
   })
@@ -3700,6 +3740,11 @@
     })
   }
   
+  // Capitalize first letter of a string
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+  
   // Ensure to six-based hex 
   function fullHex(hex) {
     return hex.length == 4 ?
@@ -3824,5 +3869,19 @@
             window.msRequestAnimationFrame     ||
             function (c) { window.setTimeout(c, 1000 / 60) }
   })()
+
+  if (typeof CustomEvent !== 'function') {
+    // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+    function CustomEvent (event, options) {
+      options = options || { bubbles: false, cancelable: false, detail: undefined }
+      var e = document.createEvent('CustomEvent')
+      e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
+      return e
+    }
+  
+    CustomEvent.prototype = window.Event.prototype
+  
+    window.CustomEvent = CustomEvent
+  }
 
 }).call(this);

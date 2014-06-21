@@ -12,19 +12,19 @@ describe('Mask', function() {
   })
 
   it('moves the masking element to a new mask node', function() {
-    expect(circle.parent instanceof SVG.Mask).toBe(true)
+    expect(circle.parent() instanceof SVG.Mask).toBe(true)
   })
   
   it('creates the mask node in the defs node', function() {
-    expect(circle.parent.parent).toBe(draw.defs())
+    expect(circle.parent().parent()).toBe(draw.defs())
   })
 
   it('sets the "mask" attribute on the masked element with the mask id', function() {
-    expect(rect.attr('mask')).toBe('url("#' + circle.parent.attr('id') + '")')
+    expect(rect.attr('mask')).toBe('url("#' + circle.parent().attr('id') + '")')
   })
 
   it('references the mask element in the masked element', function() {
-    expect(rect.masker).toBe(circle.parent)
+    expect(rect.masker).toBe(circle.parent())
   })
 
   it('references the masked element in the mask target list', function() {

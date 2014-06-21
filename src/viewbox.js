@@ -15,13 +15,13 @@ SVG.ViewBox = function(element) {
   /* find nearest non-percentual dimensions */
   while (width.unit == '%') {
     wm *= width.value
-    width = new SVG.Number(we instanceof SVG.Doc ? we.parent.offsetWidth : we.parent.width())
-    we = we.parent
+    width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
+    we = we.parent()
   }
   while (height.unit == '%') {
     hm *= height.value
-    height = new SVG.Number(he instanceof SVG.Doc ? he.parent.offsetHeight : he.parent.height())
-    he = he.parent
+    height = new SVG.Number(he instanceof SVG.Doc ? he.parent().offsetHeight : he.parent().height())
+    he = he.parent()
   }
   
   /* ensure defaults */

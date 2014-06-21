@@ -72,20 +72,20 @@ SVG.Element = SVG.invent({
       
       /* invoke shape method with shape-specific arguments */
       clone = type == 'rect' || type == 'ellipse' ?
-        this.parent[type](0,0) :
+        this.parent()[type](0,0) :
       type == 'line' ?
-        this.parent[type](0,0,0,0) :
+        this.parent()[type](0,0,0,0) :
       type == 'image' ?
-        this.parent[type](this.src) :
+        this.parent()[type](this.src) :
       type == 'text' ?
-        this.parent[type](this.content) :
+        this.parent()[type](this.content) :
       type == 'path' ?
-        this.parent[type](this.attr('d')) :
+        this.parent()[type](this.attr('d')) :
       type == 'polyline' || type == 'polygon' ?
-        this.parent[type](this.attr('points')) :
+        this.parent()[type](this.attr('points')) :
       type == 'g' ?
-        this.parent.group() :
-        this.parent[type]()
+        this.parent().group() :
+        this.parent()[type]()
       
       /* apply attributes attributes */
       attr = this.attr()
@@ -100,8 +100,8 @@ SVG.Element = SVG.invent({
     }
     // Remove element
   , remove: function() {
-      if (this.parent)
-        this.parent.removeElement(this)
+      if (this.parent())
+        this.parent().removeElement(this)
       
       return this
     }
@@ -121,7 +121,7 @@ SVG.Element = SVG.invent({
     }
     // Get parent document
   , doc: function(type) {
-      return this._parent(type || SVG.Doc)
+      return this.parent(type || SVG.Doc)
     }
     // Set svg element attribute
   , attr: function(a, v, n) {
@@ -346,59 +346,54 @@ SVG.Element = SVG.invent({
     }
     // Return array of classes on the node
   , classes: function() {
-      var classAttr = this.node.getAttribute('class')
-      if (classAttr === null) {
-        return []
-      } else {
-        return classAttr.trim().split(/\s+/)
-      }
+      var attr = this.attr('class')
+
+      return attr == null ? [] : attr.trim().split(/\s+/)
     }
     // Return true if class exists on the node, false otherwise
-  , hasClass: function(className) {
-      return this.classes().indexOf(className) != -1
+  , hasClass: function(name) {
+      return this.classes().indexOf(name) != -1
     }
     // Add class to the node
-  , addClass: function(className) {
-      var classArray
-      if (!(this.hasClass(className))) {
-        classArray = this.classes()
-        classArray.push(className)
-        this.node.setAttribute('class', classArray.join(' '))
+  , addClass: function(name) {
+      if (!this.hasClass(name)) {
+        var array = this.classes()
+        array.push(name)
+        this.attr('class', array.join(' '))
       }
+
       return this
     }
     // Remove class from the node
-  , removeClass: function(className) {
-      var classArray
-      if (this.hasClass(className)) {
-        classArray = this.classes().filter(function(c) {
-          return c != className
+  , removeClass: function(name) {
+      if (this.hasClass(name)) {
+        var array = this.classes().filter(function(c) {
+          return c != name
         })
-        this.node.setAttribute('class', classArray.join(' '))
+        this.attr('class', array.join(' '))
       }
+
       return this
     }
     // Toggle the presence of a class on the node
-  , toggleClass: function(className) {
-      if (this.hasClass(className)) {
-        this.removeClass(className)
-      } else {
-        this.addClass(className)
-      }
-      return this
+  , toggleClass: function(name) {
+      return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
     }
     // Get referenced element form attribute value
   , reference: function(attr) {
       return SVG.get(this.attr(attr))
     }
-    // Private: find svg parent by instance
-  , _parent: function(parent) {
-      var element = this
-      
-      while (element != null && !(element instanceof parent))
-        element = element.parent
+    // Returns the parent element instance
+  , parent: function(type) {
+      // Get parent element
+      var parent = SVG.adopt(this.node.parentNode)
 
-      return element
+      // If a specific type is given, find a parent with that class
+      if (type)
+        while (!(parent instanceof type))
+          parent = SVG.adopt(parent.node.parentNode)
+
+      return parent
     }
   }
 })
