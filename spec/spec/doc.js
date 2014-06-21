@@ -3,9 +3,13 @@ describe('Doc', function() {
   it('is an instance of SVG.Container', function() {
     expect(draw instanceof SVG.Container).toBe(true)
   })
+
+  it('is an instance of SVG.Doc', function() {
+    expect(draw instanceof SVG.Doc).toBe(true)
+  })
   
   it('has a defs element', function() {
-    expect(draw._defs instanceof SVG.Defs).toBe(true)
+    expect(draw.defs() instanceof SVG.Defs).toBe(true)
   })
 
   describe('defs()', function() {

@@ -31,7 +31,7 @@ SVG.RBox = function(element) {
     
     /* calculate cumulative zoom from svg documents */
     e = element
-    while (e = e.parent()) {
+    while (e.parent && (e = e.parent())) {
       if (e.type == 'svg' && e.viewbox) {
         zoom *= e.viewbox().zoom
         this.x -= e.x() || 0

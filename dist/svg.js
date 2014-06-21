@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-5-gbb0e6be - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-6-g19b6fd4 - svg selector inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -998,7 +998,7 @@
       
       /* calculate cumulative zoom from svg documents */
       e = element
-      while (e = e.parent()) {
+      while (e.parent && (e = e.parent())) {
         if (e.type == 'svg' && e.viewbox) {
           zoom *= e.viewbox().zoom
           this.x -= e.x() || 0
@@ -1463,10 +1463,10 @@
       // Add given element at a position
     , add: function(element, i) {
         if (!this.has(element)) {
-          /* define insertion index if none given */
+          // Define insertion index if none given
           i = i == null ? this.children().length : i
           
-          /* add element references */
+          // Add element references
           this.node.insertBefore(element.node, this.node.childNodes[i] || null)
         }
   
@@ -1523,9 +1523,10 @@
         // Remove children
         while(this.node.hasChildNodes())
           this.node.removeChild(this.node.lastChild)
-  
-        // Remove defs cache reference
-        delete this._defs
+        console.log(this.node.childNodes.length)
+        // Ensure new defs node
+        if (this instanceof SVG.Doc)
+          this.defs()
   
         return this
       }
@@ -2527,10 +2528,11 @@
         element.appendChild(this.node)
       }
       
-      /* set svg element attributes */
+      /* set svg element attributes and ensure defs node */
       this
         .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+        .defs()
     }
   
     // Inherit from

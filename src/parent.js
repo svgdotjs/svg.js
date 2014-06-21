@@ -18,10 +18,10 @@ SVG.Parent = SVG.invent({
     // Add given element at a position
   , add: function(element, i) {
       if (!this.has(element)) {
-        /* define insertion index if none given */
+        // Define insertion index if none given
         i = i == null ? this.children().length : i
         
-        /* add element references */
+        // Add element references
         this.node.insertBefore(element.node, this.node.childNodes[i] || null)
       }
 
@@ -78,9 +78,10 @@ SVG.Parent = SVG.invent({
       // Remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
-
-      // Remove defs cache reference
-      delete this._defs
+      
+      // Ensure new defs node
+      if (this instanceof SVG.Doc)
+        this.defs()
 
       return this
     }

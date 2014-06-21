@@ -15,10 +15,11 @@ SVG.Doc = SVG.invent({
       element.appendChild(this.node)
     }
     
-    /* set svg element attributes */
+    /* set svg element attributes and ensure defs node */
     this
       .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
       .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+      .defs()
   }
 
   // Inherit from
