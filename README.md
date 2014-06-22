@@ -752,35 +752,31 @@ var element = SVG.get('my_element')
 element.fill('#f06')
 ```
 
-### By CSS selector
+### Using CSS selectors
 There are two ways to select elements using CSS selectors.
 
 The first is to search globally. This will search in all svg elements in a document and return them in an instance of `SVG.Set`:
 
 ```javascript
-var elements = SVG.select('rect.my-class')
-
-elements.fill('#f06')
+var elements = SVG.select('rect.my-class').fill('#f06')
 ```
 
 The second is to search within a parent element:
 
 ```javascript
-var elements = group.select('rect.my-class')
-
-elements.x(100)
+var elements = group.select('rect.my-class').fill('#f06')
 ```
 
 
 ### Using jQuery
-There is no DOM querying system built into svg.js but [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) will help you achieve this. Here is an example:
+Another way is to use [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/). Here is an example:
 
 ```javascript
 /* add elements */
 var draw   = SVG('drawing')
-var group  = draw.group().attr('class', 'my-group')
-var rect   = group.rect(100,100).attr('class', 'my-element')
-var circle = group.circle(100).attr('class', 'my-element').move(100, 100)
+var group  = draw.group().addClass('my-group')
+var rect   = group.rect(100,100).addClass('my-element')
+var circle = group.circle(100).addClass('my-element').move(100, 100)
 
 /* get elements in group */
 var elements = $('#drawing g.my-group .my-element').each(function() {
