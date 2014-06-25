@@ -21,7 +21,7 @@ SVG.did  = 1000
 
 // Get next named element id
 SVG.eid = function(name) {
-  return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + (SVG.did++)
+  return 'Svgjs' + capitalize(name) + (SVG.did++)
 }
 
 // Method for element creation

@@ -8,12 +8,21 @@ describe('Polyline', function() {
   afterEach(function() {
     draw.clear()
   })
+
+  describe('array()', function() {
+    it('returns an instance of SVG.PointArray', function() {
+      expect(polyline.array() instanceof SVG.PointArray).toBeTruthy()
+    })
+    it('returns the value stored in the private variable _array', function() {
+      expect(polyline.array()).toBe(polyline._array)
+    })
+  })
   
   describe('x()', function() {
-    it('should return the value of x without an argument', function() {
+    it('returns the value of x without an argument', function() {
       expect(polyline.x()).toBe(0)
     })
-    it('should set the value of x with the first argument', function() {
+    it('sets the value of x with the first argument', function() {
       polyline.x(123)
       var box = polyline.bbox()
       expect(box.x).toBe(123)
@@ -21,10 +30,10 @@ describe('Polyline', function() {
   })
   
   describe('y()', function() {
-    it('should return the value of y without an argument', function() {
+    it('returns the value of y without an argument', function() {
       expect(polyline.y()).toBe(0)
     })
-    it('should set the value of y with the first argument', function() {
+    it('sets the value of y with the first argument', function() {
       polyline.y(345)
       var box = polyline.bbox()
       expect(box.y).toBe(345)
@@ -32,10 +41,10 @@ describe('Polyline', function() {
   })
   
   describe('cx()', function() {
-    it('should return the value of cx without an argument', function() {
+    it('returns the value of cx without an argument', function() {
       expect(polyline.cx()).toBe(50)
     })
-    it('should set the value of cx with the first argument', function() {
+    it('sets the value of cx with the first argument', function() {
       polyline.cx(123)
       var box = polyline.bbox()
       expect(box.cx).toBe(123)
@@ -43,10 +52,10 @@ describe('Polyline', function() {
   })
   
   describe('cy()', function() {
-    it('should return the value of cy without an argument', function() {
+    it('returns the value of cy without an argument', function() {
       expect(polyline.cy()).toBe(50)
     })
-    it('should set the value of cy with the first argument', function() {
+    it('sets the value of cy with the first argument', function() {
       polyline.cy(345)
       var box = polyline.bbox()
       expect(box.cy).toBe(345)
@@ -54,7 +63,7 @@ describe('Polyline', function() {
   })
   
   describe('move()', function() {
-    it('should set the x and y position', function() {
+    it('sets the x and y position', function() {
       polyline.move(123,456)
       var box = polyline.bbox()
       expect(box.x).toBe(123)
@@ -91,7 +100,7 @@ describe('Polyline', function() {
   })
   
   describe('center()', function() {
-    it('should set the cx and cy position', function() {
+    it('sets the cx and cy position', function() {
       polyline.center(321,567)
       var box = polyline.bbox()
       expect(box.x).toBe(271)
@@ -162,7 +171,7 @@ describe('Polyline', function() {
   })
 
   describe('translate()', function() {
-    it('should set the translation of an element', function() {
+    it('sets the translation of an element', function() {
       polyline.transform({ x: 12, y: 12 })
       expect(polyline.node.getAttribute('transform')).toBe('translate(12 12)')
     })

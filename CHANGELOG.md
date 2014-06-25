@@ -1,6 +1,7 @@
-# 1.0.0-rc.10 (?/?/2014)
+# 1.0.0-rc.10 (?/07/2014)
 
-- remove structural references everywhere
+- remove structural internal references everywhere
+- changed `parent` reference on elements to `parent()` method
 - rework transformation to be chainable and more true to native SVG -> __TODO!__
 - implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
@@ -8,6 +9,10 @@
 - using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]
 - added polyfill for IE9 and IE10 custom events [thanks @Fuzzyma]
 - added DOM query selector with the `select()` method globally or on parent elements
+- added the intentionally neglected `SVG.Circle` element
+- fixed bug in `radius()` method when `y` value equals `0`
+- added `rx()` and `ry()` to `SVG.Rect`, `SVG.Circle`, `SVG.Ellispe` and `SVG.FX`
+- changed `array` reference to `array()` method on `SVG.Polyline`, `SVG.Polygon` and `SVG.Path`
 
 # 1.0.0-rc.9 (17/06/2014)
 

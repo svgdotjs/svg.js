@@ -8,12 +8,21 @@ describe('Path', function() {
   afterEach(function() {
     draw.clear()
   })
+
+  describe('array()', function() {
+    it('returns an instance of SVG.PathArray', function() {
+      expect(path.array() instanceof SVG.PathArray).toBeTruthy()
+    })
+    it('returns the value stored in the private variable _array', function() {
+      expect(path.array()).toBe(path._array)
+    })
+  })
   
   describe('x()', function() {
-    it('should return the value of x without an argument', function() {
+    it('returns the value of x without an argument', function() {
       expect(path.x()).toBe(0)
     })
-    it('should set the value of x with the first argument', function() {
+    it('sets the value of x with the first argument', function() {
       path.x(123)
       var box = path.bbox()
       expect(box.x).toBe(123)
@@ -21,10 +30,10 @@ describe('Path', function() {
   })
   
   describe('y()', function() {
-    it('should return the value of y without an argument', function() {
+    it('returns the value of y without an argument', function() {
       expect(path.y()).toBe(0)
     })
-    it('should set the value of y with the first argument', function() {
+    it('sets the value of y with the first argument', function() {
       path.y(345)
       var box = path.bbox()
       expect(box.y).toBe(345)
@@ -32,10 +41,10 @@ describe('Path', function() {
   })
   
   describe('cx()', function() {
-    it('should return the value of cx without an argument', function() {
+    it('returns the value of cx without an argument', function() {
       expect(path.cx()).toBe(50)
     })
-    it('should set the value of cx with the first argument', function() {
+    it('sets the value of cx with the first argument', function() {
       path.cx(123)
       var box = path.bbox()
       expect(box.cx).toBe(123)
@@ -43,10 +52,10 @@ describe('Path', function() {
   })
   
   describe('cy()', function() {
-    it('should return the value of cy without an argument', function() {
+    it('returns the value of cy without an argument', function() {
       expect(path.cy()).toBe(50)
     })
-    it('should set the value of cy with the first argument', function() {
+    it('sets the value of cy with the first argument', function() {
       path.cy(345)
       var box = path.bbox()
       expect(box.cy).toBe(345)
@@ -54,13 +63,13 @@ describe('Path', function() {
   })
   
   describe('move()', function() {
-    it('should set the x and y position', function() {
+    it('sets the x and y position', function() {
       path.move(123,456)
       var box = path.bbox()
       expect(box.x).toBe(123)
       expect(box.y).toBe(456)
     })
-    it('should set the x and y position when scaled to half its size', function() {
+    it('sets the x and y position when scaled to half its size', function() {
       path.scale(0.5).move(123,456)
       var box = path.bbox()
       expect(box.x).toBe(123)
@@ -97,7 +106,7 @@ describe('Path', function() {
   })
   
   describe('center()', function() {
-    it('should set the cx and cy position', function() {
+    it('sets the cx and cy position', function() {
       path.center(321,567)
       var box = path.bbox()
       expect(box.x).toBe(271)
@@ -168,7 +177,7 @@ describe('Path', function() {
   })
 
   describe('translate()', function() {
-    it('should set the translation of an element', function() {
+    it('sets the translation of an element', function() {
       path.transform({ x: 12, y: 12 })
       expect(path.node.getAttribute('transform')).toBe('translate(12 12)')
     })

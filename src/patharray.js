@@ -1,6 +1,6 @@
 // Path points array
 SVG.PathArray = function(array, fallback) {
-  this.constructor.call(this, array, fallback)
+  this.constructor.call(this, array, fallback || [['M', 0, 0]])
 }
 
 // Inherit from SVG.Array

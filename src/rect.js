@@ -11,7 +11,5 @@ SVG.Rect = SVG.invent({
   	rect: function(width, height) {
   	  return this.put(new SVG.Rect().size(width, height))
   	}
-  	
 	}
-	
 })

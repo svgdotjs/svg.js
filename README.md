@@ -306,6 +306,15 @@ polyline.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250
 
 __`returns`: `itself`__
 
+### array()
+References the `SVG.PointArray` instance. This method is rather intended for internal use:
+
+```javascript
+polyline.array()
+```
+
+__`returns`: `SVG.PointArray`__
+
 ## Polygon
 The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:
 
@@ -335,6 +344,15 @@ polygon.animate(3000).plot([[0,0], [100,50], [50,100], [150,50], [200,50], [250,
 
 __`returns`: `itself`__
 
+### array()
+References the `SVG.PointArray` instance. This method is rather intended for internal use:
+
+```javascript
+polygon.array()
+```
+
+__`returns`: `SVG.PointArray`__
+
 ## Path
 The path string is similar to the polygon string but much more complex in order to support curves:
 
@@ -357,6 +375,15 @@ path.plot('M100,200L300,400')
 ```
 
 __`returns`: `itself`__
+
+### array()
+References the `SVG.PathArray` instance. This method is rather intended for internal use:
+
+```javascript
+path.array()
+```
+
+__`returns`: `SVG.PathArray`__
 
 ## Image
 Creating images is as you might expect:
@@ -2854,7 +2881,7 @@ new SVG.PointArray([
 Note that every instance of `SVG.Polyline` and `SVG.Polygon` carries a reference to the `SVG.PointArray` instance:
 
 ```javascript
-polygon.array //-> returns the SVG.PointArray instance
+polygon.array() //-> returns the SVG.PointArray instance
 ```
 
 _Javascript inheritance stack: `SVG.PointArray` < `SVG.Array`_
@@ -2889,7 +2916,7 @@ new SVG.PathArray([
 Note that every instance of `SVG.Path` carries a reference to the `SVG.PathArray` instance:
 
 ```javascript
-path.array //-> returns the SVG.PathArray instance
+path.array() //-> returns the SVG.PathArray instance
 ```
 
 #### Syntax
@@ -3168,7 +3195,7 @@ All contributions are very welcome but please make sure you:
   - single __quotes__
   - use one line __comments__ to describe any additions
   - look around and you'll know what to do
-- write at least one spec example per implementation or modification
+- __write at least one spec example per implementation or modification__
 
 Before running the specs you will need to build the library.
 Be aware that pull requests without specs will be declined.

@@ -50,11 +50,11 @@ describe('Container', function() {
       draw.circle(100)
       expect(draw.children().length).toBe(initial + 1)
     })
-    it('should create an ellipse', function() {
-      expect(draw.circle(100).type).toBe('ellipse')
+    it('should create an circle', function() {
+      expect(draw.circle(100).type).toBe('circle')
     })
-    it('should create an instance of SVG.Ellipse', function() {
-      expect(draw.circle(100) instanceof SVG.Ellipse).toBe(true)
+    it('should create an instance of SVG.Circle', function() {
+      expect(draw.circle(100) instanceof SVG.Circle).toBe(true)
     })
     it('should be an instance of SVG.Shape', function() {
       expect(draw.circle(100) instanceof SVG.Shape).toBe(true)

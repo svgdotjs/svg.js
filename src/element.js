@@ -125,8 +125,9 @@ SVG.Element = SVG.invent({
     }
     // Set svg element attribute
   , attr: function(a, v, n) {
+      // Act as full getter
       if (a == null) {
-        /* get an object of attributes */
+        // Get an object of attributes
         a = {}
         v = this.node.attributes
         for (n = v.length - 1; n >= 0; n--)
@@ -135,15 +136,15 @@ SVG.Element = SVG.invent({
         return a
         
       } else if (typeof a == 'object') {
-        /* apply every attribute individually if an object is passed */
+        // Apply every attribute individually if an object is passed
         for (v in a) this.attr(v, a[v])
         
       } else if (v === null) {
-          /* remove value */
+          // Remove value
           this.node.removeAttribute(a)
         
       } else if (v == null) {
-        /* act as a getter if the first and only argument is not an object */
+        // Act as a getter if the first and only argument is not an object
         v = this.node.getAttribute(a)
         return v == null ? 
           SVG.defaults.attrs[a] :
@@ -151,17 +152,17 @@ SVG.Element = SVG.invent({
           parseFloat(v) : v
       
       } else if (a == 'style') {
-        /* redirect to the style method */
+        // Redirect to the style method
         return this.style(v)
       
       } else {
-        /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
+        // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
         if (a == 'stroke-width')
           this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
         else if (a == 'stroke')
           this._stroke = v
 
-        /* convert image fill and stroke to patterns */
+        // Convert image fill and stroke to patterns
         if (a == 'fill' || a == 'stroke') {
           if (SVG.regex.isImage.test(v))
             v = this.doc().defs().image(v, 0, 0)
@@ -172,31 +173,31 @@ SVG.Element = SVG.invent({
             })
         }
         
-        /* ensure correct numeric values (also accepts NaN and Infinity) */
+        // Ensure correct numeric values (also accepts NaN and Infinity)
         if (typeof v === 'number')
           v = new SVG.Number(v)
 
-        /* ensure full hex color */
+        // Ensure full hex color
         else if (SVG.Color.isColor(v))
           v = new SVG.Color(v)
         
-        /* parse array values */
+        // Parse array values
         else if (Array.isArray(v))
           v = new SVG.Array(v)
 
-        /* if the passed attribute is leading... */
+        // If the passed attribute is leading...
         if (a == 'leading') {
-          /* ... call the leading method instead */
+          // ... call the leading method instead
           if (this.leading)
             this.leading(v)
         } else {
-          /* set given attribute on node */
+          // Set given attribute on node
           typeof n === 'string' ?
             this.node.setAttributeNS(n, a, v.toString()) :
             this.node.setAttribute(a, v.toString())
         }
         
-        /* rebuild if required */
+        // Rebuild if required
         if (this.rebuild && (a == 'font-size' || a == 'x'))
           this.rebuild(a, v)
       }

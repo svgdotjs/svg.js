@@ -7,13 +7,19 @@ SVG.Path = SVG.invent({
 
   // Add class methods
 , extend: {
+    // Define morphable array
+    morphArray:  SVG.PathArray
+    // Get array
+  , array: function() {
+      return this._array || (this._array = new SVG.PathArray(this.attr('d')))
+    }
     // Plot new poly points
-    plot: function(p) {
-      return this.attr('d', (this.array = new SVG.PathArray(p, [['M', 0, 0]])))
+  , plot: function(p) {
+      return this.attr('d', (this._array = new SVG.PathArray(p)))
     }
     // Move by left top corner
   , move: function(x, y) {
-      return this.attr('d', this.array.move(x, y))
+      return this.attr('d', this.array().move(x, y))
     }
     // Move by left top corner over x-axis
   , x: function(x) {
@@ -27,7 +33,7 @@ SVG.Path = SVG.invent({
   , size: function(width, height) {
       var p = proportionalSize(this.bbox(), width, height)
       
-      return this.attr('d', this.array.size(p.width, p.height))
+      return this.attr('d', this.array().size(p.width, p.height))
     }
     // Set width of element
   , width: function(width) {

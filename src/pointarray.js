@@ -1,6 +1,6 @@
 // Poly points array
-SVG.PointArray = function() {
-  this.constructor.apply(this, arguments)
+SVG.PointArray = function(array, fallback) {
+  this.constructor.call(this, array, fallback || [[0,0]])
 }
 
 // Inherit from SVG.Array

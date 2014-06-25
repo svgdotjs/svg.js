@@ -10,10 +10,10 @@ describe('Ellipse', function() {
   })
   
   describe('x()', function() {
-    it('should return the value of x without an argument', function() {
+    it('returns the value of x without an argument', function() {
       expect(ellipse.x()).toBe(0)
     })
-    it('should set the value of x with the first argument', function() {
+    it('sets the value of x with the first argument', function() {
       ellipse.x(123)
       var box = ellipse.bbox()
       expect(box.x).toBe(123)
@@ -21,10 +21,10 @@ describe('Ellipse', function() {
   })
   
   describe('y()', function() {
-    it('should return the value of y without an argument', function() {
+    it('returns the value of y without an argument', function() {
       expect(ellipse.y()).toBe(0)
     })
-    it('should set the value of cy with the first argument', function() {
+    it('sets the value of cy with the first argument', function() {
       ellipse.y(345)
       var box = ellipse.bbox()
       expect(box.y).toBe(345)
@@ -32,10 +32,10 @@ describe('Ellipse', function() {
   })
   
   describe('cx()', function() {
-    it('should return the value of cx without an argument', function() {
+    it('returns the value of cx without an argument', function() {
       expect(ellipse.cx()).toBe(120)
     })
-    it('should set the value of cx with the first argument', function() {
+    it('sets the value of cx with the first argument', function() {
       ellipse.cx(123)
       var box = ellipse.bbox()
       expect(box.cx).toBe(123)
@@ -43,10 +43,10 @@ describe('Ellipse', function() {
   })
   
   describe('cy()', function() {
-    it('should return the value of cy without an argument', function() {
+    it('returns the value of cy without an argument', function() {
       expect(ellipse.cy()).toBe(45)
     })
-    it('should set the value of cy with the first argument', function() {
+    it('sets the value of cy with the first argument', function() {
       ellipse.cy(345)
       var box = ellipse.bbox()
       expect(box.cy).toBe(345)
@@ -54,21 +54,26 @@ describe('Ellipse', function() {
   })
 
   describe('radius()', function() {
-    it('should set the rx and ry', function() {
-      ellipse.radius(10,20)
+    it('sets the rx and ry', function() {
+      ellipse.radius(10, 20)
       expect(ellipse.node.getAttribute('rx')).toBe('10')
       expect(ellipse.node.getAttribute('ry')).toBe('20')
     })
-    it('should set the rx and ry if only rx given', function() {
+    it('sets the rx and ry if only rx given', function() {
       ellipse.radius(30)
       expect(ellipse.node.getAttribute('rx')).toBe('30')
       expect(ellipse.node.getAttribute('ry')).toBe('30')
     })
+    it('sets the and ry value correctly when given 0', function() {
+      ellipse.radius(11, 0)
+      expect(ellipse.node.getAttribute('rx')).toBe('11')
+      expect(ellipse.node.getAttribute('ry')).toBe('0')
+    })
   })
   
   describe('move()', function() {
-    it('should set the x and y position', function() {
-      ellipse.move(123,456)
+    it('sets the x and y position', function() {
+      ellipse.move(123, 456)
       var box = ellipse.bbox()
       expect(box.x).toBe(123)
       expect(box.y).toBe(456)
@@ -77,7 +82,7 @@ describe('Ellipse', function() {
 
   describe('dx()', function() {
     it('moves the x positon of the element relative to the current position', function() {
-      ellipse.move(50,60)
+      ellipse.move(50, 60)
       ellipse.dx(100)
       expect(ellipse.node.getAttribute('cx')).toBe('270')
     })
@@ -85,7 +90,7 @@ describe('Ellipse', function() {
 
   describe('dy()', function() {
     it('moves the y positon of the element relative to the current position', function() {
-      ellipse.move(50,60)
+      ellipse.move(50, 60)
       ellipse.dy(120)
       expect(ellipse.node.getAttribute('cy')).toBe('225')
     })
@@ -165,7 +170,7 @@ describe('Ellipse', function() {
   })
 
   describe('translate()', function() {
-    it('should set the translation of an element', function() {
+    it('sets the translation of an element', function() {
       ellipse.transform({ x: 12, y: 12 })
       expect(ellipse.node.getAttribute('transform')).toBe('translate(12 12)')
     })

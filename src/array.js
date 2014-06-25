@@ -78,4 +78,3 @@ SVG.extend(SVG.Array, {
   }
 
 })
-

@@ -34,13 +34,17 @@ SVG.Polygon = SVG.invent({
 SVG.extend(SVG.Polyline, SVG.Polygon, {
   // Define morphable array
   morphArray:  SVG.PointArray
+  // Get array
+, array: function() {
+    return this._array || (this._array = new SVG.PointArray(this.attr('points')))
+  }
   // Plot new path
 , plot: function(p) {
-    return this.attr('points', (this.array = new SVG.PointArray(p, [[0,0]])))
+    return this.attr('points', (this._array = new SVG.PointArray(p)))
   }
   // Move by left top corner
 , move: function(x, y) {
-    return this.attr('points', this.array.move(x, y))
+    return this.attr('points', this.array().move(x, y))
   }
   // Move by left top corner over x-axis
 , x: function(x) {
@@ -66,7 +70,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
 , size: function(width, height) {
     var p = proportionalSize(this.bbox(), width, height)
 
-    return this.attr('points', this.array.size(p.width, p.height))
+    return this.attr('points', this.array().size(p.width, p.height))
   }
 
 })

@@ -66,15 +66,13 @@ SVG.extend(SVG.Element, SVG.FX, {
 , opacity: function(value) {
     return this.attr('opacity', value)
   }
-
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, SVG.FX, {
+SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    return this.attr({ rx: x, ry: y || x })
+    return this.rx(x).ry(y == null ? x : y)
   }
-
 })
 
 SVG.extend(SVG.Path, {
@@ -86,7 +84,6 @@ SVG.extend(SVG.Path, {
 , pointAt: function(length) {
     return this.node.getPointAtLength(length)
   }
-
 })
 
 SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
@@ -103,6 +100,5 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
     
     return this
   }
-  
 })
 

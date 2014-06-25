@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-9-g1953dbc - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-11-gec21f49 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -22,7 +22,7 @@
   
   // Get next named element id
   SVG.eid = function(name) {
-    return 'Svgjs' + name.charAt(0).toUpperCase() + name.slice(1) + (SVG.did++)
+    return 'Svgjs' + capitalize(name) + (SVG.did++)
   }
   
   // Method for element creation
@@ -125,9 +125,15 @@
       element = new SVG[capitalize(node.nodeName)]
   
     // Ensure references
-    element.type = node.nodeName
-    element.node = node
-    return node.instance = element
+    element.type  = node.nodeName
+    element.node  = node
+    node.instance = element
+  
+    // SVG.Class specific preparations
+    if (element instanceof SVG.Doc)
+      element.namespace().defs()
+  
+    return element
   }
 
   SVG.regex = {
@@ -433,11 +439,9 @@
     }
   
   })
-  
 
-
-  SVG.PointArray = function() {
-    this.constructor.apply(this, arguments)
+  SVG.PointArray = function(array, fallback) {
+    this.constructor.call(this, array, fallback || [[0,0]])
   }
   
   // Inherit from SVG.Array
@@ -521,7 +525,7 @@
   })
 
   SVG.PathArray = function(array, fallback) {
-    this.constructor.call(this, array, fallback)
+    this.constructor.call(this, array, fallback || [['M', 0, 0]])
   }
   
   // Inherit from SVG.Array
@@ -1149,8 +1153,9 @@
       }
       // Set svg element attribute
     , attr: function(a, v, n) {
+        // Act as full getter
         if (a == null) {
-          /* get an object of attributes */
+          // Get an object of attributes
           a = {}
           v = this.node.attributes
           for (n = v.length - 1; n >= 0; n--)
@@ -1159,15 +1164,15 @@
           return a
           
         } else if (typeof a == 'object') {
-          /* apply every attribute individually if an object is passed */
+          // Apply every attribute individually if an object is passed
           for (v in a) this.attr(v, a[v])
           
         } else if (v === null) {
-            /* remove value */
+            // Remove value
             this.node.removeAttribute(a)
           
         } else if (v == null) {
-          /* act as a getter if the first and only argument is not an object */
+          // Act as a getter if the first and only argument is not an object
           v = this.node.getAttribute(a)
           return v == null ? 
             SVG.defaults.attrs[a] :
@@ -1175,17 +1180,17 @@
             parseFloat(v) : v
         
         } else if (a == 'style') {
-          /* redirect to the style method */
+          // Redirect to the style method
           return this.style(v)
         
         } else {
-          /* BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0 */
+          // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
           if (a == 'stroke-width')
             this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
           else if (a == 'stroke')
             this._stroke = v
   
-          /* convert image fill and stroke to patterns */
+          // Convert image fill and stroke to patterns
           if (a == 'fill' || a == 'stroke') {
             if (SVG.regex.isImage.test(v))
               v = this.doc().defs().image(v, 0, 0)
@@ -1196,31 +1201,31 @@
               })
           }
           
-          /* ensure correct numeric values (also accepts NaN and Infinity) */
+          // Ensure correct numeric values (also accepts NaN and Infinity)
           if (typeof v === 'number')
             v = new SVG.Number(v)
   
-          /* ensure full hex color */
+          // Ensure full hex color
           else if (SVG.Color.isColor(v))
             v = new SVG.Color(v)
           
-          /* parse array values */
+          // Parse array values
           else if (Array.isArray(v))
             v = new SVG.Array(v)
   
-          /* if the passed attribute is leading... */
+          // If the passed attribute is leading...
           if (a == 'leading') {
-            /* ... call the leading method instead */
+            // ... call the leading method instead
             if (this.leading)
               this.leading(v)
           } else {
-            /* set given attribute on node */
+            // Set given attribute on node
             typeof n === 'string' ?
               this.node.setAttributeNS(n, a, v.toString()) :
               this.node.setAttribute(a, v.toString())
           }
           
-          /* rebuild if required */
+          // Rebuild if required
           if (this.rebuild && (a == 'font-size' || a == 'x'))
             this.rebuild(a, v)
         }
@@ -2511,25 +2516,24 @@
   SVG.Doc = SVG.invent({
     // Initialize node
     create: function(element) {
-      /* ensure the presence of a dom element */
-      element = typeof element == 'string' ?
-        document.getElementById(element) :
-        element
-      
-      /* If the target is an svg element, use that element as the main wrapper.
-         This allows svg.js to work with svg documents as well. */
-      if (element.nodeName == 'svg') {
-        this.constructor.call(this, element)
-      } else {
-        this.constructor.call(this, SVG.create('svg'))
-        element.appendChild(this.node)
+      if (element) {
+        /* ensure the presence of a dom element */
+        element = typeof element == 'string' ?
+          document.getElementById(element) :
+          element
+        
+        /* If the target is an svg element, use that element as the main wrapper.
+           This allows svg.js to work with svg documents as well. */
+        if (element.nodeName == 'svg') {
+          this.constructor.call(this, element)
+        } else {
+          this.constructor.call(this, SVG.create('svg'))
+          element.appendChild(this.node)
+        }
+        
+        /* set svg element attributes and ensure defs node */
+        this.namespace().size('100%', '100%').defs()
       }
-      
-      /* set svg element attributes and ensure defs node */
-      this
-        .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
-        .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
-        .defs()
     }
   
     // Inherit from
@@ -2537,8 +2541,14 @@
   
     // Add class methods
   , extend: {
+      // Add namespaces
+      namespace: function() {
+        return this
+          .attr({ xmlns: SVG.ns, version: '1.1' })
+          .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+      }
       // Creates and returns defs element
-      defs: function() {
+    , defs: function() {
         if (!this._defs) {
           var defs
   
@@ -2662,11 +2672,36 @@
     	rect: function(width, height) {
     	  return this.put(new SVG.Rect().size(width, height))
     	}
-    	
   	}
-  	
   })
 
+  SVG.Circle = SVG.invent({
+    // Initialize node
+    create: 'circle'
+  
+    // Inherit from
+  , inherit: SVG.Shape
+  
+    // Add parent method
+  , construct: {
+      // Create circle element, based on ellipse
+      circle: function(size) {
+        return this.put(new SVG.Circle).rx(new SVG.Number(size).divide(2)).move(0, 0)
+      }
+    }
+  })
+  
+  SVG.extend(SVG.Circle, SVG.FX, {
+    // Radius x value
+    rx: function(rx) {
+      return this.attr('r', rx)
+    }
+    // Alias radius x value
+  , ry: function(ry) {
+      return this.rx(ry)
+    }
+  })
+  
   SVG.Ellipse = SVG.invent({
     // Initialize node
     create: 'ellipse'
@@ -2674,15 +2709,35 @@
     // Inherit from
   , inherit: SVG.Shape
   
-    // Add class methods
-  , extend: {
+    // Add parent method
+  , construct: {
+      // Create an ellipse
+      ellipse: function(width, height) {
+        return this.put(new SVG.Ellipse).size(width, height).move(0, 0)
+      }
+    }
+  })
+  
+  SVG.extend(SVG.Ellipse, SVG.Rect, SVG.FX, {
+    // Radius x value
+    rx: function(rx) {
+      return this.attr('rx', rx)
+    }
+    // Radius y value
+  , ry: function(ry) {
+      return this.attr('ry', ry)
+    }
+  })
+  
+  // Add common method
+  SVG.extend(SVG.Circle, SVG.Ellipse, {
       // Move over x-axis
       x: function(x) {
-        return x == null ? this.cx() - this.attr('rx') : this.cx(x + this.attr('rx'))
+        return x == null ? this.cx() - this.rx() : this.cx(x + this.rx())
       }
       // Move over y-axis
     , y: function(y) {
-        return y == null ? this.cy() - this.attr('ry') : this.cy(y + this.attr('ry'))
+        return y == null ? this.cy() - this.ry() : this.cy(y + this.ry())
       }
       // Move by center over x-axis
     , cx: function(x) {
@@ -2694,37 +2749,20 @@
       }
       // Set width of element
     , width: function(width) {
-        return width == null ? this.attr('rx') * 2 : this.attr('rx', new SVG.Number(width).divide(2))
+        return width == null ? this.rx() * 2 : this.rx(new SVG.Number(width).divide(2))
       }
       // Set height of element
     , height: function(height) {
-        return height == null ? this.attr('ry') * 2 : this.attr('ry', new SVG.Number(height).divide(2))
+        return height == null ? this.ry() * 2 : this.ry(new SVG.Number(height).divide(2))
       }
       // Custom size function
     , size: function(width, height) {
         var p = proportionalSize(this.bbox(), width, height)
   
-        return this.attr({
-          rx: new SVG.Number(p.width).divide(2)
-        , ry: new SVG.Number(p.height).divide(2)
-        })
+        return this
+          .rx(new SVG.Number(p.width).divide(2))
+          .ry(new SVG.Number(p.height).divide(2))
       }
-      
-    }
-  
-    // Add parent method
-  , construct: {
-      // Create circle element, based on ellipse
-      circle: function(size) {
-        return this.ellipse(size, size)
-      }
-      // Create an ellipse
-    , ellipse: function(width, height) {
-        return this.put(new SVG.Ellipse).size(width, height).move(0, 0)
-      }
-      
-    }
-  
   })
 
   SVG.Line = SVG.invent({
@@ -2839,13 +2877,17 @@
   SVG.extend(SVG.Polyline, SVG.Polygon, {
     // Define morphable array
     morphArray:  SVG.PointArray
+    // Get array
+  , array: function() {
+      return this._array || (this._array = new SVG.PointArray(this.attr('points')))
+    }
     // Plot new path
   , plot: function(p) {
-      return this.attr('points', (this.array = new SVG.PointArray(p, [[0,0]])))
+      return this.attr('points', (this._array = new SVG.PointArray(p)))
     }
     // Move by left top corner
   , move: function(x, y) {
-      return this.attr('points', this.array.move(x, y))
+      return this.attr('points', this.array().move(x, y))
     }
     // Move by left top corner over x-axis
   , x: function(x) {
@@ -2871,7 +2913,7 @@
   , size: function(width, height) {
       var p = proportionalSize(this.bbox(), width, height)
   
-      return this.attr('points', this.array.size(p.width, p.height))
+      return this.attr('points', this.array().size(p.width, p.height))
     }
   
   })
@@ -2885,13 +2927,19 @@
   
     // Add class methods
   , extend: {
+      // Define morphable array
+      morphArray:  SVG.PathArray
+      // Get array
+    , array: function() {
+        return this._array || (this._array = new SVG.PathArray(this.attr('d')))
+      }
       // Plot new poly points
-      plot: function(p) {
-        return this.attr('d', (this.array = new SVG.PathArray(p, [['M', 0, 0]])))
+    , plot: function(p) {
+        return this.attr('d', (this._array = new SVG.PathArray(p)))
       }
       // Move by left top corner
     , move: function(x, y) {
-        return this.attr('d', this.array.move(x, y))
+        return this.attr('d', this.array().move(x, y))
       }
       // Move by left top corner over x-axis
     , x: function(x) {
@@ -2905,7 +2953,7 @@
     , size: function(width, height) {
         var p = proportionalSize(this.bbox(), width, height)
         
-        return this.attr('d', this.array.size(p.width, p.height))
+        return this.attr('d', this.array().size(p.width, p.height))
       }
       // Set width of element
     , width: function(width) {
@@ -3469,15 +3517,13 @@
   , opacity: function(value) {
       return this.attr('opacity', value)
     }
-  
   })
   
-  SVG.extend(SVG.Rect, SVG.Ellipse, SVG.FX, {
+  SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.FX, {
     // Add x and y radius
     radius: function(x, y) {
-      return this.attr({ rx: x, ry: y || x })
+      return this.rx(x).ry(y == null ? x : y)
     }
-  
   })
   
   SVG.extend(SVG.Path, {
@@ -3489,7 +3535,6 @@
   , pointAt: function(length) {
       return this.node.getPointAtLength(length)
     }
-  
   })
   
   SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
@@ -3506,7 +3551,6 @@
       
       return this
     }
-    
   })
   
 

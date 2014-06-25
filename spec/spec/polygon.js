@@ -8,12 +8,21 @@ describe('Polygon', function() {
   afterEach(function() {
     draw.clear()
   })
+
+  describe('array()', function() {
+    it('returns an instance of SVG.PointArray', function() {
+      expect(polygon.array() instanceof SVG.PointArray).toBeTruthy()
+    })
+    it('returns the value stored in the private variable _array', function() {
+      expect(polygon.array()).toBe(polygon._array)
+    })
+  })
   
   describe('x()', function() {
-    it('should return the value of x without an argument', function() {
+    it('returns the value of x without an argument', function() {
       expect(polygon.x()).toBe(0)
     })
-    it('should set the value of x with the first argument', function() {
+    it('sets the value of x with the first argument', function() {
       polygon.x(123)
       var box = polygon.bbox()
       expect(box.x).toBe(123)
@@ -21,10 +30,10 @@ describe('Polygon', function() {
   })
   
   describe('y()', function() {
-    it('should return the value of y without an argument', function() {
+    it('returns the value of y without an argument', function() {
       expect(polygon.y()).toBe(0)
     })
-    it('should set the value of y with the first argument', function() {
+    it('sets the value of y with the first argument', function() {
       polygon.y(345)
       var box = polygon.bbox()
       expect(box.y).toBe(345)
@@ -32,10 +41,10 @@ describe('Polygon', function() {
   })
   
   describe('cx()', function() {
-    it('should return the value of cx without an argument', function() {
+    it('returns the value of cx without an argument', function() {
       expect(polygon.cx()).toBe(50)
     })
-    it('should set the value of cx with the first argument', function() {
+    it('sets the value of cx with the first argument', function() {
       polygon.cx(123)
       var box = polygon.bbox()
       expect(box.cx).toBe(123)
@@ -43,10 +52,10 @@ describe('Polygon', function() {
   })
   
   describe('cy()', function() {
-    it('should return the value of cy without an argument', function() {
+    it('returns the value of cy without an argument', function() {
       expect(polygon.cy()).toBe(50)
     })
-    it('should set the value of cy with the first argument', function() {
+    it('sets the value of cy with the first argument', function() {
       polygon.cy(345)
       var box = polygon.bbox()
       expect(box.cy).toBe(345)
@@ -54,7 +63,7 @@ describe('Polygon', function() {
   })
   
   describe('move()', function() {
-    it('should set the x and y position', function() {
+    it('sets the x and y position', function() {
       polygon.move(123,456)
       var box = polygon.bbox()
       expect(box.x).toBe(123)
@@ -91,7 +100,7 @@ describe('Polygon', function() {
   })
   
   describe('center()', function() {
-    it('should set the cx and cy position', function() {
+    it('sets the cx and cy position', function() {
       polygon.center(321,567)
       var box = polygon.bbox()
       expect(box.x).toBe(271)
@@ -162,7 +171,7 @@ describe('Polygon', function() {
   })
 
   describe('translate()', function() {
-    it('should set the translation of an element', function() {
+    it('sets the translation of an element', function() {
       polygon.transform({ x: 12, y: 12 })
       expect(polygon.node.getAttribute('transform')).toBe('translate(12 12)')
     })

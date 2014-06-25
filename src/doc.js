@@ -1,25 +1,24 @@
 SVG.Doc = SVG.invent({
   // Initialize node
   create: function(element) {
-    /* ensure the presence of a dom element */
-    element = typeof element == 'string' ?
-      document.getElementById(element) :
-      element
-    
-    /* If the target is an svg element, use that element as the main wrapper.
-       This allows svg.js to work with svg documents as well. */
-    if (element.nodeName == 'svg') {
-      this.constructor.call(this, element)
-    } else {
-      this.constructor.call(this, SVG.create('svg'))
-      element.appendChild(this.node)
+    if (element) {
+      /* ensure the presence of a dom element */
+      element = typeof element == 'string' ?
+        document.getElementById(element) :
+        element
+      
+      /* If the target is an svg element, use that element as the main wrapper.
+         This allows svg.js to work with svg documents as well. */
+      if (element.nodeName == 'svg') {
+        this.constructor.call(this, element)
+      } else {
+        this.constructor.call(this, SVG.create('svg'))
+        element.appendChild(this.node)
+      }
+      
+      /* set svg element attributes and ensure defs node */
+      this.namespace().size('100%', '100%').defs()
     }
-    
-    /* set svg element attributes and ensure defs node */
-    this
-      .attr({ xmlns: SVG.ns, version: '1.1', width: '100%', height: '100%' })
-      .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
-      .defs()
   }
 
   // Inherit from
@@ -27,8 +26,14 @@ SVG.Doc = SVG.invent({
 
   // Add class methods
 , extend: {
+    // Add namespaces
+    namespace: function() {
+      return this
+        .attr({ xmlns: SVG.ns, version: '1.1' })
+        .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+    }
     // Creates and returns defs element
-    defs: function() {
+  , defs: function() {
       if (!this._defs) {
         var defs
 

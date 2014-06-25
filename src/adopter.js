@@ -17,7 +17,13 @@ SVG.adopt = function(node) {
     element = new SVG[capitalize(node.nodeName)]
 
   // Ensure references
-  element.type = node.nodeName
-  element.node = node
-  return node.instance = element
+  element.type  = node.nodeName
+  element.node  = node
+  node.instance = element
+
+  // SVG.Class specific preparations
+  if (element instanceof SVG.Doc)
+    element.namespace().defs()
+
+  return element
 }
