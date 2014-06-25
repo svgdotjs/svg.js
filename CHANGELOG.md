@@ -1,9 +1,7 @@
 # 1.0.0-rc.10 (?/07/2014)
 
-- remove structural internal references everywhere
+- implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
-- rework transformation to be chainable and more true to native SVG -> __TODO!__
-- implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added support to clone manually built text elements -> __TODO!__
 - using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]
@@ -11,9 +9,13 @@
 - added DOM query selector with the `select()` method globally or on parent elements
 - added the intentionally neglected `SVG.Circle` element
 - fixed bug in `radius()` method when `y` value equals `0`
+- renamed `SVG.TSpan` class to `SVG.Tspan` to play nice with the adoption system
 - added `rx()` and `ry()` to `SVG.Rect`, `SVG.Circle`, `SVG.Ellispe` and `SVG.FX`
 - changed `array` reference to `array()` method on `SVG.Polyline`, `SVG.Polygon` and `SVG.Path`
-- text.lines, text.track -> __TODO!__
+- changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
+- changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
+- completely reworked `clone()` method to use the adoption system -> __TODO!__
+- completely reworked transformations to be chainable and more true to their nature -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 
