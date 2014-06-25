@@ -49,6 +49,13 @@ describe('Adopter', function() {
       expect(polygon.array() instanceof SVG.PointArray).toBeTruthy()
     })
   })
+
+  describe('with node that has no matching svg.js class', function() {
+    it('wraps the node in the base SVG.Element class', function() {
+      var desc = SVG.get('inlineSVG').select('desc').first()
+      expect(desc instanceof SVG.Element).toBeTruthy()
+    })
+  })
   
 
 })

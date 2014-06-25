@@ -13,8 +13,10 @@ SVG.adopt = function(node) {
     element = new SVG.Gradient('lineair')
   else if (node.nodeName == 'radialGradient')
     element = new SVG.Gradient('radial')
-  else
+  else if (SVG[capitalize(node.nodeName)])
     element = new SVG[capitalize(node.nodeName)]
+  else
+    element = new SVG.Element(node)
 
   // Ensure references
   element.type  = node.nodeName

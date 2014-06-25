@@ -486,7 +486,7 @@ Just adding one tspan is also possible:
 text.tspan(' on a train...').fill('#f06')
 ```
 
-__`returns`: `SVG.TSpan`__
+__`returns`: `SVG.Tspan`__
 
 ### plain()
 If the content of the element doesn't need any stying or multiple lines, it might be sufficient to just add some plain text:
@@ -585,10 +585,10 @@ text.on('rebuild', function() {
 })
 ```
 
-## TSpan
+## Tspan
 The tspan elements are only available inside text elements or inside other tspan elements. In svg.js they have a class of their own:
 
-_Javascript inheritance stack: `SVG.TSpan` < `SVG.Shape` < `SVG.Element`_
+_Javascript inheritance stack: `SVG.Tspan` < `SVG.Shape` < `SVG.Element`_
 
 ### text()
 Update the content of the tspan. This can be done by either passing a string:
@@ -621,7 +621,7 @@ Add a nested tspan:
 tspan.tspan('I am a child of my parent').fill('#f06')
 ```
 
-__`returns`: `SVG.TSpan`__
+__`returns`: `SVG.Tspan`__
 
 ### plain()
 Just adds some plain text:

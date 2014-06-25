@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-11-gec21f49 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-13-g566407c - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -121,8 +121,10 @@
       element = new SVG.Gradient('lineair')
     else if (node.nodeName == 'radialGradient')
       element = new SVG.Gradient('radial')
-    else
+    else if (SVG[capitalize(node.nodeName)])
       element = new SVG[capitalize(node.nodeName)]
+    else
+      element = new SVG.Element(node)
   
     // Ensure references
     element.type  = node.nodeName
@@ -3164,7 +3166,7 @@
   
   })
   
-  SVG.TSpan = SVG.invent({
+  SVG.Tspan = SVG.invent({
     // Initialize node
     create: 'tspan'
   
@@ -3202,7 +3204,7 @@
     
   })
   
-  SVG.extend(SVG.Text, SVG.TSpan, {
+  SVG.extend(SVG.Text, SVG.Tspan, {
     // Create plain text node
     plain: function(text) {
       /* clear if build mode is disabled */
@@ -3217,7 +3219,7 @@
     // Create a tspan
   , tspan: function(text) {
       var node  = (this.textPath || this).node
-        , tspan = new SVG.TSpan
+        , tspan = new SVG.Tspan
   
       /* clear if build mode is disabled */
       if (this._build === false)

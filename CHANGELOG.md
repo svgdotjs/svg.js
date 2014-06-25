@@ -13,6 +13,7 @@
 - fixed bug in `radius()` method when `y` value equals `0`
 - added `rx()` and `ry()` to `SVG.Rect`, `SVG.Circle`, `SVG.Ellispe` and `SVG.FX`
 - changed `array` reference to `array()` method on `SVG.Polyline`, `SVG.Polygon` and `SVG.Path`
+- text.lines, text.track -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 

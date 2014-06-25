@@ -131,7 +131,7 @@ SVG.Text = SVG.invent({
 
 })
 
-SVG.TSpan = SVG.invent({
+SVG.Tspan = SVG.invent({
   // Initialize node
   create: 'tspan'
 
@@ -169,7 +169,7 @@ SVG.TSpan = SVG.invent({
   
 })
 
-SVG.extend(SVG.Text, SVG.TSpan, {
+SVG.extend(SVG.Text, SVG.Tspan, {
   // Create plain text node
   plain: function(text) {
     /* clear if build mode is disabled */
@@ -184,7 +184,7 @@ SVG.extend(SVG.Text, SVG.TSpan, {
   // Create a tspan
 , tspan: function(text) {
     var node  = (this.textPath || this).node
-      , tspan = new SVG.TSpan
+      , tspan = new SVG.Tspan
 
     /* clear if build mode is disabled */
     if (this._build === false)
