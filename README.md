@@ -207,6 +207,25 @@ rect.radius(10, 20)
 
 __`returns`: `itself`__
 
+## Circle
+The only argument necessary for a circle is the diameter:
+
+```javascript
+var circle = draw.circle(100)
+```
+
+__`returns`: `SVG.Circle`__
+
+_Javascript inheritance stack: `SVG.Circle` < `SVG.Shape` < `SVG.Element`_
+
+### radius()
+Circles can also be redefined by their radius:
+
+```javascript
+rect.radius(75)
+```
+
+__`returns`: `itself`__
 
 ## Ellipse
 Ellipses, like rects, have two arguments, their `width` and `height`:
@@ -224,28 +243,6 @@ Ellipses can also be redefined by their radii:
 
 ```javascript
 rect.radius(75, 50)
-```
-
-__`returns`: `itself`__
-
-## Circle
-The only argument necessary for a circle is the diameter:
-
-```javascript
-var circle = draw.circle(100)
-```
-
-__`returns`: `SVG.Ellipse`__
-
-_Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
-
-_Note that this generates an `<ellipse>` element instead of a `<circle>`. This choice has been made to keep the size of the library down._
-
-### radius()
-Circles can also be redefined by their radius:
-
-```javascript
-rect.radius(75)
 ```
 
 __`returns`: `itself`__
