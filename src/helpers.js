@@ -91,6 +91,19 @@ function arrayToString(a) {
   return s + ' '
 }
 
+// Deep new id assignment
+function assignNewId(node) {
+  // Adopt element and assign new id
+  var element = SVG.adopt(node).id(SVG.eid(node.nodeName))
+
+  // Do the same for SVG child nodes as well
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof SVGElement)
+      assignNewId(node.childNodes[i])
+
+  return element
+}
+
 // Add more bounding box properties
 function boxProperties(b) {
   b.x2 = b.x + b.width
@@ -102,10 +115,10 @@ function boxProperties(b) {
 // Parse a matrix string
 function parseMatrix(o) {
   if (o.matrix) {
-    /* split matrix string */
+    // Split matrix string
     var m = o.matrix.replace(/\s/g, '').split(',')
     
-    /* pasrse values */
+    // Pasrse values
     if (m.length == 6) {
       o.a = parseFloat(m[0])
       o.b = parseFloat(m[1])

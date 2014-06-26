@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-13-g566407c - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-15-g2bc1909 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -1097,36 +1097,7 @@
       }
       // Clone element
     , clone: function() {
-        var clone , attr
-          , type = this.type
-        
-        /* invoke shape method with shape-specific arguments */
-        clone = type == 'rect' || type == 'ellipse' ?
-          this.parent()[type](0,0) :
-        type == 'line' ?
-          this.parent()[type](0,0,0,0) :
-        type == 'image' ?
-          this.parent()[type](this.src) :
-        type == 'text' ?
-          this.parent()[type](this.content) :
-        type == 'path' ?
-          this.parent()[type](this.attr('d')) :
-        type == 'polyline' || type == 'polygon' ?
-          this.parent()[type](this.attr('points')) :
-        type == 'g' ?
-          this.parent().group() :
-          this.parent()[type]()
-        
-        /* apply attributes attributes */
-        attr = this.attr()
-        delete attr.id
-        clone.attr(attr)
-        
-        /* copy transformations */
-        clone.trans = this.trans
-        
-        /* apply attributes and translations */
-        return clone.transform({})
+        return assignNewId(this.node.cloneNode(true))
       }
       // Remove element
     , remove: function() {
@@ -3893,6 +3864,19 @@
     return s + ' '
   }
   
+  // Deep new id assignment
+  function assignNewId(node) {
+    // Adopt element and assign new id
+    var element = SVG.adopt(node).id(SVG.eid(node.nodeName))
+  
+    // Do the same for SVG child nodes as well
+    for (var i = node.childNodes.length - 1; i >= 0; i--)
+      if (node.childNodes[i] instanceof SVGElement)
+        assignNewId(node.childNodes[i])
+  
+    return element
+  }
+  
   // Add more bounding box properties
   function boxProperties(b) {
     b.x2 = b.x + b.width
@@ -3904,10 +3888,10 @@
   // Parse a matrix string
   function parseMatrix(o) {
     if (o.matrix) {
-      /* split matrix string */
+      // Split matrix string
       var m = o.matrix.replace(/\s/g, '').split(',')
       
-      /* pasrse values */
+      // Pasrse values
       if (m.length == 6) {
         o.a = parseFloat(m[0])
         o.b = parseFloat(m[1])

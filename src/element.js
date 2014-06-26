@@ -67,36 +67,7 @@ SVG.Element = SVG.invent({
     }
     // Clone element
   , clone: function() {
-      var clone , attr
-        , type = this.type
-      
-      /* invoke shape method with shape-specific arguments */
-      clone = type == 'rect' || type == 'ellipse' ?
-        this.parent()[type](0,0) :
-      type == 'line' ?
-        this.parent()[type](0,0,0,0) :
-      type == 'image' ?
-        this.parent()[type](this.src) :
-      type == 'text' ?
-        this.parent()[type](this.content) :
-      type == 'path' ?
-        this.parent()[type](this.attr('d')) :
-      type == 'polyline' || type == 'polygon' ?
-        this.parent()[type](this.attr('points')) :
-      type == 'g' ?
-        this.parent().group() :
-        this.parent()[type]()
-      
-      /* apply attributes attributes */
-      attr = this.attr()
-      delete attr.id
-      clone.attr(attr)
-      
-      /* copy transformations */
-      clone.trans = this.trans
-      
-      /* apply attributes and translations */
-      return clone.transform({})
+      return assignNewId(this.node.cloneNode(true))
     }
     // Remove element
   , remove: function() {

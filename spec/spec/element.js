@@ -16,33 +16,33 @@ describe('Element', function() {
       rect = draw.rect(100,100)
     })
     
-    it('should set one attribute when two arguments are given', function() {
+    it('sets one attribute when two arguments are given', function() {
       rect.attr('fill', '#ff0066')
       expect(rect.node.getAttribute('fill')).toBe('#ff0066')
     })
-    it('should set various attributes when an object is given', function() {
+    it('sets various attributes when an object is given', function() {
       rect.attr({ fill: '#00ff66', stroke: '#ff2233', 'stroke-width': 10 })
       expect(rect.node.getAttribute('fill')).toBe('#00ff66')
       expect(rect.node.getAttribute('stroke')).toBe('#ff2233')
       expect(rect.node.getAttribute('stroke-width')).toBe('10')
     })
-    it('should get the value of the string value given as first argument', function() {
+    it('gets the value of the string value given as first argument', function() {
       rect.attr('fill', '#ff0066')
       expect(rect.attr('fill')).toEqual('#ff0066')
     })
-    it('should get an object with all attributes without any arguments', function() {
+    it('gets an object with all attributes without any arguments', function() {
       rect.attr({ fill: '#00ff66', stroke: '#ff2233' })
       var attr = rect.attr()
       expect(attr.fill).toBe('#00ff66')
       expect(attr.stroke).toBe('#ff2233')
     })
-    it('should remove an attribute if the second argument is explicitly set to null', function() {
+    it('removes an attribute if the second argument is explicitly set to null', function() {
       rect.attr('stroke-width', 10)
       expect(rect.node.getAttribute('stroke-width')).toBe('10')
       rect.attr('stroke-width', null)
       expect(rect.node.getAttribute('stroke-width')).toBe(null)
     })
-    it('should correctly parse numeric values as a getter', function() {
+    it('correctly parses numeric values as a getter', function() {
       rect.attr('stroke-width', 11)
       expect(rect.node.getAttribute('stroke-width')).toBe('11')
       expect(rect.attr('stroke-width')).toBe(11)
@@ -63,7 +63,7 @@ describe('Element', function() {
       rect.attr('style', 'cursor:move;')
       expect(rect.node.style.cursor).toBe('move')
     })
-    it('should remove style attribute on node if the style is empty', function() {
+    it('removes style attribute on node if the style is empty', function() {
       rect.style('cursor', 'move')
       rect.style('cursor', '')
       expect(rect.style.cursor).toBe(undefined)
@@ -103,31 +103,31 @@ describe('Element', function() {
   })
   
   describe('style()', function() {
-    it('should set the style with key and value arguments', function() {
+    it('sets the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
       expect(stripped(rect.node.style.cssText)).toBe('cursor:crosshair;')
     })
-    it('should set multiple styles with an object as the first argument', function() {
+    it('sets multiple styles with an object as the first argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
       expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
       expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
       expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
     })
-    it('should get a style with a string key as the fists argument', function() {
+    it('gets a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
       expect(rect.style('cursor')).toBe('progress')
     })
-    it('should get a style with a string key as the fists argument', function() {
+    it('gets a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
       expect(stripped(rect.style())).toMatch(/display:none;/)
       expect(stripped(rect.style())).toMatch(/cursor:s-resize;/)
       expect(stripped(rect.style()).length).toBe(('cursor:s-resize;display:none;').length)
     })
-    it('should remove a style if the value is an empty string', function() {
+    it('removes a style if the value is an empty string', function() {
       var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
       expect(stripped(rect.style())).toBe('cursor:n-resize;')
     })
-    it('should remove a style if the value explicitly set to null', function() {
+    it('removes a style if the value explicitly set to null', function() {
       var rect = draw.rect(100,100).style('cursor', 'w-resize')
       expect(stripped(rect.style())).toBe('cursor:w-resize;')
       rect.style('cursor', null)
@@ -136,39 +136,39 @@ describe('Element', function() {
   })
   
   describe('transform()', function() {
-    it('should get the current transformations', function() {
+    it('gets the current transformations', function() {
       var rect = draw.rect(100,100)
       expect(rect.transform()).toEqual(SVG.defaults.trans())
     })
-    it('should set the translation of and element', function() {
+    it('sets the translation of and element', function() {
       var rect = draw.rect(100,100).transform({ x: 10, y: 10 })
       expect(rect.node.getAttribute('transform')).toBe('translate(10 10)')
     })
-    it('should set the scaleX of and element', function() {
+    it('sets the scaleX of and element', function() {
       var rect = draw.rect(100,100).transform({ scaleX: 0.1 })
       expect(rect.node.getAttribute('transform')).toBe('scale(0.1 1)')
     })
-    it('should set the scaleY of and element', function() {
+    it('sets the scaleY of and element', function() {
       var rect = draw.rect(100,100).transform({ scaleY: 10 })
       expect(rect.node.getAttribute('transform')).toBe('scale(1 10)')
     })
-    it('should set the skewX of and element', function() {
+    it('sets the skewX of and element', function() {
       var rect = draw.rect(100,100).transform({ skewX: 0.1 })
       expect(rect.node.getAttribute('transform')).toBe('skewX(0.1)')
     })
-    it('should set the skewY of and element', function() {
+    it('sets the skewY of and element', function() {
       var rect = draw.rect(100,100).transform({ skewY: 10 })
       expect(rect.node.getAttribute('transform')).toBe('skewY(10)')
     })
-    it('should rotate the element around its centre if no rotation point is given', function() {
+    it('rotates the element around its centre if no rotation point is given', function() {
       var rect = draw.rect(100,100).transform({ rotation: 45 })
       expect(rect.node.getAttribute('transform')).toBe('rotate(45 50 50)')
     })
-    it('should rotate the element around the given rotation point', function() {
+    it('rotates the element around the given rotation point', function() {
       var rect = draw.rect(100,100).transform({ rotation: 55, cx: 80, cy:2 })
       expect(rect.node.getAttribute('transform')).toBe('rotate(55 80 2)')
     })
-    it('should transform element using a matrix', function() {
+    it('transforms element using a matrix', function() {
       var rect = draw.rect(100,100).transform({ a: 0.5, c: 0.5 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5 0 0.5 1 0 0)')
     })
@@ -210,11 +210,11 @@ describe('Element', function() {
   })
   
   describe('remove()', function() {
-    it('should remove an element and return it', function() {
+    it('removes an element and return it', function() {
       var rect = draw.rect(100,100)
       expect(rect.remove()).toBe(rect)
     })
-    it('should remove an element from its parent', function() {
+    it('removes an element from its parent', function() {
       var rect = draw.rect(100,100)
       rect.remove()
       expect(draw.has(rect)).toBe(false)
@@ -288,15 +288,31 @@ describe('Element', function() {
   })
   
   describe('clone()', function() {
-    it('makes  an exact copy of the element', function() {
-      var rect = draw.rect(100,100).center(321,567).fill('#f06')
-      clone = rect.clone()
-      expect(rect.attr('id', null).attr()).toEqual(clone.attr('id', null).attr())
+    var rect, group, circle
+
+    beforeEach(function() {
+      rect   = draw.rect(100,100).center(321,567).fill('#f06')
+      group  = draw.group().add(rect)
+      circle = group.circle(100)
     })
-    it('assigns  a new id to the cloned element', function() {
-      var rect = draw.rect(100,100).center(321,567).fill('#f06')
+
+    it('makes an exact copy of the element', function() {
       clone = rect.clone()
-      expect(rect.attr('id')).not.toEqual(clone.attr('id'))
+      expect(clone.attr('id', null).attr()).toEqual(rect.attr('id', null).attr())
+    })
+    it('assigns a new id to the cloned element', function() {
+      clone = rect.clone()
+      expect(clone.attr('id')).not.toBe(rect.attr('id'))
+    })
+    it('copies all child nodes as well', function() {
+      clone = group.clone()
+      expect(clone.children().length).toBe(group.children().length)
+    })
+    it('assigns a new id to cloned child elements', function() {
+      clone = group.clone()
+      expect(clone.attr('id')).not.toEqual(group.attr('id'))
+      expect(clone.get(0).attr('id')).not.toBe(group.get(0).attr('id'))
+      expect(clone.get(1).attr('id')).not.toBe(group.get(1).attr('id'))
     })
   })
 

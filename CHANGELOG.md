@@ -3,7 +3,7 @@
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
-- added support to clone manually built text elements -> __TODO!__
+- added support to clone manually built text elements
 - using `CustomEvent` instead of `Event` to be able to fire events with a `detail` object [thanks @Fuzzyma]
 - added polyfill for IE9 and IE10 custom events [thanks @Fuzzyma]
 - added DOM query selector with the `select()` method globally or on parent elements
@@ -14,7 +14,7 @@
 - changed `array` reference to `array()` method on `SVG.Polyline`, `SVG.Polygon` and `SVG.Path`
 - changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
 - changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
-- completely reworked `clone()` method to use the adoption system -> __TODO!__
+- completely reworked `clone()` method to use the adoption system
 - completely reworked transformations to be chainable and more true to their nature -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
