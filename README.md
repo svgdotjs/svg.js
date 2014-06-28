@@ -248,7 +248,7 @@ rect.radius(75, 50)
 __`returns`: `itself`__
 
 ## Line
-Create a line for point A to point B:
+Create a line from point A to point B:
 
 ```javascript
 var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
