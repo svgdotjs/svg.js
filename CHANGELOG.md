@@ -12,9 +12,10 @@
 - changed `array` reference to `array()` method on `SVG.Polyline`, `SVG.Polygon` and `SVG.Path`
 - completely reworked `clone()` method to use the adoption system
 - added support to clone manually built text elements
+- added `svg.wiml.js` plugin to plugins list
+- completely reworked transformations to be chainable and more true to their nature -> __TODO!__
 - changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
 - changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
-- completely reworked transformations to be chainable and more true to their nature -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method -> __TODO!__
 

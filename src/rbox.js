@@ -47,8 +47,8 @@ SVG.RBox = function(element) {
   this.height = box.height /= zoom
   
   /* offset by window scroll position, because getBoundingClientRect changes when window is scrolled */
-  this.x += window.scrollX;
-  this.y += window.scrollY;
+  this.x += window.scrollX
+  this.y += window.scrollY
 
   /* add center, right and bottom */
   boxProperties(this)
@@ -66,11 +66,8 @@ SVG.extend(SVG.RBox, {
     b.y      = Math.min(this.y, box.y)
     b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
     b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-
-    /* add center, right and bottom */
-    boxProperties(b)
-
-    return b
+    
+    return boxProperties(b)
   }
 
 })

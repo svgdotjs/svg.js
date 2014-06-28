@@ -248,11 +248,13 @@ rect.radius(75, 50)
 __`returns`: `itself`__
 
 ## Line
-The line element always takes four arguments, `x1`, `y1`, `x2` and `y2`:
+Create a line for point A to point B:
 
 ```javascript
 var line = draw.line(0, 0, 100, 150).stroke({ width: 1 })
 ```
+
+Creating a line element can be done in four ways. Look at the `plot()` method to see all the possiblilities.
 
 __`returns`: `SVG.Line`__
 
@@ -265,7 +267,36 @@ Updating a line is done with the `plot()` method:
 line.plot(50, 30, 100, 150)
 ```
 
+Alternatively it also accepts a point string:
+
+```javascript
+line.plot('0,0 100,150')
+```
+
+Or a point array:
+
+```javascript
+line.plot([[0, 0], [100, 150]])
+```
+
+Or an instance of `SVG.PointArray`:
+
+```javascript
+var array = new SVG.PointArray([[0, 0], [100, 150]])
+line.plot(array)
+```
+
 __`returns`: `itself`__
+
+### array()
+References the `SVG.PointArray` instance. This method is rather intended for internal use:
+
+```javascript
+polyline.array()
+```
+
+__`returns`: `SVG.PointArray`__
+
 
 ## Polyline
 The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:
@@ -1020,6 +1051,41 @@ rect.attr('fill', null)
 
 
 ### transform()
+The `transform()` can act both as a getter or a setter. Let's start with the former but first a word about transforms.
+
+Transforms are cascading sequentially. Every transform you add will build further on the effects of all the previous transforms together. So for example, when you add the `translate(10, 10)` transform three times, the total translation will equal `translate(30, 30)`.
+
+We are going to use one node as an examle for this section:
+
+```xml
+<rect width="100" height="100" transform="translate(10, 10) rotate(45, 100, 100) scale(0.5, 0.5) rotate(-10)" />
+```
+
+#### get by index
+A transform at a specific index:
+
+```javascript
+rect.transform(1)
+// -> returns { type: 'scale', x: 0.5, cy: 0.5 }
+```
+
+#### get by name
+By default the first occurence of a given transform type will be returned:
+
+```javascript
+rect.transform('rotate')
+// -> returns { type: 'rotate', rotation: 45, cx: 100, cy: 100 }
+```
+
+If multiple occurences of a transform type exist they can be fetched with a number:
+
+```javascript
+rect.transform('rotate', { at: 1 })
+// -> returns { type: 'rotate', rotation: -10 }
+```
+
+
+
 With the `transform()` method elements can be scaled, rotated, translated and skewed:
 
 ```javascript
@@ -1036,32 +1102,7 @@ You can also provide two arguments as property and value:
 rect.transform('matrix', '1,0.5,0.5,1,0,0')
 ```
 
-All available transformations are:
 
-```javascript
-rect.transform({
-  x:        [translation on x-axis]
-, y:        [translation on y-axis]
-
-, rotation: [degrees]
-, cx:       [x rotation point]
-, cy:       [y rotation point]
-
-, scaleX:   [scaling on x-axis]
-, scaleY:   [scaling on y-axis]
-
-, skewX:    [skewing on x-axis]
-, skewY:    [skewing on y-axis]
-
-, matrix:   [a 6-digit matrix string; e.g. '1,0,0,1,0,0']
-, a:        [the first matrix digit]
-, b:        [the second matrix digit]
-, c:        [the third matrix digit]
-, d:        [the fourth matrix digit]
-, e:        [the fifth matrix digit]
-, f:        [the sixth matrix digit]
-})
-```
 
 Note that you can also apply transformations directly using the `attr()` method:
 
@@ -3181,6 +3222,9 @@ Here are a few nice plugins that are available for svg.js:
 
 ### topath
 [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
+
+### wiml
+[svg.wiml.js](https://github.com/wout/svg.wiml.js) a templating language for svg output.
 
 
 ## Contributing

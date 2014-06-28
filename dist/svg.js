@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-15-g2bc1909 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-17-g0d11ad2 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -193,11 +193,8 @@
   }
 
   SVG.defaults = {
-    // Default matrix
-    matrix:       '1 0 0 1 0 0'
-    
     // Default attribute values
-  , attrs: {
+    attrs: {
       /* fill and stroke */
       'fill-opacity':     1
     , 'stroke-opacity':   1
@@ -228,30 +225,28 @@
     , 'font-family':      'Helvetica, Arial, sans-serif'
     , 'text-anchor':      'start'
     }
-    
-    // Default transformation values
-  , trans: function() {
-      return {
-        /* translate */
-        x:        0
-      , y:        0
-        /* scale */
-      , scaleX:   1
-      , scaleY:   1
-        /* rotate */
-      , rotation: 0
-        /* skew */
-      , skewX:    0
-      , skewY:    0
-        /* matrix */
-      , matrix:   this.matrix
-      , a:        1
-      , b:        0
-      , c:        0
-      , d:        1
-      , e:        0
-      , f:        0
-      }
+  
+    // Transforms
+  , trans: {
+    /* translate */
+      x:        0
+    , y:        0
+      /* scale */
+    , scaleX:   1
+    , scaleY:   1
+      /* rotate */
+    , rotation: 0
+      /* skew */
+    , skewX:    0
+    , skewY:    0
+      /* matrix */
+    , matrix:   this.matrix
+    , a:        1
+    , b:        0
+    , c:        0
+    , d:        1
+    , e:        0
+    , f:        0
     }
     
   }
@@ -457,6 +452,15 @@
         array.push(this.value[i].join(','))
   
       return array.join(' ')
+    }
+    // Convert array to line object
+  , toLine: function() {
+      return {
+        x1: this.value[0][0]
+      , y1: this.value[0][1]
+      , x2: this.value[1][0]
+      , y2: this.value[1][1]
+      }
     }
     // Get morphed array at given position
   , at: function(pos) {
@@ -897,19 +901,19 @@
   SVG.BBox = function(element) {
     var box
   
-    /* initialize zero box */
+    // Initialize zero box
     this.x      = 0
     this.y      = 0
     this.width  = 0
     this.height = 0
     
-    /* get values if element is given */
+    // Get values if element is given
     if (element) {
       try {
-        /* actual, native bounding box */
+        // Actual, native bounding box
         box = element.node.getBBox()
       } catch(e) {
-        /* fallback for some browsers */
+        // Fallback for some browsers
         box = {
           x:      element.node.clientLeft
         , y:      element.node.clientTop
@@ -918,16 +922,16 @@
         }
       }
       
-      /* include translations on x an y */
+      // Include translations on x an y
       this.x = box.x + element.trans.x
       this.y = box.y + element.trans.y
       
-      /* plain width and height */
+      // Plain width and height
       this.width  = box.width  * element.trans.scaleX
       this.height = box.height * element.trans.scaleY
     }
   
-    /* add center, right and bottom */
+    // Add center, right and bottom
     boxProperties(this)
     
   }
@@ -936,18 +940,15 @@
   SVG.extend(SVG.BBox, {
     // merge bounding box with another, return a new instance
     merge: function(box) {
-      var b = new SVG.BBox()
+      var b = new SVG.BBox
   
-      /* merge box */
+      // Merge box
       b.x      = Math.min(this.x, box.x)
       b.y      = Math.min(this.y, box.y)
       b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
       b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
   
-      /* add center, right and bottom */
-      boxProperties(b)
-  
-      return b
+      return boxProperties(b)
     }
   
   })
@@ -1000,8 +1001,8 @@
     this.height = box.height /= zoom
     
     /* offset by window scroll position, because getBoundingClientRect changes when window is scrolled */
-    this.x += window.scrollX;
-    this.y += window.scrollY;
+    this.x += window.scrollX
+    this.y += window.scrollY
   
     /* add center, right and bottom */
     boxProperties(this)
@@ -1019,11 +1020,8 @@
       b.y      = Math.min(this.y, box.y)
       b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
       b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-  
-      /* add center, right and bottom */
-      boxProperties(b)
-  
-      return b
+      
+      return boxProperties(b)
     }
   
   })
@@ -1032,16 +1030,16 @@
   SVG.Element = SVG.invent({
     // Initialize node
     create: function(node) {
-      /* make stroke value accessible dynamically */
+      // Make stroke value accessible dynamically
       this._stroke = SVG.defaults.attrs.stroke
   
-      /* initialize transformation store with defaults */
-      this.trans = SVG.defaults.trans()
-      
-      /* create circular reference */
+      // Create circular reference
       if (this.node = node) {
         this.type = node.nodeName
         this.node.instance = this
+  
+        // Store current attribute value
+        this._stroke = node.getAttribute('stroke') || this._stroke
       }
     }
   
@@ -1152,10 +1150,6 @@
           SVG.regex.isNumber.test(v) ?
             parseFloat(v) : v
         
-        } else if (a == 'style') {
-          // Redirect to the style method
-          return this.style(v)
-        
         } else {
           // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
           if (a == 'stroke-width')
@@ -1206,76 +1200,12 @@
         return this
       }
       // Manage transformations
-    , transform: function(o, v) {
-        
-        if (arguments.length == 0) {
-          /* act as a getter if no argument is given */
-          return this.trans
+    , transform: function(t, v) {
+        // Get a transformation at a given position
+        if (typeof t === 'number') {
           
-        } else if (typeof o === 'string') {
-          /* act as a getter if only one string argument is given */
-          if (arguments.length < 2)
-            return this.trans[o]
-          
-          /* apply transformations as object if key value arguments are given*/
-          var transform = {}
-          transform[o] = v
-          
-          return this.transform(transform)
         }
-        
-        /* ... otherwise continue as a setter */
-        var transform = []
-        
-        /* parse matrix */
-        o = parseMatrix(o)
-        
-        /* merge values */
-        for (v in o)
-          if (o[v] != null)
-            this.trans[v] = o[v]
-        
-        /* compile matrix */
-        this.trans.matrix = this.trans.a
-                    + ' ' + this.trans.b
-                    + ' ' + this.trans.c
-                    + ' ' + this.trans.d
-                    + ' ' + this.trans.e
-                    + ' ' + this.trans.f
-        
-        /* alias current transformations */
-        o = this.trans
-        
-        /* add matrix */
-        if (o.matrix != SVG.defaults.matrix)
-          transform.push('matrix(' + o.matrix + ')')
-        
-        /* add rotation */
-        if (o.rotation != 0)
-          transform.push('rotate(' + o.rotation + ' ' + (o.cx == null ? this.bbox().cx : o.cx) + ' ' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
-        
-        /* add scale */
-        if (o.scaleX != 1 || o.scaleY != 1)
-          transform.push('scale(' + o.scaleX + ' ' + o.scaleY + ')')
-        
-        /* add skew on x axis */
-        if (o.skewX != 0)
-          transform.push('skewX(' + o.skewX + ')')
-        
-        /* add skew on y axis */
-        if (o.skewY != 0)
-          transform.push('skewY(' + o.skewY + ')')
-        
-        /* add translation */
-        if (o.x != 0 || o.y != 0)
-          transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
-        
-        /* update transformations, even if there are none */
-        if (transform.length == 0)
-          this.node.removeAttribute('transform')
-        else
-          this.node.setAttribute('transform', transform.join(' '))
-        
+          
         return this
       }
       // Dynamic style generator
@@ -2747,60 +2677,31 @@
   
     // Add class methods
   , extend: {
-      // Move over x-axis
-      x: function(x) {
-        var b = this.bbox()
-        
-        return x == null ? b.x : this.attr({
-          x1: this.attr('x1') - b.x + x
-        , x2: this.attr('x2') - b.x + x
-        })
+      // Get array
+      array: function() {
+        return (this._array = new SVG.PointArray([
+          [ this.attr('x1'), this.attr('y1') ]
+        , [ this.attr('x2'), this.attr('y2') ]
+        ]))
       }
-      // Move over y-axis
-    , y: function(y) {
-        var b = this.bbox()
-        
-        return y == null ? b.y : this.attr({
-          y1: this.attr('y1') - b.y + y
-        , y2: this.attr('y2') - b.y + y
-        })
-      }
-      // Move by center over x-axis
-    , cx: function(x) {
-        var half = this.bbox().width / 2
-        return x == null ? this.x() + half : this.x(x - half)
-      }
-      // Move by center over y-axis
-    , cy: function(y) {
-        var half = this.bbox().height / 2
-        return y == null ? this.y() + half : this.y(y - half)
-      }
-      // Set width of element
-    , width: function(width) {
-        var b = this.bbox()
+      // Overwrite native plot() method
+    , plot: function(x1, y1, x2, y2) {
+        if (typeof x1 === 'number')
+          x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
+        else 
+          x1 = (this._array = new SVG.PointArray(x1)).toLine()
   
-        return width == null ? b.width : this.attr(this.attr('x1') < this.attr('x2') ? 'x2' : 'x1', b.x + width)
+        return this.attr(x1)
       }
-      // Set height of element
-    , height: function(height) {
-        var b = this.bbox()
-  
-        return height == null ? b.height : this.attr(this.attr('y1') < this.attr('y2') ? 'y2' : 'y1', b.y + height)
+      // Move by left top corner
+    , move: function(x, y) {
+        return this.attr(this.array().move(x, y).toLine())
       }
-      // Set line size by width and height
+      // Set element size to given width and height
     , size: function(width, height) {
         var p = proportionalSize(this.bbox(), width, height)
   
-        return this.width(p.width).height(p.height)
-      }
-      // Set path data
-    , plot: function(x1, y1, x2, y2) {
-        return this.attr({
-          x1: x1
-        , y1: y1
-        , x2: x2
-        , y2: y2
-        })
+        return this.attr(this.array().size(p.width, p.height).toLine())
       }
     }
     
@@ -2808,7 +2709,7 @@
   , construct: {
       // Create a line element
       line: function(x1, y1, x2, y2) {
-        return this.put(new SVG.Line().plot(x1, y1, x2, y2))
+        return this.put(new SVG.Line).plot(x1, y1, x2, y2)
       }
     }
   })
@@ -2848,10 +2749,8 @@
   
   // Add polygon-specific functions
   SVG.extend(SVG.Polyline, SVG.Polygon, {
-    // Define morphable array
-    morphArray:  SVG.PointArray
     // Get array
-  , array: function() {
+    array: function() {
       return this._array || (this._array = new SVG.PointArray(this.attr('points')))
     }
     // Plot new path
@@ -2862,6 +2761,18 @@
   , move: function(x, y) {
       return this.attr('points', this.array().move(x, y))
     }
+    // Set element size to given width and height
+  , size: function(width, height) {
+      var p = proportionalSize(this.bbox(), width, height)
+  
+      return this.attr('points', this.array().size(p.width, p.height))
+    }
+  
+  })
+
+  SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, {
+    // Define morphable array
+    morphArray:  SVG.PointArray
     // Move by left top corner over x-axis
   , x: function(x) {
       return x == null ? this.bbox().x : this.move(x, this.bbox().y)
@@ -2882,13 +2793,6 @@
   
       return height == null ? b.height : this.size(b.width, height) 
     }
-    // Set element size to given width and height
-  , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
-  
-      return this.attr('points', this.array().size(p.width, p.height))
-    }
-  
   })
 
   SVG.Path = SVG.invent({
@@ -3866,15 +3770,12 @@
   
   // Deep new id assignment
   function assignNewId(node) {
-    // Adopt element and assign new id
-    var element = SVG.adopt(node).id(SVG.eid(node.nodeName))
-  
     // Do the same for SVG child nodes as well
     for (var i = node.childNodes.length - 1; i >= 0; i--)
       if (node.childNodes[i] instanceof SVGElement)
         assignNewId(node.childNodes[i])
   
-    return element
+    return SVG.adopt(node).id(SVG.eid(node.nodeName))
   }
   
   // Add more bounding box properties
@@ -3883,6 +3784,8 @@
     b.y2 = b.y + b.height
     b.cx = b.x + b.width / 2
     b.cy = b.y + b.height / 2
+  
+    return b
   }
   
   // Parse a matrix string

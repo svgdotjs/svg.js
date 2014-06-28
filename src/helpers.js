@@ -93,15 +93,12 @@ function arrayToString(a) {
 
 // Deep new id assignment
 function assignNewId(node) {
-  // Adopt element and assign new id
-  var element = SVG.adopt(node).id(SVG.eid(node.nodeName))
-
   // Do the same for SVG child nodes as well
   for (var i = node.childNodes.length - 1; i >= 0; i--)
     if (node.childNodes[i] instanceof SVGElement)
       assignNewId(node.childNodes[i])
 
-  return element
+  return SVG.adopt(node).id(SVG.eid(node.nodeName))
 }
 
 // Add more bounding box properties
@@ -110,6 +107,8 @@ function boxProperties(b) {
   b.y2 = b.y + b.height
   b.cx = b.x + b.width / 2
   b.cy = b.y + b.height / 2
+
+  return b
 }
 
 // Parse a matrix string

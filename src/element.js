@@ -2,16 +2,16 @@
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    /* make stroke value accessible dynamically */
+    // Make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
 
-    /* initialize transformation store with defaults */
-    this.trans = SVG.defaults.trans()
-    
-    /* create circular reference */
+    // Create circular reference
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
+
+      // Store current attribute value
+      this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
 
@@ -122,10 +122,6 @@ SVG.Element = SVG.invent({
         SVG.regex.isNumber.test(v) ?
           parseFloat(v) : v
       
-      } else if (a == 'style') {
-        // Redirect to the style method
-        return this.style(v)
-      
       } else {
         // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
         if (a == 'stroke-width')
@@ -176,76 +172,12 @@ SVG.Element = SVG.invent({
       return this
     }
     // Manage transformations
-  , transform: function(o, v) {
-      
-      if (arguments.length == 0) {
-        /* act as a getter if no argument is given */
-        return this.trans
+  , transform: function(t, v) {
+      // Get a transformation at a given position
+      if (typeof t === 'number') {
         
-      } else if (typeof o === 'string') {
-        /* act as a getter if only one string argument is given */
-        if (arguments.length < 2)
-          return this.trans[o]
-        
-        /* apply transformations as object if key value arguments are given*/
-        var transform = {}
-        transform[o] = v
-        
-        return this.transform(transform)
       }
-      
-      /* ... otherwise continue as a setter */
-      var transform = []
-      
-      /* parse matrix */
-      o = parseMatrix(o)
-      
-      /* merge values */
-      for (v in o)
-        if (o[v] != null)
-          this.trans[v] = o[v]
-      
-      /* compile matrix */
-      this.trans.matrix = this.trans.a
-                  + ' ' + this.trans.b
-                  + ' ' + this.trans.c
-                  + ' ' + this.trans.d
-                  + ' ' + this.trans.e
-                  + ' ' + this.trans.f
-      
-      /* alias current transformations */
-      o = this.trans
-      
-      /* add matrix */
-      if (o.matrix != SVG.defaults.matrix)
-        transform.push('matrix(' + o.matrix + ')')
-      
-      /* add rotation */
-      if (o.rotation != 0)
-        transform.push('rotate(' + o.rotation + ' ' + (o.cx == null ? this.bbox().cx : o.cx) + ' ' + (o.cy == null ? this.bbox().cy : o.cy) + ')')
-      
-      /* add scale */
-      if (o.scaleX != 1 || o.scaleY != 1)
-        transform.push('scale(' + o.scaleX + ' ' + o.scaleY + ')')
-      
-      /* add skew on x axis */
-      if (o.skewX != 0)
-        transform.push('skewX(' + o.skewX + ')')
-      
-      /* add skew on y axis */
-      if (o.skewY != 0)
-        transform.push('skewY(' + o.skewY + ')')
-      
-      /* add translation */
-      if (o.x != 0 || o.y != 0)
-        transform.push('translate(' + new SVG.Number(o.x / o.scaleX) + ' ' + new SVG.Number(o.y / o.scaleY) + ')')
-      
-      /* update transformations, even if there are none */
-      if (transform.length == 0)
-        this.node.removeAttribute('transform')
-      else
-        this.node.setAttribute('transform', transform.join(' '))
-      
+        
       return this
     }
     // Dynamic style generator

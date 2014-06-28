@@ -15,6 +15,15 @@ SVG.extend(SVG.PointArray, {
 
     return array.join(' ')
   }
+  // Convert array to line object
+, toLine: function() {
+    return {
+      x1: this.value[0][0]
+    , y1: this.value[0][1]
+    , x2: this.value[1][0]
+    , y2: this.value[1][1]
+    }
+  }
   // Get morphed array at given position
 , at: function(pos) {
     /* make sure a destination is defined */
