@@ -10,7 +10,6 @@ describe('Selector', function() {
       var element = draw.group()
         , got = SVG.get(element.attr('id'))
       
-      expect(got.transform()).toEqual(SVG.defaults.trans())
       expect(got.attr()).toEqual(element.attr())
     })
     it('gets a referenced element by attribute value', function() {

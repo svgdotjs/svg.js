@@ -9,17 +9,17 @@ SVG.Line = SVG.invent({
 , extend: {
     // Get array
     array: function() {
-      return (this._array = new SVG.PointArray([
+      return new SVG.PointArray([
         [ this.attr('x1'), this.attr('y1') ]
       , [ this.attr('x2'), this.attr('y2') ]
-      ]))
+      ])
     }
     // Overwrite native plot() method
   , plot: function(x1, y1, x2, y2) {
-      if (typeof x1 === 'number')
+      if (arguments.length == 4)
         x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
       else 
-        x1 = (this._array = new SVG.PointArray(x1)).toLine()
+        x1 = new SVG.PointArray(x1).toLine()
 
       return this.attr(x1)
     }

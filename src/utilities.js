@@ -11,4 +11,13 @@ SVG.utils = {
     return result
   }
 
+  // Degrees to radians
+, radians: function(d) {
+		return d % 360 * Math.PI / 180
+	}
+	// Radians to degrees
+, degrees: function(r) {
+		return r * 180 / Math.PI % 360
+	}
+
 }

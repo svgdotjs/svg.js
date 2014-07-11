@@ -186,7 +186,7 @@ SVG.extend(SVG.PathArray, {
       else if (s == 'Q')
         x.push(seg.x1, seg.y1, seg.x, seg.y)
       else if (s == 'A')
-        x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag|0, seg.sweepFlag|0, seg.x, seg.y)
+        x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag | 0, seg.sweepFlag | 0, seg.x, seg.y)
 
       /* store segment */
       array.push(x)

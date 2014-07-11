@@ -273,6 +273,12 @@ describe('Container', function() {
   })
   
   describe('viewbox()', function() {
+
+    beforeEach(function() {
+      draw.attr('viewBox', null)
+      console.log(draw.node)
+    })
+
     it('should set the viewbox when four arguments are provided', function() {
       draw.viewbox(0,0,100,100)
       expect(draw.node.getAttribute('viewBox')).toBe('0 0 100 100')

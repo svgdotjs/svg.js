@@ -1,5 +1,9 @@
 describe('Element', function() {
   
+  beforeEach(function() {
+    draw.attr('viewBox', null)
+  })
+
   afterEach(function() {
     draw.clear()
   })
@@ -15,7 +19,11 @@ describe('Element', function() {
     beforeEach(function() {
       rect = draw.rect(100,100)
     })
-    
+
+    afterEach(function() {
+      rect.remove()
+    })
+
     it('sets one attribute when two arguments are given', function() {
       rect.attr('fill', '#ff0066')
       expect(rect.node.getAttribute('fill')).toBe('#ff0066')
@@ -68,19 +76,20 @@ describe('Element', function() {
       rect.style('cursor', '')
       expect(rect.style.cursor).toBe(undefined)
     })
-    it('should act as a global getter when no arguments are given', function() {
+    it('acts as a global getter when no arguments are given', function() {
       rect.fill('#ff0066')
       expect(rect.attr().fill).toBe('#ff0066')
     })
-    it('should correctly parse numeric values as a global getter', function() {
+    it('correctly parses numeric values as a global getter', function() {
       rect.stroke({ width: 20 })
       expect(rect.attr()['stroke-width']).toBe(20)
     })
-    it('should correctly parse negative numeric values as a global getter', function() {
+    it('correctly parses negative numeric values as a global getter', function() {
       rect.x(-30)
+      console.log(rect.native())
       expect(rect.attr().x).toBe(-30)
     })
-    it('should leave unit values alone as a global getter', function() {
+    it('leaves unit values alone as a global getter', function() {
       rect.attr('x', '69%')
       expect(rect.attr().x).toBe('69%')
     })
@@ -138,27 +147,23 @@ describe('Element', function() {
   describe('transform()', function() {
     it('gets the current transformations', function() {
       var rect = draw.rect(100,100)
-      expect(rect.transform()).toEqual(SVG.defaults.trans())
+      expect(rect.transform()).toEqual(new SVG.Matrix(rect).extract())
     })
     it('sets the translation of and element', function() {
-      var rect = draw.rect(100,100).transform({ x: 10, y: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('translate(10 10)')
+      var rect = draw.rect(100,100).transform({ x: 10, y: 11 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,10,11)')
     })
-    it('sets the scaleX of and element', function() {
-      var rect = draw.rect(100,100).transform({ scaleX: 0.1 })
-      expect(rect.node.getAttribute('transform')).toBe('scale(0.1 1)')
-    })
-    it('sets the scaleY of and element', function() {
-      var rect = draw.rect(100,100).transform({ scaleY: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('scale(1 10)')
+    it('sets the scaleX and scaleY of and element', function() {
+      var rect = draw.rect(100,100).transform({ scaleX: 0.5, scaleY: 2 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,0,0)')
     })
     it('sets the skewX of and element', function() {
-      var rect = draw.rect(100,100).transform({ skewX: 0.1 })
-      expect(rect.node.getAttribute('transform')).toBe('skewX(0.1)')
+      var rect = draw.rect(100,100).transform({ skewX: 10 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0.17632698070846498,1,0,0)')
     })
     it('sets the skewY of and element', function() {
-      var rect = draw.rect(100,100).transform({ skewY: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('skewY(10)')
+      var rect = draw.rect(100,100).transform({ skewY: -10 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,-0.17632698070846498,0,1,0,0)')
     })
     it('rotates the element around its centre if no rotation point is given', function() {
       var rect = draw.rect(100,100).transform({ rotation: 45 })

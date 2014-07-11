@@ -1,4 +1,4 @@
-# svg.js
+# SVG.js
 
 A lightweight library for manipulating and animating SVG.
 
@@ -6,7 +6,7 @@ Svg.js has no dependencies and aims to be as small as possible.
 
 Svg.js is licensed under the terms of the MIT License.
 
-See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://documentup.com/wout/svg.js) and [some action](http://svgjs.com/test).
+See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://documentup.com/wout/SVG.js) and [some action](http://svgjs.com/test).
 
 [![Wout on Gittip](http://files.wout.co.uk/github/gittip.png)](https://www.gittip.com/wout/)
 
@@ -77,7 +77,7 @@ var draw = SVG('drawing').fixSubPixelOffset()
 ## Parent elements
 
 ### Main svg document
-The main svg.js initializer function creates a root svg node in the given element and retuns an instance of `SVG.Doc`:
+The main SVG.js initializer function creates a root svg node in the given element and retuns an instance of `SVG.Doc`:
 
 ```javascript
 var draw = SVG('drawing')
@@ -101,7 +101,7 @@ __`returns`: `SVG.Nested`__
 _Javascript inheritance stack: `SVG.Nested` < `SVG.Container` < `SVG.Parent`_
 
 ### Groups
-Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document: 
+Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document:
 
 ```javascript
 var group = draw.group()
@@ -113,6 +113,8 @@ Existing elements from the svg document can also be added to a group:
 ```javascript
 group.add(rect)
 ```
+
+__Note:__ Groups do not have a geometry of their own, it's inherited from their content. Therefore groups do not listen to `x`, `y`, `width` and `height` attributes. If that is what you are looking for, use a `nested()` svg instead.
 
 __`returns`: `SVG.G`__
 
@@ -458,7 +460,7 @@ __`returns`: `itself`__
 
 
 ## Text
-Unlike html, text in svg is much harder to tame. There is no way to create flowing text, so newlines should be entered manually. In svg.js there are two ways to create text elements.
+Unlike html, text in svg is much harder to tame. There is no way to create flowing text, so newlines should be entered manually. In SVG.js there are two ways to create text elements.
 
 The first and easiest method is to provide a string of text, split by newlines:
 
@@ -543,7 +545,7 @@ text.font({
 __`returns`: `itself`__
 
 ### leading()
-As opposed to html, where leading is defined by `line-height`, svg does not have a natural leading equivalent. In svg, lines are not defined naturally. They are defined by `<tspan>` nodes with a `dy` attribute defining the line height and a `x` value resetting the line to the `x` position of the parent text element. But you can also have many nodes in one line defining a different `y`, `dy`, `x` or even `dx` value. This gives us a lot of freedom, but also a lot more responsibility. We have to decide when a new line is defined, where it starts, what its offset is and what it's height is. The `leading()` method in svg.js tries to ease the pain by giving you behaviour that is much closer to html. In combination with newline separated text, it works just like html:
+As opposed to html, where leading is defined by `line-height`, svg does not have a natural leading equivalent. In svg, lines are not defined naturally. They are defined by `<tspan>` nodes with a `dy` attribute defining the line height and a `x` value resetting the line to the `x` position of the parent text element. But you can also have many nodes in one line defining a different `y`, `dy`, `x` or even `dx` value. This gives us a lot of freedom, but also a lot more responsibility. We have to decide when a new line is defined, where it starts, what its offset is and what it's height is. The `leading()` method in SVG.js tries to ease the pain by giving you behaviour that is much closer to html. In combination with newline separated text, it works just like html:
 
 ```javascript
 var text = draw.text("Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor.")
@@ -617,7 +619,7 @@ text.on('rebuild', function() {
 ```
 
 ## Tspan
-The tspan elements are only available inside text elements or inside other tspan elements. In svg.js they have a class of their own:
+The tspan elements are only available inside text elements or inside other tspan elements. In SVG.js they have a class of their own:
 
 _Javascript inheritance stack: `SVG.Tspan` < `SVG.Shape` < `SVG.Element`_
 
@@ -799,7 +801,7 @@ _Javascript inheritance stack: `SVG.Use` < `SVG.Container` < `SVG.Symbol`_
 ## Referencing elements
 
 ### By id
-If you want to get an element created by svg.js by its id, you can use the `SVG.get()` method:
+If you want to get an element created by SVG.js by its id, you can use the `SVG.get()` method:
 
 ```javascript
 var element = SVG.get('my_element')
@@ -840,7 +842,7 @@ var elements = $('#drawing g.my-group .my-element').each(function() {
 ```
 
 ## Circular reference
-Every element instance within svg.js has a reference to the actual `node`:
+Every element instance within SVG.js has a reference to the actual `node`:
 
 ### node
 ```javascript
@@ -849,7 +851,7 @@ element.node
 __`returns`: `node`__
 
 ### instance
-Similarly, the node carries a reference to the svg.js `instance`:
+Similarly, the node carries a reference to the SVG.js `instance`:
 
 ```javascript
 node.instance
@@ -1055,7 +1057,7 @@ The `transform()` can act both as a getter or a setter. Let's start with the for
 
 Transforms are cascading sequentially. Every transform you add will build further on the effects of all the previous transforms together. So for example, when you add the `translate(10, 10)` transform three times, the total translation will equal `translate(30, 30)`.
 
-We are going to use one node as an examle for this section:
+We are going to use one node as an example for this section:
 
 ```xml
 <rect width="100" height="100" transform="translate(10, 10) rotate(45, 100, 100) scale(0.5, 0.5) rotate(-10)" />
@@ -1548,6 +1550,15 @@ path.rbox()
 ```
 
 __`returns`: `SVG.RBox`__
+
+### ctm()
+Retreives the current transform matrix of the element:
+
+```javascript
+path.ctm()
+```
+
+__`returns`: `SVG.Matrix`__
 
 ### inside()
 To check if a given point is inside the bounding box of an element you can use the `inside()` method:
@@ -2735,7 +2746,7 @@ _Important: always make sure you namespace your event to avoid conflicts. Prefer
 
 ## Numbers
 
-Numbers in svg.js have a dedicated number class to be able to process string values. Creating a new number is simple:
+Numbers in SVG.js have a dedicated number class to be able to process string values. Creating a new number is simple:
 
 ```javascript
 var number = new SVG.Number('78%')
@@ -2873,7 +2884,7 @@ __`returns`: `SVG.Color`__
 
 
 ## Arrays
-In svg.js every value list string can be cast and passed as an array. This makes writing them more convenient but also adds a lot of key functionality to them.
+In SVG.js every value list string can be cast and passed as an array. This makes writing them more convenient but also adds a lot of key functionality to them.
 
 ### SVG.Array
 Is for simple, whitespace separated value strings:
@@ -2961,37 +2972,37 @@ path.array() //-> returns the SVG.PathArray instance
 The syntax for patharrays is very predictable. They are basically literal representations in the form of two dimentional arrays.
 
 ##### Move To
-Original syntax is `M0 0` or `m0 0`. The svg.js syntax `['M',0,0]` or `['m',0,0]`.
+Original syntax is `M0 0` or `m0 0`. The SVG.js syntax `['M',0,0]` or `['m',0,0]`.
 
 ##### Line To
-Original syntax is `L100 100` or `l100 100`. The svg.js syntax `['L',100,100]` or `['l',100,100]`.
+Original syntax is `L100 100` or `l100 100`. The SVG.js syntax `['L',100,100]` or `['l',100,100]`.
 
 ##### Horizontal line
-Original syntax is `H200` or `h200`. The svg.js syntax `['H',200]` or `['h',200]`.
+Original syntax is `H200` or `h200`. The SVG.js syntax `['H',200]` or `['h',200]`.
 
 ##### Vertical line
-Original syntax is `V300` or `v300`. The svg.js syntax `['V',300]` or `['v',300]`.
+Original syntax is `V300` or `v300`. The SVG.js syntax `['V',300]` or `['v',300]`.
 
 ##### Bezier curve
-Original syntax is `C20 20 40 20 50 10` or `c20 20 40 20 50 10`. The svg.js syntax `['C',20,20,40,20,50,10]` or `['c',20,20,40,20,50,10]`.
+Original syntax is `C20 20 40 20 50 10` or `c20 20 40 20 50 10`. The SVG.js syntax `['C',20,20,40,20,50,10]` or `['c',20,20,40,20,50,10]`.
 
 Or mirrored with `S`:
 
-Original syntax is `S40 20 50 10` or `s40 20 50 10`. The svg.js syntax `['S',40,20,50,10]` or `['s',40,20,50,10]`.
+Original syntax is `S40 20 50 10` or `s40 20 50 10`. The SVG.js syntax `['S',40,20,50,10]` or `['s',40,20,50,10]`.
 
 Or quadratic with `Q`:
 
-Original syntax is `Q20 20 50 10` or `q20 20 50 10`. The svg.js syntax `['Q',20,20,50,10]` or `['q',20,20,50,10]`.
+Original syntax is `Q20 20 50 10` or `q20 20 50 10`. The SVG.js syntax `['Q',20,20,50,10]` or `['q',20,20,50,10]`.
 
 Or a complete shortcut with `T`:
 
-Original syntax is `T50 10` or `t50 10`. The svg.js syntax `['T',50,10]` or `['t',50,10]`.
+Original syntax is `T50 10` or `t50 10`. The SVG.js syntax `['T',50,10]` or `['t',50,10]`.
 
 ##### Arc
-Original syntax is `A 30 50 0 0 1 162 163` or `a 30 50 0 0 1 162 163`. The svg.js syntax `['A',30,50,0,0,1,162,163]` or `['a',30,50,0,0,1,162,163]`.
+Original syntax is `A 30 50 0 0 1 162 163` or `a 30 50 0 0 1 162 163`. The SVG.js syntax `['A',30,50,0,0,1,162,163]` or `['a',30,50,0,0,1,162,163]`.
 
 ##### Close
-Original syntax is `Z` or `z`. The svg.js syntax `['Z']` or `['z']`.
+Original syntax is `Z` or `z`. The SVG.js syntax `['Z']` or `['z']`.
 
 The best documentation on paths can be found at https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths.
 
@@ -2999,7 +3010,7 @@ The best documentation on paths can be found at https://developer.mozilla.org/en
 _Javascript inheritance stack: `SVG.PathArray` < `SVG.Array`_
 
 ### morph()
-In order to animate array values the `morph()` method lets you pass a destination value. This can be either the string value, a plain array or an instance of the same type of svg.js array:
+In order to animate array values the `morph()` method lets you pass a destination value. This can be either the string value, a plain array or an instance of the same type of SVG.js array:
 
 ```javascript
 var array = new SVG.PointArray([[0, 0], [100, 100]])
@@ -3083,10 +3094,81 @@ Note that this method is only available on `SVG.PointArray` and `SVG.PathArray`
 __`returns`: `object`__
 
 
+## Matrices
+Matrices in SVG.js have their own class `SVG.Matrix`, wrapping the native `SVGMatrix`. They add a lot of functionality like extracting transform values, matrix morphing and improvements on the native methods.
+
+### SVG.Matrix
+In SVG.js matrices accept various values on initialization.
+
+Without a value:
+
+```javascript
+var matrix = new SVG.Matrix
+matrix.toString() //-> returns matrix(1,0,0,1,0,0)
+```
+
+Six arguments:
+
+```javascript
+var matrix = new SVG.Matrix(1, 0, 0, 1, 100, 150)
+matrix.toString() //-> returns matrix(1,0,0,1,100,150)
+```
+
+A string value:
+
+```javascript
+var matrix = new SVG.Matrix('1,0,0,1,100,150')
+matrix.toString() //-> returns matrix(1,0,0,1,100,150)
+```
+
+An object value:
+
+```javascript
+var matrix = new SVG.Matrix({ a: 1, b: 0, c: 0, d: 1, e: 100, f: 150 })
+matrix.toString() //-> returns matrix(1,0,0,1,100,150)
+```
+
+A native `SVGMatrix`:
+
+```javascript
+var svgMatrix = svgElement.getCTM()
+var matrix = new SVG.Matrix(svgMatrix)
+matrix.toString() //-> returns matrix(1,0,0,1,0,0)
+```
+
+Even an instance of `SVG.Element`:
+
+```javascript
+var rect = draw.rect(50, 25)
+var matrix = new SVG.Matrix(rect)
+matrix.toString() //-> returns matrix(1,0,0,1,0,0)
+```
+
+### extract()
+Get the calculated values of matrix:
+
+```javascript
+new SVG.Matrix().extract()
+```
+
+returns:
+```javascript
+{
+  x:        0
+, y:        0
+, skewX:    0
+, skewY:    0
+, scaleX:   1
+, scaleY:   1
+, rotation: 0
+}
+```
+
+
 ## Extending functionality
 
 ### SVG.invent()
-Creating your own custom elements with svg.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the height of the element. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
+Creating your own custom elements with SVG.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the height of the element. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
 
 ```javascript
 SVG.Rounded = SVG.invent({
@@ -3132,10 +3214,10 @@ That's it, the invention is now ready to be used!
 The `SVG.invent()` function always expectes an object. The object can have the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
-- `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
+- `inherit`: the desired SVG.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
 - `extend`: an object with the methods that should be applied to the element's prototype; `[optional]`
 - `construct`: an objects with the methods to create the element on the parent element; `[optional]`
-- `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
+- `parent`: an SVG.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
 
 Svg.js uses the `SVG.invent()` function to create all internal elements, so have a look at the source to see how this function is used in various ways.
 
@@ -3188,10 +3270,10 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 
 
 ## Plugins
-Here are a few nice plugins that are available for svg.js:
+Here are a few nice plugins that are available for SVG.js:
 
 ### absorb
-[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into a svg.js instance.
+[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into a SVG.js instance.
 
 ### draggable
 [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
@@ -3243,7 +3325,7 @@ Be aware that pull requests without specs will be declined.
 
 
 ## Building
-Starting out with the default distribution of svg.js is good. Although you might want to remove some modules to keep the size at minimum.
+Starting out with the default distribution of SVG.js is good. Although you might want to remove some modules to keep the size at minimum.
 
 You will need ruby, RubyGems, and rake installed on your system.
 
@@ -3257,7 +3339,7 @@ $ rake -V
 $ gem install uglifier
 ```
 
-Build svg.js by running `rake`:
+Build SVG.js by running `rake`:
 
 ``` sh
 $ rake
@@ -3268,7 +3350,7 @@ Minified and gzipped: 4.413k, compression factor 7.289
 
 The resulting files are:
 
-1. `dist/svg.js`
+1. `dist/SVG.js`
 2. `dist/svg.min.js`
 
 To include optional modules and remove default ones, use the `concat` task. In
@@ -3301,6 +3383,6 @@ rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
 - Chrome for Android 18+
 - Firefox for Android 15+
 
-Visit the [svg.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
+Visit the [SVG.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
 
 Important: this library is still in beta, therefore the API might be subject to change in the course of development.

@@ -64,11 +64,11 @@ SVG.extend(SVG.Circle, SVG.Ellipse, {
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.trans.scaleX))
+      return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.ctm().scaleX))
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.trans.scaleY))
+      return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.ctm().scaleY))
     }
     // Set width of element
   , width: function(width) {

@@ -30,37 +30,24 @@ var sugar = {
 
 SVG.extend(SVG.Element, SVG.FX, {
   // Rotation
-  rotate: function(deg, x, y) {
-    return this.transform({
-      rotation: deg || 0
-    , cx: x
-    , cy: y
-    })
+  rotate: function(d, cx, cy) {
+    return this.transform({ rotation: d, cx: cx, cy: cy })
   }
   // Skew
 , skew: function(x, y) {
-    return this.transform({
-      skewX: x || 0
-    , skewY: y || 0
-    })
+    return this.transform({ skewX: x, skewY: y })
   }
   // Scale
-, scale: function(x, y) {
-    return this.transform({
-      scaleX: x
-    , scaleY: y == null ? x : y
-    })
+, scale: function(x, y, cx, cy) {
+    return this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
   }
   // Translate
 , translate: function(x, y) {
-    return this.transform({
-      x: x
-    , y: y
-    })
+    return this.transform({ x: x, y: y })
   }
   // Matrix
 , matrix: function(m) {
-    return this.transform({ matrix: m })
+    return this.attr('transform', new SVG.Matrix(m))
   }
   // Opacity
 , opacity: function(value) {
