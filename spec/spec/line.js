@@ -182,7 +182,7 @@ describe('Line', function() {
   describe('translate()', function() {
     it('should set the translation of an element', function() {
       line.transform({ x: 12, y: 12 })
-      expect(line.node.getAttribute('transform')).toBe('translate(12 12)')
+      expect(line.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
   

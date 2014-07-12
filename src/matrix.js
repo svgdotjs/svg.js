@@ -4,7 +4,7 @@ SVG.Matrix = SVG.invent({
 		var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
 		// Ensure source as object
-		source = source.node && source.node.getCTM ?
+		source = source && source.node && source.node.getCTM ?
 			source.node.getCTM() :
 		typeof source === 'string' ?
 			arrayToMatrix(source.replace(/\s/g, '').split(',')) :
@@ -25,8 +25,8 @@ SVG.Matrix = SVG.invent({
 		// Extract individual transformations
 	  extract: function() {
 			// Find transform points
-			var px 		= deltaTransformPoint(this, { x: 0, y: 1 })
-				, py 		= deltaTransformPoint(this, { x: 1, y: 0 })
+			var px 		= deltaTransformPoint(this, 0, 1)
+				, py 		= deltaTransformPoint(this, 1, 0)
 				, skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
 	
 			return {

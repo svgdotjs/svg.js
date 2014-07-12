@@ -172,7 +172,7 @@ describe('Ellipse', function() {
   describe('translate()', function() {
     it('sets the translation of an element', function() {
       ellipse.transform({ x: 12, y: 12 })
-      expect(ellipse.node.getAttribute('transform')).toBe('translate(12 12)')
+      expect(ellipse.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
   

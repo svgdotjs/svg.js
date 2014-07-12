@@ -42,10 +42,10 @@ function proportionalSize(box, width, height) {
 }
 
 // Delta transform point
-function deltaTransformPoint(matrix, point) {
+function deltaTransformPoint(matrix, x, y) {
 	return {
-		x: point.x * matrix.a + point.y * matrix.c + 0
-	, y: point.x * matrix.b + point.y * matrix.d + 0
+		x: x * matrix.a + y * matrix.c + 0
+	, y: x * matrix.b + y * matrix.d + 0
 	}
 }
 

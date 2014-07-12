@@ -173,7 +173,7 @@ describe('Polygon', function() {
   describe('translate()', function() {
     it('sets the translation of an element', function() {
       polygon.transform({ x: 12, y: 12 })
-      expect(polygon.node.getAttribute('transform')).toBe('translate(12 12)')
+      expect(polygon.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
   

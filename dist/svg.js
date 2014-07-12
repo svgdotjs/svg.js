@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-20-g462d2cd - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-21-g501cb53 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -1241,7 +1241,7 @@
   		var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
   
   		// Ensure source as object
-  		source = source.node && source.node.getCTM ?
+  		source = source && source.node && source.node.getCTM ?
   			source.node.getCTM() :
   		typeof source === 'string' ?
   			arrayToMatrix(source.replace(/\s/g, '').split(',')) :
@@ -1262,8 +1262,8 @@
   		// Extract individual transformations
   	  extract: function() {
   			// Find transform points
-  			var px 		= deltaTransformPoint(this, { x: 0, y: 1 })
-  				, py 		= deltaTransformPoint(this, { x: 1, y: 0 })
+  			var px 		= deltaTransformPoint(this, 0, 1)
+  				, py 		= deltaTransformPoint(this, 1, 0)
   				, skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
   	
   			return {
@@ -2247,11 +2247,11 @@
   , extend: {
       // Move over x-axis
       x: function(x) {
-        return x == null ? this.ctm().x : this.transform('x', x)
+        return x == null ? this.transform('x') : this.transform({ x: x })
       }
       // Move over y-axis
     , y: function(y) {
-        return y == null ? this.ctm().y : this.transform('y', y)
+        return y == null ? this.transform('y') : this.transform({ y: y })
       }
       // Move by center over x-axis
     , cx: function(x) {
@@ -3922,10 +3922,10 @@
   }
   
   // Delta transform point
-  function deltaTransformPoint(matrix, point) {
+  function deltaTransformPoint(matrix, x, y) {
   	return {
-  		x: point.x * matrix.a + point.y * matrix.c + 0
-  	, y: point.x * matrix.b + point.y * matrix.d + 0
+  		x: x * matrix.a + y * matrix.c + 0
+  	, y: x * matrix.b + y * matrix.d + 0
   	}
   }
   

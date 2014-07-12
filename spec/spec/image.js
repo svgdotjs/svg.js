@@ -153,7 +153,7 @@ describe('Image', function() {
   describe('translate()', function() {
     it('should set the translation of an element', function() {
       image.transform({ x: 12, y: 12 })
-      expect(image.node.getAttribute('transform')).toBe('translate(12 12)')
+      expect(image.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
   

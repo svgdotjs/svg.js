@@ -9,11 +9,11 @@ SVG.G = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      return x == null ? this.ctm().x : this.transform('x', x)
+      return x == null ? this.transform('x') : this.transform({ x: x })
     }
     // Move over y-axis
   , y: function(y) {
-      return y == null ? this.ctm().y : this.transform('y', y)
+      return y == null ? this.transform('y') : this.transform({ y: y })
     }
     // Move by center over x-axis
   , cx: function(x) {
