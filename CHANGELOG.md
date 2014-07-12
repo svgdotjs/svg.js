@@ -1,3 +1,7 @@
+# 1.0.0 (?/?/2014)
+
+- added `morph()` method to `SVG.PathArray` -> __TODO!__
+
 # 1.0.0-rc.10 (?/07/2014)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
@@ -14,15 +18,16 @@
 - added support to clone manually built text elements
 - added `svg.wiml.js` plugin to plugins list
 - added `ctm()` method to for matrix-centric transformations -> __TODO!__
-- completely reworked transformations to be chainable and more true to their nature -> __TODO!__
+- completely reworked transformations to be chainable and more true to their nature
 - changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
 - changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method -> __TODO!__
 - moved sup-pixel offset fix to a separate plugin -> __TODO!__
-- added `SVG.Title` -> __TODO!__
+- added `SVG.Title` and `SVG.Desc` -> __TODO!__
 - added `native()` method to elements and matrix to get to the native api -> __TODO!__
 - added `untransform()` method to remove all transformations -> __TODO!__
+- fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 
