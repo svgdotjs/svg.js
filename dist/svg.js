@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-21-g501cb53 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-23-g03f358a - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -1294,19 +1294,28 @@
   		}
   		// Scale
   	, scale: function(x, y, cx, cy) {
-  			if (y == null)
-  				return new SVG.Matrix(this.native().scale(x))
-  			else
-  				return new SVG.Matrix(this.native().scaleNonUniform(x, y))
+  			// Support universal scale
+  			if (arguments.length == 1 || arguments.length == 3)
+  				y = x
+  			if (arguments.length == 3) {
+  				cy = cx
+  				cx = y
+  			}
+  
+  			return this
+  				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
+  				.multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
+  				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
   		}
   		// Rotate
-  	, rotate: function(d, x, y) {
+  	, rotate: function(d, cx, cy) {
   			// Convert degrees to radians
   			d = SVG.utils.radians(d)
   			
-  			return new SVG.Matrix(1, 0, 0, 1, x, y)
+  			return this
+  				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
   				.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-  				.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
+  				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
   		}
   		// Flip
   	, flip: function(a) {
@@ -1898,26 +1907,26 @@
       }
       // Add animatable transformations
     , transform: function(o, v) {
-        if (arguments.length == 1) {
-          /* parse matrix string */
-          o = parseMatrix(o)
+        // if (arguments.length == 1) {
+        //   /* parse matrix string */
+        //   o = parseMatrix(o)
           
-          /* dlete matrixstring from object */
-          delete o.matrix
+        //   /* dlete matrixstring from object */
+        //   delete o.matrix
           
-          /* store matrix values */
-          for (v in o)
-            this.trans[v] = { from: this.target.trans[v], to: o[v] }
+        //   /* store matrix values */
+        //   for (v in o)
+        //     this.trans[v] = { from: this.target.trans[v], to: o[v] }
           
-        } else {
-          /* apply transformations as object if key value arguments are given*/
-          var transform = {}
-          transform[o] = v
+        // } else {
+        //   /* apply transformations as object if key value arguments are given*/
+        //   var transform = {}
+        //   transform[o] = v
           
-          this.transform(transform)
-        }
+        //   this.transform(transform)
+        // }
         
-        return this
+        // return this
       }
       // Add animatable styles
     , style: function(s, v) {
@@ -3583,7 +3592,9 @@
     }
     // Scale
   , scale: function(x, y, cx, cy) {
-      return this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
+      return arguments.length == 1  || arguments.length == 3 ?
+        this.transform({ scale: x,  cx: y, cy: cx }) :
+        this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
     }
     // Translate
   , translate: function(x, y) {
@@ -4002,26 +4013,6 @@
   	b.cy = b.y + b.height / 2
   
   	return b
-  }
-  
-  // Parse a matrix string
-  function parseMatrix(o) {
-  	if (o.matrix) {
-  		// Split matrix string
-  		var m = o.matrix.replace(/\s/g, '').split(',')
-  		
-  		// Pasrse values
-  		if (m.length == 6) {
-  			o.a = parseFloat(m[0])
-  			o.b = parseFloat(m[1])
-  			o.c = parseFloat(m[2])
-  			o.d = parseFloat(m[3])
-  			o.e = parseFloat(m[4])
-  			o.f = parseFloat(m[5])
-  		}
-  	}
-  	
-  	return o
   }
   
   // Get id from reference string

@@ -57,26 +57,36 @@ SVG.Matrix = SVG.invent({
 		}
 		// Scale
 	, scale: function(x, y, cx, cy) {
-			if (y == null)
-				return new SVG.Matrix(this.native().scale(x))
-			else
-				return new SVG.Matrix(this.native().scaleNonUniform(x, y))
+			// Support universal scale
+			if (arguments.length == 1 || arguments.length == 3)
+				y = x
+			if (arguments.length == 3) {
+				cy = cx
+				cx = y
+			}
+
+			return this
+				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
+				.multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
+				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
 		}
 		// Rotate
-	, rotate: function(d, x, y) {
+	, rotate: function(d, cx, cy) {
 			// Convert degrees to radians
 			d = SVG.utils.radians(d)
 			
-			return new SVG.Matrix(1, 0, 0, 1, x, y)
+			return this
+				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
 				.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-				.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
+				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
 		}
 		// Flip
 	, flip: function(a) {
 			return new SVG.Matrix(this.native()['flip' + a.toUpperCase()]())
 		}
 		// Skew
-	, skew: function(x, y) {
+	, skew: function(x, y, cx, cy) {
+			// IMPLEMENT SKEW CENTER POINT
 			return new SVG.Matrix(this.native().skewX(x || 0).skewY(y || 0))
 		}
 		// Convert this to SVGMatrix

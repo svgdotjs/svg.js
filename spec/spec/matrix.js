@@ -61,6 +61,12 @@ describe('Matrix', function() {
 		})
 	})
 
+	describe('native()', function() {
+	  it('returns the node reference', function() {
+	    expect(new SVG.Matrix().native() instanceof SVGMatrix).toBeTruthy()
+	  })
+	})
+
 })
 
 

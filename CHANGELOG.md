@@ -18,6 +18,8 @@
 - added support to clone manually built text elements
 - added `svg.wiml.js` plugin to plugins list
 - added `ctm()` method to for matrix-centric transformations -> __TODO!__
+- added `morph()` method to `SVG.Matrix` -> __TODO!__
+- added support for new matrix system to `SVG.FX` -> __TODO!__
 - completely reworked transformations to be chainable and more true to their nature
 - changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
 - changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
@@ -25,7 +27,7 @@
 - added raw svg import functionality with the `svg()` method -> __TODO!__
 - moved sup-pixel offset fix to a separate plugin -> __TODO!__
 - added `SVG.Title` and `SVG.Desc` -> __TODO!__
-- added `native()` method to elements and matrix to get to the native api -> __TODO!__
+- added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 

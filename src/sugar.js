@@ -39,7 +39,9 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Scale
 , scale: function(x, y, cx, cy) {
-    return this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
+    return arguments.length == 1  || arguments.length == 3 ?
+      this.transform({ scale: x,  cx: y, cy: cx }) :
+      this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
   }
   // Translate
 , translate: function(x, y) {

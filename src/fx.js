@@ -226,26 +226,26 @@ SVG.FX = SVG.invent({
     }
     // Add animatable transformations
   , transform: function(o, v) {
-      if (arguments.length == 1) {
-        /* parse matrix string */
-        o = parseMatrix(o)
+      // if (arguments.length == 1) {
+      //   /* parse matrix string */
+      //   o = parseMatrix(o)
         
-        /* dlete matrixstring from object */
-        delete o.matrix
+      //   /* dlete matrixstring from object */
+      //   delete o.matrix
         
-        /* store matrix values */
-        for (v in o)
-          this.trans[v] = { from: this.target.trans[v], to: o[v] }
+      //   /* store matrix values */
+      //   for (v in o)
+      //     this.trans[v] = { from: this.target.trans[v], to: o[v] }
         
-      } else {
-        /* apply transformations as object if key value arguments are given*/
-        var transform = {}
-        transform[o] = v
+      // } else {
+      //   /* apply transformations as object if key value arguments are given*/
+      //   var transform = {}
+      //   transform[o] = v
         
-        this.transform(transform)
-      }
+      //   this.transform(transform)
+      // }
       
-      return this
+      // return this
     }
     // Add animatable styles
   , style: function(s, v) {

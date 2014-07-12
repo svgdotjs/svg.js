@@ -12,6 +12,13 @@ describe('Element', function() {
     var rect = draw.rect(100,100)
     expect(rect.node.instance).toBe(rect)
   })
+
+  describe('native()', function() {
+    it('returns the node reference', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.native()).toBe(rect.node)
+    })
+  })
   
   describe('attr()', function() {
     var rect

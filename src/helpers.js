@@ -124,26 +124,6 @@ function fullBox(b) {
 	return b
 }
 
-// Parse a matrix string
-function parseMatrix(o) {
-	if (o.matrix) {
-		// Split matrix string
-		var m = o.matrix.replace(/\s/g, '').split(',')
-		
-		// Pasrse values
-		if (m.length == 6) {
-			o.a = parseFloat(m[0])
-			o.b = parseFloat(m[1])
-			o.c = parseFloat(m[2])
-			o.d = parseFloat(m[3])
-			o.e = parseFloat(m[4])
-			o.f = parseFloat(m[5])
-		}
-	}
-	
-	return o
-}
-
 // Get id from reference string
 function idFromReference(url) {
 	var m = url.toString().match(SVG.regex.reference)
