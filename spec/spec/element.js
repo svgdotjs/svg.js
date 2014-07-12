@@ -86,7 +86,6 @@ describe('Element', function() {
     })
     it('correctly parses negative numeric values as a global getter', function() {
       rect.x(-30)
-      console.log(rect.native())
       expect(rect.attr().x).toBe(-30)
     })
     it('leaves unit values alone as a global getter', function() {
@@ -166,16 +165,17 @@ describe('Element', function() {
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,-0.17632698070846498,0,1,0,0)')
     })
     it('rotates the element around its centre if no rotation point is given', function() {
-      var rect = draw.rect(100,100).transform({ rotation: 45 })
-      expect(rect.node.getAttribute('transform')).toBe('rotate(45 50 50)')
+      var rect = draw.rect(100,100).center(150,150).transform({ rotation: 45 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.7071067811865475,0.7071067811865475,-0.7071067811865475,0.7071067811865475,150,-62.13203435596424)')
+      expect(rect.transform('rotation')).toBe(45)
     })
     it('rotates the element around the given rotation point', function() {
       var rect = draw.rect(100,100).transform({ rotation: 55, cx: 80, cy:2 })
-      expect(rect.node.getAttribute('transform')).toBe('rotate(55 80 2)')
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.573576436351046,0.8191520442889917,-0.8191520442889917,0.573576436351046,35.7521891804943,-64.67931641582143)')
     })
     it('transforms element using a matrix', function() {
       var rect = draw.rect(100,100).transform({ a: 0.5, c: 0.5 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5 0 0.5 1 0 0)')
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,0,0)')
     })
   })
   

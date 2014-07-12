@@ -25,21 +25,22 @@ SVG.Matrix = SVG.invent({
 		// Extract individual transformations
 	  extract: function() {
 			// Find transform points
-			var px = deltaTransformPoint(this, { x: 0, y: 1 })
-				, py = deltaTransformPoint(this, { x: 1, y: 0 })
+			var px 		= deltaTransformPoint(this, { x: 0, y: 1 })
+				, py 		= deltaTransformPoint(this, { x: 1, y: 0 })
+				, skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
 	
 			return {
 				// Translation
 				x: 				this.e
 			, y: 				this.f
 				// Skew
-			, skewX: 		180 / Math.PI * Math.atan2(px.y, px.x) - 90
+			, skewX: 		skewX
 			, skewY: 		180 / Math.PI * Math.atan2(py.y, py.x)
 				// Scale
 			, scaleX: 	Math.sqrt(this.a * this.a + this.b * this.b)
 			, scaleY: 	Math.sqrt(this.c * this.c + this.d * this.d)
 				// Rotation
-			, rotation: this.skewX
+			, rotation: skewX
 			}
 		}
 		// Multiply
@@ -63,15 +64,12 @@ SVG.Matrix = SVG.invent({
 		}
 		// Rotate
 	, rotate: function(d, x, y) {
-			// Fall back to native rotate method 
-			if (x == null) return new SVG.Matrix(this.native().rotate(d))
-
 			// Convert degrees to radians
 			d = SVG.utils.radians(d)
-
+			
 			return new SVG.Matrix(1, 0, 0, 1, x, y)
-				//.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-				//.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
+				.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
+				.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
 		}
 		// Flip
 	, flip: function(a) {

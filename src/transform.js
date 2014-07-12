@@ -5,6 +5,10 @@ SVG.extend(SVG.Element, {
 		if (o == null)
 			return this.ctm().extract()
 
+		// Singular getter
+		else if (typeof o === 'string')
+			return this.ctm().extract()[o]
+
 		// Get current matrix
 		var matrix = new SVG.Matrix(this)
 
@@ -36,7 +40,7 @@ SVG.extend(SVG.Element, {
 		// Act on translate
 		else if (o.x || o.y)
 			matrix = matrix.translate(o.x, o.y)
-console.log(o, matrix)
+
 		return this.attr('transform', matrix)
 	}
 	// Reset all transformations

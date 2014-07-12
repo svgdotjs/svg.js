@@ -51,7 +51,7 @@ function deltaTransformPoint(matrix, point) {
 
 // Map matrix array to object
 function arrayToMatrix(a) {
-	return { a: a[0], b: a[1], c: a[2], e: a[3], f: a[4], g: a[5] }
+	return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
 }
 
 // Calculate position according to from and to

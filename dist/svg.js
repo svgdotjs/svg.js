@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-19-g7cc2d36 - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
+/* svg.js 1.0.0-rc.10-20-g462d2cd - svg inventor adopter regex utilities default color array pointarray patharray number viewbox element boxes matrix attr transform style parent container transporter fx relative event defs group arrange mask clip gradient pattern doc spof shape symbol use rect ellipse line poly pointed path image text textpath nested hyperlink marker sugar set data memory selector loader helpers polyfill - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -929,7 +929,7 @@
       x: function(x) {
         if (x != null) {
           x = new SVG.Number(x)
-          x.value /= this.ctm().extract().scaleX
+          x.value /= this.transform('scaleX')
         }
         return this.attr('x', x)
       }
@@ -937,7 +937,7 @@
     , y: function(y) {
         if (y != null) {
           y = new SVG.Number(y)
-          y.value /= this.ctm().extract().scaleY
+          y.value /= this.transform('scaleY')
         }
         return this.attr('y', y)
       }
@@ -1262,21 +1262,22 @@
   		// Extract individual transformations
   	  extract: function() {
   			// Find transform points
-  			var px = deltaTransformPoint(this, { x: 0, y: 1 })
-  				, py = deltaTransformPoint(this, { x: 1, y: 0 })
+  			var px 		= deltaTransformPoint(this, { x: 0, y: 1 })
+  				, py 		= deltaTransformPoint(this, { x: 1, y: 0 })
+  				, skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
   	
   			return {
   				// Translation
   				x: 				this.e
   			, y: 				this.f
   				// Skew
-  			, skewX: 		180 / Math.PI * Math.atan2(px.y, px.x) - 90
+  			, skewX: 		skewX
   			, skewY: 		180 / Math.PI * Math.atan2(py.y, py.x)
   				// Scale
   			, scaleX: 	Math.sqrt(this.a * this.a + this.b * this.b)
   			, scaleY: 	Math.sqrt(this.c * this.c + this.d * this.d)
   				// Rotation
-  			, rotation: this.skewX
+  			, rotation: skewX
   			}
   		}
   		// Multiply
@@ -1300,15 +1301,12 @@
   		}
   		// Rotate
   	, rotate: function(d, x, y) {
-  			// Fall back to native rotate method 
-  			if (x == null) return new SVG.Matrix(this.native().rotate(d))
-  
   			// Convert degrees to radians
   			d = SVG.utils.radians(d)
-  
+  			
   			return new SVG.Matrix(1, 0, 0, 1, x, y)
-  				//.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-  				//.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
+  				.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
+  				.multiply(new SVG.Matrix(1, 0, 0, 1, -x, -y))
   		}
   		// Flip
   	, flip: function(a) {
@@ -1436,6 +1434,10 @@
   		if (o == null)
   			return this.ctm().extract()
   
+  		// Singular getter
+  		else if (typeof o === 'string')
+  			return this.ctm().extract()[o]
+  
   		// Get current matrix
   		var matrix = new SVG.Matrix(this)
   
@@ -1467,7 +1469,7 @@
   		// Act on translate
   		else if (o.x || o.y)
   			matrix = matrix.translate(o.x, o.y)
-  console.log(o, matrix)
+  
   		return this.attr('transform', matrix)
   	}
   	// Reset all transformations
@@ -2858,11 +2860,11 @@
       }
       // Move by center over x-axis
     , cx: function(x) {
-        return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.ctm().scaleX))
+        return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.transform('scaleX')))
       }
       // Move by center over y-axis
     , cy: function(y) {
-        return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.ctm().scaleY))
+        return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.transform('scaleY')))
       }
       // Set width of element
     , width: function(width) {
@@ -3929,7 +3931,7 @@
   
   // Map matrix array to object
   function arrayToMatrix(a) {
-  	return { a: a[0], b: a[1], c: a[2], e: a[3], f: a[4], g: a[5] }
+  	return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
   }
   
   // Calculate position according to from and to
