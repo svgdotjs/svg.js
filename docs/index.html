@@ -1,0 +1,2967 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG.js</title>
+    
+    <link rel="stylesheet" type="text/css" href="svgjs.css">
+    
+    
+
+    
+
+    <!-- Typekit -->
+    
+      <script type="text/javascript">
+        (function() {
+          var config = {
+            kitId: 'hjp0pft',
+            scriptTimeout: 3000
+          };
+          var h=document.getElementsByTagName("html")[0];h.className+=" wf-loading";var t=setTimeout(function(){h.className=h.className.replace(/( |^)wf-loading( |$)/g,"");h.className+=" wf-inactive"},config.scriptTimeout);var tk=document.createElement("script");tk.src='//use.typekit.net/'+config.kitId+'.js';tk.type="text/javascript";tk.async="true";tk.onload=tk.onreadystatechange=function(){var a=this.readyState;if(a&&a!="complete"&&a!="loaded")return;clearTimeout(t);try{Typekit.load(config)}catch(b){}};var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(tk,s)
+        })();
+      </script>
+    
+  </head>
+  <body><div id="container">
+  <div id="nav">
+    
+      <div id="header">
+        <a href="#" id="logo">SVG.js</a>
+      </div>
+    
+    <ul id="sections">
+      
+        <li>
+          <a href="#usage">Usage</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#usage/create-a-svg-document">Create a SVG document</a>
+                </li>
+              
+                <li>
+                  <a href="#usage/checking-for-svg-support">Checking for SVG support</a>
+                </li>
+              
+                <li>
+                  <a href="#usage/svg-document">SVG document</a>
+                </li>
+              
+                <li>
+                  <a href="#usage/sub-pixel-offset-fix">Sub pixel offset fix</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#parent-elements">Parent elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#parent-elements/main-svg-document">Main svg document</a>
+                </li>
+              
+                <li>
+                  <a href="#parent-elements/nested-svg">Nested svg</a>
+                </li>
+              
+                <li>
+                  <a href="#parent-elements/groups">Groups</a>
+                </li>
+              
+                <li>
+                  <a href="#parent-elements/hyperlink">Hyperlink</a>
+                </li>
+              
+                <li>
+                  <a href="#parent-elements/defs">Defs</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#rect">Rect</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#rect/radius">radius()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#circle">Circle</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#circle/radius">radius()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#ellipse">Ellipse</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#ellipse/radius">radius()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#line">Line</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#line/plot">plot()</a>
+                </li>
+              
+                <li>
+                  <a href="#line/array">array()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#polyline">Polyline</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#polyline/plot">plot()</a>
+                </li>
+              
+                <li>
+                  <a href="#polyline/array">array()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#polygon">Polygon</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#polygon/plot">plot()</a>
+                </li>
+              
+                <li>
+                  <a href="#polygon/array">array()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#path">Path</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#path/plot">plot()</a>
+                </li>
+              
+                <li>
+                  <a href="#path/array">array()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#image">Image</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#image/load">load()</a>
+                </li>
+              
+                <li>
+                  <a href="#image/loaded">loaded()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#text">Text</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#text/text">text()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/tspan">tspan()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/plain">plain()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/font">font()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/leading">leading()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/build">build()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/rebuild">rebuild()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/clear">clear()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/length">length()</a>
+                </li>
+              
+                <li>
+                  <a href="#text/lines">lines</a>
+                </li>
+              
+                <li>
+                  <a href="#text/events">events</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#tspan">Tspan</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#tspan/text">text()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/tspan">tspan()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/plain">plain()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/dx">dx()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/dy">dy()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/newline">newLine()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/clear">clear()</a>
+                </li>
+              
+                <li>
+                  <a href="#tspan/length">length()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#textpath">TextPath</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#textpath/track">track</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#use">Use</a>
+          
+        </li>
+      
+        <li>
+          <a href="#symbol">Symbol</a>
+          
+        </li>
+      
+        <li>
+          <a href="#referencing-elements">Referencing elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#referencing-elements/by-id">By id</a>
+                </li>
+              
+                <li>
+                  <a href="#referencing-elements/using-css-selectors">Using CSS selectors</a>
+                </li>
+              
+                <li>
+                  <a href="#referencing-elements/using-jquery">Using jQuery</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#circular-reference">Circular reference</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#circular-reference/node">node</a>
+                </li>
+              
+                <li>
+                  <a href="#circular-reference/instance">instance</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#parent-reference">Parent reference</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#parent-reference/parent">parent()</a>
+                </li>
+              
+                <li>
+                  <a href="#parent-reference/doc">doc()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#child-references">Child references</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#child-references/first">first()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/last">last()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/children">children()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/each">each()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/has">has()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/index">index()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/get">get()</a>
+                </li>
+              
+                <li>
+                  <a href="#child-references/clear">clear()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#attribute-references">Attribute references</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#attribute-references/reference">reference()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#manipulating-elements">Manipulating elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#manipulating-elements/attr">attr()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/transform">transform()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/style">style()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/classes">classes()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/hasclass">hasClass()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/addclass">addClass()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/removeclass">removeClass()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/toggleclass">toggleClass()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/move">move()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/x">x()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/y">y()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/dmove">dmove()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/dx">dx()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/dy">dy()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/center">center()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/cx">cx()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/cy">cy()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/size">size()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/width">width()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/height">height()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/hide">hide()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/show">show()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/visible">visible()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/clone">clone()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/remove">remove()</a>
+                </li>
+              
+                <li>
+                  <a href="#manipulating-elements/replace">replace()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#inserting-elements">Inserting elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#inserting-elements/add">add()</a>
+                </li>
+              
+                <li>
+                  <a href="#inserting-elements/put">put()</a>
+                </li>
+              
+                <li>
+                  <a href="#inserting-elements/addto">addTo()</a>
+                </li>
+              
+                <li>
+                  <a href="#inserting-elements/putin">putIn()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#geometry">Geometry</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#geometry/viewbox">viewbox()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/bbox">bbox()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/rbox">rbox()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/ctm">ctm()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/inside">inside()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/length">length()</a>
+                </li>
+              
+                <li>
+                  <a href="#geometry/pointat">pointAt()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#animating-elements">Animating elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#animating-elements/animatable-method-chain">Animatable method chain</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/easing">easing</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/animate">animate()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/pause">pause()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/play">play()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/stop">stop()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/during">during()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/loop">loop()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/after">after()</a>
+                </li>
+              
+                <li>
+                  <a href="#animating-elements/to">to()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#syntax-sugar">Syntax sugar</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#syntax-sugar/fill">fill()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/stroke">stroke()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/opacity">opacity()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/rotate">rotate()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/skew">skew()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/scale">scale()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/translate">translate()</a>
+                </li>
+              
+                <li>
+                  <a href="#syntax-sugar/radius">radius()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#masking-elements">Masking elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#masking-elements/maskwith">maskWith()</a>
+                </li>
+              
+                <li>
+                  <a href="#masking-elements/mask">mask()</a>
+                </li>
+              
+                <li>
+                  <a href="#masking-elements/unmask">unmask()</a>
+                </li>
+              
+                <li>
+                  <a href="#masking-elements/remove">remove()</a>
+                </li>
+              
+                <li>
+                  <a href="#masking-elements/masker">masker</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#clipping-elements">Clipping elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#clipping-elements/clipwith">clipWith()</a>
+                </li>
+              
+                <li>
+                  <a href="#clipping-elements/clip">clip()</a>
+                </li>
+              
+                <li>
+                  <a href="#clipping-elements/unclip">unclip()</a>
+                </li>
+              
+                <li>
+                  <a href="#clipping-elements/remove">remove()</a>
+                </li>
+              
+                <li>
+                  <a href="#clipping-elements/clipper">clipper</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#arranging-elements">Arranging elements</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#arranging-elements/front">front()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/back">back()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/forward">forward()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/backward">backward()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/siblings">siblings()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/position">position()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/next">next()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/previous">previous()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/before">before()</a>
+                </li>
+              
+                <li>
+                  <a href="#arranging-elements/after">after()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#sets">Sets</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#sets/add">add()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/each">each()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/has">has()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/index">index()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/get">get()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/first">first()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/last">last()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/bbox">bbox()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/remove">remove()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/clear">clear()</a>
+                </li>
+              
+                <li>
+                  <a href="#sets/animate">animate()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#gradient">Gradient</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#gradient/gradient">gradient()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/at">at()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/from">from()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/to">to()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/radius">radius()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/update">update()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/get">get()</a>
+                </li>
+              
+                <li>
+                  <a href="#gradient/fill">fill()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#pattern">Pattern</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#pattern/pattern">pattern()</a>
+                </li>
+              
+                <li>
+                  <a href="#pattern/update">update()</a>
+                </li>
+              
+                <li>
+                  <a href="#pattern/fill">fill()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#marker">Marker</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#marker/marker">marker()</a>
+                </li>
+              
+                <li>
+                  <a href="#marker/ref">ref()</a>
+                </li>
+              
+                <li>
+                  <a href="#marker/update">update()</a>
+                </li>
+              
+                <li>
+                  <a href="#marker/width">width()</a>
+                </li>
+              
+                <li>
+                  <a href="#marker/height">height()</a>
+                </li>
+              
+                <li>
+                  <a href="#marker/size">size()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#data">Data</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#data/setting">Setting</a>
+                </li>
+              
+                <li>
+                  <a href="#data/getting">Getting</a>
+                </li>
+              
+                <li>
+                  <a href="#data/removing">Removing</a>
+                </li>
+              
+                <li>
+                  <a href="#data/sustaining-data-types">Sustaining data types</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#memory">Memory</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#memory/remember">remember()</a>
+                </li>
+              
+                <li>
+                  <a href="#memory/forget">forget()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#events">Events</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#events/basic-events">Basic events</a>
+                </li>
+              
+                <li>
+                  <a href="#events/event-listeners">Event listeners</a>
+                </li>
+              
+                <li>
+                  <a href="#events/custom-events">Custom events</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#numbers">Numbers</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#numbers/plus">plus()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/minus">minus()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/times">times()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/divide">divide()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/to">to()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/morph">morph()</a>
+                </li>
+              
+                <li>
+                  <a href="#numbers/at">at()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#colors">Colors</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#colors/tohex">toHex()</a>
+                </li>
+              
+                <li>
+                  <a href="#colors/torgb">toRgb()</a>
+                </li>
+              
+                <li>
+                  <a href="#colors/brightness">brightness()</a>
+                </li>
+              
+                <li>
+                  <a href="#colors/morph">morph()</a>
+                </li>
+              
+                <li>
+                  <a href="#colors/at">at()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#arrays">Arrays</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#arrays/svg-array">SVG.Array</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/svg-pointarray">SVG.PointArray</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/svg-patharray">SVG.PathArray</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/morph">morph()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/at">at()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/settle">settle()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/move">move()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/size">size()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/reverse">reverse()</a>
+                </li>
+              
+                <li>
+                  <a href="#arrays/bbox">bbox()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#matrices">Matrices</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#matrices/svg-matrix">SVG.Matrix</a>
+                </li>
+              
+                <li>
+                  <a href="#matrices/extract">extract()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#extending-functionality">Extending functionality</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#extending-functionality/svg-invent">SVG.invent()</a>
+                </li>
+              
+                <li>
+                  <a href="#extending-functionality/svg-extend">SVG.extend()</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#plugins">Plugins</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#plugins/absorb">absorb</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/draggable">draggable</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/easing">easing</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/export">export</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/filter">filter</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/foreignobject">foreignobject</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/import">import</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/math">math</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/path">path</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/shapes">shapes</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/topath">topath</a>
+                </li>
+              
+                <li>
+                  <a href="#plugins/wiml">wiml</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#contributing">Contributing</a>
+          
+        </li>
+      
+        <li>
+          <a href="#building">Building</a>
+          
+        </li>
+      
+        <li>
+          <a href="#compatibility">Compatibility</a>
+          
+            <ul>
+              
+                <li>
+                  <a href="#compatibility/desktop">Desktop</a>
+                </li>
+              
+                <li>
+                  <a href="#compatibility/mobile">Mobile</a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+        <li>
+          <a href="#acknowledgements-thanks">Acknowledgements &amp; Thanks</a>
+          
+        </li>
+      
+    </ul>
+    
+    
+  </div>
+  <div id="content">
+    
+    <h1 id="svg-js">SVG.js</h1>
+<p>A lightweight library for manipulating and animating SVG.</p>
+<p>Svg.js has no dependencies and aims to be as small as possible.</p>
+<p>Svg.js is licensed under the terms of the MIT License.</p>
+<p>See <a href="http://svgjs.com">svgjs.com</a> for an introduction, <a href="http://documentup.com/wout/SVG.js">documentation</a> and <a href="http://svgjs.com/test">some action</a>.</p>
+<p><a href="https://www.gittip.com/wout/"><img src="http://files.wout.co.uk/github/gittip.png" alt="Wout on Gittip"></a></p>
+<h2 id='usage' id="usage">Usage</h2 id='usage'>
+<h3 id='usage/create-a-svg-document' id="create-a-svg-document">Create a SVG document</h3 id='usage/create-a-svg-document'>
+<p>Use the <code>SVG()</code> function to create a SVG document within a given html element:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>).size(<span class="number">300</span>, <span class="number">300</span>)
+<span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>).attr({ fill: <span class="string">'#f06'</span> })</code></pre>
+<p>The first argument can either be an id of the element or the selected element itself.
+This will generate the following output:</p>
+<pre><code class="lang-html"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"drawing"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">svg</span> <span class="attribute">xmlns</span>=<span class="value">"http://www.w3.org/2000/svg"</span> <span class="attribute">version</span>=<span class="value">"1.1"</span> <span class="attribute">xmlns:xlink</span>=<span class="value">"http://www.w3.org/1999/xlink"</span> <span class="attribute">width</span>=<span class="value">"300"</span> <span class="attribute">height</span>=<span class="value">"300"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">rect</span> <span class="attribute">width</span>=<span class="value">"100"</span> <span class="attribute">height</span>=<span class="value">"100"</span> <span class="attribute">fill</span>=<span class="value">"#f06"</span>&gt;</span><span class="tag">&lt;/<span class="title">rect</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">svg</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">div</span>&gt;</span></code></pre>
+<p>By default the svg drawing follows the dimensions of its parent, in this case <code>#drawing</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>).size(<span class="string">'100%'</span>, <span class="string">'100%'</span>)</code></pre>
+<h3 id='usage/checking-for-svg-support' id="checking-for-svg-support">Checking for SVG support</h3 id='usage/checking-for-svg-support'>
+<p>By default this library assumes the client&#39;s browser supports SVG. You can test support as follows:</p>
+<pre><code class="lang-javascript"><span class="keyword">if</span> (SVG.supported) {
+  <span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>)
+  <span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>)
+} <span class="keyword">else</span> {
+  alert(<span class="string">'SVG not supported'</span>)
+}</code></pre>
+<h3 id='usage/svg-document' id="svg-document">SVG document</h3 id='usage/svg-document'>
+<p>Svg.js also works outside of the HTML DOM, inside an SVG document for example:</p>
+<pre><code class="lang-xml"><span class="pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="tag">&lt;<span class="title">svg</span> <span class="attribute">id</span>=<span class="value">"drawing"</span> <span class="attribute">xmlns</span>=<span class="value">"http://www.w3.org/2000/svg"</span> <span class="attribute">xmlns:xlink</span>=<span class="value">"http://www.w3.org/1999/xlink"</span> <span class="attribute">version</span>=<span class="value">"1.1"</span> &gt;</span>
+  <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">xlink:href</span>=<span class="value">"svg.min.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+    &lt;![CDATA[
+      <span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>)
+      draw.rect(<span class="number">100</span>,<span class="number">100</span>).animate().fill(<span class="string">'#f03'</span>).move(<span class="number">100</span>,<span class="number">100</span>)
+    ]]&gt;
+  </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">svg</span>&gt;</span></code></pre>
+<h3 id='usage/sub-pixel-offset-fix' id="sub-pixel-offset-fix">Sub pixel offset fix</h3 id='usage/sub-pixel-offset-fix'>
+<p>By default sub pixel offset won&#39;t be corrected. To enable it, call the <code>fixSubPixelOffset()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>).fixSubPixelOffset()</code></pre>
+<h2 id='parent-elements' id="parent-elements">Parent elements</h2 id='parent-elements'>
+<h3 id='parent-elements/main-svg-document' id="main-svg-document">Main svg document</h3 id='parent-elements/main-svg-document'>
+<p>The main SVG.js initializer function creates a root svg node in the given element and retuns an instance of <code>SVG.Doc</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Doc</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Doc</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Parent</code></em></p>
+<h3 id='parent-elements/nested-svg' id="nested-svg">Nested svg</h3 id='parent-elements/nested-svg'>
+<p>With this feature you can nest svg documents within each other. Nested svg documents have exactly the same features as the main, top-level svg document:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> nested = draw.nested()
+
+<span class="keyword">var</span> rect = nested.rect(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Nested</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Nested</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Parent</code></em></p>
+<h3 id='parent-elements/groups' id="groups">Groups</h3 id='parent-elements/groups'>
+<p>Grouping elements is useful if you want to transform a set of elements as if it were one. All element within a group maintain their position relative to the group they belong to. A group has all the same element methods as the root svg document:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> group = draw.group()
+group.path(<span class="string">'M10,20L30,40'</span>)</code></pre>
+<p>Existing elements from the svg document can also be added to a group:</p>
+<pre><code class="lang-javascript">group.add(rect)</code></pre>
+<p><strong>Note:</strong> Groups do not have a geometry of their own, it&#39;s inherited from their content. Therefore groups do not listen to <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code> attributes. If that is what you are looking for, use a <code>nested()</code> svg instead.</p>
+<p><strong><code>returns</code>: <code>SVG.G</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.G</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Parent</code></em></p>
+<h3 id='parent-elements/hyperlink' id="hyperlink">Hyperlink</h3 id='parent-elements/hyperlink'>
+<p>A hyperlink or <code>&lt;a&gt;</code> tag creates a container that enables a link on all children:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> link = draw.link(<span class="string">'http://svgjs.com'</span>)
+<span class="keyword">var</span> rect = link.rect(<span class="number">100</span>, <span class="number">100</span>)</code></pre>
+<p>The link url can be updated with the <code>to()</code> method:</p>
+<pre><code class="lang-javascript">link.to(<span class="string">'http://apple.com'</span>)</code></pre>
+<p>Furthermore, the link element has a <code>show()</code> method to create the <code>xlink:show</code> attribute:</p>
+<pre><code class="lang-javascript">link.show(<span class="string">'replace'</span>)</code></pre>
+<p>And the <code>target()</code> method to create the <code>target</code> attribute:</p>
+<pre><code class="lang-javascript">link.target(<span class="string">'_blank'</span>)</code></pre>
+<p>Elements can also be linked the other way around with the <code>linkTo()</code> method:</p>
+<pre><code class="lang-javascript">rect.linkTo(<span class="string">'http://svgjs.com'</span>)</code></pre>
+<p>Alternatively a block can be passed instead of a url for more options on the link element:</p>
+<pre><code class="lang-javascript">rect.linkTo(<span class="keyword">function</span>(link) {
+  link.to(<span class="string">'http://svgjs.com'</span>).target(<span class="string">'_blank'</span>)
+})</code></pre>
+<p><strong><code>returns</code>: <code>SVG.A</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.A</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Parent</code></em></p>
+<h3 id='parent-elements/defs' id="defs">Defs</h3 id='parent-elements/defs'>
+<p>The <code>&lt;defs&gt;</code> element is a container element for referenced elements. Elements that are descendants of a ‘defs’ are not rendered directly. The <code>&lt;defs&gt;</code> node lives in the main <code>&lt;svg&gt;</code> document and can be accessed with the <code>defs()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> defs = draw.defs()</code></pre>
+<p>The defs are also availabel on any other element through the <code>doc()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> defs = rect.doc().defs()</code></pre>
+<p>The defs node works exactly the same as groups.</p>
+<p><strong><code>returns</code>: <code>SVG.Defs</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Defs</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Parent</code></em></p>
+<h2 id='rect' id="rect">Rect</h2 id='rect'>
+<p>Rects have two arguments, their <code>width</code> and <code>height</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Rect</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Rect</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='rect/radius' id="radius-">radius()</h3 id='rect/radius'>
+<p>Rects can also have rounded corners:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">10</span>)</code></pre>
+<p>This will set the <code>rx</code> and <code>ry</code> attributes to <code>10</code>. To set <code>rx</code> and <code>ry</code> individually:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">10</span>, <span class="number">20</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='circle' id="circle">Circle</h2 id='circle'>
+<p>The only argument necessary for a circle is the diameter:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> circle = draw.circle(<span class="number">100</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Circle</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Circle</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='circle/radius' id="radius-">radius()</h3 id='circle/radius'>
+<p>Circles can also be redefined by their radius:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">75</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='ellipse' id="ellipse">Ellipse</h2 id='ellipse'>
+<p>Ellipses, like rects, have two arguments, their <code>width</code> and <code>height</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">200</span>, <span class="number">100</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Ellipse</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Ellipse</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='ellipse/radius' id="radius-">radius()</h3 id='ellipse/radius'>
+<p>Ellipses can also be redefined by their radii:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">75</span>, <span class="number">50</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='line' id="line">Line</h2 id='line'>
+<p>Create a line from point A to point B:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> line = draw.line(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">150</span>).stroke({ width: <span class="number">1</span> })</code></pre>
+<p>Creating a line element can be done in four ways. Look at the <code>plot()</code> method to see all the possiblilities.</p>
+<p><strong><code>returns</code>: <code>SVG.Line</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Line</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='line/plot' id="plot-">plot()</h3 id='line/plot'>
+<p>Updating a line is done with the <code>plot()</code> method:</p>
+<pre><code class="lang-javascript">line.plot(<span class="number">50</span>, <span class="number">30</span>, <span class="number">100</span>, <span class="number">150</span>)</code></pre>
+<p>Alternatively it also accepts a point string:</p>
+<pre><code class="lang-javascript">line.plot(<span class="string">'0,0 100,150'</span>)</code></pre>
+<p>Or a point array:</p>
+<pre><code class="lang-javascript">line.plot([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">150</span>]])</code></pre>
+<p>Or an instance of <code>SVG.PointArray</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> array = <span class="keyword">new</span> SVG.PointArray([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">150</span>]])
+line.plot(array)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='line/array' id="array-">array()</h3 id='line/array'>
+<p>References the <code>SVG.PointArray</code> instance. This method is rather intended for internal use:</p>
+<pre><code class="lang-javascript">polyline.array()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.PointArray</code></strong></p>
+<h2 id='polyline' id="polyline">Polyline</h2 id='polyline'>
+<p>The polyline element defines a set of connected straight line segments. Typically, polyline elements define open shapes:</p>
+<pre><code class="lang-javascript"><span class="comment">// polyline('x,y x,y x,y')</span>
+<span class="keyword">var</span> polyline = draw.polyline(<span class="string">'0,0 100,50 50,100'</span>).fill(<span class="string">'none'</span>).stroke({ width: <span class="number">1</span> })</code></pre>
+<p>Polyline strings consist of a list of points separated by spaces: <code>x,y x,y x,y</code>.</p>
+<p>As an alternative an array of points will work as well:</p>
+<pre><code class="lang-javascript"><span class="comment">// polyline([[x,y], [x,y], [x,y]])</span>
+<span class="keyword">var</span> polyline = draw.polyline([[<span class="number">0</span>,<span class="number">0</span>], [<span class="number">100</span>,<span class="number">50</span>], [<span class="number">50</span>,<span class="number">100</span>]]).fill(<span class="string">'none'</span>).stroke({ width: <span class="number">1</span> })</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Polyline</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Polyline</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='polyline/plot' id="plot-">plot()</h3 id='polyline/plot'>
+<p>Polylines can be updated using the <code>plot()</code> method:</p>
+<pre><code class="lang-javascript">polyline.plot([[<span class="number">0</span>,<span class="number">0</span>], [<span class="number">100</span>,<span class="number">50</span>], [<span class="number">50</span>,<span class="number">100</span>], [<span class="number">150</span>,<span class="number">50</span>], [<span class="number">200</span>,<span class="number">50</span>]])</code></pre>
+<p>The <code>plot()</code> method can also be animated:</p>
+<pre><code class="lang-javascript">polyline.animate(<span class="number">3000</span>).plot([[<span class="number">0</span>,<span class="number">0</span>], [<span class="number">100</span>,<span class="number">50</span>], [<span class="number">50</span>,<span class="number">100</span>], [<span class="number">150</span>,<span class="number">50</span>], [<span class="number">200</span>,<span class="number">50</span>], [<span class="number">250</span>,<span class="number">100</span>], [<span class="number">300</span>,<span class="number">50</span>], [<span class="number">350</span>,<span class="number">50</span>]])</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='polyline/array' id="array-">array()</h3 id='polyline/array'>
+<p>References the <code>SVG.PointArray</code> instance. This method is rather intended for internal use:</p>
+<pre><code class="lang-javascript">polyline.array()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.PointArray</code></strong></p>
+<h2 id='polygon' id="polygon">Polygon</h2 id='polygon'>
+<p>The polygon element, unlike the polyline element, defines a closed shape consisting of a set of connected straight line segments:</p>
+<pre><code class="lang-javascript"><span class="comment">// polygon('x,y x,y x,y')</span>
+<span class="keyword">var</span> polygon = draw.polygon(<span class="string">'0,0 100,50 50,100'</span>).fill(<span class="string">'none'</span>).stroke({ width: <span class="number">1</span> })</code></pre>
+<p>Polygon strings are exactly the same as polyline strings. There is no need to close the shape as the first and last point will be connected automatically.</p>
+<p><strong><code>returns</code>: <code>SVG.Polygon</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Polygon</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='polygon/plot' id="plot-">plot()</h3 id='polygon/plot'>
+<p>Like polylines, polygons can be updated using the <code>plot()</code> method:</p>
+<pre><code class="lang-javascript">polygon.plot([[<span class="number">0</span>,<span class="number">0</span>], [<span class="number">100</span>,<span class="number">50</span>], [<span class="number">50</span>,<span class="number">100</span>], [<span class="number">150</span>,<span class="number">50</span>], [<span class="number">200</span>,<span class="number">50</span>]])</code></pre>
+<p>The <code>plot()</code> method can also be animated:</p>
+<pre><code class="lang-javascript">polygon.animate(<span class="number">3000</span>).plot([[<span class="number">0</span>,<span class="number">0</span>], [<span class="number">100</span>,<span class="number">50</span>], [<span class="number">50</span>,<span class="number">100</span>], [<span class="number">150</span>,<span class="number">50</span>], [<span class="number">200</span>,<span class="number">50</span>], [<span class="number">250</span>,<span class="number">100</span>], [<span class="number">300</span>,<span class="number">50</span>], [<span class="number">350</span>,<span class="number">50</span>]])</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='polygon/array' id="array-">array()</h3 id='polygon/array'>
+<p>References the <code>SVG.PointArray</code> instance. This method is rather intended for internal use:</p>
+<pre><code class="lang-javascript">polygon.array()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.PointArray</code></strong></p>
+<h2 id='path' id="path">Path</h2 id='path'>
+<p>The path string is similar to the polygon string but much more complex in order to support curves:</p>
+<pre><code class="lang-javascript">draw.path(<span class="string">'M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Path</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Path</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<p>For more details on path data strings, please refer to the SVG documentation:
+<a href="http://www.w3.org/TR/SVG/paths.html#PathData">http://www.w3.org/TR/SVG/paths.html#PathData</a></p>
+<h3 id='path/plot' id="plot-">plot()</h3 id='path/plot'>
+<p>Paths can be updated using the <code>plot()</code> method:</p>
+<pre><code class="lang-javascript">path.plot(<span class="string">'M100,200L300,400'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='path/array' id="array-">array()</h3 id='path/array'>
+<p>References the <code>SVG.PathArray</code> instance. This method is rather intended for internal use:</p>
+<pre><code class="lang-javascript">path.array()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.PathArray</code></strong></p>
+<h2 id='image' id="image">Image</h2 id='image'>
+<p>Creating images is as you might expect:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> image = draw.image(<span class="string">'/path/to/image.jpg'</span>)</code></pre>
+<p>If you know the size of the image, those parameters can be passed as the second and third arguments:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> image = draw.image(<span class="string">'/path/to/image.jpg'</span>, <span class="number">200</span>, <span class="number">300</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Image</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Image</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='image/load' id="load-">load()</h3 id='image/load'>
+<p>Loading another image can be done with the <code>load()</code> method:</p>
+<pre><code class="lang-javascript">draw.image(<span class="string">'/path/to/another/image.jpg'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='image/loaded' id="loaded-">loaded()</h3 id='image/loaded'>
+<p>If you don&#39;t know the size of the image, obviously you will have to wait for the image to be <code>loaded</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> image = draw.image(<span class="string">'/path/to/image.jpg'</span>).loaded(<span class="keyword">function</span>(loader) {
+  <span class="keyword">this</span>.size(loader.width, loader.height)
+})</code></pre>
+<p>The returned <code>loader</code> object as first the argument of the loaded method contains four values:</p>
+<ul>
+<li><code>width</code></li>
+<li><code>height</code></li>
+<li><code>ratio</code> (width / height)</li>
+<li><code>url</code></li>
+</ul>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='text' id="text">Text</h2 id='text'>
+<p>Unlike html, text in svg is much harder to tame. There is no way to create flowing text, so newlines should be entered manually. In SVG.js there are two ways to create text elements.</p>
+<p>The first and easiest method is to provide a string of text, split by newlines:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="string">"Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor."</span>)</code></pre>
+<p>This will automatically create a block of text and insert newlines where necessary.</p>
+<p>The second method will give you much more control but requires a bit more code:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="keyword">function</span>(add) {
+  add.tspan(<span class="string">'Lorem ipsum dolor sit amet '</span>).newLine()
+  add.tspan(<span class="string">'consectetur'</span>).fill(<span class="string">'#f06'</span>)
+  add.tspan(<span class="string">'.'</span>)
+  add.tspan(<span class="string">'Cras sodales imperdiet auctor.'</span>).newLine().dx(<span class="number">20</span>)
+  add.tspan(<span class="string">'Nunc ultrices lectus at erat'</span>).newLine()
+  add.tspan(<span class="string">'dictum pharetra elementum ante'</span>).newLine()
+})</code></pre>
+<p>If you want to go the other way and don&#39;t want to add tspans at all, just one line of text, you can use the <code>plain()</code> method instead:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.plain(<span class="string">'Lorem ipsum dolor sit amet consectetur.'</span>)</code></pre>
+<p>This is a shortcut to the <code>plain</code> method on the <code>SVG.Text</code> instance which doesn&#39;t render newlines at all.</p>
+<p><em>Javascript inheritance stack: <code>SVG.Text</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<p><strong><code>returns</code>: <code>SVG.Text</code></strong></p>
+<h3 id='text/text' id="text-">text()</h3 id='text/text'>
+<p>Changing text afterwards is also possible with the <code>text()</code> method:</p>
+<pre><code class="lang-javascript">text.text(<span class="string">'Brilliant!'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<p>To get the raw text content:</p>
+<pre><code class="lang-javascript">text.text()</code></pre>
+<p><strong><code>returns</code>: <code>string</code></strong></p>
+<h3 id='text/tspan' id="tspan-">tspan()</h3 id='text/tspan'>
+<p>Just adding one tspan is also possible:</p>
+<pre><code class="lang-javascript">text.tspan(<span class="string">' on a train...'</span>).fill(<span class="string">'#f06'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Tspan</code></strong></p>
+<h3 id='text/plain' id="plain-">plain()</h3 id='text/plain'>
+<p>If the content of the element doesn&#39;t need any stying or multiple lines, it might be sufficient to just add some plain text:</p>
+<pre><code class="lang-javascript">text.plain(<span class="string">'I do not have any expectations.'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/font' id="font-">font()</h3 id='text/font'>
+<p>The sugar.js module provides some syntax sugar specifically for this element type:</p>
+<pre><code class="lang-javascript">text.font({
+  family:   <span class="string">'Helvetica'</span>
+, size:     <span class="number">144</span>
+, anchor:   <span class="string">'middle'</span>
+, leading:  <span class="string">'1.5em'</span>
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/leading' id="leading-">leading()</h3 id='text/leading'>
+<p>As opposed to html, where leading is defined by <code>line-height</code>, svg does not have a natural leading equivalent. In svg, lines are not defined naturally. They are defined by <code>&lt;tspan&gt;</code> nodes with a <code>dy</code> attribute defining the line height and a <code>x</code> value resetting the line to the <code>x</code> position of the parent text element. But you can also have many nodes in one line defining a different <code>y</code>, <code>dy</code>, <code>x</code> or even <code>dx</code> value. This gives us a lot of freedom, but also a lot more responsibility. We have to decide when a new line is defined, where it starts, what its offset is and what it&#39;s height is. The <code>leading()</code> method in SVG.js tries to ease the pain by giving you behaviour that is much closer to html. In combination with newline separated text, it works just like html:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="string">"Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor."</span>)
+text.leading(<span class="number">1.3</span>)</code></pre>
+<p>This will render a text element with a tspan element for each line, with a <code>dy</code> value of <code>130%</code> of the font size.</p>
+<p>Note that the <code>leading()</code> method assumes that every first level tspan in a text node represents a new line. Using <code>leading()</code> on text elements containing multiple tspans in one line (e.g. without a wrapping tspan defining a new line) will render scrambeled. So it is advisable to use this method with care, preferably only when throwing newline separated text at the text element or calling the <code>newLine()</code> method on every first level tspan added in the block passed as argument to the text element.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/build' id="build-">build()</h3 id='text/build'>
+<p>The <code>build()</code> can be used to enable / disable build mode. With build mode disabled, the <code>plain()</code> and <code>tspan()</code> methods will first call the <code>clear()</code> bethod before adding the new content. So when build mode is enabled, <code>plain()</code> and <code>tspan()</code> will append the new content to the existing content. When passing a block to the <code>text()</code> method, build mode is toggled automatically before and after the block is called. But in some cases it might be useful to be able to toggle it manually:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="string">'This is just the start, '</span>)
+
+text.build(<span class="literal">true</span>)  <span class="comment">// enables build mode</span>
+
+<span class="keyword">var</span> tspan = text.tspan(<span class="string">'something pink in the middle '</span>).fill(<span class="string">'#00ff97'</span>)
+text.plain(<span class="string">'and again boring at the end.'</span>)
+
+text.build(<span class="literal">false</span>) <span class="comment">// disables build mode</span>
+
+tspan.animate(<span class="string">'2s'</span>).fill(<span class="string">'#f06'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/rebuild' id="rebuild-">rebuild()</h3 id='text/rebuild'>
+<p>This is an internal callback that probably never needs to be called manually. Basically it rebuilds the text element whenerver <code>font-size</code> and <code>x</code> attributes or the <code>leading()</code> of the text element are modified. This method also acts a setter to enable or disable rebuilding:</p>
+<pre><code class="lang-javascript">text.rebuild(<span class="literal">false</span>) <span class="comment">//-&gt; disables rebuilding</span>
+text.rebuild(<span class="literal">true</span>)  <span class="comment">//-&gt; enables rebuilding and instantaneously rebuilds the text element</span></code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/clear' id="clear-">clear()</h3 id='text/clear'>
+<p>Clear all the contents of the called text element:</p>
+<pre><code class="lang-javascript">text.clear()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='text/length' id="length-">length()</h3 id='text/length'>
+<p>Gets the total computed text length of all tspans together:</p>
+<pre><code class="lang-javascript">text.length()</code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='text/lines' id="lines">lines</h3 id='text/lines'>
+<p>All added tspans are stored in the <code>lines</code> reference, which is an instance of <code>SVG.Set</code>.</p>
+<h3 id='text/events' id="events">events</h3 id='text/events'>
+<p>The text element has one event. It is fired every time the <code>rebuild()</code> method is called:</p>
+<pre><code class="lang-javascript">text.on(<span class="string">'rebuild'</span>, <span class="keyword">function</span>() {
+  <span class="comment">// whatever you need to do after rebuilding</span>
+})</code></pre>
+<h2 id='tspan' id="tspan">Tspan</h2 id='tspan'>
+<p>The tspan elements are only available inside text elements or inside other tspan elements. In SVG.js they have a class of their own:</p>
+<p><em>Javascript inheritance stack: <code>SVG.Tspan</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='tspan/text' id="text-">text()</h3 id='tspan/text'>
+<p>Update the content of the tspan. This can be done by either passing a string:</p>
+<pre><code class="lang-javascript">tspan.text(<span class="string">'Just a string.'</span>)</code></pre>
+<p>Which will basicly call the <code>plain()</code> method.</p>
+<p>Or by passing a block to add more specific content inside the called tspan:</p>
+<pre><code class="lang-javascript">tspan.text(<span class="keyword">function</span>(add) {
+  add.plain(<span class="string">'Just plain text.'</span>)
+  add.tspan(<span class="string">'Fancy text wrapped in a tspan.'</span>).fill(<span class="string">'#f06'</span>)
+  add.tspan(<span class="keyword">function</span>(addMore) {
+    addMore.tspan(<span class="string">'And you can doo deeper and deeper...'</span>)
+  })
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/tspan' id="tspan-">tspan()</h3 id='tspan/tspan'>
+<p>Add a nested tspan:</p>
+<pre><code class="lang-javascript">tspan.tspan(<span class="string">'I am a child of my parent'</span>).fill(<span class="string">'#f06'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Tspan</code></strong></p>
+<h3 id='tspan/plain' id="plain-">plain()</h3 id='tspan/plain'>
+<p>Just adds some plain text:</p>
+<pre><code class="lang-javascript">tspan.plain(<span class="string">'I do not have any expectations.'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/dx' id="dx-">dx()</h3 id='tspan/dx'>
+<p>Define the dynamic <code>x</code> value of the element, much like a html element with <code>position:relative</code> and <code>left</code> defined:</p>
+<pre><code class="lang-javascript">tspan.dx(<span class="number">30</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/dy' id="dy-">dy()</h3 id='tspan/dy'>
+<p>Define the dynamic <code>y</code> value of the element, much like a html element with <code>position:relative</code> and <code>top</code> defined:</p>
+<pre><code class="lang-javascript">tspan.dy(<span class="number">30</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/newline' id="newline-">newLine()</h3 id='tspan/newline'>
+<p>The <code>newLine()</code> is a convenience method for adding a new line with a <code>dy</code> attribute using the current &quot;leading&quot;:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="keyword">function</span>(add) {
+  add.tspan(<span class="string">'Lorem ipsum dolor sit amet '</span>).newLine()
+  add.tspan(<span class="string">'consectetur'</span>).fill(<span class="string">'#f06'</span>)
+  add.tspan(<span class="string">'.'</span>)
+  add.tspan(<span class="string">'Cras sodales imperdiet auctor.'</span>).newLine().dx(<span class="number">20</span>)
+  add.tspan(<span class="string">'Nunc ultrices lectus at erat'</span>).newLine()
+  add.tspan(<span class="string">'dictum pharetra elementum ante'</span>).newLine()
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/clear' id="clear-">clear()</h3 id='tspan/clear'>
+<p>Clear all the contents of the called tspan element:</p>
+<pre><code class="lang-javascript">tspan.clear()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='tspan/length' id="length-">length()</h3 id='tspan/length'>
+<p>Gets the total computed text length:</p>
+<pre><code class="lang-javascript">tspan.length()</code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h2 id='textpath' id="textpath">TextPath</h2 id='textpath'>
+<p>A nice feature in svg is the ability to run text along a path:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> text = draw.text(<span class="keyword">function</span>(add) {
+  add.tspan(<span class="string">'We go '</span>)
+  add.tspan(<span class="string">'up'</span>).fill(<span class="string">'#f09'</span>).dy(-<span class="number">40</span>)
+  add.tspan(<span class="string">', then we go down, then up again'</span>).dy(<span class="number">40</span>)
+})
+text
+  .path(<span class="string">'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'</span>)
+  .font({ size: <span class="number">42.5</span>, family: <span class="string">'Verdana'</span> })</code></pre>
+<p>When calling the <code>path()</code> method on a text element, the text element is mutated into an intermediate between a text and a path element. From that point on the text element will also feature a <code>plot()</code> method to update the path:</p>
+<pre><code class="lang-javascript">text.plot(<span class="string">'M 300 500 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'</span>)</code></pre>
+<p>Attributes specific to the <code>&lt;textPath&gt;</code> element can be applied to the textPath instance itself:</p>
+<pre><code class="lang-javascript">text.textPath.attr(<span class="string">'startOffset'</span>, <span class="number">0.5</span>)</code></pre>
+<p>And they can be animated as well of course:</p>
+<pre><code class="lang-javascript">text.textPath.animate(<span class="number">3000</span>).attr(<span class="string">'startOffset'</span>, <span class="number">0.8</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.TextPath</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.TextPath</code> &lt; <code>SVG.Element</code></em></p>
+<h3 id='textpath/track' id="track">track</h3 id='textpath/track'>
+<p>Referencing the linked path element directly:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> path = text.track</code></pre>
+<h2 id='use' id="use">Use</h2 id='use'>
+<p>The use element simply emulates another existing element. Any changes on the master element will be reflected on all the <code>use</code> instances. The usage of <code>use()</code> is very straightforward:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>).fill(<span class="string">'#f09'</span>)
+<span class="keyword">var</span> use  = draw.use(rect).move(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p>In the case of the example above two rects will appear on the svg drawing, the original and the <code>use</code> instance. In some cases you might want to hide the original element. the best way to do this is to create the original element in the defs node:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.defs().rect(<span class="number">100</span>, <span class="number">100</span>).fill(<span class="string">'#f09'</span>)
+<span class="keyword">var</span> use  = draw.use(rect).move(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p>In this way the rect element acts as a library element. You can edit it but it won&#39;t be rendered.</p>
+<p><strong><code>returns</code>: <code>SVG.Use</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Use</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<h2 id='symbol' id="symbol">Symbol</h2 id='symbol'>
+<p>Not unlike the <code>group</code> element, the <code>symbol</code> element is a container element. The only difference between symbols and groups is that symbols are not rendered. Therefore a <code>symbol</code> element is ideal in combination with the <code>use</code> element:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> symbol = draw.symbol()
+symbol.rect(<span class="number">100</span>, <span class="number">100</span>).fill(<span class="string">'#f09'</span>)
+
+<span class="keyword">var</span> use  = draw.use(symbol).move(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Symbol</code></strong></p>
+<p><em>Javascript inheritance stack: <code>SVG.Use</code> &lt; <code>SVG.Container</code> &lt; <code>SVG.Symbol</code></em></p>
+<h2 id='referencing-elements' id="referencing-elements">Referencing elements</h2 id='referencing-elements'>
+<h3 id='referencing-elements/by-id' id="by-id">By id</h3 id='referencing-elements/by-id'>
+<p>If you want to get an element created by SVG.js by its id, you can use the <code>SVG.get()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> element = SVG.get(<span class="string">'my_element'</span>)
+
+element.fill(<span class="string">'#f06'</span>)</code></pre>
+<h3 id='referencing-elements/using-css-selectors' id="using-css-selectors">Using CSS selectors</h3 id='referencing-elements/using-css-selectors'>
+<p>There are two ways to select elements using CSS selectors.</p>
+<p>The first is to search globally. This will search in all svg elements in a document and return them in an instance of <code>SVG.Set</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> elements = SVG.select(<span class="string">'rect.my-class'</span>).fill(<span class="string">'#f06'</span>)</code></pre>
+<p>The second is to search within a parent element:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> elements = group.select(<span class="string">'rect.my-class'</span>).fill(<span class="string">'#f06'</span>)</code></pre>
+<h3 id='referencing-elements/using-jquery' id="using-jquery">Using jQuery</h3 id='referencing-elements/using-jquery'>
+<p>Another way is to use <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>. Here is an example:</p>
+<pre><code class="lang-javascript"><span class="comment">/* add elements */</span>
+<span class="keyword">var</span> draw   = SVG(<span class="string">'drawing'</span>)
+<span class="keyword">var</span> group  = draw.group().addClass(<span class="string">'my-group'</span>)
+<span class="keyword">var</span> rect   = group.rect(<span class="number">100</span>,<span class="number">100</span>).addClass(<span class="string">'my-element'</span>)
+<span class="keyword">var</span> circle = group.circle(<span class="number">100</span>).addClass(<span class="string">'my-element'</span>).move(<span class="number">100</span>, <span class="number">100</span>)
+
+<span class="comment">/* get elements in group */</span>
+<span class="keyword">var</span> elements = $(<span class="string">'#drawing g.my-group .my-element'</span>).each(<span class="keyword">function</span>() {
+  <span class="keyword">this</span>.instance.animate().fill(<span class="string">'#f09'</span>)
+})</code></pre>
+<h2 id='circular-reference' id="circular-reference">Circular reference</h2 id='circular-reference'>
+<p>Every element instance within SVG.js has a reference to the actual <code>node</code>:</p>
+<h3 id='circular-reference/node' id="node">node</h3 id='circular-reference/node'>
+<pre><code class="lang-javascript">element.node</code></pre>
+<p><strong><code>returns</code>: <code>node</code></strong></p>
+<h3 id='circular-reference/instance' id="instance">instance</h3 id='circular-reference/instance'>
+<p>Similarly, the node carries a reference to the SVG.js <code>instance</code>:</p>
+<pre><code class="lang-javascript">node.instance</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h2 id='parent-reference' id="parent-reference">Parent reference</h2 id='parent-reference'>
+<p>Every element has a reference to its parent with the <code>parent()</code> method:</p>
+<h3 id='parent-reference/parent' id="parent-">parent()</h3 id='parent-reference/parent'>
+<pre><code class="lang-javascript">element.parent()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<p>Even the main svg document:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>)
+
+draw.parent() <span class="comment">//-&gt; returns the wrappig html element with id 'drawing'</span></code></pre>
+<p><strong><code>returns</code>: <code>HTMLNode</code></strong></p>
+<h3 id='parent-reference/doc' id="doc-">doc()</h3 id='parent-reference/doc'>
+<p>For more specific parent filtering the <code>doc()</code> method can be used:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw = SVG(<span class="string">'drawing'</span>)
+<span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>)
+
+rect.doc() <span class="comment">//-&gt; returns draw</span></code></pre>
+<p>Alternatively a class can be passed as the first argument:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> draw   = SVG(<span class="string">'drawing'</span>)
+<span class="keyword">var</span> nested = draw.nested()
+<span class="keyword">var</span> group  = nested.group()
+<span class="keyword">var</span> rect   = group.rect(<span class="number">100</span>, <span class="number">100</span>)
+
+rect.doc()           <span class="comment">//-&gt; returns draw</span>
+rect.doc(SVG.Doc)    <span class="comment">//-&gt; returns draw</span>
+rect.doc(SVG.Nested) <span class="comment">//-&gt; returns nested</span>
+rect.doc(SVG.G)      <span class="comment">//-&gt; returns group</span></code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h2 id='child-references' id="child-references">Child references</h2 id='child-references'>
+<h3 id='child-references/first' id="first-">first()</h3 id='child-references/first'>
+<p>To get the first child of a parent element:</p>
+<pre><code class="lang-javascript">draw.first()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='child-references/last' id="last-">last()</h3 id='child-references/last'>
+<p>To get the last child of a parent element:</p>
+<pre><code class="lang-javascript">draw.last()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='child-references/children' id="children-">children()</h3 id='child-references/children'>
+<p>An array of all children will can be retreives with the <code>children</code> method:</p>
+<pre><code class="lang-javascript">draw.children()</code></pre>
+<p><strong><code>returns</code>: <code>array</code></strong></p>
+<h3 id='child-references/each' id="each-">each()</h3 id='child-references/each'>
+<p>The <code>each()</code> allows you to iterate over the all children of a parent element:</p>
+<pre><code class="lang-javascript">draw.each(<span class="keyword">function</span>(i, children) {
+  <span class="keyword">this</span>.fill({ color: <span class="string">'#f06'</span> })
+})</code></pre>
+<p>Deep traversing is also possible by passing true as the second argument:</p>
+<pre><code class="lang-javascript"><span class="comment">// draw.each(block, deep)</span>
+draw.each(<span class="keyword">function</span>(i, children) {
+  <span class="keyword">this</span>.fill({ color: <span class="string">'#f06'</span> })
+}, <span class="literal">true</span>)</code></pre>
+<p>Note that <code>this</code> refers to the current child element.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='child-references/has' id="has-">has()</h3 id='child-references/has'>
+<p>Checking the existence of an element within a parent:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect  = draw.rect(<span class="number">100</span>, <span class="number">50</span>)
+<span class="keyword">var</span> group = draw.group()
+
+draw.has(rect)  <span class="comment">//-&gt; returns true</span>
+group.has(rect) <span class="comment">//-&gt; returns false</span></code></pre>
+<p><strong><code>returns</code>: <code>boolean</code></strong></p>
+<h3 id='child-references/index' id="index-">index()</h3 id='child-references/index'>
+<p>Returns the index of given element and retuns -1 when it is not a child:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect  = draw.rect(<span class="number">100</span>, <span class="number">50</span>)
+<span class="keyword">var</span> group = draw.group()
+
+draw.index(rect)  <span class="comment">//-&gt; returns 0</span>
+group.index(rect) <span class="comment">//-&gt; returns -1</span></code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='child-references/get' id="get-">get()</h3 id='child-references/get'>
+<p>Get an element on a given position in the children array:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect   = draw.rect(<span class="number">20</span>, <span class="number">30</span>)
+<span class="keyword">var</span> circle = draw.circle(<span class="number">50</span>)
+
+draw.get(<span class="number">0</span>) <span class="comment">//-&gt; returns rect</span>
+draw.get(<span class="number">1</span>) <span class="comment">//-&gt; returns circle</span></code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='child-references/clear' id="clear-">clear()</h3 id='child-references/clear'>
+<p>To remove all elements from a parent element:</p>
+<pre><code class="lang-javascript">draw.clear()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='attribute-references' id="attribute-references">Attribute references</h2 id='attribute-references'>
+<h3 id='attribute-references/reference' id="reference-">reference()</h3 id='attribute-references/reference'>
+<p>In cases where an element is linked to another element through an attribute, the linked element instance can be fetched with the <code>reference()</code> method. The only thing required is the attribute name:</p>
+<pre><code class="lang-javascript">use.reference(<span class="string">'href'</span>) <span class="comment">//-&gt; returns used element instance</span>
+<span class="comment">// or</span>
+rect.reference(<span class="string">'fill'</span>) <span class="comment">//-&gt; returns gradient or pattern instance for example</span>
+<span class="comment">// or</span>
+circle.reference(<span class="string">'clip-path'</span>) <span class="comment">//-&gt; returns clip instance</span></code></pre>
+<h2 id='manipulating-elements' id="manipulating-elements">Manipulating elements</h2 id='manipulating-elements'>
+<h3 id='manipulating-elements/attr' id="attr-">attr()</h3 id='manipulating-elements/attr'>
+<p>You can get and set an element&#39;s attributes directly using <code>attr()</code>.</p>
+<p>Get a single attribute:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'x'</span>)</code></pre>
+<p>Set a single attribute:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'x'</span>, <span class="number">50</span>)</code></pre>
+<p>Set multiple attributes at once:</p>
+<pre><code class="lang-javascript">rect.attr({
+  fill: <span class="string">'#f06'</span>
+, <span class="string">'fill-opacity'</span>: <span class="number">0.5</span>
+, stroke: <span class="string">'#000'</span>
+, <span class="string">'stroke-width'</span>: <span class="number">10</span>
+})</code></pre>
+<p>Set an attribute with a namespace:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'x'</span>, <span class="number">50</span>, <span class="string">'http://www.w3.org/2000/svg'</span>)</code></pre>
+<p>Explicitly remove an attribute:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'fill'</span>, <span class="literal">null</span>)</code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/transform' id="transform-">transform()</h3 id='manipulating-elements/transform'>
+<p>The <code>transform()</code> can act both as a getter or a setter. Let&#39;s start with the former but first a word about transforms.</p>
+<p>Transforms are cascading sequentially. Every transform you add will build further on the effects of all the previous transforms together. So for example, when you add the <code>translate(10, 10)</code> transform three times, the total translation will equal <code>translate(30, 30)</code>.</p>
+<p>We are going to use one node as an example for this section:</p>
+<pre><code class="lang-xml"><span class="tag">&lt;<span class="title">rect</span> <span class="attribute">width</span>=<span class="value">"100"</span> <span class="attribute">height</span>=<span class="value">"100"</span> <span class="attribute">transform</span>=<span class="value">"translate(10, 10) rotate(45, 100, 100) scale(0.5, 0.5) rotate(-10)"</span> /&gt;</span></code></pre>
+<h4 id="get-by-index">get by index</h4>
+<p>A transform at a specific index:</p>
+<pre><code class="lang-javascript">rect.transform(<span class="number">1</span>)
+<span class="comment">// -&gt; returns { type: 'scale', x: 0.5, cy: 0.5 }</span></code></pre>
+<h4 id="get-by-name">get by name</h4>
+<p>By default the first occurence of a given transform type will be returned:</p>
+<pre><code class="lang-javascript">rect.transform(<span class="string">'rotate'</span>)
+<span class="comment">// -&gt; returns { type: 'rotate', rotation: 45, cx: 100, cy: 100 }</span></code></pre>
+<p>If multiple occurences of a transform type exist they can be fetched with a number:</p>
+<pre><code class="lang-javascript">rect.transform(<span class="string">'rotate'</span>, { at: <span class="number">1</span> })
+<span class="comment">// -&gt; returns { type: 'rotate', rotation: -10 }</span></code></pre>
+<p>With the <code>transform()</code> method elements can be scaled, rotated, translated and skewed:</p>
+<pre><code class="lang-javascript">rect.transform({
+  rotation: <span class="number">45</span>
+, cx:       <span class="number">100</span>
+, cy:       <span class="number">100</span>
+})</code></pre>
+<p>You can also provide two arguments as property and value:</p>
+<pre><code class="lang-javascript">rect.transform(<span class="string">'matrix'</span>, <span class="string">'1,0.5,0.5,1,0,0'</span>)</code></pre>
+<p>Note that you can also apply transformations directly using the <code>attr()</code> method:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'transform'</span>, <span class="string">'matrix(1,0.5,0.5,1,0,0)'</span>)</code></pre>
+<p>Although that would mean you can&#39;t use the <code>transform()</code> method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the <code>transform()</code> method.</p>
+<p><code>getter</code><strong><code>returns</code>: <code>number</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/style' id="style-">style()</h3 id='manipulating-elements/style'>
+<p>With the <code>style()</code> method the <code>style</code> attribute can be managed like attributes with <code>attr</code>:</p>
+<pre><code class="lang-javascript">rect.style(<span class="string">'cursor'</span>, <span class="string">'pointer'</span>)</code></pre>
+<p>Multiple styles can be set at once using an object:</p>
+<pre><code class="lang-javascript">rect.style({ cursor: <span class="string">'pointer'</span>, fill: <span class="string">'#f03'</span> })</code></pre>
+<p>Or a css string:</p>
+<pre><code class="lang-javascript">rect.style(<span class="string">'cursor:pointer;fill:#f03;'</span>)</code></pre>
+<p>Similarly to <code>attr()</code> the <code>style()</code> method can also act as a getter:</p>
+<pre><code class="lang-javascript">rect.style(<span class="string">'cursor'</span>)
+<span class="comment">// =&gt; pointer</span></code></pre>
+<p>Or even a full getter:</p>
+<pre><code class="lang-javascript">rect.style()
+<span class="comment">// =&gt; 'cursor:pointer;fill:#f03;'</span></code></pre>
+<p>Explicitly deleting individual style definitions works the same as with the <code>attr()</code> method:</p>
+<pre><code class="lang-javascript">rect.style(<span class="string">'cursor'</span>, <span class="literal">null</span>)</code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/classes' id="classes-">classes()</h3 id='manipulating-elements/classes'>
+<p>Fetches an array of css classes on the node:</p>
+<pre><code class="lang-javascript">rect.classes()</code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>array</code></strong></p>
+<h3 id='manipulating-elements/hasclass' id="hasclass-">hasClass()</h3 id='manipulating-elements/hasclass'>
+<p>Test the presence of a given css class:</p>
+<pre><code class="lang-javascript">rect.hasClass(<span class="string">'purple-rain'</span>)</code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>boolean</code></strong></p>
+<h3 id='manipulating-elements/addclass' id="addclass-">addClass()</h3 id='manipulating-elements/addclass'>
+<p>Adds a given css class:</p>
+<pre><code class="lang-javascript">rect.addClass(<span class="string">'pink-flower'</span>)</code></pre>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/removeclass' id="removeclass-">removeClass()</h3 id='manipulating-elements/removeclass'>
+<p>Removes a given css class:</p>
+<pre><code class="lang-javascript">rect.removeClass(<span class="string">'pink-flower'</span>)</code></pre>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/toggleclass' id="toggleclass-">toggleClass()</h3 id='manipulating-elements/toggleclass'>
+<p>Toggles a given css class:</p>
+<pre><code class="lang-javascript">rect.toggleClass(<span class="string">'pink-flower'</span>)</code></pre>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/move' id="move-">move()</h3 id='manipulating-elements/move'>
+<p>Move the element to a given <code>x</code> and <code>y</code> position by its upper left corner:</p>
+<pre><code class="lang-javascript">rect.move(<span class="number">200</span>, <span class="number">350</span>)</code></pre>
+<p>Note that you can also use the following code to move some elements (like images and rects) around:</p>
+<pre><code class="lang-javascript">rect.attr({ x: <span class="number">20</span>, y: <span class="number">60</span> })</code></pre>
+<p>Although <code>move()</code> is much more convenient because it will always use the upper left corner as the position reference, whereas with using <code>attr()</code> the <code>x</code> and <code>y</code> reference differ between element types. For example, rect uses the upper left corner with the <code>x</code> and <code>y</code> attributes, circle and ellipse use their center with the <code>cx</code> and <code>cy</code> attributes and thereby simply ignoring the <code>x</code> and <code>y</code> values you might assign.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/x' id="x-">x()</h3 id='manipulating-elements/x'>
+<p>Move element only along x-axis by its upper left corner:</p>
+<pre><code class="lang-javascript">rect.x(<span class="number">200</span>)</code></pre>
+<p>Without an argument the <code>x()</code> method serves as a getter as well:</p>
+<pre><code class="lang-javascript">rect.x() <span class="comment">//-&gt; returns 200</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/y' id="y-">y()</h3 id='manipulating-elements/y'>
+<p>Move element only along y-axis by its upper left corner:</p>
+<pre><code class="lang-javascript">rect.y(<span class="number">350</span>)</code></pre>
+<p>Without an argument the <code>y()</code> method serves as a getter as well:</p>
+<pre><code class="lang-javascript">rect.y() <span class="comment">//-&gt; returns 350</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/dmove' id="dmove-">dmove()</h3 id='manipulating-elements/dmove'>
+<p>Move the element to a given <code>x</code> and <code>y</code> position relative to its current position:</p>
+<pre><code class="lang-javascript">rect.dmove(<span class="number">10</span>, <span class="number">30</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/dx' id="dx-">dx()</h3 id='manipulating-elements/dx'>
+<p>Move element only along x-axis relative to its current position:</p>
+<pre><code class="lang-javascript">rect.dx(<span class="number">200</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/dy' id="dy-">dy()</h3 id='manipulating-elements/dy'>
+<p>Move element only along y-axis relative to its current position:</p>
+<pre><code class="lang-javascript">rect.dy(<span class="number">200</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/center' id="center-">center()</h3 id='manipulating-elements/center'>
+<p>This is an extra method to move an element by its center:</p>
+<pre><code class="lang-javascript">rect.center(<span class="number">150</span>, <span class="number">150</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/cx' id="cx-">cx()</h3 id='manipulating-elements/cx'>
+<p>Move element only along x-axis by its center:</p>
+<pre><code class="lang-javascript">rect.cx(<span class="number">200</span>)</code></pre>
+<p>Without an argument the <code>cx()</code> method serves as a getter as well:</p>
+<pre><code class="lang-javascript">rect.cx() <span class="comment">//-&gt; returns 200</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/cy' id="cy-">cy()</h3 id='manipulating-elements/cy'>
+<p>Move element only along y-axis by its center:</p>
+<pre><code class="lang-javascript">rect.cy(<span class="number">350</span>)</code></pre>
+<p>Without an argument the <code>cy()</code> method serves as a getter as well:</p>
+<pre><code class="lang-javascript">rect.cy() <span class="comment">//-&gt; returns 350</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/size' id="size-">size()</h3 id='manipulating-elements/size'>
+<p>Set the size of an element by a given <code>width</code> and <code>height</code>:</p>
+<pre><code class="lang-javascript">rect.size(<span class="number">200</span>, <span class="number">300</span>)</code></pre>
+<p>Proporional resizing is also possible by leaving out <code>height</code>:</p>
+<pre><code class="lang-javascript">rect.size(<span class="number">200</span>)</code></pre>
+<p>Or by passing <code>null</code> as the value for <code>width</code>:</p>
+<pre><code class="lang-javascript">rect.size(<span class="literal">null</span>, <span class="number">200</span>)</code></pre>
+<p>Same as with <code>move()</code> the size of an element could be set by using <code>attr()</code>. But because every type of element is handles its size differently the <code>size()</code> method is much more convenient.</p>
+<p>There is one exceptions though, the <code>SVG.Text</code> only takes one argument and applies the given value to the <code>font-size</code> attribute.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/width' id="width-">width()</h3 id='manipulating-elements/width'>
+<p>Set only width of an element:</p>
+<pre><code class="lang-javascript">rect.width(<span class="number">200</span>)</code></pre>
+<p>This method also acts as a getter:</p>
+<pre><code class="lang-javascript">rect.width() <span class="comment">//-&gt; returns 200</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/height' id="height-">height()</h3 id='manipulating-elements/height'>
+<p>Set only height of an element:</p>
+<pre><code class="lang-javascript">rect.height(<span class="number">325</span>)</code></pre>
+<p>This method also acts as a getter:</p>
+<pre><code class="lang-javascript">rect.height() <span class="comment">//-&gt; returns 325</span></code></pre>
+<p><code>getter</code><strong><code>returns</code>: <code>value</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/hide' id="hide-">hide()</h3 id='manipulating-elements/hide'>
+<p>Hide element:</p>
+<pre><code class="lang-javascript">rect.hide()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/show' id="show-">show()</h3 id='manipulating-elements/show'>
+<p>Show element:</p>
+<pre><code class="lang-javascript">rect.show()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/visible' id="visible-">visible()</h3 id='manipulating-elements/visible'>
+<p>To check if the element is visible:</p>
+<pre><code class="lang-javascript">rect.visible()</code></pre>
+<p><strong><code>returns</code>: <code>boolean</code></strong></p>
+<h3 id='manipulating-elements/clone' id="clone-">clone()</h3 id='manipulating-elements/clone'>
+<p>To make an exact copy of an element the <code>clone()</code> method comes in handy:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> clone = rect.clone()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<p>This will create an new, unlinked copy. If you want to make a linked clone have a look at the <a href="#elements/use">use</a> element.</p>
+<h3 id='manipulating-elements/remove' id="remove-">remove()</h3 id='manipulating-elements/remove'>
+<p>Pretty straightforward:</p>
+<pre><code class="lang-javascript">rect.remove()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='manipulating-elements/replace' id="replace-">replace()</h3 id='manipulating-elements/replace'>
+<p>This method will replace the called element with the given element in the same position in the stack:</p>
+<pre><code class="lang-javascript">rect.replace(draw.circle(<span class="number">100</span>))</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h2 id='inserting-elements' id="inserting-elements">Inserting elements</h2 id='inserting-elements'>
+<h3 id='inserting-elements/add' id="add-">add()</h3 id='inserting-elements/add'>
+<p>Elements can be moved between parents via the <code>add()</code> method on any parent:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>)
+<span class="keyword">var</span> group = draw.group()
+
+group.add(rect) <span class="comment">//-&gt; returns group</span></code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='inserting-elements/put' id="put-">put()</h3 id='inserting-elements/put'>
+<p>Where the <code>add()</code> method returns the parent itself, the <code>put()</code> method returns the given element:</p>
+<pre><code class="lang-javascript">group.put(rect) <span class="comment">//-&gt; returns rect</span></code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='inserting-elements/addto' id="addto-">addTo()</h3 id='inserting-elements/addto'>
+<p>Similarly to the <code>add()</code> method on a parent element, elements have the <code>addTo()</code> method:</p>
+<pre><code class="lang-javascript">rect.addTo(group) <span class="comment">//-&gt; returns rect</span></code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='inserting-elements/putin' id="putin-">putIn()</h3 id='inserting-elements/putin'>
+<p>Similarly to the <code>put()</code> method on a parent element, elements have the <code>putIn()</code> method:</p>
+<pre><code class="lang-javascript">rect.putIn(group) <span class="comment">//-&gt; returns group</span></code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h2 id='geometry' id="geometry">Geometry</h2 id='geometry'>
+<h3 id='geometry/viewbox' id="viewbox-">viewbox()</h3 id='geometry/viewbox'>
+<p>The <code>viewBox</code> attribute of an <code>&lt;svg&gt;</code> element can be managed with the <code>viewbox()</code> method. When supplied with four arguments it will act as a setter:</p>
+<pre><code class="lang-javascript">draw.viewbox(<span class="number">0</span>, <span class="number">0</span>, <span class="number">297</span>, <span class="number">210</span>)</code></pre>
+<p>Alternatively you can also supply an object as the first argument:</p>
+<pre><code class="lang-javascript">draw.viewbox({ x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">297</span>, height: <span class="number">210</span> })</code></pre>
+<p>Without any arguments an instance of <code>SVG.ViewBox</code> will be returned:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> box = draw.viewbox()</code></pre>
+<p>But the best thing about the <code>viewbox()</code> method is that you can get the zoom of the viewbox:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> box = draw.viewbox()
+<span class="keyword">var</span> zoom = box.zoom</code></pre>
+<p>If the size of the viewbox equals the size of the svg drawing, the zoom value will be 1.</p>
+<p><code>getter</code><strong><code>returns</code>: <code>SVG.ViewBox</code></strong></p>
+<p><code>setter</code><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='geometry/bbox' id="bbox-">bbox()</h3 id='geometry/bbox'>
+<pre><code class="lang-javascript">path.bbox()</code></pre>
+<p>This will return an instance of <code>SVG.BBox</code> containing the following values:</p>
+<pre><code class="lang-javascript">{ width: <span class="number">20</span>, height: <span class="number">20</span>, x: <span class="number">10</span>, y: <span class="number">20</span>, cx: <span class="number">20</span>, cy: <span class="number">30</span>, x2: <span class="number">30</span>, y2: <span class="number">40</span> }</code></pre>
+<p>As opposed to the native <code>getBBox()</code> method any translations used with the <code>transform()</code> method will be taken into account.</p>
+<p>The <code>SVG.BBox</code> has one other nifty little feature, enter the <code>merge()</code> method. With <code>merge()</code> two <code>SVG.BBox</code> instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> box1 = draw.rect(<span class="number">100</span>,<span class="number">100</span>).move(<span class="number">50</span>,<span class="number">50</span>)
+<span class="keyword">var</span> box2 = draw.rect(<span class="number">100</span>,<span class="number">100</span>).move(<span class="number">200</span>,<span class="number">200</span>)
+<span class="keyword">var</span> box3 = box1.merge(box2)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.BBox</code></strong></p>
+<h3 id='geometry/rbox' id="rbox-">rbox()</h3 id='geometry/rbox'>
+<p>Is similar to <code>bbox()</code> but will give you the box around the exact representation of the element, taking all transformations into account.</p>
+<pre><code class="lang-javascript">path.rbox()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.RBox</code></strong></p>
+<h3 id='geometry/ctm' id="ctm-">ctm()</h3 id='geometry/ctm'>
+<p>Retreives the current transform matrix of the element:</p>
+<pre><code class="lang-javascript">path.ctm()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Matrix</code></strong></p>
+<h3 id='geometry/inside' id="inside-">inside()</h3 id='geometry/inside'>
+<p>To check if a given point is inside the bounding box of an element you can use the <code>inside()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>, <span class="number">100</span>).move(<span class="number">50</span>, <span class="number">50</span>)
+
+rect.inside(<span class="number">25</span>, <span class="number">30</span>) <span class="comment">//-&gt; returns false</span>
+rect.inside(<span class="number">60</span>, <span class="number">70</span>) <span class="comment">//-&gt; returns true</span></code></pre>
+<p>Note: the <code>x</code> and <code>y</code> positions are tested against the relative position of the element. Any offset on the parent element is not taken into account.</p>
+<p><strong><code>returns</code>: <code>boolean</code></strong></p>
+<h3 id='geometry/length' id="length-">length()</h3 id='geometry/length'>
+<p>Get the total length of a path element:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> length = path.length()</code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='geometry/pointat' id="pointat-">pointAt()</h3 id='geometry/pointat'>
+<p>Get get point on a path at given length:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> point = path.pointAt(<span class="number">105</span>) <span class="comment">//-&gt; returns { x : 96.88497924804688, y : 58.062747955322266 }</span></code></pre>
+<p><strong><code>returns</code>: <code>object</code></strong></p>
+<h2 id='animating-elements' id="animating-elements">Animating elements</h2 id='animating-elements'>
+<h3 id='animating-elements/animatable-method-chain' id="animatable-method-chain">Animatable method chain</h3 id='animating-elements/animatable-method-chain'>
+<p>Note that the <code>animate()</code> method will not return the targeted element but an instance of SVG.FX which will take the following methods:</p>
+<p>Of course <code>attr()</code>:</p>
+<pre><code class="lang-javascript">rect.animate().attr({ fill: <span class="string">'#f03'</span> })</code></pre>
+<p>The <code>x()</code>, <code>y()</code> and <code>move()</code> methods:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">100</span>, <span class="number">100</span>)</code></pre>
+<p>And the <code>cx()</code>, <code>cy()</code> and <code>center()</code> methods:</p>
+<pre><code class="lang-javascript">rect.animate().center(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p>If you include the sugar.js module, <code>fill()</code>, <code>stroke()</code>, <code>rotate()</code>, <code>skew()</code>, <code>scale()</code>, <code>matrix()</code>, <code>opacity()</code>, <code>radius()</code> will be available as well:</p>
+<pre><code class="lang-javascript">rect.animate().rotate(<span class="number">45</span>).skew(<span class="number">25</span>, <span class="number">0</span>)</code></pre>
+<p>You can also animate non-numeric unit values unsing the <code>attr()</code> method:</p>
+<pre><code class="lang-javascript">rect.attr(<span class="string">'x'</span>, <span class="string">'10%'</span>).animate().attr(<span class="string">'x'</span>, <span class="string">'50%'</span>)</code></pre>
+<h3 id='animating-elements/easing' id="easing">easing</h3 id='animating-elements/easing'>
+<p>All available ease types are:</p>
+<ul>
+<li><code>&lt;&gt;</code>: ease in and out</li>
+<li><code>&gt;</code>: ease out</li>
+<li><code>&lt;</code>: ease in</li>
+<li><code>-</code>: linear</li>
+<li><code>=</code>: external control</li>
+<li>a function</li>
+</ul>
+<p>For the latter, here is an example of the default <code>&lt;&gt;</code> function:</p>
+<pre><code class="lang-javascript"><span class="keyword">function</span>(pos) { <span class="keyword">return</span> (-Math.cos(pos * Math.PI) / <span class="number">2</span>) + <span class="number">0.5</span> }</code></pre>
+<p>For more easing equations, have a look at the <a href="https://github.com/wout/svg.easing.js">svg.easing.js</a> plugin.</p>
+<h3 id='animating-elements/animate' id="animate-">animate()</h3 id='animating-elements/animate'>
+<p>Animating elements is very much the same as manipulating elements, the only difference is you have to include the <code>animate()</code> method:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">150</span>, <span class="number">150</span>)</code></pre>
+<p>The <code>animate()</code> method will take three arguments. The first is <code>duration</code>, the second <code>ease</code> and the third <code>delay</code>:</p>
+<pre><code class="lang-javascript">rect.animate(<span class="number">2000</span>, <span class="string">'&gt;'</span>, <span class="number">1000</span>).attr({ fill: <span class="string">'#f03'</span> })</code></pre>
+<p>Alternatively you can pass an object as the first argument:</p>
+<pre><code class="lang-javascript">rect.animate({ ease: <span class="string">'&lt;'</span>, delay: <span class="string">'1.5s'</span> }).attr({ fill: <span class="string">'#f03'</span> })</code></pre>
+<p>By default <code>duration</code> will be set to <code>1000</code>, <code>ease</code> will be set to <code>&lt;&gt;</code>.</p>
+<p><strong><code>returns</code>: <code>SVG.FX</code></strong></p>
+<h3 id='animating-elements/pause' id="pause-">pause()</h3 id='animating-elements/pause'>
+<p>Pausing an animations is fairly straightforward:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">200</span>, <span class="number">200</span>)
+
+rect.mouseenter(<span class="keyword">function</span>() { <span class="keyword">this</span>.pause() })</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='animating-elements/play' id="play-">play()</h3 id='animating-elements/play'>
+<p>Will start playing a paused animation:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">200</span>, <span class="number">200</span>)
+
+rect.mouseenter(<span class="keyword">function</span>() { <span class="keyword">this</span>.pause() })
+rect.mouseleave(<span class="keyword">function</span>() { <span class="keyword">this</span>.play() })</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='animating-elements/stop' id="stop-">stop()</h3 id='animating-elements/stop'>
+<p>Animations can be stopped in two ways.</p>
+<p>By calling the <code>stop()</code> method:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">200</span>, <span class="number">200</span>)
+
+rect.stop()</code></pre>
+<p>Or by invoking another animation:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">200</span>, <span class="number">200</span>)
+
+rect.animate().center(<span class="number">200</span>, <span class="number">200</span>)</code></pre>
+<p>By calling <code>stop()</code>, the transition is left at its current position. By passing <code>true</code> as the first argument to <code>stop()</code>, the animation will be fulfilled instantly:</p>
+<pre><code class="lang-javascript">rect.animate().move(<span class="number">200</span>, <span class="number">200</span>)
+
+rect.stop(<span class="literal">true</span>)</code></pre>
+<p>Stopping an animation is irreversable.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='animating-elements/during' id="during-">during()</h3 id='animating-elements/during'>
+<p>If you want to perform your own actions during the animations you can use the <code>during()</code> method:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> position
+  , from = <span class="number">100</span>
+  , to   = <span class="number">300</span>
+
+rect.animate(<span class="number">3000</span>).move(<span class="number">100</span>, <span class="number">100</span>).during(<span class="keyword">function</span>(pos) {
+  position = from + (to - from) * pos 
+})</code></pre>
+<p>Note that <code>pos</code> is <code>0</code> in the beginning of the animation and <code>1</code> at the end of the animation.</p>
+<p>To make things easier a morphing function is passed as the second argument. This function accepts a <code>from</code> and <code>to</code> value as the first and second argument and they can be a number, unit or hex color:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">100</span>, <span class="number">100</span>).attr(<span class="string">'cx'</span>, <span class="string">'20%'</span>).fill(<span class="string">'#333'</span>)
+
+rect.animate(<span class="number">3000</span>).move(<span class="number">100</span>, <span class="number">100</span>).during(<span class="keyword">function</span>(pos, morph) {
+  <span class="comment">/* numeric values */</span>
+  ellipse.size(morph(<span class="number">100</span>, <span class="number">200</span>), morph(<span class="number">100</span>, <span class="number">50</span>))
+
+  <span class="comment">/* unit strings */</span>
+  ellipse.attr(<span class="string">'cx'</span>, morph(<span class="string">'20%'</span>, <span class="string">'80%'</span>))
+
+  <span class="comment">/* hex color strings */</span>
+  ellipse.fill(morph(<span class="string">'#333'</span>, <span class="string">'#ff0066'</span>))
+})</code></pre>
+<p><strong><code>returns</code>: <code>SVG.FX</code></strong></p>
+<h3 id='animating-elements/loop' id="loop-">loop()</h3 id='animating-elements/loop'>
+<p>By default the <code>loop()</code> method creates and eternal loop:</p>
+<pre><code class="lang-javascript">rect.animate(<span class="number">3000</span>).move(<span class="number">100</span>, <span class="number">100</span>).loop()</code></pre>
+<p>But the loop can also be a predefined number of times:</p>
+<pre><code class="lang-javascript">rect.animate(<span class="number">3000</span>).move(<span class="number">100</span>, <span class="number">100</span>).loop(<span class="number">5</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.FX</code></strong></p>
+<h3 id='animating-elements/after' id="after-">after()</h3 id='animating-elements/after'>
+<p>Finally, you can add callback methods using <code>after()</code>:</p>
+<pre><code class="lang-javascript">rect.animate(<span class="number">3000</span>).move(<span class="number">100</span>, <span class="number">100</span>).after(<span class="keyword">function</span>() {
+  <span class="keyword">this</span>.animate().attr({ fill: <span class="string">'#f06'</span> })
+})</code></pre>
+<p>Note that the <code>after()</code> method will never be called if the animation is looping eternally. </p>
+<p><strong><code>returns</code>: <code>SVG.FX</code></strong></p>
+<h3 id='animating-elements/to' id="to-">to()</h3 id='animating-elements/to'>
+<p>Say you want to control the position of an animation with an external event, then the <code>to()</code> method will proove very useful:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> animate = draw.rect(<span class="number">100</span>, <span class="number">100</span>).move(<span class="number">50</span>, <span class="number">50</span>).animate(<span class="string">'='</span>).move(<span class="number">200</span>, <span class="number">200</span>)
+
+document.onmousemove = <span class="keyword">function</span>(event) {
+  animate.to(event.clientX / <span class="number">1000</span>)
+}</code></pre>
+<p>In order to be able use the <code>to()</code> method the duration of the animation should be set to <code>&#39;=&#39;</code>. The value passed as the first argument of <code>to()</code> should be a number between <code>0</code> and <code>1</code>, <code>0</code> being the beginning of the animation and <code>1</code> being the end. Note that any values below <code>0</code> and above <code>1</code> will be normalized.</p>
+<p><em>This functionality requires the fx.js module which is included in the default distribution.</em></p>
+<p><strong><code>returns</code>: <code>SVG.FX</code></strong></p>
+<h2 id='syntax-sugar' id="syntax-sugar">Syntax sugar</h2 id='syntax-sugar'>
+<p>Fill and stroke are used quite often. Therefore two convenience methods are provided:</p>
+<h3 id='syntax-sugar/fill' id="fill-">fill()</h3 id='syntax-sugar/fill'>
+<p>The <code>fill()</code> method is a pretty alternative to the <code>attr()</code> method:</p>
+<pre><code class="lang-javascript">rect.fill({ color: <span class="string">'#f06'</span>, opacity: <span class="number">0.6</span> })</code></pre>
+<p>A single hex string will work as well:</p>
+<pre><code class="lang-javascript">rect.fill(<span class="string">'#f06'</span>)</code></pre>
+<p>Last but not least, you can also use an image as fill, simply by passing an image url:</p>
+<pre><code class="lang-javascript">rect.fill(<span class="string">'images/shade.jpg'</span>)</code></pre>
+<p>Or if you want more control over the size of the image, you can pass an image instance as well:</p>
+<pre><code class="lang-javascript">rect.fill(draw.image(<span class="string">'images/shade.jpg'</span>, <span class="number">20</span>, <span class="number">20</span>))</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/stroke' id="stroke-">stroke()</h3 id='syntax-sugar/stroke'>
+<p>The <code>stroke()</code> method is similar to <code>fill()</code>:</p>
+<pre><code class="lang-javascript">rect.stroke({ color: <span class="string">'#f06'</span>, opacity: <span class="number">0.6</span>, width: <span class="number">5</span> })</code></pre>
+<p>Like fill, a single hex string will work as well:</p>
+<pre><code class="lang-javascript">rect.stroke(<span class="string">'#f06'</span>)</code></pre>
+<p>Not unlike the <code>fill()</code> method, you can also use an image as stroke, simply by passing an image url:</p>
+<pre><code class="lang-javascript">rect.stroke(<span class="string">'images/shade.jpg'</span>)</code></pre>
+<p>Or if you want more control over the size of the image, you can pass an image instance as well:</p>
+<pre><code class="lang-javascript">rect.stroke(draw.image(<span class="string">'images/shade.jpg'</span>, <span class="number">20</span>, <span class="number">20</span>))</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/opacity' id="opacity-">opacity()</h3 id='syntax-sugar/opacity'>
+<p>To set the overall opacity of an element:</p>
+<pre><code class="lang-javascript">rect.opacity(<span class="number">0.5</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/rotate' id="rotate-">rotate()</h3 id='syntax-sugar/rotate'>
+<p>The <code>rotate()</code> method will automatically rotate elements according to the center of the element:</p>
+<pre><code class="lang-javascript"><span class="comment">// rotate(degrees)</span>
+rect.rotate(<span class="number">45</span>)</code></pre>
+<p>Although you can also define a specific rotation point:</p>
+<pre><code class="lang-javascript"><span class="comment">// rotate(degrees, cx, cy)</span>
+rect.rotate(<span class="number">45</span>, <span class="number">50</span>, <span class="number">50</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/skew' id="skew-">skew()</h3 id='syntax-sugar/skew'>
+<p>The <code>skew()</code> method will take an <code>x</code> and <code>y</code> value:</p>
+<pre><code class="lang-javascript"><span class="comment">// skew(x, y)</span>
+rect.skew(<span class="number">0</span>, <span class="number">45</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/scale' id="scale-">scale()</h3 id='syntax-sugar/scale'>
+<p>The <code>scale()</code> method will take an <code>x</code> and <code>y</code> value:</p>
+<pre><code class="lang-javascript"><span class="comment">// scale(x, y)</span>
+rect.scale(<span class="number">0.5</span>, -<span class="number">1</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='syntax-sugar/translate' id="translate-">translate()</h3 id='syntax-sugar/translate'>
+<p>The <code>translate()</code> method will take an <code>x</code> and <code>y</code> value:</p>
+<pre><code class="lang-javascript"><span class="comment">// translate(x, y)</span>
+rect.translate(<span class="number">0.5</span>, -<span class="number">1</span>)</code></pre>
+<h3 id='syntax-sugar/radius' id="radius-">radius()</h3 id='syntax-sugar/radius'>
+<p>Rects and ellipses have a <code>radius()</code> method. On rects it defines rounded corners, on ellipses the radii:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">10</span>)</code></pre>
+<p>This will set the <code>rx</code> and <code>ry</code> attributes to <code>10</code>. To set <code>rx</code> and <code>ry</code> individually:</p>
+<pre><code class="lang-javascript">rect.radius(<span class="number">10</span>, <span class="number">20</span>)</code></pre>
+<p><em>This functionality requires the sugar.js module which is included in the default distribution.</em></p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='masking-elements' id="masking-elements">Masking elements</h2 id='masking-elements'>
+<h3 id='masking-elements/maskwith' id="maskwith-">maskWith()</h3 id='masking-elements/maskwith'>
+<p>The easiest way to mask is to use a single element:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">80</span>, <span class="number">40</span>).move(<span class="number">10</span>, <span class="number">10</span>).fill({ color: <span class="string">'#fff'</span> })
+
+rect.maskWith(ellipse)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='masking-elements/mask' id="mask-">mask()</h3 id='masking-elements/mask'>
+<p>But you can also use multiple elements:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">80</span>, <span class="number">40</span>).move(<span class="number">10</span>, <span class="number">10</span>).fill({ color: <span class="string">'#fff'</span> })
+<span class="keyword">var</span> text = draw.text(<span class="string">'SVG.JS'</span>).move(<span class="number">10</span>, <span class="number">10</span>).font({ size: <span class="number">36</span> }).fill({ color: <span class="string">'#fff'</span> })
+
+<span class="keyword">var</span> mask = draw.mask().add(text).add(ellipse)
+
+rect.maskWith(mask)</code></pre>
+<p>If you want the masked object to be rendered at 100% you need to set the fill color of the masking object to white. But you might also want to use a gradient:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> gradient = draw.gradient(<span class="string">'linear'</span>, <span class="keyword">function</span>(stop) {
+  stop.at({ offset: <span class="number">0</span>, color: <span class="string">'#000'</span> })
+  stop.at({ offset: <span class="number">1</span>, color: <span class="string">'#fff'</span> })
+})
+
+<span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">80</span>, <span class="number">40</span>).move(<span class="number">10</span>, <span class="number">10</span>).fill({ color: gradient })
+
+rect.maskWith(ellipse)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Mask</code></strong></p>
+<h3 id='masking-elements/unmask' id="unmask-">unmask()</h3 id='masking-elements/unmask'>
+<p>Unmasking the elements can be done with the <code>unmask()</code> method:</p>
+<pre><code class="lang-javascript">rect.unmask()</code></pre>
+<p>The <code>unmask()</code> method returns the masking element.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='masking-elements/remove' id="remove-">remove()</h3 id='masking-elements/remove'>
+<p>Removing the mask alltogether will also <code>unmask()</code> all masked elements as well:</p>
+<pre><code class="lang-javascript">mask.remove()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='masking-elements/masker' id="masker">masker</h3 id='masking-elements/masker'>
+<p>For your convenience, the masking element is also referenced in the masked element. This can be useful in case you want to change the mask:</p>
+<pre><code class="lang-javascript">rect.masker.fill(<span class="string">'#fff'</span>)</code></pre>
+<p><em>This functionality requires the mask.js module which is included in the default distribution.</em></p>
+<h2 id='clipping-elements' id="clipping-elements">Clipping elements</h2 id='clipping-elements'>
+<p>Clipping elements works exactly the same as masking elements. The only difference is that clipped elements will adopt the geometry of the clipping element. Therefore events are only triggered when entering the clipping element whereas with masks the masked element triggers the event. Another difference is that masks can define opacity with their fill color and clipPaths don&#39;t.</p>
+<h3 id='clipping-elements/clipwith' id="clipwith-">clipWith()</h3 id='clipping-elements/clipwith'>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">80</span>, <span class="number">40</span>).move(<span class="number">10</span>, <span class="number">10</span>)
+
+rect.clipWith(ellipse)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='clipping-elements/clip' id="clip-">clip()</h3 id='clipping-elements/clip'>
+<p>Clip multiple elements:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> ellipse = draw.ellipse(<span class="number">80</span>, <span class="number">40</span>).move(<span class="number">10</span>, <span class="number">10</span>)
+<span class="keyword">var</span> text = draw.text(<span class="string">'SVG.JS'</span>).move(<span class="number">10</span>, <span class="number">10</span>).font({ size: <span class="number">36</span> })
+
+<span class="keyword">var</span> clip = draw.clip().add(text).add(ellipse)
+
+rect.clipWith(clip)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.ClipPath</code></strong></p>
+<h3 id='clipping-elements/unclip' id="unclip-">unclip()</h3 id='clipping-elements/unclip'>
+<p>Unclipping the elements can be done with the <code>unclip()</code> method:</p>
+<pre><code class="lang-javascript">rect.unclip()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='clipping-elements/remove' id="remove-">remove()</h3 id='clipping-elements/remove'>
+<p>Removing the clip alltogether will also <code>unclip()</code> all clipped elements as well:</p>
+<pre><code class="lang-javascript">clip.remove()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='clipping-elements/clipper' id="clipper">clipper</h3 id='clipping-elements/clipper'>
+<p>For your convenience, the clipping element is also referenced in the clipped element. This can be useful in case you want to change the clipPath:</p>
+<pre><code class="lang-javascript">rect.clipper.move(<span class="number">10</span>, <span class="number">10</span>)</code></pre>
+<p><em>This functionality requires the clip.js module which is included in the default distribution.</em></p>
+<h2 id='arranging-elements' id="arranging-elements">Arranging elements</h2 id='arranging-elements'>
+<p>You can arrange elements within their parent SVG document using the following methods.</p>
+<h3 id='arranging-elements/front' id="front-">front()</h3 id='arranging-elements/front'>
+<p>Move element to the front:</p>
+<pre><code class="lang-javascript">rect.front()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arranging-elements/back' id="back-">back()</h3 id='arranging-elements/back'>
+<p>Move element to the back:</p>
+<pre><code class="lang-javascript">rect.back()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arranging-elements/forward' id="forward-">forward()</h3 id='arranging-elements/forward'>
+<p>Move element one step forward:</p>
+<pre><code class="lang-javascript">rect.forward()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arranging-elements/backward' id="backward-">backward()</h3 id='arranging-elements/backward'>
+<p>Move element one step backward:</p>
+<pre><code class="lang-javascript">rect.backward()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arranging-elements/siblings' id="siblings-">siblings()</h3 id='arranging-elements/siblings'>
+<p>The arrange.js module brings some additional methods. To get all siblings of rect, including rect itself:</p>
+<pre><code class="lang-javascript">rect.siblings()</code></pre>
+<p><strong><code>returns</code>: <code>array</code></strong></p>
+<h3 id='arranging-elements/position' id="position-">position()</h3 id='arranging-elements/position'>
+<p>Get the position (a number) of rect between its siblings:</p>
+<pre><code class="lang-javascript">rect.position()</code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='arranging-elements/next' id="next-">next()</h3 id='arranging-elements/next'>
+<p>Get the next sibling:</p>
+<pre><code class="lang-javascript">rect.next()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='arranging-elements/previous' id="previous-">previous()</h3 id='arranging-elements/previous'>
+<p>Get the previous sibling:</p>
+<pre><code class="lang-javascript">rect.previous()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='arranging-elements/before' id="before-">before()</h3 id='arranging-elements/before'>
+<p>Insert an element before another:</p>
+<pre><code class="lang-javascript"><span class="comment">// inserts circle before rect</span>
+rect.before(circle)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arranging-elements/after' id="after-">after()</h3 id='arranging-elements/after'>
+<p>Insert an element after another:</p>
+<pre><code class="lang-javascript"><span class="comment">// inserts circle after rect</span>
+rect.after(circle)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<p><em>This functionality requires the arrange.js module which is included in the default distribution.</em></p>
+<h2 id='sets' id="sets">Sets</h2 id='sets'>
+<p>Sets are very useful if you want to modify or animate multiple elements at once. A set will accept all the same methods accessible on individual elements, even the ones that you add with your own plugins! Creating a set is exactly as you would expect:</p>
+<pre><code class="lang-javascript"><span class="comment">// create some elements</span>
+<span class="keyword">var</span> rect = draw.rect(<span class="number">100</span>,<span class="number">100</span>)
+<span class="keyword">var</span> circle = draw.circle(<span class="number">100</span>).move(<span class="number">100</span>,<span class="number">100</span>).fill(<span class="string">'#f09'</span>)
+
+<span class="comment">// create a set and add the elements</span>
+<span class="keyword">var</span> set = draw.set()
+set.add(rect).add(circle)
+
+<span class="comment">// change the fill of all elements in the set at once</span>
+set.fill(<span class="string">'#ff0'</span>)</code></pre>
+<p>A single element can be a member of many sets. Sets also don&#39;t have a structural representation, in fact they are just fancy array&#39;s.</p>
+<h3 id='sets/add' id="add-">add()</h3 id='sets/add'>
+<p>Add an element to a set:</p>
+<pre><code class="lang-javascript">set.add(rect)</code></pre>
+<p>Quite a useful feature of sets is the ability to accept multiple elements at once:</p>
+<pre><code class="lang-javascript">set.add(rect, circle)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='sets/each' id="each-">each()</h3 id='sets/each'>
+<p>Iterating over all members in a set is the same as with svg containers:</p>
+<pre><code class="lang-javascript">set.each(<span class="keyword">function</span>(i) {
+  <span class="keyword">this</span>.attr(<span class="string">'id'</span>, <span class="string">'shiny_new_id_'</span> + i)
+})</code></pre>
+<p>Note that <code>this</code> refers to the current child element.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='sets/has' id="has-">has()</h3 id='sets/has'>
+<p>Determine if an element is member of the set:</p>
+<pre><code class="lang-javascript">set.has(rect)</code></pre>
+<p><strong><code>returns</code>: <code>boolean</code></strong></p>
+<h3 id='sets/index' id="index-">index()</h3 id='sets/index'>
+<p>Returns the index of a given element in the set.</p>
+<pre><code class="lang-javascript">set.index(rect) <span class="comment">//-&gt; -1 if element is not a member</span></code></pre>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='sets/get' id="get-">get()</h3 id='sets/get'>
+<p>Gets the element at a given index:</p>
+<pre><code class="lang-javascript">set.get(<span class="number">1</span>)</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='sets/first' id="first-">first()</h3 id='sets/first'>
+<p>Gets the first element:</p>
+<pre><code class="lang-javascript">set.first()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='sets/last' id="last-">last()</h3 id='sets/last'>
+<p>Gets the last element:</p>
+<pre><code class="lang-javascript">set.last()</code></pre>
+<p><strong><code>returns</code>: <code>element</code></strong></p>
+<h3 id='sets/bbox' id="bbox-">bbox()</h3 id='sets/bbox'>
+<p>Get the bounding box of all elements in the set:</p>
+<pre><code class="lang-javascript">set.bbox()</code></pre>
+<p><strong><code>returns</code>: <code>SVG.BBox</code></strong></p>
+<h3 id='sets/remove' id="remove-">remove()</h3 id='sets/remove'>
+<p>To remove an element from a set:</p>
+<pre><code class="lang-javascript">set.remove(rect)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='sets/clear' id="clear-">clear()</h3 id='sets/clear'>
+<p>Or to remove all elements from a set:</p>
+<pre><code class="lang-javascript">set.clear()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='sets/animate' id="animate-">animate()</h3 id='sets/animate'>
+<p>Sets work with animations as well:</p>
+<pre><code class="lang-javascript">set.animate(<span class="number">3000</span>).fill(<span class="string">'#ff0'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>SVG.SetFX</code></strong></p>
+<h2 id='gradient' id="gradient">Gradient</h2 id='gradient'>
+<h3 id='gradient/gradient' id="gradient-">gradient()</h3 id='gradient/gradient'>
+<p>There are linear and radial gradients. The linear gradient can be created like this:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> gradient = draw.gradient(<span class="string">'linear'</span>, <span class="keyword">function</span>(stop) {
+  stop.at(<span class="number">0</span>, <span class="string">'#333'</span>)
+  stop.at(<span class="number">1</span>, <span class="string">'#fff'</span>)
+})</code></pre>
+<p><strong><code>returns</code>: <code>SVG.Gradient</code></strong></p>
+<h3 id='gradient/at' id="at-">at()</h3 id='gradient/at'>
+<p>The <code>offset</code> and <code>color</code> parameters are required for stops, <code>opacity</code> is optional. Offset is float between 0 and 1, or a percentage value (e.g. <code>33%</code>). </p>
+<pre><code class="lang-javascript">stop.at(<span class="number">0</span>, <span class="string">'#333'</span>)</code></pre>
+<p>or</p>
+<pre><code class="lang-javascript">stop.at({ offset: <span class="number">0</span>, color: <span class="string">'#333'</span>, opacity: <span class="number">1</span> })</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='gradient/from' id="from-">from()</h3 id='gradient/from'>
+<p>To define the direction you can set from <code>x</code>, <code>y</code> and to <code>x</code>, <code>y</code>:</p>
+<pre><code class="lang-javascript">gradient.from(<span class="number">0</span>, <span class="number">0</span>).to(<span class="number">0</span>, <span class="number">1</span>)</code></pre>
+<p>The from and to values are also expressed in percent.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='gradient/to' id="to-">to()</h3 id='gradient/to'>
+<p>To define the direction you can set from <code>x</code>, <code>y</code> and to <code>x</code>, <code>y</code>:</p>
+<pre><code class="lang-javascript">gradient.from(<span class="number">0</span>, <span class="number">0</span>).to(<span class="number">0</span>, <span class="number">1</span>)</code></pre>
+<p>The from and to values are also expressed in percent.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='gradient/radius' id="radius-">radius()</h3 id='gradient/radius'>
+<p>Radial gradients have a <code>radius()</code> method to define the outermost radius to where the inner color should develop:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> gradient = draw.gradient(<span class="string">'radial'</span>, <span class="keyword">function</span>(stop) {
+  stop.at(<span class="number">0</span>, <span class="string">'#333'</span>)
+  stop.at(<span class="number">1</span>, <span class="string">'#fff'</span>)
+})
+
+gradient.from(<span class="number">0.5</span>, <span class="number">0.5</span>).to(<span class="number">0.5</span>, <span class="number">0.5</span>).radius(<span class="number">0.5</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='gradient/update' id="update-">update()</h3 id='gradient/update'>
+<p>A gradient can also be updated afterwards:</p>
+<pre><code class="lang-javascript">gradient.update(<span class="keyword">function</span>(stop) {
+  stop.at(<span class="number">0.1</span>, <span class="string">'#333'</span>, <span class="number">0.2</span>)
+  stop.at(<span class="number">0.9</span>, <span class="string">'#f03'</span>, <span class="number">1</span>)
+})</code></pre>
+<p>And even a single stop can be updated:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> s1, s2, s3
+
+draw.gradient(<span class="string">'radial'</span>, <span class="keyword">function</span>(stop) {
+  s1 = stop.at(<span class="number">0</span>, <span class="string">'#000'</span>)
+  s2 = stop.at(<span class="number">0.5</span>, <span class="string">'#f03'</span>)
+  s3 = stop.at(<span class="number">1</span>, <span class="string">'#066'</span>)
+})
+
+s1.update(<span class="number">0.1</span>, <span class="string">'#0f0'</span>, <span class="number">1</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='gradient/get' id="get-">get()</h3 id='gradient/get'>
+<p>The <code>get()</code> method makes it even easier to get a stop from an existing gradient:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> gradient = draw.gradient(<span class="string">'radial'</span>, <span class="keyword">function</span>(stop) {
+  stop.at({ offset: <span class="number">0</span>, color: <span class="string">'#000'</span>, opacity: <span class="number">1</span> })   <span class="comment">// -&gt; first</span>
+  stop.at({ offset: <span class="number">0.5</span>, color: <span class="string">'#f03'</span>, opacity: <span class="number">1</span> }) <span class="comment">// -&gt; second</span>
+  stop.at({ offset: <span class="number">1</span>, color: <span class="string">'#066'</span>, opacity: <span class="number">1</span> })   <span class="comment">// -&gt; third</span>
+})
+
+<span class="keyword">var</span> s1 = gradient.get(<span class="number">0</span>) <span class="comment">// -&gt; returns "first" stop</span></code></pre>
+<p><strong><code>returns</code>: <code>SVG.Stop</code></strong></p>
+<h3 id='gradient/fill' id="fill-">fill()</h3 id='gradient/fill'>
+<p>Finally, to use the gradient on an element:</p>
+<pre><code class="lang-javascript">rect.attr({ fill: gradient })</code></pre>
+<p>Or:</p>
+<pre><code class="lang-javascript">rect.fill(gradient)</code></pre>
+<p>By passing the gradient instance as the fill on any element, the <code>fill()</code> method will be called:</p>
+<pre><code class="lang-javascript">gradient.fill() <span class="comment">//-&gt; returns 'url(#SvgjsGradient1234)'</span></code></pre>
+<p><a href="http://www.w3schools.com/svg/svg_grad_linear.asp">W3Schools</a> has a great example page on how
+<a href="http://www.w3schools.com/svg/svg_grad_linear.asp">linear gradients</a> and
+<a href="http://www.w3schools.com/svg/svg_grad_radial.asp">radial gradients</a> work.</p>
+<p><em>This functionality requires the gradient.js module which is included in the default distribution.</em></p>
+<p><strong><code>returns</code>: <code>value</code></strong></p>
+<h2 id='pattern' id="pattern">Pattern</h2 id='pattern'>
+<h3 id='pattern/pattern' id="pattern-">pattern()</h3 id='pattern/pattern'>
+<p>Creating a pattern is very similar to creating gradients</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> pattern = draw.pattern(<span class="number">20</span>, <span class="number">20</span>, <span class="keyword">function</span>(add) {
+  add.rect(<span class="number">20</span>,<span class="number">20</span>).fill(<span class="string">'#f06'</span>)
+  add.rect(<span class="number">10</span>,<span class="number">10</span>)
+  add.rect(<span class="number">10</span>,<span class="number">10</span>).move(<span class="number">10</span>,<span class="number">10</span>)
+})</code></pre>
+<p>This creates a checkered pattern of 20 x 20 pixels. You can add any available element to your pattern.</p>
+<p><strong><code>returns</code>: <code>SVG.Pattern</code></strong></p>
+<h3 id='pattern/update' id="update-">update()</h3 id='pattern/update'>
+<p>A pattern can also be updated afterwards:</p>
+<pre><code class="lang-javascript">pattern.update(<span class="keyword">function</span>(add) {
+  add.circle(<span class="number">15</span>).center(<span class="number">10</span>,<span class="number">10</span>)
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='pattern/fill' id="fill-">fill()</h3 id='pattern/fill'>
+<p>Finally, to use the pattern on an element:</p>
+<pre><code class="lang-javascript">rect.attr({ fill: pattern })</code></pre>
+<p>Or:</p>
+<pre><code class="lang-javascript">rect.fill(pattern)</code></pre>
+<p>By passing the pattern instance as the fill on any element, the <code>fill()</code> method will be called on th pattern instance:</p>
+<pre><code class="lang-javascript">pattern.fill() <span class="comment">//-&gt; returns 'url(#SvgjsPattern1234)'</span></code></pre>
+<p><strong><code>returns</code>: <code>value</code></strong></p>
+<h2 id='marker' id="marker">Marker</h2 id='marker'>
+<h3 id='marker/marker' id="marker-">marker()</h3 id='marker/marker'>
+<p>Markers can be added to every individual point of a <code>line</code>, <code>polyline</code>, <code>polygon</code> and <code>path</code>. There are three types of markers: <code>start</code>, <code>mid</code> and <code>end</code>. Where <code>start</code> represents the first point, <code>end</code> the last and <code>mid</code> every point in between.</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> path = draw.path(<span class="string">'M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100z'</span>)
+
+path.fill(<span class="string">'none'</span>).stroke({ width: <span class="number">1</span> })
+
+path.marker(<span class="string">'start'</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="keyword">function</span>(add) {
+  add.circle(<span class="number">10</span>).fill(<span class="string">'#f06'</span>)
+})
+path.marker(<span class="string">'mid'</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="keyword">function</span>(add) {
+  add.rect(<span class="number">10</span>, <span class="number">10</span>)
+})
+path.marker(<span class="string">'end'</span>, <span class="number">20</span>, <span class="number">20</span>, <span class="keyword">function</span>(add) {
+  add.circle(<span class="number">6</span>).center(<span class="number">4</span>, <span class="number">5</span>)
+  add.circle(<span class="number">6</span>).center(<span class="number">4</span>, <span class="number">15</span>)
+  add.circle(<span class="number">6</span>).center(<span class="number">16</span>, <span class="number">10</span>)
+
+  <span class="keyword">this</span>.fill(<span class="string">'#0f6'</span>)
+})</code></pre>
+<p>The <code>marker()</code> method can be used in three ways. Firstly, a marker can be created on any container element (e.g. svg, nested, group, ...). This is useful if you plan to reuse the marker many times so it will create a marker in the defs but not show it yet:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> marker = draw.marker(<span class="number">10</span>, <span class="number">10</span>, <span class="keyword">function</span>() {
+  add.rect(<span class="number">10</span>, <span class="number">10</span>)
+})</code></pre>
+<p>Secondly a marker can be created and applied directly on its target element:</p>
+<pre><code class="lang-javascript">path.marker(<span class="string">'start'</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="keyword">function</span>() {
+  add.circle(<span class="number">10</span>).fill(<span class="string">'#f06'</span>)
+})</code></pre>
+<p>This will create a marker in the defs and apply it directly. Note that the first argument defines the position of the marker and that there are four arguments as opposed to three with the first example.</p>
+<p>Lastly, if a marker is created for reuse on a container element, it can be applied directly on the target element:</p>
+<pre><code class="lang-javascript">path.marker(<span class="string">'mid'</span>, marker)</code></pre>
+<p>Finally, to get a marker instance from the target element reference:</p>
+<pre><code class="lang-javascript">path.reference(<span class="string">'marker-end'</span>)</code></pre>
+<h3 id='marker/ref' id="ref-">ref()</h3 id='marker/ref'>
+<p>By default the <code>refX</code> and <code>refY</code> attributes of a marker are set to respectively half the <code>width</code> nd <code>height</code> values. To define the <code>refX</code> and <code>refY</code> of a marker differently:</p>
+<pre><code class="lang-javascript">marker.ref(<span class="number">2</span>, <span class="number">7</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='marker/update' id="update-">update()</h3 id='marker/update'>
+<p>Updating the contents of a marker will <code>clear()</code> the existing content and add the content defined in the block passed as the first argument:</p>
+<pre><code class="lang-javascript">marker.update(<span class="keyword">function</span>(add) {
+  add.circle(<span class="number">10</span>)
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='marker/width' id="width-">width()</h3 id='marker/width'>
+<p>Defines the <code>markerWidth</code> attribute:</p>
+<pre><code class="lang-javascript">marker.width(<span class="number">10</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='marker/height' id="height-">height()</h3 id='marker/height'>
+<p>Defines the <code>markerHeight</code> attribute:</p>
+<pre><code class="lang-javascript">marker.height(<span class="number">10</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='marker/size' id="size-">size()</h3 id='marker/size'>
+<p>Defines the <code>markerWidth</code> and <code>markerHeight</code> attributes:</p>
+<pre><code class="lang-javascript">marker.size(<span class="number">10</span>, <span class="number">10</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='data' id="data">Data</h2 id='data'>
+<h3 id='data/setting' id="setting">Setting</h3 id='data/setting'>
+<p>The <code>data()</code> method allows you to bind arbitrary objects, strings and numbers to SVG elements:</p>
+<pre><code class="lang-javascript">rect.data(<span class="string">'key'</span>, { value: { data: <span class="number">0.3</span> }})</code></pre>
+<p>Or set multiple values at once:</p>
+<pre><code class="lang-javascript">rect.data({
+  forbidden: <span class="string">'fruit'</span>
+, multiple: {
+    values: <span class="string">'in'</span>
+  , an: <span class="string">'object'</span>
+  }
+})</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='data/getting' id="getting">Getting</h3 id='data/getting'>
+<p>Fetching the values is similar to the <code>attr()</code> method:</p>
+<pre><code class="lang-javascript">rect.data(<span class="string">'key'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='data/removing' id="removing">Removing</h3 id='data/removing'>
+<p>Removing the data altogether:</p>
+<pre><code class="lang-javascript">rect.data(<span class="string">'key'</span>, <span class="literal">null</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='data/sustaining-data-types' id="sustaining-data-types">Sustaining data types</h3 id='data/sustaining-data-types'>
+<p>Your values will always be stored as JSON and in some cases this might not be desirable. If you want to store the value as-is, just pass true as the third argument:</p>
+<pre><code class="lang-javascript">rect.data(<span class="string">'key'</span>, <span class="string">'value'</span>, <span class="literal">true</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='memory' id="memory">Memory</h2 id='memory'>
+<h3 id='memory/remember' id="remember-">remember()</h3 id='memory/remember'>
+<p>Storing data in-memory is very much like setting attributes:</p>
+<pre><code class="lang-javascript">rect.remember(<span class="string">'oldBBox'</span>, rect.bbox())</code></pre>
+<p>Multiple values can also be remembered at once:</p>
+<pre><code class="lang-javascript">rect.remember({
+  oldFill:    rect.attr(<span class="string">'fill'</span>)
+, oldStroke:  rect.attr(<span class="string">'stroke'</span>)
+})</code></pre>
+<p>To retrieve a memory</p>
+<pre><code class="lang-javascript">rect.remember(<span class="string">'oldBBox'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='memory/forget' id="forget-">forget()</h3 id='memory/forget'>
+<p>Erasing a single memory:</p>
+<pre><code class="lang-javascript">rect.forget(<span class="string">'oldBBox'</span>)</code></pre>
+<p>Or erasing multiple memories at once:</p>
+<pre><code class="lang-javascript">rect.forget(<span class="string">'oldFill'</span>, <span class="string">'oldStroke'</span>)</code></pre>
+<p>And finally, just erasing the whole memory:</p>
+<pre><code class="lang-javascript">rect.forget()</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h2 id='events' id="events">Events</h2 id='events'>
+<h3 id='events/basic-events' id="basic-events">Basic events</h3 id='events/basic-events'>
+<p>Events can be bound to elements as follows:</p>
+<pre><code class="lang-javascript">rect.click(<span class="keyword">function</span>() {
+  <span class="keyword">this</span>.fill({ color: <span class="string">'#f06'</span> })
+})</code></pre>
+<p>Removing it is quite as easy:</p>
+<pre><code class="lang-javascript">rect.click(<span class="literal">null</span>)</code></pre>
+<p>All available evenets are: <code>click</code>, <code>dblclick</code>, <code>mousedown</code>, <code>mouseup</code>, <code>mouseover</code>, <code>mouseout</code>, <code>mousemove</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>touchstart</code>, <code>touchmove</code>, <code>touchleave</code>, <code>touchend</code> and <code>touchcancel</code>.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='events/event-listeners' id="event-listeners">Event listeners</h3 id='events/event-listeners'>
+<p>You can also bind event listeners to elements:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> click = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.fill({ color: <span class="string">'#f06'</span> })
+}
+
+rect.on(<span class="string">'click'</span>, click)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<p>Unbinding events is just as easy:</p>
+<pre><code class="lang-javascript">rect.off(<span class="string">'click'</span>, click)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<p>But there is more to event listeners. You can bind events to html elements as well:</p>
+<pre><code class="lang-javascript">SVG.on(window, <span class="string">'click'</span>, click)</code></pre>
+<p>Obviously unbinding is practically the same:</p>
+<pre><code class="lang-javascript">SVG.off(window, <span class="string">'click'</span>, click)</code></pre>
+<h3 id='events/custom-events' id="custom-events">Custom events</h3 id='events/custom-events'>
+<p>You can even create your own events.</p>
+<p>The only thing you need to do is register your own event:</p>
+<pre><code class="lang-javascript">SVG.registerEvent(<span class="string">'my:event'</span>)</code></pre>
+<p>Next you can add an event listener for your newly created event:</p>
+<pre><code class="lang-javascript">rect.on(<span class="string">'my:event'</span>, <span class="keyword">function</span>() {
+  alert(<span class="string">'ta-da!'</span>)
+})</code></pre>
+<p>Now you are ready to fire the event whenever you need:</p>
+<pre><code class="lang-javascript"><span class="function"><span class="keyword">function</span> <span class="title">whenSomethingHappens</span><span class="params">()</span> {</span>
+  rect.fire(<span class="string">'my:event'</span>) 
+}</code></pre>
+<p><em>Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So <code>wicked:event</code> for example would be better than something generic like <code>svg:event</code>.</em></p>
+<h2 id='numbers' id="numbers">Numbers</h2 id='numbers'>
+<p>Numbers in SVG.js have a dedicated number class to be able to process string values. Creating a new number is simple:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> number = <span class="keyword">new</span> SVG.Number(<span class="string">'78%'</span>)
+number.plus(<span class="string">'3%'</span>).toString() <span class="comment">//-&gt; returns '81%'</span>
+number.valueOf() <span class="comment">//-&gt; returns 0.81</span></code></pre>
+<p>Operators are defined as methods on the <code>SVG.Number</code> instance.</p>
+<h3 id='numbers/plus' id="plus-">plus()</h3 id='numbers/plus'>
+<p>Addition:</p>
+<pre><code class="lang-javascript">number.plus(<span class="string">'3%'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/minus' id="minus-">minus()</h3 id='numbers/minus'>
+<p>Subtraction:</p>
+<pre><code class="lang-javascript">number.minus(<span class="string">'3%'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/times' id="times-">times()</h3 id='numbers/times'>
+<p>Multiplication:</p>
+<pre><code class="lang-javascript">number.times(<span class="number">2</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/divide' id="divide-">divide()</h3 id='numbers/divide'>
+<p>Division:</p>
+<pre><code class="lang-javascript">number.divide(<span class="string">'3%'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/to' id="to-">to()</h3 id='numbers/to'>
+<p>Change number to another unit:</p>
+<pre><code class="lang-javascript">number.to(<span class="string">'px'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/morph' id="morph-">morph()</h3 id='numbers/morph'>
+<p>Make a number morphable:</p>
+<pre><code class="lang-javascript">number.morph(<span class="string">'11%'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='numbers/at' id="at-">at()</h3 id='numbers/at'>
+<p>Get morphable number at given position:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> number = <span class="keyword">new</span> SVG.Number(<span class="string">'79%'</span>).morph(<span class="string">'3%'</span>)
+number.at(<span class="number">0.55</span>).toString() <span class="comment">//-&gt; '37.2%'</span></code></pre>
+<p><strong><code>returns</code>: <code>SVG.Number</code></strong></p>
+<h2 id='colors' id="colors">Colors</h2 id='colors'>
+<p>Svg.js has a dedicated color class handling different types of colors. Accepted values are:</p>
+<ul>
+<li>hex string; three based (e.g. #f06) or six based (e.g. #ff0066) <code>new SVG.Color(&#39;#f06&#39;)</code></li>
+<li>rgb string; e.g. rgb(255, 0, 102) <code>new SVG.Color(&#39;rgb(255, 0, 102)&#39;)</code></li>
+<li>rgb object; e.g. { r: 255, g: 0, b: 102 } <code>new SVG.Color({ r: 255, g: 0, b: 102 })</code></li>
+</ul>
+<p>Note that when working with objects is important to provide all three values every time.</p>
+<p>The <code>SVG.Color</code> instance has a few methods of its own.</p>
+<h3 id='colors/tohex' id="tohex-">toHex()</h3 id='colors/tohex'>
+<p>Get hex value:</p>
+<pre><code class="lang-javascript">color.toHex() <span class="comment">//-&gt; returns '#ff0066'</span></code></pre>
+<p><strong><code>returns</code>: hex color string</strong></p>
+<h3 id='colors/torgb' id="torgb-">toRgb()</h3 id='colors/torgb'>
+<p>Get rgb string value:</p>
+<pre><code class="lang-javascript">color.toRgb() <span class="comment">//-&gt; returns 'rgb(255,0,102)'</span></code></pre>
+<p><strong><code>returns</code>: rgb color string</strong></p>
+<h3 id='colors/brightness' id="brightness-">brightness()</h3 id='colors/brightness'>
+<p>Get the brightness of a color:</p>
+<pre><code class="lang-javascript">color.brightness() <span class="comment">//-&gt; returns 0.344</span></code></pre>
+<p>This is the perceived brighness where <code>0</code> is black and <code>1</code> is white.</p>
+<p><strong><code>returns</code>: <code>number</code></strong></p>
+<h3 id='colors/morph' id="morph-">morph()</h3 id='colors/morph'>
+<p>Make a color morphable:</p>
+<pre><code class="lang-javascript">color.morph(<span class="string">'#000'</span>)</code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='colors/at' id="at-">at()</h3 id='colors/at'>
+<p>Get morphable color at given position:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> color = <span class="keyword">new</span> SVG.Color(<span class="string">'#ff0066'</span>).morph(<span class="string">'#000'</span>)
+color.at(<span class="number">0.5</span>).toHex() <span class="comment">//-&gt; '#7f0033'</span></code></pre>
+<p><strong><code>returns</code>: <code>SVG.Color</code></strong></p>
+<h2 id='arrays' id="arrays">Arrays</h2 id='arrays'>
+<p>In SVG.js every value list string can be cast and passed as an array. This makes writing them more convenient but also adds a lot of key functionality to them.</p>
+<h3 id='arrays/svg-array' id="svg-array">SVG.Array</h3 id='arrays/svg-array'>
+<p>Is for simple, whitespace separated value strings:</p>
+<pre><code class="lang-javascript"><span class="string">'0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0'</span></code></pre>
+<p>Can also be passed like this in a more manageable format:</p>
+<pre><code class="lang-javascript"><span class="keyword">new</span> SVG.Array([ <span class="number">.343</span>,  <span class="number">.669</span>, <span class="number">.119</span>, <span class="number">0</span>,   <span class="number">0</span> 
+              , <span class="number">.249</span>, -<span class="number">.626</span>, <span class="number">.130</span>, <span class="number">0</span>,   <span class="number">0</span>
+              , <span class="number">.172</span>,  <span class="number">.334</span>, <span class="number">.111</span>, <span class="number">0</span>,   <span class="number">0</span>
+              , <span class="number">.000</span>,  <span class="number">.000</span>, <span class="number">.000</span>, <span class="number">1</span>,  -<span class="number">0</span> ])</code></pre>
+<h3 id='arrays/svg-pointarray' id="svg-pointarray">SVG.PointArray</h3 id='arrays/svg-pointarray'>
+<p>Is a bit more complex and is used for polyline and polygon elements. This is a poly-point string:</p>
+<pre><code class="lang-javascript"><span class="string">'0,0 100,100'</span></code></pre>
+<p>The dynamic representation:</p>
+<pre><code class="lang-javascript">[
+  [<span class="number">0</span>, <span class="number">0</span>]
+, [<span class="number">100</span>, <span class="number">100</span>]
+]</code></pre>
+<p>Precompiling it as a <code>SVG.PointArray</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">new</span> SVG.PointArray([
+  [<span class="number">0</span>, <span class="number">0</span>]
+, [<span class="number">100</span>, <span class="number">100</span>]
+])</code></pre>
+<p>Note that every instance of <code>SVG.Polyline</code> and <code>SVG.Polygon</code> carries a reference to the <code>SVG.PointArray</code> instance:</p>
+<pre><code class="lang-javascript">polygon.array() <span class="comment">//-&gt; returns the SVG.PointArray instance</span></code></pre>
+<p><em>Javascript inheritance stack: <code>SVG.PointArray</code> &lt; <code>SVG.Array</code></em></p>
+<h3 id='arrays/svg-patharray' id="svg-patharray">SVG.PathArray</h3 id='arrays/svg-patharray'>
+<p>Path arrays carry arrays representing every segment in a path string:</p>
+<pre><code class="lang-javascript"><span class="string">'M0 0L100 100z'</span></code></pre>
+<p>The dynamic representation:</p>
+<pre><code class="lang-javascript">[
+  [<span class="string">'M'</span>, <span class="number">0</span>, <span class="number">0</span>]
+, [<span class="string">'L'</span>, <span class="number">100</span>, <span class="number">100</span>]
+, [<span class="string">'z'</span>]
+]</code></pre>
+<p>Precompiling it as a <code>SVG.PathArray</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">new</span> SVG.PathArray([
+  [<span class="string">'M'</span>, <span class="number">0</span>, <span class="number">0</span>]
+, [<span class="string">'L'</span>, <span class="number">100</span>, <span class="number">100</span>]
+, [<span class="string">'z'</span>]
+])</code></pre>
+<p>Note that every instance of <code>SVG.Path</code> carries a reference to the <code>SVG.PathArray</code> instance:</p>
+<pre><code class="lang-javascript">path.array() <span class="comment">//-&gt; returns the SVG.PathArray instance</span></code></pre>
+<h4 id="syntax">Syntax</h4>
+<p>The syntax for patharrays is very predictable. They are basically literal representations in the form of two dimentional arrays.</p>
+<h5 id="move-to">Move To</h5>
+<p>Original syntax is <code>M0 0</code> or <code>m0 0</code>. The SVG.js syntax <code>[&#39;M&#39;,0,0]</code> or <code>[&#39;m&#39;,0,0]</code>.</p>
+<h5 id="line-to">Line To</h5>
+<p>Original syntax is <code>L100 100</code> or <code>l100 100</code>. The SVG.js syntax <code>[&#39;L&#39;,100,100]</code> or <code>[&#39;l&#39;,100,100]</code>.</p>
+<h5 id="horizontal-line">Horizontal line</h5>
+<p>Original syntax is <code>H200</code> or <code>h200</code>. The SVG.js syntax <code>[&#39;H&#39;,200]</code> or <code>[&#39;h&#39;,200]</code>.</p>
+<h5 id="vertical-line">Vertical line</h5>
+<p>Original syntax is <code>V300</code> or <code>v300</code>. The SVG.js syntax <code>[&#39;V&#39;,300]</code> or <code>[&#39;v&#39;,300]</code>.</p>
+<h5 id="bezier-curve">Bezier curve</h5>
+<p>Original syntax is <code>C20 20 40 20 50 10</code> or <code>c20 20 40 20 50 10</code>. The SVG.js syntax <code>[&#39;C&#39;,20,20,40,20,50,10]</code> or <code>[&#39;c&#39;,20,20,40,20,50,10]</code>.</p>
+<p>Or mirrored with <code>S</code>:</p>
+<p>Original syntax is <code>S40 20 50 10</code> or <code>s40 20 50 10</code>. The SVG.js syntax <code>[&#39;S&#39;,40,20,50,10]</code> or <code>[&#39;s&#39;,40,20,50,10]</code>.</p>
+<p>Or quadratic with <code>Q</code>:</p>
+<p>Original syntax is <code>Q20 20 50 10</code> or <code>q20 20 50 10</code>. The SVG.js syntax <code>[&#39;Q&#39;,20,20,50,10]</code> or <code>[&#39;q&#39;,20,20,50,10]</code>.</p>
+<p>Or a complete shortcut with <code>T</code>:</p>
+<p>Original syntax is <code>T50 10</code> or <code>t50 10</code>. The SVG.js syntax <code>[&#39;T&#39;,50,10]</code> or <code>[&#39;t&#39;,50,10]</code>.</p>
+<h5 id="arc">Arc</h5>
+<p>Original syntax is <code>A 30 50 0 0 1 162 163</code> or <code>a 30 50 0 0 1 162 163</code>. The SVG.js syntax <code>[&#39;A&#39;,30,50,0,0,1,162,163]</code> or <code>[&#39;a&#39;,30,50,0,0,1,162,163]</code>.</p>
+<h5 id="close">Close</h5>
+<p>Original syntax is <code>Z</code> or <code>z</code>. The SVG.js syntax <code>[&#39;Z&#39;]</code> or <code>[&#39;z&#39;]</code>.</p>
+<p>The best documentation on paths can be found at <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths">https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths</a>.</p>
+<p><em>Javascript inheritance stack: <code>SVG.PathArray</code> &lt; <code>SVG.Array</code></em></p>
+<h3 id='arrays/morph' id="morph-">morph()</h3 id='arrays/morph'>
+<p>In order to animate array values the <code>morph()</code> method lets you pass a destination value. This can be either the string value, a plain array or an instance of the same type of SVG.js array:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> array = <span class="keyword">new</span> SVG.PointArray([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">100</span>]])
+array.morph(<span class="string">'100,0 0,100 200,200'</span>)</code></pre>
+<p>This method will prepare the array ensuring both the source and destination arrays have the same length.</p>
+<p>Note that this method is currently not available on <code>SVG.PathArray</code> but will be soon.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arrays/at' id="at-">at()</h3 id='arrays/at'>
+<p>This method will morph the array to a given position between <code>0</code> and <code>1</code>. Continuing with the previous example:</p>
+<pre><code class="lang-javascript">array.at(<span class="number">0.27</span>).toString() <span class="comment">//-&gt; returns '27,0 73,100 127,127'</span></code></pre>
+<p>Note that this method is currently not available on <code>SVG.PathArray</code> but will be soon.</p>
+<p><strong><code>returns</code>: new instance</strong></p>
+<h3 id='arrays/settle' id="settle-">settle()</h3 id='arrays/settle'>
+<p>When morphing is done the <code>settle()</code> method will eliminate any transitional points like duplicates:</p>
+<pre><code class="lang-javascript">array.settle()</code></pre>
+<p>Note that this method is currently not available on <code>SVG.PathArray</code> but will be soon.</p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arrays/move' id="move-">move()</h3 id='arrays/move'>
+<p>Moves geometry of the array with the given <code>x</code> and <code>y</code> values:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> array = <span class="keyword">new</span> SVG.PointArray([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">100</span>]])
+array.move(<span class="number">33</span>,<span class="number">75</span>)
+array.toString() <span class="comment">//-&gt; returns '33,75 133,175'</span></code></pre>
+<p>Note that this method is only available on <code>SVG.PointArray</code> and <code>SVG.PathArray</code></p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arrays/size' id="size-">size()</h3 id='arrays/size'>
+<p>Resizes geometry of the array by the given <code>width</code> and <code>height</code> values:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> array = <span class="keyword">new</span> SVG.PointArray([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">100</span>]])
+array.move(<span class="number">100</span>,<span class="number">100</span>).size(<span class="number">222</span>,<span class="number">333</span>)
+array.toString() <span class="comment">//-&gt; returns '100,100 322,433'</span></code></pre>
+<p>Note that this method is only available on <code>SVG.PointArray</code> and <code>SVG.PathArray</code></p>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arrays/reverse' id="reverse-">reverse()</h3 id='arrays/reverse'>
+<p>Reverses the order of the array:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> array = <span class="keyword">new</span> SVG.PointArray([[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">100</span>]])
+array.reverse()
+array.toString() <span class="comment">//-&gt; returns '100,100 0,0'</span></code></pre>
+<p><strong><code>returns</code>: <code>itself</code></strong></p>
+<h3 id='arrays/bbox' id="bbox-">bbox()</h3 id='arrays/bbox'>
+<p>Gets the bounding box of the geometry of the array:</p>
+<pre><code class="lang-javascript">array.bbox()</code></pre>
+<p>Note that this method is only available on <code>SVG.PointArray</code> and <code>SVG.PathArray</code></p>
+<p><strong><code>returns</code>: <code>object</code></strong></p>
+<h2 id='matrices' id="matrices">Matrices</h2 id='matrices'>
+<p>Matrices in SVG.js have their own class <code>SVG.Matrix</code>, wrapping the native <code>SVGMatrix</code>. They add a lot of functionality like extracting transform values, matrix morphing and improvements on the native methods.</p>
+<h3 id='matrices/svg-matrix' id="svg-matrix">SVG.Matrix</h3 id='matrices/svg-matrix'>
+<p>In SVG.js matrices accept various values on initialization.</p>
+<p>Without a value:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,0,0)</span></code></pre>
+<p>Six arguments:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">100</span>, <span class="number">150</span>)
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,100,150)</span></code></pre>
+<p>A string value:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix(<span class="string">'1,0,0,1,100,150'</span>)
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,100,150)</span></code></pre>
+<p>An object value:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix({ a: <span class="number">1</span>, b: <span class="number">0</span>, c: <span class="number">0</span>, d: <span class="number">1</span>, e: <span class="number">100</span>, f: <span class="number">150</span> })
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,100,150)</span></code></pre>
+<p>A native <code>SVGMatrix</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> svgMatrix = svgElement.getCTM()
+<span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix(svgMatrix)
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,0,0)</span></code></pre>
+<p>Even an instance of <code>SVG.Element</code>:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rect = draw.rect(<span class="number">50</span>, <span class="number">25</span>)
+<span class="keyword">var</span> matrix = <span class="keyword">new</span> SVG.Matrix(rect)
+matrix.toString() <span class="comment">//-&gt; returns matrix(1,0,0,1,0,0)</span></code></pre>
+<h3 id='matrices/extract' id="extract-">extract()</h3 id='matrices/extract'>
+<p>Get the calculated values of matrix:</p>
+<pre><code class="lang-javascript"><span class="keyword">new</span> SVG.Matrix().extract()</code></pre>
+<p>returns:</p>
+<pre><code class="lang-javascript">{
+  x:        <span class="number">0</span>
+, y:        <span class="number">0</span>
+, skewX:    <span class="number">0</span>
+, skewY:    <span class="number">0</span>
+, scaleX:   <span class="number">1</span>
+, scaleY:   <span class="number">1</span>
+, rotation: <span class="number">0</span>
+}</code></pre>
+<h2 id='extending-functionality' id="extending-functionality">Extending functionality</h2 id='extending-functionality'>
+<h3 id='extending-functionality/svg-invent' id="svg-invent-">SVG.invent()</h3 id='extending-functionality/svg-invent'>
+<p>Creating your own custom elements with SVG.js is piece of cake thanks to the <code>SVG.invent</code> function. For the sake of this example, lets &quot;invent&quot; a shape. We want a <code>rect</code> with rounded corners that are always proportional to the height of the element. The new shape lives in the <code>SVG</code> namespace and is called <code>Rounded</code>. Here is how we achieve that.</p>
+<pre><code class="lang-javascript">SVG.Rounded = SVG.invent({
+  <span class="comment">// Define the type of element that should be created</span>
+  create: <span class="string">'rect'</span>
+
+  <span class="comment">// Specify from which existing class this shape inherits</span>
+, inherit: SVG.Shape
+
+  <span class="comment">// Add custom methods to invented shape</span>
+, extend: {
+    <span class="comment">// Create method to proportionally scale the rounded corners</span>
+    size: <span class="keyword">function</span>(width, height) {
+      <span class="keyword">return</span> <span class="keyword">this</span>.attr({
+        width:  width
+      , height: height
+      , rx:     height / <span class="number">5</span>
+      , ry:     height / <span class="number">5</span>
+      })
+    }
+  }
+
+  <span class="comment">// Add method to parent elements</span>
+, construct: {
+    <span class="comment">// Create a rounded element</span>
+    rounded: <span class="keyword">function</span>(width, height) {
+      <span class="keyword">return</span> <span class="keyword">this</span>.put(<span class="keyword">new</span> SVG.Rounded).size(width, height)
+    }
+
+  }
+})</code></pre>
+<p>To create the element in your drawing:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> rounded = draw.rounded(<span class="number">200</span>, <span class="number">100</span>)</code></pre>
+<p>That&#39;s it, the invention is now ready to be used!</p>
+<h4 id="accepted-values">Accepted values</h4>
+<p>The <code>SVG.invent()</code> function always expectes an object. The object can have the following configuration values:</p>
+<ul>
+<li><code>create</code>: can be either a string with the node name (e.g. <code>rect</code>, <code>ellipse</code>, ...) or a custom initializer function; <code>[required]</code></li>
+<li><code>inherit</code>: the desired SVG.js class to inherit from (e.g. <code>SVG.Shape</code>, <code>SVG.Element</code>, <code>SVG.Container</code>, <code>SVG.Rect</code>, ...); <code>[optional but recommended]</code></li>
+<li><code>extend</code>: an object with the methods that should be applied to the element&#39;s prototype; <code>[optional]</code></li>
+<li><code>construct</code>: an objects with the methods to create the element on the parent element; <code>[optional]</code></li>
+<li><code>parent</code>: an SVG.js parent class on which the methods in the passed <code>construct</code> object should be available; <code>[optional]</code></li>
+</ul>
+<p>Svg.js uses the <code>SVG.invent()</code> function to create all internal elements, so have a look at the source to see how this function is used in various ways.</p>
+<h3 id='extending-functionality/svg-extend' id="svg-extend-">SVG.extend()</h3 id='extending-functionality/svg-extend'>
+<p>Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let&#39;s say we want to add a method to all shape types then we would add our method to SVG.Shape:</p>
+<pre><code class="lang-javascript">SVG.extend(SVG.Shape, {
+  paintRed: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="keyword">this</span>.fill(<span class="string">'red'</span>)
+  }
+})</code></pre>
+<p>Now all shapes will have the paintRed method available. Say we want to have the paintRed method on an ellipse apply a slightly different color:</p>
+<pre><code class="lang-javascript">SVG.extend(SVG.Ellipse, {
+  paintRed: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="keyword">this</span>.fill(<span class="string">'orangered'</span>)
+  }
+})</code></pre>
+<p>The complete inheritance stack for <code>SVG.Ellipse</code> is:</p>
+<p><em><code>SVG.Ellipse</code> &lt; <code>SVG.Shape</code> &lt; <code>SVG.Element</code></em></p>
+<p>The SVG document can be extended by using:</p>
+<pre><code class="lang-javascript">SVG.extend(SVG.Doc, {
+  paintAllPink: <span class="keyword">function</span>() {
+    <span class="keyword">this</span>.each(<span class="keyword">function</span>() {
+      <span class="keyword">this</span>.fill(<span class="string">'pink'</span>)
+    })
+  }
+})</code></pre>
+<p>You can also extend multiple elements at once:</p>
+<pre><code class="lang-javascript">SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
+  paintRed: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="keyword">this</span>.fill(<span class="string">'orangered'</span>)
+  }
+})</code></pre>
+<h2 id='plugins' id="plugins">Plugins</h2 id='plugins'>
+<p>Here are a few nice plugins that are available for SVG.js:</p>
+<h3 id='plugins/absorb' id="absorb">absorb</h3 id='plugins/absorb'>
+<p><a href="https://github.com/wout/svg.absorb.js">svg.absorb.js</a> absorb raw SVG data into a SVG.js instance.</p>
+<h3 id='plugins/draggable' id="draggable">draggable</h3 id='plugins/draggable'>
+<p><a href="https://github.com/wout/svg.draggable.js">svg.draggable.js</a> to make elements draggable.</p>
+<h3 id='plugins/easing' id="easing">easing</h3 id='plugins/easing'>
+<p><a href="https://github.com/wout/svg.easing.js">svg.easing.js</a> for more easing methods on animations.</p>
+<h3 id='plugins/export' id="export">export</h3 id='plugins/export'>
+<p><a href="https://github.com/wout/svg.export.js">svg.export.js</a> export raw SVG.</p>
+<h3 id='plugins/filter' id="filter">filter</h3 id='plugins/filter'>
+<p><a href="https://github.com/wout/svg.filter.js">svg.filter.js</a> adding svg filters to elements.</p>
+<h3 id='plugins/foreignobject' id="foreignobject">foreignobject</h3 id='plugins/foreignobject'>
+<p><a href="https://github.com/john-memloom/svg.foreignobject.js">svg.foreignobject.js</a> foreignObject implementation (by john-memloom).</p>
+<h3 id='plugins/import' id="import">import</h3 id='plugins/import'>
+<p><a href="https://github.com/wout/svg.import.js">svg.import.js</a> import raw SVG data.</p>
+<h3 id='plugins/math' id="math">math</h3 id='plugins/math'>
+<p><a href="https://github.com/otm/svg.math.js">svg.math.js</a> a math extension (by Nils Lagerkvist).</p>
+<h3 id='plugins/path' id="path">path</h3 id='plugins/path'>
+<p><a href="https://github.com/otm/svg.path.js">svg.path.js</a> for manually drawing paths (by Nils Lagerkvist).</p>
+<h3 id='plugins/shapes' id="shapes">shapes</h3 id='plugins/shapes'>
+<p><a href="https://github.com/wout/svg.shapes.js">svg.shapes.js</a> for more polygon based shapes.</p>
+<h3 id='plugins/topath' id="topath">topath</h3 id='plugins/topath'>
+<p><a href="https://github.com/wout/svg.topath.js">svg.topath.js</a> to convert any other shape to a path.</p>
+<h3 id='plugins/wiml' id="wiml">wiml</h3 id='plugins/wiml'>
+<p><a href="https://github.com/wout/svg.wiml.js">svg.wiml.js</a> a templating language for svg output.</p>
+<h2 id='contributing' id="contributing">Contributing</h2 id='contributing'>
+<p>All contributions are very welcome but please make sure you:</p>
+<ul>
+<li>maintain the coding style<ul>
+<li><strong>indentation</strong> of 2 spaces</li>
+<li>no tailing <strong>semicolons</strong></li>
+<li>single <strong>quotes</strong></li>
+<li>use one line <strong>comments</strong> to describe any additions</li>
+<li>look around and you&#39;ll know what to do</li>
+</ul>
+</li>
+<li><strong>write at least one spec example per implementation or modification</strong></li>
+</ul>
+<p>Before running the specs you will need to build the library.
+Be aware that pull requests without specs will be declined.</p>
+<h2 id='building' id="building">Building</h2 id='building'>
+<p>After contributing you probably want to build the library to run some specs. Make sure you have Node.js installed on your system, <code>cd</code> to the svg.js directory and run:</p>
+<pre><code class="lang-sh"><span class="variable">$ </span>npm install</code></pre>
+<p>Build SVG.js by running <code>gulp</code>:</p>
+<pre><code class="lang-sh"><span class="variable">$ </span>gulp</code></pre>
+<p>The resulting files are:</p>
+<ol>
+<li><code>dist/svg.js</code></li>
+<li><code>dist/svg.min.js</code></li>
+</ol>
+<h2 id='compatibility' id="compatibility">Compatibility</h2 id='compatibility'>
+<h3 id='compatibility/desktop' id="desktop">Desktop</h3 id='compatibility/desktop'>
+<ul>
+<li>Firefox 3+</li>
+<li>Chrome 4+</li>
+<li>Safari 3.2+</li>
+<li>Opera 9+</li>
+<li>IE9+</li>
+</ul>
+<h3 id='compatibility/mobile' id="mobile">Mobile</h3 id='compatibility/mobile'>
+<ul>
+<li>iOS Safari 3.2+</li>
+<li>Android Browser 3+</li>
+<li>Opera Mobile 10+</li>
+<li>Chrome for Android 18+</li>
+<li>Firefox for Android 15+</li>
+</ul>
+<p>Visit the <a href="http://svgjs.com/test">SVG.js test page</a> if you want to check compatibility with different browsers.</p>
+<p>Important: this library is still in beta, therefore the API might be subject to change in the course of development.</p>
+<h2 id='acknowledgements-thanks' id="acknowledgements-thanks">Acknowledgements &amp; Thanks</h2 id='acknowledgements-thanks'>
+
+  </div>
+</div>
+</body>
+</html>

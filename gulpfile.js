@@ -6,6 +6,8 @@ var rimraf 	= require('gulp-rimraf')
 var size   	= require('gulp-size')
 var uglify 	= require('gulp-uglify')
 var wrapper	= require('gulp-wrapper')
+var request = require('request')
+var fs 			= require('fs')
 
 var pkg    	= require('./package.json')
 
@@ -123,4 +125,29 @@ gulp.task('minify', ['unify'], function() {
 	}, 1000)
 })
 
+/**
+ ‎* rebuild documentation using documentup
+ */
+
+gulp.task('docs', function() {
+	fs.readFile('README.md', 'utf8', function (err, data) {
+		request.post(
+			'http://documentup.com/compiled'
+		, { form: { content: data, name: 'SVG.js', theme: 'v1' } }
+		, function (error, response, body) {
+				// Replace stylesheet
+				body = body.replace('//documentup.com/stylesheets/themes/v1.css', 'svgjs.css')
+
+				// Write file
+				fs.writeFile('docs/index.html', body, function(err) {})
+			}
+		)
+	})
+})
+
 gulp.task('default', ['clean', 'unify', 'minify'], function() {})
+
+
+
+
+

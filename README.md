@@ -3362,3 +3362,9 @@ The resulting files are:
 Visit the [SVG.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
 
 Important: this library is still in beta, therefore the API might be subject to change in the course of development.
+
+## Acknowledgements & Thanks
+
+Documentation kindly provided by [DocumentUp](http://documentup.com)
+
+SVG.js and this documentation is released under the terms of the MIT license.
