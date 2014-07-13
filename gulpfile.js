@@ -1,15 +1,15 @@
-var gulp   	= require('gulp')
-var concat 	= require('gulp-concat')
-var header 	= require('gulp-header')
-var rename 	= require('gulp-rename')
-var rimraf 	= require('gulp-rimraf')
-var size   	= require('gulp-size')
-var uglify 	= require('gulp-uglify')
-var wrapper	= require('gulp-wrapper')
+var gulp    = require('gulp')
+var concat  = require('gulp-concat')
+var header  = require('gulp-header')
+var rename  = require('gulp-rename')
+var rimraf  = require('gulp-rimraf')
+var size    = require('gulp-size')
+var uglify  = require('gulp-uglify')
+var wrapper = require('gulp-wrapper')
 var request = require('request')
-var fs 			= require('fs')
+var fs      = require('fs')
 
-var pkg    	= require('./package.json')
+var pkg     = require('./package.json')
 
 var headerLong = ['/*!',
  '* <%= pkg.name %> - <%= pkg.description %>',
@@ -27,7 +27,7 @@ var headerShort = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.license %>*/'
 
 // all files in the right order (currently we don't use any dependency management system)
 var parts = [
-	'src/svg.js'
+  'src/svg.js'
 , 'src/inventor.js'
 , 'src/adopter.js'
 , 'src/regex.js'
@@ -86,8 +86,8 @@ var parts = [
 ]
 
 gulp.task('clean', function() {
-	return gulp.src('dist/*', { read: false }) // faster
-		.pipe(rimraf())
+  return gulp.src('dist/*', { read: false }) // faster
+    .pipe(rimraf())
 })
 
 /**
@@ -97,14 +97,14 @@ gulp.task('clean', function() {
  * add the license information to the header plus the build time stamp‏
  */
 gulp.task('unify', ['clean'], function() {
-	pkg.buildDate = Date()
-	gulp.src(parts)
-		.pipe(concat('svg.js', { newLine: '\n' }))
-		//wrap the whole thing in an immediate function call
-		.pipe(wrapper({ header:';(function() {\n', footer: '\n}).call(this);' }))
-		.pipe(header(headerLong, { pkg: pkg }))
-		.pipe(size({ showFiles: true, title: 'Full' }))
-		.pipe(gulp.dest('dist'))
+  pkg.buildDate = Date()
+  gulp.src(parts)
+    .pipe(concat('svg.js', { newLine: '\n' }))
+    //wrap the whole thing in an immediate function call
+    .pipe(wrapper({ header:';(function() {\n', footer: '\n}).call(this);' }))
+    .pipe(header(headerLong, { pkg: pkg }))
+    .pipe(size({ showFiles: true, title: 'Full' }))
+    .pipe(gulp.dest('dist'))
 })
 
 /**
@@ -113,16 +113,16 @@ gulp.task('unify', ['clean'], function() {
  * show the gzipped file size
  */
 gulp.task('minify', ['unify'], function() {
-	// Fugly timeout hack
-	setTimeout(function() {
-		gulp.src('dist/svg.js')
-			.pipe(uglify())
-			.pipe(rename({ suffix:'.min' }))
-			.pipe(size({ showFiles: true, title: 'Minified' }))
-			.pipe(header(headerShort, { pkg: pkg }))
-			.pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
-			.pipe(gulp.dest('dist'))
-	}, 1000)
+  // Fugly timeout hack
+  setTimeout(function() {
+    gulp.src('dist/svg.js')
+      .pipe(uglify())
+      .pipe(rename({ suffix:'.min' }))
+      .pipe(size({ showFiles: true, title: 'Minified' }))
+      .pipe(header(headerShort, { pkg: pkg }))
+      .pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
+      .pipe(gulp.dest('dist'))
+  }, 1000)
 })
 
 /**
@@ -130,19 +130,19 @@ gulp.task('minify', ['unify'], function() {
  */
 
 gulp.task('docs', function() {
-	fs.readFile('README.md', 'utf8', function (err, data) {
-		request.post(
-			'http://documentup.com/compiled'
-		, { form: { content: data, name: 'SVG.js', theme: 'v1' } }
-		, function (error, response, body) {
-				// Replace stylesheet
-				body = body.replace('//documentup.com/stylesheets/themes/v1.css', 'svgjs.css')
+  fs.readFile('README.md', 'utf8', function (err, data) {
+    request.post(
+      'http://documentup.com/compiled'
+    , { form: { content: data, name: 'SVG.js', theme: 'v1' } }
+    , function (error, response, body) {
+        // Replace stylesheet
+        body = body.replace('//documentup.com/stylesheets/themes/v1.css', 'svgjs.css')
 
-				// Write file
-				fs.writeFile('docs/index.html', body, function(err) {})
-			}
-		)
-	})
+        // Write file
+        fs.writeFile('docs/index.html', body, function(err) {})
+      }
+    )
+  })
 })
 
 gulp.task('default', ['clean', 'unify', 'minify'], function() {})
