@@ -30,6 +30,7 @@
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
+- switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf] 
 
 # 1.0.0-rc.9 (17/06/2014)
 

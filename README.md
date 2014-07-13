@@ -3325,46 +3325,22 @@ Be aware that pull requests without specs will be declined.
 
 
 ## Building
-Starting out with the default distribution of SVG.js is good. Although you might want to remove some modules to keep the size at minimum.
-
-You will need ruby, RubyGems, and rake installed on your system.
+After contributing you probably want to build the library to run some specs. Make sure you have Node.js installed on your system, `cd` to the svg.js directory and run:
 
 ``` sh
-# dependencies:
-$ ruby -v
-$ gem -v
-$ rake -V
-
-# required to generate the minified version:
-$ gem install uglifier
+$ npm install
 ```
 
-Build SVG.js by running `rake`:
+Build SVG.js by running `gulp`:
 
 ``` sh
-$ rake
-Original version: 32.165k
-Minified: 14.757k
-Minified and gzipped: 4.413k, compression factor 7.289
+$ gulp
 ```
 
 The resulting files are:
 
-1. `dist/SVG.js`
+1. `dist/svg.js`
 2. `dist/svg.min.js`
-
-To include optional modules and remove default ones, use the `concat` task. In
-this example, 'clip' is removed, but 'group' and 'arrange' are added:
-
-``` sh
-$ rake concat[-clip:group:arrange] dist
-```
-
-To build the base library only including shapes:
-
-``` sh
-rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
-```
 
 
 ## Compatibility
@@ -3374,7 +3350,7 @@ rake concat[-fx:-event:-group:-arrange:-mask:-gradient:-nested:-sugar] dist
 - Chrome 4+
 - Safari 3.2+
 - Opera 9+
-- IE9 +
+- IE9+
 
 ### Mobile
 - iOS Safari 3.2+

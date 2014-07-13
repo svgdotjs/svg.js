@@ -1,37 +1,58 @@
 {
-  "name":         "svg.js"
-, "description":  "A lightweight library for manipulating and animating SVG."
-, "url":          "http://svgjs.com"
-, "homepage":     "http://svgjs.com"
-, "keywords":     ["svg", "vector", "graphics", "animation"]
-, "author":       "Wout Fierens <wout@impinc.co.uk>"
-, "main":         "dist/svg.js"
-, "version":      "1.0.0-rc.10"
-, "jam": {
+  "name": "SVG.js",
+  "version": "1.0.0-rc.10",
+  "description": "A lightweight library for manipulating and animating SVG.",
+  "url": "http://svgjs.com",
+  "homepage": "http://www.svgjs.com",
+  "keywords": [
+    "svg",
+    "vector",
+    "graphics",
+    "animation"
+  ],
+  "author": "Wout Fierens <wout@impinc.co.uk>",
+  "main": "dist/svg.js",
+  "jam": {
     "include": [
-      "dist/svg.js"
-    , "README.md"
-    , "MIT-LICENSE"
+      "dist/svg.js",
+      "README.md",
+      "LICENSE.txt"
     ]
+  },
+  "maintainers": [
+    {
+      "name": "Wout Fierens",
+      "email": "wout@svgjs.com",
+      "web": "http://svgjs.com"
+    },
+    {
+      "name": "Alex Ewerlöf",
+      "email": "alex@userpixel.com",
+      "web": "http://www.ewerlof.name"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wout/svg.js.git"
+  },
+  "github": "https://github.com/wout/svg.js",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.6",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.3.3",
+    "gulp-gzip": "0.0.8",
+    "gulp-header": "^1.0.5",
+    "gulp-rename": "^1.2.0",
+    "gulp-rimraf": "^0.1.0",
+    "gulp-size": "^0.4.0",
+    "gulp-uglify": "^0.3.1",
+    "gulp-wrapper": "^0.1.42"
   }
-, "maintainers": [
-    {
-      "name":     "Wout Fierens"
-    , "email":    "wout@woutfierens.com"
-    , "web":      "http://woutfierens.com"
-    }
-  ]
-, "licenses": [
-    {
-      "type":     "MIT"
-    , "url":      "http://www.opensource.org/licenses/mit-license.php"
-    }
-  ]
-, "repositories": [
-    {
-      "type":     "git"
-    , "url":      "https://github.com/wout/svg.js.git"
-    }
-  ]
-, "github":       "https://github.com/wout/svg.js"
 }
