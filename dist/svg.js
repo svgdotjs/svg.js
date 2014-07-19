@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 13 2014 10:29:52 GMT+0200 (CEST)
+* BUILT: Sat Jul 19 2014 08:38:53 GMT+0200 (CEST)
 */
 ;(function() {
 
@@ -2256,11 +2256,11 @@ SVG.G = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      return x == null ? this.transform('x') : this.transform({ x: x })
+      return x == null ? this.transform('x') : this.transform({ x: -this.x() + x })
     }
     // Move over y-axis
   , y: function(y) {
-      return y == null ? this.transform('y') : this.transform({ y: y })
+      return y == null ? this.transform('y') : this.transform({ y: -this.y() + y })
     }
     // Move by center over x-axis
   , cx: function(x) {

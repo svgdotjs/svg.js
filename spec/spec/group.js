@@ -19,6 +19,11 @@ describe('Group', function() {
       var box = group.bbox()
       expect(box.x).toBe(123)
     })
+    it('sets the value of x correctly when called multiple times', function() {
+      group.x(10).x(100).x(13)
+      var box = group.bbox()
+      expect(box.x).toBe(13)
+    })
   })
   
   describe('y()', function() {
@@ -29,6 +34,11 @@ describe('Group', function() {
       group.y(345)
       var box = group.bbox()
       expect(box.y).toBe(345)
+    })
+    it('sets the value of y correctly when called multiple times', function() {
+      group.y(1).y(10).y(15)
+      var box = group.bbox()
+      expect(box.y).toBe(15)
     })
   })
   
@@ -57,7 +67,7 @@ describe('Group', function() {
   describe('move()', function() {
     it('sets the x and y position', function() {
       group.move(123,456)
-      expect(group.node.getAttribute('transform')).toBe('translate(123 456)')
+      expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,123,456)')
     })
   })
   
@@ -74,7 +84,7 @@ describe('Group', function() {
     it('moves the x positon of the element relative to the current position', function() {
       group.move(50,60)
       group.dx(100)
-      expect(group.node.getAttribute('transform')).toBe('translate(150 60)')
+      expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,150,60)')
     })
   })
 
@@ -82,7 +92,7 @@ describe('Group', function() {
     it('moves the y positon of the element relative to the current position', function() {
       group.move(50,60)
       group.dy(120)
-      expect(group.node.getAttribute('transform')).toBe('translate(50 180)')
+      expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,50,180)')
     })
   })
 
@@ -90,7 +100,7 @@ describe('Group', function() {
     it('moves the x and y positon of the element relative to the current position', function() {
       group.move(50, 60)
       group.dmove(80, 25)
-      expect(group.node.getAttribute('transform')).toBe('translate(130 85)')
+      expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,130,85)')
     })
   })
   
