@@ -1,27 +1,26 @@
 var gulp    = require('gulp')
-var concat  = require('gulp-concat')
-var header  = require('gulp-header')
-var rename  = require('gulp-rename')
-var rimraf  = require('gulp-rimraf')
-var size    = require('gulp-size')
-var uglify  = require('gulp-uglify')
-var wrapper = require('gulp-wrapper')
-var request = require('request')
-var fs      = require('fs')
+  , concat  = require('gulp-concat')
+  , header  = require('gulp-header')
+  , rename  = require('gulp-rename')
+  , rimraf  = require('gulp-rimraf')
+  , size    = require('gulp-size')
+  , uglify  = require('gulp-uglify')
+  , wrapper = require('gulp-wrapper')
+  , request = require('request')
+  , fs      = require('fs')
+  , pkg     = require('./package.json')
 
-var pkg     = require('./package.json')
-
-var headerLong = ['/*!',
- '* <%= pkg.name %> - <%= pkg.description %>',
- '* @version <%= pkg.version %>',
- '* <%= pkg.homepage %>',
- '*',
- '* @copyright <%= pkg.author %>',
- '* @license <%= pkg.license %>',
- '*',
- '* BUILT: <%= pkg.buildDate %>',
- '*/',
- ''].join('\n')
+var headerLong = ['/*!'
+  , '* <%= pkg.name %> - <%= pkg.description %>'
+  , '* @version <%= pkg.version %>'
+  , '* <%= pkg.homepage %>'
+  , '*'
+  , '* @copyright <%= pkg.author %>'
+  , '* @license <%= pkg.license %>'
+  , '*'
+  , '* BUILT: <%= pkg.buildDate %>'
+  , '*/'
+  , ''].join('\n')
 
 var headerShort = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.license %>*/'
 
@@ -98,13 +97,13 @@ gulp.task('clean', function() {
  */
 gulp.task('unify', ['clean'], function() {
   pkg.buildDate = Date()
-  gulp.src(parts)
+  return gulp.src(parts)
     .pipe(concat('svg.js', { newLine: '\n' }))
-    //wrap the whole thing in an immediate function call
+    // wrap the whole thing in an immediate function call
     .pipe(wrapper({ header:';(function() {\n', footer: '\n}).call(this);' }))
     .pipe(header(headerLong, { pkg: pkg }))
-    .pipe(size({ showFiles: true, title: 'Full' }))
     .pipe(gulp.dest('dist'))
+    .pipe(size({ showFiles: true, title: 'Full' }))
 })
 
 /**
@@ -113,16 +112,13 @@ gulp.task('unify', ['clean'], function() {
  * show the gzipped file size
  */
 gulp.task('minify', ['unify'], function() {
-  // Fugly timeout hack
-  setTimeout(function() {
-    gulp.src('dist/svg.js')
-      .pipe(uglify())
-      .pipe(rename({ suffix:'.min' }))
-      .pipe(size({ showFiles: true, title: 'Minified' }))
-      .pipe(header(headerShort, { pkg: pkg }))
-      .pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
-      .pipe(gulp.dest('dist'))
-  }, 1000)
+  return gulp.src('dist/svg.js')
+    .pipe(uglify())
+    .pipe(rename({ suffix:'.min' }))
+    .pipe(size({ showFiles: true, title: 'Minified' }))
+    .pipe(header(headerShort, { pkg: pkg }))
+    .pipe(gulp.dest('dist'))
+    .pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
 })
 
 /**

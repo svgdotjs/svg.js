@@ -55,8 +55,7 @@ SVG.BBox = SVG.invent({
 SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var e, zoom
-      , box = {}
+    var box = {}
 
     // Initialize zero box
     this.x      = 0
@@ -65,8 +64,8 @@ SVG.RBox = SVG.invent({
     this.height = 0
     
     if (element) {
-      e = element.doc().parent()
-      zoom = element.doc().viewbox().zoom
+      var e = element.doc().parent()
+        , zoom = 1
       
       // Actual, native bounding box
       box = element.node.getBoundingClientRect()
@@ -96,8 +95,8 @@ SVG.RBox = SVG.invent({
     }
     
     // Recalculate viewbox distortion
-    this.x /= zoom
-    this.y /= zoom
+    // this.x /= zoom
+    // this.y /= zoom
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     

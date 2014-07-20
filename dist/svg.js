@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Jul 19 2014 08:38:53 GMT+0200 (CEST)
+* BUILT: Sun Jul 20 2014 09:19:22 GMT+0200 (CEST)
 */
 ;(function() {
 
@@ -1154,8 +1154,7 @@ SVG.BBox = SVG.invent({
 SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var e, zoom
-      , box = {}
+    var box = {}
 
     // Initialize zero box
     this.x      = 0
@@ -1164,8 +1163,8 @@ SVG.RBox = SVG.invent({
     this.height = 0
     
     if (element) {
-      e = element.doc().parent()
-      zoom = element.doc().viewbox().zoom
+      var e = element.doc().parent()
+        , zoom = 1
       
       // Actual, native bounding box
       box = element.node.getBoundingClientRect()
@@ -1195,8 +1194,8 @@ SVG.RBox = SVG.invent({
     }
     
     // Recalculate viewbox distortion
-    this.x /= zoom
-    this.y /= zoom
+    // this.x /= zoom
+    // this.y /= zoom
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     
