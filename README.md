@@ -785,7 +785,6 @@ _Javascript inheritance stack: `SVG.Use` < `SVG.Shape` < `SVG.Element`_
 ## Symbol
 Not unlike the `group` element, the `symbol` element is a container element. The only difference between symbols and groups is that symbols are not rendered. Therefore a `symbol` element is ideal in combination with the `use` element:
 
-
 ```javascript
 var symbol = draw.symbol()
 symbol.rect(100, 100).fill('#f09')
@@ -795,7 +794,7 @@ var use  = draw.use(symbol).move(200, 200)
 
 __`returns`: `SVG.Symbol`__
 
-_Javascript inheritance stack: `SVG.Use` < `SVG.Container` < `SVG.Symbol`_
+_Javascript inheritance stack: `SVG.Symbol` < `SVG.Container` < `SVG.Element`_
 
 
 ## Referencing elements

@@ -1,6 +1,8 @@
 # 1.0.0 (?/?/2014)
 
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
+- added `rotate()` method to linear gradients -> __TODO!__
+- added `'random'` option to `SVG.Color` -> __TODO!__
 
 # 1.0.0-rc.10 (?/07/2014)
 
@@ -30,7 +32,7 @@
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
-- switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf] 
+- switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf]
 
 # 1.0.0-rc.9 (17/06/2014)
 

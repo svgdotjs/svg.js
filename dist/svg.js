@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 20 2014 09:19:22 GMT+0200 (CEST)
+* BUILT: Tue Jul 22 2014 13:34:24 GMT+0200 (CEST)
 */
 ;(function() {
 
@@ -242,29 +242,6 @@ SVG.defaults = {
   , 'font-size':        16
   , 'font-family':      'Helvetica, Arial, sans-serif'
   , 'text-anchor':      'start'
-  }
-
-  // Transforms
-, trans: {
-  /* translate */
-    x:        0
-  , y:        0
-    /* scale */
-  , scaleX:   1
-  , scaleY:   1
-    /* rotate */
-  , rotation: 0
-    /* skew */
-  , skewX:    0
-  , skewY:    0
-    /* matrix */
-  , matrix:   this.matrix
-  , a:        1
-  , b:        0
-  , c:        0
-  , d:        1
-  , e:        0
-  , f:        0
   }
   
 }

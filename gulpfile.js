@@ -27,7 +27,6 @@ var headerShort = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.license %>*/'
 // all files in the right order (currently we don't use any dependency management system)
 var parts = [
   'src/svg.js'
-, 'src/inventor.js'
 , 'src/adopter.js'
 , 'src/regex.js'
 , 'src/utilities.js'
