@@ -37,25 +37,55 @@ describe('Matrix', function() {
 					expect(extract.scaleX).toBe(1)
 					expect(extract.scaleY).toBe(1)
 				})
-				it('parses rotaton value', function() {
+				it('parses rotatoin value', function() {
 					expect(extract.rotation).toBe(0)
 				})
 			})
 		})
 
 		describe('with an element given', function() {
-			
+			var rect
+
 			beforeEach(function() {
-				matrix = new SVG.Matrix(draw.rect(100, 100).skew(10, 20).translate(40, 50).scale(3, 2))
+				rect = draw.rect(100, 100)
+				matrix = new SVG.Matrix(rect)
 			})
 
 			it('parses the current transform matrix form an element', function() {
-				expect(matrix.a).toBe(3.192533254623413)
-				expect(matrix.b).toBe(1.091910719871521)
-				expect(matrix.c).toBe(0.35265403985977173)
-				expect(matrix.d).toBe(2)
-				expect(matrix.e).toBe(51.383460998535156)
-				expect(matrix.f).toBe(64.55880737304688)
+				rect.rotate(-10).translate(40, 50).scale(2)
+				expect(matrix.a).toBe(1.9696155786514282)
+				expect(matrix.b).toBe(-0.3472963869571686)
+				expect(matrix.c).toBe(0.3472963869571686)
+				expect(matrix.d).toBe(1.9696155786514282)
+				expect(matrix.e).toBe(-8.373950958251953)
+				expect(matrix.f).toBe(7.758301258087158)
+			})
+
+			describe('extract()', function() {
+
+				it('parses translation values', function() {
+					var extract = new SVG.Matrix(draw.rect(100, 100).translate(40, 50)).extract()
+					expect(extract.x).toBe(40)
+					expect(extract.y).toBe(50)
+				})
+				it('parses skewX value', function() {
+					var extract = new SVG.Matrix(draw.rect(100, 100).skew(10, 0)).extract()
+					expect(approximately(extract.skewX, 0.01)).toBe(10)
+				})
+				it('parses skewX value', function() {
+					var extract = new SVG.Matrix(draw.rect(100, 100).skew(0, 20)).extract()
+					expect(approximately(extract.skewY, 0.01)).toBe(20)
+				})
+				it('parses scale values', function() {
+					var extract = new SVG.Matrix(draw.rect(100, 100).scale(2, 3)).extract()
+					expect(extract.scaleX).toBe(2)
+					expect(extract.scaleY).toBe(3)
+				})
+				it('parses rotatoin value', function() {
+					var extract = new SVG.Matrix(draw.rect(100, 100).rotate(-100)).extract()
+					expect(approximately(extract.rotation, 0.01)).toBe(-100)
+				})
+
 			})
 			
 		})

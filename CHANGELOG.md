@@ -2,7 +2,8 @@
 
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `rotate()` method to linear gradients -> __TODO!__
-- added `'random'` option to `SVG.Color` -> __TODO!__
+- added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
+- added `SVG.Title` and `SVG.Desc` -> __TODO!__
 
 # 1.0.0-rc.10 (?/07/2014)
 
@@ -28,11 +29,11 @@
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method -> __TODO!__
 - moved sup-pixel offset fix to a separate plugin -> __TODO!__
-- added `SVG.Title` and `SVG.Desc` -> __TODO!__
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf]
+- added coding style description to README
 
 # 1.0.0-rc.9 (17/06/2014)
 

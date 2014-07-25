@@ -3309,18 +3309,94 @@ Here are a few nice plugins that are available for SVG.js:
 
 
 ## Contributing
-All contributions are very welcome but please make sure you:
+All contributions are very welcome but please make sure you follow the same coding style. Here are some guidelines.
 
-- maintain the coding style
-  - __indentation__ of 2 spaces
-  - no tailing __semicolons__
-  - single __quotes__
-  - use one line __comments__ to describe any additions
-  - look around and you'll know what to do
-- __write at least one spec example per implementation or modification__
+### Indentation
+We do it with __two spaces__. Make sure you don't start using tabs becaus then things get messy.
 
-Before running the specs you will need to build the library.
-Be aware that pull requests without specs will be declined.
+### Avoid hairy code
+We like to keep things simple and clean, don't write anything you don't need. So use __single quotes__ where possible and __avoid semicolons__, we're not writing PHP here.
+
+__Good__:
+```javascript
+var text = draw.text('with single quotes here')
+  , nest = draw.nested().attr('x', '50%')
+
+for (var i = 0; i < 5; i++)
+  if (i != 3)
+    nest.circle(i * 100)
+```
+
+__Bad__:
+```javascript
+var text = draw.text("with single quotes here");
+var nest = draw.nested().attr("x", "50%");
+
+for (var i = 0; i < 5; i++) {
+  if (i != 3) {
+    nest.circle(100);
+  };
+};
+```
+
+### Let your code breathe people!
+Don't try to be a code compressor yourself, they do way better a job anyway. Give your code some spaces and newlines.
+
+__Good__:
+```javascript
+var nest = draw.nested().attr({
+  x:      10
+, y:      20
+, width:  200
+, height: 300
+})
+
+for (var i = 0; i < 5; i++)
+  nest.circle(100)
+```
+
+__Bad__:
+```javascript
+var nest=draw.nested().attr({x:10,y:20,width:200,height:300});
+for(var i=0;i<5;i++)nest.circle(100);
+```
+
+### It won't hurt to add a few comments
+Where necessary tell us what you are doing but be concise. We only use single-line comments. Also keep your variable and method names short while maintaining readability.
+
+__Good__:
+```javascript
+// Adds orange-specific methods
+SVG.extend(SVG.Rect, {
+  // Add a nice, transparent orange
+  orangify: function() {
+    // fill with orange color
+    this.fill('orange')
+
+    // add a slight opacity
+    return this.opacity(0.85)
+  }
+})
+```
+
+__Bad__:
+```javascript
+/*
+ *
+ * does something with orange and opacity
+ *
+ */
+SVG.extend(SVG.Rect, {
+  orgf: function() {
+    return this.fill('orange').opacity(0.85)
+  }
+})
+```
+
+### Test. Your. Code.
+It's not that hard to write at least one example per implementation although we prefer more. Your code might seem to work by quickly testing it in your brwoser but more than often you can't forsee everything.
+
+Before running the specs you will need to build the library. Be aware that pull requests without specs will be declined.
 
 
 ## Building

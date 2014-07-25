@@ -28,12 +28,10 @@ function compToHex(comp) {
 
 // Calculate proportional width and height values when necessary
 function proportionalSize(box, width, height) {
-	if (width == null || height == null) {
-		if (height == null)
-			height = box.height / box.width * width
-		else if (width == null)
-			width = box.width / box.height * height
-	}
+	if (height == null)
+		height = box.height / box.width * width
+	else if (width == null)
+		width = box.width / box.height * height
 	
 	return {
 		width:  width

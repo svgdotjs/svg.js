@@ -1,4 +1,3 @@
-
 SVG.Text = SVG.invent({
   // Initialize node
   create: function() {

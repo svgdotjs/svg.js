@@ -2,6 +2,7 @@
 public
 site/
 bleed/
+docs/
 obsolete/
 test/
 src/index.js

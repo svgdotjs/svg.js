@@ -1,4 +1,3 @@
-
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
@@ -16,6 +15,15 @@ SVG.ns    = 'http://www.w3.org/2000/svg'
 SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
 
+// Svg support test
+SVG.supported = (function() {
+  return !! document.createElementNS &&
+         !! document.createElementNS(SVG.ns,'svg').createSVGRect
+})()
+
+// Don't bother to continue if SVG is not supported 
+if (!SVG.supported) return false
+
 // Element id sequence
 SVG.did  = 1000
 
@@ -26,10 +34,10 @@ SVG.eid = function(name) {
 
 // Method for element creation
 SVG.create = function(name) {
-  /* create element */
+  // Create element
   var element = document.createElementNS(this.ns, name)
   
-  /* apply unique id */
+  // Apply unique id
   element.setAttribute('id', this.eid(name))
   
   return element
@@ -39,10 +47,10 @@ SVG.create = function(name) {
 SVG.extend = function() {
   var modules, methods, key, i
   
-  /* get list of modules */
+  // Get list of modules
   modules = [].slice.call(arguments)
   
-  /* get object with extensions */
+  // Get object with extensions
   methods = modules.pop()
   
   for (i = modules.length - 1; i >= 0; i--)
@@ -50,46 +58,78 @@ SVG.extend = function() {
       for (key in methods)
         modules[i].prototype[key] = methods[key]
 
-  /* make sure SVG.Set inherits any newly added methods */
+  // Make sure SVG.Set inherits any newly added methods
   if (SVG.Set && SVG.Set.inherit)
     SVG.Set.inherit()
 }
 
 // Invent new element
 SVG.invent = function(config) {
-  /* create element initializer */
+  // Create element initializer
   var initializer = typeof config.create == 'function' ?
     config.create :
     function() {
       this.constructor.call(this, SVG.create(config.create))
     }
 
-  /* inherit prototype */
+  // Inherit prototype
   if (config.inherit)
     initializer.prototype = new config.inherit
 
-  /* extend with methods */
+  // Extend with methods
   if (config.extend)
     SVG.extend(initializer, config.extend)
 
-  /* attach construct method to parent */
+  // Attach construct method to parent
   if (config.construct)
     SVG.extend(config.parent || SVG.Container, config.construct)
 
   return initializer
 }
 
+// Adopt existing svg elements
+SVG.adopt = function(node) {
+  // Make sure a node isn't already adopted
+  if (node.instance) return node.instance
+
+  // Initialize variables
+  var element
+
+  // Adopt with element-specific settings
+  if (node.nodeName == 'svg')
+    element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
+  else if (node.nodeName == 'lineairGradient')
+    element = new SVG.Gradient('lineair')
+  else if (node.nodeName == 'radialGradient')
+    element = new SVG.Gradient('radial')
+  else if (SVG[capitalize(node.nodeName)])
+    element = new SVG[capitalize(node.nodeName)]
+  else
+    element = new SVG.Element(node)
+
+  // Ensure references
+  element.type  = node.nodeName
+  element.node  = node
+  node.instance = element
+
+  // SVG.Class specific preparations
+  if (element instanceof SVG.Doc)
+    element.namespace().defs()
+
+  return element
+}
+
 // Initialize parsing element
 SVG.prepare = function(element) {
-  /* select document body and create invisible svg element */
+  // Select document body and create invisible svg element
   var body = document.getElementsByTagName('body')[0]
     , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
     , path = SVG.create('path')
 
-  /* insert parsers */
+  // Insert parsers
   draw.node.appendChild(path)
 
-  /* create parser object */
+  // Create parser object
   SVG.parser = {
     body: body || element.parent()
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
@@ -97,11 +137,3 @@ SVG.prepare = function(element) {
   , path: path
   }
 }
-
-// svg support test
-SVG.supported = (function() {
-  return !! document.createElementNS &&
-         !! document.createElementNS(SVG.ns,'svg').createSVGRect
-})()
-
-if (!SVG.supported) return false

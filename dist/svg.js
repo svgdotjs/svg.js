@@ -6,10 +6,9 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Jul 22 2014 13:34:24 GMT+0200 (CEST)
+* BUILT: Fri Jul 25 2014 11:10:49 GMT+0200 (CEST)
 */
 ;(function() {
-
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
@@ -27,6 +26,15 @@ SVG.ns    = 'http://www.w3.org/2000/svg'
 SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
 
+// Svg support test
+SVG.supported = (function() {
+  return !! document.createElementNS &&
+         !! document.createElementNS(SVG.ns,'svg').createSVGRect
+})()
+
+// Don't bother to continue if SVG is not supported 
+if (!SVG.supported) return false
+
 // Element id sequence
 SVG.did  = 1000
 
@@ -37,10 +45,10 @@ SVG.eid = function(name) {
 
 // Method for element creation
 SVG.create = function(name) {
-  /* create element */
+  // Create element
   var element = document.createElementNS(this.ns, name)
   
-  /* apply unique id */
+  // Apply unique id
   element.setAttribute('id', this.eid(name))
   
   return element
@@ -50,10 +58,10 @@ SVG.create = function(name) {
 SVG.extend = function() {
   var modules, methods, key, i
   
-  /* get list of modules */
+  // Get list of modules
   modules = [].slice.call(arguments)
   
-  /* get object with extensions */
+  // Get object with extensions
   methods = modules.pop()
   
   for (i = modules.length - 1; i >= 0; i--)
@@ -61,61 +69,35 @@ SVG.extend = function() {
       for (key in methods)
         modules[i].prototype[key] = methods[key]
 
-  /* make sure SVG.Set inherits any newly added methods */
+  // Make sure SVG.Set inherits any newly added methods
   if (SVG.Set && SVG.Set.inherit)
     SVG.Set.inherit()
 }
 
-// Initialize parsing element
-SVG.prepare = function(element) {
-  /* select document body and create invisible svg element */
-  var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
-    , path = SVG.create('path')
-
-  /* insert parsers */
-  draw.node.appendChild(path)
-
-  /* create parser object */
-  SVG.parser = {
-    body: body || element.parent()
-  , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
-  , poly: draw.polyline().node
-  , path: path
-  }
-}
-
-// svg support test
-SVG.supported = (function() {
-  return !! document.createElementNS &&
-         !! document.createElementNS(SVG.ns,'svg').createSVGRect
-})()
-
-if (!SVG.supported) return false
-
 // Invent new element
 SVG.invent = function(config) {
-	/* create element initializer */
-	var initializer = typeof config.create == 'function' ?
-		config.create :
-		function() {
-			this.constructor.call(this, SVG.create(config.create))
-		}
+  // Create element initializer
+  var initializer = typeof config.create == 'function' ?
+    config.create :
+    function() {
+      this.constructor.call(this, SVG.create(config.create))
+    }
 
-	/* inherit prototype */
-	if (config.inherit)
-		initializer.prototype = new config.inherit
+  // Inherit prototype
+  if (config.inherit)
+    initializer.prototype = new config.inherit
 
-	/* extend with methods */
-	if (config.extend)
-		SVG.extend(initializer, config.extend)
+  // Extend with methods
+  if (config.extend)
+    SVG.extend(initializer, config.extend)
 
-	/* attach construct method to parent */
-	if (config.construct)
-		SVG.extend(config.parent || SVG.Container, config.construct)
+  // Attach construct method to parent
+  if (config.construct)
+    SVG.extend(config.parent || SVG.Container, config.construct)
 
-	return initializer
+  return initializer
 }
+
 // Adopt existing svg elements
 SVG.adopt = function(node) {
   // Make sure a node isn't already adopted
@@ -147,43 +129,59 @@ SVG.adopt = function(node) {
 
   return element
 }
+
+// Initialize parsing element
+SVG.prepare = function(element) {
+  // Select document body and create invisible svg element
+  var body = document.getElementsByTagName('body')[0]
+    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
+    , path = SVG.create('path')
+
+  // Insert parsers
+  draw.node.appendChild(path)
+
+  // Create parser object
+  SVG.parser = {
+    body: body || element.parent()
+  , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
+  , poly: draw.polyline().node
+  , path: path
+  }
+}
 // Storage for regular expressions
 SVG.regex = {
-  /* parse unit value */
+  // Parse unit value
   unit:             /^(-?[\d\.]+)([a-z%]{0,2})$/
   
-  /* parse hex value */
+  // Parse hex value
 , hex:              /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
   
-  /* parse rgb value */
+  // Parse rgb value
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
   
-  /* parse reference id */
+  // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
 
-  /* test hex value */
+  // Test hex value
 , isHex:            /^#[a-f0-9]{3,6}$/i
   
-  /* test rgb value */
+  // Test rgb value
 , isRgb:            /^rgb\(/
   
-  /* test css declaration */
+  // Test css declaration
 , isCss:            /[^:]+:[^;]+;?/
   
-  /* test for blank string */
+  // Test for blank string
 , isBlank:          /^(\s+)?$/
   
-  /* test for numeric string */
+  // Test for numeric string
 , isNumber:         /^-?[\d\.]+$/
 
-  /* test for percent value */
+  // Test for percent value
 , isPercent:        /^-?[\d\.]+%$/
 
-  /* test for image url */
-, isImage:          /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
-  
-  /* test for namespaced event */
-, isEvent:          /^[\w]+:[\w]+$/
+  // Test for image url
+, isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
 
 }
 SVG.utils = {
@@ -729,105 +727,107 @@ SVG.extend(SVG.PathArray, {
 
 })
 // Module for unit convertions
-SVG.Number = function(value) {
+SVG.Number = SVG.invent({
+  // Initialize
+  create: function(value) {
+    // Initialize defaults
+    this.value = 0
+    this.unit = ''
 
-  /* initialize defaults */
-  this.value = 0
-  this.unit = ''
+    // Parse value
+    if (typeof value === 'number') {
+      // Ensure a valid numeric value
+      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
-  /* parse value */
-  if (typeof value === 'number') {
-    /* ensure a valid numeric value */
-    this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
+    } else if (typeof value === 'string') {
+      var match = value.match(SVG.regex.unit)
 
-  } else if (typeof value === 'string') {
-    var match = value.match(SVG.regex.unit)
+      if (match) {
+        // Make value numeric
+        this.value = parseFloat(match[1])
+      
+        // Normalize
+        if (match[2] == '%')
+          this.value /= 100
+        else if (match[2] == 's')
+          this.value *= 1000
+      
+        // Store unit
+        this.unit = match[2]
+      }
 
-    if (match) {
-      /* make value numeric */
-      this.value = parseFloat(match[1])
-    
-      /* normalize percent value */
-      if (match[2] == '%')
-        this.value /= 100
-      else if (match[2] == 's')
-        this.value *= 1000
-    
-      /* store unit */
-      this.unit = match[2]
+    } else {
+      if (value instanceof SVG.Number) {
+        this.value = value.value
+        this.unit  = value.unit
+      }
     }
 
-  } else {
-    if (value instanceof SVG.Number) {
-      this.value = value.value
-      this.unit  = value.unit
+  }
+  // Add methods
+, extend: {
+    // Stringalize
+    toString: function() {
+      return (
+        this.unit == '%' ?
+          ~~(this.value * 1e8) / 1e6:
+        this.unit == 's' ?
+          this.value / 1e3 :
+          this.value
+      ) + this.unit
     }
-  }
+  , // Convert to primitive
+    valueOf: function() {
+      return this.value
+    }
+    // Add number
+  , plus: function(number) {
+      this.value = this + new SVG.Number(number)
 
-}
+      return this
+    }
+    // Subtract number
+  , minus: function(number) {
+      return this.plus(-new SVG.Number(number))
+    }
+    // Multiply number
+  , times: function(number) {
+      this.value = this * new SVG.Number(number)
 
-SVG.extend(SVG.Number, {
-  // Stringalize
-  toString: function() {
-    return (
-      this.unit == '%' ?
-        ~~(this.value * 1e8) / 1e6:
-      this.unit == 's' ?
-        this.value / 1e3 :
-        this.value
-    ) + this.unit
-  }
-, // Convert to primitive
-  valueOf: function() {
-    return this.value
-  }
-  // Add number
-, plus: function(number) {
-    this.value = this + new SVG.Number(number)
+      return this
+    }
+    // Divide number
+  , divide: function(number) {
+      this.value = this / new SVG.Number(number)
 
-    return this
-  }
-  // Subtract number
-, minus: function(number) {
-    return this.plus(-new SVG.Number(number))
-  }
-  // Multiply number
-, times: function(number) {
-    this.value = this * new SVG.Number(number)
+      return this
+    }
+    // Convert to different unit
+  , to: function(unit) {
+      if (typeof unit === 'string')
+        this.unit = unit
 
-    return this
-  }
-  // Divide number
-, divide: function(number) {
-    this.value = this / new SVG.Number(number)
+      return this
+    }
+    // Make number morphable
+  , morph: function(number) {
+      this.destination = new SVG.Number(number)
 
-    return this
-  }
-  // Convert to different unit
-, to: function(unit) {
-    if (typeof unit === 'string')
-      this.unit = unit
+      return this
+    }
+    // Get morphed number at given position
+  , at: function(pos) {
+      // Make sure a destination is defined
+      if (!this.destination) return this
 
-    return this
-  }
-  // Make number morphable
-, morph: function(number) {
-    this.destination = new SVG.Number(number)
+      // Generate new morphed number
+      return new SVG.Number(this.destination)
+          .minus(this)
+          .times(pos)
+          .plus(this)
+    }
 
-    return this
   }
-  // Get morphed number at given position
-, at: function(pos) {
-    /* make sure a destination is defined */
-    if (!this.destination) return this
-
-    /* generate new morphed number */
-    return new SVG.Number(this.destination)
-        .minus(this)
-        .times(pos)
-        .plus(this)
-  }
-
 })
 
 SVG.ViewBox = function(element) {
@@ -2742,10 +2742,10 @@ SVG.Use = SVG.invent({
 , extend: {
     // Use element as a reference
     element: function(element) {
-      /* store target element */
+      // Store target element
       this.target = element
 
-      /* set lined element */
+      // Set lined element
       return this.attr('href', '#' + element, SVG.xlink)
     }
   }
@@ -3099,7 +3099,6 @@ SVG.Image = SVG.invent({
   }
 
 })
-
 SVG.Text = SVG.invent({
   // Initialize node
   create: function() {
@@ -3880,12 +3879,10 @@ function compToHex(comp) {
 
 // Calculate proportional width and height values when necessary
 function proportionalSize(box, width, height) {
-	if (width == null || height == null) {
-		if (height == null)
-			height = box.height / box.width * width
-		else if (width == null)
-			width = box.width / box.height * height
-	}
+	if (height == null)
+		height = box.height / box.width * width
+	else if (width == null)
+		width = box.width / box.height * height
 	
 	return {
 		width:  width

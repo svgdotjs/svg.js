@@ -9,10 +9,10 @@ SVG.Use = SVG.invent({
 , extend: {
     // Use element as a reference
     element: function(element) {
-      /* store target element */
+      // Store target element
       this.target = element
 
-      /* set lined element */
+      // Set lined element
       return this.attr('href', '#' + element, SVG.xlink)
     }
   }

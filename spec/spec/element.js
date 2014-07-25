@@ -151,38 +151,59 @@ describe('Element', function() {
   })
   
   describe('transform()', function() {
+    var rect
+    
+    beforeEach(function() {
+      rect = draw.rect(100,100)
+    })
+    
     it('gets the current transformations', function() {
-      var rect = draw.rect(100,100)
       expect(rect.transform()).toEqual(new SVG.Matrix(rect).extract())
     })
     it('sets the translation of and element', function() {
-      var rect = draw.rect(100,100).transform({ x: 10, y: 11 })
+      rect.transform({ x: 10, y: 11 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,10,11)')
     })
     it('sets the scaleX and scaleY of and element', function() {
-      var rect = draw.rect(100,100).transform({ scaleX: 0.5, scaleY: 2 })
+      rect.transform({ scaleX: 0.5, scaleY: 2 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,0,0)')
     })
     it('sets the skewX of and element', function() {
-      var rect = draw.rect(100,100).transform({ skewX: 10 })
+      rect.transform({ skewX: 10 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0.17632698070846498,1,0,0)')
     })
     it('sets the skewY of and element', function() {
-      var rect = draw.rect(100,100).transform({ skewY: -10 })
+      rect.transform({ skewY: -10 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,-0.17632698070846498,0,1,0,0)')
     })
     it('rotates the element around its centre if no rotation point is given', function() {
-      var rect = draw.rect(100,100).center(150,150).transform({ rotation: 45 })
+      rect.center(150,150).transform({ rotation: 45 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.7071067811865475,0.7071067811865475,-0.7071067811865475,0.7071067811865475,150,-62.13203435596424)')
       expect(rect.transform('rotation')).toBe(45)
     })
     it('rotates the element around the given rotation point', function() {
-      var rect = draw.rect(100,100).transform({ rotation: 55, cx: 80, cy:2 })
+      rect.transform({ rotation: 55, cx: 80, cy:2 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.573576436351046,0.8191520442889917,-0.8191520442889917,0.573576436351046,35.7521891804943,-64.67931641582143)')
     })
     it('transforms element using a matrix', function() {
-      var rect = draw.rect(100,100).transform({ a: 0.5, c: 0.5 })
+      rect.transform({ a: 0.5, c: 0.5 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,0,0)')
+    })
+  })
+
+  describe('ctm()', function() {
+    var rect
+    
+    beforeEach(function() {
+      rect = draw.rect(100,100)
+    })
+    
+    it('gets the current transform matrix of the element', function() {
+      rect.translate(10, 20)
+      expect(rect.ctm().toString()).toBe('matrix(1,0,0,1,10,20)')
+    })
+    it('returns an instance of SVG.Matrix', function() {
+      expect(rect.ctm() instanceof SVG.Matrix).toBeTruthy()
     })
   })
   
