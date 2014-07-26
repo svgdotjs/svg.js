@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Jul 26 2014 21:51:10 GMT+0200 (CEST)
+* BUILT: Sat Jul 26 2014 22:10:03 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -1229,7 +1229,7 @@ SVG.Matrix = SVG.invent({
   create: function(source) {
     var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
-    // Ensure source as object
+    // ensure source as object
     source = source && source.node && source.node.getCTM ?
       source.node.getCTM() :
     typeof source === 'string' ?
@@ -1239,7 +1239,7 @@ SVG.Matrix = SVG.invent({
     typeof source === 'object' ?
       source : base
 
-    // Merge source
+    // merge source
     for (i = abcdef.length - 1; i >= 0; i--)
       this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
@@ -1250,7 +1250,7 @@ SVG.Matrix = SVG.invent({
 , extend: {
     // Extract individual transformations
     extract: function() {
-      // find transform points
+      // find delta transform points
       var px    = deltaTransformPoint(this, 0, 1)
         , py    = deltaTransformPoint(this, 1, 0)
         , skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
@@ -1316,11 +1316,11 @@ SVG.Matrix = SVG.invent({
   , inverse: function() {
       return new SVG.Matrix(this.native().inverse())
     }
-    // Translate
+    // Translate matrix
   , translate: function(x, y) {
       return new SVG.Matrix(this.native().translate(x || 0, y || 0))  
     }
-    // Scale
+    // Scale matrix
   , scale: function(x, y, cx, cy) {
       // support universal scale
       if (arguments.length == 1 || arguments.length == 3)
@@ -1335,7 +1335,7 @@ SVG.Matrix = SVG.invent({
         .multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
         .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
     }
-    // Rotate
+    // Rotate matrix
   , rotate: function(d, cx, cy) {
       // convert degrees to radians
       d = SVG.utils.radians(d)
@@ -1345,7 +1345,7 @@ SVG.Matrix = SVG.invent({
         .multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
         .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
     }
-    // Flip
+    // Flip matrix on x or y
   , flip: function(a) {
       return new SVG.Matrix(this.native()['flip' + a.toUpperCase()]())
     }
@@ -1354,7 +1354,7 @@ SVG.Matrix = SVG.invent({
       // IMPLEMENT SKEW CENTER POINT
       return new SVG.Matrix(this.native().skewX(x || 0).skewY(y || 0))
     }
-    // Convert this to SVGMatrix
+    // Convert to native SVGMatrix
   , native: function() {
       // create new matrix
       var i, matrix = SVG.parser.draw.node.createSVGMatrix()
@@ -1365,7 +1365,7 @@ SVG.Matrix = SVG.invent({
 
       return matrix
     }
-    // Convert array to string
+    // Convert matrix to string
   , toString: function() {
       return 'matrix(' + [this.a, this.b, this.c, this.d, this.e, this.f].join() + ')'
     }
