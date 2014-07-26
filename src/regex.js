@@ -11,6 +11,12 @@ SVG.regex = {
   
   // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
+  
+  // Parse matrix wrapper
+, matrix:           /matrix\(|\)/g
+  
+  // Whitespace
+, whitespace:       /\s/g
 
   // Test hex value
 , isHex:            /^#[a-f0-9]{3,6}$/i

@@ -29,25 +29,25 @@ var sugar = {
 })
 
 SVG.extend(SVG.Element, SVG.FX, {
-  // Rotation
+  // Map rotation to transform
   rotate: function(d, cx, cy) {
     return this.transform({ rotation: d, cx: cx, cy: cy })
   }
-  // Skew
+  // Map skew to transform
 , skew: function(x, y) {
     return this.transform({ skewX: x, skewY: y })
   }
-  // Scale
+  // Map scale to transform
 , scale: function(x, y, cx, cy) {
     return arguments.length == 1  || arguments.length == 3 ?
-      this.transform({ scale: x,  cx: y, cy: cx }) :
+      this.transform({ scale: x, cx: y, cy: cx }) :
       this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
   }
-  // Translate
+  // Map translate to transform
 , translate: function(x, y) {
     return this.transform({ x: x, y: y })
   }
-  // Matrix
+  // Map matrix to transform
 , matrix: function(m) {
     return this.attr('transform', new SVG.Matrix(m))
   }
@@ -57,10 +57,12 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.FX, {
+SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    return this.rx(x).ry(y == null ? x : y)
+    return (this.target || this).type == 'radial' ?
+      this.attr({ r: new SVG.Number(x) }) :
+      this.rx(x).ry(y == null ? x : y)
   }
 })
 

@@ -3144,10 +3144,10 @@ matrix.toString() //-> returns matrix(1,0,0,1,0,0)
 ```
 
 ### extract()
-Get the calculated values of matrix:
+Gets the calculated values of the matrix:
 
 ```javascript
-new SVG.Matrix().extract()
+matrix.extract()
 ```
 
 returns:
@@ -3163,6 +3163,169 @@ returns:
 }
 ```
 
+__`returns`: `object`__
+
+### clone()
+Returns an exact copy of the matrix:
+
+```javascript
+matrix.clone()
+```
+
+__`returns`: `SVG.Matrix`__
+
+### morph()
+In order to animate matrices the `morph()` method lets you pass a destination matrix. This can be any value that a `SVG.Matrix` would accept on initialization:
+
+```javascript
+matrix.morph('matrix(2,0,0,2,100,150)')
+```
+
+__`returns`: `itself`__
+
+### at()
+This method will morph the matrix to a given position between `0` and `1`. Continuing with the previous example:
+
+```javascript
+matrix.at(0.27)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### multiply()
+Multiplies by another given matrix:
+
+```javascript
+matrix.matrix(matrix2)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### add()
+Adds two matrics:
+
+```javascript
+matrix.add(matrix2)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### inverse()
+Creates an inversed matix:
+
+```javascript
+matrix.inverse()
+```
+
+__`returns`: `SVG.Matrix`__
+
+### translate()
+Translates matrix by a given x and y value:
+
+```javascript
+matrix.translate(10, 20)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### scale()
+Scales matrix uniformal with one value:
+
+```javascript
+// scale
+matrix.scale(2)
+```
+
+Scales matrix non-uniformal with two values:
+
+```javascript
+// scaleX, scaleY
+matrix.scale(2, 3)
+```
+
+Scales matrix uniformal on a given center point with three values:
+
+```javascript
+// scale, cx, cy
+matrix.scale(2, 100, 150)
+```
+
+Scales matrix non-uniformal on a given center point with four values:
+
+```javascript
+// scaleX, scaleY, cx, cy
+matrix.scale(2, 3, 100, 150)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### rotate()
+Rotates matrix by degrees with one value given:
+
+```javascript
+// degrees
+matrix.rotate(45)
+```
+
+Rotates a matrix by degrees around a given point with three values:
+
+```javascript
+// degrees, cx, cy
+matrix.rotate(45, 100, 150)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### flip()
+Flips matrix over a given axis:
+
+```javascript
+matrix.flip('x')
+```
+
+or
+
+```javascript
+matrix.flip('y')
+```
+
+__`returns`: `SVG.Matrix`__
+
+### skew()
+Skews matrix a given degrees over x and or y axis with two values:
+
+```javascript
+// degreesX, degreesY
+matrix.skew(0, 45)
+```
+
+Skews matrix a given degrees over x and or y axis on a given point with four values:
+
+```javascript
+// degreesX, degreesY, cx, cy
+matrix.skew(0, 45, 150, 100)
+```
+
+__`returns`: `SVG.Matrix`__
+
+### native()
+Returns a native `SVGMatrix` extracted from the `SVG.Matrix` instance:
+
+```javascript
+matrix.native()
+```
+
+__`returns`: `SVGMatrix`__
+
+### toString()
+Converts the matrix to a transform string:
+
+```javascript
+matrix.toString()
+// -> matrix(1,0,0,1,0,0)
+```
+
+__`returns`: `string`__
 
 ## Extending functionality
 
@@ -3309,10 +3472,10 @@ Here are a few nice plugins that are available for SVG.js:
 
 
 ## Contributing
-All contributions are very welcome but please make sure you follow the same coding style. Here are some guidelines.
+We love contributions. Did you si it? The word LOVE? Please make sure you follow the same coding style, here are some guidelines.
 
 ### Indentation
-We do it with __two spaces__. Make sure you don't start using tabs becaus then things get messy.
+We do it with __two spaces__. Make sure you don't start using tabs because then things get messy.
 
 ### Avoid hairy code
 We like to keep things simple and clean, don't write anything you don't need. So use __single quotes__ where possible and __avoid semicolons__, we're not writing PHP here.
@@ -3340,7 +3503,7 @@ for (var i = 0; i < 5; i++) {
 ```
 
 ### Let your code breathe people!
-Don't try to be a code compressor yourself, they do way better a job anyway. Give your code some spaces and newlines.
+Don't try to be a code compressor yourself, they do way a better job anyway. Give your code some spaces and newlines.
 
 __Good__:
 ```javascript
@@ -3394,7 +3557,7 @@ SVG.extend(SVG.Rect, {
 ```
 
 ### Test. Your. Code.
-It's not that hard to write at least one example per implementation although we prefer more. Your code might seem to work by quickly testing it in your brwoser but more than often you can't forsee everything.
+It's not that hard to write at least one example per implementation, although we prefer more. Your code might seem to work by quickly testing it in your brwoser but more than often you can't forsee everything.
 
 Before running the specs you will need to build the library. Be aware that pull requests without specs will be declined.
 
@@ -3436,10 +3599,8 @@ The resulting files are:
 
 Visit the [SVG.js test page](http://svgjs.com/test) if you want to check compatibility with different browsers.
 
-Important: this library is still in beta, therefore the API might be subject to change in the course of development.
-
 ## Acknowledgements & Thanks
 
 Documentation kindly provided by [DocumentUp](http://documentup.com)
 
-SVG.js and this documentation is released under the terms of the MIT license.
+SVG.js and its documentation is released under the terms of the MIT license.

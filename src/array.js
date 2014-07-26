@@ -25,7 +25,7 @@ SVG.extend(SVG.Array, {
       while(this.value.length < this.destination.length)
         this.value.push(lastValue)
     }
-
+    
     return this
   }
   // Clean up any duplicate points

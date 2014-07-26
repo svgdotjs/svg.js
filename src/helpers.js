@@ -52,16 +52,40 @@ function arrayToMatrix(a) {
 	return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
 }
 
+// Parse matrix if required
+function parseMatrix(matrix) {
+	if (!(matrix instanceof SVG.Matrix))
+	  matrix = new SVG.Matrix(matrix)
+	
+	return matrix
+}
+
+// Convert string to matrix
+function stringToMatrix(source) {
+	// remove matrix wrapper and split to individual numbers
+	source = source
+		.replace(SVG.regex.whitespace, '')
+		.replace(SVG.regex.matrix, '')
+		.split(',')
+
+	// convert string values to floats and convert to a matrix-formatted object
+	return arrayToMatrix(
+		SVG.utils.map(source, function(n) {
+			return parseFloat(n)
+		})
+	)
+}
+
 // Calculate position according to from and to
 function at(o, pos) {
-	/* number recalculation (don't bother converting to SVG.Number for performance reasons) */
+	// number recalculation (don't bother converting to SVG.Number for performance reasons)
 	return typeof o.from == 'number' ?
 		o.from + (o.to - o.from) * pos :
 	
-	/* instance recalculation */
-	o instanceof SVG.Color || o instanceof SVG.Number ? o.at(pos) :
+	// instance recalculation
+	o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
 	
-	/* for all other values wait until pos has reached 1 to return the final value */
+	// for all other values wait until pos has reached 1 to return the final value
 	pos < 1 ? o.from : o.to
 }
 

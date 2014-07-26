@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Jul 25 2014 11:10:49 GMT+0200 (CEST)
+* BUILT: Sat Jul 26 2014 21:51:10 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -161,6 +161,12 @@ SVG.regex = {
   
   // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
+  
+  // Parse matrix wrapper
+, matrix:           /matrix\(|\)/g
+  
+  // Whitespace
+, whitespace:       /\s/g
 
   // Test hex value
 , isHex:            /^#[a-f0-9]{3,6}$/i
@@ -376,7 +382,7 @@ SVG.extend(SVG.Array, {
       while(this.value.length < this.destination.length)
         this.value.push(lastValue)
     }
-
+    
     return this
   }
   // Clean up any duplicate points
@@ -1219,124 +1225,163 @@ SVG.RBox = SVG.invent({
 })
 
 SVG.Matrix = SVG.invent({
-	// Initialize
-	create: function(source) {
-		var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
+  // Initialize
+  create: function(source) {
+    var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
-		// Ensure source as object
-		source = source && source.node && source.node.getCTM ?
-			source.node.getCTM() :
-		typeof source === 'string' ?
-			arrayToMatrix(source.replace(/\s/g, '').split(',')) :
-		arguments.length == 6 ?
-			arrayToMatrix([].slice.call(arguments)) :
-		typeof source === 'object' ?
-			source : base
+    // Ensure source as object
+    source = source && source.node && source.node.getCTM ?
+      source.node.getCTM() :
+    typeof source === 'string' ?
+      stringToMatrix(source) :
+    arguments.length == 6 ?
+      arrayToMatrix([].slice.call(arguments)) :
+    typeof source === 'object' ?
+      source : base
 
-		// Merge source
-		for (i = abcdef.length - 1; i >= 0; i--)
-			this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
-				source[abcdef[i]] : base[abcdef[i]]
-		
-	}
-	
-	// Add methods
+    // Merge source
+    for (i = abcdef.length - 1; i >= 0; i--)
+      this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
+        source[abcdef[i]] : base[abcdef[i]]
+    
+  }
+  
+  // Add methods
 , extend: {
-		// Extract individual transformations
-	  extract: function() {
-			// Find transform points
-			var px 		= deltaTransformPoint(this, 0, 1)
-				, py 		= deltaTransformPoint(this, 1, 0)
-				, skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
-	
-			return {
-				// Translation
-				x: 				this.e
-			, y: 				this.f
-				// Skew
-			, skewX: 		skewX
-			, skewY: 		180 / Math.PI * Math.atan2(py.y, py.x)
-				// Scale
-			, scaleX: 	Math.sqrt(this.a * this.a + this.b * this.b)
-			, scaleY: 	Math.sqrt(this.c * this.c + this.d * this.d)
-				// Rotation
-			, rotation: skewX
-			}
-		}
-		// Multiply
-	, multiply: function(matrix) {
-			return new SVG.Matrix(this.native().multiply(matrix.native()))
-		}
-		// Inverse
-	, inverse: function() {
-			return new SVG.Matrix(this.native().inverse())
-		}
-		// Translate
-	, translate: function(x, y) {
-			return new SVG.Matrix(this.native().translate(x || 0, y || 0))	
-		}
-		// Scale
-	, scale: function(x, y, cx, cy) {
-			// Support universal scale
-			if (arguments.length == 1 || arguments.length == 3)
-				y = x
-			if (arguments.length == 3) {
-				cy = cx
-				cx = y
-			}
+    // Extract individual transformations
+    extract: function() {
+      // find transform points
+      var px    = deltaTransformPoint(this, 0, 1)
+        , py    = deltaTransformPoint(this, 1, 0)
+        , skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
+  
+      return {
+        // translation
+        x:        this.e
+      , y:        this.f
+        // skew
+      , skewX:    -skewX
+      , skewY:    180 / Math.PI * Math.atan2(py.y, py.x)
+        // scale
+      , scaleX:   Math.sqrt(this.a * this.a + this.b * this.b)
+      , scaleY:   Math.sqrt(this.c * this.c + this.d * this.d)
+        // rotation
+      , rotation: skewX
+      }
+    }
+    // Clone matrix
+  , clone: function() {
+      return new SVG.Matrix(this)
+    }
+    // Morph one matrix into another
+  , morph: function(matrix) {
+      // store new destination
+      this.destination = new SVG.Matrix(matrix)
 
-			return this
-				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
-				.multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
-				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
-		}
-		// Rotate
-	, rotate: function(d, cx, cy) {
-			// Convert degrees to radians
-			d = SVG.utils.radians(d)
-			
-			return this
-				.multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
-				.multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-				.multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
-		}
-		// Flip
-	, flip: function(a) {
-			return new SVG.Matrix(this.native()['flip' + a.toUpperCase()]())
-		}
-		// Skew
-	, skew: function(x, y, cx, cy) {
-			// IMPLEMENT SKEW CENTER POINT
-			return new SVG.Matrix(this.native().skewX(x || 0).skewY(y || 0))
-		}
-		// Convert this to SVGMatrix
-	, native: function() {
-			// Create new matrix
-			var i, matrix = SVG.parser.draw.node.createSVGMatrix()
-	
-			// Update with current values
-			for (i = abcdef.length - 1; i >= 0; i--)
-				matrix[abcdef[i]] = this[abcdef[i]]
+      return this
+    }
+    // Get morphed matrix at a given position
+  , at: function(pos) {
+      // make sure a destination is defined
+      if (!this.destination) return this
 
-			return matrix
-		}
-		// Convert array to string
-	, toString: function() {
-			return 'matrix(' + [this.a, this.b, this.c, this.d, this.e, this.f].join() + ')'
-		}
-	}
+      // calculate morphed matrix at a given position
+      return new SVG.Matrix({
+        a: this.a + (this.destination.a - this.a) * pos
+      , b: this.b + (this.destination.b - this.b) * pos
+      , c: this.c + (this.destination.c - this.c) * pos
+      , d: this.d + (this.destination.d - this.d) * pos
+      , e: this.e + (this.destination.e - this.e) * pos
+      , f: this.f + (this.destination.f - this.f) * pos
+      })
+    }
+    // Multiplies by given matrix
+  , multiply: function(matrix) {
+      return new SVG.Matrix(this.native().multiply(parseMatrix(matrix).native()))
+    }
+    // Adds given matrix
+  , add: function(matrix) {
+      matrix = parseMatrix(matrix)
 
-	// Define parent
+      return new SVG.Matrix({
+        a: this.a + matrix.a - 1
+      , b: this.b + matrix.b
+      , c: this.c + matrix.c
+      , d: this.d + matrix.d - 1
+      , e: this.e + matrix.e
+      , f: this.f + matrix.f
+      })
+    }
+    // Inverses matrix
+  , inverse: function() {
+      return new SVG.Matrix(this.native().inverse())
+    }
+    // Translate
+  , translate: function(x, y) {
+      return new SVG.Matrix(this.native().translate(x || 0, y || 0))  
+    }
+    // Scale
+  , scale: function(x, y, cx, cy) {
+      // support universal scale
+      if (arguments.length == 1 || arguments.length == 3)
+        y = x
+      if (arguments.length == 3) {
+        cy = cx
+        cx = y
+      }
+
+      return this
+        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
+        .multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
+        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
+    }
+    // Rotate
+  , rotate: function(d, cx, cy) {
+      // convert degrees to radians
+      d = SVG.utils.radians(d)
+      
+      return this
+        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
+        .multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
+        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
+    }
+    // Flip
+  , flip: function(a) {
+      return new SVG.Matrix(this.native()['flip' + a.toUpperCase()]())
+    }
+    // Skew
+  , skew: function(x, y, cx, cy) {
+      // IMPLEMENT SKEW CENTER POINT
+      return new SVG.Matrix(this.native().skewX(x || 0).skewY(y || 0))
+    }
+    // Convert this to SVGMatrix
+  , native: function() {
+      // create new matrix
+      var i, matrix = SVG.parser.draw.node.createSVGMatrix()
+  
+      // update with current values
+      for (i = abcdef.length - 1; i >= 0; i--)
+        matrix[abcdef[i]] = this[abcdef[i]]
+
+      return matrix
+    }
+    // Convert array to string
+  , toString: function() {
+      return 'matrix(' + [this.a, this.b, this.c, this.d, this.e, this.f].join() + ')'
+    }
+  }
+
+  // Define parent
 , parent: SVG.Element
 
-	// Add parent method
+  // Add parent method
 , construct: {
-		// Get current matrix
-		ctm: function() {
-			return new SVG.Matrix(this)
-		}
-	
-	}
+    // Get current matrix
+    ctm: function() {
+      return new SVG.Matrix(this)
+    }
+  
+  }
 
 })
 SVG.extend(SVG.Element, {
@@ -1418,56 +1463,61 @@ SVG.extend(SVG.Element, {
     return this
   }
 })
-SVG.extend(SVG.Element, {
+SVG.extend(SVG.Element, SVG.FX, {
 	// Add transformations
 	transform: function(o) {
-		// Full getter
+		// get target in case of the fx module, otherwise reference this
+		var target = this.target || this
+
+		// full getter
 		if (o == null)
-			return this.ctm().extract()
+			return target.ctm().extract()
 
-		// Singular getter
+		// singular getter
 		else if (typeof o === 'string')
-			return this.ctm().extract()[o]
+			return target.ctm().extract()[o]
 
-		// Get current matrix
-		var matrix = new SVG.Matrix(this)
+		// get current matrix
+		var matrix = new SVG.Matrix(target)
 
-		// Act on matrix
+		// act on matrix
 		if (o.a != null)
 			matrix = matrix.multiply(new SVG.Matrix(o))
 		
-		// Act on rotate
+		// act on rotate
 		else if (o.rotation)
 			matrix = matrix.rotate(
 				o.rotation
-			, o.cx == null ? this.bbox().cx : o.cx
-			, o.cy == null ? this.bbox().cy : o.cy
+			, o.cx == null ? target.bbox().cx : o.cx
+			, o.cy == null ? target.bbox().cy : o.cy
 			)
 
-		// Act on scale
+		// act on scale
 		else if (o.scale != null || o.scaleX != null || o.scaleY != null)
 			matrix = matrix.scale(
 				o.scale != null ? o.scale : o.scaleX != null ? o.scaleX : 1
 			, o.scale != null ? o.scale : o.scaleY != null ? o.scaleY : 1
-			, o.cx 		!= null ? o.cx 		: this.bbox().x
-			, o.cy 		!= null ? o.cy 		: this.bbox().y
+			, o.cx 		!= null ? o.cx 		: target.bbox().x
+			, o.cy 		!= null ? o.cy 		: target.bbox().y
 			)
 
-		// Act on skew
+		// act on skew
 		else if (o.skewX || o.skewY)
 			matrix = matrix.skew(o.skewX, o.skewY)
 
-		// Act on translate
+		// act on translate
 		else if (o.x || o.y)
 			matrix = matrix.translate(o.x, o.y)
 
 		return this.attr('transform', matrix)
 	}
+})
+
+SVG.extend(SVG.Element, {
 	// Reset all transformations
-, untransform: function() {
+  untransform: function() {
 		return this.attr('transform', null)
 	}
-
 })
 SVG.extend(SVG.Element, {
   // Dynamic style generator
@@ -1659,7 +1709,7 @@ SVG.extend(SVG.Parent, SVG.Text, {
 SVG.FX = SVG.invent({
   // Initialize FX object
   create: function(element) {
-    /* store target element */
+    // store target element
     this.target = element
   }
 
@@ -1667,44 +1717,44 @@ SVG.FX = SVG.invent({
 , extend: {
     // Add animation parameters and start animation
     animate: function(d, ease, delay) {
-      var akeys, tkeys, skeys, key
+      var akeys, skeys, key
         , element = this.target
         , fx = this
       
-      /* dissect object if one is passed */
+      // dissect object if one is passed
       if (typeof d == 'object') {
         delay = d.delay
         ease = d.ease
         d = d.duration
       }
 
-      /* ensure default duration and easing */
+      // ensure default duration and easing
       d = d == '=' ? d : d == null ? 1000 : new SVG.Number(d).valueOf()
       ease = ease || '<>'
 
-      /* process values */
-      fx.to = function(pos) {
+      // process values
+      fx.at = function(pos) {
         var i
 
-        /* normalise pos */
+        // normalise pos
         pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
 
-        /* collect attribute keys */
+        // collect attribute keys
         if (akeys == null) {
           akeys = []
           for (key in fx.attrs)
             akeys.push(key)
 
-          /* make sure morphable elements are scaled, translated and morphed all together */
+          // make sure morphable elements are scaled, translated and morphed all together
           if (element.morphArray && (fx._plot || akeys.indexOf('points') > -1)) {
-            /* get destination */
+            // get destination
             var box
               , p = new element.morphArray(fx._plot || fx.attrs.points || element.array)
 
-            /* add size */
+            // add size
             if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
 
-            /* add movement */
+            // add movement
             box = p.bbox()
             if (fx._x) p.move(fx._x.to, box.y)
             else if (fx._cx) p.move(fx._cx.to - box.width / 2, box.y)
@@ -1713,7 +1763,7 @@ SVG.FX = SVG.invent({
             if (fx._y) p.move(box.x, fx._y.to)
             else if (fx._cy) p.move(box.x, fx._cy.to - box.height / 2)
 
-            /* delete element oriented changes */
+            // delete element oriented changes
             delete fx._x
             delete fx._y
             delete fx._cx
@@ -1724,21 +1774,14 @@ SVG.FX = SVG.invent({
           }
         }
 
-        /* collect transformation keys */
-        if (tkeys == null) {
-          tkeys = []
-          for (key in fx.trans)
-            tkeys.push(key)
-        }
-
-        /* collect style keys */
+        // collect style keys
         if (skeys == null) {
           skeys = []
           for (key in fx.styles)
             skeys.push(key)
         }
 
-        /* apply easing */
+        // apply easing
         pos = ease == '<>' ?
           (-Math.cos(pos * Math.PI) / 2) + 0.5 :
         ease == '>' ?
@@ -1751,29 +1794,29 @@ SVG.FX = SVG.invent({
           ease(pos) :
           pos
         
-        /* run plot function */
+        // run plot function
         if (fx._plot) {
           element.plot(fx._plot.at(pos))
 
         } else {
-          /* run all x-position properties */
+          // run all x-position properties
           if (fx._x)
             element.x(fx._x.at(pos))
           else if (fx._cx)
             element.cx(fx._cx.at(pos))
 
-          /* run all y-position properties */
+          // run all y-position properties
           if (fx._y)
             element.y(fx._y.at(pos))
           else if (fx._cy)
             element.cy(fx._cy.at(pos))
 
-          /* run all size properties */
+          // run all size properties
           if (fx._size)
             element.size(fx._size.width.at(pos), fx._size.height.at(pos))
         }
 
-        /* run all viewbox properties */
+        // run all viewbox properties
         if (fx._viewbox)
           element.viewbox(
             fx._viewbox.x.at(pos)
@@ -1782,23 +1825,19 @@ SVG.FX = SVG.invent({
           , fx._viewbox.height.at(pos)
           )
 
-        /* run leading property */
+        // run leading property
         if (fx._leading)
           element.leading(fx._leading.at(pos))
 
-        /* animate attributes */
+        // animate attributes
         for (i = akeys.length - 1; i >= 0; i--)
           element.attr(akeys[i], at(fx.attrs[akeys[i]], pos))
 
-        /* animate transformations */
-        for (i = tkeys.length - 1; i >= 0; i--)
-          element.transform(tkeys[i], at(fx.trans[tkeys[i]], pos))
-
-        /* animate styles */
+        // animate styles
         for (i = skeys.length - 1; i >= 0; i--)
           element.style(skeys[i], at(fx.styles[skeys[i]], pos))
 
-        /* callback for each keyframe */
+        // callback for each keyframe
         if (fx._during)
           fx._during.call(element, pos, function(from, to) {
             return at({ from: from, to: to }, pos)
@@ -1806,11 +1845,11 @@ SVG.FX = SVG.invent({
       }
       
       if (typeof d === 'number') {
-        /* delay animation */
+        // delay animation
         this.timeout = setTimeout(function() {
           var start = new Date().getTime()
 
-          /* initialize situation object */
+          // initialize situation object
           fx.situation = {
             interval: 1000 / 60
           , start:    start
@@ -1819,18 +1858,18 @@ SVG.FX = SVG.invent({
           , duration: d
           }
 
-          /* render function */
+          // render function
           fx.render = function() {
             
             if (fx.situation.play === true) {
-              // This code was borrowed from the emile.js micro framework by Thomas Fuchs, aka MadRobby.
+              // calculate pos
               var time = new Date().getTime()
                 , pos = time > fx.situation.finish ? 1 : (time - fx.situation.start) / d
               
-              /* process values */
-              fx.to(pos)
+              // process values
+              fx.at(pos)
               
-              /* finish off animation */
+              // finish off animation
               if (time > fx.situation.finish) {
                 if (fx._plot)
                   element.plot(new SVG.PointArray(fx._plot.destination).settle())
@@ -1852,7 +1891,7 @@ SVG.FX = SVG.invent({
             
           }
 
-          /* start animation */
+          // start animation
           fx.render()
           
         }, new SVG.Number(delay).valueOf())
@@ -1866,14 +1905,19 @@ SVG.FX = SVG.invent({
     }
     // Add animatable attributes
   , attr: function(a, v) {
+      // apply attributes individually
       if (typeof a == 'object') {
         for (var key in a)
           this.attr(key, a[key])
       
       } else {
+        // get the current state
         var from = this.target.attr(a)
 
-        this.attrs[a] = SVG.Color.isColor(from) ?
+        // detect format
+        this.attrs[a] = a == 'transform' ?
+          this.target.ctm().morph(v) :
+        SVG.Color.isColor(from) ?
           new SVG.Color(from).morph(v) :
         SVG.regex.unit.test(from) ?
           new SVG.Number(from).morph(v) :
@@ -1883,27 +1927,8 @@ SVG.FX = SVG.invent({
       return this
     }
     // Add animatable transformations
-  , transform: function(o, v) {
-      // if (arguments.length == 1) {
-      //   /* parse matrix string */
-      //   o = parseMatrix(o)
-        
-      //   /* dlete matrixstring from object */
-      //   delete o.matrix
-        
-      //   /* store matrix values */
-      //   for (v in o)
-      //     this.trans[v] = { from: this.target.trans[v], to: o[v] }
-        
-      // } else {
-      //   /* apply transformations as object if key value arguments are given*/
-      //   var transform = {}
-      //   transform[o] = v
-        
-      //   this.transform(transform)
-      // }
-      
-      // return this
+  , transform: function(o) {
+      return this.attr('transform', o)
     }
     // Add animatable styles
   , style: function(s, v) {
@@ -1951,11 +1976,11 @@ SVG.FX = SVG.invent({
     // Add animatable size
   , size: function(width, height) {
       if (this.target instanceof SVG.Text) {
-        /* animate font size for Text elements */
+        // animate font size for Text elements
         this.attr('font-size', width)
         
       } else {
-        /* animate bbox based size for all other elements */
+        // animate bbox based size for all other elements
         var box = this.target.bbox()
 
         this._size = {
@@ -2024,7 +2049,7 @@ SVG.FX = SVG.invent({
     }
     // Stop running animation
   , stop: function(fulfill) {
-      /* fulfill animation */
+      // fulfill animation
       if (fulfill === true) {
 
         this.animate(0)
@@ -2033,16 +2058,16 @@ SVG.FX = SVG.invent({
           this._after.apply(this.target, [this])
 
       } else {
-        /* stop current animation */
+        // stop current animation
         clearTimeout(this.timeout)
 
-        /* reset storage for properties that need animation */
+        // reset storage for properties that need animation
         this.attrs     = {}
         this.trans     = {}
         this.styles    = {}
         this.situation = {}
 
-        /* delete destinations */
+        // delete destinations
         delete this._x
         delete this._y
         delete this._cx
@@ -2281,10 +2306,10 @@ SVG.extend(SVG.Element, {
     var i = this.position() + 1
       , p = this.parent()
 
-    // Move node one step forward
+    // move node one step forward
     p.removeElement(this).add(this, i)
 
-    // Make sure defs node is always at the top
+    // make sure defs node is always at the top
     if (p instanceof SVG.Doc)
       p.node.appendChild(p.defs().node)
 
@@ -2472,26 +2497,8 @@ SVG.Gradient = SVG.invent({
 
   // Add class methods
 , extend: {
-    // From position
-    from: function(x, y) {
-      return this.type == 'radial' ?
-        this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
-        this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
-    }
-    // To position
-  , to: function(x, y) {
-      return this.type == 'radial' ?
-        this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
-        this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
-    }
-    // Radius for radial gradient
-  , radius: function(r) {
-      return this.type == 'radial' ?
-        this.attr({ r: new SVG.Number(r) }) :
-        this
-    }
     // Add a color stop
-  , at: function(offset, color, opacity) {
+    at: function(offset, color, opacity) {
       return this.put(new SVG.Stop).update(offset, color, opacity)
     }
     // Update gradient
@@ -2524,6 +2531,23 @@ SVG.Gradient = SVG.invent({
   }
 })
 
+// Add animatable methods to both gradient and fx module
+SVG.extend(SVG.Gradient, SVG.FX, {
+  // From position
+  from: function(x, y) {
+    return (this.target || this).type == 'radial' ?
+      this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
+      this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
+  }
+  // To position
+, to: function(x, y) {
+    return (this.target || this).type == 'radial' ?
+      this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
+      this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
+  }
+})
+
+// Base gradient generation
 SVG.extend(SVG.Defs, {
   // define gradient
   gradient: function(type, block) {
@@ -3543,25 +3567,25 @@ var sugar = {
 })
 
 SVG.extend(SVG.Element, SVG.FX, {
-  // Rotation
+  // Map rotation to transform
   rotate: function(d, cx, cy) {
     return this.transform({ rotation: d, cx: cx, cy: cy })
   }
-  // Skew
+  // Map skew to transform
 , skew: function(x, y) {
     return this.transform({ skewX: x, skewY: y })
   }
-  // Scale
+  // Map scale to transform
 , scale: function(x, y, cx, cy) {
     return arguments.length == 1  || arguments.length == 3 ?
-      this.transform({ scale: x,  cx: y, cy: cx }) :
+      this.transform({ scale: x, cx: y, cy: cx }) :
       this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
   }
-  // Translate
+  // Map translate to transform
 , translate: function(x, y) {
     return this.transform({ x: x, y: y })
   }
-  // Matrix
+  // Map matrix to transform
 , matrix: function(m) {
     return this.attr('transform', new SVG.Matrix(m))
   }
@@ -3571,10 +3595,12 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.FX, {
+SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    return this.rx(x).ry(y == null ? x : y)
+    return (this.target || this).type == 'radial' ?
+      this.attr({ r: new SVG.Number(x) }) :
+      this.rx(x).ry(y == null ? x : y)
   }
 })
 
@@ -3903,16 +3929,40 @@ function arrayToMatrix(a) {
 	return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
 }
 
+// Parse matrix if required
+function parseMatrix(matrix) {
+	if (!(matrix instanceof SVG.Matrix))
+	  matrix = new SVG.Matrix(matrix)
+	
+	return matrix
+}
+
+// Convert string to matrix
+function stringToMatrix(source) {
+	// remove matrix wrapper and split to individual numbers
+	source = source
+		.replace(SVG.regex.whitespace, '')
+		.replace(SVG.regex.matrix, '')
+		.split(',')
+
+	// convert string values to floats and convert to a matrix-formatted object
+	return arrayToMatrix(
+		SVG.utils.map(source, function(n) {
+			return parseFloat(n)
+		})
+	)
+}
+
 // Calculate position according to from and to
 function at(o, pos) {
-	/* number recalculation (don't bother converting to SVG.Number for performance reasons) */
+	// number recalculation (don't bother converting to SVG.Number for performance reasons)
 	return typeof o.from == 'number' ?
 		o.from + (o.to - o.from) * pos :
 	
-	/* instance recalculation */
-	o instanceof SVG.Color || o instanceof SVG.Number ? o.at(pos) :
+	// instance recalculation
+	o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
 	
-	/* for all other values wait until pos has reached 1 to return the final value */
+	// for all other values wait until pos has reached 1 to return the final value
 	pos < 1 ? o.from : o.to
 }
 

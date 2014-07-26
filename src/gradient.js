@@ -12,26 +12,8 @@ SVG.Gradient = SVG.invent({
 
   // Add class methods
 , extend: {
-    // From position
-    from: function(x, y) {
-      return this.type == 'radial' ?
-        this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
-        this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
-    }
-    // To position
-  , to: function(x, y) {
-      return this.type == 'radial' ?
-        this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
-        this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
-    }
-    // Radius for radial gradient
-  , radius: function(r) {
-      return this.type == 'radial' ?
-        this.attr({ r: new SVG.Number(r) }) :
-        this
-    }
     // Add a color stop
-  , at: function(offset, color, opacity) {
+    at: function(offset, color, opacity) {
       return this.put(new SVG.Stop).update(offset, color, opacity)
     }
     // Update gradient
@@ -64,6 +46,23 @@ SVG.Gradient = SVG.invent({
   }
 })
 
+// Add animatable methods to both gradient and fx module
+SVG.extend(SVG.Gradient, SVG.FX, {
+  // From position
+  from: function(x, y) {
+    return (this.target || this).type == 'radial' ?
+      this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
+      this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
+  }
+  // To position
+, to: function(x, y) {
+    return (this.target || this).type == 'radial' ?
+      this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
+      this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
+  }
+})
+
+// Base gradient generation
 SVG.extend(SVG.Defs, {
   // define gradient
   gradient: function(type, block) {

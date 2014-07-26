@@ -276,7 +276,6 @@ describe('Container', function() {
 
     beforeEach(function() {
       draw.attr('viewBox', null)
-      console.log(draw.node)
     })
 
     it('should set the viewbox when four arguments are provided', function() {
@@ -284,16 +283,16 @@ describe('Container', function() {
       expect(draw.node.getAttribute('viewBox')).toBe('0 0 100 100')
     })
     it('should set the viewbox when an object is provided as first argument', function() {
-      draw.viewbox({ x: 0, y: 0, width: 50, height: 50, zoom: 1 })
+      draw.viewbox({ x: 0, y: 0, width: 50, height: 50 })
       expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
     })
     it('should accept negative values', function() {
-      draw.size(100,100).viewbox(-100,-100,50,50)
+      draw.size(100,100).viewbox(-100, -100, 50, 50)
       expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 50 50')
     })
     it('should get the viewbox if no arguments are given', function() {
-      draw.viewbox(0,0,100,100)
-      expect(draw.viewbox()).toEqual({ x: 0, y: 0, width: 100, height: 100, zoom: 1 })
+      draw.viewbox(0, 0, 100, 100)
+      expect(draw.viewbox()).toEqual(new SVG.ViewBox(draw))
     })
     it('should define the zoom of the viewbox in relation to the canvas size', function() {
       draw.size(100,100).viewbox(0,0,50,50)

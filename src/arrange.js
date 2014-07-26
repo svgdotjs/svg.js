@@ -23,10 +23,10 @@ SVG.extend(SVG.Element, {
     var i = this.position() + 1
       , p = this.parent()
 
-    // Move node one step forward
+    // move node one step forward
     p.removeElement(this).add(this, i)
 
-    // Make sure defs node is always at the top
+    // make sure defs node is always at the top
     if (p instanceof SVG.Doc)
       p.node.appendChild(p.defs().node)
 
