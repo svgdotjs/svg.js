@@ -191,11 +191,30 @@ describe('Element', function() {
     })
   })
 
+  describe('untransform()', function() {
+    var circle
+    
+    beforeEach(function() {
+      circle = draw.circle(100).translate(50, 100)
+    })
+
+    it('removes the transform attribute', function() {
+      expect(circle.node.getAttribute('transform')).toBe('matrix(1,0,0,1,50,100)')
+      circle.untransform()
+      expect(circle.node.getAttribute('transform')).toBeNull()
+    })
+    it('resets the current transform matix', function() {
+      expect(circle.ctm()).toEqual(new SVG.Matrix(1,0,0,1,50,100))
+      circle.untransform()
+      expect(circle.ctm()).toEqual(new SVG.Matrix)
+    })
+  })
+
   describe('ctm()', function() {
     var rect
     
     beforeEach(function() {
-      rect = draw.rect(100,100)
+      rect = draw.rect(100, 100)
     })
     
     it('gets the current transform matrix of the element', function() {

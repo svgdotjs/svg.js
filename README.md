@@ -3175,7 +3175,7 @@ matrix.clone()
 __`returns`: `SVG.Matrix`__
 
 ### morph()
-In order to animate matrices the `morph()` method lets you pass a destination matrix. This can be any value that a `SVG.Matrix` would accept on initialization:
+In order to animate matrices the `morph()` method lets you pass a destination matrix. This can be any value a `SVG.Matrix` would accept on initialization:
 
 ```javascript
 matrix.morph('matrix(2,0,0,2,100,150)')
@@ -3184,11 +3184,13 @@ matrix.morph('matrix(2,0,0,2,100,150)')
 __`returns`: `itself`__
 
 ### at()
-This method will morph the matrix to a given position between `0` and `1`. Continuing with the previous example:
+This method will morph the matrix to a given position between `0` and `1`:
 
 ```javascript
 matrix.at(0.27)
 ```
+
+This will only work when a destination matirx is defined using the `morph()` method.
 
 __`returns`: `SVG.Matrix`__
 
@@ -3211,7 +3213,7 @@ matrix.add(matrix2)
 __`returns`: `SVG.Matrix`__
 
 ### inverse()
-Creates an inversed matix:
+Creates an inverted matix:
 
 ```javascript
 matrix.inverse()
@@ -3467,12 +3469,15 @@ Here are a few nice plugins that are available for SVG.js:
 ### topath
 [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
 
+### topoly
+[svg.topoly.js](https://github.com/wout/svg.topoly.js) to convert a path to polygon or polyline.
+
 ### wiml
 [svg.wiml.js](https://github.com/wout/svg.wiml.js) a templating language for svg output.
 
 
 ## Contributing
-We love contributions. Did you si it? The word LOVE? Please make sure you follow the same coding style, here are some guidelines.
+We love contributions. Yes indeed, I used the word LOVE! But please make sure you follow the same coding style. Here are some guidelines.
 
 ### Indentation
 We do it with __two spaces__. Make sure you don't start using tabs because then things get messy.
