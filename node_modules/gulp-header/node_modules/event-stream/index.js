@@ -290,9 +290,11 @@ es.join = function (str) {
 //
 
 es.wait = function (callback) {
-  var body = ''
-  return es.through(function (data) { body += data },
+  var arr = []
+  return es.through(function (data) { arr.push(data) },
     function () {
+      var body = Buffer.isBuffer(arr[0]) ? Buffer.concat(arr)
+        : arr.join('')
       this.emit('data', body)
       this.emit('end')
       if(callback) callback(null, body)

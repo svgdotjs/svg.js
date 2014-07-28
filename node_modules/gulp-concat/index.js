@@ -33,7 +33,8 @@ module.exports = function(fileName, opt) {
         cwd: firstFile.cwd,
         base: firstFile.base,
         path: joinedPath,
-        contents: new Buffer(concat.content)
+        contents: new Buffer(concat.content),
+        stat: firstFile.stat
       });
       if (concat.sourceMapping)
         joinedFile.sourceMap = JSON.parse(concat.sourceMap);

@@ -112,11 +112,11 @@ describe('Polyline', function() {
     it('sets the width and height of the element', function() {
       polyline.width(987)
       var box = polyline.bbox()
-      expect(approximately(box.width, 0.1)).toBe(987)
+      expect(box.width).toBeCloseTo(987, 1)
     })
     it('gets the width and height of the element without an argument', function() {
       polyline.width(789)
-      expect(approximately(polyline.width(), 0.1)).toBe(789)
+      expect(polyline.width()).toBeCloseTo(789)
     })
   })
 
@@ -124,11 +124,11 @@ describe('Polyline', function() {
     it('sets the height and height of the element', function() {
       polyline.height(987)
       var box = polyline.bbox()
-      expect(approximately(box.height, 0.1)).toBe(987)
+      expect(box.height).toBeCloseTo(987)
     })
     it('gets the height and height of the element without an argument', function() {
       polyline.height(789)
-      expect(approximately(polyline.height(), 0.1)).toBe(789)
+      expect(polyline.height()).toBeCloseTo(789)
     })
   })
   
@@ -136,8 +136,8 @@ describe('Polyline', function() {
     it('should define the width and height of the element', function() {
       polyline.size(987,654)
       var box = polyline.bbox()
-      expect(approximately(box.width, 0.1)).toBe(987)
-      expect(approximately(box.height, 0.1)).toBe(654)
+      expect(box.width).toBeCloseTo(987)
+      expect(box.height).toBeCloseTo(654)
     })
     it('defines the width and height proportionally with only the width value given', function() {
       var box = polyline.bbox()

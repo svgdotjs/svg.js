@@ -18,9 +18,10 @@ module.exports = function (x, opts) {
 
     opts.paths = opts.paths || [];
 
-    if (x.match(/^(?:\.\.?\/|\/|([A-Za-z]:)?\\)/)) {
-        var m = loadAsFileSync(path.resolve(y, x))
-            || loadAsDirectorySync(path.resolve(y, x));
+    if (/^(?:\.\.?(?:\/|$)|\/|([A-Za-z]:)?[\\\/])/.test(x)) {
+        var res = path.resolve(y, x);
+        if (x === '..') res += '/';
+        var m = loadAsFileSync(res) || loadAsDirectorySync(res);
         if (m) return m;
     } else {
         var n = loadNodeModulesSync(x, y);

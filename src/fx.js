@@ -218,10 +218,6 @@ SVG.FX = SVG.invent({
       
       return this
     }
-    // Add animatable transformations
-  , transform: function(o) {
-      return this.attr('transform', o)
-    }
     // Add animatable styles
   , style: function(s, v) {
       if (typeof s == 'object')

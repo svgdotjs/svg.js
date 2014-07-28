@@ -308,7 +308,7 @@ describe('Element', function() {
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
     })
-    it('returns the correct rectangular box within a viewbox', function() {
+    xit('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
       expect(box.x).toBe(1)

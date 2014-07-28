@@ -58,37 +58,37 @@ describe('Matrix', function() {
       })
 
       it('parses the current transform matrix form an element', function() {
-        expect(matrix.a).toBe(1.9696155786514282)
-        expect(matrix.b).toBe(-0.3472963869571686)
-        expect(matrix.c).toBe(0.3472963869571686)
-        expect(matrix.d).toBe(1.9696155786514282)
-        expect(matrix.e).toBe(-8.373950958251953)
-        expect(matrix.f).toBe(7.758301258087158)
+        expect(matrix.a).toBeCloseTo(1.9696155786514282)
+        expect(matrix.b).toBeCloseTo(-0.3472963869571686)
+        expect(matrix.c).toBeCloseTo(0.3472963869571686)
+        expect(matrix.d).toBeCloseTo(1.9696155786514282)
+        expect(matrix.e).toBeCloseTo(-8.373950958251953)
+        expect(matrix.f).toBeCloseTo(7.758301258087158)
       })
 
       describe('extract()', function() {
 
         it('parses translation values', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).translate(40, 50)).extract()
-          expect(extract.x).toBe(40)
-          expect(extract.y).toBe(50)
+          expect(extract.x).toBeCloseTo(40)
+          expect(extract.y).toBeCloseTo(50)
         })
         it('parses skewX value', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).skew(25, 0)).extract()
-          expect(approximately(extract.skewX, 0.01)).toBe(25)
+          expect(extract.skewX).toBeCloseTo(25)
         })
-        it('parses skewX value', function() {
+        it('parses skewY value', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).skew(0, 20)).extract()
-          expect(approximately(extract.skewY, 0.01)).toBe(20)
+          expect(extract.skewY).toBeCloseTo(20)
         })
         it('parses scale values', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).scale(2, 3)).extract()
-          expect(extract.scaleX).toBe(2)
-          expect(extract.scaleY).toBe(3)
+          expect(extract.scaleX).toBeCloseTo(2)
+          expect(extract.scaleY).toBeCloseTo(3)
         })
         it('parses rotatoin value', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).rotate(-100)).extract()
-          expect(approximately(extract.rotation, 0.01)).toBe(-100)
+          expect(extract.rotation).toBeCloseTo(-100)
         })
 
       })
@@ -240,19 +240,72 @@ describe('Matrix', function() {
   })
 
   describe('rotate()', function() {
-    
+    it('performs a rotation with one argument', function() {
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(30)
+
+      expect(matrix.a).toBeCloseTo(0.8660254037844387)
+      expect(matrix.d).toBeCloseTo(0.8660254037844387)
+      expect(matrix.e).toBe(4)
+      expect(matrix.f).toBe(3)
+    })
+    it('performs a rotation on a given point with three arguments', function() {
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(30, 150, 100)
+
+      expect(matrix.a).toBeCloseTo(0.8660254037844387)
+      expect(matrix.d).toBeCloseTo(0.8660254037844387)
+      expect(matrix.e).toBeCloseTo(74.0961894323342)
+      expect(matrix.f).toBeCloseTo(-58.60254037844388)
+    })
   })
 
   describe('flip()', function() {
-    
+    describe('with x given', function() {
+      it('performs a flip over the horizontal axis with one argument', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('x')
+
+        expect(matrix.a).toBe(-1)
+        expect(matrix.d).toBe(1)
+        expect(matrix.e).toBe(4)
+        expect(matrix.f).toBe(3)
+      })
+      it('performs a flip over the horizontal axis over a given point with two arguments', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('x', 150)
+
+        expect(matrix.a).toBe(-1)
+        expect(matrix.d).toBe(1)
+        expect(matrix.e).toBe(304)
+        expect(matrix.f).toBe(3)
+      })
+    })
+    describe('with y given', function() {
+      it('performs a flip over the vertical axis with one argument', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y')
+        
+        expect(matrix.a).toBe(1)
+        expect(matrix.d).toBe(-1)
+        expect(matrix.e).toBe(4)
+        expect(matrix.f).toBe(3)
+      })
+      it('performs a flip over the vertical axis over a given point with two arguments', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y', 100)
+  
+        expect(matrix.a).toBe(1)
+        expect(matrix.d).toBe(-1)
+        expect(matrix.e).toBe(4)
+        expect(matrix.f).toBe(203)
+      })
+    })
   })
 
   describe('skew()', function() {
-    
-  })
+    it('performs a skew two arguments', function() {
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(0, 0)
 
-  describe('skew()', function() {
-    
+      expect(matrix.a).toBe(matrix.toString())
+      expect(matrix.d).toBe(1)
+      expect(matrix.e).toBe(4)
+      expect(matrix.f).toBe(3)
+    })
   })
 
   describe('native()', function() {

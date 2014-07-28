@@ -34,8 +34,8 @@ SVG.extend(SVG.Element, SVG.FX, {
     return this.transform({ rotation: d, cx: cx, cy: cy })
   }
   // Map skew to transform
-, skew: function(x, y) {
-    return this.transform({ skewX: x, skewY: y })
+, skew: function(x, y, cx, cy) {
+    return this.transform({ skewX: x, skewY: y, cx: cx, cy: cy })
   }
   // Map scale to transform
 , scale: function(x, y, cx, cy) {
@@ -46,6 +46,10 @@ SVG.extend(SVG.Element, SVG.FX, {
   // Map translate to transform
 , translate: function(x, y) {
     return this.transform({ x: x, y: y })
+  }
+  // Map flip to transform
+, flip: function(a, o) {
+    return this.transform({ flip: a, offset: o })
   }
   // Map matrix to transform
 , matrix: function(m) {

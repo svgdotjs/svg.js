@@ -6,6 +6,7 @@ var gulp    = require('gulp')
   , size    = require('gulp-size')
   , uglify  = require('gulp-uglify')
   , wrapper = require('gulp-wrapper')
+  , jasmine = require('gulp-jasmine')
   , request = require('request')
   , fs      = require('fs')
   , pkg     = require('./package.json')
@@ -37,6 +38,7 @@ var parts = [
 , 'src/number.js'
 , 'src/viewbox.js'
 , 'src/element.js'
+, 'src/fx.js'
 , 'src/boxes.js'
 , 'src/matrix.js'
 , 'src/attr.js'
@@ -45,7 +47,6 @@ var parts = [
 , 'src/parent.js'
 , 'src/container.js'
 , 'src/transporter.js'
-, 'src/fx.js'
 , 'src/relative.js'
 , 'src/event.js'
 , 'src/defs.js'

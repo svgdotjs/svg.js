@@ -20,12 +20,12 @@ describe('Text', function() {
     it('sets the value of x with the first argument', function() {
       text.x(123)
       var box = text.bbox()
-      expect(approximately(box.x)).toBe(123)
+      expect(box.x).toBeCloseTo(123)
     })
     it('sets the value of x based on the anchor with the first argument', function() {
       text.x(123, true)
       var box = text.bbox()
-      expect(approximately(box.x)).toBe(123)
+      expect(box.x).toBeCloseTo(123)
     })
   })
   
@@ -50,17 +50,17 @@ describe('Text', function() {
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       var box = text.bbox()
-      expect(approximately(text.cx())).toBe(approximately(box.width / 2))
+      expect(text.cx()).toBeCloseTo(box.width / 2)
     })
     it('sets the value of cx with the first argument', function() {
       text.cx(123)
       var box = text.bbox()
-      expect(approximately(box.cx)).toBe(123)
+      expect(box.cx).toBeCloseTo(123)
     })
     it('sets the value of cx based on the anchor with the first argument', function() {
       text.cx(123, true)
       var box = text.bbox()
-      expect(approximately(box.cx)).toBe(123)
+      expect(box.cx).toBeCloseTo(123)
     })
   })
   
@@ -80,17 +80,17 @@ describe('Text', function() {
     it('sets the x and y position', function() {
       text.move(123,456)
       var box = text.bbox()
-      expect(approximately(box.x)).toBe(123)
-      expect(approximately(box.y)).toBe(456)
+      expect(box.x).toBeCloseTo(123)
+      expect(box.y).toBeCloseTo(456)
     })
   })
   
   describe('center()', function() {
     it('sets the cx and cy position', function() {
-      text.center(321,567)
+      text.center(321, 567)
       var box = text.bbox()
-      expect(approximately(box.cx)).toBe(321)
-      expect(approximately(box.cy)).toBe(567)
+      expect(box.cx).toBeCloseTo(321)
+      expect(box.cy).toBeCloseTo(567, 1)
     })
   })
   

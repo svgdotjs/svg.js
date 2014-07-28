@@ -104,37 +104,37 @@ SVG.Matrix = SVG.invent({
         cx = y
       }
 
-      return this
-        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
-        .multiply(new SVG.Matrix(x, 0, 0, y, 0, 0))
-        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
+      return this.around(cx, cy, new SVG.Matrix(x, 0, 0, y, 0, 0))
     }
     // Rotate matrix
-  , rotate: function(d, cx, cy) {
+  , rotate: function(r, cx, cy) {
       // convert degrees to radians
-      d = SVG.utils.radians(d)
+      r = SVG.utils.radians(r)
       
-      return this
-        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
-        .multiply(new SVG.Matrix(Math.cos(d), Math.sin(d), -Math.sin(d), Math.cos(d), 0, 0))
-        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
+      return this.around(cx, cy, new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0))
     }
-    // Flip matrix on x or y
-  , flip: function(a) {
-      return new SVG.Matrix(this.native()['flip' + a.toUpperCase()]())
+    // Flip matrix on x or y, at a given offset
+  , flip: function(a, o) {
+      return a == 'x' ? this.scale(-1, 1, o, 0) : this.scale(1, -1, 0, o)
     }
     // Skew
   , skew: function(x, y, cx, cy) {
-      // IMPLEMENT SKEW CENTER POINT
-      return new SVG.Matrix(this.native().skewX(x || 0).skewY(y || 0))
+      return this.around(cx, cy, this.native().skewX(x || 0).skewY(y || 0))
+    }
+    // Transform around a center point
+  , around: function(cx, cy, matrix) {
+      return this
+        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
+        .multiply(matrix)
+        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
     }
     // Convert to native SVGMatrix
   , native: function() {
       // create new matrix
-      var i, matrix = SVG.parser.draw.node.createSVGMatrix()
+      var matrix = SVG.parser.draw.node.createSVGMatrix()
   
       // update with current values
-      for (i = abcdef.length - 1; i >= 0; i--)
+      for (var i = abcdef.length - 1; i >= 0; i--)
         matrix[abcdef[i]] = this[abcdef[i]]
 
       return matrix

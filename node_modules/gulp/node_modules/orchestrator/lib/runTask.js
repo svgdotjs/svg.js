@@ -3,6 +3,7 @@
 "use strict";
 
 var eos = require('end-of-stream');
+var consume = require('stream-consume');
 
 module.exports = function (task, done) {
 	var that = this, finish, cb, isDone = false, start, r;
@@ -47,9 +48,12 @@ module.exports = function (task, done) {
 	} else if (r && typeof r.pipe === 'function') {
 		// wait for stream to end
 
-		eos(r, { error: true, readable: false, writable: false }, function(err){
+		eos(r, { error: true, readable: r.readable, writable: r.writable && !r.readable }, function(err){
 			finish(err, 'stream');
 		});
+
+		// Ensure that the stream completes
+        consume(r);
 
 	} else if (task.length === 0) {
 		// synchronous, function took in args.length parameters, and the callback was extra

@@ -118,11 +118,11 @@ describe('Path', function() {
     it('sets the width of the element', function() {
       path.width(234)
       var box = path.bbox()
-      expect(approximately(box.width, 0.1)).toBe(234)
+      expect(box.width).toBeCloseTo(234)
     })
     it('gets the width of the element aithout an agrument', function() {
       path.width(456)
-      expect(approximately(path.width(), 0.1)).toBe(456)
+      expect(path.width()).toBeCloseTo(456)
     })
   })
 
@@ -130,11 +130,11 @@ describe('Path', function() {
     it('sets the height of the element', function() {
       path.height(654)
       var box = path.bbox()
-      expect(approximately(box.height, 0.1)).toBe(654)
+      expect(box.height).toBeCloseTo(654)
     })
     it('gets the height of the element aithout an agrument', function() {
       path.height(321)
-      expect(approximately(path.height(), 0.1)).toBe(321)
+      expect(path.height()).toBeCloseTo(321)
     })
   })
   
@@ -142,8 +142,8 @@ describe('Path', function() {
     it('defines the width and height of the element', function() {
       path.size(987,654)
       var box = path.bbox()
-      expect(approximately(box.width, 0.1)).toBe(987)
-      expect(approximately(box.height, 0.1)).toBe(654)
+      expect(box.width).toBeCloseTo(987)
+      expect(box.height).toBeCloseTo(654)
     })
     it('defines the width and height proportionally with only the width value given', function() {
       var box = path.bbox()

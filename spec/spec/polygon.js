@@ -112,11 +112,11 @@ describe('Polygon', function() {
     it('sets the width and height of the element', function() {
       polygon.width(987)
       var box = polygon.bbox()
-      expect(approximately(box.width, 0.1)).toBe(987)
+      expect(box.width).toBeCloseTo(987)
     })
     it('gets the width and height of the element without an argument', function() {
       polygon.width(789)
-      expect(approximately(polygon.width(), 0.1)).toBe(789)
+      expect(polygon.width()).toBeCloseTo(789)
     })
   })
 
@@ -124,11 +124,11 @@ describe('Polygon', function() {
     it('sets the height and height of the element', function() {
       polygon.height(987)
       var box = polygon.bbox()
-      expect(approximately(box.height, 0.1)).toBe(987)
+      expect(box.height).toBeCloseTo(987)
     })
     it('gets the height and height of the element without an argument', function() {
       polygon.height(789)
-      expect(approximately(polygon.height(), 0.1)).toBe(789)
+      expect(polygon.height()).toBeCloseTo(789)
     })
   })
   
@@ -136,8 +136,8 @@ describe('Polygon', function() {
     it('should define the width and height of the element', function() {
       polygon.size(987,654)
       var box = polygon.bbox()
-      expect(approximately(box.width, 0.1)).toBe(987)
-      expect(approximately(box.height, 0.1)).toBe(654)
+      expect(box.width).toBeCloseTo(987)
+      expect(box.height).toBeCloseTo(654)
     })
     it('defines the width and height proportionally with only the width value given', function() {
       var box = polygon.bbox()

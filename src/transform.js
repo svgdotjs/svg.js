@@ -11,10 +11,10 @@ SVG.extend(SVG.Element, SVG.FX, {
 		// singular getter
 		else if (typeof o === 'string')
 			return target.ctm().extract()[o]
-
+		
 		// get current matrix
 		var matrix = new SVG.Matrix(target)
-
+		
 		// act on matrix
 		if (o.a != null)
 			matrix = matrix.multiply(new SVG.Matrix(o))
@@ -26,19 +26,31 @@ SVG.extend(SVG.Element, SVG.FX, {
 			, o.cx == null ? target.bbox().cx : o.cx
 			, o.cy == null ? target.bbox().cy : o.cy
 			)
-
+		
 		// act on scale
 		else if (o.scale != null || o.scaleX != null || o.scaleY != null)
 			matrix = matrix.scale(
 				o.scale != null ? o.scale : o.scaleX != null ? o.scaleX : 1
 			, o.scale != null ? o.scale : o.scaleY != null ? o.scaleY : 1
-			, o.cx 		!= null ? o.cx 		: target.bbox().x
-			, o.cy 		!= null ? o.cy 		: target.bbox().y
+			, o.cx 		== null ? target.bbox().x : o.cx
+			, o.cy 		== null ? target.bbox().y : o.cy
 			)
 
 		// act on skew
 		else if (o.skewX || o.skewY)
-			matrix = matrix.skew(o.skewX, o.skewY)
+			matrix = matrix.skew(
+				o.skewX
+			, o.skewY
+			, o.cx == null ? target.bbox().cx : o.cx
+			, o.cy == null ? target.bbox().cy : o.cy
+			)
+
+		// act on flip
+		else if (o.flip)
+			matrix = matrix.flip(
+				o.flip
+			, o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+			)
 
 		// act on translate
 		else if (o.x || o.y)

@@ -11,6 +11,7 @@ xtend is a basic utility library which allows you to extend an object by appendi
 ```js
 var extend = require("xtend")
 
+// extend returns a new object. Does not mutate arguments
 var combination = extend({
     a: "a"
 }, {

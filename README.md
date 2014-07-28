@@ -3291,6 +3291,18 @@ or
 matrix.flip('y')
 ```
 
+By default elements are flipped over their center point. The flip axis position can be defined with the second argument:
+
+```javascript
+matrix.flip('x', 150)
+```
+
+or
+
+```javascript
+matrix.flip('y', 100)
+```
+
 __`returns`: `SVG.Matrix`__
 
 ### skew()
@@ -3307,6 +3319,18 @@ Skews matrix a given degrees over x and or y axis on a given point with four val
 // degreesX, degreesY, cx, cy
 matrix.skew(0, 45, 150, 100)
 ```
+
+__`returns`: `SVG.Matrix`__
+
+### around()
+Performs a given matrix transformation around a given center point:
+
+```javascript
+// cx, cy, matrix
+matrix.around(100, 150, new SVG.Matrix().skew(0, 45))
+```
+
+The matrix passed as the third argument will be used to multiply.
 
 __`returns`: `SVG.Matrix`__
 
