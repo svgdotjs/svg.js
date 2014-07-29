@@ -3501,7 +3501,7 @@ Here are a few nice plugins that are available for SVG.js:
 
 
 ## Contributing
-We love contributions. Yes indeed, I used the word LOVE! But please make sure you follow the same coding style. Here are some guidelines.
+We love contributions. Yes indeed, we used the word LOVE! But please make sure you follow the same coding style. Here are some guidelines.
 
 ### Indentation
 We do it with __two spaces__. Make sure you don't start using tabs because then things get messy.
@@ -3529,6 +3529,29 @@ for (var i = 0; i < 5; i++) {
     nest.circle(100);
   };
 };
+```
+
+### Minimize variable declarations
+All local variables should be declared at the beginning of a function or method unless there is ony one variable to declare. Although it is not required to assign them at the same moment. When if statements are involved, requiring some variables only to be present in the statement, the necessary variables should be declared right after the if statement.
+
+__Good__:
+```javascript
+function reading_board() {
+  var aap, noot, mies
+
+  aap  = 1
+  noot = 2
+  mies = aap + noot
+}
+```
+
+__Bad__:
+```javascript
+function reading_board() {
+  var aap  = 1
+  var noot = 2
+  var mies = aap + noot
+}
 ```
 
 ### Let your code breathe people!
