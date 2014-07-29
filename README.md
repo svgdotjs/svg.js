@@ -2954,10 +2954,10 @@ Note that this method is currently not available on `SVG.PathArray` but will be 
 __`returns`: `itself`__
 
 ### move()
-Moves geometry of the array with the given `x` and `y` values:
+Moves geometry to a given `x` and `y` position by its upper left corner:
 
 ```javascript
-var array = new SVG.PointArray([[0, 0], [100, 100]])
+var array = new SVG.PointArray([[10, 10], [100, 100]])
 array.move(33,75)
 array.toString() //-> returns '33,75 133,175'
 ```
