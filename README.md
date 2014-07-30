@@ -1790,10 +1790,10 @@ __`returns`: `SVG.FX`__
 Say you want to control the position of an animation with an external event, then the `at()` method will proove very useful:
 
 ```javascript
-var animate = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
+var animation = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
 
 document.onmousemove = function(event) {
-  animate.at(event.clientX / 1000)
+  animation.at(event.clientX / 1000)
 }
 ```
 
