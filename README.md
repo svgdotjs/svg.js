@@ -1797,7 +1797,7 @@ document.onmousemove = function(event) {
 }
 ```
 
-In order to be able use the `at()` method, the duration of the animation should be set to `'='`. The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
+In order to be able to use the `at()` method, the duration of the animation should be set to `'='`. The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
 
 _This functionality requires the fx.js module which is included in the default distribution._
 
