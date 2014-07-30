@@ -18,10 +18,10 @@ SVG.Parent = SVG.invent({
     // Add given element at a position
   , add: function(element, i) {
       if (!this.has(element)) {
-        // Define insertion index if none given
+        // define insertion index if none given
         i = i == null ? this.children().length : i
         
-        // Add element references
+        // add element references
         this.node.insertBefore(element.node, this.node.childNodes[i] || null)
       }
 

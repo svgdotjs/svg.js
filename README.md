@@ -1735,13 +1735,13 @@ To make things easier a morphing function is passed as the second argument. This
 var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
 
 rect.animate(3000).move(100, 100).during(function(pos, morph) {
-  /* numeric values */
+  // numeric values
   ellipse.size(morph(100, 200), morph(100, 50))
   
-  /* unit strings */
+  // unit strings
   ellipse.attr('cx', morph('20%', '80%'))
   
-  /* hex color strings */
+  // hex color strings
   ellipse.fill(morph('#333', '#ff0066'))
 })
 ```
@@ -1758,8 +1758,18 @@ rect.animate(3000).move(100, 100).loop()
 But the loop can also be a predefined number of times:
 
 ```javascript
-rect.animate(3000).move(100, 100).loop(5)
+rect.animate(3000).move(100, 100).loop(3)
 ```
+
+Loops go from beginning to end and start over again (`0->1.0->1.0->1.`).
+
+There is also a reverse flag that should be passed as the second argument:
+
+```javascript
+rect.animate(3000).move(100, 100).loop(3, true)
+```
+
+Loops will then be completely reversed before starting over (`0->1->0->1->0->1.`).
 
 __`returns`: `SVG.FX`__
 
@@ -1776,22 +1786,46 @@ Note that the `after()` method will never be called if the animation is looping 
 
 __`returns`: `SVG.FX`__
 
-### to()
-Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
+### at()
+Say you want to control the position of an animation with an external event, then the `at()` method will proove very useful:
 
 ```javascript
 var animate = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
 
 document.onmousemove = function(event) {
-  animate.to(event.clientX / 1000)
+  animate.at(event.clientX / 1000)
 }
 ```
 
-In order to be able use the `to()` method the duration of the animation should be set to `'='`. The value passed as the first argument of `to()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
+In order to be able use the `at()` method, the duration of the animation should be set to `'='`. The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
 
 _This functionality requires the fx.js module which is included in the default distribution._
 
 __`returns`: `SVG.FX`__
+
+
+### situation
+The current situation of an animation is stored in the `situation` object:
+
+```javascript
+rect.animate(3000).move(100, 100)
+rect.fx.situation //-> everything is in here
+```
+
+Available values are:
+
+- `start` (start time as a number in milliseconds)
+- `play` (animation playing or not; `true` or `false`)
+- `pause` (time when the animation was last paused)
+- `duration` (the chosen duration of the animation)
+- `ease` (the chosen easing calculation)
+- `finish` (start + duration)
+- `loop` (the current loop; counting down if a number; `true`, `false` or a number)
+- `loops` (if a number, the total number loops; `true`, `false` or a number)
+- `reverse` (whether or not the loop should be reversed; `true` or `false`)
+- `reversing` (`true` if the loop is currently reversing, otherwise `false`)
+- `during` (the function that should be called on every keyframe)
+- `after` (the function that should be called after completion)
 
 
 ## Syntax sugar

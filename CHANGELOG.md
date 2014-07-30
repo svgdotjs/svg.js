@@ -5,7 +5,7 @@
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `SVG.Title` and `SVG.Desc` -> __TODO!__
 
-# 1.0.0-rc.10 (?/07/2014)
+# 1.0.0-rc.10 (?/08/2014)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
@@ -34,6 +34,9 @@
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf]
 - added coding style description to README
+- changed `to()` method to `at()` method in `SVG.FX`
+- added reverse functionality for animations
+- documented the `situation` object in `SVG.FX`
 
 # 1.0.0-rc.9 (17/06/2014)
 

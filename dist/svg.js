@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Jul 28 2014 19:09:36 GMT+0200 (CEST)
+* BUILT: Wed Jul 30 2014 11:04:18 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -1120,31 +1120,32 @@ SVG.FX = SVG.invent({
             akeys.push(key)
 
           // make sure morphable elements are scaled, translated and morphed all together
-          if (element.morphArray && (fx._plot || akeys.indexOf('points') > -1)) {
+          if (element.morphArray && (fx.destination.plot || akeys.indexOf('points') > -1)) {
             // get destination
             var box
-              , p = new element.morphArray(fx._plot || fx.attrs.points || element.array)
+              , p = new element.morphArray(fx.destination.plot || fx.attrs.points || element.array)
 
             // add size
-            if (fx._size) p.size(fx._size.width.to, fx._size.height.to)
+            if (fx.destination.size)
+              p.size(fx.destination.size.width.to, fx.destination.size.height.to)
 
             // add movement
             box = p.bbox()
-            if (fx._x) p.move(fx._x.to, box.y)
-            else if (fx._cx) p.move(fx._cx.to - box.width / 2, box.y)
+            if (fx.destination.x)
+              p.move(fx.destination.x.to, box.y)
+            else if (fx.destination.cx)
+              p.move(fx.destination.cx.to - box.width / 2, box.y)
 
             box = p.bbox()
-            if (fx._y) p.move(box.x, fx._y.to)
-            else if (fx._cy) p.move(box.x, fx._cy.to - box.height / 2)
+            if (fx.destination.y)
+              p.move(box.x, fx.destination.y.to)
+            else if (fx.destination.cy)
+              p.move(box.x, fx.destination.cy.to - box.height / 2)
 
-            // delete element oriented changes
-            delete fx._x
-            delete fx._y
-            delete fx._cx
-            delete fx._cy
-            delete fx._size
-
-            fx._plot = element.array.morph(p)
+            // reset destination values
+            fx.destination = {
+              plot: element.array.morph(p)
+            }
           }
         }
 
@@ -1169,39 +1170,39 @@ SVG.FX = SVG.invent({
           pos
         
         // run plot function
-        if (fx._plot) {
-          element.plot(fx._plot.at(pos))
+        if (fx.destination.plot) {
+          element.plot(fx.destination.plot.at(pos))
 
         } else {
           // run all x-position properties
-          if (fx._x)
-            element.x(fx._x.at(pos))
-          else if (fx._cx)
-            element.cx(fx._cx.at(pos))
+          if (fx.destination.x)
+            element.x(fx.destination.x.at(pos))
+          else if (fx.destination.cx)
+            element.cx(fx.destination.cx.at(pos))
 
           // run all y-position properties
-          if (fx._y)
-            element.y(fx._y.at(pos))
-          else if (fx._cy)
-            element.cy(fx._cy.at(pos))
+          if (fx.destination.y)
+            element.y(fx.destination.y.at(pos))
+          else if (fx.destination.cy)
+            element.cy(fx.destination.cy.at(pos))
 
           // run all size properties
-          if (fx._size)
-            element.size(fx._size.width.at(pos), fx._size.height.at(pos))
+          if (fx.destination.size)
+            element.size(fx.destination.size.width.at(pos), fx.destination.size.height.at(pos))
         }
 
         // run all viewbox properties
-        if (fx._viewbox)
+        if (fx.destination.viewbox)
           element.viewbox(
-            fx._viewbox.x.at(pos)
-          , fx._viewbox.y.at(pos)
-          , fx._viewbox.width.at(pos)
-          , fx._viewbox.height.at(pos)
+            fx.destination.viewbox.x.at(pos)
+          , fx.destination.viewbox.y.at(pos)
+          , fx.destination.viewbox.width.at(pos)
+          , fx.destination.viewbox.height.at(pos)
           )
 
         // run leading property
-        if (fx._leading)
-          element.leading(fx._leading.at(pos))
+        if (fx.destination.leading)
+          element.leading(fx.destination.leading.at(pos))
 
         // animate attributes
         for (i = akeys.length - 1; i >= 0; i--)
@@ -1212,8 +1213,8 @@ SVG.FX = SVG.invent({
           element.style(skeys[i], at(fx.styles[skeys[i]], pos))
 
         // callback for each keyframe
-        if (fx._during)
-          fx._during.call(element, pos, function(from, to) {
+        if (fx.situation.during)
+          fx.situation.during.call(element, pos, function(from, to) {
             return at({ from: from, to: to }, pos)
           })
       }
@@ -1224,13 +1225,11 @@ SVG.FX = SVG.invent({
           var start = new Date().getTime()
 
           // initialize situation object
-          fx.situation = {
-            interval: 1000 / 60
-          , start:    start
-          , play:     true
-          , finish:   start + d
-          , duration: d
-          }
+          fx.situation.start    = start
+          fx.situation.play     = true
+          fx.situation.finish   = start + d
+          fx.situation.duration = d
+          fx.situation.ease     = ease
 
           // render function
           fx.render = function() {
@@ -1239,21 +1238,37 @@ SVG.FX = SVG.invent({
               // calculate pos
               var time = new Date().getTime()
                 , pos = time > fx.situation.finish ? 1 : (time - fx.situation.start) / d
+
+              // reverse pos if animation is reversed
+              if (fx.situation.reversing)
+                pos = -pos + 1
               
               // process values
               fx.at(pos)
               
               // finish off animation
               if (time > fx.situation.finish) {
-                if (fx._plot)
-                  element.plot(new SVG.PointArray(fx._plot.destination).settle())
+                if (fx.destination.plot)
+                  element.plot(new SVG.PointArray(fx.destination.plot.destination).settle())
 
-                if (fx._loop === true || (typeof fx._loop == 'number' && fx._loop > 1)) {
-                  if (typeof fx._loop == 'number')
-                    --fx._loop
+                if (fx.situation.loop === true || (typeof fx.situation.loop == 'number' && fx.situation.loop > 0)) {
+                  // register reverse
+                  if (fx.situation.reverse)
+                    fx.situation.reversing = !fx.situation.reversing
+
+                  if (typeof fx.situation.loop == 'number') {
+                    // reduce loop count
+                    if (!fx.situation.reverse || fx.situation.reversing)
+                      --fx.situation.loop
+
+                    // remove last loop if reverse is disabled
+                    if (!fx.situation.reverse && fx.situation.loop == 1)
+                      --fx.situation.loop                      
+                  }
+                  
                   fx.animate(d, ease, delay)
                 } else {
-                  fx._after ? fx._after.apply(element, [fx]) : fx.stop()
+                  fx.situation.after ? fx.situation.after.apply(element, [fx]) : fx.stop()
                 }
 
               } else {
@@ -1313,25 +1328,25 @@ SVG.FX = SVG.invent({
     }
     // Animatable x-axis
   , x: function(x) {
-      this._x = new SVG.Number(this.target.x()).morph(x)
+      this.destination.x = new SVG.Number(this.target.x()).morph(x)
       
       return this
     }
     // Animatable y-axis
   , y: function(y) {
-      this._y = new SVG.Number(this.target.y()).morph(y)
+      this.destination.y = new SVG.Number(this.target.y()).morph(y)
       
       return this
     }
     // Animatable center x-axis
   , cx: function(x) {
-      this._cx = new SVG.Number(this.target.cx()).morph(x)
+      this.destination.cx = new SVG.Number(this.target.cx()).morph(x)
       
       return this
     }
     // Animatable center y-axis
   , cy: function(y) {
-      this._cy = new SVG.Number(this.target.cy()).morph(y)
+      this.destination.cy = new SVG.Number(this.target.cy()).morph(y)
       
       return this
     }
@@ -1353,7 +1368,7 @@ SVG.FX = SVG.invent({
         // animate bbox based size for all other elements
         var box = this.target.bbox()
 
-        this._size = {
+        this.destination.size = {
           width:  new SVG.Number(box.width).morph(width)
         , height: new SVG.Number(box.height).morph(height)
         }
@@ -1363,14 +1378,14 @@ SVG.FX = SVG.invent({
     }
     // Add animatable plot
   , plot: function(p) {
-      this._plot = p
+      this.destination.plot = p
 
       return this
     }
     // Add leading method
   , leading: function(value) {
-      if (this.target._leading)
-        this._leading = new SVG.Number(this.target._leading).morph(value)
+      if (this.target.destination.leading)
+        this.destination.leading = new SVG.Number(this.target.destination.leading).morph(value)
 
       return this
     }
@@ -1379,7 +1394,7 @@ SVG.FX = SVG.invent({
       if (this.target instanceof SVG.Container) {
         var box = this.target.viewbox()
         
-        this._viewbox = {
+        this.destination.viewbox = {
           x:      new SVG.Number(box.x).morph(x)
         , y:      new SVG.Number(box.y).morph(y)
         , width:  new SVG.Number(box.width).morph(width)
@@ -1401,19 +1416,23 @@ SVG.FX = SVG.invent({
     }
     // Add callback for each keyframe
   , during: function(during) {
-      this._during = during
+      this.situation.during = during
       
       return this
     }
     // Callback after animation
   , after: function(after) {
-      this._after = after
+      this.situation.after = after
       
       return this
     }
     // Make loopable
-  , loop: function(times) {
-      this._loop = times || true
+  , loop: function(times, reverse) {
+      // store current loop and total loops
+      this.situation.loop = this.situation.loops = times || true
+
+      // make reversable
+      this.situation.reverse = !!reverse
 
       return this
     }
@@ -1424,31 +1443,18 @@ SVG.FX = SVG.invent({
 
         this.animate(0)
 
-        if (this._after)
-          this._after.apply(this.target, [this])
+        if (this.situation.after)
+          this.situation.after.apply(this.target, [this])
 
       } else {
         // stop current animation
         clearTimeout(this.timeout)
 
-        // reset storage for properties that need animation
-        this.attrs     = {}
-        this.trans     = {}
-        this.styles    = {}
-        this.situation = {}
-
-        // delete destinations
-        delete this._x
-        delete this._y
-        delete this._cx
-        delete this._cy
-        delete this._size
-        delete this._plot
-        delete this._loop
-        delete this._after
-        delete this._during
-        delete this._leading
-        delete this._viewbox
+        // reset storage for properties
+        this.attrs       = {}
+        this.styles      = {}
+        this.situation   = {}
+        this.destination = {}
       }
       
       return this
@@ -2015,10 +2021,10 @@ SVG.Parent = SVG.invent({
     // Add given element at a position
   , add: function(element, i) {
       if (!this.has(element)) {
-        // Define insertion index if none given
+        // define insertion index if none given
         i = i == null ? this.children().length : i
         
-        // Add element references
+        // add element references
         this.node.insertBefore(element.node, this.node.childNodes[i] || null)
       }
 
@@ -3666,7 +3672,7 @@ SVG.Set = SVG.invent({
   , remove: function(element) {
       var i = this.index(element)
       
-      /* remove given child */
+      // remove given child
       if (i > -1)
         this.members.splice(i, 1)
 
@@ -3681,7 +3687,7 @@ SVG.Set = SVG.invent({
     }
     // Restore to defaults
   , clear: function() {
-      /* initialize store */
+      // initialize store
       this.members = []
 
       return this
@@ -3714,11 +3720,11 @@ SVG.Set = SVG.invent({
   , bbox: function(){
       var box = new SVG.BBox()
 
-      /* return an empty box of there are no members */
+      // return an empty box of there are no members
       if (this.members.length == 0)
         return box
 
-      /* get the first rbox and update the target bbox */
+      // get the first rbox and update the target bbox
       var rbox = this.members[0].rbox()
       box.x      = rbox.x
       box.y      = rbox.y
@@ -3726,7 +3732,7 @@ SVG.Set = SVG.invent({
       box.height = rbox.height
 
       this.each(function() {
-        /* user rbox for correct position and visual representation */
+        // user rbox for correct position and visual representation
         box = box.merge(this.rbox())
       })
 
@@ -3743,10 +3749,10 @@ SVG.Set = SVG.invent({
   }
 })
 
-SVG.SetFX = SVG.invent({
+SVG.FX.Set = SVG.invent({
   // Initialize node
   create: function(set) {
-    /* store reference to set */
+    // store reference to set
     this.set = set
   }
 
@@ -3757,33 +3763,33 @@ SVG.Set.inherit = function() {
   var m
     , methods = []
   
-  /* gather shape methods */
+  // gather shape methods
   for(var m in SVG.Shape.prototype)
     if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
       methods.push(m)
 
-  /* apply shape aliasses */
+  // apply shape aliasses
   methods.forEach(function(method) {
     SVG.Set.prototype[method] = function() {
       for (var i = 0, il = this.members.length; i < il; i++)
         if (this.members[i] && typeof this.members[i][method] == 'function')
           this.members[i][method].apply(this.members[i], arguments)
 
-      return method == 'animate' ? (this.fx || (this.fx = new SVG.SetFX(this))) : this
+      return method == 'animate' ? (this.fx || (this.fx = new SVG.FX.Set(this))) : this
     }
   })
 
-  /* clear methods for the next round */
+  // clear methods for the next round
   methods = []
 
-  /* gather fx methods */
+  // gather fx methods
   for(var m in SVG.FX.prototype)
-    if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.SetFX.prototype[m] != 'function')
+    if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.FX.Set.prototype[m] != 'function')
       methods.push(m)
 
-  /* apply fx aliasses */
+  // apply fx aliasses
   methods.forEach(function(method) {
-    SVG.SetFX.prototype[method] = function() {
+    SVG.FX.Set.prototype[method] = function() {
       for (var i = 0, il = this.set.members.length; i < il; i++)
         this.set.members[i].fx[method].apply(this.set.members[i].fx, arguments)
 
