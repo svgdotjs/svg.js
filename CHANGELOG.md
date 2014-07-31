@@ -28,7 +28,7 @@
 - changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method -> __TODO!__
-- moved sup-pixel offset fix to a separate plugin -> __TODO!__
+- reworked sup-pixel offset implementation to be more compact
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
@@ -37,6 +37,9 @@
 - changed `to()` method to `at()` method in `SVG.FX`
 - added reverse functionality for animations
 - documented the `situation` object in `SVG.FX`
+- renamed `SVG.SetFX` to `SVG.FX.Set`
+- added distinction between relative and absolute matrix transformations -> __TODO!__
+- added specs for `SVG.FX` -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 

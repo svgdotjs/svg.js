@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Jul 30 2014 11:04:18 GMT+0200 (CEST)
+* BUILT: Thu Jul 31 2014 20:23:11 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -2707,41 +2707,22 @@ SVG.Doc = SVG.invent({
   , parent: function() {
       return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
     }
-  }
-  
-})
-
-// Fix for possible sub-pixel offset. See:
-// https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-SVG.extend(SVG.Doc, {
-  // Callback
-  spof: function() {
-    if (this.doSpof) {
+    // Fix for possible sub-pixel offset. See:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+  , spof: function(spof) {
       var pos = this.node.getScreenCTM()
       
       if (pos)
         this
           .style('left', (-pos.e % 1) + 'px')
           .style('top',  (-pos.f % 1) + 'px')
+
+      return this
     }
-    
-    return this
-  }
-
-  // Sub-pixel offset enabler
-, fixSubPixelOffset: function() {
-    var self = this
-
-    // Enable spof
-    this.doSpof = true
-
-    // Make sure sub-pixel offset is fixed every time the window is resized
-    SVG.on(window, 'resize', function() { self.spof() })
-
-    return this.spof()
   }
   
 })
+
 SVG.Shape = SVG.invent({
   // Initialize node
   create: function(element) {

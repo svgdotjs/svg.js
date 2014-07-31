@@ -57,7 +57,6 @@ var parts = [
 , 'src/gradient.js'
 , 'src/pattern.js'
 , 'src/doc.js'
-, 'src/spof.js'
 , 'src/shape.js'
 , 'src/symbol.js'
 , 'src/use.js'

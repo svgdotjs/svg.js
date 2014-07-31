@@ -67,11 +67,17 @@ Svg.js also works outside of the HTML DOM, inside an SVG document for example:
 </svg>
 ```
 
-### Sub pixel offset fix
-By default sub pixel offset won't be corrected. To enable it, call the `fixSubPixelOffset()` method:
+### Sub-pixel offset fix
+Call the `spof()` method to fix sub-pixel offset:
 
 ```javascript
-var draw = SVG('drawing').fixSubPixelOffset()
+var draw = SVG('drawing').spof()
+```
+
+To enable automatic sub-pixel offset correction when the window is resized:
+
+```javascript
+SVG.on(window, 'resize', function() { draw.spof() })
 ```
 
 ## Parent elements
@@ -3641,6 +3647,9 @@ SVG.extend(SVG.Rect, {
   }
 })
 ```
+
+### Refactor your code
+Once your implementation is ready, revisit and rework it. We like to keep it [DRY](http://en.wikipedia.org/wiki/Don't_repeat_yourself).
 
 ### Test. Your. Code.
 It's not that hard to write at least one example per implementation, although we prefer more. Your code might seem to work by quickly testing it in your brwoser but more than often you can't forsee everything.
