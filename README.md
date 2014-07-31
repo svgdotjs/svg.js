@@ -1054,7 +1054,7 @@ Or a css string:
 rect.style('cursor:pointer;fill:#f03;')
 ```
 
-Similarly to `attr()` the `style()` method can also act as a getter:
+Similar to `attr()`, the `style()` method can also act as a getter:
 
 ```javascript
 rect.style('cursor')
@@ -1384,7 +1384,7 @@ group.put(rect) //-> returns rect
 __`returns`: `element`__
 
 ### addTo()
-Similarly to the `add()` method on a parent element, elements have the `addTo()` method:
+Similar to the `add()` method on a parent element, elements have the `addTo()` method:
 
 ```javascript
 rect.addTo(group) //-> returns rect
@@ -1393,7 +1393,7 @@ rect.addTo(group) //-> returns rect
 __`returns`: `itself`__
 
 ### putIn()
-Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
+Similar to the `put()` method on a parent element, elements have the `putIn()` method:
 
 ```javascript
 rect.putIn(group) //-> returns group
@@ -2320,7 +2320,7 @@ __`returns`: `value`__
 ## Pattern
 
 ### pattern()
-Creating a pattern is very similar to creating gradients
+Creating a pattern is very similar to creating gradients:
 
 ```javascript
 var pattern = draw.pattern(20, 20, function(add) {
