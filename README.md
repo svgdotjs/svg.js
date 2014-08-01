@@ -811,9 +811,9 @@ the `SVG.Bare` class can be instantiated with the `element()` method on any pare
 ```javascript
 var element = draw.element('title')
 ```
-The stirng value passed as the first argument is the node name that should be generated.
+The string value passed as the first argument is the node name that should be generated.
 
-Additionally the class name can be passed as the second argument from which the element should inherit:
+Additionally any existing class name can be passed as the second argument from which the element should inherit:
 
 ```javascript
 var element = draw.element('symbol', SVG.Parent)
@@ -859,8 +859,7 @@ The second is to search within a parent element:
 var elements = group.select('rect.my-class').fill('#f06')
 ```
 
-
-### Using jQuery
+### Using jQuery or Zepto
 Another way is to use [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/). Here is an example:
 
 ```javascript
