@@ -1025,13 +1025,15 @@ Exporting the full generated SVG, or a part of it, can be done with the `svg()` 
 draw.svg()
 ```
 
+Exporting works on all elements.
+
 Importing is done with the same method:
 
 ```javascript
 draw.svg('<g><rect width="100" height="50" fill="#f06"></rect></g>')
 ```
 
-This method works on any element that inherits from `SVG.Parent`, which is basically every element that can contain other elements.
+Importing works on any element that inherits from `SVG.Parent`, which is basically every element that can contain other elements.
 
 `getter`__`returns`: `string`__
 
