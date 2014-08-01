@@ -67,7 +67,7 @@ SVG.Parent = SVG.invent({
     
       return this
     }
-    // Remove a child element at a position
+    // Remove a given child
   , removeElement: function(element) {
       this.node.removeChild(element.node)
       
@@ -75,11 +75,11 @@ SVG.Parent = SVG.invent({
     }
     // Remove all elements in this container
   , clear: function() {
-      // Remove children
+      // remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
       
-      // Remove defs reference
+      // remove defs reference
       delete this._defs
 
       return this

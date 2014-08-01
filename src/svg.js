@@ -89,13 +89,13 @@ SVG.invent = function(config) {
 
 // Adopt existing svg elements
 SVG.adopt = function(node) {
-  // Make sure a node isn't already adopted
+  // make sure a node isn't already adopted
   if (node.instance) return node.instance
 
-  // Initialize variables
+  // initialize variables
   var element
 
-  // Adopt with element-specific settings
+  // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
   else if (node.nodeName == 'lineairGradient')
@@ -107,7 +107,7 @@ SVG.adopt = function(node) {
   else
     element = new SVG.Element(node)
 
-  // Ensure references
+  // ensure references
   element.type  = node.nodeName
   element.node  = node
   node.instance = element

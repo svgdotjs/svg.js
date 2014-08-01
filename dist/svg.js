@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Jul 31 2014 20:23:11 GMT+0200 (CEST)
+* BUILT: Fri Aug 01 2014 15:10:13 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -100,13 +100,13 @@ SVG.invent = function(config) {
 
 // Adopt existing svg elements
 SVG.adopt = function(node) {
-  // Make sure a node isn't already adopted
+  // make sure a node isn't already adopted
   if (node.instance) return node.instance
 
-  // Initialize variables
+  // initialize variables
   var element
 
-  // Adopt with element-specific settings
+  // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
   else if (node.nodeName == 'lineairGradient')
@@ -118,7 +118,7 @@ SVG.adopt = function(node) {
   else
     element = new SVG.Element(node)
 
-  // Ensure references
+  // ensure references
   element.type  = node.nodeName
   element.node  = node
   node.instance = element
@@ -1076,6 +1076,34 @@ SVG.Element = SVG.invent({
     // Returns the svg node to call native svg methods on it
   , native: function() {
       return this.node
+    }
+    // Import raw svg
+  , svg: function(svg) {
+      // create temporary holder
+      var well = document.createElement('svg')
+
+      // act as a setter if svg is given
+      if (svg && this instanceof SVG.Parent) {
+        // dump raw svg
+        well.innerHTML = '<svg>' + svg + '</svg>'
+
+        // transplant nodes
+        for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
+          this.node.appendChild(well.firstChild.childNodes[i])
+
+      // otherwise act as a getter
+      } else {
+        // create a wrapping svg element in case of partial content
+        well.appendChild(svg = document.createElement('svg'))
+
+        // insert a copy of this node
+        svg.appendChild(this.node.cloneNode(true))
+
+        // return target element
+        return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
+      }
+
+      return this
     }
   }
 })
@@ -2070,7 +2098,7 @@ SVG.Parent = SVG.invent({
     
       return this
     }
-    // Remove a child element at a position
+    // Remove a given child
   , removeElement: function(element) {
       this.node.removeChild(element.node)
       
@@ -2078,11 +2106,11 @@ SVG.Parent = SVG.invent({
     }
     // Remove all elements in this container
   , clear: function() {
-      // Remove children
+      // remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
       
-      // Remove defs reference
+      // remove defs reference
       delete this._defs
 
       return this

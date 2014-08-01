@@ -491,4 +491,43 @@ describe('Element', function() {
       expect(path.reference('marker-end')).toBe(mark)
     })
   })
+
+  describe('svg()', function() {
+    describe('without an argument', function() {
+      it('returns full raw svg when called on the main svg doc', function() {
+        draw.size(100,100).rect(100,100).id(null)
+        draw.circle(100).fill('#f06').id(null)
+        expect(draw.svg()).toBe('<svg id="SvgjsSvg1000" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>')
+      })
+      it('returns partial raw svg when called on a sub group', function() {
+        var group = draw.group().id(null)
+        group.rect(100,100).id(null)
+        group.circle(100).fill('#f06').id(null)
+        expect(group.svg()).toBe('<g><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></g>')
+      })
+      it('returns a single element when called on an element', function() {
+        var group = draw.group().id(null)
+        group.rect(100,100).id(null)
+        var circle = group.circle(100).fill('#f06').id(null)
+        expect(circle.svg()).toBe('<circle r="50" cx="50" cy="50" fill="#ff0066"></circle>')
+      })
+    })
+    describe('with raw svg given', function() {
+      it('imports a full svg document', function() {
+        draw.svg('<svg id="SvgjsSvg1000" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 50 50"><rect id="SvgjsRect1183" width="100" height="100"></rect><circle id="SvgjsCircle1184" r="50" cx="25" cy="25" fill="#ff0066"></circle></svg>')
+        expect(draw.get(0).type).toBe('svg')
+        expect(draw.get(0).children().length).toBe(2)
+        expect(draw.get(0).get(0).type).toBe('rect')
+        expect(draw.get(0).get(1).type).toBe('circle')
+        expect(draw.get(0).get(1).attr('fill')).toBe('#ff0066')
+      })
+      it('imports partial svg content', function() {
+        draw.svg('<g id="SvgjsG1185"><rect id="SvgjsRect1186" width="100" height="100"></rect><circle id="SvgjsCircle1187" r="50" cx="25" cy="25" fill="#ff0066"></circle></g>')
+        expect(draw.get(0).type).toBe('g')
+        expect(draw.get(0).get(0).type).toBe('rect')
+        expect(draw.get(0).get(1).type).toBe('circle')
+        expect(draw.get(0).get(1).attr('fill')).toBe('#ff0066')
+      })
+    })
+  })
 })

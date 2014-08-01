@@ -856,7 +856,7 @@ element.node
 __`returns`: `node`__
 
 ### instance
-Similarly, the node carries a reference to the SVG.js `instance`:
+Similar, the node carries a reference to the SVG.js `instance`:
 
 ```javascript
 node.instance
@@ -1016,6 +1016,26 @@ rect.reference('fill') //-> returns gradient or pattern instance for example
 circle.reference('clip-path') //-> returns clip instance
 ```
 
+## Import / export SVG
+
+### svg()
+Exporting the full generated SVG, or a part of it, can be done with the `svg()` method:
+
+```javascript
+draw.svg()
+```
+
+Importing is done with the same method:
+
+```javascript
+draw.svg('<g><rect width="100" height="50" fill="#f06"></rect></g>')
+```
+
+This method works on any element that inherits from `SVG.Parent`, which is basically every element that can contain other elements.
+
+`getter`__`returns`: `string`__
+
+`setter`__`returns`: `itself`__
 
 ## Manipulating elements
 
@@ -1142,7 +1162,7 @@ Or a css string:
 rect.style('cursor:pointer;fill:#f03;')
 ```
 
-Similarly to `attr()` the `style()` method can also act as a getter:
+Similar to `attr()` the `style()` method can also act as a getter:
 
 ```javascript
 rect.style('cursor')
@@ -1472,7 +1492,7 @@ group.put(rect) //-> returns rect
 __`returns`: `element`__
 
 ### addTo()
-Similarly to the `add()` method on a parent element, elements have the `addTo()` method:
+Similar to the `add()` method on a parent element, elements have the `addTo()` method:
 
 ```javascript
 rect.addTo(group) //-> returns rect
@@ -1481,7 +1501,7 @@ rect.addTo(group) //-> returns rect
 __`returns`: `itself`__
 
 ### putIn()
-Similarly to the `put()` method on a parent element, elements have the `putIn()` method:
+Similar to the `put()` method on a parent element, elements have the `putIn()` method:
 
 ```javascript
 rect.putIn(group) //-> returns group
@@ -2451,7 +2471,7 @@ __`returns`: `value`__
 ## Pattern
 
 ### pattern()
-Creating a pattern is very similar to creating gradients
+Creating a pattern is very similar to creating gradients:
 
 ```javascript
 var pattern = draw.pattern(20, 20, function(add) {

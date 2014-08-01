@@ -342,11 +342,12 @@ describe('Container', function() {
   })
   
   describe('parent()', function() {
-    it('returns th parent element instance', function() {
+    it('returns the parent element instance', function() {
       var rect = draw.rect(100,100)
       expect(rect.parent()).toBe(rect.node.parentNode.instance)
     })
   })
+  
 })
 
 
