@@ -803,17 +803,17 @@ __`returns`: `SVG.Bare`__
 _Javascript inheritance stack: `SVG.Bare` < `SVG.Element` [with a shallow inheritance from `SVG.Parent`]_
 
 ## Bare
-For all SVG elements that are not described by SVG.js, the `SVG.Bare` class comes in handy. This class inherits directly from `SVG.Element` and makes it possible to add custom methods in a separate namespace.
+For all SVG elements that are not described by SVG.js, the `SVG.Bare` class comes in handy. This class inherits directly from `SVG.Element` and makes it possible to add custom methods in a separate namespace without polluting the main `SVG.Element` namespace. Consider it your personal playground.
 
 ### element()
-the `SVG.Bare` class can be instantiated with the `element()` method on any parent element:
+The `SVG.Bare` class can be instantiated with the `element()` method on any parent element:
 
 ```javascript
 var element = draw.element('title')
 ```
 The string value passed as the first argument is the node name that should be generated.
 
-Additionally any existing class name can be passed as the second argument from which the element should inherit:
+Additionally any existing class name can be passed as the second argument to define from which class the element should inherit:
 
 ```javascript
 var element = draw.element('symbol', SVG.Parent)
