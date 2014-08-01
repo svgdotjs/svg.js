@@ -528,6 +528,11 @@ describe('Element', function() {
         expect(draw.get(0).get(1).type).toBe('circle')
         expect(draw.get(0).get(1).attr('fill')).toBe('#ff0066')
       })
+      it('does not import on single elements, even with an argument it acts as a getter', function() {
+        var rect   = draw.rect(100,100).id(null)
+          , result = rect.svg('<circle r="300"></rect>')
+        expect(result).toBe('<rect width="100" height="100"></rect>')
+      })
     })
   })
 })
