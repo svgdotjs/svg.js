@@ -32,6 +32,7 @@
 - reworked sup-pixel offset implementation to be more compact
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations
+- fixed a bug where events are not detached properly -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf]
 - added coding style description to README
