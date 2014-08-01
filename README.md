@@ -798,10 +798,40 @@ symbol.rect(100, 100).fill('#f09')
 var use  = draw.use(symbol).move(200, 200)
 ```
 
-__`returns`: `SVG.Symbol`__
+__`returns`: `SVG.Bare`__
 
-_Javascript inheritance stack: `SVG.Symbol` < `SVG.Container` < `SVG.Element`_
+_Javascript inheritance stack: `SVG.Bare` < `SVG.Element` [with a shallow inheritance from `SVG.Parent`]_
 
+## Bare
+For all SVG elements that are not described by SVG.js, the `SVG.Bare` class comes in handy. This class inherits directly from `SVG.Element` and makes it possible to add custom methods in a separate namespace.
+
+### element()
+the `SVG.Bare` class can be instantiated with the `element()` method on any parent element:
+
+```javascript
+var element = draw.element('title')
+```
+The stirng value passed as the first argument is the node name that should be generated.
+
+Additionally the class name can be passed as the second argument from which the element should inherit:
+
+```javascript
+var element = draw.element('symbol', SVG.Parent)
+```
+
+This gives you as the user a lot of power. But remember, with great power comes great responsibility.
+
+__`returns`: `SVG.Bare`__
+
+### words()
+The `SVG.Bare` instance carries an additional method to add plain text:
+
+```javascript
+var element = draw.element('title').words('This is a title.')
+//-> <title>This is a title.</title>
+```
+
+__`returns`: `itself`__
 
 ## Referencing elements
 

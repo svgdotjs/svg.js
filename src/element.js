@@ -2,15 +2,15 @@
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // Make stroke value accessible dynamically
+    // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
 
-    // Create circular reference
+    // create circular reference
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
 
-      // Store current attribute value
+      // store current attribute value
       this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
@@ -185,7 +185,7 @@ SVG.Element = SVG.invent({
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
         // dump raw svg
-        well.innerHTML = '<svg>' + svg + '</svg>'
+        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
 
         // transplant nodes
         for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)

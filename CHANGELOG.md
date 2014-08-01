@@ -3,7 +3,6 @@
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `rotate()` method to linear gradients -> __TODO!__
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
-- added `SVG.Title` and `SVG.Desc` -> __TODO!__
 
 # 1.0.0-rc.10 (?/08/2014)
 
@@ -40,6 +39,8 @@
 - renamed `SVG.SetFX` to `SVG.FX.Set`
 - added distinction between relative and absolute matrix transformations -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
+- implemented the `element()` method using the `SVG.Bare` class to create elements that are not described by SVG.js
+- removed `SVG.Symbol` but kept the `symbol()` method using the new `element()` method
 
 # 1.0.0-rc.9 (17/06/2014)
 

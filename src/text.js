@@ -3,11 +3,11 @@ SVG.Text = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('text'))
     
-    this._leading = new SVG.Number(1.3)    /* store leading value for rebuilding */
-    this._rebuild = true                   /* enable automatic updating of dy values */
-    this._build   = false                  /* disable build mode for adding multiple lines */
+    this._leading = new SVG.Number(1.3)    // store leading value for rebuilding
+    this._rebuild = true                   // enable automatic updating of dy values
+    this._build   = false                  // disable build mode for adding multiple lines
 
-    /* set default font */
+    // set default font
     this.attr('font-family', SVG.defaults.attrs['font-family'])
   }
 
@@ -18,11 +18,11 @@ SVG.Text = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      /* act as getter */
+      // act as getter
       if (x == null)
         return this.attr('x')
       
-      /* move lines as well if no textPath is present */
+      // move lines as well if no textPath is present
       if (!this.textPath)
         this.lines.each(function() { if (this.newLined) this.x(x) })
 
@@ -33,7 +33,7 @@ SVG.Text = SVG.invent({
       var oy = this.attr('y')
         , o  = typeof oy === 'number' ? oy - this.bbox().y : 0
 
-      /* act as getter */
+      // act as getter
       if (y == null)
         return typeof oy === 'number' ? oy - o : oy
 
@@ -49,26 +49,26 @@ SVG.Text = SVG.invent({
     }
     // Set the text content
   , text: function(text) {
-      /* act as getter */
+      // act as getter
       if (typeof text === 'undefined') return this.content
       
-      /* remove existing content */
+      // remove existing content
       this.clear().build(true)
       
       if (typeof text === 'function') {
-        /* call block */
+        // call block
         text.call(this, this)
 
       } else {
-        /* store text and make sure text is not blank */
+        // store text and make sure text is not blank
         text = (this.content = text).split('\n')
         
-        /* build new lines */
+        // build new lines
         for (var i = 0, il = text.length; i < il; i++)
           this.tspan(text[i]).newLine()
       }
       
-      /* disable build mode and rebuild lines */
+      // disable build mode and rebuild lines
       return this.build(false).rebuild()
     }
     // Set font size
@@ -77,22 +77,22 @@ SVG.Text = SVG.invent({
     }
     // Set / get leading
   , leading: function(value) {
-      /* act as getter */
+      // act as getter
       if (value == null)
         return this._leading
       
-      /* act as setter */
+      // act as setter
       this._leading = new SVG.Number(value)
       
       return this.rebuild()
     }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
-      /* store new rebuild flag if given */
+      // store new rebuild flag if given
       if (typeof rebuild == 'boolean')
         this._rebuild = rebuild
 
-      /* define position of all lines */
+      // define position of all lines
       if (this._rebuild) {
         var self = this
         
@@ -155,13 +155,13 @@ SVG.Tspan = SVG.invent({
     }
     // Create new line
   , newLine: function() {
-      /* fetch text parent */
+      // fetch text parent
       var t = this.doc(SVG.Text)
 
-      /* mark new line */
+      // mark new line
       this.newLined = true
 
-      /* apply new hy¡n */
+      // apply new hy¡n
       return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
     }
   }
@@ -171,11 +171,11 @@ SVG.Tspan = SVG.invent({
 SVG.extend(SVG.Text, SVG.Tspan, {
   // Create plain text node
   plain: function(text) {
-    /* clear if build mode is disabled */
+    // clear if build mode is disabled
     if (this._build === false)
       this.clear()
 
-    /* create text node */
+    // create text node
     this.node.appendChild(document.createTextNode((this.content = text)))
     
     return this
@@ -185,14 +185,14 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     var node  = (this.textPath || this).node
       , tspan = new SVG.Tspan
 
-    /* clear if build mode is disabled */
+    // clear if build mode is disabled
     if (this._build === false)
       this.clear()
     
-    /* add new tspan and reference */
+    // add new tspan and reference
     node.appendChild(tspan.node)
 
-    /* only first level tspans are considered to be "lines" */
+    // only first level tspans are considered to be "lines"
     if (this instanceof SVG.Text)
       this.lines.add(tspan)
 
@@ -202,11 +202,11 @@ SVG.extend(SVG.Text, SVG.Tspan, {
 , clear: function() {
     var node = (this.textPath || this).node
 
-    /* remove existing child nodes */
+    // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
     
-    /* reset content references  */
+    // reset content references 
     if (this instanceof SVG.Text) {
       delete this.lines
       this.lines = new SVG.Set

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Aug 01 2014 15:10:13 GMT+0200 (CEST)
+* BUILT: Fri Aug 01 2014 20:15:09 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -902,15 +902,15 @@ SVG.extend(SVG.ViewBox, {
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // Make stroke value accessible dynamically
+    // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
 
-    // Create circular reference
+    // create circular reference
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
 
-      // Store current attribute value
+      // store current attribute value
       this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
@@ -1085,7 +1085,7 @@ SVG.Element = SVG.invent({
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
         // dump raw svg
-        well.innerHTML = '<svg>' + svg + '</svg>'
+        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
 
         // transplant nodes
         for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
@@ -2150,55 +2150,6 @@ SVG.Container = SVG.invent({
   }
   
 })
-SVG.extend(SVG.Parent, SVG.Text, {
-  // Import svg SVG data
-  svg: function(svg) {
-    // create temporary div to receive svg content
-    var element = document.createElement('div')
-
-    if (svg) {
-      // strip away newlines and properly close tags
-      svg = svg
-        .replace(/\n/, '')
-        .replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>')
-
-      // ensure SVG wrapper for correct element type casting
-      element.innerHTML = '<svg>' + svg + '</svg>'
-
-      // transplant content from well to target
-      for (var i = element.firstChild.childNodes.length - 1; i >= 0; i--)
-        if (element.firstChild.childNodes[i].nodeType == 1)
-          this.node.appendChild(element.firstChild.childNodes[i])
-
-      return this
-
-    } else {
-      // clone element and its contents
-      var clone  = this.node.cloneNode(true)
-
-      // add target to clone
-      element.appendChild(clone)
-
-      return element.innerHTML
-    }
-  }
-})
-//
-SVG.extend(SVG.Element, SVG.FX, {
-  // Relative move over x axis
-  dx: function(x) {
-    return this.x((this.target || this).x() + x)
-  }
-  // Relative move over y axis
-, dy: function(y) {
-    return this.y((this.target || this).y() + y)
-  }
-  // Relative move over x and y axes
-, dmove: function(x, y) {
-    return this.dx(x).dy(y)
-  }
-
-})
 // Add events to elements
 ;[  'click'
   , 'dblclick'
@@ -2762,21 +2713,49 @@ SVG.Shape = SVG.invent({
 
 })
 
-SVG.Symbol = SVG.invent({
-  // Initialize node
-  create: 'symbol'
+SVG.Bare = SVG.invent({
+	// Initialize
+	create: function(element, inherit) {
+		// construct element
+		this.constructor.call(this, SVG.create(element))
 
-  // Inherit from
-, inherit: SVG.Container
+		// inherit custom methods
+		if (inherit)
+			for (var method in inherit.prototype)
+				if (typeof inherit.prototype[method] === 'function')
+					element[method] = inherit.prototype[method]
+	}
 
-  // Add parent method
-, construct: {
-    // Create a new symbol
-    symbol: function() {
-      return this.defs().put(new SVG.Symbol)
-    }
-  }
-  
+	// Inherit from
+, inherit: SVG.Element
+	
+	// Add methods
+, extend: {
+		// Insert some plain text
+		words: function(text) {
+			// remove contents
+			while (this.node.hasChildNodes())
+      	this.node.removeChild(this.node.lastChild)
+
+      // create text node
+      this.node.appendChild(document.createTextNode(text))
+
+      return this
+		}
+	}
+})
+
+
+SVG.extend(SVG.Parent, {
+	// Create an element that is not described by SVG.js
+	element: function(element, inherit) {
+		return this.put(new SVG.Bare(element, inherit))
+	}
+	// Add symbol element
+, symbol: function() {
+		return this.defs().element('symbol', SVG.Container)
+	}
+
 })
 SVG.Use = SVG.invent({
   // Initialize node
@@ -3151,11 +3130,11 @@ SVG.Text = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('text'))
     
-    this._leading = new SVG.Number(1.3)    /* store leading value for rebuilding */
-    this._rebuild = true                   /* enable automatic updating of dy values */
-    this._build   = false                  /* disable build mode for adding multiple lines */
+    this._leading = new SVG.Number(1.3)    // store leading value for rebuilding
+    this._rebuild = true                   // enable automatic updating of dy values
+    this._build   = false                  // disable build mode for adding multiple lines
 
-    /* set default font */
+    // set default font
     this.attr('font-family', SVG.defaults.attrs['font-family'])
   }
 
@@ -3166,11 +3145,11 @@ SVG.Text = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      /* act as getter */
+      // act as getter
       if (x == null)
         return this.attr('x')
       
-      /* move lines as well if no textPath is present */
+      // move lines as well if no textPath is present
       if (!this.textPath)
         this.lines.each(function() { if (this.newLined) this.x(x) })
 
@@ -3181,7 +3160,7 @@ SVG.Text = SVG.invent({
       var oy = this.attr('y')
         , o  = typeof oy === 'number' ? oy - this.bbox().y : 0
 
-      /* act as getter */
+      // act as getter
       if (y == null)
         return typeof oy === 'number' ? oy - o : oy
 
@@ -3197,26 +3176,26 @@ SVG.Text = SVG.invent({
     }
     // Set the text content
   , text: function(text) {
-      /* act as getter */
+      // act as getter
       if (typeof text === 'undefined') return this.content
       
-      /* remove existing content */
+      // remove existing content
       this.clear().build(true)
       
       if (typeof text === 'function') {
-        /* call block */
+        // call block
         text.call(this, this)
 
       } else {
-        /* store text and make sure text is not blank */
+        // store text and make sure text is not blank
         text = (this.content = text).split('\n')
         
-        /* build new lines */
+        // build new lines
         for (var i = 0, il = text.length; i < il; i++)
           this.tspan(text[i]).newLine()
       }
       
-      /* disable build mode and rebuild lines */
+      // disable build mode and rebuild lines
       return this.build(false).rebuild()
     }
     // Set font size
@@ -3225,22 +3204,22 @@ SVG.Text = SVG.invent({
     }
     // Set / get leading
   , leading: function(value) {
-      /* act as getter */
+      // act as getter
       if (value == null)
         return this._leading
       
-      /* act as setter */
+      // act as setter
       this._leading = new SVG.Number(value)
       
       return this.rebuild()
     }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
-      /* store new rebuild flag if given */
+      // store new rebuild flag if given
       if (typeof rebuild == 'boolean')
         this._rebuild = rebuild
 
-      /* define position of all lines */
+      // define position of all lines
       if (this._rebuild) {
         var self = this
         
@@ -3303,13 +3282,13 @@ SVG.Tspan = SVG.invent({
     }
     // Create new line
   , newLine: function() {
-      /* fetch text parent */
+      // fetch text parent
       var t = this.doc(SVG.Text)
 
-      /* mark new line */
+      // mark new line
       this.newLined = true
 
-      /* apply new hy¡n */
+      // apply new hy¡n
       return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
     }
   }
@@ -3319,11 +3298,11 @@ SVG.Tspan = SVG.invent({
 SVG.extend(SVG.Text, SVG.Tspan, {
   // Create plain text node
   plain: function(text) {
-    /* clear if build mode is disabled */
+    // clear if build mode is disabled
     if (this._build === false)
       this.clear()
 
-    /* create text node */
+    // create text node
     this.node.appendChild(document.createTextNode((this.content = text)))
     
     return this
@@ -3333,14 +3312,14 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     var node  = (this.textPath || this).node
       , tspan = new SVG.Tspan
 
-    /* clear if build mode is disabled */
+    // clear if build mode is disabled
     if (this._build === false)
       this.clear()
     
-    /* add new tspan and reference */
+    // add new tspan and reference
     node.appendChild(tspan.node)
 
-    /* only first level tspans are considered to be "lines" */
+    // only first level tspans are considered to be "lines"
     if (this instanceof SVG.Text)
       this.lines.add(tspan)
 
@@ -3350,11 +3329,11 @@ SVG.extend(SVG.Text, SVG.Tspan, {
 , clear: function() {
     var node = (this.textPath || this).node
 
-    /* remove existing child nodes */
+    // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
     
-    /* reset content references  */
+    // reset content references 
     if (this instanceof SVG.Text) {
       delete this.lines
       this.lines = new SVG.Set
@@ -3619,6 +3598,18 @@ SVG.extend(SVG.Element, SVG.FX, {
   // Opacity
 , opacity: function(value) {
     return this.attr('opacity', value)
+  }
+  // Relative move over x axis
+, dx: function(x) {
+    return this.x((this.target || this).x() + x)
+  }
+  // Relative move over y axis
+, dy: function(y) {
+    return this.y((this.target || this).y() + y)
+  }
+  // Relative move over x and y axes
+, dmove: function(x, y) {
+    return this.dx(x).dy(y)
   }
 })
 
