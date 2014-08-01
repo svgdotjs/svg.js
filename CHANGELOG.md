@@ -5,6 +5,7 @@
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `parents()` method to get an array of all parenting elements -> __TODO!__
 - added support for css selectors with the `parent()` method -> __TODO!__
+- added `enqueue()` method to `SVG.FX` -> __TODO!__
 
 # 1.0.0-rc.10 (11/08/2014)
 
