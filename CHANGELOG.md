@@ -1,10 +1,12 @@
-# 1.0.0 (?/?/2014)
+# 1.0.0 (02/09/2014)
 
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `rotate()` method to linear gradients -> __TODO!__
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
+- added `parents()` method to get an array of all parenting elements -> __TODO!__
+- added support for css selectors with the `parent()` method -> __TODO!__
 
-# 1.0.0-rc.10 (?/08/2014)
+# 1.0.0-rc.10 (11/08/2014)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
