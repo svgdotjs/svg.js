@@ -6,9 +6,19 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Aug 01 2014 22:53:44 GMT+0200 (CEST)
+* BUILT: Sun Aug 03 2014 15:28:28 GMT+0200 (W. Europe Daylight Time)
 */
-;(function() {
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require, exports, module);
+  } else {
+    root.SVG = factory();
+  }
+}(this, function(require, exports, module) {
+
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
@@ -3887,12 +3897,6 @@ SVG.extend(SVG.Parent, {
   }
 
 })
-
-// Use AMD or CommonJS if either is present
-if (typeof define === 'function' && define.amd)
-  define(function() { return SVG })
-else if (typeof exports !== 'undefined')
-  exports.SVG = SVG
 // Convert dash-separated-string to camelCase
 function camelCase(s) { 
 	return s.toLowerCase().replace(/-(.)/g, function(m, g) {
@@ -4073,4 +4077,6 @@ if (typeof CustomEvent !== 'function') {
 
   window.CustomEvent = CustomEvent
 }
-}).call(this);
+return SVG;
+
+}));

@@ -1,12 +1,13 @@
 var gulp    = require('gulp')
   , concat  = require('gulp-concat')
   , header  = require('gulp-header')
+  , jasmine = require('gulp-jasmine')
   , rename  = require('gulp-rename')
   , rimraf  = require('gulp-rimraf')
   , size    = require('gulp-size')
   , uglify  = require('gulp-uglify')
+  , wrapUmd = require('gulp-wrap-umd')
   , wrapper = require('gulp-wrapper')
-  , jasmine = require('gulp-jasmine')
   , request = require('request')
   , fs      = require('fs')
   , pkg     = require('./package.json')
@@ -75,7 +76,6 @@ var parts = [
 , 'src/data.js'
 , 'src/memory.js'
 , 'src/selector.js'
-, 'src/loader.js'
 , 'src/helpers.js'
 , 'src/polyfill.js'
 ]
@@ -86,9 +86,8 @@ gulp.task('clean', function() {
 })
 
 /**
- * compile everything in /src to one file in the order defined in the MODULES constant
- * embed it in an immediate function call‏
- * uglify this file and call it svg.min.js
+ * Compile everything in /src to one unified file in the order defined in the MODULES constant
+ * wrap the whole thing in a UMD wrapper (@see https://github.com/umdjs/umd)
  * add the license information to the header plus the build time stamp‏
  */
 gulp.task('unify', ['clean'], function() {
@@ -96,14 +95,17 @@ gulp.task('unify', ['clean'], function() {
   return gulp.src(parts)
     .pipe(concat('svg.js', { newLine: '\n' }))
     // wrap the whole thing in an immediate function call
-    .pipe(wrapper({ header:';(function() {\n', footer: '\n}).call(this);' }))
+    .pipe(wrapUmd({
+          namespace: 'SVG',
+          exports: 'SVG'
+      }))
     .pipe(header(headerLong, { pkg: pkg }))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
-})
+});
 
 /**
- ‎* gzip the file and get it's size to display in the terminal‏
+ ‎* uglify the file and show the size of the result
  * add the license info
  * show the gzipped file size
  */
