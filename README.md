@@ -1104,75 +1104,13 @@ rect.attr('fill', null)
 ```
 
 `getter`__`returns`: `value`__
-
 `setter`__`returns`: `itself`__
 
 
 ### transform()
-The `transform()` can act both as a getter or a setter. Let's start with the former but first a word about transforms.
+The `transform()` method acts as a full getter without an argument. Basically it calls `element.ctm().extract()`.
 
-Transforms are cascading sequentially. Every transform you add will build further on the effects of all the previous transforms together. So for example, when you add the `translate(10, 10)` transform three times, the total translation will equal `translate(30, 30)`.
-
-We are going to use one node as an example for this section:
-
-```xml
-<rect width="100" height="100" transform="translate(10, 10) rotate(45, 100, 100) scale(0.5, 0.5) rotate(-10)" />
-```
-
-#### get by index
-A transform at a specific index:
-
-```javascript
-rect.transform(1)
-// -> returns { type: 'scale', x: 0.5, cy: 0.5 }
-```
-
-#### get by name
-By default the first occurence of a given transform type will be returned:
-
-```javascript
-rect.transform('rotate')
-// -> returns { type: 'rotate', rotation: 45, cx: 100, cy: 100 }
-```
-
-If multiple occurences of a transform type exist they can be fetched with a number:
-
-```javascript
-rect.transform('rotate', { at: 1 })
-// -> returns { type: 'rotate', rotation: -10 }
-```
-
-
-
-With the `transform()` method elements can be scaled, rotated, translated and skewed:
-
-```javascript
-rect.transform({
-  rotation: 45
-, cx:       100
-, cy:       100
-})
-```
-
-You can also provide two arguments as property and value:
-
-```javascript
-rect.transform('matrix', '1,0.5,0.5,1,0,0')
-```
-
-
-
-Note that you can also apply transformations directly using the `attr()` method:
-
-```javascript
-rect.attr('transform', 'matrix(1,0.5,0.5,1,0,0)')
-```
-
-Although that would mean you can't use the `transform()` method because it would overwrite any manually applied transformations. You should only go down this route if you know exactly what you are doing and you want to achieve an effect that is not achievable with the `transform()` method.
-
-`getter`__`returns`: `number`__
-
-`setter`__`returns`: `itself`__
+As a setter it has two ways of working. By default transformations are absolute. For example, if you call `element.transform({ rotation: 125 }).transform({ rotation: 37.5 })` the resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `add` parameter. That would be `element.transform({ rotation: 125 }).transform({ rotation: 37.5, add: true })`.
 
 ### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:

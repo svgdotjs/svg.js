@@ -13,7 +13,7 @@ SVG.extend(SVG.Element, SVG.FX, {
 			return target.ctm().extract()[o]
 		
 		// get current matrix
-		var matrix = new SVG.Matrix(target)
+		var matrix = new SVG.Matrix(o.add === true ? target : {})
 		
 		// act on matrix
 		if (o.a != null)

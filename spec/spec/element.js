@@ -164,6 +164,14 @@ describe('Element', function() {
       rect.transform({ x: 10, y: 11 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,10,11)')
     })
+    it('performs an absolute translation', function() {
+      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,20,21)')
+    })
+    it('performs a relative translation when add is set to true', function() {
+      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, add: true })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
+    })
     it('sets the scaleX and scaleY of and element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,0,0)')

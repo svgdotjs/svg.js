@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Aug 01 2014 20:15:09 GMT+0200 (CEST)
+* BUILT: Fri Aug 01 2014 22:53:44 GMT+0200 (CEST)
 */
 ;(function() {
 // The main wrapping element
@@ -1943,7 +1943,7 @@ SVG.extend(SVG.Element, SVG.FX, {
 			return target.ctm().extract()[o]
 		
 		// get current matrix
-		var matrix = new SVG.Matrix(target)
+		var matrix = new SVG.Matrix(o.add === true ? target : {})
 		
 		// act on matrix
 		if (o.a != null)
