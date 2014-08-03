@@ -6,3 +6,4 @@ docs/
 obsolete/
 test/
 src/index.js
+node_modules/
