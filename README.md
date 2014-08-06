@@ -77,7 +77,7 @@ var draw = SVG('drawing').fixSubPixelOffset()
 ## Parent elements
 
 ### Main svg document
-The main svg.js initializer function creates a root svg node in the given element and retuns an instance of `SVG.Doc`:
+The main svg.js initializer function creates a root svg node in the given element and returns an instance of `SVG.Doc`:
 
 ```javascript
 var draw = SVG('drawing')
@@ -893,7 +893,7 @@ group.has(rect) //-> returns false
 __`returns`: `boolean`__
 
 ### index()
-Returns the index of given element and retuns -1 when it is not a child:
+Returns the index of given element and returns -1 when it is not a child:
 
 ```javascript
 var rect  = draw.rect(100, 50)
