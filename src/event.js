@@ -33,8 +33,17 @@ SVG.listeners = {}
 
 // Event constructor
 SVG.registerEvent = function(event) {
-  if (!SVG.events[event])
-    SVG.events[event] = new Event(event)
+  if (!SVG.events[event]) {
+    try {
+      SVG.events[event] = new Event(event)
+    }
+    catch(exception) {
+      // Fallback for IE that still uses createEvent/initEvent to create new events
+      var evtInstance = document.createEvent('Event')
+      evtInstance.initEvent(event, false, false)
+      SVG.events[event] = evtInstance
+    }
+  }
 }
 
 // Add event binder in the SVG namespace
