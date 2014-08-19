@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Aug 03 2014 15:28:28 GMT+0200 (W. Europe Daylight Time)
+* BUILT: Sun Aug 03 2014 16:27:52 GMT+0200 (CEST)
 */
 
 (function(root, factory) {
@@ -55,10 +55,10 @@ SVG.eid = function(name) {
 
 // Method for element creation
 SVG.create = function(name) {
-  // Create element
+  // create element
   var element = document.createElementNS(this.ns, name)
   
-  // Apply unique id
+  // apply unique id
   element.setAttribute('id', this.eid(name))
   
   return element

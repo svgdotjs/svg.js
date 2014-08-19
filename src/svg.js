@@ -34,10 +34,10 @@ SVG.eid = function(name) {
 
 // Method for element creation
 SVG.create = function(name) {
-  // Create element
+  // create element
   var element = document.createElementNS(this.ns, name)
   
-  // Apply unique id
+  // apply unique id
   element.setAttribute('id', this.eid(name))
   
   return element

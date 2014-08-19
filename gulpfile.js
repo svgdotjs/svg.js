@@ -102,7 +102,7 @@ gulp.task('unify', ['clean'], function() {
     .pipe(header(headerLong, { pkg: pkg }))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
-});
+})
 
 /**
  ‎* uglify the file and show the size of the result
