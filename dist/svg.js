@@ -6,8 +6,8 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Aug 03 2014 16:27:52 GMT+0200 (CEST)
-*/
+* BUILT: Tue Aug 19 2014 18:15:39 GMT+0200 (CEST)
+*/;
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
