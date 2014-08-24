@@ -1110,7 +1110,29 @@ rect.attr('fill', null)
 ### transform()
 The `transform()` method acts as a full getter without an argument. Basically it calls `element.ctm().extract()`.
 
-As a setter it has two ways of working. By default transformations are absolute. For example, if you call `element.transform({ rotation: 125 }).transform({ rotation: 37.5 })` the resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `add` parameter. That would be `element.transform({ rotation: 125 }).transform({ rotation: 37.5, add: true })`.
+As a setter it has two ways of working. By default transformations are absolute. For example, if you call `element.transform({ rotation: 125 }).transform({ rotation: 37.5 })` the resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `add` parameter. That would be: 
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5, relative: true })
+```
+
+Alternatively a relative flag can be passed as the second argument:
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5 }, true)
+```
+
+Available transformations are:
+
+- `rotation` with optional `cx` and `cy`
+- `scale` with optional `cx` and `cy`
+- `scaleX` with optional `cx` and `cy`
+- `scaleY` with optional `cx` and `cy`
+- `skewX` with optional `cx` and `cy`
+- `skewY` with optional `cx` and `cy`
+- `x`
+- `y`
+- `a`, `b`, `c`, `d`, `e` and/or `f` or an existing matrix of course
 
 ### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
