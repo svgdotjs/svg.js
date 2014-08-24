@@ -1108,9 +1108,20 @@ rect.attr('fill', null)
 
 
 ### transform()
-The `transform()` method acts as a full getter without an argument. Basically it calls `element.ctm().extract()`.
+The `transform()` method acts as a full getter without an argument. Basically it calls:
 
-As a setter it has two ways of working. By default transformations are absolute. For example, if you call `element.transform({ rotation: 125 }).transform({ rotation: 37.5 })` the resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `add` parameter. That would be: 
+```javascript
+element.ctm().extract()
+```
+
+As a setter it has two ways of working. By default transformations are absolute. For example, if you call:
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5 })
+```
+
+The resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `relative` parameter. That would be:
+
 
 ```javascript
 element.transform({ rotation: 125 }).transform({ rotation: 37.5, relative: true })
