@@ -95,8 +95,6 @@ SVG.RBox = SVG.invent({
     }
     
     // Recalculate viewbox distortion
-    // this.x /= zoom
-    // this.y /= zoom
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     

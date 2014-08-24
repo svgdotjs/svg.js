@@ -42,7 +42,7 @@
 - added reverse functionality for animations
 - documented the `situation` object in `SVG.FX`
 - renamed `SVG.SetFX` to `SVG.FX.Set`
-- added distinction between relative and absolute matrix transformations -> __TODO!__
+- added distinction between relative and absolute matrix transformations
 - added specs for `SVG.FX` -> __TODO!__
 - implemented the `element()` method using the `SVG.Bare` class to create elements that are not described by SVG.js
 - removed `SVG.Symbol` but kept the `symbol()` method using the new `element()` method

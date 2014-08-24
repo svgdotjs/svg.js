@@ -47,13 +47,23 @@ describe('Matrix', function() {
           expect(matrix.toString()).toBe('matrix(1,0,0,1,0,0)')
         })
       })
+
+      describe('toArray()' , function() {
+        it('exports correctly to an array', function() {
+          expect(matrix.toArray()).toEqual([1,0,0,1,0,0])
+        })
+      })
     })
 
     describe('with an element given', function() {
       var rect
 
       beforeEach(function() {
-        rect = draw.rect(100, 100).rotate(-10).translate(40, 50).scale(2)
+        rect = draw.rect(100, 100)
+          .transform({ rotation: -10 }, true)
+          .transform({ x: 40, y: 50 }, true)
+          .transform({ scale: 2 }, true)
+          
         matrix = new SVG.Matrix(rect)
       })
 
@@ -62,8 +72,8 @@ describe('Matrix', function() {
         expect(matrix.b).toBeCloseTo(-0.3472963869571686)
         expect(matrix.c).toBeCloseTo(0.3472963869571686)
         expect(matrix.d).toBeCloseTo(1.9696155786514282)
-        expect(matrix.e).toBeCloseTo(-8.373950958251953)
-        expect(matrix.f).toBeCloseTo(7.758301258087158)
+        expect(matrix.e).toBeCloseTo(-66.2967529296875)
+        expect(matrix.f).toBeCloseTo(-32.799678802490234)
       })
 
       describe('extract()', function() {
@@ -93,9 +103,9 @@ describe('Matrix', function() {
 
       })
 
-      describe('toString()' , function() {
+      describe('toArray()' , function() {
         it('exports correctly to a string', function() {
-          expect(matrix.toString()).toBe('matrix(1.9696155786514282,-0.3472963869571686,0.3472963869571686,1.9696155786514282,-8.373950958251953,7.758301258087158)')
+          expect(matrix.toArray()).toEqual([matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f])
         })
       })
       
@@ -299,9 +309,11 @@ describe('Matrix', function() {
 
   describe('skew()', function() {
     it('performs a skew two arguments', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(0, 0)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3)//.skew(0, 0)
 
-      expect(matrix.a).toBe(matrix.toString())
+      expect(matrix.a).toBe(1)
+      expect(matrix.b).toBe(0)
+      expect(matrix.c).toBe(0)
       expect(matrix.d).toBe(1)
       expect(matrix.e).toBe(4)
       expect(matrix.f).toBe(3)

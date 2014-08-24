@@ -70,7 +70,7 @@ describe('Path', function() {
       expect(box.y).toBe(456)
     })
     it('sets the x and y position when scaled to half its size', function() {
-      path.scale(0.5).move(123,456)
+      path.scale(0.5, 0, 0).move(123,456)
       var box = path.bbox()
       expect(box.x).toBe(123)
       expect(box.y).toBe(456)

@@ -151,7 +151,7 @@ describe('Element', function() {
   })
   
   describe('transform()', function() {
-    var rect
+    var rect, ctm
     
     beforeEach(function() {
       rect = draw.rect(100,100)
@@ -168,30 +168,75 @@ describe('Element', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,20,21)')
     })
-    it('performs a relative translation when add is set to true', function() {
-      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, add: true })
+    it('performs a relative translation when relative is set to true', function() {
+      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, relative: true })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
+    })
+    it('performs a relative translation with relative flag', function() {
+      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
     })
     it('sets the scaleX and scaleY of and element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,0,0)')
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,25,-50)')
     })
-    it('sets the skewX of and element', function() {
-      rect.transform({ skewX: 10 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0.17632698070846498,1,0,0)')
+    it('performs a uniform scale with scale given', function() {
+      rect.transform({ scale: 3 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(3,0,0,3,-100,-100)')
+    })
+    it('performs an absolute scale by default', function() {
+      rect.transform({ scale: 3 }).transform({ scale: 0.5 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,0.5,25,25)')
+    })
+    it('performs a relative scale with a relative flag', function() {
+      rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1.5,0,0,8,-25,-350)')
+    })
+    it('sets the skewX of and element with center on the element', function() {
+      ctm = rect.transform({ skewX: 10 }).ctm()
+      expect(ctm.a).toBe(1)
+      expect(ctm.b).toBe(0)
+      expect(ctm.c).toBeCloseTo(0.17632698070846498)
+      expect(ctm.d).toBe(1)
+      expect(ctm.e).toBeCloseTo(-8.81634903542325)
+      expect(ctm.f).toBe(0)
+    })
+    it('sets the skewX of and element with given center', function() {
+      ctm = rect.transform({ skewX: 10, cx: 0, cy: 0 }).ctm()
+      expect(ctm.a).toBe(1)
+      expect(ctm.b).toBe(0)
+      expect(ctm.c).toBeCloseTo(0.17632698070846498)
+      expect(ctm.d).toBe(1)
+      expect(ctm.e).toBe(0)
+      expect(ctm.f).toBe(0)
     })
     it('sets the skewY of and element', function() {
-      rect.transform({ skewY: -10 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,-0.17632698070846498,0,1,0,0)')
+      ctm = rect.transform({ skewY: -10, cx: 0, cy: 0 }).ctm()
+      expect(ctm.a).toBe(1)
+      expect(ctm.b).toBeCloseTo(-0.17632698070846498)
+      expect(ctm.c).toBe(0)
+      expect(ctm.d).toBe(1)
+      expect(ctm.e).toBe(0)
+      expect(ctm.f).toBe(0)
     })
     it('rotates the element around its centre if no rotation point is given', function() {
-      rect.center(150,150).transform({ rotation: 45 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.7071067811865475,0.7071067811865475,-0.7071067811865475,0.7071067811865475,150,-62.13203435596424)')
+      ctm = rect.center(100, 100).transform({ rotation: 45 }).ctm()
+      expect(ctm.a).toBeCloseTo(0.7071068286895752)
+      expect(ctm.b).toBeCloseTo(0.7071068286895752)
+      expect(ctm.c).toBeCloseTo(-0.7071068286895752)
+      expect(ctm.d).toBeCloseTo(0.7071068286895752)
+      expect(ctm.e).toBeCloseTo(100)
+      expect(ctm.f).toBeCloseTo(-41.421356201171875)
       expect(rect.transform('rotation')).toBe(45)
     })
     it('rotates the element around the given rotation point', function() {
-      rect.transform({ rotation: 55, cx: 80, cy:2 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.573576436351046,0.8191520442889917,-0.8191520442889917,0.573576436351046,35.7521891804943,-64.67931641582143)')
+      ctm = rect.transform({ rotation: 55, cx: 80, cy:2 }).ctm()
+      expect(ctm.a).toBeCloseTo(0.5735765099525452)
+      expect(ctm.b).toBeCloseTo(0.8191521167755127)
+      expect(ctm.c).toBeCloseTo(-0.8191521167755127)
+      expect(ctm.d).toBeCloseTo(0.5735765099525452)
+      expect(ctm.e).toBeCloseTo(35.75218963623047)
+      expect(ctm.f).toBeCloseTo(-64.67931365966797)
     })
     it('transforms element using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 })
@@ -316,15 +361,15 @@ describe('Element', function() {
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
     })
-    xit('returns the correct rectangular box within a viewbox', function() {
+    it('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(box.x).toBe(1)
-      expect(box.y).toBe(6)
-      expect(box.cx).toBe(27.25)
-      expect(box.cy).toBe(58.5)
-      expect(box.width).toBe(52.5)
-      expect(box.height).toBe(105)
+      expect(box.x).toBe(2)
+      expect(box.y).toBe(12)
+      expect(box.cx).toBe(54.5)
+      expect(box.cy).toBe(117)
+      expect(box.width).toBe(105)
+      expect(box.height).toBe(210)
     })
   })
   

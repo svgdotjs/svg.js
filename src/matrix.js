@@ -141,7 +141,11 @@ SVG.Matrix = SVG.invent({
     }
     // Convert matrix to string
   , toString: function() {
-      return 'matrix(' + [this.a, this.b, this.c, this.d, this.e, this.f].join() + ')'
+      return 'matrix(' + this.toArray().join() + ')'
+    }
+    // Convert matrix to array
+  , toArray: function() {
+      return [this.a, this.b, this.c, this.d, this.e, this.f]
     }
   }
 
