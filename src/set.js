@@ -2,7 +2,7 @@ SVG.Set = SVG.invent({
   // Initialize
   create: function(members) {
     // Set initial state
-    Array.isArray(members) ?this.members = members : this.clear()
+    Array.isArray(members) ? this.members = members : this.clear()
   }
 
   // Add class methods
@@ -39,6 +39,10 @@ SVG.Set = SVG.invent({
       this.members = []
 
       return this
+    }
+    // Get the length of a set
+  , length: function() {
+      return this.members.length
     }
     // Checks if a given element is present in set
   , has: function(element) {

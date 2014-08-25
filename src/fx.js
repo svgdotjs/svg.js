@@ -224,9 +224,9 @@ SVG.FX = SVG.invent({
         // detect format
         this.attrs[a] = a == 'transform' ?
           this.target.ctm().morph(v) :
-        SVG.Color.isColor(from) ?
+        SVG.Color.isColor(v) ?
           new SVG.Color(from).morph(v) :
-        SVG.regex.unit.test(from) ?
+        SVG.regex.unit.test(v) ?
           new SVG.Number(from).morph(v) :
           { from: from, to: v }
       }

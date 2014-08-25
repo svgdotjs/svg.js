@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Aug 24 2014 15:40:30 GMT+0200 (CEST)
+* BUILT: Mon Aug 25 2014 09:53:20 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1344,9 +1344,9 @@ SVG.FX = SVG.invent({
         // detect format
         this.attrs[a] = a == 'transform' ?
           this.target.ctm().morph(v) :
-        SVG.Color.isColor(from) ?
+        SVG.Color.isColor(v) ?
           new SVG.Color(from).morph(v) :
-        SVG.regex.unit.test(from) ?
+        SVG.regex.unit.test(v) ?
           new SVG.Number(from).morph(v) :
           { from: from, to: v }
       }
@@ -3194,7 +3194,7 @@ SVG.Text = SVG.invent({
       
       // move lines as well if no textPath is present
       if (!this.textPath)
-        this.lines.each(function() { if (this.newLined) this.x(x) })
+        this.lines().each(function() { if (this.newLined) this.x(x) })
 
       return this.attr('x', x)
     }
@@ -3256,6 +3256,16 @@ SVG.Text = SVG.invent({
       
       return this.rebuild()
     }
+    // Get all the first level lines
+  , lines: function() {
+      // filter tspans and map them to SVG.js instances
+      for (var i = 0, il = this.node.childNodes.length, lines = []; i < il; i++)
+        if (this.node.childNodes[i] instanceof SVGElement)
+          lines.push(SVG.adopt(this.node.childNodes[i]))
+      
+      // return an instance of SVG.set
+      return new SVG.Set(lines)
+    }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
       // store new rebuild flag if given
@@ -3266,10 +3276,11 @@ SVG.Text = SVG.invent({
       if (this._rebuild) {
         var self = this
         
-        this.lines.each(function() {
+        this.lines().each(function() {
           if (this.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
+            
             this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
           }
         })
@@ -3352,7 +3363,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
   }
   // Create a tspan
 , tspan: function(text) {
-    var node  = (this.textPath || this).node
+    var node  = (this.textPath() || this).node
       , tspan = new SVG.Tspan
 
     // clear if build mode is disabled
@@ -3364,24 +3375,21 @@ SVG.extend(SVG.Text, SVG.Tspan, {
 
     // only first level tspans are considered to be "lines"
     if (this instanceof SVG.Text)
-      this.lines.add(tspan)
+      this.lines().add(tspan)
 
     return tspan.text(text)
   }
   // Clear all lines
 , clear: function() {
-    var node = (this.textPath || this).node
+    var node = (this.textPath() || this).node
 
     // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
     
     // reset content references 
-    if (this instanceof SVG.Text) {
-      delete this.lines
-      this.lines = new SVG.Set
+    if (this instanceof SVG.Text)
       this.content = ''
-    }
     
     return this
   }
@@ -3408,31 +3416,42 @@ SVG.TextPath = SVG.invent({
 , construct: {
     // Create path for text to run on
     path: function(d) {
-      /* create textPath element */
-      this.textPath = new SVG.TextPath
+      // create textPath element
+      var path  = new SVG.TextPath
+        , track = this.doc().defs().path(d)
 
-      /* move lines to textpath */
-      while(this.node.hasChildNodes())
-        this.textPath.node.appendChild(this.node.firstChild)
+      // move lines to textpath
+      while (this.node.hasChildNodes())
+        path.node.appendChild(this.node.firstChild)
 
-      /* add textPath element as child node */
-      this.node.appendChild(this.textPath.node)
+      // add textPath element as child node
+      this.node.appendChild(path.node)
 
-      /* create path in defs */
-      this.track = this.doc().defs().path(d)
-
-      /* create circular reference */
-      this.textPath.parent = this
-
-      /* link textPath to path and add content */
-      this.textPath.attr('href', '#' + this.track, SVG.xlink)
+      // link textPath to path and add content
+      path.attr('href', '#' + track, SVG.xlink)
 
       return this
     }
     // Plot path if any
   , plot: function(d) {
-      if (this.track) this.track.plot(d)
+      var track = this.track()
+
+      if (track)
+        track.plot(d)
+
       return this
+    }
+    // Get the path track element
+  , track: function() {
+      var path = this.textPath()
+
+      if (path)
+        return path.reference('href')
+    }
+    // Get the textPath child
+  , textPath: function() {
+      if (this.node.firstChild && this.node.firstChild.nodeName == 'textPath')
+        return SVG.adopt(this.node.firstChild)
     }
   }
 })
@@ -3697,7 +3716,7 @@ SVG.Set = SVG.invent({
   // Initialize
   create: function(members) {
     // Set initial state
-    Array.isArray(members) ?this.members = members : this.clear()
+    Array.isArray(members) ? this.members = members : this.clear()
   }
 
   // Add class methods
@@ -3734,6 +3753,10 @@ SVG.Set = SVG.invent({
       this.members = []
 
       return this
+    }
+    // Get the length of a set
+  , length: function() {
+      return this.members.length
     }
     // Checks if a given element is present in set
   , has: function(element) {

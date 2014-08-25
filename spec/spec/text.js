@@ -123,11 +123,6 @@ describe('Text', function() {
       text.text('It is\nJUST\na bear!')
       expect(text.node.childNodes.length).toBe(3)
     })
-    it('stores a reference to the tspan nodes in a set', function() {
-      text.text('It is\nJUST\na bear!')
-      expect(text.lines instanceof SVG.Set).toBe(true)
-      expect(text.lines.members.length).toBe(3)
-    })
     it('stores the text value in the content reference', function() {
       text.text('It is\nJUST\na bear!')
       expect(text.content).toBe('It is\nJUST\na bear!')
@@ -190,15 +185,24 @@ describe('Text', function() {
       text.clear()
       expect(text.node.childNodes.length).toBe(0)
     })
-    it('initializes a new set for the lines reference', function() {
-      var lines = text.lines
-      text.clear()
-      expect(text.lines instanceof SVG.Set).toBe(true)
-      expect(text.lines).not.toBe(lines)
-    })
     it('clears the stored content value', function() {
       text.text('Stored locally.')
       expect(text.content).toBe('Stored locally.')
+    })
+  })
+
+  describe('lines()', function() {
+    it('gets an array of individual lines as an instance of SVG.Set', function() {
+      var l1, l2, l3
+      text.text(function(add) {
+        l1 = add.tspan('The first.')
+        l2 = add.tspan('The second.')
+        l3 = add.tspan('The third.')
+      })
+      expect(text.lines().length()).toBe(3)
+      expect(text.lines().get(0)).toBe(l1)
+      expect(text.lines().get(1)).toBe(l2)
+      expect(text.lines().get(2)).toBe(l3)
     })
   })
 
@@ -209,7 +213,7 @@ describe('Text', function() {
         add.tspan('The second.')
         add.tspan('The third.')
       })
-      expect(text.length()).toBe(text.lines.get(0).length() + text.lines.get(1).length() + text.lines.get(2).length())
+      expect(text.length()).toBe(text.lines().get(0).length() + text.lines().get(1).length() + text.lines().get(2).length())
     })
   })
   

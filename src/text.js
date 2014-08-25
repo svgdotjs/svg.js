@@ -24,7 +24,7 @@ SVG.Text = SVG.invent({
       
       // move lines as well if no textPath is present
       if (!this.textPath)
-        this.lines.each(function() { if (this.newLined) this.x(x) })
+        this.lines().each(function() { if (this.newLined) this.x(x) })
 
       return this.attr('x', x)
     }
@@ -86,6 +86,16 @@ SVG.Text = SVG.invent({
       
       return this.rebuild()
     }
+    // Get all the first level lines
+  , lines: function() {
+      // filter tspans and map them to SVG.js instances
+      for (var i = 0, il = this.node.childNodes.length, lines = []; i < il; i++)
+        if (this.node.childNodes[i] instanceof SVGElement)
+          lines.push(SVG.adopt(this.node.childNodes[i]))
+      
+      // return an instance of SVG.set
+      return new SVG.Set(lines)
+    }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
       // store new rebuild flag if given
@@ -96,10 +106,11 @@ SVG.Text = SVG.invent({
       if (this._rebuild) {
         var self = this
         
-        this.lines.each(function() {
+        this.lines().each(function() {
           if (this.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
+            
             this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
           }
         })
@@ -182,7 +193,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
   }
   // Create a tspan
 , tspan: function(text) {
-    var node  = (this.textPath || this).node
+    var node  = (this.textPath() || this).node
       , tspan = new SVG.Tspan
 
     // clear if build mode is disabled
@@ -194,24 +205,21 @@ SVG.extend(SVG.Text, SVG.Tspan, {
 
     // only first level tspans are considered to be "lines"
     if (this instanceof SVG.Text)
-      this.lines.add(tspan)
+      this.lines().add(tspan)
 
     return tspan.text(text)
   }
   // Clear all lines
 , clear: function() {
-    var node = (this.textPath || this).node
+    var node = (this.textPath() || this).node
 
     // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
     
     // reset content references 
-    if (this instanceof SVG.Text) {
-      delete this.lines
-      this.lines = new SVG.Set
+    if (this instanceof SVG.Text)
       this.content = ''
-    }
     
     return this
   }

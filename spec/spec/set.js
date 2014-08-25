@@ -108,6 +108,13 @@ describe('Set', function() {
     })
   })
 
+  describe('length()', function() {
+    it('gets the length of the set', function() {
+      set.add(e1).add(e2).add(e3).add(e4).add(e5)
+      expect(set.length()).toBe(5)
+    })
+  })
+
   describe('index()', function() {
     it('returns the index of a given element within the set', function() {
       set.add(e1).add(e2).add(e3).add(e5)

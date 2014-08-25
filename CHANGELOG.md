@@ -1,4 +1,4 @@
-# 1.0.0 (02/09/2014)
+# 1.0.0-rc.12 (?/09/2014)
 
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `rotate()` method to linear gradients -> __TODO!__
@@ -8,7 +8,11 @@
 - added `enqueue()` method to `SVG.FX` -> __TODO!__
 - added `ungroup()` method -> __TODO!__ [thanks to Peter Uithoven]
 
-# 1.0.0-rc.10 (11/08/2014)
+# 1.0.0-rc.11 (?/09/2014)
+
+
+
+# 1.0.0-rc.10 (?/09/2014)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
@@ -27,8 +31,9 @@
 - added `morph()` method to `SVG.Matrix`
 - added support for new matrix system to `SVG.FX`
 - completely reworked transformations to be chainable and more true to their nature
-- changed `lines` reference to `lines()` on `SVG.Text` -> __TODO!__
-- changed `track` reference to `track()` on `SVG.Text` -> __TODO!__
+- changed `lines` reference to `lines()` on `SVG.Text`
+- changed `track` reference to `track()` on `SVG.Text`
+- changed `textPath` reference to `textPath()` on `SVG.Text`
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method
 - reworked sup-pixel offset implementation to be more compact
