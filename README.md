@@ -442,7 +442,7 @@ _Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
 Loading another image can be done with the `load()` method:
 
 ```javascript
-draw.image('/path/to/another/image.jpg')
+image.load('/path/to/another/image.jpg')
 ```
 
 __`returns`: `itself`__
@@ -883,6 +883,14 @@ Every element instance within SVG.js has a reference to the actual `node`:
 element.node
 ```
 __`returns`: `node`__
+
+### native()
+The same can be achieved with the `native()` method:
+```javascript
+element.native()
+```
+__`returns`: `node`__
+
 
 ### instance
 Similar, the node carries a reference to the SVG.js `instance`:
@@ -2824,7 +2832,7 @@ Addition:
 number.plus('3%')
 ```
 
-__`returns`: `itself`__
+__`returns`: `SVG.Number`__
 
 ### minus()
 Subtraction:
@@ -2833,7 +2841,7 @@ Subtraction:
 number.minus('3%')
 ```
 
-__`returns`: `itself`__
+__`returns`: `SVG.Number`__
 
 ### times()
 Multiplication:
@@ -2842,7 +2850,7 @@ Multiplication:
 number.times(2)
 ```
 
-__`returns`: `itself`__
+__`returns`: `SVG.Number`__
 
 ### divide()
 Division:
@@ -2851,7 +2859,7 @@ Division:
 number.divide('3%')
 ```
 
-__`returns`: `itself`__
+__`returns`: `SVG.Number`__
 
 ### to()
 Change number to another unit:

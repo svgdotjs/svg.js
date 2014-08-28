@@ -12,6 +12,11 @@ describe('Number', function() {
     it('has a blank unit', function() {
       expect(number.unit).toBe('')
     })
+    it('accepts the unit as a second argument', function() {
+      number = new SVG.Number(30, '%')
+      expect(number.value).toBe(30)
+      expect(number.unit).toBe('%')
+    })
     it('parses a pixel value', function() {
       number = new SVG.Number('20px')
       expect(number.value).toBe(20)
@@ -91,7 +96,10 @@ describe('Number', function() {
 
   describe('to()', function() {
     beforeEach(function() {
-      number.plus(4)
+      number = number.plus(4)
+    })
+    it('returns itself', function() {
+      expect(number.to('em')).toBe(number)
     })
     it('changes the unit value', function() {
       number.to('%')
@@ -105,72 +113,67 @@ describe('Number', function() {
   })
 
   describe('plus()', function() {
+    it('returns a new instance', function() {
+      expect(number.plus(4.5)).not.toBe(number)
+      expect(number.plus(4.5) instanceof SVG.Number).toBeTruthy()
+    })
     it('adds a given number', function() {
-      number.plus(3.5)
-      expect(number.valueOf()).toBe(3.5)
+      expect(number.plus(3.5).valueOf()).toBe(3.5)
     })
     it('adds a given percentage value', function() {
-      number.plus('225%')
-      expect(number.valueOf()).toBe(2.25)
+      expect(number.plus('225%').valueOf()).toBe(2.25)
     })
     it('adds a given pixel value', function() {
-      number.plus('83px')
-      expect(number.valueOf()).toBe(83)
+      expect(number.plus('83px').valueOf()).toBe(83)
     })
   })
 
   describe('minus()', function() {
     it('subtracts a given number', function() {
-      number.minus(3.7)
-      expect(number.valueOf()).toBe(-3.7)
+      expect(number.minus(3.7).valueOf()).toBe(-3.7)
     })
     it('subtracts a given percentage value', function() {
-      number.minus('223%')
-      expect(number.valueOf()).toBe(-2.23)
+      expect(number.minus('223%').valueOf()).toBe(-2.23)
     })
     it('subtracts a given pixel value', function() {
-      number.minus('85px')
-      expect(number.valueOf()).toBe(-85)
+      expect(number.minus('85px').valueOf()).toBe(-85)
     })
   })
 
   describe('times()', function() {
     beforeEach(function() {
-      number.plus(4)
+      number = number.plus(4)
     })
     it('multiplies with a given number', function() {
-      number.times(3)
-      expect(number.valueOf()).toBe(12)
+      expect(number.times(3).valueOf()).toBe(12)
     })
     it('multiplies with a given percentage value', function() {
-      number.times('110%')
-      expect(number.valueOf()).toBe(4.4)
+      expect(number.times('110%').valueOf()).toBe(4.4)
     })
     it('multiplies with a given pixel value', function() {
-      number.times('85px')
-      expect(number.valueOf()).toBe(340)
+      expect(number.times('85px').valueOf()).toBe(340)
     })
   })
 
   describe('divide()', function() {
     beforeEach(function() {
-      number.plus(90)
+      number = number.plus(90)
     })
     it('divides by a given number', function() {
-      number.divide(3)
-      expect(number.valueOf()).toBe(30)
+      expect(number.divide(3).valueOf()).toBe(30)
     })
     it('divides by a given percentage value', function() {
-      number.divide('3000%')
-      expect(number.valueOf()).toBe(3)
+      expect(number.divide('3000%').valueOf()).toBe(3)
     })
     it('divides by a given pixel value', function() {
-      number.divide('45px')
-      expect(number.valueOf()).toBe(2)
+      expect(number.divide('45px').valueOf()).toBe(2)
     })
   })
 
   describe('morph()', function() {
+    it('returns itself', function() {
+      expect(number.morph(new SVG.Number)).toBe(number)
+    })
     it('prepares the color for morphing', function() {
       var destination = new SVG.Number
       number.morph(destination)
@@ -179,6 +182,12 @@ describe('Number', function() {
   })
 
   describe('at()', function() {
+    it('returns a new instance', function() {
+      var destination = new SVG.Number(200)
+      var morphed = number.morph(destination).at(0.4)
+      expect(morphed).not.toBe(number)
+      expect(morphed).not.toBe(destination)
+    })
     it('morphes number to a given position', function() {
       var destination = new SVG.Number(200)
       var morphed = number.morph(destination).at(0.4)

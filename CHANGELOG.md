@@ -10,7 +10,10 @@
 
 # 1.0.0-rc.11 (?/09/2014)
 
-
+- added specs for `SVG.FX` -> __TODO!__
+- fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
+- fixed a bug where events are not detached properly -> __TODO!__
+- fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 # 1.0.0-rc.10 (?/09/2014)
 
@@ -34,13 +37,10 @@
 - changed `lines` reference to `lines()` on `SVG.Text`
 - changed `track` reference to `track()` on `SVG.Text`
 - changed `textPath` reference to `textPath()` on `SVG.Text`
-- fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - added raw svg import functionality with the `svg()` method
 - reworked sup-pixel offset implementation to be more compact
 - added `native()` method to elements and matrix to get to the native api
 - added `untransform()` method to remove all transformations
-- fixed a bug where events are not detached properly -> __TODO!__
-- fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - switched from Ruby's `rake` to Node's `gulp` for building [thanks to Alex Ewerlöf]
 - added coding style description to README
 - changed `to()` method to `at()` method in `SVG.FX`
@@ -48,9 +48,9 @@
 - documented the `situation` object in `SVG.FX`
 - renamed `SVG.SetFX` to `SVG.FX.Set`
 - added distinction between relative and absolute matrix transformations
-- added specs for `SVG.FX` -> __TODO!__
 - implemented the `element()` method using the `SVG.Bare` class to create elements that are not described by SVG.js
 - removed `SVG.Symbol` but kept the `symbol()` method using the new `element()` method
+- reworked `SVG.Number` to return new instances with calculations rather than itself
 
 # 1.0.0-rc.9 (17/06/2014)
 

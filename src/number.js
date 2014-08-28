@@ -1,31 +1,31 @@
 // Module for unit convertions
 SVG.Number = SVG.invent({
   // Initialize
-  create: function(value) {
-    // Initialize defaults
+  create: function(value, unit) {
+    // initialize defaults
     this.value = 0
-    this.unit = ''
+    this.unit  = unit || ''
 
-    // Parse value
+    // parse value
     if (typeof value === 'number') {
-      // Ensure a valid numeric value
+      // ensure a valid numeric value
       this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
     } else if (typeof value === 'string') {
-      var match = value.match(SVG.regex.unit)
+      unit = value.match(SVG.regex.unit)
 
-      if (match) {
-        // Make value numeric
-        this.value = parseFloat(match[1])
+      if (unit) {
+        // make value numeric
+        this.value = parseFloat(unit[1])
       
-        // Normalize
-        if (match[2] == '%')
+        // normalize
+        if (unit[2] == '%')
           this.value /= 100
-        else if (match[2] == 's')
+        else if (unit[2] == 's')
           this.value *= 1000
       
-        // Store unit
-        this.unit = match[2]
+        // store unit
+        this.unit = unit[2]
       }
 
     } else {
@@ -54,9 +54,7 @@ SVG.Number = SVG.invent({
     }
     // Add number
   , plus: function(number) {
-      this.value = this + new SVG.Number(number)
-
-      return this
+      return new SVG.Number(this + new SVG.Number(number), this.unit)
     }
     // Subtract number
   , minus: function(number) {
@@ -64,15 +62,11 @@ SVG.Number = SVG.invent({
     }
     // Multiply number
   , times: function(number) {
-      this.value = this * new SVG.Number(number)
-
-      return this
+      return new SVG.Number(this * new SVG.Number(number), this.unit)
     }
     // Divide number
   , divide: function(number) {
-      this.value = this / new SVG.Number(number)
-
-      return this
+      return new SVG.Number(this / new SVG.Number(number), this.unit)
     }
     // Convert to different unit
   , to: function(unit) {
