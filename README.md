@@ -1582,12 +1582,12 @@ path.bbox()
 
 This will return an instance of `SVG.BBox` containing the following values:
 
-- `width` (value from native getBBox)
-- `height` (value from native getBBox)
+- `width` (value from native `getBBox`)
+- `height` (value from native `getBBox`)
 - `w` (shorthand for `width`)
 - `h` (shorthand for `height`)
-- `x` (value from native getBBox)
-- `y` (value from native getBBox)
+- `x` (value from native `getBBox`)
+- `y` (value from native `getBBox`)
 - `cx` (center `x` of the bounding box)
 - `cy` (center `y` of the bounding box)
 - `x2` (lower right `x` of the bounding box)
