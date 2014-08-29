@@ -164,15 +164,15 @@ describe('Line', function() {
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box1 = line.bbox()
-        , box2 = line.scale(2).bbox()
+      var box1 = line.tbox()
+        , box2 = line.scale(2).tbox()
       
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box1 = line.bbox()
-        , box2 = line.scale(2,3.5).bbox() 
+      var box1 = line.tbox()
+        , box2 = line.scale(2,3.5).tbox() 
       
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 3.5)

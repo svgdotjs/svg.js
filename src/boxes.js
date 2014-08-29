@@ -1,23 +1,14 @@
 SVG.BBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var box
-
-    // Initialize zero box
-    this.x      = 0
-    this.y      = 0
-    this.width  = 0
-    this.height = 0
-    
-    // Get values if element is given
+    // get values if element is given
     if (element) {
-      // Get current extracted transformations
-      var t = new SVG.Matrix(element).extract()
-      
-      // Find native bbox
+      var box
+
+      // find native bbox
       if (element.node.getBBox)
         box = element.node.getBBox()
-      // Mimic bbox
+      // mimic bbox
       else
         box = {
           x:      element.node.clientLeft
@@ -26,20 +17,20 @@ SVG.BBox = SVG.invent({
         , height: element.node.clientHeight
         }
       
-      // Include translations on x an y
-      this.x = box.x + t.x
-      this.y = box.y + t.y
-      
-      // Plain width and height
-      this.width  = box.width  * t.scaleX
-      this.height = box.height * t.scaleY
+      // plain x and y
+      this.x = box.x
+      this.y = box.y
+
+      // plain width and height
+      this.width  = box.width
+      this.height = box.height
     }
 
-    // Add center, right and bottom
+    // add center, right and bottom
     fullBox(this)
   }
 
-  // define Parent
+  // Define Parent
 , parent: SVG.Element
 
   // Constructor
@@ -52,29 +43,54 @@ SVG.BBox = SVG.invent({
 
 })
 
+SVG.TBox = SVG.invent({
+  // Initialize
+  create: function(element) {
+    // get values if element is given
+    if (element) {
+      var t   = element.ctm().extract()
+        , box = element.bbox()
+      
+      // x and y including transformations
+      this.x = box.x + t.x
+      this.y = box.y + t.y
+      
+      // width and height including transformations
+      this.width  = box.width  * t.scaleX
+      this.height = box.height * t.scaleY
+    }
+
+    // add center, right and bottom
+    fullBox(this)
+  }
+
+  // Define Parent
+, parent: SVG.Element
+
+  // Constructor
+, construct: {
+    // Get transformed bounding box
+    tbox: function() {
+      return new SVG.TBox(this)
+    }
+  }
+
+})
+
+
 SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var box = {}
-
-    // Initialize zero box
-    this.x      = 0
-    this.y      = 0
-    this.width  = 0
-    this.height = 0
-    
     if (element) {
-      var e = element.doc().parent()
+      var e    = element.doc().parent()
+        , box  = element.node.getBoundingClientRect()
         , zoom = 1
       
-      // Actual, native bounding box
-      box = element.node.getBoundingClientRect()
-      
-      // Get screen offset
+      // get screen offset
       this.x = box.left
       this.y = box.top
       
-      // Subtract parent offset
+      // subtract parent offset
       this.x -= e.offsetLeft
       this.y -= e.offsetTop
       
@@ -83,7 +99,7 @@ SVG.RBox = SVG.invent({
         this.y -= e.offsetTop
       }
       
-      // Calculate cumulative zoom from svg documents
+      // calculate cumulative zoom from svg documents
       e = element
       while (e.parent && (e = e.parent())) {
         if (e.viewbox) {
@@ -94,15 +110,15 @@ SVG.RBox = SVG.invent({
       }
     }
     
-    // Recalculate viewbox distortion
+    // recalculate viewbox distortion
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     
-    // Offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += window.scrollX
     this.y += window.scrollY
 
-    // Add center, right and bottom
+    // add center, right and bottom
     fullBox(this)
   }
 
@@ -120,14 +136,14 @@ SVG.RBox = SVG.invent({
 })
 
 // Add universal merge method
-;[SVG.BBox, SVG.RBox].forEach(function(c) {
+;[SVG.BBox, SVG.TBox, SVG.RBox].forEach(function(c) {
 
   SVG.extend(c, {
     // Merge rect box with another, return a new instance
     merge: function(box) {
       var b = new c()
 
-      // Merge box
+      // merge boxes
       b.x      = Math.min(this.x, box.x)
       b.y      = Math.min(this.y, box.y)
       b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x

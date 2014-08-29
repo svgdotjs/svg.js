@@ -612,8 +612,16 @@ text.length()
 __`returns`: `number`__
 
 
-### lines
-All added tspans are stored in the `lines` reference, which is an instance of `SVG.Set`.
+### lines()
+All first level tspans can be referenced with the `lines()` method:
+
+```javascript
+text.lines()
+```
+
+This will return an intance of `SVG.Set` including all `tspan` elements.
+
+__`returns`: `SVG.Set`__
 
 ### events
 The text element has one event. It is fired every time the `rebuild()` method is called:
@@ -746,26 +754,36 @@ text.plot('M 300 500 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100
 Attributes specific to the `<textPath>` element can be applied to the textPath instance itself:
 
 ```javascript
-text.textPath.attr('startOffset', 0.5)
+text.textPath().attr('startOffset', 0.5)
 ```
 
 And they can be animated as well of course:
 
 ```javascript
-text.textPath.animate(3000).attr('startOffset', 0.8)
+text.textPath().animate(3000).attr('startOffset', 0.8)
 ```
 
 __`returns`: `SVG.TextPath`__
 
 _Javascript inheritance stack: `SVG.TextPath` < `SVG.Element`_
 
-### track
+### textPath()
+Referencing the textPath node directly:
+
+```javascript
+var textPath = text.textPath()
+```
+
+__`returns`: `SVG.TextPath`__
+
+### track()
 Referencing the linked path element directly:
 
 ```javascript
-var path = text.track
+var path = text.track()
 ```
 
+__`returns`: `SVG.Path`__
 
 ## Use
 The use element simply emulates another existing element. Any changes on the master element will be reflected on all the `use` instances. The usage of `use()` is very straightforward:
@@ -1112,6 +1130,7 @@ rect.attr('fill', null)
 ```
 
 `getter`__`returns`: `value`__
+
 `setter`__`returns`: `itself`__
 
 
@@ -1555,17 +1574,24 @@ If the size of the viewbox equals the size of the svg drawing, the zoom value wi
 `setter`__`returns`: `itself`__
 
 ### bbox()
+Get the bounding box of an element. This is a wrapper for the native `getBBox()` method but adds more values:
 
 ```javascript
 path.bbox()
 ```
+
 This will return an instance of `SVG.BBox` containing the following values:
 
-```javascript
-{ width: 20, height: 20, x: 10, y: 20, cx: 20, cy: 30, x2: 30, y2: 40 } 
-```
-
-As opposed to the native `getBBox()` method any translations used with the `transform()` method will be taken into account.
+- `width` (value from native getBBox)
+- `height` (value from native getBBox)
+- `w` (shorthand for `width`)
+- `h` (shorthand for `height`)
+- `x` (value from native getBBox)
+- `y` (value from native getBBox)
+- `cx` (center `x` of the bounding box)
+- `cy` (center `y` of the bounding box)
+- `x2` (lower right `x` of the bounding box)
+- `y2` (lower right `y` of the bounding box)
 
 The `SVG.BBox` has one other nifty little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
 
@@ -1577,12 +1603,51 @@ var box3 = box1.merge(box2)
 
 __`returns`: `SVG.BBox`__
 
+### tbox()
+Where `bbox()` returns a bounding box mindless of any transformations, the `tbox()` method does take transformations into account. So any translation or scale will be applied to the resulting values to get closer to the actual visual representation:
+
+```javascript
+path.tbox()
+```
+
+This will return an instance of `SVG.TBox` containing the following values:
+
+- `width` (value from native getBBox influenced by the `scaleX` of the current matrix)
+- `height` (value from native getBBox influenced by the `scaleY` of the current matrix)
+- `w` (shorthand for `width`)
+- `h` (shorthand for `height`)
+- `x` (value from native getBBox influenced by the `x` of the current matrix)
+- `y` (value from native getBBox influenced by the `y` of the current matrix)
+- `cx` (center `x` of the bounding box)
+- `cy` (center `y` of the bounding box)
+- `x2` (lower right `x` of the bounding box)
+- `y2` (lower right `y` of the bounding box)
+
+Note that the rotation of the element will not be added to the calculation.
+
+__`returns`: `SVG.TBox`__
+
 ### rbox()
-Is similar to `bbox()` but will give you the box around the exact representation of the element, taking all transformations into account.
+Is similar to `bbox()` but will give you the box around the exact visual representation of the element, taking all transformations into account.
 
 ```javascript
 path.rbox()
 ```
+
+This will return an instance of `SVG.RBox` containing the following values:
+
+- `width` (the actual visual width)
+- `height` (the actual visual height)
+- `w` (shorthand for `width`)
+- `h` (shorthand for `height`)
+- `x` (the actual visual position on the x-axis)
+- `y` (the actual visual position on the y-axis)
+- `cx` (center `x` of the bounding box)
+- `cy` (center `y` of the bounding box)
+- `x2` (lower right `x` of the bounding box)
+- `y2` (lower right `y` of the bounding box)
+
+__Important__: Mozilla browsers include stroke widths where other browsers do not. Therefore the resulting box might be different in Mozulla browsers. It is very hard to modify this behavior so for the time being this is an inconvenience we have to live with.
 
 __`returns`: `SVG.RBox`__
 

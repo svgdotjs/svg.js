@@ -18,6 +18,9 @@ SVG.Matrix = SVG.invent({
       this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
     
+    // merge polymertic values
+    if (source._r)
+      this._r = source._r
   }
   
   // Add methods
@@ -52,6 +55,10 @@ SVG.Matrix = SVG.invent({
       // store new destination
       this.destination = new SVG.Matrix(matrix)
 
+      // detect polymetric rotation
+      if (this.destination._r)
+        this._r = this.extract()
+
       return this
     }
     // Get morphed matrix at a given position
@@ -60,7 +67,7 @@ SVG.Matrix = SVG.invent({
       if (!this.destination) return this
 
       // calculate morphed matrix at a given position
-      return new SVG.Matrix({
+      var matrix = new SVG.Matrix({
         a: this.a + (this.destination.a - this.a) * pos
       , b: this.b + (this.destination.b - this.b) * pos
       , c: this.c + (this.destination.c - this.c) * pos
@@ -68,6 +75,16 @@ SVG.Matrix = SVG.invent({
       , e: this.e + (this.destination.e - this.e) * pos
       , f: this.f + (this.destination.f - this.f) * pos
       })
+
+      // add polymetric rotation if required
+      if (this._r && this.destination._r)
+        matrix = matrix.rotate(
+          this._r.rotation + (this.destination._r.rotation - this._r.rotation) * pos
+        , this.destination._r.cx
+        , this.destination._r.cy
+        )
+
+      return matrix
     }
     // Multiplies by given matrix
   , multiply: function(matrix) {

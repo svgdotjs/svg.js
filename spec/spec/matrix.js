@@ -67,13 +67,13 @@ describe('Matrix', function() {
         matrix = new SVG.Matrix(rect)
       })
 
-      it('parses the current transform matrix form an element', function() {
+      it('parses the current transform matrix from an element', function() {
         expect(matrix.a).toBeCloseTo(1.9696155786514282)
         expect(matrix.b).toBeCloseTo(-0.3472963869571686)
         expect(matrix.c).toBeCloseTo(0.3472963869571686)
         expect(matrix.d).toBeCloseTo(1.9696155786514282)
-        expect(matrix.e).toBeCloseTo(-66.2967529296875)
-        expect(matrix.f).toBeCloseTo(-32.799678802490234)
+        expect(matrix.e).toBeCloseTo(-17.770875930786133)
+        expect(matrix.f).toBeCloseTo(11.178505897521973)
       })
 
       describe('extract()', function() {

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Aug 28 2014 18:38:34 GMT+0200 (CEST)
+* BUILT: Fri Aug 29 2014 12:43:21 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1336,13 +1336,18 @@ SVG.FX = SVG.invent({
         var from = this.target.attr(a)
 
         // detect format
-        this.attrs[a] = a == 'transform' ?
-          this.target.ctm().morph(v) :
-        SVG.Color.isColor(v) ?
-          new SVG.Color(from).morph(v) :
-        SVG.regex.unit.test(v) ?
-          new SVG.Number(from).morph(v) :
-          { from: from, to: v }
+        if (a == 'transform') {
+          if (this.attrs[a])
+            v = this.attrs[a].destination.multiply(v)
+
+          this.attrs[a] = this.target.ctm().morph(v)
+        } else {
+          this.attrs[a] = SVG.Color.isColor(v) ?
+            new SVG.Color(from).morph(v) :
+          SVG.regex.unit.test(v) ?
+            new SVG.Number(from).morph(v) :
+            { from: from, to: v }
+        }
       }
       
       return this
@@ -1552,23 +1557,14 @@ SVG.FX = SVG.invent({
 SVG.BBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var box
-
-    // Initialize zero box
-    this.x      = 0
-    this.y      = 0
-    this.width  = 0
-    this.height = 0
-    
-    // Get values if element is given
+    // get values if element is given
     if (element) {
-      // Get current extracted transformations
-      var t = new SVG.Matrix(element).extract()
-      
-      // Find native bbox
+      var box
+
+      // find native bbox
       if (element.node.getBBox)
         box = element.node.getBBox()
-      // Mimic bbox
+      // mimic bbox
       else
         box = {
           x:      element.node.clientLeft
@@ -1577,20 +1573,20 @@ SVG.BBox = SVG.invent({
         , height: element.node.clientHeight
         }
       
-      // Include translations on x an y
-      this.x = box.x + t.x
-      this.y = box.y + t.y
-      
-      // Plain width and height
-      this.width  = box.width  * t.scaleX
-      this.height = box.height * t.scaleY
+      // plain x and y
+      this.x = box.x
+      this.y = box.y
+
+      // plain width and height
+      this.width  = box.width
+      this.height = box.height
     }
 
-    // Add center, right and bottom
+    // add center, right and bottom
     fullBox(this)
   }
 
-  // define Parent
+  // Define Parent
 , parent: SVG.Element
 
   // Constructor
@@ -1603,29 +1599,54 @@ SVG.BBox = SVG.invent({
 
 })
 
+SVG.TBox = SVG.invent({
+  // Initialize
+  create: function(element) {
+    // get values if element is given
+    if (element) {
+      var t   = element.ctm().extract()
+        , box = element.bbox()
+      
+      // x and y including transformations
+      this.x = box.x + t.x
+      this.y = box.y + t.y
+      
+      // width and height including transformations
+      this.width  = box.width  * t.scaleX
+      this.height = box.height * t.scaleY
+    }
+
+    // add center, right and bottom
+    fullBox(this)
+  }
+
+  // Define Parent
+, parent: SVG.Element
+
+  // Constructor
+, construct: {
+    // Get transformed bounding box
+    tbox: function() {
+      return new SVG.TBox(this)
+    }
+  }
+
+})
+
+
 SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
-    var box = {}
-
-    // Initialize zero box
-    this.x      = 0
-    this.y      = 0
-    this.width  = 0
-    this.height = 0
-    
     if (element) {
-      var e = element.doc().parent()
+      var e    = element.doc().parent()
+        , box  = element.node.getBoundingClientRect()
         , zoom = 1
       
-      // Actual, native bounding box
-      box = element.node.getBoundingClientRect()
-      
-      // Get screen offset
+      // get screen offset
       this.x = box.left
       this.y = box.top
       
-      // Subtract parent offset
+      // subtract parent offset
       this.x -= e.offsetLeft
       this.y -= e.offsetTop
       
@@ -1634,7 +1655,7 @@ SVG.RBox = SVG.invent({
         this.y -= e.offsetTop
       }
       
-      // Calculate cumulative zoom from svg documents
+      // calculate cumulative zoom from svg documents
       e = element
       while (e.parent && (e = e.parent())) {
         if (e.viewbox) {
@@ -1645,15 +1666,15 @@ SVG.RBox = SVG.invent({
       }
     }
     
-    // Recalculate viewbox distortion
+    // recalculate viewbox distortion
     this.width  = box.width  /= zoom
     this.height = box.height /= zoom
     
-    // Offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += window.scrollX
     this.y += window.scrollY
 
-    // Add center, right and bottom
+    // add center, right and bottom
     fullBox(this)
   }
 
@@ -1671,14 +1692,14 @@ SVG.RBox = SVG.invent({
 })
 
 // Add universal merge method
-;[SVG.BBox, SVG.RBox].forEach(function(c) {
+;[SVG.BBox, SVG.TBox, SVG.RBox].forEach(function(c) {
 
   SVG.extend(c, {
     // Merge rect box with another, return a new instance
     merge: function(box) {
       var b = new c()
 
-      // Merge box
+      // merge boxes
       b.x      = Math.min(this.x, box.x)
       b.y      = Math.min(this.y, box.y)
       b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
@@ -1711,6 +1732,9 @@ SVG.Matrix = SVG.invent({
       this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
     
+    // merge polymertic values
+    if (source._r)
+      this._r = source._r
   }
   
   // Add methods
@@ -1745,6 +1769,10 @@ SVG.Matrix = SVG.invent({
       // store new destination
       this.destination = new SVG.Matrix(matrix)
 
+      // detect polymetric rotation
+      if (this.destination._r)
+        this._r = this.extract()
+
       return this
     }
     // Get morphed matrix at a given position
@@ -1753,7 +1781,7 @@ SVG.Matrix = SVG.invent({
       if (!this.destination) return this
 
       // calculate morphed matrix at a given position
-      return new SVG.Matrix({
+      var matrix = new SVG.Matrix({
         a: this.a + (this.destination.a - this.a) * pos
       , b: this.b + (this.destination.b - this.b) * pos
       , c: this.c + (this.destination.c - this.c) * pos
@@ -1761,6 +1789,16 @@ SVG.Matrix = SVG.invent({
       , e: this.e + (this.destination.e - this.e) * pos
       , f: this.f + (this.destination.f - this.f) * pos
       })
+
+      // add polymetric rotation if required
+      if (this._r && this.destination._r)
+        matrix = matrix.rotate(
+          this._r.rotation + (this.destination._r.rotation - this._r.rotation) * pos
+        , this.destination._r.cx
+        , this.destination._r.cy
+        )
+
+      return matrix
     }
     // Multiplies by given matrix
   , multiply: function(matrix) {
@@ -1962,16 +2000,21 @@ SVG.extend(SVG.Element, SVG.FX, {
         // absolute
         new SVG.Matrix(o)
     
-    // act on rotate
+    // act on rotation
     } else if (o.rotation != null) {
       o.cx = o.cx == null ? target.bbox().cx : o.cx
       o.cy = o.cy == null ? target.bbox().cy : o.cy
 
-      matrix = relative ?
-        // relative
-        target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
-        // absolute
-        matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
+      if (this instanceof SVG.FX) {
+        o.rotation -= (relative ? 0 : matrix.extract().rotation)
+        matrix._r = o
+      } else {
+        matrix = relative ?
+          // relative
+          target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
+          // absolute
+          matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
+      }
     
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
@@ -2022,7 +2065,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         if (o.y != null) matrix.f = o.y
       }
     }
-
+    
     return this.attr('transform', matrix)
   }
 })
@@ -2295,11 +2338,11 @@ SVG.G = SVG.invent({
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
+      return x == null ? this.tbox().cx : this.x(x - this.tbox().width / 2)
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
+      return y == null ? this.tbox().cy : this.y(y - this.tbox().height / 2)
     }
   }
   
@@ -3949,157 +3992,166 @@ SVG.extend(SVG.Parent, {
 })
 // Convert dash-separated-string to camelCase
 function camelCase(s) { 
-	return s.toLowerCase().replace(/-(.)/g, function(m, g) {
-		return g.toUpperCase()
-	})
+  return s.toLowerCase().replace(/-(.)/g, function(m, g) {
+    return g.toUpperCase()
+  })
 }
 
 // Capitalize first letter of a string
 function capitalize(s) {
-	return s.charAt(0).toUpperCase() + s.slice(1)
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 // Ensure to six-based hex 
 function fullHex(hex) {
-	return hex.length == 4 ?
-		[ '#',
-			hex.substring(1, 2), hex.substring(1, 2)
-		, hex.substring(2, 3), hex.substring(2, 3)
-		, hex.substring(3, 4), hex.substring(3, 4)
-		].join('') : hex
+  return hex.length == 4 ?
+    [ '#',
+      hex.substring(1, 2), hex.substring(1, 2)
+    , hex.substring(2, 3), hex.substring(2, 3)
+    , hex.substring(3, 4), hex.substring(3, 4)
+    ].join('') : hex
 }
 
 // Component to hex value
 function compToHex(comp) {
-	var hex = comp.toString(16)
-	return hex.length == 1 ? '0' + hex : hex
+  var hex = comp.toString(16)
+  return hex.length == 1 ? '0' + hex : hex
 }
 
 // Calculate proportional width and height values when necessary
 function proportionalSize(box, width, height) {
-	if (height == null)
-		height = box.height / box.width * width
-	else if (width == null)
-		width = box.width / box.height * height
-	
-	return {
-		width:  width
-	, height: height
-	}
+  if (height == null)
+    height = box.height / box.width * width
+  else if (width == null)
+    width = box.width / box.height * height
+  
+  return {
+    width:  width
+  , height: height
+  }
 }
 
 // Delta transform point
 function deltaTransformPoint(matrix, x, y) {
-	return {
-		x: x * matrix.a + y * matrix.c + 0
-	, y: x * matrix.b + y * matrix.d + 0
-	}
+  return {
+    x: x * matrix.a + y * matrix.c + 0
+  , y: x * matrix.b + y * matrix.d + 0
+  }
 }
 
 // Map matrix array to object
 function arrayToMatrix(a) {
-	return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
+  return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
 }
 
 // Parse matrix if required
 function parseMatrix(matrix) {
-	if (!(matrix instanceof SVG.Matrix))
-	  matrix = new SVG.Matrix(matrix)
-	
-	return matrix
+  if (!(matrix instanceof SVG.Matrix))
+    matrix = new SVG.Matrix(matrix)
+  
+  return matrix
 }
 
 // Convert string to matrix
 function stringToMatrix(source) {
-	// remove matrix wrapper and split to individual numbers
-	source = source
-		.replace(SVG.regex.whitespace, '')
-		.replace(SVG.regex.matrix, '')
-		.split(',')
+  // remove matrix wrapper and split to individual numbers
+  source = source
+    .replace(SVG.regex.whitespace, '')
+    .replace(SVG.regex.matrix, '')
+    .split(',')
 
-	// convert string values to floats and convert to a matrix-formatted object
-	return arrayToMatrix(
-		SVG.utils.map(source, function(n) {
-			return parseFloat(n)
-		})
-	)
+  // convert string values to floats and convert to a matrix-formatted object
+  return arrayToMatrix(
+    SVG.utils.map(source, function(n) {
+      return parseFloat(n)
+    })
+  )
 }
 
 // Calculate position according to from and to
 function at(o, pos) {
-	// number recalculation (don't bother converting to SVG.Number for performance reasons)
-	return typeof o.from == 'number' ?
-		o.from + (o.to - o.from) * pos :
-	
-	// instance recalculation
-	o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
-	
-	// for all other values wait until pos has reached 1 to return the final value
-	pos < 1 ? o.from : o.to
+  // number recalculation (don't bother converting to SVG.Number for performance reasons)
+  return typeof o.from == 'number' ?
+    o.from + (o.to - o.from) * pos :
+  
+  // instance recalculation
+  o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
+  
+  // for all other values wait until pos has reached 1 to return the final value
+  pos < 1 ? o.from : o.to
 }
 
 // PathArray Helpers
 function arrayToString(a) {
-	for (var i = 0, il = a.length, s = ''; i < il; i++) {
-		s += a[i][0]
+  for (var i = 0, il = a.length, s = ''; i < il; i++) {
+    s += a[i][0]
 
-		if (a[i][1] != null) {
-			s += a[i][1]
+    if (a[i][1] != null) {
+      s += a[i][1]
 
-			if (a[i][2] != null) {
-				s += ' '
-				s += a[i][2]
+      if (a[i][2] != null) {
+        s += ' '
+        s += a[i][2]
 
-				if (a[i][3] != null) {
-					s += ' '
-					s += a[i][3]
-					s += ' '
-					s += a[i][4]
+        if (a[i][3] != null) {
+          s += ' '
+          s += a[i][3]
+          s += ' '
+          s += a[i][4]
 
-					if (a[i][5] != null) {
-						s += ' '
-						s += a[i][5]
-						s += ' '
-						s += a[i][6]
+          if (a[i][5] != null) {
+            s += ' '
+            s += a[i][5]
+            s += ' '
+            s += a[i][6]
 
-						if (a[i][7] != null) {
-							s += ' '
-							s += a[i][7]
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	return s + ' '
+            if (a[i][7] != null) {
+              s += ' '
+              s += a[i][7]
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return s + ' '
 }
 
 // Deep new id assignment
 function assignNewId(node) {
-	// Do the same for SVG child nodes as well
-	for (var i = node.childNodes.length - 1; i >= 0; i--)
-		if (node.childNodes[i] instanceof SVGElement)
-			assignNewId(node.childNodes[i])
+  // do the same for SVG child nodes as well
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof SVGElement)
+      assignNewId(node.childNodes[i])
 
-	return SVG.adopt(node).id(SVG.eid(node.nodeName))
+  return SVG.adopt(node).id(SVG.eid(node.nodeName))
 }
 
 // Add more bounding box properties
 function fullBox(b) {
-	b.x2 = b.x + b.width
-	b.y2 = b.y + b.height
-	b.cx = b.x + b.width / 2
-	b.cy = b.y + b.height / 2
+  if (b.x == null) {
+    b.x      = 0
+    b.y      = 0
+    b.width  = 0
+    b.height = 0
+  }
 
-	return b
+  b.w  = b.width
+  b.h  = b.height
+  b.x2 = b.x + b.width
+  b.y2 = b.y + b.height
+  b.cx = b.x + b.width / 2
+  b.cy = b.y + b.height / 2
+
+  return b
 }
 
 // Get id from reference string
 function idFromReference(url) {
-	var m = url.toString().match(SVG.regex.reference)
+  var m = url.toString().match(SVG.regex.reference)
 
-	if (m) return m[1]
+  if (m) return m[1]
 }
 
 // Create matrix array for looping
@@ -4107,11 +4159,11 @@ var abcdef = 'abcdef'.split('')
 
 // Shim layer with setTimeout fallback by Paul Irish
 window.requestAnimFrame = (function(){
-	return  window.requestAnimationFrame       ||
-					window.webkitRequestAnimationFrame ||
-					window.mozRequestAnimationFrame    ||
-					window.msRequestAnimationFrame     ||
-					function (c) { window.setTimeout(c, 1000 / 60) }
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.msRequestAnimationFrame     ||
+          function (c) { window.setTimeout(c, 1000 / 60) }
 })()
 // Add CustomEvent to IE9 and IE10 
 if (typeof CustomEvent !== 'function') {

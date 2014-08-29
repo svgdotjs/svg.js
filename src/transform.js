@@ -26,16 +26,21 @@ SVG.extend(SVG.Element, SVG.FX, {
         // absolute
         new SVG.Matrix(o)
     
-    // act on rotate
+    // act on rotation
     } else if (o.rotation != null) {
       o.cx = o.cx == null ? target.bbox().cx : o.cx
       o.cy = o.cy == null ? target.bbox().cy : o.cy
 
-      matrix = relative ?
-        // relative
-        target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
-        // absolute
-        matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
+      if (this instanceof SVG.FX) {
+        o.rotation -= (relative ? 0 : matrix.extract().rotation)
+        matrix._r = o
+      } else {
+        matrix = relative ?
+          // relative
+          target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
+          // absolute
+          matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
+      }
     
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
@@ -86,7 +91,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         if (o.y != null) matrix.f = o.y
       }
     }
-
+    
     return this.attr('transform', matrix)
   }
 })

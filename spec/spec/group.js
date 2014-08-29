@@ -16,12 +16,12 @@ describe('Group', function() {
     })
     it('sets the value of x with the first argument', function() {
       group.x(123)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.x).toBe(123)
     })
     it('sets the value of x correctly when called multiple times', function() {
       group.x(10).x(100).x(13)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.x).toBe(13)
     })
   })
@@ -32,12 +32,12 @@ describe('Group', function() {
     })
     it('sets the value of y with the first argument', function() {
       group.y(345)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.y).toBe(345)
     })
     it('sets the value of y correctly when called multiple times', function() {
       group.y(1).y(10).y(15)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.y).toBe(15)
     })
   })
@@ -48,7 +48,7 @@ describe('Group', function() {
     })
     it('sets the value of cx with the first argument', function() {
       group.cx(123)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.cx).toBe(123)
     })
   })
@@ -59,7 +59,7 @@ describe('Group', function() {
     })
     it('sets the value of cy with the first argument', function() {
       group.cy(345)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.cy).toBe(345)
     })
   })
@@ -74,7 +74,7 @@ describe('Group', function() {
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       group.center(321,567)
-      var box = group.bbox()
+      var box = group.tbox()
       expect(box.cx).toBe(321)
       expect(box.cy).toBe(567)
     })

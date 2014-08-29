@@ -222,13 +222,18 @@ SVG.FX = SVG.invent({
         var from = this.target.attr(a)
 
         // detect format
-        this.attrs[a] = a == 'transform' ?
-          this.target.ctm().morph(v) :
-        SVG.Color.isColor(v) ?
-          new SVG.Color(from).morph(v) :
-        SVG.regex.unit.test(v) ?
-          new SVG.Number(from).morph(v) :
-          { from: from, to: v }
+        if (a == 'transform') {
+          if (this.attrs[a])
+            v = this.attrs[a].destination.multiply(v)
+
+          this.attrs[a] = this.target.ctm().morph(v)
+        } else {
+          this.attrs[a] = SVG.Color.isColor(v) ?
+            new SVG.Color(from).morph(v) :
+          SVG.regex.unit.test(v) ?
+            new SVG.Number(from).morph(v) :
+            { from: from, to: v }
+        }
       }
       
       return this
