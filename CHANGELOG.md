@@ -14,6 +14,7 @@
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug where events are not detached properly -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
+- added `precision()` method to round numeric element attributes -> __TODO!__
 
 # 1.0.0-rc.10 (31/08/2014)
 
@@ -53,6 +54,7 @@
 - reworked `SVG.Number` to return new instances with calculations rather than itself
 - added `w` and `h` properties as shorthand for `width` and `height` to `SVG.BBox`
 - added `SVG.TBox` to get a bounding box that is affected by transformation values
+- reworked animatable matrix rotations -> __TODO!__
 
 # 1.0.0-rc.9 (17/06/2014)
 
