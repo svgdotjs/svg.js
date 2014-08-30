@@ -90,19 +90,6 @@ SVG.Matrix = SVG.invent({
   , multiply: function(matrix) {
       return new SVG.Matrix(this.native().multiply(parseMatrix(matrix).native()))
     }
-    // Adds given matrix
-  , add: function(matrix) {
-      matrix = parseMatrix(matrix)
-
-      return new SVG.Matrix({
-        a: this.a + matrix.a - 1
-      , b: this.b + matrix.b
-      , c: this.c + matrix.c
-      , d: this.d + matrix.d - 1
-      , e: this.e + matrix.e
-      , f: this.f + matrix.f
-      })
-    }
     // Inverses matrix
   , inverse: function() {
       return new SVG.Matrix(this.native().inverse())

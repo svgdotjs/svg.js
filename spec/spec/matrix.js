@@ -164,25 +164,6 @@ describe('Matrix', function() {
     })
   })
 
-  describe('add()', function() {
-    it('adds two matices', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1.1, 0, 0, 1.5, 4, 3)
-        , matrix3 = matrix1.add(matrix2)
-
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(1.1,0,0,1.5,4,3)')
-      expect(matrix3.toString()).toBe('matrix(2.1,0,0,5.5,4,3)')
-    })
-    it('accepts two matrices in any form', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = matrix1.add('1.1,0,0,1.5,4,3')
-
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(2.1,0,0,5.5,4,3)')
-    })
-  })
-
   describe('inverse()', function() {
     it('inverses matrix', function() {
       var matrix1 = new SVG.Matrix(2, 0, 0, 5, 4, 3)

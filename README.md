@@ -3320,8 +3320,6 @@ The returned object contains the following values:
 - `scaleX` (calculated scale on x-axis)
 - `scaleY` (calculated scale on y-axis)
 - `rotation` (calculated rotation)
-- `cx` (last used rotation centre on x-axis)
-- `cy` (last used rotation centre on y-axis)
 
 __`returns`: `object`__
 
@@ -3359,15 +3357,6 @@ Multiplies by another given matrix:
 
 ```javascript
 matrix.matrix(matrix2)
-```
-
-__`returns`: `SVG.Matrix`__
-
-### add()
-Adds two matrics:
-
-```javascript
-matrix.add(matrix2)
 ```
 
 __`returns`: `SVG.Matrix`__

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Aug 30 2014 16:27:39 GMT+0200 (CEST)
+* BUILT: Sat Aug 30 2014 17:15:00 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1822,19 +1822,6 @@ SVG.Matrix = SVG.invent({
     // Multiplies by given matrix
   , multiply: function(matrix) {
       return new SVG.Matrix(this.native().multiply(parseMatrix(matrix).native()))
-    }
-    // Adds given matrix
-  , add: function(matrix) {
-      matrix = parseMatrix(matrix)
-
-      return new SVG.Matrix({
-        a: this.a + matrix.a - 1
-      , b: this.b + matrix.b
-      , c: this.c + matrix.c
-      , d: this.d + matrix.d - 1
-      , e: this.e + matrix.e
-      , f: this.f + matrix.f
-      })
     }
     // Inverses matrix
   , inverse: function() {
