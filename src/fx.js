@@ -223,15 +223,34 @@ SVG.FX = SVG.invent({
 
         // detect format
         if (a == 'transform') {
+          // merge given transformation with an existing one
           if (this.attrs[a])
             v = this.attrs[a].destination.multiply(v)
 
+          // prepare matrix for morphing
           this.attrs[a] = this.target.ctm().morph(v)
+
+          // add parametric rotation values
+          if (this.param) {
+            // get initial rotation
+            v = this.target.transform('rotation')
+
+            // add param
+            this.attrs[a].param = {
+              from:     this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
+            , to:       this.param
+            , initial:  v
+            }
+          }
+
         } else {
           this.attrs[a] = SVG.Color.isColor(v) ?
+            // prepare color for morphing
             new SVG.Color(from).morph(v) :
           SVG.regex.unit.test(v) ?
+            // prepare number for morphing
             new SVG.Number(from).morph(v) :
+            // prepare for plain morphing
             { from: from, to: v }
         }
       }

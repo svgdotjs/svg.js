@@ -60,6 +60,12 @@ function parseMatrix(matrix) {
   return matrix
 }
 
+// Add centre point to transform object
+function ensureCentre(o, target) {
+  o.cx = o.cx == null ? target.bbox().cx : o.cx
+  o.cy = o.cy == null ? target.bbox().cy : o.cy
+}
+
 // Convert string to matrix
 function stringToMatrix(source) {
   // remove matrix wrapper and split to individual numbers

@@ -1135,11 +1135,33 @@ rect.attr('fill', null)
 
 
 ### transform()
-The `transform()` method acts as a full getter without an argument. Basically it calls:
+
+The `transform()` method acts as a full getter without an argument:
 
 ```javascript
-element.ctm().extract()
+element.transform()
 ```
+
+The returned __`object`__ contains the following values:
+
+- `x` (translation on the x-axis)
+- `y` (translation on the y-axis)
+- `skewX` (calculated skew on x-axis)
+- `skewY` (calculated skew on y-axis)
+- `scaleX` (calculated scale on x-axis)
+- `scaleY` (calculated scale on y-axis)
+- `rotation` (calculated rotation)
+- `cx` (last used rotation centre on x-axis)
+- `cy` (last used rotation centre on y-axis)
+
+Additionally a string value for the required property can be passed:
+
+```javascript
+element.transform('rotation')
+```
+
+In this case the returned value is a __`number`__.
+
 
 As a setter it has two ways of working. By default transformations are absolute. For example, if you call:
 
@@ -1170,7 +1192,11 @@ Available transformations are:
 - `skewY` with optional `cx` and `cy`
 - `x`
 - `y`
-- `a`, `b`, `c`, `d`, `e` and/or `f` or an existing matrix of course
+- `a`, `b`, `c`, `d`, `e` and/or `f` or an existing matrix instead of the object
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
 
 ### style()
 With the `style()` method the `style` attribute can be managed like attributes with `attr`:
@@ -1586,7 +1612,7 @@ This will return an instance of `SVG.BBox` containing the following values:
 - `height` (value from native `getBBox`)
 - `w` (shorthand for `width`)
 - `h` (shorthand for `height`)
-- `x` (value from native `getBBox`)
+- `x` (value from native `getBBox`) 
 - `y` (value from native `getBBox`)
 - `cx` (center `x` of the bounding box)
 - `cy` (center `y` of the bounding box)
@@ -3279,24 +3305,23 @@ matrix.toString() //-> returns matrix(1,0,0,1,0,0)
 ```
 
 ### extract()
-Gets the calculated values of the matrix:
+Gets the calculated values of the matrix as an object:
 
 ```javascript
 matrix.extract()
 ```
 
-returns:
-```javascript
-{
-  x:        0
-, y:        0
-, skewX:    0
-, skewY:    0
-, scaleX:   1
-, scaleY:   1
-, rotation: 0
-}
-```
+The returned object contains the following values:
+
+- `x` (translation on the x-axis)
+- `y` (translation on the y-axis)
+- `skewX` (calculated skew on x-axis)
+- `skewY` (calculated skew on y-axis)
+- `scaleX` (calculated scale on x-axis)
+- `scaleY` (calculated scale on y-axis)
+- `rotation` (calculated rotation)
+- `cx` (last used rotation centre on x-axis)
+- `cy` (last used rotation centre on y-axis)
 
 __`returns`: `object`__
 

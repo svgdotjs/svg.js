@@ -3,17 +3,27 @@ SVG.extend(SVG.Element, SVG.FX, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this.target || this
+      , matrix
 
-    // full getter
-    if (o == null)
-      return target.ctm().extract()
+    // act as a getter
+    if (typeof o !== 'object') {
+      // get current matrix
+      matrix = target.ctm().extract()
 
-    // singular getter
-    else if (typeof o === 'string')
-      return target.ctm().extract()[o]
+      // add parametric rotation
+      if (typeof this.param === 'object') {
+        matrix.rotation = this.param.rotation
+        matrix.cx       = this.param.cx
+        matrix.cy       = this.param.cy
+      }
+
+      return typeof o === 'string' ? matrix[o] : matrix
+    }
 
     // get current matrix
-    var matrix = new SVG.Matrix(target)
+    matrix = this instanceof SVG.FX && this.attrs.transform ?
+      this.attrs.transform :
+      new SVG.Matrix(target)
 
     // ensure relative flag
     relative = !!relative || !!o.relative
@@ -28,13 +38,21 @@ SVG.extend(SVG.Element, SVG.FX, {
     
     // act on rotation
     } else if (o.rotation != null) {
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
+      // ensure centre point
+      ensureCentre(o, target)
 
-      if (this instanceof SVG.FX) {
-        o.rotation -= (relative ? 0 : matrix.extract().rotation)
-        matrix._r = o
-      } else {
+      // relativize rotation value
+      if (relative) {
+        o.rotation += this.param && this.param.rotation != null ?
+          this.param.rotation :
+          matrix.extract().rotation
+      }
+
+      // store parametric values
+      this.param = o
+
+      // apply transformation
+      if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
           target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
@@ -44,10 +62,12 @@ SVG.extend(SVG.Element, SVG.FX, {
     
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure scale values on both axes
       o.scaleX = o.scale != null ? o.scale : o.scaleX != null ? o.scaleX : 1
       o.scaleY = o.scale != null ? o.scale : o.scaleY != null ? o.scaleY : 1
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
 
       if (!relative) {
         // absolute; multiply inversed values
@@ -60,10 +80,12 @@ SVG.extend(SVG.Element, SVG.FX, {
 
     // act on skew
     } else if (o.skewX != null || o.skewY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure skew values on both axes
       o.skewX = o.skewX != null ? o.skewX : 0
       o.skewY = o.skewY != null ? o.skewY : 0
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
 
       if (!relative) {
         // absolute; reset skew values

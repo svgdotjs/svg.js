@@ -17,10 +17,6 @@ SVG.Matrix = SVG.invent({
     for (i = abcdef.length - 1; i >= 0; i--)
       this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
-    
-    // merge polymertic values
-    if (source._r)
-      this._r = source._r
   }
   
   // Add methods
@@ -55,10 +51,6 @@ SVG.Matrix = SVG.invent({
       // store new destination
       this.destination = new SVG.Matrix(matrix)
 
-      // detect polymetric rotation
-      if (this.destination._r)
-        this._r = this.extract()
-
       return this
     }
     // Get morphed matrix at a given position
@@ -76,13 +68,21 @@ SVG.Matrix = SVG.invent({
       , f: this.f + (this.destination.f - this.f) * pos
       })
 
-      // add polymetric rotation if required
-      if (this._r && this.destination._r)
-        matrix = matrix.rotate(
-          this._r.rotation + (this.destination._r.rotation - this._r.rotation) * pos
-        , this.destination._r.cx
-        , this.destination._r.cy
-        )
+      // process parametric rotation if present
+      if (this.param && this.param.to) {
+        // calculate current parametric position
+        var param = {
+          rotation: this.param.from.rotation + (this.param.to.rotation - this.param.from.rotation) * pos
+        , cx:       this.param.from.cx
+        , cy:       this.param.from.cy
+        }
+
+        // rotate matrix
+        matrix = matrix.rotate(param.rotation - this.param.initial, param.cx, param.cy)
+
+        // store current parametric values
+        matrix.param = param
+      }
 
       return matrix
     }
@@ -158,11 +158,7 @@ SVG.Matrix = SVG.invent({
     }
     // Convert matrix to string
   , toString: function() {
-      return 'matrix(' + this.toArray().join() + ')'
-    }
-    // Convert matrix to array
-  , toArray: function() {
-      return [this.a, this.b, this.c, this.d, this.e, this.f]
+      return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
     }
   }
 

@@ -47,12 +47,6 @@ describe('Matrix', function() {
           expect(matrix.toString()).toBe('matrix(1,0,0,1,0,0)')
         })
       })
-
-      describe('toArray()' , function() {
-        it('exports correctly to an array', function() {
-          expect(matrix.toArray()).toEqual([1,0,0,1,0,0])
-        })
-      })
     })
 
     describe('with an element given', function() {
@@ -101,12 +95,6 @@ describe('Matrix', function() {
           expect(extract.rotation).toBeCloseTo(-100)
         })
 
-      })
-
-      describe('toArray()' , function() {
-        it('exports correctly to a string', function() {
-          expect(matrix.toArray()).toEqual([matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f])
-        })
       })
       
     })

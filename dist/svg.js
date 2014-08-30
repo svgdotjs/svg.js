@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Aug 29 2014 12:43:21 GMT+0200 (CEST)
+* BUILT: Sat Aug 30 2014 16:27:39 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1337,15 +1337,34 @@ SVG.FX = SVG.invent({
 
         // detect format
         if (a == 'transform') {
+          // merge given transformation with an existing one
           if (this.attrs[a])
             v = this.attrs[a].destination.multiply(v)
 
+          // prepare matrix for morphing
           this.attrs[a] = this.target.ctm().morph(v)
+
+          // add parametric rotation values
+          if (this.param) {
+            // get initial rotation
+            v = this.target.transform('rotation')
+
+            // add param
+            this.attrs[a].param = {
+              from:     this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
+            , to:       this.param
+            , initial:  v
+            }
+          }
+
         } else {
           this.attrs[a] = SVG.Color.isColor(v) ?
+            // prepare color for morphing
             new SVG.Color(from).morph(v) :
           SVG.regex.unit.test(v) ?
+            // prepare number for morphing
             new SVG.Number(from).morph(v) :
+            // prepare for plain morphing
             { from: from, to: v }
         }
       }
@@ -1731,10 +1750,6 @@ SVG.Matrix = SVG.invent({
     for (i = abcdef.length - 1; i >= 0; i--)
       this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
-    
-    // merge polymertic values
-    if (source._r)
-      this._r = source._r
   }
   
   // Add methods
@@ -1769,10 +1784,6 @@ SVG.Matrix = SVG.invent({
       // store new destination
       this.destination = new SVG.Matrix(matrix)
 
-      // detect polymetric rotation
-      if (this.destination._r)
-        this._r = this.extract()
-
       return this
     }
     // Get morphed matrix at a given position
@@ -1790,13 +1801,21 @@ SVG.Matrix = SVG.invent({
       , f: this.f + (this.destination.f - this.f) * pos
       })
 
-      // add polymetric rotation if required
-      if (this._r && this.destination._r)
-        matrix = matrix.rotate(
-          this._r.rotation + (this.destination._r.rotation - this._r.rotation) * pos
-        , this.destination._r.cx
-        , this.destination._r.cy
-        )
+      // process parametric rotation if present
+      if (this.param && this.param.to) {
+        // calculate current parametric position
+        var param = {
+          rotation: this.param.from.rotation + (this.param.to.rotation - this.param.from.rotation) * pos
+        , cx:       this.param.from.cx
+        , cy:       this.param.from.cy
+        }
+
+        // rotate matrix
+        matrix = matrix.rotate(param.rotation - this.param.initial, param.cx, param.cy)
+
+        // store current parametric values
+        matrix.param = param
+      }
 
       return matrix
     }
@@ -1872,11 +1891,7 @@ SVG.Matrix = SVG.invent({
     }
     // Convert matrix to string
   , toString: function() {
-      return 'matrix(' + this.toArray().join() + ')'
-    }
-    // Convert matrix to array
-  , toArray: function() {
-      return [this.a, this.b, this.c, this.d, this.e, this.f]
+      return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
     }
   }
 
@@ -1896,9 +1911,9 @@ SVG.Matrix = SVG.invent({
 SVG.extend(SVG.Element, {
   // Set svg element attribute
   attr: function(a, v, n) {
-    // Act as full getter
+    // act as full getter
     if (a == null) {
-      // Get an object of attributes
+      // get an object of attributes
       a = {}
       v = this.node.attributes
       for (n = v.length - 1; n >= 0; n--)
@@ -1907,15 +1922,15 @@ SVG.extend(SVG.Element, {
       return a
       
     } else if (typeof a == 'object') {
-      // Apply every attribute individually if an object is passed
+      // apply every attribute individually if an object is passed
       for (v in a) this.attr(v, a[v])
       
     } else if (v === null) {
-        // Remove value
+        // remove value
         this.node.removeAttribute(a)
       
     } else if (v == null) {
-      // Act as a getter if the first and only argument is not an object
+      // act as a getter if the first and only argument is not an object
       v = this.node.getAttribute(a)
       return v == null ? 
         SVG.defaults.attrs[a] :
@@ -1923,13 +1938,13 @@ SVG.extend(SVG.Element, {
         parseFloat(v) : v
     
     } else {
-      // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
+      // bUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
       if (a == 'stroke-width')
         this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
       else if (a == 'stroke')
         this._stroke = v
 
-      // Convert image fill and stroke to patterns
+      // convert image fill and stroke to patterns
       if (a == 'fill' || a == 'stroke') {
         if (SVG.regex.isImage.test(v))
           v = this.doc().defs().image(v, 0, 0)
@@ -1940,31 +1955,35 @@ SVG.extend(SVG.Element, {
           })
       }
       
-      // Ensure correct numeric values (also accepts NaN and Infinity)
+      // ensure correct numeric values (also accepts NaN and Infinity)
       if (typeof v === 'number')
         v = new SVG.Number(v)
 
-      // Ensure full hex color
+      // ensure full hex color
       else if (SVG.Color.isColor(v))
         v = new SVG.Color(v)
       
-      // Parse array values
+      // parse array values
       else if (Array.isArray(v))
         v = new SVG.Array(v)
 
-      // If the passed attribute is leading...
+      // store parametric transformation values locally
+      else if (v instanceof SVG.Matrix && v.param)
+        this.param = v.param
+
+      // if the passed attribute is leading...
       if (a == 'leading') {
         // ... call the leading method instead
         if (this.leading)
           this.leading(v)
       } else {
-        // Set given attribute on node
+        // set given attribute on node
         typeof n === 'string' ?
           this.node.setAttributeNS(n, a, v.toString()) :
           this.node.setAttribute(a, v.toString())
       }
       
-      // Rebuild if required
+      // rebuild if required
       if (this.rebuild && (a == 'font-size' || a == 'x'))
         this.rebuild(a, v)
     }
@@ -1977,17 +1996,27 @@ SVG.extend(SVG.Element, SVG.FX, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this.target || this
+      , matrix
 
-    // full getter
-    if (o == null)
-      return target.ctm().extract()
+    // act as a getter
+    if (typeof o !== 'object') {
+      // get current matrix
+      matrix = target.ctm().extract()
 
-    // singular getter
-    else if (typeof o === 'string')
-      return target.ctm().extract()[o]
+      // add parametric rotation
+      if (typeof this.param === 'object') {
+        matrix.rotation = this.param.rotation
+        matrix.cx       = this.param.cx
+        matrix.cy       = this.param.cy
+      }
+
+      return typeof o === 'string' ? matrix[o] : matrix
+    }
 
     // get current matrix
-    var matrix = new SVG.Matrix(target)
+    matrix = this instanceof SVG.FX && this.attrs.transform ?
+      this.attrs.transform :
+      new SVG.Matrix(target)
 
     // ensure relative flag
     relative = !!relative || !!o.relative
@@ -2002,13 +2031,21 @@ SVG.extend(SVG.Element, SVG.FX, {
     
     // act on rotation
     } else if (o.rotation != null) {
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
+      // ensure centre point
+      ensureCentre(o, target)
 
-      if (this instanceof SVG.FX) {
-        o.rotation -= (relative ? 0 : matrix.extract().rotation)
-        matrix._r = o
-      } else {
+      // relativize rotation value
+      if (relative) {
+        o.rotation += this.param && this.param.rotation != null ?
+          this.param.rotation :
+          matrix.extract().rotation
+      }
+
+      // store parametric values
+      this.param = o
+
+      // apply transformation
+      if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
           target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
@@ -2018,10 +2055,12 @@ SVG.extend(SVG.Element, SVG.FX, {
     
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure scale values on both axes
       o.scaleX = o.scale != null ? o.scale : o.scaleX != null ? o.scaleX : 1
       o.scaleY = o.scale != null ? o.scale : o.scaleY != null ? o.scaleY : 1
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
 
       if (!relative) {
         // absolute; multiply inversed values
@@ -2034,10 +2073,12 @@ SVG.extend(SVG.Element, SVG.FX, {
 
     // act on skew
     } else if (o.skewX != null || o.skewY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure skew values on both axes
       o.skewX = o.skewX != null ? o.skewX : 0
       o.skewY = o.skewY != null ? o.skewY : 0
-      o.cx = o.cx == null ? target.bbox().cx : o.cx
-      o.cy = o.cy == null ? target.bbox().cy : o.cy
 
       if (!relative) {
         // absolute; reset skew values
@@ -4050,6 +4091,12 @@ function parseMatrix(matrix) {
     matrix = new SVG.Matrix(matrix)
   
   return matrix
+}
+
+// Add centre point to transform object
+function ensureCentre(o, target) {
+  o.cx = o.cx == null ? target.bbox().cx : o.cx
+  o.cy = o.cy == null ? target.bbox().cy : o.cy
 }
 
 // Convert string to matrix
