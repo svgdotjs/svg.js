@@ -54,11 +54,19 @@ BuildTask.define_task 'dist/svg.js' => MODULES.map {|m| "src/#{ m }.js" } do |ta
   
   File.open(task.name, 'w') do |file|
     file.puts "/* svg.js %s - %s - svgjs.com/license */" % [version_string, task.modules.join(' ')]
-  
-    file.puts ';(function() {'
+    file.puts ";(function(root, factory) {"
+    file.puts "  if (typeof define === 'function' && define.amd) {"
+    file.puts "    define(factory);"
+    file.puts "  } else if (typeof exports === 'object') {"
+    file.puts "    module.exports = factory();"
+    file.puts "  } else {"
+    file.puts "    root.SVG = factory();"
+    file.puts "  }"
+    file.puts "}(this, function() {"
     file.puts "\n"
     file.puts svgjs
-    file.puts '}).call(this);'
+    file.puts "  return SVG"
+    file.puts "}));"
   end
   
 end
