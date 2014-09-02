@@ -2902,6 +2902,22 @@ function whenSomethingHappens() {
 }
 ```
 
+Additionally you can pass an object as second argument to the `fire()` method:
+
+```javascript
+function whenSomethingHappens() {
+  rect.fire('my:event', { shout: 'SVG.js is the best!' }) 
+}
+```
+
+The object will be passed in the event's `detail` property:
+
+```javascript
+rect.on('my:event', function(event) {
+  alert(event.detail.shout)
+})
+```
+
 _Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `wicked:event` for example would be better than something generic like `svg:event`._
 
 ## Numbers

@@ -419,6 +419,10 @@ describe('Element', function() {
       expect(clone.get(0).attr('id')).not.toBe(group.get(0).attr('id'))
       expect(clone.get(1).attr('id')).not.toBe(group.get(1).attr('id'))
     })
+    it('inserts the clone after the cloned element', function() {
+      clone = rect.clone()
+      expect(rect.next()).toBe(clone)
+    })
   })
 
   describe('toString()', function() {

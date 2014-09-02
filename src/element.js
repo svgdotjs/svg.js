@@ -67,7 +67,13 @@ SVG.Element = SVG.invent({
     }
     // Clone element
   , clone: function() {
-      return assignNewId(this.node.cloneNode(true))
+      // clone element and assign new id
+      var clone = assignNewId(this.node.cloneNode(true))
+
+      // insert the clone after myself
+      this.after(clone)
+      
+      return clone
     }
     // Remove element
   , remove: function() {
@@ -159,15 +165,17 @@ SVG.Element = SVG.invent({
     }
     // Returns the parent element instance
   , parent: function(type) {
-      // Get parent element
-      var parent = SVG.adopt(this.node.parentNode)
+      if (this.node.parentNode) {
+        // get parent element
+        var parent = SVG.adopt(this.node.parentNode)
 
-      // If a specific type is given, find a parent with that class
-      if (type)
-        while (!(parent instanceof type))
-          parent = SVG.adopt(parent.node.parentNode)
+        // if a specific type is given, find a parent with that class
+        if (type)
+          while (!(parent instanceof type) && parent.node.parentNode instanceof SVGElement)
+            parent = SVG.adopt(parent.node.parentNode)
 
-      return parent
+        return parent
+      }
     }
     // Get parent document
   , doc: function(type) {

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Aug 30 2014 17:15:00 GMT+0200 (CEST)
+* BUILT: Tue Sep 02 2014 14:18:40 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -971,7 +971,13 @@ SVG.Element = SVG.invent({
     }
     // Clone element
   , clone: function() {
-      return assignNewId(this.node.cloneNode(true))
+      // clone element and assign new id
+      var clone = assignNewId(this.node.cloneNode(true))
+
+      // insert the clone after myself
+      this.after(clone)
+      
+      return clone
     }
     // Remove element
   , remove: function() {
@@ -1063,15 +1069,17 @@ SVG.Element = SVG.invent({
     }
     // Returns the parent element instance
   , parent: function(type) {
-      // Get parent element
-      var parent = SVG.adopt(this.node.parentNode)
+      if (this.node.parentNode) {
+        // get parent element
+        var parent = SVG.adopt(this.node.parentNode)
 
-      // If a specific type is given, find a parent with that class
-      if (type)
-        while (!(parent instanceof type))
-          parent = SVG.adopt(parent.node.parentNode)
+        // if a specific type is given, find a parent with that class
+        if (type)
+          while (!(parent instanceof type) && parent.node.parentNode instanceof SVGElement)
+            parent = SVG.adopt(parent.node.parentNode)
 
-      return parent
+        return parent
+      }
     }
     // Get parent document
   , doc: function(type) {
@@ -1351,9 +1359,8 @@ SVG.FX = SVG.invent({
 
             // add param
             this.attrs[a].param = {
-              from:     this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
-            , to:       this.param
-            , initial:  v
+              from: this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
+            , to:   this.param
             }
           }
 
@@ -1811,7 +1818,11 @@ SVG.Matrix = SVG.invent({
         }
 
         // rotate matrix
-        matrix = matrix.rotate(param.rotation - this.param.initial, param.cx, param.cy)
+        matrix = matrix.rotate(
+          (this.param.to.rotation - this.param.from.rotation * 2) * pos
+        , param.cx
+        , param.cy
+        )
 
         // store current parametric values
         matrix.param = param
@@ -3193,19 +3204,19 @@ SVG.Image = SVG.invent({
       var self = this
         , img  = document.createElement('img')
       
-      /* preload image */
+      // preload image
       img.onload = function() {
         var p = self.doc(SVG.Pattern)
 
-        /* ensure image size */
+        // ensure image size
         if (self.width() == 0 && self.height() == 0)
           self.size(img.width, img.height)
 
-        /* ensure pattern size if not set */
+        // ensure pattern size if not set
         if (p && p.width() == 0 && p.height() == 0)
           p.size(self.width(), self.height())
         
-        /* callback */
+        // callback
         if (typeof self._loaded === 'function')
           self._loaded.call(self, {
             width:  img.width
@@ -3217,7 +3228,7 @@ SVG.Image = SVG.invent({
 
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }
-    // Add loade callback
+    // Add loaded callback
   , loaded: function(loaded) {
       this._loaded = loaded
       return this
@@ -3226,7 +3237,7 @@ SVG.Image = SVG.invent({
   
   // Add parent method
 , construct: {
-    // Create image element, load image and set its size
+    // create image element, load image and set its size
     image: function(source, width, height) {
       return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
     }

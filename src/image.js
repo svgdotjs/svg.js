@@ -14,19 +14,19 @@ SVG.Image = SVG.invent({
       var self = this
         , img  = document.createElement('img')
       
-      /* preload image */
+      // preload image
       img.onload = function() {
         var p = self.doc(SVG.Pattern)
 
-        /* ensure image size */
+        // ensure image size
         if (self.width() == 0 && self.height() == 0)
           self.size(img.width, img.height)
 
-        /* ensure pattern size if not set */
+        // ensure pattern size if not set
         if (p && p.width() == 0 && p.height() == 0)
           p.size(self.width(), self.height())
         
-        /* callback */
+        // callback
         if (typeof self._loaded === 'function')
           self._loaded.call(self, {
             width:  img.width
@@ -38,7 +38,7 @@ SVG.Image = SVG.invent({
 
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }
-    // Add loade callback
+    // Add loaded callback
   , loaded: function(loaded) {
       this._loaded = loaded
       return this
@@ -47,7 +47,7 @@ SVG.Image = SVG.invent({
   
   // Add parent method
 , construct: {
-    // Create image element, load image and set its size
+    // create image element, load image and set its size
     image: function(source, width, height) {
       return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
     }

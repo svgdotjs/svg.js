@@ -78,7 +78,11 @@ SVG.Matrix = SVG.invent({
         }
 
         // rotate matrix
-        matrix = matrix.rotate(param.rotation - this.param.initial, param.cx, param.cy)
+        matrix = matrix.rotate(
+          (this.param.to.rotation - this.param.from.rotation * 2) * pos
+        , param.cx
+        , param.cy
+        )
 
         // store current parametric values
         matrix.param = param

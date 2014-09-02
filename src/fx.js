@@ -237,9 +237,8 @@ SVG.FX = SVG.invent({
 
             // add param
             this.attrs[a].param = {
-              from:     this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
-            , to:       this.param
-            , initial:  v
+              from: this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
+            , to:   this.param
             }
           }
 
