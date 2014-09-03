@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Sep 03 2014 15:38:51 GMT+0200 (CEST)
+* BUILT: Wed Sep 03 2014 15:55:13 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1642,9 +1642,8 @@ SVG.TBox = SVG.invent({
       this.height = box.height * t.scaleY
 
       // x and y including transformations
-      box = element.rbox()
-      this.x = box.x
-      this.y = box.y
+      this.x = box.x + t.x
+      this.y = box.y + t.y
     }
 
     // add center, right and bottom
