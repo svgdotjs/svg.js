@@ -1,5 +1,13 @@
-/* svg.js 1.0.0-rc.10-4-gf47dddc - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
-;(function() {
+/* svg.js 1.0.0-rc.9-16-g0dac953 - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+;(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.SVG = factory();
+  }
+}(this, function() {
 
   var SVG = this.SVG = function(element) {
     if (SVG.supported) {
@@ -2043,7 +2051,7 @@
   // Event constructor
   SVG.registerEvent = function(event) {
     if (!SVG.events[event])
-      SVG.events[event] = new Event(event)
+      SVG.events[event] = new CustomEvent(event)
   }
   
   // Add event binder in the SVG namespace
@@ -3825,4 +3833,5 @@
             function (c) { window.setTimeout(c, 1000 / 60) }
   })()
 
-}).call(this);
+  return SVG
+}));
