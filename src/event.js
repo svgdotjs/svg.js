@@ -42,11 +42,12 @@ SVG.on = function(node, event, listener) {
   // create listener
   var l = listener.bind(node.instance || node)
 
-  // ensure node reference
-  SVG.listeners[node] = SVG.listeners[node] || {}
+  // ensure reference objects
+  SVG.listeners[node]        = SVG.listeners[node]        || {}
+  SVG.listeners[node][event] = SVG.listeners[node][event] || {}
 
   // reference listener
-  SVG.listeners[node][listener] = l
+  SVG.listeners[node][event][listener] = l
 
   // add listener
   node.addEventListener(event, l, false)
@@ -54,11 +55,33 @@ SVG.on = function(node, event, listener) {
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  // remove listener
-  node.removeEventListener(event, SVG.listeners[node][listener], false)
+  if (listener) {
+    // remove listener reference
+    if (SVG.listeners[node] && SVG.listeners[node][event]) {
+      // remove listener
+      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
 
-  // remove listener reference
-  delete SVG.listeners[node][listener]
+      delete SVG.listeners[node][event][listener]
+    }
+
+  } else if (event) {
+    // remove all listeners for the event
+    if (SVG.listeners[node][event]) {
+      for (listener in SVG.listeners[node][event])
+        SVG.off(node, event, listener)
+
+      delete SVG.listeners[node][event]
+    }
+
+  } else {
+    // remove all listeners on a given node
+    if (SVG.listeners[node]) {
+      for (event in SVG.listeners[node])
+        SVG.off(node, event)
+
+      delete SVG.listeners[node]
+    }
+  }
 }
 
 //

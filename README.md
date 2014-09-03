@@ -2864,6 +2864,18 @@ Unbinding events is just as easy:
 rect.off('click', click)
 ```
 
+Or to unbind all listeners for a given event:
+
+```javascript
+rect.off('click')
+```
+
+Or even unbind all listeners for all events:
+
+```javascript
+rect.off()
+```
+
 __`returns`: `itself`__
 
 But there is more to event listeners. You can bind events to html elements as well:

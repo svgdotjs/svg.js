@@ -53,13 +53,14 @@ SVG.TBox = SVG.invent({
       var t   = element.ctm().extract()
         , box = element.bbox()
       
-      // x and y including transformations
-      this.x = box.x + t.x
-      this.y = box.y + t.y
-      
       // width and height including transformations
       this.width  = box.width  * t.scaleX
       this.height = box.height * t.scaleY
+
+      // x and y including transformations
+      box = element.rbox()
+      this.x = box.x
+      this.y = box.y
     }
 
     // add center, right and bottom
@@ -110,18 +111,18 @@ SVG.RBox = SVG.invent({
           this.y -= e.y() || 0
         }
       }
+
+      // recalculate viewbox distortion
+      this.width  = box.width  /= zoom
+      this.height = box.height /= zoom
     }
     
-    // recalculate viewbox distortion
-    this.width  = box.width  /= zoom
-    this.height = box.height /= zoom
-    
+    // add center, right and bottom
+    fullBox(this)
+
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += window.scrollX
     this.y += window.scrollY
-
-    // add center, right and bottom
-    fullBox(this)
   }
 
   // define Parent

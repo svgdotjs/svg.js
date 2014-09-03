@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Sep 03 2014 12:14:37 GMT+0200 (CEST)
+* BUILT: Wed Sep 03 2014 15:23:40 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1635,13 +1635,14 @@ SVG.TBox = SVG.invent({
       var t   = element.ctm().extract()
         , box = element.bbox()
       
-      // x and y including transformations
-      this.x = box.x + t.x
-      this.y = box.y + t.y
-      
       // width and height including transformations
       this.width  = box.width  * t.scaleX
       this.height = box.height * t.scaleY
+
+      // x and y including transformations
+      box = element.rbox()
+      this.x = box.x
+      this.y = box.y
     }
 
     // add center, right and bottom
@@ -1692,18 +1693,18 @@ SVG.RBox = SVG.invent({
           this.y -= e.y() || 0
         }
       }
+
+      // recalculate viewbox distortion
+      this.width  = box.width  /= zoom
+      this.height = box.height /= zoom
     }
     
-    // recalculate viewbox distortion
-    this.width  = box.width  /= zoom
-    this.height = box.height /= zoom
-    
+    // add center, right and bottom
+    fullBox(this)
+
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += window.scrollX
     this.y += window.scrollY
-
-    // add center, right and bottom
-    fullBox(this)
   }
 
   // define Parent
@@ -2315,11 +2316,12 @@ SVG.on = function(node, event, listener) {
   // create listener
   var l = listener.bind(node.instance || node)
 
-  // ensure node reference
-  SVG.listeners[node] = SVG.listeners[node] || {}
+  // ensure reference objects
+  SVG.listeners[node]        = SVG.listeners[node]        || {}
+  SVG.listeners[node][event] = SVG.listeners[node][event] || {}
 
   // reference listener
-  SVG.listeners[node][listener] = l
+  SVG.listeners[node][event][listener] = l
 
   // add listener
   node.addEventListener(event, l, false)
@@ -2327,11 +2329,33 @@ SVG.on = function(node, event, listener) {
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  // remove listener
-  node.removeEventListener(event, SVG.listeners[node][listener], false)
+  if (listener) {
+    // remove listener reference
+    if (SVG.listeners[node] && SVG.listeners[node][event]) {
+      // remove listener
+      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
 
-  // remove listener reference
-  delete SVG.listeners[node][listener]
+      delete SVG.listeners[node][event][listener]
+    }
+
+  } else if (event) {
+    // remove all listeners for the event
+    if (SVG.listeners[node][event]) {
+      for (listener in SVG.listeners[node][event])
+        SVG.off(node, event, listener)
+
+      delete SVG.listeners[node][event]
+    }
+
+  } else {
+    // remove all listeners on a given node
+    if (SVG.listeners[node]) {
+      for (event in SVG.listeners[node])
+        SVG.off(node, event)
+
+      delete SVG.listeners[node]
+    }
+  }
 }
 
 //
