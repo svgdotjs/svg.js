@@ -34,7 +34,7 @@ SVG.listeners = {}
 // Event constructor
 SVG.registerEvent = function(event) {
   if (!SVG.events[event])
-    SVG.events[event] = new Event(event)
+    SVG.events[event] = new CustomEvent(event)
 }
 
 // Add event binder in the SVG namespace
