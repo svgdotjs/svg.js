@@ -5,17 +5,19 @@ SVG.BBox = SVG.invent({
     if (element) {
       var box
 
-      // find native bbox
-      if (element.node.getBBox)
+      // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
+      try {
+        // find native bbox
         box = element.node.getBBox()
-      // mimic bbox
-      else
+      } catch(e) {
+        // mimic bbox
         box = {
           x:      element.node.clientLeft
         , y:      element.node.clientTop
         , width:  element.node.clientWidth
         , height: element.node.clientHeight
         }
+      }
       
       // plain x and y
       this.x = box.x

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Sep 02 2014 14:18:40 GMT+0200 (CEST)
+* BUILT: Wed Sep 03 2014 12:14:37 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1587,17 +1587,19 @@ SVG.BBox = SVG.invent({
     if (element) {
       var box
 
-      // find native bbox
-      if (element.node.getBBox)
+      // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
+      try {
+        // find native bbox
         box = element.node.getBBox()
-      // mimic bbox
-      else
+      } catch(e) {
+        // mimic bbox
         box = {
           x:      element.node.clientLeft
         , y:      element.node.clientTop
         , width:  element.node.clientWidth
         , height: element.node.clientHeight
         }
+      }
       
       // plain x and y
       this.x = box.x
@@ -1755,7 +1757,7 @@ SVG.Matrix = SVG.invent({
 
     // merge source
     for (i = abcdef.length - 1; i >= 0; i--)
-      this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
+      this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
   
@@ -2310,15 +2312,26 @@ SVG.registerEvent = function(event) {
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
+  // create listener
   var l = listener.bind(node.instance || node)
-  SVG.listeners[listener] = l
+
+  // ensure node reference
+  SVG.listeners[node] = SVG.listeners[node] || {}
+
+  // reference listener
+  SVG.listeners[node][listener] = l
+
+  // add listener
   node.addEventListener(event, l, false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  node.removeEventListener(event, SVG.listeners[listener], false)
-  delete SVG.listeners[listener]
+  // remove listener
+  node.removeEventListener(event, SVG.listeners[node][listener], false)
+
+  // remove listener reference
+  delete SVG.listeners[node][listener]
 }
 
 //

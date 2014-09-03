@@ -13,7 +13,30 @@ imageUrl = ''
 // lorem ipsum text
 loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sodales\n imperdiet auctor. Nunc ultrices lectus at erat dictum pharetra\n elementum ante posuere. Duis turpis risus, blandit nec elementum et,\n posuere eget lacus. Aliquam et risus magna, eu aliquet nibh. Fusce\n consequat mi quis purus varius sagittis euismod urna interdum.\n Curabitur aliquet orci quis felis semper vulputate. Vestibulum ac nisi\n magna, id dictum diam. Proin sed metus vel magna blandit\n sodales. Pellentesque at neque ultricies nunc euismod rutrum ut in\n lorem. Mauris euismod tellus in tellus tempus interdum. Phasellus\n mattis sapien et leo feugiat dictum. Vestibulum at volutpat velit.'
 
+// test for touch device
+window.isTouchDevice = 'ontouchstart' in document.documentElement
+
 // strip spaces from result
 function stripped(string) {
   return string.replace(/\s+/g, '')
+}
+
+// dispatch an event
+function dispatchEvent(element, name) {
+  var e
+
+  if (document.createEvent) {
+    e = document.createEvent('HTMLEvents')
+    e.initEvent(name, true, true)
+  } else {
+    e = document.createEventObject()
+    e.eventType = name
+  }
+
+  e.eventName = name
+
+  if (document.createEvent)
+    element.node.dispatchEvent(e)
+  else
+    element.node.fireEvent('on' + name, e)
 }

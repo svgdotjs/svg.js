@@ -39,15 +39,26 @@ SVG.registerEvent = function(event) {
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
+  // create listener
   var l = listener.bind(node.instance || node)
-  SVG.listeners[listener] = l
+
+  // ensure node reference
+  SVG.listeners[node] = SVG.listeners[node] || {}
+
+  // reference listener
+  SVG.listeners[node][listener] = l
+
+  // add listener
   node.addEventListener(event, l, false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
-  node.removeEventListener(event, SVG.listeners[listener], false)
-  delete SVG.listeners[listener]
+  // remove listener
+  node.removeEventListener(event, SVG.listeners[node][listener], false)
+
+  // remove listener reference
+  delete SVG.listeners[node][listener]
 }
 
 //

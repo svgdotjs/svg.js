@@ -15,7 +15,7 @@ SVG.Matrix = SVG.invent({
 
     // merge source
     for (i = abcdef.length - 1; i >= 0; i--)
-      this[abcdef[i]] = typeof source[abcdef[i]] === 'number' ?
+      this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
   
