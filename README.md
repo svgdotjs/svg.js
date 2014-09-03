@@ -2987,7 +2987,7 @@ Change number to another unit:
 number.to('px')
 ```
 
-__`returns`: `itself`__
+__`returns`: `SVG.Number`__
 
 ### morph()
 Make a number morphable:

@@ -98,16 +98,17 @@ describe('Number', function() {
     beforeEach(function() {
       number = number.plus(4)
     })
-    it('returns itself', function() {
-      expect(number.to('em')).toBe(number)
+    it('returns a new instance', function() {
+      expect(number.to('em')).not.toBe(number)
+      expect(number.to('em') instanceof SVG.Number).toBeTruthy()
     })
     it('changes the unit value', function() {
-      number.to('%')
+      number = number.to('%')
       expect(number.unit).toBe('%')
     })
     it('changes the output value', function() {
       var oldNumber = number.valueOf()
-      number.to('%')
+      number = number.to('%')
       expect(number.toString()).toBe('400%')
     })
   })

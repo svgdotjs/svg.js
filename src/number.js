@@ -30,7 +30,7 @@ SVG.Number = SVG.invent({
 
     } else {
       if (value instanceof SVG.Number) {
-        this.value = value.value
+        this.value = value.valueOf()
         this.unit  = value.unit
       }
     }
@@ -70,10 +70,12 @@ SVG.Number = SVG.invent({
     }
     // Convert to different unit
   , to: function(unit) {
+      var number = new SVG.Number(this)
+      
       if (typeof unit === 'string')
-        this.unit = unit
+        number.unit = unit
 
-      return this
+      return number
     }
     // Make number morphable
   , morph: function(number) {
