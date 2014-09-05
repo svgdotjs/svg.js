@@ -3003,7 +3003,7 @@ __`returns`: `object`__
 ## Extending functionality
 
 ### SVG.invent()
-Creating your own custom elements with svg.js is piece of cake thanks to the `SVG.invent` function. For the sake of this example, lets "invent" a shape. We want a `rect` with rounded corners that are always proportional to the height of the element. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
+Creating your own custom elements with svg.js is a piece of cake thanks to the `SVG.invent` function. For the sake of this example, let's "invent" a shape. We want a `rect` with rounded corners that are always proportional to the height of the element. The new shape lives in the `SVG` namespace and is called `Rounded`. Here is how we achieve that.
 
 ```javascript
 SVG.Rounded = SVG.invent({
