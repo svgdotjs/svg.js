@@ -1684,7 +1684,7 @@ Note that the `after()` method will never be called if the animation is looping 
 __`returns`: `SVG.FX`__
 
 ### to()
-Say you want to control the position of an animation with an external event, then the `to()` method will proove very useful:
+Say you want to control the position of an animation with an external event, then the `to()` method will prove to be very useful:
 
 ```javascript
 var animate = draw.rect(100, 100).move(50, 50).animate('=').move(200, 200)
