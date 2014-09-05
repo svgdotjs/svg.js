@@ -1577,7 +1577,7 @@ Pausing an animations is fairly straightforward:
 ```javascript
 rect.animate().move(200, 200)
 
-rect.mouseenter(function() { this.pause() })
+rect.mouseover(function() { this.pause() })
 ```
 
 __`returns`: `itself`__
@@ -1588,8 +1588,8 @@ Will start playing a paused animation:
 ```javascript
 rect.animate().move(200, 200)
 
-rect.mouseenter(function() { this.pause() })
-rect.mouseleave(function() { this.play() })
+rect.mouseover(function() { this.pause() })
+rect.mouseout(function() { this.play() })
 ```
 __`returns`: `itself`__
 
@@ -2587,7 +2587,7 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `mouseenter`, `mouseleave`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
+All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
 
 __`returns`: `itself`__
 

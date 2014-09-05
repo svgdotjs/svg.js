@@ -1,4 +1,4 @@
-/* svg.js 1.0.0-rc.10-4-gf47dddc - svg selector inventor regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.0 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
 ;(function() {
 
   var SVG = this.SVG = function(element) {
@@ -110,6 +110,20 @@
   		SVG.extend(config.parent || SVG.Container, config.construct)
   
   	return initializer
+  }
+
+  if (typeof CustomEvent !== 'function') {
+    // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+    function CustomEvent (event, options) {
+      options = options || { bubbles: false, cancelable: false, detail: undefined }
+      var e = document.createEvent('CustomEvent')
+      e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
+      return e
+    }
+  
+    CustomEvent.prototype = window.Event.prototype
+  
+    window.CustomEvent = CustomEvent
   }
 
   SVG.regex = {
@@ -961,8 +975,8 @@
     this.height = box.height /= zoom
     
     /* offset by window scroll position, because getBoundingClientRect changes when window is scrolled */
-    this.x += window.scrollX;
-    this.y += window.scrollY;
+    this.x += typeof window.scrollX === 'number' ? window.scrollX : window.pageXOffset
+    this.y += typeof window.scrollY === 'number' ? window.scrollY : window.pageYOffset
   
     /* add center, right and bottom */
     boxProperties(this)
@@ -1135,11 +1149,11 @@
           
         } else if (v == null) {
           /* act as a getter if the first and only argument is not an object */
-          v = this.node.getAttribute(a)
+          v = this.node.attributes[a]
           return v == null ? 
             SVG.defaults.attrs[a] :
-          SVG.regex.isNumber.test(v) ?
-            parseFloat(v) : v
+          SVG.regex.isNumber.test(v.nodeValue) ?
+            parseFloat(v.nodeValue) : v.nodeValue
         
         } else if (a == 'style') {
           /* redirect to the style method */
@@ -1380,7 +1394,7 @@
       }
       // Get referenced element form attribute value
     , reference: function(attr) {
-        return SVG.get(this.attr(attr))
+        return SVG.get(this.attr()[attr])
       }
       // Private: find svg parent by instance
     , _parent: function(parent) {
@@ -2015,8 +2029,8 @@
     , 'mouseover'
     , 'mouseout'
     , 'mousemove'
-    , 'mouseenter'
-    , 'mouseleave'
+    // , 'mouseenter' -> not supported by IE
+    // , 'mouseleave' -> not supported by IE
     , 'touchstart'
     , 'touchmove'
     , 'touchleave'
@@ -2043,20 +2057,54 @@
   // Event constructor
   SVG.registerEvent = function(event) {
     if (!SVG.events[event])
-      SVG.events[event] = new Event(event)
+      SVG.events[event] = new CustomEvent(event)
   }
   
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {
+    // create listener
     var l = listener.bind(node.instance || node)
-    SVG.listeners[listener] = l
+  
+    // ensure reference objects
+    SVG.listeners[node]        = SVG.listeners[node]        || {}
+    SVG.listeners[node][event] = SVG.listeners[node][event] || {}
+  
+    // reference listener
+    SVG.listeners[node][event][listener] = l
+  
+    // add listener
     node.addEventListener(event, l, false)
   }
   
   // Add event unbinder in the SVG namespace
   SVG.off = function(node, event, listener) {
-    node.removeEventListener(event, SVG.listeners[listener], false)
-    delete SVG.listeners[listener]
+    if (listener) {
+      // remove listener reference
+      if (SVG.listeners[node] && SVG.listeners[node][event]) {
+        // remove listener
+        node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+  
+        delete SVG.listeners[node][event][listener]
+      }
+  
+    } else if (event) {
+      // remove all listeners for the event
+      if (SVG.listeners[node][event]) {
+        for (listener in SVG.listeners[node][event])
+          SVG.off(node, event, listener)
+  
+        delete SVG.listeners[node][event]
+      }
+  
+    } else {
+      // remove all listeners on a given node
+      if (SVG.listeners[node]) {
+        for (event in SVG.listeners[node])
+          SVG.off(node, event)
+  
+        delete SVG.listeners[node]
+      }
+    }
   }
   
   //
@@ -2074,8 +2122,15 @@
       return this
     }
     // Fire given event
-  , fire: function(event) {
+  , fire: function(event, data) {
+      // Add detail data to event
+      SVG.events[event].detail = data
+      
+      // Dispatch event
       this.node.dispatchEvent(SVG.events[event])
+  
+      // Remove detail
+      delete SVG.events[event].detail
   
       return this
     }

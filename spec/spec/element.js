@@ -249,12 +249,12 @@ describe('Element', function() {
     it('returns the correct rectangular box', function() {
       var rect = draw.size(200,150).viewbox(0,0,200,150).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(approximately(box.x)).toBe(approximately(2))
-      expect(approximately(box.y)).toBe(approximately(12))
-      expect(approximately(box.cx)).toBe(approximately(54.5))
-      expect(approximately(box.cy)).toBe(approximately(117))
-      expect(approximately(box.width)).toBe(approximately(105))
-      expect(approximately(box.height)).toBe(approximately(210))
+      expect(box.x).toBe(2)
+      expect(box.y).toBe(12)
+      expect(box.cx).toBe(54.5)
+      expect(box.cy).toBe(117)
+      expect(box.width).toBeCloseTo(105)
+      expect(box.height).toBeCloseTo(210)
     })
     it('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
@@ -418,7 +418,7 @@ describe('Element', function() {
         , use  = draw.use(rect)
         , mark = draw.marker(10, 10)
         , path = draw.path(svgPath).marker('end', mark)
-
+      
       expect(use.reference('href')).toBe(rect)
       expect(path.reference('marker-end')).toBe(mark)
     })

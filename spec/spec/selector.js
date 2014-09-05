@@ -19,7 +19,7 @@ describe('Selector', function() {
         , mark = draw.marker(10, 10)
         , path = draw.path(svgPath).marker('end', mark)
 
-      expect(SVG.get(use.attr('href'))).toBe(rect)
+      expect(SVG.get(use.attr().href)).toBe(rect)
       expect(SVG.get(path.attr('marker-end'))).toBe(mark)
     })
   })

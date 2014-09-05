@@ -144,11 +144,11 @@ SVG.Element = SVG.invent({
         
       } else if (v == null) {
         /* act as a getter if the first and only argument is not an object */
-        v = this.node.getAttribute(a)
+        v = this.node.attributes[a]
         return v == null ? 
           SVG.defaults.attrs[a] :
-        SVG.regex.isNumber.test(v) ?
-          parseFloat(v) : v
+        SVG.regex.isNumber.test(v.nodeValue) ?
+          parseFloat(v.nodeValue) : v.nodeValue
       
       } else if (a == 'style') {
         /* redirect to the style method */
@@ -389,7 +389,7 @@ SVG.Element = SVG.invent({
     }
     // Get referenced element form attribute value
   , reference: function(attr) {
-      return SVG.get(this.attr(attr))
+      return SVG.get(this.attr()[attr])
     }
     // Private: find svg parent by instance
   , _parent: function(parent) {

@@ -1,10 +1,7 @@
-# 1.0.0-rc.10 (?/?/2014)
+# 1.0.0 (?/09/2014)
 
-- remove internal references everywhere -> __TODO!__
-- rework transformation to be chainable and more true to native SVG -> __TODO!__
-- implement an SVG adoption system to be able to manipulate existing SVG's not created with svg.js -> __TODO!__
-- fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
-- added support to clone manually built text elements -> __TODO!__
+- fixed event module
+- removed `mouseenter` and `mouseleave` events because they are not supported by IE
 
 # 1.0.0-rc.9 (17/06/2014)
 

@@ -48,7 +48,7 @@ describe('SVG', function() {
           return this.opacity(0.2)
         }
       })
-      
+      expect(draw.rect(100,100).soft() instanceof SVG.Rect).toBeTruthy()
       expect(typeof SVG.Rect.prototype.soft).toBe('function')
       expect(draw.rect(100,100).soft().attr('opacity')).toBe(0.2)
     })
