@@ -1,4 +1,4 @@
-# 1.0.0-rc.12 (?/09/2014)
+# 2.0.0-rc.2 (?/11/2014)
 
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `rotate()` method to linear gradients -> __TODO!__
@@ -8,14 +8,14 @@
 - added `enqueue()` method to `SVG.FX` -> __TODO!__
 - added `ungroup()` method -> __TODO!__ [thanks to Peter Uithoven]
 
-# 1.0.0-rc.11 (?/09/2014)
+# 2.0.0-rc.1 (?/10/2014)
 
 - added specs for `SVG.FX` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 
-# 1.0.0-rc.10 (?/09/2014)
+# 1.0.0 (?/09/2014)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
