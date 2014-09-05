@@ -167,7 +167,7 @@ The `<defs>` element is a container element for referenced elements. Elements th
 var defs = draw.defs()
 ```
 
-The defs are also availabel on any other element through the `doc()` method:
+The defs are also available on any other element through the `doc()` method:
 
 ```javascript
 var defs = rect.doc().defs()
