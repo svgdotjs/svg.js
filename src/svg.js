@@ -1,4 +1,3 @@
-
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {

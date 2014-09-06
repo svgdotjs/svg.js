@@ -1,4 +1,8 @@
-# 1.0.0 (?/09/2014)
+# 1.0.1 (06/09/2014)
+
+- added UMD support
+
+# 1.0.0 (05/09/2014)
 
 - fixed event module
 - removed `mouseenter` and `mouseleave` events because they are not supported by IE
