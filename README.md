@@ -2395,7 +2395,7 @@ path.marker('end', 20, 20, function(add) {
 The `marker()` method can be used in three ways. Firstly, a marker can be created on any container element (e.g. svg, nested, group, ...). This is useful if you plan to reuse the marker many times so it will create a marker in the defs but not show it yet:
 
 ```javascript
-var marker = draw.marker(10, 10, function() {
+var marker = draw.marker(10, 10, function(add) {
   add.rect(10, 10)
 })
 ```
@@ -2403,7 +2403,7 @@ var marker = draw.marker(10, 10, function() {
 Secondly a marker can be created and applied directly on its target element:
 
 ```javascript
-path.marker('start', 10, 10, function() {
+path.marker('start', 10, 10, function(add) {
   add.circle(10).fill('#f06')
 })
 ```
