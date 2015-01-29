@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-3-g6b0c1d2 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.1-4-g7984a87 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -3751,11 +3751,6 @@
     }
   
   })
-
-  if (typeof define === 'function' && define.amd)
-    define(function() { return SVG })
-  else if (typeof exports !== 'undefined')
-    exports.SVG = SVG
 
   function camelCase(s) { 
     return s.toLowerCase().replace(/-(.)/g, function(m, g) {
