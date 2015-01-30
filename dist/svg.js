@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-4-g7984a87 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.0.1-6-g4f20932 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -2058,15 +2058,8 @@
     
   })
   
-  // Initialize events and listeners stack
-  SVG.events = {}
+  // Initialize listeners stack
   SVG.listeners = {}
-  
-  // Event constructor
-  SVG.registerEvent = function(event) {
-    if (!SVG.events[event])
-      SVG.events[event] = new CustomEvent(event)
-  }
   
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {
@@ -2131,14 +2124,9 @@
     }
     // Fire given event
   , fire: function(event, data) {
-      // Add detail data to event
-      SVG.events[event].detail = data
       
       // Dispatch event
-      this.node.dispatchEvent(SVG.events[event])
-  
-      // Remove detail
-      delete SVG.events[event].detail
+      this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
   
       return this
     }
@@ -3230,9 +3218,6 @@
       return this.node.getComputedTextLength()
     }
   })
-  
-  // Register rebuild event
-  SVG.registerEvent('rebuild')
 
 
   SVG.TextPath = SVG.invent({
