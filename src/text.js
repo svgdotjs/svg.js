@@ -222,6 +222,3 @@ SVG.extend(SVG.Text, SVG.TSpan, {
     return this.node.getComputedTextLength()
   }
 })
-
-// Register rebuild event
-SVG.registerEvent('rebuild')
