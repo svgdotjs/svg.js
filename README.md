@@ -3113,6 +3113,9 @@ Here are a few nice plugins that are available for svg.js:
 ### draggable
 [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
 
+### connectable
+[svg.connectable.js](https://github.com/jillix/svg.connectable.js) to connect elements.
+
 ### easing
 [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
 
