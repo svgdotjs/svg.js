@@ -1249,7 +1249,7 @@ Set the size of an element by a given `width` and `height`:
 rect.size(200, 300)
 ```
 
-Proporional resizing is also possible by leaving out `height`:
+Proportional resizing is also possible by leaving out `height`:
 
 ```javascript
 rect.size(200)
@@ -1490,7 +1490,7 @@ var length = path.length()
 __`returns`: `number`__
 
 ### pointAt()
-Get get point on a path at given length:
+Get point on a path at given length:
 
 ```javascript
 var point = path.pointAt(105) //-> returns { x : 96.88497924804688, y : 58.062747955322266 }
@@ -1524,7 +1524,7 @@ If you include the sugar.js module, `fill()`, `stroke()`, `rotate()`, `skew()`, 
 rect.animate().rotate(45).skew(25, 0)
 ```
 
-You can also animate non-numeric unit values unsing the `attr()` method:
+You can also animate non-numeric unit values using the `attr()` method:
 ```javascript
 rect.attr('x', '10%').animate().attr('x', '50%')
 ```
@@ -2587,7 +2587,7 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
+All available events are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
 
 __`returns`: `itself`__
 
@@ -3046,19 +3046,19 @@ var rounded = draw.rounded(200, 100)
 That's it, the invention is now ready to be used!
 
 #### Accepted values
-The `SVG.invent()` function always expectes an object. The object can have the following configuration values:
+The `SVG.invent()` function always expects an object. The object can have the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
 - `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
 - `extend`: an object with the methods that should be applied to the element's prototype; `[optional]`
-- `construct`: an objects with the methods to create the element on the parent element; `[optional]`
+- `construct`: an object with the methods to create the element on the parent element; `[optional]`
 - `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
 
 Svg.js uses the `SVG.invent()` function to create all internal elements, so have a look at the source to see how this function is used in various ways.
 
 
 ### SVG.extend()
-Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
+Svg.js has a modular structure. It is very easy to add your own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 
 ```javascript
 SVG.extend(SVG.Shape, {
