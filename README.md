@@ -377,7 +377,7 @@ _Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
 Loading another image can be done with the `load()` method:
 
 ```javascript
-draw.image('/path/to/another/image.jpg')
+image.load('/path/to/another/image.jpg')
 ```
 
 __`returns`: `itself`__
