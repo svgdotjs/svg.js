@@ -221,7 +221,7 @@ _Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 Ellipses can also be redefined by their radii:
 
 ```javascript
-rect.radius(75, 50)
+ellipse.radius(75, 50)
 ```
 
 __`returns`: `itself`__
@@ -243,7 +243,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 Circles can also be redefined by their radius:
 
 ```javascript
-rect.radius(75)
+circle.radius(75)
 ```
 
 __`returns`: `itself`__
