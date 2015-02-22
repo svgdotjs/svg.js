@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-6-g4f20932 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.0.1-7-ge6c6c01 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -2060,6 +2060,9 @@
   
   // Initialize listeners stack
   SVG.listeners = {}
+  
+  // Only kept for consistency of API
+  SVG.registerEvent = function(){};
   
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {

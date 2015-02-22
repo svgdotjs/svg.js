@@ -30,6 +30,9 @@
 // Initialize listeners stack
 SVG.listeners = {}
 
+// Only kept for consistency of API
+SVG.registerEvent = function(){};
+
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
   // create listener
