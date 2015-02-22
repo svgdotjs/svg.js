@@ -389,6 +389,7 @@ describe('Event', function() {
     it('passes additional data within the event', function() {
       expect(fruitsInDetail).toBeNull()
       rect.fire('my:event', {apple:1})
+      expect(fruitsInDetail).not.toBe(null)
       expect(fruitsInDetail.apple).toBe(1)
     })  
   })
