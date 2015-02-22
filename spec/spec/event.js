@@ -1,11 +1,11 @@
 describe('Event', function() {
   var rect, context
     , toast = null
-    , fruitsInDetail,
+    , fruitsInDetail = null,
     action = function(e) {
         toast = 'ready'
         context = this
-        fruitsInDetail = e.detail
+        fruitsInDetail = e.detail || null
       }
 
   beforeEach(function() {
