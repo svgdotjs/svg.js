@@ -101,7 +101,7 @@ SVG.Element = SVG.invent({
     // Remove element
   , remove: function() {
       if (this.parent)
-        this.parent.removeElement(this)
+        this.doc() === this ? this.destroy() : this.parent.removeElement(this)
       
       return this
     }

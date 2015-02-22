@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-20-g6bb7b47 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.0.1-23-g095b474 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -1114,7 +1114,7 @@
       // Remove element
     , remove: function() {
         if (this.parent)
-          this.parent.removeElement(this)
+          this.doc() === this ? this.destroy() : this.parent.removeElement(this)
         
         return this
       }
@@ -2601,6 +2601,14 @@
         this.doSpof = true
   
         return this
+      }
+      
+        // Removes the doc from the DOM
+    , destroy: function() {
+        this.parent.removeChild(this.node);
+        this.parent = null;
+  
+        return this;
       }
     }
     
