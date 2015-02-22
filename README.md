@@ -2625,15 +2625,9 @@ SVG.off(window, 'click', click)
 ```
 
 ### Custom events
-You can even create your own events.
+You can even use your own events.
 
-The only thing you need to do is register your own event:
-
-```javascript
-SVG.registerEvent('my:event')
-```
-
-Next you can add an event listener for your newly created event:
+Just add an event listener for your event:
 ```javascript
 rect.on('my:event', function() {
   alert('ta-da!')
