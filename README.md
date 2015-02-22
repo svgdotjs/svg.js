@@ -10,9 +10,9 @@ See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://do
 
 ## Usage
 
-### Create a SVG document
+### Create an SVG document
 
-Use the `SVG()` function to create a SVG document within a given html element:
+Use the `SVG()` function to create an SVG document within a given html element:
 
 ```javascript
 var draw = SVG('drawing').size(300, 300)
@@ -2830,7 +2830,7 @@ The dynamic representation:
 ]
 ```
 
-Precompiling it as a `SVG.PointArray`:
+Precompiling it as an `SVG.PointArray`:
 
 ```javascript
 new SVG.PointArray([
@@ -2864,7 +2864,7 @@ The dynamic representation:
 ]
 ```
 
-Precompiling it as a `SVG.PathArray`:
+Precompiling it as an `SVG.PathArray`:
 
 ```javascript
 new SVG.PathArray([
@@ -3114,7 +3114,7 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 Here are a few nice plugins that are available for svg.js:
 
 ### absorb
-[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into a svg.js instance.
+[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into an svg.js instance.
 
 ### draggable
 [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
