@@ -2642,6 +2642,18 @@ function whenSomethingHappens() {
 }
 ```
 
+You can also pass some data to the event:
+
+```javascript
+function whenSomethingHappens() {
+  rect.fire('my:event', {some:'data'}) 
+}
+
+rect.on('my:event', function(e) {
+  alert(e.detail.some) // outputs 'data'
+})
+```
+
 _Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `wicked:event` for example would be better than something generic like `svg:event`._
 
 ## Numbers
