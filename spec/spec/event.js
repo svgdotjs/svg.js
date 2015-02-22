@@ -1,9 +1,11 @@
 describe('Event', function() {
   var rect, context
     , toast = null
-    , action = function() {
+    , fruitsInDetail,
+    action = function(e) {
         toast = 'ready'
         context = this
+        fruitsInDetail = e.detail
       }
 
   beforeEach(function() {
@@ -287,7 +289,8 @@ describe('Event', function() {
     })
 
   }
-
+/* This function is no longer needed and only exists for compatibility issues */
+/*
   describe('registerEvent()', function() {
     it('creates a new custom event and stores it in the events object', function() {
       expect(SVG.events['my:event']).toBeUndefined()
@@ -295,7 +298,7 @@ describe('Event', function() {
       expect(SVG.events['my:event'] instanceof CustomEvent).toBeTruthy()
     })
   })
-
+*/
   describe('on()', function() {
 
     beforeEach(function() {
@@ -374,6 +377,21 @@ describe('Event', function() {
       expect(rect.fire('my:event')).toBe(rect)
     })
 
+  })
+  
+  describe('fire with details', function() {
+
+    beforeEach(function() {
+      SVG.registerEvent('my:event')
+      rect.on('my:event', action)
+    })
+
+    it('passes additional data within the event', function() {
+      expect(fruitsInDetail).toBeNull()
+      rect.fire('my:event', {apple:1})
+      expect(fruitsInDetail).not.toBe(null)
+      expect(fruitsInDetail.apple).toBe(1)
+    })  
   })
 
 })
