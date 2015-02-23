@@ -3149,6 +3149,9 @@ Here are a few nice plugins that are available for svg.js:
 ### topath
 [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
 
+### comic
+[comic.js](https://github.com/balint42/comic.js) to cartoonize any given svg.
+
 
 ## Contributing
 All contributions are very welcome but please make sure you:
