@@ -21,17 +21,9 @@ describe('Doc', function() {
     })
   })
   
-  describe('remove() / destroy()', function() {
-    it('removes the doc from the dom (remove)', function() {
+  describe('remove()', function() {
+    it('removes the doc from the dom', function() {
       draw.remove()
-      expect(draw.parent).toBeNull()
-      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(1)
-      draw = SVG(drawing).size(100,100);
-      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(2)
-    })
-    
-    it('removes the doc from the dom (remove)', function() {
-      draw.destroy()
       expect(draw.parent).toBeNull()
       expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(1)
       draw = SVG(drawing).size(100,100);

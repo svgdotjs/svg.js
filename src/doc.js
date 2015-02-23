@@ -80,9 +80,11 @@ SVG.Doc = SVG.invent({
     }
     
       // Removes the doc from the DOM
-  , destroy: function() {
-      this.parent.removeChild(this.node);
-      this.parent = null;
+  , remove: function() {
+      if(this.parent) {
+        this.parent.removeChild(this.node);
+        this.parent = null;
+      }
 
       return this;
     }
