@@ -46,7 +46,7 @@ SVG.on = function(node, event, listener) {
   SVG.listeners[node][event][listener] = l
 
   // add listener
-  node.addEventListener(event, l, false)
+  node.addEventListener(event.split('.')[0], l, false)
 }
 
 // Add event unbinder in the SVG namespace
@@ -55,7 +55,7 @@ SVG.off = function(node, event, listener) {
     // remove listener reference
     if (SVG.listeners[node] && SVG.listeners[node][event]) {
       // remove listener
-      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+      node.removeEventListener(event.split('.')[0], SVG.listeners[node][event][listener], false)
 
       delete SVG.listeners[node][event][listener]
     }
