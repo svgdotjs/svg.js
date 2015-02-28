@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-26-g2ecbacb - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.0.1-29-g02e88d9 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -133,6 +133,34 @@
   
     window.CustomEvent = CustomEvent
   }
+  
+  // requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
+  (function(w) {
+    var lastTime = 0
+    var vendors = ['moz', 'webkit']
+    
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      w.requestAnimationFrame = w[vendors[x] + 'RequestAnimationFrame']
+      w.cancelAnimationFrame  = w[vendors[x] + 'CancelAnimationFrame'] ||
+                                w[vendors[x] + 'CancelRequestAnimationFrame']
+    }
+   
+    w.requestAnimationFrame = w.requestAnimationFrame || 
+      function(callback) {
+        var currTime = new Date().getTime()
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime))
+        
+        var id = w.setTimeout(function() {
+          callback(currTime + timeToCall)
+        }, timeToCall)
+        
+        lastTime = currTime + timeToCall
+        return id
+      }
+   
+    w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
+  
+  }(window))
 
   SVG.regex = {
     /* parse unit value */
@@ -1741,10 +1769,10 @@
                   }
   
                 } else {
-                  requestAnimFrame(fx.render)
+                  fx.animationFrame = requestAnimationFrame(fx.render)
                 }
               } else {
-                requestAnimFrame(fx.render)
+                fx.animationFrame = requestAnimationFrame(fx.render)
               }
               
             }
@@ -1932,6 +1960,7 @@
         } else {
           /* stop current animation */
           clearTimeout(this.timeout)
+          cancelAnimationFrame(this.animationFrame);
   
           /* reset storage for properties that need animation */
           this.attrs     = {}
@@ -3871,15 +3900,7 @@
   
     if (m) return m[1]
   }
-  
-  // Shim layer with setTimeout fallback by Paul Irish
-  window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            window.msRequestAnimationFrame     ||
-            function (c) { window.setTimeout(c, 1000 / 60) }
-  })()
+
 
   return SVG
 }));
