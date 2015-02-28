@@ -309,13 +309,28 @@ describe('Event', function() {
       dispatchEvent(rect.on('my:event', action), 'my:event')
       expect(toast).toBe('ready')
     })
+    it('attaches multiple handlers on different element', function() {
+      var listenerCnt = SVG.listeners.length
+      
+      var rect2 = draw.rect(100,100);
+      var rect3 = draw.rect(100,100);
+      
+      rect.on('my:event', action)
+      rect2.on('my:event', action)
+      rect3.on('my:event', function(){ butter = 'melting' })
+      rect3.on('my:event', action)
+      
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).length).toBe(1)  // 1 listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['my:event']).length).toBe(2) // 2 listener on rect3
+      expect(SVG.listeners.length).toBe(listenerCnt + 3)                                           // added 3 listener
+    })
     it('applies the element as context', function() {
       dispatchEvent(rect.on('my:event', action), 'my:event')
       expect(context).toBe(rect)
     })
     it('stores the listener for future reference', function() {
       rect.on('my:event', action)
-      expect(SVG.listeners[rect.node]['my:event'][action]).not.toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event'][action]).not.toBeUndefined()
     })
     it('returns the called element', function() {
       expect(rect.on('my:event', action)).toBe(rect)
@@ -330,21 +345,38 @@ describe('Event', function() {
       SVG.registerEvent('my:event')
     })
 
-    it('detaches a specific event listener', function() {
+    it('detaches a specific event listener, all other still working', function() {
+      rect2 = draw.rect(100,100);
+      rect3 = draw.rect(100,100);
+      
       rect.on('my:event', action)
+      rect2.on('my:event', action)
+      rect3.on('my:event', function(){ butter = 'melting' })
+      
       rect.off('my:event', action)
+      
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).length).toBe(0)
+      
       dispatchEvent(rect, 'my:event')
       expect(toast).toBeNull()
-      expect(SVG.listeners[rect.node]['my:event'][action]).toBeUndefined()
+      
+      dispatchEvent(rect2, 'my:event')
+      expect(toast).toBe('ready')
+      
+      dispatchEvent(rect3, 'my:event')
+      expect(butter).toBe('melting')
+      
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event'][action]).toBeUndefined()
     })
     it('detaches all listeners for an event without a listener given', function() {
       rect.on('my:event', action)
       rect.on('my:event', function() { butter = 'melting' })
       rect.off('my:event')
+      
       dispatchEvent(rect, 'my:event')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
-      expect(SVG.listeners[rect.node]['my:event']).toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).toBeUndefined()
     })
     it('detaches all listeners without an argument', function() {
       rect.on('my:event', action)
@@ -354,7 +386,7 @@ describe('Event', function() {
       dispatchEvent(rect, 'click')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
-      expect(SVG.listeners[rect.node]).toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]).toBeUndefined()
     })
     it('returns the called element', function() {
       expect(rect.off('my:event', action)).toBe(rect)

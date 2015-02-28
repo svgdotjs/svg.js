@@ -28,22 +28,24 @@
 })
 
 // Initialize listeners stack
-SVG.listeners = {}
+SVG.listeners = []
+SVG.handlerMap = []
 
 // Only kept for consistency of API
 SVG.registerEvent = function(){};
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
-  // create listener
-  var l = listener.bind(node.instance || node)
-
-  // ensure reference objects
-  SVG.listeners[node]        = SVG.listeners[node]        || {}
-  SVG.listeners[node][event] = SVG.listeners[node][event] || {}
+  // create listener, get object-index
+  var l     = listener.bind(node.instance || node)
+    , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
+  
+  // ensure valid object
+  SVG.listeners[index]        = SVG.listeners[index]        || {}
+  SVG.listeners[index][event] = SVG.listeners[index][event] || {}
 
   // reference listener
-  SVG.listeners[node][event][listener] = l
+  SVG.listeners[index][event][listener] = l
 
   // add listener
   node.addEventListener(event, l, false)
@@ -51,31 +53,33 @@ SVG.on = function(node, event, listener) {
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
+  var index = SVG.handlerMap.indexOf(node)
+  
   if (listener) {
     // remove listener reference
-    if (SVG.listeners[node] && SVG.listeners[node][event]) {
+    if (index != -1 && SVG.listeners[index][event]) {
       // remove listener
-      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+      node.removeEventListener(event, SVG.listeners[index][event][listener], false)
 
-      delete SVG.listeners[node][event][listener]
+      delete SVG.listeners[index][event][listener]
     }
 
   } else if (event) {
     // remove all listeners for the event
-    if (SVG.listeners[node][event]) {
-      for (listener in SVG.listeners[node][event])
+    if (SVG.listeners[index][event]) {
+      for (listener in SVG.listeners[index][event])
         SVG.off(node, event, listener)
 
-      delete SVG.listeners[node][event]
+      delete SVG.listeners[index][event]
     }
 
   } else {
     // remove all listeners on a given node
-    if (SVG.listeners[node]) {
-      for (event in SVG.listeners[node])
+    if (index != -1) {
+      for (event in SVG.listeners[index])
         SVG.off(node, event)
 
-      delete SVG.listeners[node]
+      delete SVG.listeners[index]
     }
   }
 }
