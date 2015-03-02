@@ -1718,7 +1718,7 @@
           /* animate transformations */
           for (i = tkeys.length - 1; i >= 0; i--)
             element.transform(tkeys[i], at(fx.trans[tkeys[i]], pos))
-  
+          
           /* animate styles */
           for (i = skeys.length - 1; i >= 0; i--)
             element.style(skeys[i], at(fx.styles[skeys[i]], pos))
@@ -1816,15 +1816,24 @@
           /* dlete matrixstring from object */
           delete o.matrix
           
+          /* add rotation-center to transformations */
+          this.target.trans.cx = o.cx || null
+          this.target.trans.cy = o.cy || null
+          
+          delete o.cx
+          delete o.cy
+
           /* store matrix values */
           for (v in o)
             this.trans[v] = { from: this.target.trans[v], to: o[v] }
+            
+          
           
         } else {
           /* apply transformations as object if key value arguments are given*/
           var transform = {}
           transform[o] = v
-          
+
           this.transform(transform)
         }
         
