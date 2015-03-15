@@ -293,20 +293,16 @@ describe('Event', function() {
 /*
   describe('registerEvent()', function() {
     it('creates a new custom event and stores it in the events object', function() {
-      expect(SVG.events['my:event']).toBeUndefined()
-      SVG.registerEvent('my:event')
-      expect(SVG.events['my:event'] instanceof CustomEvent).toBeTruthy()
+      expect(SVG.events['event']).toBeUndefined()
+      SVG.registerEvent('event')
+      expect(SVG.events['event'] instanceof CustomEvent).toBeTruthy()
     })
   })
 */
   describe('on()', function() {
 
-    beforeEach(function() {
-      SVG.registerEvent('my:event')
-    })
-
     it('attaches and event to the element', function() {
-      dispatchEvent(rect.on('my:event', action), 'my:event')
+      dispatchEvent(rect.on('event', action), 'event')
       expect(toast).toBe('ready')
     })
     it('attaches multiple handlers on different element', function() {
@@ -315,25 +311,43 @@ describe('Event', function() {
       var rect2 = draw.rect(100,100);
       var rect3 = draw.rect(100,100);
       
-      rect.on('my:event', action)
-      rect2.on('my:event', action)
-      rect3.on('my:event', function(){ butter = 'melting' })
-      rect3.on('my:event', action)
+      rect.on('event', action)
+      rect2.on('event', action)
+      rect3.on('event', function(){ butter = 'melting' })
+      rect3.on('event', action)
       
-      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).length).toBe(1)  // 1 listener on rect
-      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['my:event']).length).toBe(2) // 2 listener on rect3
-      expect(SVG.listeners.length).toBe(listenerCnt + 3)                                           // added 3 listener
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(1)  // 1 listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['event']['*']).length).toBe(2) // 2 listener on rect3
+      expect(SVG.listeners.length).toBe(listenerCnt + 3)                                                  // added listeners on 3 different elements
+    })
+    if('attaches a handler to a namespaced event', function(){
+      var listenerCnt = SVG.listeners.length
+      
+      var rect2 = draw.rect(100,100);
+      var rect3 = draw.rect(100,100);
+      
+      rect.on('event.namespace1', action)
+      rect2.on('event.namespace2', action)
+      rect3.on('event.namespace3', function(){ butter = 'melting' })
+      rect3.on('event', action)
+      
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'])).toBeUndefined()          // no global listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace1']).length).toBe( 1) // 1 namespaced listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect2.node)]['event']['namespace2']).length).toBe(1) // 1 namespaced listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['event']['*']).length).toBe(1)          // 1 gobal listener on rect3
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['event']['namespace3']).length).toBe(1) // 1 namespaced listener on rect3
+      expect(SVG.listeners.length).toBe(listenerCnt + 3)                                                           // added listeners on 3 different elements
     })
     it('applies the element as context', function() {
-      dispatchEvent(rect.on('my:event', action), 'my:event')
+      dispatchEvent(rect.on('event', action), 'event')
       expect(context).toBe(rect)
     })
     it('stores the listener for future reference', function() {
-      rect.on('my:event', action)
-      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event'][action]).not.toBeUndefined()
+      rect.on('event', action)
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).not.toBeUndefined()
     })
     it('returns the called element', function() {
-      expect(rect.on('my:event', action)).toBe(rect)
+      expect(rect.on('event', action)).toBe(rect)
     })
   })
 
@@ -342,76 +356,97 @@ describe('Event', function() {
 
     beforeEach(function() {
       butter = null
-      SVG.registerEvent('my:event')
     })
 
     it('detaches a specific event listener, all other still working', function() {
       rect2 = draw.rect(100,100);
       rect3 = draw.rect(100,100);
       
-      rect.on('my:event', action)
-      rect2.on('my:event', action)
-      rect3.on('my:event', function(){ butter = 'melting' })
+      rect.on('event', action)
+      rect2.on('event', action)
+      rect3.on('event', function(){ butter = 'melting' })
       
-      rect.off('my:event', action)
+      rect.off('event', action)
       
-      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).length).toBe(0)
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(0)
       
-      dispatchEvent(rect, 'my:event')
+      dispatchEvent(rect, 'event')
       expect(toast).toBeNull()
       
-      dispatchEvent(rect2, 'my:event')
+      dispatchEvent(rect2, 'event')
       expect(toast).toBe('ready')
       
-      dispatchEvent(rect3, 'my:event')
+      dispatchEvent(rect3, 'event')
       expect(butter).toBe('melting')
       
-      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event'][action]).toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).toBeUndefined()
+    })
+    it('detaches a specific namespaced event listener, all other still working', function() {
+      rect2 = draw.rect(100,100);
+      rect3 = draw.rect(100,100);
+      
+      rect.on('event.namespace', action)
+      rect2.on('event.namespace', action)
+      rect3.on('event.namespace', function(){ butter = 'melting' })
+      
+      rect.off('event.namespace', action)
+      
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace']).length).toBe(0)
+      
+      dispatchEvent(rect, 'event')
+      expect(toast).toBeNull()
+      
+      dispatchEvent(rect2, 'event')
+      expect(toast).toBe('ready')
+      
+      dispatchEvent(rect3, 'event')
+      expect(butter).toBe('melting')
+      
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace'][action]).toBeUndefined()
     })
     it('detaches all listeners for an event without a listener given', function() {
-      rect.on('my:event', action)
-      rect.on('my:event', function() { butter = 'melting' })
-      rect.off('my:event')
-      
-      dispatchEvent(rect, 'my:event')
+      rect.on('event', action)
+      rect.on('event.namespace', function() { butter = 'melting'; console.log('called'); })
+      rect.off('event')
+
+      dispatchEvent(rect, 'event')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
-      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['my:event']).toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']).toBeUndefined()
     })
     it('detaches all listeners without an argument', function() {
-      rect.on('my:event', action)
+      rect.on('event', action)
       rect.on('click', function() { butter = 'melting' })
       rect.off()
-      dispatchEvent(rect, 'my:event')
+      dispatchEvent(rect, 'event')
       dispatchEvent(rect, 'click')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]).toBeUndefined()
     })
     it('returns the called element', function() {
-      expect(rect.off('my:event', action)).toBe(rect)
+      expect(rect.off('event', action)).toBe(rect)
     })
   })
 
   describe('fire()', function() {
 
     beforeEach(function() {
-      SVG.registerEvent('my:event')
-      rect.on('my:event', action)
+      rect.on('event', action)
     })
 
     it('fires an event for the element', function() {
       expect(toast).toBeNull()
-      rect.fire('my:event')
+      rect.fire('event')
       expect(toast).toBe('ready')
       expect(fruitsInDetail).toBe(null)
     })
     it('returns the called element', function() {
-      expect(rect.fire('my:event')).toBe(rect)
+      expect(rect.fire('event')).toBe(rect)
     })
     it('fires event with additional data', function() {
       expect(fruitsInDetail).toBeNull()
-      rect.fire('my:event', {apple:1})
+      rect.fire('event', {apple:1})
       expect(fruitsInDetail).not.toBe(null)
       expect(fruitsInDetail.apple).toBe(1)
     })

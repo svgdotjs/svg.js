@@ -2629,7 +2629,7 @@ You can even use your own events.
 
 Just add an event listener for your event:
 ```javascript
-rect.on('my:event', function() {
+rect.on('myevent', function() {
   alert('ta-da!')
 })
 ```
@@ -2638,7 +2638,7 @@ Now you are ready to fire the event whenever you need:
 
 ```javascript
 function whenSomethingHappens() {
-  rect.fire('my:event') 
+  rect.fire('myevent') 
 }
 ```
 
@@ -2646,15 +2646,34 @@ You can also pass some data to the event:
 
 ```javascript
 function whenSomethingHappens() {
-  rect.fire('my:event', {some:'data'}) 
+  rect.fire('myevent', {some:'data'}) 
 }
 
-rect.on('my:event', function(e) {
+rect.on('myevent', function(e) {
   alert(e.detail.some) // outputs 'data'
 })
 ```
 
-_Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `wicked:event` for example would be better than something generic like `svg:event`._
+svg.js supports namespaced events following the syntax `event.namespace`.
+
+A namespaced event behaves like a normal event with the difference that you can remove it without touching handlers from other namespaces.
+
+```
+// attach
+rect.on('myevent.namespace', function(e) {
+  // do something
+})
+
+// detach all handlers of namespace
+rect.off('myevent.namespace')
+
+// detach all handlers including all namespaces
+rect.off('myevent)
+```
+
+However you can't fire a specific namespaced event. Calling `rect.fire('myevent.namespace')` won't do anything while `rect.fire('myevent')` works and fires all attached handlers of the event
+
+_Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `event.wicked` for example would be better than something generic like `event.svg`._
 
 ## Numbers
 

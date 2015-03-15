@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-30-g2fc54cb - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.0.1-32-gcc9a4a3 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -1718,7 +1718,7 @@
           /* animate transformations */
           for (i = tkeys.length - 1; i >= 0; i--)
             element.transform(tkeys[i], at(fx.trans[tkeys[i]], pos))
-          
+  
           /* animate styles */
           for (i = skeys.length - 1; i >= 0; i--)
             element.style(skeys[i], at(fx.styles[skeys[i]], pos))
@@ -1822,18 +1822,16 @@
           
           delete o.cx
           delete o.cy
-
+          
           /* store matrix values */
           for (v in o)
             this.trans[v] = { from: this.target.trans[v], to: o[v] }
-            
-          
           
         } else {
           /* apply transformations as object if key value arguments are given*/
           var transform = {}
           transform[o] = v
-
+          
           this.transform(transform)
         }
         
@@ -2108,48 +2106,64 @@
     // create listener, get object-index
     var l     = listener.bind(node.instance || node)
       , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
+      , ev    = event.split('.')[0]
+      , ns    = event.split('.')[1] || '*'
+      
     
     // ensure valid object
-    SVG.listeners[index]        = SVG.listeners[index]        || {}
-    SVG.listeners[index][event] = SVG.listeners[index][event] || {}
+    SVG.listeners[index]         = SVG.listeners[index]         || {}
+    SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
+    SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
   
     // reference listener
-    SVG.listeners[index][event][listener] = l
+    SVG.listeners[index][ev][ns][listener] = l
   
     // add listener
-    node.addEventListener(event, l, false)
+    node.addEventListener(ev, l, false)
   }
   
   // Add event unbinder in the SVG namespace
   SVG.off = function(node, event, listener) {
     var index = SVG.handlerMap.indexOf(node)
+      , ev    = event && event.split('.')[0]
+      , ns    = event && event.split('.')[1]
+  
+    if(index == -1) return
     
     if (listener) {
       // remove listener reference
-      if (index != -1 && SVG.listeners[index][event]) {
+      if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
         // remove listener
-        node.removeEventListener(event, SVG.listeners[index][event][listener], false)
+        node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
   
-        delete SVG.listeners[index][event][listener]
+        delete SVG.listeners[index][ev][ns || '*'][listener]
       }
   
-    } else if (event) {
-      // remove all listeners for the event
-      if (SVG.listeners[index][event]) {
-        for (listener in SVG.listeners[index][event])
-          SVG.off(node, event, listener)
+    } else if (ns) {
+      // remove all listeners for the namespaced event
+      if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
+        for (listener in SVG.listeners[index][ev][ns])
+          SVG.off(node, [ev, ns].join('.'), listener)
   
-        delete SVG.listeners[index][event]
+        delete SVG.listeners[index][ev][ns]
+      }
+  
+    } else if (ev) {
+      // remove all listeners for the event
+      if (SVG.listeners[index][ev]) {
+        for (namespace in SVG.listeners[index][ev])
+          SVG.off(node, [ev, namespace].join('.'))
+  
+        delete SVG.listeners[index][ev]
       }
   
     } else {
       // remove all listeners on a given node
-      if (index != -1) {
-        for (event in SVG.listeners[index])
-          SVG.off(node, event)
+      for (event in SVG.listeners[index])
+        SVG.off(node, event)
   
-        delete SVG.listeners[index]
-      }
+      delete SVG.listeners[index]
+  
     }
   }
   
