@@ -3140,6 +3140,7 @@ Here are a few nice plugins that are available for svg.js:
 
 ### connectable
 [svg.connectable.js](https://github.com/jillix/svg.connectable.js) to connect elements.
+[svg.connectable.js fork](https://github.com/loredanacirstea/svg.connectable.js) to connect elements (added: curved connectors, you can use any self-made path as a connector, choosable 'center'/'perifery' attachment, 'perifery' attachment for source / target SVG Paths uses smallest-distance algorithm between PathArray points)
 
 ### easing
 [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
