@@ -719,6 +719,15 @@ var use  = draw.use(rect).move(200, 200)
 
 In this way the rect element acts as a library element. You can edit it but it won't be rendered.
 
+Another way is to point an external SVG file, just specified the element `id` and path to file.
+
+```javascript
+var use  = draw.use('elementId', 'path/to/file.svg')
+```
+
+This way is usefull when you have complex images already created.
+Note that, for external images (outside your domain) it may be necessary to load the file with XHR.
+
 __`returns`: `SVG.Use`__
 
 _Javascript inheritance stack: `SVG.Use` < `SVG.Shape` < `SVG.Element`_

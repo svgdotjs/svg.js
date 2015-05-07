@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-3-g6b0c1d2 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.1-6-g90c50d9 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -2654,20 +2654,20 @@
     // Add class methods
   , extend: {
       // Use element as a reference
-      element: function(element) {
+      element: function(element, file) {
         /* store target element */
         this.target = element
   
         /* set lined element */
-        return this.attr('href', '#' + element, SVG.xlink)
+        return this.attr('href', (file || '') + '#' + element, SVG.xlink)
       }
     }
     
     // Add parent method
   , construct: {
       // Create a use element
-      use: function(element) {
-        return this.put(new SVG.Use).element(element)
+      use: function(element, file) {
+        return this.put(new SVG.Use).element(element, file)
       }
     }
   })
