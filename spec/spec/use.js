@@ -1,25 +1,50 @@
 describe('Use', function() {
-  var use, rect
+  var use
 
-  beforeEach(function() {
-    rect = draw.rect(100,100)
-    use = draw.use(rect)
+  describe('on a container element', function() {
+    var rect
+
+    beforeEach(function() {
+      rect = draw.rect(100,100)
+      use = draw.use(rect)
+    })
+
+    it('creates an instance of SVG.Use', function() {
+      expect(use instanceof SVG.Use).toBe(true)
+    })
+
+    it('sets the target element id to its href attribute', function() {
+      expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe('#' + rect)
+    })
+
+    it('stores a reference to the target element', function() {
+      expect(use.target).toBe(rect)
+    })
+
+    it('adopts the geometry of the target element', function() {
+      expect(use.bbox()).toEqual(rect.bbox())
+    })
   })
 
-  it('creates an instance of SVG.Use', function() {
-    expect(use instanceof SVG.Use).toBe(true)
-  })
+  describe('on an external path', function() {
+    var file = 'http://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg'
+      , id = 'flowRoot1882'
 
-  it('sets the target element id to its href attribute', function() {
-    expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe('#' + rect)
-  })
+    beforeEach(function() {
+      use = draw.use(id, file)
+    })
 
-  it('stores a reference to the target element', function() {
-    expect(use.target).toBe(rect)
-  })
+    it('creates an instance of SVG.Use', function() {
+      expect(use instanceof SVG.Use).toBe(true)
+    })
 
-  it('adopts the geometry of the target element', function() {
-    expect(use.bbox()).toEqual(rect.bbox())
+    it('sets the target element id and file path to its href attribute', function() {
+      expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe(file + '#' + id)
+    })
+
+    it('stores a reference to the target element', function() {
+      expect(use.target).toBe(id)
+    })
   })
   
 })
