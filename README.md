@@ -10,9 +10,9 @@ See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://do
 
 ## Usage
 
-### Create a SVG document
+### Create an SVG document
 
-Use the `SVG()` function to create a SVG document within a given html element:
+Use the `SVG()` function to create an SVG document within a given html element:
 
 ```javascript
 var draw = SVG('drawing').size(300, 300)
@@ -221,7 +221,7 @@ _Javascript inheritance stack: `SVG.Ellipse` < `SVG.Shape` < `SVG.Element`_
 Ellipses can also be redefined by their radii:
 
 ```javascript
-rect.radius(75, 50)
+ellipse.radius(75, 50)
 ```
 
 __`returns`: `itself`__
@@ -243,7 +243,7 @@ _Note that this generates an `<ellipse>` element instead of a `<circle>`. This c
 Circles can also be redefined by their radius:
 
 ```javascript
-rect.radius(75)
+circle.radius(75)
 ```
 
 __`returns`: `itself`__
@@ -377,7 +377,7 @@ _Javascript inheritance stack: `SVG.Image` < `SVG.Shape` < `SVG.Element`_
 Loading another image can be done with the `load()` method:
 
 ```javascript
-draw.image('/path/to/another/image.jpg')
+image.load('/path/to/another/image.jpg')
 ```
 
 __`returns`: `itself`__
@@ -1258,7 +1258,7 @@ Set the size of an element by a given `width` and `height`:
 rect.size(200, 300)
 ```
 
-Proporional resizing is also possible by leaving out `height`:
+Proportional resizing is also possible by leaving out `height`:
 
 ```javascript
 rect.size(200)
@@ -1459,8 +1459,8 @@ As opposed to the native `getBBox()` method any translations used with the `tran
 The `SVG.BBox` has one other nifty little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
 
 ```javascript
-var box1 = draw.rect(100,100).move(50,50)
-var box2 = draw.rect(100,100).move(200,200)
+var box1 = draw.rect(100,100).move(50,50).bbox()
+var box2 = draw.rect(100,100).move(200,200).bbox()
 var box3 = box1.merge(box2)
 ```
 
@@ -1499,7 +1499,7 @@ var length = path.length()
 __`returns`: `number`__
 
 ### pointAt()
-Get get point on a path at given length:
+Get point on a path at given length:
 
 ```javascript
 var point = path.pointAt(105) //-> returns { x : 96.88497924804688, y : 58.062747955322266 }
@@ -1533,7 +1533,7 @@ If you include the sugar.js module, `fill()`, `stroke()`, `rotate()`, `skew()`, 
 rect.animate().rotate(45).skew(25, 0)
 ```
 
-You can also animate non-numeric unit values unsing the `attr()` method:
+You can also animate non-numeric unit values using the `attr()` method:
 ```javascript
 rect.attr('x', '10%').animate().attr('x', '50%')
 ```
@@ -2404,7 +2404,7 @@ path.marker('end', 20, 20, function(add) {
 The `marker()` method can be used in three ways. Firstly, a marker can be created on any container element (e.g. svg, nested, group, ...). This is useful if you plan to reuse the marker many times so it will create a marker in the defs but not show it yet:
 
 ```javascript
-var marker = draw.marker(10, 10, function() {
+var marker = draw.marker(10, 10, function(add) {
   add.rect(10, 10)
 })
 ```
@@ -2412,7 +2412,7 @@ var marker = draw.marker(10, 10, function() {
 Secondly a marker can be created and applied directly on its target element:
 
 ```javascript
-path.marker('start', 10, 10, function() {
+path.marker('start', 10, 10, function(add) {
   add.circle(10).fill('#f06')
 })
 ```
@@ -2596,7 +2596,7 @@ Removing it is quite as easy:
 rect.click(null)
 ```
 
-All available evenets are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
+All available events are: `click`, `dblclick`, `mousedown`, `mouseup`, `mouseover`, `mouseout`, `mousemove`, `touchstart`, `touchmove`, `touchleave`, `touchend` and `touchcancel`.
 
 __`returns`: `itself`__
 
@@ -2634,17 +2634,11 @@ SVG.off(window, 'click', click)
 ```
 
 ### Custom events
-You can even create your own events.
+You can even use your own events.
 
-The only thing you need to do is register your own event:
-
+Just add an event listener for your event:
 ```javascript
-SVG.registerEvent('my:event')
-```
-
-Next you can add an event listener for your newly created event:
-```javascript
-rect.on('my:event', function() {
+rect.on('myevent', function() {
   alert('ta-da!')
 })
 ```
@@ -2653,11 +2647,42 @@ Now you are ready to fire the event whenever you need:
 
 ```javascript
 function whenSomethingHappens() {
-  rect.fire('my:event') 
+  rect.fire('myevent') 
 }
 ```
 
-_Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `wicked:event` for example would be better than something generic like `svg:event`._
+You can also pass some data to the event:
+
+```javascript
+function whenSomethingHappens() {
+  rect.fire('myevent', {some:'data'}) 
+}
+
+rect.on('myevent', function(e) {
+  alert(e.detail.some) // outputs 'data'
+})
+```
+
+svg.js supports namespaced events following the syntax `event.namespace`.
+
+A namespaced event behaves like a normal event with the difference that you can remove it without touching handlers from other namespaces.
+
+```
+// attach
+rect.on('myevent.namespace', function(e) {
+  // do something
+})
+
+// detach all handlers of namespace
+rect.off('myevent.namespace')
+
+// detach all handlers including all namespaces
+rect.off('myevent)
+```
+
+However you can't fire a specific namespaced event. Calling `rect.fire('myevent.namespace')` won't do anything while `rect.fire('myevent')` works and fires all attached handlers of the event
+
+_Important: always make sure you namespace your event to avoid conflicts. Preferably use something very specific. So `event.wicked` for example would be better than something generic like `event.svg`._
 
 ## Numbers
 
@@ -2833,7 +2858,7 @@ The dynamic representation:
 ]
 ```
 
-Precompiling it as a `SVG.PointArray`:
+Precompiling it as an `SVG.PointArray`:
 
 ```javascript
 new SVG.PointArray([
@@ -2867,7 +2892,7 @@ The dynamic representation:
 ]
 ```
 
-Precompiling it as a `SVG.PathArray`:
+Precompiling it as an `SVG.PathArray`:
 
 ```javascript
 new SVG.PathArray([
@@ -3055,19 +3080,19 @@ var rounded = draw.rounded(200, 100)
 That's it, the invention is now ready to be used!
 
 #### Accepted values
-The `SVG.invent()` function always expectes an object. The object can have the following configuration values:
+The `SVG.invent()` function always expects an object. The object can have the following configuration values:
 
 - `create`: can be either a string with the node name (e.g. `rect`, `ellipse`, ...) or a custom initializer function; `[required]`
 - `inherit`: the desired svg.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
 - `extend`: an object with the methods that should be applied to the element's prototype; `[optional]`
-- `construct`: an objects with the methods to create the element on the parent element; `[optional]`
+- `construct`: an object with the methods to create the element on the parent element; `[optional]`
 - `parent`: an svg.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
 
 Svg.js uses the `SVG.invent()` function to create all internal elements, so have a look at the source to see how this function is used in various ways.
 
 
 ### SVG.extend()
-Svg.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
+Svg.js has a modular structure. It is very easy to add your own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 
 ```javascript
 SVG.extend(SVG.Shape, {
@@ -3117,10 +3142,13 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 Here are a few nice plugins that are available for svg.js:
 
 ### absorb
-[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into a svg.js instance.
+[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into an svg.js instance.
 
 ### draggable
 [svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
+
+### connectable
+[svg.connectable.js](https://github.com/jillix/svg.connectable.js) to connect elements.
 
 ### easing
 [svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
@@ -3148,6 +3176,9 @@ Here are a few nice plugins that are available for svg.js:
 
 ### topath
 [svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
+
+### comic
+[comic.js](https://github.com/balint42/comic.js) to cartoonize any given svg.
 
 
 ## Contributing

@@ -120,12 +120,3 @@ function idFromReference(url) {
 
   if (m) return m[1]
 }
-
-// Shim layer with setTimeout fallback by Paul Irish
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.msRequestAnimationFrame     ||
-          function (c) { window.setTimeout(c, 1000 / 60) }
-})()

@@ -186,10 +186,10 @@ SVG.FX = SVG.invent({
                 }
 
               } else {
-                requestAnimFrame(fx.render)
+                fx.animationFrame = requestAnimationFrame(fx.render)
               }
             } else {
-              requestAnimFrame(fx.render)
+              fx.animationFrame = requestAnimationFrame(fx.render)
             }
             
           }
@@ -232,6 +232,13 @@ SVG.FX = SVG.invent({
         
         /* dlete matrixstring from object */
         delete o.matrix
+        
+        /* add rotation-center to transformations */
+        this.target.trans.cx = o.cx || null
+        this.target.trans.cy = o.cy || null
+        
+        delete o.cx
+        delete o.cy
         
         /* store matrix values */
         for (v in o)
@@ -377,6 +384,7 @@ SVG.FX = SVG.invent({
       } else {
         /* stop current animation */
         clearTimeout(this.timeout)
+        cancelAnimationFrame(this.animationFrame);
 
         /* reset storage for properties that need animation */
         this.attrs     = {}

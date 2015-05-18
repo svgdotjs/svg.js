@@ -27,60 +27,76 @@
   
 })
 
-// Initialize events and listeners stack
-SVG.events = {}
-SVG.listeners = {}
+// Initialize listeners stack
+SVG.listeners = []
+SVG.handlerMap = []
 
-// Event constructor
-SVG.registerEvent = function(event) {
-  if (!SVG.events[event])
-    SVG.events[event] = new CustomEvent(event)
-}
+// Only kept for consistency of API
+SVG.registerEvent = function(){};
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
-  // create listener
-  var l = listener.bind(node.instance || node)
-
-  // ensure reference objects
-  SVG.listeners[node]        = SVG.listeners[node]        || {}
-  SVG.listeners[node][event] = SVG.listeners[node][event] || {}
+  // create listener, get object-index
+  var l     = listener.bind(node.instance || node)
+    , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
+    , ev    = event.split('.')[0]
+    , ns    = event.split('.')[1] || '*'
+    
+  
+  // ensure valid object
+  SVG.listeners[index]         = SVG.listeners[index]         || {}
+  SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
+  SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
 
   // reference listener
-  SVG.listeners[node][event][listener] = l
+  SVG.listeners[index][ev][ns][listener] = l
 
   // add listener
-  node.addEventListener(event, l, false)
+  node.addEventListener(ev, l, false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
+  var index = SVG.handlerMap.indexOf(node)
+    , ev    = event && event.split('.')[0]
+    , ns    = event && event.split('.')[1]
+
+  if(index == -1) return
+  
   if (listener) {
     // remove listener reference
-    if (SVG.listeners[node] && SVG.listeners[node][event]) {
+    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
       // remove listener
-      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+      node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
 
-      delete SVG.listeners[node][event][listener]
+      delete SVG.listeners[index][ev][ns || '*'][listener]
     }
 
-  } else if (event) {
-    // remove all listeners for the event
-    if (SVG.listeners[node][event]) {
-      for (listener in SVG.listeners[node][event])
-        SVG.off(node, event, listener)
+  } else if (ns) {
+    // remove all listeners for the namespaced event
+    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
+      for (listener in SVG.listeners[index][ev][ns])
+        SVG.off(node, [ev, ns].join('.'), listener)
 
-      delete SVG.listeners[node][event]
+      delete SVG.listeners[index][ev][ns]
+    }
+
+  } else if (ev) {
+    // remove all listeners for the event
+    if (SVG.listeners[index][ev]) {
+      for (namespace in SVG.listeners[index][ev])
+        SVG.off(node, [ev, namespace].join('.'))
+
+      delete SVG.listeners[index][ev]
     }
 
   } else {
     // remove all listeners on a given node
-    if (SVG.listeners[node]) {
-      for (event in SVG.listeners[node])
-        SVG.off(node, event)
+    for (event in SVG.listeners[index])
+      SVG.off(node, event)
 
-      delete SVG.listeners[node]
-    }
+    delete SVG.listeners[index]
+
   }
 }
 
@@ -100,14 +116,9 @@ SVG.extend(SVG.Element, {
   }
   // Fire given event
 , fire: function(event, data) {
-    // Add detail data to event
-    SVG.events[event].detail = data
     
     // Dispatch event
-    this.node.dispatchEvent(SVG.events[event])
-
-    // Remove detail
-    delete SVG.events[event].detail
+    this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
 
     return this
   }

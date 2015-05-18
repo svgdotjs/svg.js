@@ -1,4 +1,4 @@
-/* svg.js 1.0.1-6-g90c50d9 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory loader helpers - svgjs.com/license */
+/* svg.js 1.0.1-37-gd71dcdb - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -133,6 +133,34 @@
   
     window.CustomEvent = CustomEvent
   }
+  
+  // requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
+  (function(w) {
+    var lastTime = 0
+    var vendors = ['moz', 'webkit']
+    
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      w.requestAnimationFrame = w[vendors[x] + 'RequestAnimationFrame']
+      w.cancelAnimationFrame  = w[vendors[x] + 'CancelAnimationFrame'] ||
+                                w[vendors[x] + 'CancelRequestAnimationFrame']
+    }
+   
+    w.requestAnimationFrame = w.requestAnimationFrame || 
+      function(callback) {
+        var currTime = new Date().getTime()
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime))
+        
+        var id = w.setTimeout(function() {
+          callback(currTime + timeToCall)
+        }, timeToCall)
+        
+        lastTime = currTime + timeToCall
+        return id
+      }
+   
+    w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
+  
+  }(window))
 
   SVG.regex = {
     /* parse unit value */
@@ -1741,10 +1769,10 @@
                   }
   
                 } else {
-                  requestAnimFrame(fx.render)
+                  fx.animationFrame = requestAnimationFrame(fx.render)
                 }
               } else {
-                requestAnimFrame(fx.render)
+                fx.animationFrame = requestAnimationFrame(fx.render)
               }
               
             }
@@ -1787,6 +1815,13 @@
           
           /* dlete matrixstring from object */
           delete o.matrix
+          
+          /* add rotation-center to transformations */
+          this.target.trans.cx = o.cx || null
+          this.target.trans.cy = o.cy || null
+          
+          delete o.cx
+          delete o.cy
           
           /* store matrix values */
           for (v in o)
@@ -1932,6 +1967,7 @@
         } else {
           /* stop current animation */
           clearTimeout(this.timeout)
+          cancelAnimationFrame(this.animationFrame);
   
           /* reset storage for properties that need animation */
           this.attrs     = {}
@@ -2058,60 +2094,76 @@
     
   })
   
-  // Initialize events and listeners stack
-  SVG.events = {}
-  SVG.listeners = {}
+  // Initialize listeners stack
+  SVG.listeners = []
+  SVG.handlerMap = []
   
-  // Event constructor
-  SVG.registerEvent = function(event) {
-    if (!SVG.events[event])
-      SVG.events[event] = new CustomEvent(event)
-  }
+  // Only kept for consistency of API
+  SVG.registerEvent = function(){};
   
   // Add event binder in the SVG namespace
   SVG.on = function(node, event, listener) {
-    // create listener
-    var l = listener.bind(node.instance || node)
-  
-    // ensure reference objects
-    SVG.listeners[node]        = SVG.listeners[node]        || {}
-    SVG.listeners[node][event] = SVG.listeners[node][event] || {}
+    // create listener, get object-index
+    var l     = listener.bind(node.instance || node)
+      , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
+      , ev    = event.split('.')[0]
+      , ns    = event.split('.')[1] || '*'
+      
+    
+    // ensure valid object
+    SVG.listeners[index]         = SVG.listeners[index]         || {}
+    SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
+    SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
   
     // reference listener
-    SVG.listeners[node][event][listener] = l
+    SVG.listeners[index][ev][ns][listener] = l
   
     // add listener
-    node.addEventListener(event, l, false)
+    node.addEventListener(ev, l, false)
   }
   
   // Add event unbinder in the SVG namespace
   SVG.off = function(node, event, listener) {
+    var index = SVG.handlerMap.indexOf(node)
+      , ev    = event && event.split('.')[0]
+      , ns    = event && event.split('.')[1]
+  
+    if(index == -1) return
+    
     if (listener) {
       // remove listener reference
-      if (SVG.listeners[node] && SVG.listeners[node][event]) {
+      if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
         // remove listener
-        node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+        node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
   
-        delete SVG.listeners[node][event][listener]
+        delete SVG.listeners[index][ev][ns || '*'][listener]
       }
   
-    } else if (event) {
-      // remove all listeners for the event
-      if (SVG.listeners[node][event]) {
-        for (listener in SVG.listeners[node][event])
-          SVG.off(node, event, listener)
+    } else if (ns) {
+      // remove all listeners for the namespaced event
+      if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
+        for (listener in SVG.listeners[index][ev][ns])
+          SVG.off(node, [ev, ns].join('.'), listener)
   
-        delete SVG.listeners[node][event]
+        delete SVG.listeners[index][ev][ns]
+      }
+  
+    } else if (ev) {
+      // remove all listeners for the event
+      if (SVG.listeners[index][ev]) {
+        for (namespace in SVG.listeners[index][ev])
+          SVG.off(node, [ev, namespace].join('.'))
+  
+        delete SVG.listeners[index][ev]
       }
   
     } else {
       // remove all listeners on a given node
-      if (SVG.listeners[node]) {
-        for (event in SVG.listeners[node])
-          SVG.off(node, event)
+      for (event in SVG.listeners[index])
+        SVG.off(node, event)
   
-        delete SVG.listeners[node]
-      }
+      delete SVG.listeners[index]
+  
     }
   }
   
@@ -2131,14 +2183,9 @@
     }
     // Fire given event
   , fire: function(event, data) {
-      // Add detail data to event
-      SVG.events[event].detail = data
       
       // Dispatch event
-      this.node.dispatchEvent(SVG.events[event])
-  
-      // Remove detail
-      delete SVG.events[event].detail
+      this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
   
       return this
     }
@@ -2610,6 +2657,16 @@
         this.doSpof = true
   
         return this
+      }
+      
+        // Removes the doc from the DOM
+    , remove: function() {
+        if(this.parent) {
+          this.parent.removeChild(this.node);
+          this.parent = null;
+        }
+  
+        return this;
       }
     }
     
@@ -3230,9 +3287,6 @@
       return this.node.getComputedTextLength()
     }
   })
-  
-  // Register rebuild event
-  SVG.registerEvent('rebuild')
 
 
   SVG.TextPath = SVG.invent({
@@ -3752,11 +3806,6 @@
   
   })
 
-  if (typeof define === 'function' && define.amd)
-    define(function() { return SVG })
-  else if (typeof exports !== 'undefined')
-    exports.SVG = SVG
-
   function camelCase(s) { 
     return s.toLowerCase().replace(/-(.)/g, function(m, g) {
       return g.toUpperCase()
@@ -3878,15 +3927,7 @@
   
     if (m) return m[1]
   }
-  
-  // Shim layer with setTimeout fallback by Paul Irish
-  window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            window.msRequestAnimationFrame     ||
-            function (c) { window.setTimeout(c, 1000 / 60) }
-  })()
+
 
   return SVG
 }));

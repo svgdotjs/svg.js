@@ -27,11 +27,9 @@
     , "url":      "http://www.opensource.org/licenses/mit-license.php"
     }
   ]
-, "repositories": [
-    {
-      "type":     "git"
-    , "url":      "https://github.com/wout/svg.js.git"
-    }
-  ]
+, "repository": {
+    "type":     "git"
+  , "url":      "https://github.com/wout/svg.js.git"
+  }
 , "github":       "https://github.com/wout/svg.js"
 }
