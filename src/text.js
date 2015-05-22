@@ -65,8 +65,12 @@ SVG.Text = SVG.invent({
         text = (this.content = text).split('\n')
         
         /* build new lines */
-        for (var i = 0, il = text.length; i < il; i++)
-          this.tspan(text[i]).newLine()
+        if (text.length > 1) {
+            for (var i = 0, il = text.length; i < il; i++)
+              this.tspan(text[i]).newLine()
+        } else {
+            this.plain(text[0]);
+        }
       }
       
       /* disable build mode and rebuild lines */
