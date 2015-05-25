@@ -93,7 +93,7 @@ describe('Element', function() {
       rect = draw.rect(100,100)
     })
     
-    it('gets the value if the id attribute without an argument', function() {
+    it('gets the value of the id attribute without an argument', function() {
       expect(rect.id()).toBe(rect.attr('id'))
     })
     it('sets the value of the id', function() {
