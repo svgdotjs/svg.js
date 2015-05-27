@@ -3182,6 +3182,14 @@ Here are a few nice plugins that are available for svg.js:
 ### comic
 [comic.js](https://github.com/balint42/comic.js) to cartoonize any given svg.
 
+### draw
+[svg.draw.js](https://github.com/fuzzyma/svg.draw.js) to draw elements with your mouse
+
+### select
+[svg.select.js](https://github.com/fuzzyma/svg.select.js) to select elements
+
+### resize
+[svg.resize.js](https://github.com/fuzzyma/svg.resize.js) to resize elements with your mouse
 
 ## Contributing
 All contributions are very welcome but please make sure you:
