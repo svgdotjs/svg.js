@@ -64,7 +64,7 @@ describe('Ellipse', function() {
       expect(ellipse.node.getAttribute('rx')).toBe('30')
       expect(ellipse.node.getAttribute('ry')).toBe('30')
     })
-    it('sets the and ry value correctly when given 0', function() {
+    it('sets the rx and ry value correctly when given 0', function() {
       ellipse.radius(11, 0)
       expect(ellipse.node.getAttribute('rx')).toBe('11')
       expect(ellipse.node.getAttribute('ry')).toBe('0')

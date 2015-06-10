@@ -65,6 +65,15 @@ SVG.Doc = SVG.invent({
 
       return this
     }
+    
+      // Removes the doc from the DOM
+  , remove: function() {
+      if(this.parent()) {
+        this.parent().removeChild(this.node);
+      }
+
+      return this;
+    }
   }
   
 })

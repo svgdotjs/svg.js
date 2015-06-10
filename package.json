@@ -1,6 +1,6 @@
 {
   "name": "SVG.js",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "http://svgjs.com",
   "homepage": "http://www.svgjs.com",
@@ -29,6 +29,10 @@
       "name": "Alex Ewerlöf",
       "email": "alex@userpixel.com",
       "web": "http://www.ewerlof.name"
+    },
+    {
+      "name": "Ulrich-Matthias Schäfer",
+      "email": "ulima.ums@googlemail.com"
     }
   ],
   "licenses": [
@@ -44,12 +48,12 @@
   "github": "https://github.com/wout/svg.js",
   "license": "MIT",
   "devDependencies": {
+    "del": "^1.2.0",
     "gulp": "^3.8.6",
     "gulp-concat": "^2.3.3",
     "gulp-header": "^1.0.5",
     "gulp-jasmine": "^0.3.0",
     "gulp-rename": "^1.2.0",
-    "gulp-rimraf": "^0.1.0",
     "gulp-size": "^0.4.0",
     "gulp-uglify": "^0.3.1",
     "gulp-wrap-umd": "^0.2.1",

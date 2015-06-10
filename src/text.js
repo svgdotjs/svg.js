@@ -200,10 +200,13 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     if (this._build === false)
       this.clear()
     
-    // add new tspan and reference
+    // add new tspan
     node.appendChild(tspan.node)
 
     // only first level tspans are considered to be "lines"
+    // that doenst make sence. A line is added to a SVG.Set which is never used or returned.
+    // So why bother adding it?
+    // Also: lines() reads all children so it already has this tspan in it because we added it before
     if (this instanceof SVG.Text)
       this.lines().add(tspan)
 
@@ -228,6 +231,3 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     return this.node.getComputedTextLength()
   }
 })
-
-// Register rebuild event
-SVG.registerEvent('rebuild')

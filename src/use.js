@@ -8,20 +8,20 @@ SVG.Use = SVG.invent({
   // Add class methods
 , extend: {
     // Use element as a reference
-    element: function(element) {
-      // Store target element
+    element: function(element, file) {
+      /* Store target element */
       this.target = element
 
-      // Set lined element
-      return this.attr('href', '#' + element, SVG.xlink)
+      /* Set lined element */
+      return this.attr('href', (file || '') + '#' + element, SVG.xlink)
     }
   }
   
   // Add parent method
 , construct: {
     // Create a use element
-    use: function(element) {
-      return this.put(new SVG.Use).element(element)
+    use: function(element, file) {
+      return this.put(new SVG.Use).element(element, file)
     }
   }
 })

@@ -1,12 +1,12 @@
 /*!
 * SVG.js - A lightweight library for manipulating and animating SVG.
-* @version 2.0.0-rc.1
+* @version 2.0.0-rc.2
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Sep 05 2014 09:05:03 GMT+0200 (CEST)
+* BUILT: Thu Jun 11 2015 00:40:21 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -119,7 +119,7 @@ SVG.adopt = function(node) {
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
-  else if (node.nodeName == 'lineairGradient')
+  else if (node.nodeName == 'lineairGradient') // lineair?
     element = new SVG.Gradient('lineair')
   else if (node.nodeName == 'radialGradient')
     element = new SVG.Gradient('radial')
@@ -1314,10 +1314,10 @@ SVG.FX = SVG.invent({
                 }
 
               } else {
-                requestAnimFrame(fx.render)
+                fx.animationFrame = requestAnimationFrame(fx.render)
               }
             } else {
-              requestAnimFrame(fx.render)
+              fx.animationFrame = requestAnimationFrame(fx.render)
             }
             
           }
@@ -1514,6 +1514,7 @@ SVG.FX = SVG.invent({
       } else {
         // stop current animation
         clearTimeout(this.timeout)
+        cancelAnimationFrame(this.animationFrame);
 
         // reset storage for properties
         this.attrs       = {}
@@ -2281,8 +2282,8 @@ SVG.Container = SVG.invent({
   , 'mouseover'
   , 'mouseout'
   , 'mousemove'
-  , 'mouseenter'
-  , 'mouseleave'
+  // , 'mouseenter' -> not supported by IE
+  // , 'mouseleave' -> not supported by IE
   , 'touchstart'
   , 'touchmove'
   , 'touchleave'
@@ -2302,60 +2303,73 @@ SVG.Container = SVG.invent({
   
 })
 
-// Initialize events and listeners stack
-SVG.events = {}
-SVG.listeners = {}
-
-// Event constructor
-SVG.registerEvent = function(event) {
-  if (!SVG.events[event])
-    SVG.events[event] = new CustomEvent(event)
-}
+// Initialize listeners stack
+SVG.listeners = []
+SVG.handlerMap = []
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener) {
-  // create listener
-  var l = listener.bind(node.instance || node)
-
-  // ensure reference objects
-  SVG.listeners[node]        = SVG.listeners[node]        || {}
-  SVG.listeners[node][event] = SVG.listeners[node][event] || {}
+  // create listener, get object-index
+  var l     = listener.bind(node.instance || node)
+    , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
+    , ev    = event.split('.')[0]
+    , ns    = event.split('.')[1] || '*'
+    
+  
+  // ensure valid object
+  SVG.listeners[index]         = SVG.listeners[index]         || {}
+  SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
+  SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
 
   // reference listener
-  SVG.listeners[node][event][listener] = l
+  SVG.listeners[index][ev][ns][listener] = l
 
   // add listener
-  node.addEventListener(event, l, false)
+  node.addEventListener(ev, l, false)
 }
 
 // Add event unbinder in the SVG namespace
 SVG.off = function(node, event, listener) {
+  var index = SVG.handlerMap.indexOf(node)
+    , ev    = event && event.split('.')[0]
+    , ns    = event && event.split('.')[1]
+
+  if(index == -1) return
+  
   if (listener) {
     // remove listener reference
-    if (SVG.listeners[node] && SVG.listeners[node][event]) {
+    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
       // remove listener
-      node.removeEventListener(event, SVG.listeners[node][event][listener], false)
+      node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
 
-      delete SVG.listeners[node][event][listener]
+      delete SVG.listeners[index][ev][ns || '*'][listener]
     }
 
-  } else if (event) {
-    // remove all listeners for the event
-    if (SVG.listeners[node][event]) {
-      for (listener in SVG.listeners[node][event])
-        SVG.off(node, event, listener)
+  } else if (ns) {
+    // remove all listeners for the namespaced event
+    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
+      for (listener in SVG.listeners[index][ev][ns])
+        SVG.off(node, [ev, ns].join('.'), listener)
 
-      delete SVG.listeners[node][event]
+      delete SVG.listeners[index][ev][ns]
+    }
+
+  } else if (ev) {
+    // remove all listeners for the event
+    if (SVG.listeners[index][ev]) {
+      for (namespace in SVG.listeners[index][ev])
+        SVG.off(node, [ev, namespace].join('.'))
+
+      delete SVG.listeners[index][ev]
     }
 
   } else {
     // remove all listeners on a given node
-    if (SVG.listeners[node]) {
-      for (event in SVG.listeners[node])
-        SVG.off(node, event)
+    for (event in SVG.listeners[index])
+      SVG.off(node, event)
 
-      delete SVG.listeners[node]
-    }
+    delete SVG.listeners[index]
+
   }
 }
 
@@ -2375,14 +2389,9 @@ SVG.extend(SVG.Element, {
   }
   // Fire given event
 , fire: function(event, data) {
-    // Add detail data to event
-    SVG.events[event].detail = data
     
     // Dispatch event
-    this.node.dispatchEvent(SVG.events[event])
-
-    // Remove detail
-    delete SVG.events[event].detail
+    this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
 
     return this
   }
@@ -2855,6 +2864,15 @@ SVG.Doc = SVG.invent({
 
       return this
     }
+    
+      // Removes the doc from the DOM
+  , remove: function() {
+      if(this.parent()) {
+        this.parent().removeChild(this.node);
+      }
+
+      return this;
+    }
   }
   
 })
@@ -2924,37 +2942,37 @@ SVG.Use = SVG.invent({
   // Add class methods
 , extend: {
     // Use element as a reference
-    element: function(element) {
-      // Store target element
+    element: function(element, file) {
+      /* Store target element */
       this.target = element
 
-      // Set lined element
-      return this.attr('href', '#' + element, SVG.xlink)
+      /* Set lined element */
+      return this.attr('href', (file || '') + '#' + element, SVG.xlink)
     }
   }
   
   // Add parent method
 , construct: {
     // Create a use element
-    use: function(element) {
-      return this.put(new SVG.Use).element(element)
+    use: function(element, file) {
+      return this.put(new SVG.Use).element(element, file)
     }
   }
 })
 SVG.Rect = SVG.invent({
-	// Initialize node
+  // Initialize node
   create: 'rect'
 
-	// Inherit from
+  // Inherit from
 , inherit: SVG.Shape
-	
-	// Add parent method
+    
+  // Add parent method
 , construct: {
-  	// Create a rect element
-  	rect: function(width, height) {
-  	  return this.put(new SVG.Rect().size(width, height))
-  	}
-	}
+    // Create a rect element
+    rect: function(width, height) {
+      return this.put(new SVG.Rect().size(width, height))
+    }
+  }
 })
 SVG.Circle = SVG.invent({
   // Initialize node
@@ -3484,10 +3502,13 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     if (this._build === false)
       this.clear()
     
-    // add new tspan and reference
+    // add new tspan
     node.appendChild(tspan.node)
 
     // only first level tspans are considered to be "lines"
+    // that doenst make sence. A line is added to a SVG.Set which is never used or returned.
+    // So why bother adding it?
+    // Also: lines() reads all children so it already has this tspan in it because we added it before
     if (this instanceof SVG.Text)
       this.lines().add(tspan)
 
@@ -3512,9 +3533,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     return this.node.getComputedTextLength()
   }
 })
-
-// Register rebuild event
-SVG.registerEvent('rebuild')
 
 SVG.TextPath = SVG.invent({
   // Initialize node
@@ -4239,19 +4257,10 @@ function idFromReference(url) {
 
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
-
-// Shim layer with setTimeout fallback by Paul Irish
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.msRequestAnimationFrame     ||
-          function (c) { window.setTimeout(c, 1000 / 60) }
-})()
 // Add CustomEvent to IE9 and IE10 
 if (typeof CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  function CustomEvent (event, options) {
+  var CustomEvent = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }
     var e = document.createEvent('CustomEvent')
     e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
@@ -4262,6 +4271,34 @@ if (typeof CustomEvent !== 'function') {
 
   window.CustomEvent = CustomEvent
 }
+
+// requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
+(function(w) {
+  var lastTime = 0
+  var vendors = ['moz', 'webkit']
+  
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    w.requestAnimationFrame = w[vendors[x] + 'RequestAnimationFrame']
+    w.cancelAnimationFrame  = w[vendors[x] + 'CancelAnimationFrame'] ||
+                              w[vendors[x] + 'CancelRequestAnimationFrame']
+  }
+ 
+  w.requestAnimationFrame = w.requestAnimationFrame || 
+    function(callback) {
+      var currTime = new Date().getTime()
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime))
+      
+      var id = w.setTimeout(function() {
+        callback(currTime + timeToCall)
+      }, timeToCall)
+      
+      lastTime = currTime + timeToCall
+      return id
+    }
+ 
+  w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
+
+}(window))
 return SVG;
 
 }));

@@ -190,10 +190,10 @@ SVG.FX = SVG.invent({
                 }
 
               } else {
-                requestAnimFrame(fx.render)
+                fx.animationFrame = requestAnimationFrame(fx.render)
               }
             } else {
-              requestAnimFrame(fx.render)
+              fx.animationFrame = requestAnimationFrame(fx.render)
             }
             
           }
@@ -390,6 +390,7 @@ SVG.FX = SVG.invent({
       } else {
         // stop current animation
         clearTimeout(this.timeout)
+        cancelAnimationFrame(this.animationFrame);
 
         // reset storage for properties
         this.attrs       = {}

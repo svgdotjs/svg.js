@@ -21,4 +21,13 @@ describe('Doc', function() {
     })
   })
   
+  describe('remove()', function() {
+    it('removes the doc from the dom', function() {
+      draw.remove()
+      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(2)
+      draw = SVG(drawing).size(100,100);
+      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(3)
+    })
+  })
+  
 })

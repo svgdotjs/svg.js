@@ -1,15 +1,15 @@
 SVG.Rect = SVG.invent({
-	// Initialize node
+  // Initialize node
   create: 'rect'
 
-	// Inherit from
+  // Inherit from
 , inherit: SVG.Shape
-	
-	// Add parent method
+    
+  // Add parent method
 , construct: {
-  	// Create a rect element
-  	rect: function(width, height) {
-  	  return this.put(new SVG.Rect().size(width, height))
-  	}
-	}
+    // Create a rect element
+    rect: function(width, height) {
+      return this.put(new SVG.Rect().size(width, height))
+    }
+  }
 })

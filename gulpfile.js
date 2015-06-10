@@ -1,9 +1,9 @@
-var gulp    = require('gulp')
+var del     = require('del')
+  , gulp    = require('gulp')
   , concat  = require('gulp-concat')
   , header  = require('gulp-header')
   , jasmine = require('gulp-jasmine')
   , rename  = require('gulp-rename')
-  , rimraf  = require('gulp-rimraf')
   , size    = require('gulp-size')
   , uglify  = require('gulp-uglify')
   , wrapUmd = require('gulp-wrap-umd')
@@ -11,6 +11,7 @@ var gulp    = require('gulp')
   , request = require('request')
   , fs      = require('fs')
   , pkg     = require('./package.json')
+
 
 var headerLong = ['/*!'
   , '* <%= pkg.name %> - <%= pkg.description %>'
@@ -80,9 +81,8 @@ var parts = [
 , 'src/polyfill.js'
 ]
 
-gulp.task('clean', function() {
-  return gulp.src('dist/*', { read: false }) // faster
-    .pipe(rimraf())
+gulp.task('clean', function(cb) {
+  del([ 'dist/*' ], cb);
 })
 
 /**
