@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Jun 11 2015 01:22:10 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Jun 15 2015 16:08:41 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -435,7 +435,7 @@ SVG.extend(SVG.Array, {
   }
   // Strip unnecessary whitespace
 , split: function(string) {
-    return string.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g,'').split(' ') 
+    return string.trim().split(/\s+/)
   }
   // Reverse array
 , reverse: function() {
@@ -1085,7 +1085,7 @@ SVG.Element = SVG.invent({
     }
     // Get parent document
   , doc: function(type) {
-      return this.parent(type || SVG.Doc)
+      return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
     // Returns the svg node to call native svg methods on it
   , native: function() {

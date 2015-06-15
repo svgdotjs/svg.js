@@ -179,7 +179,7 @@ SVG.Element = SVG.invent({
     }
     // Get parent document
   , doc: function(type) {
-      return this.parent(type || SVG.Doc)
+      return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
     // Returns the svg node to call native svg methods on it
   , native: function() {

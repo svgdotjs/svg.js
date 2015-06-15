@@ -8,6 +8,10 @@ describe('Doc', function() {
     expect(draw instanceof SVG.Doc).toBe(true)
   })
   
+  it('returns itself as Doc', function() {
+    expect(draw.doc()).toBe(draw)
+  })
+  
   it('has a defs element', function() {
     expect(draw.defs() instanceof SVG.Defs).toBe(true)
   })
