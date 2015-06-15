@@ -17,10 +17,6 @@ describe('Use', function() {
       expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe('#' + rect)
     })
 
-    it('stores a reference to the target element', function() {
-      expect(use.target).toBe(rect)
-    })
-
     it('adopts the geometry of the target element', function() {
       expect(use.bbox()).toEqual(rect.bbox())
     })
@@ -42,9 +38,6 @@ describe('Use', function() {
       expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe(file + '#' + id)
     })
 
-    it('stores a reference to the target element', function() {
-      expect(use.target).toBe(id)
-    })
   })
   
 })

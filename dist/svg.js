@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Jun 15 2015 16:08:41 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Jun 15 2015 16:36:12 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -2943,9 +2943,6 @@ SVG.Use = SVG.invent({
 , extend: {
     // Use element as a reference
     element: function(element, file) {
-      /* Store target element */
-      this.target = element
-
       /* Set lined element */
       return this.attr('href', (file || '') + '#' + element, SVG.xlink)
     }
