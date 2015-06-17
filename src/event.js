@@ -69,13 +69,23 @@ SVG.off = function(node, event, listener) {
       delete SVG.listeners[index][ev][ns || '*'][listener]
     }
 
-  } else if (ns) {
-    // remove all listeners for the namespaced event
+  } else if (ns && ev) {
+    // remove all listeners for a namespaced event
     if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
       for (listener in SVG.listeners[index][ev][ns])
         SVG.off(node, [ev, ns].join('.'), listener)
 
       delete SVG.listeners[index][ev][ns]
+    }
+
+  } else if (ns){
+    // remove all listeners for a specific namespace
+    for(event in SVG.listeners[index]){
+        for(namespace in SVG.listeners[index][event]){
+            if(ns === namespace){
+                SVG.off(node, [event, ns].join('.'))
+            }
+        }
     }
 
   } else if (ev) {
@@ -115,7 +125,11 @@ SVG.extend(SVG.Element, {
 , fire: function(event, data) {
     
     // Dispatch event
-    this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
+    if(event instanceof Event){
+        this.node.dispatchEvent(event)
+    }else{
+        this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
+    }
 
     return this
   }

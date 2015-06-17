@@ -2913,6 +2913,12 @@ Now you are ready to fire the event whenever you need:
 function whenSomethingHappens() {
   rect.fire('myevent') 
 }
+
+// or if you want to pass an event
+function whenSomethingHappens(event) {
+  rect.fire(event) 
+}
+
 ```
 
 You can also pass some data to the event:
@@ -2937,8 +2943,11 @@ rect.on('myevent.namespace', function(e) {
   // do something
 })
 
-// detach all handlers of namespace
+// detach all handlers of namespace for myevent
 rect.off('myevent.namespace')
+
+// detach all handlers of namespace
+rect.off('.namespace')
 
 // detach all handlers including all namespaces
 rect.off('myevent)

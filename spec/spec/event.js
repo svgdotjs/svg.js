@@ -394,9 +394,18 @@ describe('Event', function() {
       
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace'][action]).toBeUndefined()
     })
+    it('detaches all listeners for a specific namespace', function() {
+      rect.on('event', action)
+      rect.on('event.namespace', function() { butter = 'melting'; })
+      rect.off('.namespace')
+
+      dispatchEvent(rect, 'event')
+      expect(toast).toBe('ready')
+      expect(butter).toBeNull()
+    })
     it('detaches all listeners for an event without a listener given', function() {
       rect.on('event', action)
-      rect.on('event.namespace', function() { butter = 'melting'; console.log('called'); })
+      rect.on('event.namespace', function() { butter = 'melting'; })
       rect.off('event')
 
       dispatchEvent(rect, 'event')
@@ -439,6 +448,11 @@ describe('Event', function() {
       rect.fire('event', {apple:1})
       expect(fruitsInDetail).not.toBe(null)
       expect(fruitsInDetail.apple).toBe(1)
+    })
+    it('fires my own event', function() {
+      toast = null
+      rect.fire(new CustomEvent('event'))
+      expect(toast).toBe('ready')
     })
   })
   

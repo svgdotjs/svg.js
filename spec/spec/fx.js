@@ -46,13 +46,12 @@ describe('FX', function() {
     setTimeout(function(){
     
       var ctm = rect.ctm();
-      console.log(ctm);
       expect(ctm.a).toBeLessThan(1)
       expect(ctm.b).toBeGreaterThan(0)
       expect(ctm.c).toBeLessThan(0)
       expect(ctm.d).toBeGreaterThan(0)
       expect(ctm.e).toBeGreaterThan(0)
-      expect(ctm.f).toBeGreatherThan(0)
+      expect(ctm.f).toBeGreaterThan(0)
     }, 250)
     
   })
