@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Jun 17 2015 15:45:48 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jun 19 2015 11:48:00 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1165,7 +1165,7 @@ SVG.FX = SVG.invent({
           if (element.morphArray && (fx.destination.plot || akeys.indexOf('points') > -1)) {
             // get destination
             var box
-              , p = new element.morphArray(fx.destination.plot || fx.attrs.points || element.array)
+              , p = new element.morphArray(fx.destination.plot || fx.attrs.points || element.array())
 
             // add size
             if (fx.destination.size)
@@ -1186,7 +1186,7 @@ SVG.FX = SVG.invent({
 
             // reset destination values
             fx.destination = {
-              plot: element.array.morph(p)
+              plot: element.array().morph(p)
             }
           }
         }

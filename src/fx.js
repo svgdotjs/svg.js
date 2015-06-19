@@ -41,7 +41,7 @@ SVG.FX = SVG.invent({
           if (element.morphArray && (fx.destination.plot || akeys.indexOf('points') > -1)) {
             // get destination
             var box
-              , p = new element.morphArray(fx.destination.plot || fx.attrs.points || element.array)
+              , p = new element.morphArray(fx.destination.plot || fx.attrs.points || element.array())
 
             // add size
             if (fx.destination.size)
@@ -62,7 +62,7 @@ SVG.FX = SVG.invent({
 
             // reset destination values
             fx.destination = {
-              plot: element.array.morph(p)
+              plot: element.array().morph(p)
             }
           }
         }
