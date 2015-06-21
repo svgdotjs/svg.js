@@ -15,7 +15,15 @@
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 
-# 1.0.0 (?/09/2014)
+# 2.0.1 (21/06/2015)
+
+- fixed bug with `doc()` which always should return root svg
+- removed target reference from use which caused bugs in `dmove()` and `use()` with external file
+- added possibility to remove all events from a certain namespace
+- fixed bug in `SVG.FX` when animating with `plot()`
+- removed scale consideration in `move()` duo to incompatibilities with other move-functions e.g. in `SVG.PointArray`
+
+# 2.0.0 (11/06/2015)
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
