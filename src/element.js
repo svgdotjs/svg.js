@@ -19,18 +19,10 @@ SVG.Element = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      if (x != null) {
-        x = new SVG.Number(x)
-        x.value /= this.transform('scaleX')
-      }
       return this.attr('x', x)
     }
     // Move over y-axis
   , y: function(y) {
-      if (y != null) {
-        y = new SVG.Number(y)
-        y.value /= this.transform('scaleY')
-      }
       return this.attr('y', y)
     }
     // Move by center over x-axis

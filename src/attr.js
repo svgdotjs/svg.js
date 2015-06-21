@@ -28,7 +28,7 @@ SVG.extend(SVG.Element, {
         parseFloat(v) : v
     
     } else {
-      // bUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
+      // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
       if (a == 'stroke-width')
         this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
       else if (a == 'stroke')

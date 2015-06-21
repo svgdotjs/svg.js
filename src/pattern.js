@@ -13,10 +13,10 @@ SVG.Pattern = SVG.invent({
 	  }
 	  // Update pattern by rebuilding
 	, update: function(block) {
-			/* remove content */
+      // remove content
       this.clear()
       
-      /* invoke passed block */
+      // invoke passed block
       if (typeof block == 'function')
       	block.call(this, this)
       

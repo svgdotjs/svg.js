@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Jun 19 2015 11:48:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Jun 21 2015 18:25:42 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -925,18 +925,10 @@ SVG.Element = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      if (x != null) {
-        x = new SVG.Number(x)
-        x.value /= this.transform('scaleX')
-      }
       return this.attr('x', x)
     }
     // Move over y-axis
   , y: function(y) {
-      if (y != null) {
-        y = new SVG.Number(y)
-        y.value /= this.transform('scaleY')
-      }
       return this.attr('y', y)
     }
     // Move by center over x-axis
@@ -1941,7 +1933,7 @@ SVG.extend(SVG.Element, {
         parseFloat(v) : v
     
     } else {
-      // bUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
+      // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
       if (a == 'stroke-width')
         this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
       else if (a == 'stroke')
@@ -2774,10 +2766,10 @@ SVG.Pattern = SVG.invent({
 	  }
 	  // Update pattern by rebuilding
 	, update: function(block) {
-			/* remove content */
+      // remove content
       this.clear()
       
-      /* invoke passed block */
+      // invoke passed block
       if (typeof block == 'function')
       	block.call(this, this)
       
