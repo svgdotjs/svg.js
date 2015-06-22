@@ -15,6 +15,10 @@
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 
+# 2.0.2 (22/06/2015)
+
+- Fixed zoom consideration in circle and ellipse
+
 # 2.0.1 (21/06/2015)
 
 - fixed bug with `doc()` which always should return root svg
