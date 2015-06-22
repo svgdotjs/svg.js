@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.0.0
+* @version 2.0.1
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jun 21 2015 18:25:42 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Jun 22 2015 22:02:40 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -3043,11 +3043,11 @@ SVG.extend(SVG.Circle, SVG.Ellipse, {
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.attr('cx') : this.attr('cx', new SVG.Number(x).divide(this.transform('scaleX')))
+      return x == null ? this.attr('cx') : this.attr('cx', x)
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.attr('cy') : this.attr('cy', new SVG.Number(y).divide(this.transform('scaleY')))
+      return y == null ? this.attr('cy') : this.attr('cy', y)
     }
     // Set width of element
   , width: function(width) {
