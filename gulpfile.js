@@ -1,5 +1,6 @@
 var del     = require('del')
   , gulp    = require('gulp')
+  , chmod   = require('gulp-chmod')
   , concat  = require('gulp-concat')
   , header  = require('gulp-header')
   , jasmine = require('gulp-jasmine')
@@ -100,6 +101,7 @@ gulp.task('unify', ['clean'], function() {
           exports: 'SVG'
       }))
     .pipe(header(headerLong, { pkg: pkg }))
+    .pipe(chmod(644))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
 })
@@ -115,6 +117,7 @@ gulp.task('minify', ['unify'], function() {
     .pipe(rename({ suffix:'.min' }))
     .pipe(size({ showFiles: true, title: 'Minified' }))
     .pipe(header(headerShort, { pkg: pkg }))
+    .pipe(chmod(644))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
 })
