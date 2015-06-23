@@ -50,6 +50,7 @@
   "devDependencies": {
     "del": "^1.2.0",
     "gulp": "^3.8.6",
+    "gulp-chmod": "^1.2.0",
     "gulp-concat": "^2.3.3",
     "gulp-header": "^1.0.5",
     "gulp-jasmine": "^0.3.0",
