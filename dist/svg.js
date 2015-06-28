@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.0.3
+* @version 2.0.4
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Jun 27 2015 14:02:53 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Jun 28 2015 21:25:11 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -201,12 +201,12 @@ SVG.regex = {
 
 }
 SVG.utils = {
-  // Map function
-  map: function(array, block) {
+    // Map function
+    map: function(array, block) {
     var i
       , il = array.length
       , result = []
-
+    
     for (i = 0; i < il; i++)
       result.push(block(array[i]))
     
@@ -215,12 +215,15 @@ SVG.utils = {
 
   // Degrees to radians
 , radians: function(d) {
-		return d % 360 * Math.PI / 180
-	}
-	// Radians to degrees
+    return d % 360 * Math.PI / 180
+  }
+  // Radians to degrees
 , degrees: function(r) {
-		return r * 180 / Math.PI % 360
-	}
+    return r * 180 / Math.PI % 360
+  }
+, filterSVGElements: function(p) {
+    return [].filter.call(p, function(el){ return el instanceof SVGElement })
+  }
 
 }
 
@@ -2158,7 +2161,7 @@ SVG.Parent = SVG.invent({
 , extend: {
     // Returns all child elements
     children: function() {
-      return SVG.utils.map(this.node.childNodes, function(node) {
+      return SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(node) {
         return SVG.adopt(node)
       })
     }
@@ -3265,7 +3268,7 @@ SVG.Image = SVG.invent({
       
       // preload image
       img.onload = function() {
-        var p = self.doc(SVG.Pattern)
+        var p = self.parent(SVG.Pattern)
 
         // ensure image size
         if (self.width() == 0 && self.height() == 0)
@@ -3394,10 +3397,10 @@ SVG.Text = SVG.invent({
     // Get all the first level lines
   , lines: function() {
       // filter tspans and map them to SVG.js instances
-      for (var i = 0, il = this.node.childNodes.length, lines = []; i < il; i++)
-        if (this.node.childNodes[i] instanceof SVGElement)
-          lines.push(SVG.adopt(this.node.childNodes[i]))
-      
+      var lines = SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(el){
+        return SVG.adopt(el)
+      })
+
       // return an instance of SVG.set
       return new SVG.Set(lines)
     }
@@ -3472,7 +3475,7 @@ SVG.Tspan = SVG.invent({
     // Create new line
   , newLine: function() {
       // fetch text parent
-      var t = this.doc(SVG.Text)
+      var t = this.parent(SVG.Text)
 
       // mark new line
       this.newLined = true
@@ -3507,13 +3510,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     
     // add new tspan
     node.appendChild(tspan.node)
-
-    // only first level tspans are considered to be "lines"
-    // that doenst make sence. A line is added to a SVG.Set which is never used or returned.
-    // So why bother adding it?
-    // Also: lines() reads all children so it already has this tspan in it because we added it before
-    if (this instanceof SVG.Text)
-      this.lines().add(tspan)
 
     return tspan.text(text)
   }
