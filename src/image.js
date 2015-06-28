@@ -16,7 +16,7 @@ SVG.Image = SVG.invent({
       
       // preload image
       img.onload = function() {
-        var p = self.doc(SVG.Pattern)
+        var p = self.parent(SVG.Pattern)
 
         // ensure image size
         if (self.width() == 0 && self.height() == 0)

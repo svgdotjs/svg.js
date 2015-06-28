@@ -89,10 +89,10 @@ SVG.Text = SVG.invent({
     // Get all the first level lines
   , lines: function() {
       // filter tspans and map them to SVG.js instances
-      for (var i = 0, il = this.node.childNodes.length, lines = []; i < il; i++)
-        if (this.node.childNodes[i] instanceof SVGElement)
-          lines.push(SVG.adopt(this.node.childNodes[i]))
-      
+      var lines = SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(el){
+        return SVG.adopt(el)
+      })
+
       // return an instance of SVG.set
       return new SVG.Set(lines)
     }
@@ -167,7 +167,7 @@ SVG.Tspan = SVG.invent({
     // Create new line
   , newLine: function() {
       // fetch text parent
-      var t = this.doc(SVG.Text)
+      var t = this.parent(SVG.Text)
 
       // mark new line
       this.newLined = true
@@ -202,13 +202,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     
     // add new tspan
     node.appendChild(tspan.node)
-
-    // only first level tspans are considered to be "lines"
-    // that doenst make sence. A line is added to a SVG.Set which is never used or returned.
-    // So why bother adding it?
-    // Also: lines() reads all children so it already has this tspan in it because we added it before
-    if (this instanceof SVG.Text)
-      this.lines().add(tspan)
 
     return tspan.text(text)
   }

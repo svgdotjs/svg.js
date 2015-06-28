@@ -11,7 +11,7 @@ SVG.Parent = SVG.invent({
 , extend: {
     // Returns all child elements
     children: function() {
-      return SVG.utils.map(this.node.childNodes, function(node) {
+      return SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(node) {
         return SVG.adopt(node)
       })
     }
