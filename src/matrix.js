@@ -4,8 +4,8 @@ SVG.Matrix = SVG.invent({
     var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
     // ensure source as object
-    source = source && source.node && source.node.getCTM ?
-      source.node.getCTM() :
+    source = source instanceof SVG.Element ?
+      source.matrixify() :
     typeof source === 'string' ?
       stringToMatrix(source) :
     arguments.length == 6 ?
@@ -18,7 +18,7 @@ SVG.Matrix = SVG.invent({
       this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
-  
+
   // Add methods
 , extend: {
     // Extract individual transformations
@@ -27,7 +27,7 @@ SVG.Matrix = SVG.invent({
       var px    = deltaTransformPoint(this, 0, 1)
         , py    = deltaTransformPoint(this, 1, 0)
         , skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
-  
+
       return {
         // translation
         x:        this.e
@@ -100,7 +100,7 @@ SVG.Matrix = SVG.invent({
     }
     // Translate matrix
   , translate: function(x, y) {
-      return new SVG.Matrix(this.native().translate(x || 0, y || 0))  
+      return new SVG.Matrix(this.native().translate(x || 0, y || 0))
     }
     // Scale matrix
   , scale: function(x, y, cx, cy) {
@@ -118,7 +118,7 @@ SVG.Matrix = SVG.invent({
   , rotate: function(r, cx, cy) {
       // convert degrees to radians
       r = SVG.utils.radians(r)
-      
+
       return this.around(cx, cy, new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0))
     }
     // Flip matrix on x or y, at a given offset
@@ -140,7 +140,7 @@ SVG.Matrix = SVG.invent({
   , native: function() {
       // create new matrix
       var matrix = SVG.parser.draw.node.createSVGMatrix()
-  
+
       // update with current values
       for (var i = abcdef.length - 1; i >= 0; i--)
         matrix[abcdef[i]] = this[abcdef[i]]
@@ -160,9 +160,9 @@ SVG.Matrix = SVG.invent({
 , construct: {
     // Get current matrix
     ctm: function() {
-      return new SVG.Matrix(this)
+      return new SVG.Matrix(this.node.getCTM())
     }
-  
+
   }
 
 })

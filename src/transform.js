@@ -8,7 +8,7 @@ SVG.extend(SVG.Element, SVG.FX, {
     // act as a getter
     if (typeof o !== 'object') {
       // get current matrix
-      matrix = target.ctm().extract()
+      matrix = new SVG.Matrix(target).extract()
 
       // add parametric rotation
       if (typeof this.param === 'object') {
@@ -27,7 +27,7 @@ SVG.extend(SVG.Element, SVG.FX, {
 
     // ensure relative flag
     relative = !!relative || !!o.relative
-    
+
     // act on matrix
     if (o.a != null) {
       matrix = relative ?
@@ -35,7 +35,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         matrix.multiply(new SVG.Matrix(o)) :
         // absolute
         new SVG.Matrix(o)
-    
+
     // act on rotation
     } else if (o.rotation != null) {
       // ensure centre point
@@ -55,11 +55,11 @@ SVG.extend(SVG.Element, SVG.FX, {
       if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
-          target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
+          matrix.rotate(o.rotation, o.cx, o.cy) :
           // absolute
           matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
       }
-    
+
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
       // ensure centre point
@@ -92,7 +92,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         var e = matrix.extract()
         matrix = matrix.multiply(new SVG.Matrix().skew(e.skewX, e.skewY, o.cx, o.cy).inverse())
       }
-      
+
       matrix = matrix.skew(o.skewX, o.skewY, o.cx, o.cy)
 
     // act on flip
@@ -113,7 +113,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         if (o.y != null) matrix.f = o.y
       }
     }
-    
+
     return this.attr('transform', matrix)
   }
 })
@@ -122,5 +122,26 @@ SVG.extend(SVG.Element, {
   // Reset all transformations
   untransform: function() {
     return this.attr('transform', null)
+  },
+  matrixify: function() {
+
+    var matrix = (this.attr('transform') || '')
+      // split transformations
+      .split(/\)\s*/).slice(0,-1).map(function(str){
+        // generate key => value pairs
+        var kv = str.trim().split('(')
+        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
+      })
+      // calculate every transformation into one matrix
+      .reduce(function(matrix, transform){
+
+        if(transform[0] == 'matrix') return matrix.multiply(arrayToMatrix(transform[1]))
+        return matrix[transform[0]].apply(matrix, transform[1])
+
+      }, new SVG.Matrix())
+    // apply calculated matrix to element
+    this.attr('transform', matrix)
+
+    return matrix
   }
 })

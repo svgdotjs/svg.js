@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jun 28 2015 21:25:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Jul 05 2015 01:33:26 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1744,8 +1744,8 @@ SVG.Matrix = SVG.invent({
     var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
     // ensure source as object
-    source = source && source.node && source.node.getCTM ?
-      source.node.getCTM() :
+    source = source instanceof SVG.Element ?
+      source.matrixify() :
     typeof source === 'string' ?
       stringToMatrix(source) :
     arguments.length == 6 ?
@@ -1758,7 +1758,7 @@ SVG.Matrix = SVG.invent({
       this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
-  
+
   // Add methods
 , extend: {
     // Extract individual transformations
@@ -1767,7 +1767,7 @@ SVG.Matrix = SVG.invent({
       var px    = deltaTransformPoint(this, 0, 1)
         , py    = deltaTransformPoint(this, 1, 0)
         , skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
-  
+
       return {
         // translation
         x:        this.e
@@ -1840,7 +1840,7 @@ SVG.Matrix = SVG.invent({
     }
     // Translate matrix
   , translate: function(x, y) {
-      return new SVG.Matrix(this.native().translate(x || 0, y || 0))  
+      return new SVG.Matrix(this.native().translate(x || 0, y || 0))
     }
     // Scale matrix
   , scale: function(x, y, cx, cy) {
@@ -1858,7 +1858,7 @@ SVG.Matrix = SVG.invent({
   , rotate: function(r, cx, cy) {
       // convert degrees to radians
       r = SVG.utils.radians(r)
-      
+
       return this.around(cx, cy, new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0))
     }
     // Flip matrix on x or y, at a given offset
@@ -1880,7 +1880,7 @@ SVG.Matrix = SVG.invent({
   , native: function() {
       // create new matrix
       var matrix = SVG.parser.draw.node.createSVGMatrix()
-  
+
       // update with current values
       for (var i = abcdef.length - 1; i >= 0; i--)
         matrix[abcdef[i]] = this[abcdef[i]]
@@ -1900,9 +1900,9 @@ SVG.Matrix = SVG.invent({
 , construct: {
     // Get current matrix
     ctm: function() {
-      return new SVG.Matrix(this)
+      return new SVG.Matrix(this.node.getCTM())
     }
-  
+
   }
 
 })
@@ -1999,7 +1999,7 @@ SVG.extend(SVG.Element, SVG.FX, {
     // act as a getter
     if (typeof o !== 'object') {
       // get current matrix
-      matrix = target.ctm().extract()
+      matrix = new SVG.Matrix(target).extract()
 
       // add parametric rotation
       if (typeof this.param === 'object') {
@@ -2018,7 +2018,7 @@ SVG.extend(SVG.Element, SVG.FX, {
 
     // ensure relative flag
     relative = !!relative || !!o.relative
-    
+
     // act on matrix
     if (o.a != null) {
       matrix = relative ?
@@ -2026,7 +2026,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         matrix.multiply(new SVG.Matrix(o)) :
         // absolute
         new SVG.Matrix(o)
-    
+
     // act on rotation
     } else if (o.rotation != null) {
       // ensure centre point
@@ -2046,11 +2046,11 @@ SVG.extend(SVG.Element, SVG.FX, {
       if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
-          target.attr('transform', matrix + ' rotate(' + [o.rotation, o.cx, o.cy].join() + ')').ctm() :
+          matrix.rotate(o.rotation, o.cx, o.cy) :
           // absolute
           matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
       }
-    
+
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
       // ensure centre point
@@ -2083,7 +2083,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         var e = matrix.extract()
         matrix = matrix.multiply(new SVG.Matrix().skew(e.skewX, e.skewY, o.cx, o.cy).inverse())
       }
-      
+
       matrix = matrix.skew(o.skewX, o.skewY, o.cx, o.cy)
 
     // act on flip
@@ -2104,7 +2104,7 @@ SVG.extend(SVG.Element, SVG.FX, {
         if (o.y != null) matrix.f = o.y
       }
     }
-    
+
     return this.attr('transform', matrix)
   }
 })
@@ -2113,6 +2113,27 @@ SVG.extend(SVG.Element, {
   // Reset all transformations
   untransform: function() {
     return this.attr('transform', null)
+  },
+  matrixify: function() {
+
+    var matrix = (this.attr('transform') || '')
+      // split transformations
+      .split(/\)\s*/).slice(0,-1).map(function(str){
+        // generate key => value pairs
+        var kv = str.trim().split('(')
+        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
+      })
+      // calculate every transformation into one matrix
+      .reduce(function(matrix, transform){
+
+        if(transform[0] == 'matrix') return matrix.multiply(arrayToMatrix(transform[1]))
+        return matrix[transform[0]].apply(matrix, transform[1])
+
+      }, new SVG.Matrix())
+    // apply calculated matrix to element
+    this.attr('transform', matrix)
+
+    return matrix
   }
 })
 SVG.extend(SVG.Element, {
