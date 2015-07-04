@@ -1685,13 +1685,23 @@ __Important__: Mozilla browsers include stroke widths where other browsers do no
 __`returns`: `SVG.RBox`__
 
 ### ctm()
-Retreives the current transform matrix of the element:
+Retreives the current transform matrix of the element to the root coordinate system:
 
 ```javascript
 path.ctm()
 ```
 
 __`returns`: `SVG.Matrix`__
+
+### matrixify()
+Merges all transformations of the element into one single matrix which is returned
+
+```javascript
+path.matrixify()
+```
+
+__`returns`: `SVG.Matrix`__
+
 
 ### inside()
 To check if a given point is inside the bounding box of an element you can use the `inside()` method:
