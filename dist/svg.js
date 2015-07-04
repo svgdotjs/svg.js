@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 05 2015 01:33:26 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Jul 05 2015 01:38:16 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -973,14 +973,14 @@ SVG.Element = SVG.invent({
 
       // insert the clone after myself
       this.after(clone)
-      
+
       return clone
     }
     // Remove element
   , remove: function() {
       if (this.parent())
         this.parent().removeElement(this)
-      
+
       return this
     }
     // Replace element
@@ -1004,7 +1004,7 @@ SVG.Element = SVG.invent({
     // Checks whether the given point inside the bounding box of the element
   , inside: function(x, y) {
       var box = this.bbox()
-      
+
       return x > box.x
           && y > box.y
           && x < box.x + box.width
@@ -1098,7 +1098,7 @@ SVG.Element = SVG.invent({
 
         // transplant nodes
         for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
-          this.node.appendChild(well.firstChild.childNodes[i])
+          this.node.appendChild(well.firstChild.firstChild)
 
       // otherwise act as a getter
       } else {
