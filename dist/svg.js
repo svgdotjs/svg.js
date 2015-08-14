@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 05 2015 01:42:48 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Aug 14 2015 16:45:27 GMT+0100 (GMT Daylight Time)
 */;
 
 (function(root, factory) {
@@ -174,6 +174,9 @@ SVG.regex = {
   
   // Parse matrix wrapper
 , matrix:           /matrix\(|\)/g
+
+  // Elements of a matrix
+, matrixElements:   /,*\s+|,/
   
   // Whitespace
 , whitespace:       /\s/g
@@ -2121,7 +2124,7 @@ SVG.extend(SVG.Element, {
       .split(/\)\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
+        return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
       })
       // calculate every transformation into one matrix
       .reduce(function(matrix, transform){
@@ -4179,7 +4182,7 @@ function stringToMatrix(source) {
   source = source
     .replace(SVG.regex.whitespace, '')
     .replace(SVG.regex.matrix, '')
-    .split(',')
+    .split(SVG.regex.matrixElements)
 
   // convert string values to floats and convert to a matrix-formatted object
   return arrayToMatrix(
