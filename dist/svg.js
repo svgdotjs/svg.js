@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 05 2015 01:42:48 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Sep 06 2015 20:34:43 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -119,8 +119,8 @@ SVG.adopt = function(node) {
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
-  else if (node.nodeName == 'lineairGradient') // lineair?
-    element = new SVG.Gradient('lineair')
+  else if (node.nodeName == 'linearGradient')
+    element = new SVG.Gradient('linear')
   else if (node.nodeName == 'radialGradient')
     element = new SVG.Gradient('radial')
   else if (SVG[capitalize(node.nodeName)])
@@ -158,6 +158,7 @@ SVG.prepare = function(element) {
   , path: path
   }
 }
+
 // Storage for regular expressions
 SVG.regex = {
   // Parse unit value
