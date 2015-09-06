@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Jul 05 2015 01:42:48 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Sep 06 2015 20:34:43 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -158,6 +158,7 @@ SVG.prepare = function(element) {
   , path: path
   }
 }
+
 // Storage for regular expressions
 SVG.regex = {
   // Parse unit value
