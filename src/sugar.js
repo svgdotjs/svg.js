@@ -10,7 +10,7 @@ var sugar = {
 /* Add sugar for fill and stroke */
 ;['fill', 'stroke'].forEach(function(m) {
   var i, extension = {}
-  
+
   extension[m] = function(o) {
     if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
       this.attr(m, o)
@@ -20,12 +20,12 @@ var sugar = {
       for (i = sugar[m].length - 1; i >= 0; i--)
         if (o[sugar[m][i]] != null)
           this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
-    
+
     return this
   }
-  
+
   SVG.extend(SVG.Element, SVG.FX, extension)
-  
+
 })
 
 SVG.extend(SVG.Element, SVG.FX, {
@@ -76,8 +76,9 @@ SVG.extend(SVG.Element, SVG.FX, {
 SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    return (this.target || this).type == 'radial' ?
-      this.attr({ r: new SVG.Number(x) }) :
+    var type = (this.target || this).type;
+    return type == 'radial' || type == 'circle' ?
+      this.attr({ 'r': new SVG.Number(x) }) :
       this.rx(x).ry(y == null ? x : y)
   }
 })
@@ -94,7 +95,7 @@ SVG.extend(SVG.Path, {
 })
 
 SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
-  // Set font 
+  // Set font
   font: function(o) {
     for (var k in o)
       k == 'leading' ?
@@ -104,7 +105,7 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
       k == 'size' || k == 'family' || k == 'weight' || k == 'stretch' || k == 'variant' || k == 'style' ?
         this.attr('font-'+ k, o[k]) :
         this.attr(k, o[k])
-    
+
     return this
   }
 })
