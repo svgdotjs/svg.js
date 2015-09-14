@@ -98,8 +98,8 @@ SVG.adopt = function(node) {
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
-  else if (node.nodeName == 'lineairGradient') // lineair?
-    element = new SVG.Gradient('lineair')
+  else if (node.nodeName == 'linearGradient')
+    element = new SVG.Gradient('linear')
   else if (node.nodeName == 'radialGradient')
     element = new SVG.Gradient('radial')
   else if (SVG[capitalize(node.nodeName)])

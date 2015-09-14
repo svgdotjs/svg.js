@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Aug 14 2015 16:45:27 GMT+0100 (GMT Daylight Time)
+* BUILT: Sun Sep 06 2015 20:34:43 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -119,8 +119,8 @@ SVG.adopt = function(node) {
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
-  else if (node.nodeName == 'lineairGradient') // lineair?
-    element = new SVG.Gradient('lineair')
+  else if (node.nodeName == 'linearGradient')
+    element = new SVG.Gradient('linear')
   else if (node.nodeName == 'radialGradient')
     element = new SVG.Gradient('radial')
   else if (SVG[capitalize(node.nodeName)])
@@ -158,6 +158,7 @@ SVG.prepare = function(element) {
   , path: path
   }
 }
+
 // Storage for regular expressions
 SVG.regex = {
   // Parse unit value
@@ -174,9 +175,6 @@ SVG.regex = {
   
   // Parse matrix wrapper
 , matrix:           /matrix\(|\)/g
-
-  // Elements of a matrix
-, matrixElements:   /,*\s+|,/
   
   // Whitespace
 , whitespace:       /\s/g
@@ -2124,7 +2122,7 @@ SVG.extend(SVG.Element, {
       .split(/\)\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
+        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
       })
       // calculate every transformation into one matrix
       .reduce(function(matrix, transform){
@@ -4182,7 +4180,7 @@ function stringToMatrix(source) {
   source = source
     .replace(SVG.regex.whitespace, '')
     .replace(SVG.regex.matrix, '')
-    .split(SVG.regex.matrixElements)
+    .split(',')
 
   // convert string values to floats and convert to a matrix-formatted object
   return arrayToMatrix(
