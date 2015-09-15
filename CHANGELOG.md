@@ -1,26 +1,21 @@
 # 3.0.0
 
 - make transform-methods relative as default (breaking change)
-
-# 2.1.0
-
-- added transform to pattern and gradients
-
-# 2.0.0-rc.2 (?/11/2014)
-
 - added `morph()` method to `SVG.PathArray` -> __TODO!__
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `parents()` method to get an array of all parenting elements -> __TODO!__
 - added support for css selectors with the `parent()` method -> __TODO!__
 - added `enqueue()` method to `SVG.FX` -> __TODO!__
 - added `ungroup()` method -> __TODO!__ [thanks to Peter Uithoven]
-
-# 2.0.0-rc.1 (?/10/2014)
-
-- added specs for `SVG.FX` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
+- added specs for `SVG.FX` -> __TODO!__
+
+# 2.1.0
+
+- added transform to pattern and gradients
+- fixed clone of textnodes
 
 # 2.0.2 (22/06/2015)
 

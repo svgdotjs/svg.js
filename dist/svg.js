@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Sep 15 2015 23:20:25 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Sep 15 2015 23:39:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -3357,8 +3357,23 @@ SVG.Text = SVG.invent({
 
   // Add class methods
 , extend: {
+    clone: function(){
+      // TODO: overwrite clone-function to mime the right behavior
+
+      // clone element and assign new id
+      var clone = assignNewId(this.node.cloneNode(true))
+
+      clone.lines().each(function(){
+        this.newLined = true
+      })
+      
+      // insert the clone after myself
+      this.after(clone)
+
+      return clone
+    }
     // Move over x-axis
-    x: function(x) {
+  , x: function(x) {
       // act as getter
       if (x == null)
         return this.attr('x')

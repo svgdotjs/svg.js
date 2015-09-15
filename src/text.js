@@ -16,8 +16,22 @@ SVG.Text = SVG.invent({
 
   // Add class methods
 , extend: {
+    clone: function(){
+      // clone element and assign new id
+      var clone = assignNewId(this.node.cloneNode(true))
+
+      // mark first level tspans as newlines
+      clone.lines().each(function(){
+        this.newLined = true
+      })
+      
+      // insert the clone after myself
+      this.after(clone)
+
+      return clone
+    }
     // Move over x-axis
-    x: function(x) {
+  , x: function(x) {
       // act as getter
       if (x == null)
         return this.attr('x')
