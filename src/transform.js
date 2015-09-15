@@ -130,7 +130,7 @@ SVG.extend(SVG.Element, {
       .split(/\)\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
+        return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
       })
       // calculate every transformation into one matrix
       .reduce(function(matrix, transform){

@@ -72,7 +72,7 @@ function stringToMatrix(source) {
   source = source
     .replace(SVG.regex.whitespace, '')
     .replace(SVG.regex.matrix, '')
-    .split(',')
+    .split(SVG.regex.matrixElements)
 
   // convert string values to floats and convert to a matrix-formatted object
   return arrayToMatrix(

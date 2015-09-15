@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Sep 06 2015 20:34:43 GMT+0200 (CEST)
+* BUILT: Mon Sep 14 2015 14:08:55 GMT+0100 (GMT Daylight Time)
 */;
 
 (function(root, factory) {
@@ -175,6 +175,9 @@ SVG.regex = {
   
   // Parse matrix wrapper
 , matrix:           /matrix\(|\)/g
+
+  // Elements of a matrix
+, matrixElements:   /,*\s+|,/
   
   // Whitespace
 , whitespace:       /\s/g
@@ -2122,7 +2125,7 @@ SVG.extend(SVG.Element, {
       .split(/\)\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(',').map(function(str){ return parseFloat(str) })]
+        return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
       })
       // calculate every transformation into one matrix
       .reduce(function(matrix, transform){
@@ -3765,7 +3768,7 @@ var sugar = {
 /* Add sugar for fill and stroke */
 ;['fill', 'stroke'].forEach(function(m) {
   var i, extension = {}
-  
+
   extension[m] = function(o) {
     if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
       this.attr(m, o)
@@ -3775,12 +3778,12 @@ var sugar = {
       for (i = sugar[m].length - 1; i >= 0; i--)
         if (o[sugar[m][i]] != null)
           this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
-    
+
     return this
   }
-  
+
   SVG.extend(SVG.Element, SVG.FX, extension)
-  
+
 })
 
 SVG.extend(SVG.Element, SVG.FX, {
@@ -3831,8 +3834,9 @@ SVG.extend(SVG.Element, SVG.FX, {
 SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    return (this.target || this).type == 'radial' ?
-      this.attr({ r: new SVG.Number(x) }) :
+    var type = (this.target || this).type;
+    return type == 'radial' || type == 'circle' ?
+      this.attr({ 'r': new SVG.Number(x) }) :
       this.rx(x).ry(y == null ? x : y)
   }
 })
@@ -3849,7 +3853,7 @@ SVG.extend(SVG.Path, {
 })
 
 SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
-  // Set font 
+  // Set font
   font: function(o) {
     for (var k in o)
       k == 'leading' ?
@@ -3859,7 +3863,7 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
       k == 'size' || k == 'family' || k == 'weight' || k == 'stretch' || k == 'variant' || k == 'style' ?
         this.attr('font-'+ k, o[k]) :
         this.attr(k, o[k])
-    
+
     return this
   }
 })
@@ -4180,7 +4184,7 @@ function stringToMatrix(source) {
   source = source
     .replace(SVG.regex.whitespace, '')
     .replace(SVG.regex.matrix, '')
-    .split(',')
+    .split(SVG.regex.matrixElements)
 
   // convert string values to floats and convert to a matrix-formatted object
   return arrayToMatrix(
