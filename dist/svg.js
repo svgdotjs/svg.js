@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Sep 14 2015 14:08:55 GMT+0100 (GMT Daylight Time)
+* BUILT: Tue Sep 15 2015 23:20:25 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1873,6 +1873,14 @@ SVG.Matrix = SVG.invent({
   , skew: function(x, y, cx, cy) {
       return this.around(cx, cy, this.native().skewX(x || 0).skewY(y || 0))
     }
+    // SkewX
+  , skewX: function(x, cx, cy) {
+      return this.around(cx, cy, this.native().skewX(x || 0))
+    }
+    // SkewY
+  , skewY: function(y, cx, cy) {
+      return this.around(cx, cy, this.native().skewY(y || 0))
+    }
     // Transform around a center point
   , around: function(cx, cy, matrix) {
       return this
@@ -2109,7 +2117,7 @@ SVG.extend(SVG.Element, SVG.FX, {
       }
     }
 
-    return this.attr('transform', matrix)
+    return this.attr(this instanceof SVG.Pattern ? 'patternTransform' : this instanceof SVG.Gradient ? 'gradientTransform' : 'transform', matrix)
   }
 })
 

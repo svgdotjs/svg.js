@@ -114,7 +114,7 @@ SVG.extend(SVG.Element, SVG.FX, {
       }
     }
 
-    return this.attr('transform', matrix)
+    return this.attr(this instanceof SVG.Pattern ? 'patternTransform' : this instanceof SVG.Gradient ? 'gradientTransform' : 'transform', matrix)
   }
 })
 

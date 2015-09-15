@@ -129,6 +129,14 @@ SVG.Matrix = SVG.invent({
   , skew: function(x, y, cx, cy) {
       return this.around(cx, cy, this.native().skewX(x || 0).skewY(y || 0))
     }
+    // SkewX
+  , skewX: function(x, cx, cy) {
+      return this.around(cx, cy, this.native().skewX(x || 0))
+    }
+    // SkewY
+  , skewY: function(y, cx, cy) {
+      return this.around(cx, cy, this.native().skewY(y || 0))
+    }
     // Transform around a center point
   , around: function(cx, cy, matrix) {
       return this
