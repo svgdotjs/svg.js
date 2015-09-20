@@ -14,8 +14,11 @@
 
 # 2.1.0
 
-- added transform to pattern and gradients
-- fixed clone of textnodes
+- added transform to pattern and gradients (#383)
+- fixed clone of textnodes (#369)
+- fixed transformlists in IE (#372)
+- fixed typo that leads to broken gradients (#370)
+- fixed animate radius for circles (#367)
 
 # 2.0.2 (22/06/2015)
 

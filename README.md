@@ -3623,7 +3623,7 @@ Svg.js uses the `SVG.invent()` function to create all internal elements, so have
 
 
 ### SVG.extend()
-SVG.js has a modular structure. It is very easy to add you own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
+SVG.js has a modular structure. It is very easy to add your own methods at different levels. Let's say we want to add a method to all shape types then we would add our method to SVG.Shape:
 
 ```javascript
 SVG.extend(SVG.Shape, {
