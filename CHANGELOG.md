@@ -12,7 +12,11 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.1.0
+# 2.1.1
+
+- added custom context binding to event callback (default is the element the event is binded to)
+
+# 2.1.0 (20/09/2015)
 
 - added transform to pattern and gradients (#383)
 - fixed clone of textnodes (#369)

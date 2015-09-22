@@ -2873,6 +2873,12 @@ var click = function() {
 rect.on('click', click)
 ```
 
+**Note:** The context of `this` in the callback is binded to the element. You can change this context by applying your own object:
+
+```javascript
+rect.on('click', click, window) // context of this is window
+```
+
 __`returns`: `itself`__
 
 Unbinding events is just as easy:

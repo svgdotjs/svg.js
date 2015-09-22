@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.0.5
+* @version 2.1.0
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Sep 15 2015 23:39:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Sep 22 2015 20:44:15 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -2336,9 +2336,9 @@ SVG.listeners = []
 SVG.handlerMap = []
 
 // Add event binder in the SVG namespace
-SVG.on = function(node, event, listener) {
+SVG.on = function(node, event, listener, binding) {
   // create listener, get object-index
-  var l     = listener.bind(node.instance || node)
+  var l     = listener.bind(binding || node.instance || node)
     , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
     , ev    = event.split('.')[0]
     , ns    = event.split('.')[1] || '*'
@@ -2414,8 +2414,8 @@ SVG.off = function(node, event, listener) {
 //
 SVG.extend(SVG.Element, {
   // Bind given event to listener
-  on: function(event, listener) {
-    SVG.on(this.node, event, listener)
+  on: function(event, listener, binding) {
+    SVG.on(this.node, event, listener, binding)
     
     return this
   }
@@ -3358,11 +3358,10 @@ SVG.Text = SVG.invent({
   // Add class methods
 , extend: {
     clone: function(){
-      // TODO: overwrite clone-function to mime the right behavior
-
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
+      // mark first level tspans as newlines
       clone.lines().each(function(){
         this.newLined = true
       })

@@ -32,9 +32,9 @@ SVG.listeners = []
 SVG.handlerMap = []
 
 // Add event binder in the SVG namespace
-SVG.on = function(node, event, listener) {
+SVG.on = function(node, event, listener, binding) {
   // create listener, get object-index
-  var l     = listener.bind(node.instance || node)
+  var l     = listener.bind(binding || node.instance || node)
     , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
     , ev    = event.split('.')[0]
     , ns    = event.split('.')[1] || '*'
@@ -110,8 +110,8 @@ SVG.off = function(node, event, listener) {
 //
 SVG.extend(SVG.Element, {
   // Bind given event to listener
-  on: function(event, listener) {
-    SVG.on(this.node, event, listener)
+  on: function(event, listener, binding) {
+    SVG.on(this.node, event, listener, binding)
     
     return this
   }

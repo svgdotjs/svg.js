@@ -332,6 +332,10 @@ describe('Event', function() {
       dispatchEvent(rect.on('event', action), 'event')
       expect(context).toBe(rect)
     })
+    it('applies given object as context', function() {
+      dispatchEvent(rect.on('event', action, this), 'event')
+      expect(context).toBe(this)
+    })
     it('stores the listener for future reference', function() {
       rect.on('event', action)
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).not.toBeUndefined()
