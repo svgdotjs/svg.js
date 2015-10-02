@@ -2873,7 +2873,7 @@ var click = function() {
 rect.on('click', click)
 ```
 
-**Note:** The context of `this` in the callback is binded to the element. You can change this context by applying your own object:
+**Note:** The context of `this` in the callback is bound to the element. You can change this context by applying your own object:
 
 ```javascript
 rect.on('click', click, window) // context of this is window

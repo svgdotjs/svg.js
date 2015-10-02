@@ -14,7 +14,7 @@
 
 # 2.1.1
 
-- added custom context binding to event callback (default is the element the event is binded to)
+- added custom context binding to event callback (default is the element the event is bound to)
 
 # 2.1.0 (20/09/2015)
 
