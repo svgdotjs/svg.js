@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.1.0
+* @version 2.1.1
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Sep 22 2015 20:44:15 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Oct 05 2015 20:47:18 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
