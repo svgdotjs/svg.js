@@ -12,7 +12,11 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.1.1
+# 2.1.2 (??/??/2015)
+
+- fixed pattern and gradient animation (#385)
+
+# 2.1.1 (03/10/2015)
 
 - added custom context binding to event callback (default is the element the event is bound to)
 

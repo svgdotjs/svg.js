@@ -228,7 +228,7 @@ SVG.FX = SVG.invent({
             v = this.attrs[a].destination.multiply(v)
 
           // prepare matrix for morphing
-          this.attrs[a] = this.target.ctm().morph(v)
+          this.attrs[a] = (new SVG.Matrix(this.target)).morph(v)
 
           // add parametric rotation values
           if (this.param) {

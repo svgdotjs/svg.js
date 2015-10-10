@@ -1,6 +1,13 @@
 SVG.extend(SVG.Element, {
   // Set svg element attribute
   attr: function(a, v, n) {
+    // ensure right tranform attribute
+    if (a == 'transform')
+      if(this instanceof SVG.Pattern)
+        a = 'patternTransform'
+      else if(this instanceof SVG.Gradient)
+        a = 'gradientTransform'
+
     // act as full getter
     if (a == null) {
       // get an object of attributes
