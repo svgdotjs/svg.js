@@ -49,6 +49,7 @@ var parts = [
 , 'src/transform.js'
 , 'src/style.js'
 , 'src/parent.js'
+, 'src/ungroup.js'
 , 'src/container.js'
 , 'src/event.js'
 , 'src/defs.js'

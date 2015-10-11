@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Oct 10 2015 16:48:33 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Oct 11 2015 15:13:32 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1913,6 +1913,10 @@ SVG.Matrix = SVG.invent({
     // Get current matrix
     ctm: function() {
       return new SVG.Matrix(this.node.getCTM())
+    },
+    // Get current screen matrix
+    screenCTM: function() {
+      return new SVG.Matrix(this.node.getScreenCTM())
     }
 
   }
@@ -2133,6 +2137,7 @@ SVG.extend(SVG.Element, {
   untransform: function() {
     return this.attr('transform', null)
   },
+  // merge the whole transformation chain into one matrix
   matrixify: function() {
 
     var matrix = (this.attr('transform') || '')
@@ -2153,8 +2158,26 @@ SVG.extend(SVG.Element, {
     this.attr('transform', matrix)
 
     return matrix
+  },
+  // add an element to another parent without changing the visual representation on the screen
+  toParent: function(parent) {
+    if(this == parent) return this
+    var ctm = this.screenCTM()
+    var temp = parent.rect(1,1)
+    var pCtm = temp.screenCTM().inverse()
+    temp.remove()
+
+    this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
+
+    return this
+  },
+  // same as above with parent equals root-svg
+  toDoc: function() {
+    return this.toParent(this.doc())
   }
+
 })
+
 SVG.extend(SVG.Element, {
   // Dynamic style generator
   style: function(s, v) {
@@ -2282,6 +2305,32 @@ SVG.Parent = SVG.invent({
 
 })
 
+SVG.extend(SVG.Parent, {
+
+  ungroup: function(parent, deepness) {
+    if(deepness === 0) return this
+
+    parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
+    deepness = deepness || Infinity
+
+    this.each(function(){
+      if(this instanceof SVG.Parent){
+        return this.ungroup(parent, deepness-1)
+      }
+
+      return this.toParent(parent)
+    })
+
+    this.node.firstChild || this.remove()
+
+    return this
+  },
+
+  flatten: function(parent, deepness) {
+    return this.ungroup(parent, deepness)
+  }
+
+})
 SVG.Container = SVG.invent({
   // Initialize node
   create: function(element) {

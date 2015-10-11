@@ -6,15 +6,15 @@
 - added `parents()` method to get an array of all parenting elements -> __TODO!__
 - added support for css selectors with the `parent()` method -> __TODO!__
 - added `enqueue()` method to `SVG.FX` -> __TODO!__
-- added `ungroup()` method -> __TODO!__ [thanks to Peter Uithoven]
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.1.2 (??/??/2015)
+# 2.2.0 (??/??/2015)
 
 - fixed pattern and gradient animation (#385)
+- added ungroup/flatten (#238), toParent and toDoc
 
 # 2.1.1 (03/10/2015)
 

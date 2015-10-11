@@ -1571,6 +1571,43 @@ rect.putIn(group) //-> returns group
 
 __`returns`: `element`__
 
+### toParent()
+Moves an element to another parent (similar to add) but remains the visual representation. All transformations are merged and applied to the element.
+
+```javascript
+rect.toParent(group) // looks the same as before
+```
+
+__`returns`: `itself`__
+
+### toDoc()
+Same as `toParent()` but with the root-node as parent
+
+__`returns`: `itself`__
+
+### ungroup() / flatten()
+Break up the group/container and places all elements in the given parent while remaining their visual representation. The result is a flat svg structure e.g. for exporting
+
+```javascript
+// ungroups all elements in this group recursively and places them into the given parent
+// (default: parent container of the calling element)
+group.ungroup(parent, depth)
+
+// call it on the whole document to get a flat svg structure
+drawing.ungroup()
+
+// breaks up the group and places all elements in drawing
+group.ungroup(drawing)
+
+// breaks up all groups until it reaches a depth of 3
+drawing.ungroup(null, 3)
+
+// flat and export svg
+var svgString = drawing.ungroup().svg()
+```
+
+__`returns`: `itself`__
+
 ## Geometry
 
 ### viewbox()

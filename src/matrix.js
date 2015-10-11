@@ -169,6 +169,10 @@ SVG.Matrix = SVG.invent({
     // Get current matrix
     ctm: function() {
       return new SVG.Matrix(this.node.getCTM())
+    },
+    // Get current screen matrix
+    screenCTM: function() {
+      return new SVG.Matrix(this.node.getScreenCTM())
     }
 
   }

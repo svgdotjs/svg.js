@@ -123,6 +123,7 @@ SVG.extend(SVG.Element, {
   untransform: function() {
     return this.attr('transform', null)
   },
+  // merge the whole transformation chain into one matrix
   matrixify: function() {
 
     var matrix = (this.attr('transform') || '')
@@ -143,5 +144,22 @@ SVG.extend(SVG.Element, {
     this.attr('transform', matrix)
 
     return matrix
+  },
+  // add an element to another parent without changing the visual representation on the screen
+  toParent: function(parent) {
+    if(this == parent) return this
+    var ctm = this.screenCTM()
+    var temp = parent.rect(1,1)
+    var pCtm = temp.screenCTM().inverse()
+    temp.remove()
+
+    this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
+
+    return this
+  },
+  // same as above with parent equals root-svg
+  toDoc: function() {
+    return this.toParent(this.doc())
   }
+
 })
