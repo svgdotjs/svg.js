@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Oct 11 2015 15:13:32 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Oct 11 2015 15:43:14 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -2307,17 +2307,15 @@ SVG.Parent = SVG.invent({
 
 SVG.extend(SVG.Parent, {
 
-  ungroup: function(parent, deepness) {
-    if(deepness === 0) return this
+  ungroup: function(parent, depth) {
+    if(depth === 0 || this instanceof SVG.Defs) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
-    deepness = deepness || Infinity
+    depth = depth || Infinity
 
     this.each(function(){
-      if(this instanceof SVG.Parent){
-        return this.ungroup(parent, deepness-1)
-      }
-
+      if(this instanceof SVG.Defs) return this
+      if(this instanceof SVG.Parent) return this.ungroup(parent, depth-1)
       return this.toParent(parent)
     })
 
@@ -2326,8 +2324,8 @@ SVG.extend(SVG.Parent, {
     return this
   },
 
-  flatten: function(parent, deepness) {
-    return this.ungroup(parent, deepness)
+  flatten: function(parent, depth) {
+    return this.ungroup(parent, depth)
   }
 
 })
