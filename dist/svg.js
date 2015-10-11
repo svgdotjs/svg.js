@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Oct 11 2015 15:43:14 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Oct 11 2015 16:12:47 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1925,13 +1925,6 @@ SVG.Matrix = SVG.invent({
 SVG.extend(SVG.Element, {
   // Set svg element attribute
   attr: function(a, v, n) {
-    // ensure right tranform attribute
-    if (a == 'transform')
-      if(this instanceof SVG.Pattern)
-        a = 'patternTransform'
-      else if(this instanceof SVG.Gradient)
-        a = 'gradientTransform'
-
     // act as full getter
     if (a == null) {
       // get an object of attributes
@@ -2775,6 +2768,11 @@ SVG.Gradient = SVG.invent({
   , toString: function() {
       return this.fill()
     }
+    // custom attr to handle transform
+  , attr: function(a, b, c) {console.log('hallo')
+      if(a == 'transform') a = 'gradientTransform'
+      return SVG.Container.prototype.attr.call(this, a, b, c)
+    }
   }
 
   // Add parent method
@@ -2869,6 +2867,12 @@ SVG.Pattern = SVG.invent({
 	, toString: function() {
 	    return this.fill()
 	  }
+    // custom attr to handle transform
+  , attr: function(a, b, c) {
+      if(a == 'transform') a = 'patternTransform'
+      return SVG.Container.prototype.attr.call(this, a, b, c)
+    }
+
   }
 
   // Add parent method

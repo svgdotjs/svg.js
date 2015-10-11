@@ -26,6 +26,12 @@ SVG.Pattern = SVG.invent({
 	, toString: function() {
 	    return this.fill()
 	  }
+    // custom attr to handle transform
+  , attr: function(a, b, c) {
+      if(a == 'transform') a = 'patternTransform'
+      return SVG.Container.prototype.attr.call(this, a, b, c)
+    }
+
   }
   
   // Add parent method
