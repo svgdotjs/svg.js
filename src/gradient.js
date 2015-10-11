@@ -36,7 +36,7 @@ SVG.Gradient = SVG.invent({
       return this.fill()
     }
     // custom attr to handle transform
-  , attr: function(a, b, c) {console.log('hallo')
+  , attr: function(a, b, c) {
       if(a == 'transform') a = 'gradientTransform'
       return SVG.Container.prototype.attr.call(this, a, b, c)
     }

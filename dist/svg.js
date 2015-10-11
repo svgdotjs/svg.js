@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Oct 11 2015 16:12:47 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Oct 11 2015 21:55:27 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1594,12 +1594,19 @@ SVG.BBox = SVG.invent({
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
-        // mimic bbox
-        box = {
-          x:      element.node.clientLeft
-        , y:      element.node.clientTop
-        , width:  element.node.clientWidth
-        , height: element.node.clientHeight
+        try{
+          // clone element to visible place to get bbox (FF fix)
+          var clone = element.clone().addTo(SVG.parser.draw)
+          box = clone.bbox()
+          clone.remove()
+        } catch(e) {
+          // mimic bbox
+          box = {
+            x:      element.node.clientLeft
+          , y:      element.node.clientTop
+          , width:  element.node.clientWidth
+          , height: element.node.clientHeight
+          }
         }
       }
 
@@ -2769,7 +2776,7 @@ SVG.Gradient = SVG.invent({
       return this.fill()
     }
     // custom attr to handle transform
-  , attr: function(a, b, c) {console.log('hallo')
+  , attr: function(a, b, c) {
       if(a == 'transform') a = 'gradientTransform'
       return SVG.Container.prototype.attr.call(this, a, b, c)
     }

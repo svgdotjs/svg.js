@@ -10,12 +10,19 @@ SVG.BBox = SVG.invent({
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
-        // mimic bbox
-        box = {
-          x:      element.node.clientLeft
-        , y:      element.node.clientTop
-        , width:  element.node.clientWidth
-        , height: element.node.clientHeight
+        try{
+          // clone element to visible place to get bbox (FF fix)
+          var clone = element.clone().addTo(SVG.parser.draw)
+          box = clone.bbox()
+          clone.remove()
+        } catch(e) {
+          // mimic bbox
+          box = {
+            x:      element.node.clientLeft
+          , y:      element.node.clientTop
+          , width:  element.node.clientWidth
+          , height: element.node.clientHeight
+          }
         }
       }
       
