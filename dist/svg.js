@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Oct 22 2015 17:18:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu Oct 22 2015 22:36:38 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -3072,7 +3072,7 @@ SVG.Rect = SVG.invent({
 , construct: {
     // Create a rect element
     rect: function(width, height) {
-      return this.put(new SVG.Rect().size(width, height))
+      return this.put(new SVG.Rect()).size(width, height)
     }
   }
 })

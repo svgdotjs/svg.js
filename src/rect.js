@@ -9,7 +9,7 @@ SVG.Rect = SVG.invent({
 , construct: {
     // Create a rect element
     rect: function(width, height) {
-      return this.put(new SVG.Rect().size(width, height))
+      return this.put(new SVG.Rect()).size(width, height)
     }
   }
 })
