@@ -10,13 +10,11 @@ SVG.BBox = SVG.invent({
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
-        try{
-          // clone element to visible place to get bbox (FF fix)
+        if(element instanceof SVG.Shape){
           var clone = element.clone().addTo(SVG.parser.draw)
           box = clone.bbox()
           clone.remove()
-        } catch(e) {
-          // mimic bbox
+        }else{
           box = {
             x:      element.node.clientLeft
           , y:      element.node.clientTop

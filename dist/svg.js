@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Oct 11 2015 21:55:27 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu Oct 22 2015 17:18:44 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1594,13 +1594,11 @@ SVG.BBox = SVG.invent({
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
-        try{
-          // clone element to visible place to get bbox (FF fix)
+        if(element instanceof SVG.Shape){
           var clone = element.clone().addTo(SVG.parser.draw)
           box = clone.bbox()
           clone.remove()
-        } catch(e) {
-          // mimic bbox
+        }else{
           box = {
             x:      element.node.clientLeft
           , y:      element.node.clientTop
