@@ -1722,10 +1722,19 @@ __Important__: Mozilla browsers include stroke widths where other browsers do no
 __`returns`: `SVG.RBox`__
 
 ### ctm()
-Retreives the current transform matrix of the element to the root coordinate system:
+Retreives the current transform matrix of the element relative to the nearest viewport parent:
 
 ```javascript
 path.ctm()
+```
+
+__`returns`: `SVG.Matrix`__
+
+### screenCTM()
+Retreives the current transform matrix of the element relative to the screen:
+
+```javascript
+path.screenCTM()
 ```
 
 __`returns`: `SVG.Matrix`__
@@ -3285,7 +3294,7 @@ array.morph('100,0 0,100 200,200')
 
 This method will prepare the array ensuring both the source and destination arrays have the same length.
 
-Note that this method is currently not available on `SVG.PathArray` but will be soon.
+In order to morph paths you need to include the [svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) extension.
 
 __`returns`: `itself`__
 
@@ -3714,6 +3723,9 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 
 ## Plugins
 Here are a few nice plugins that are available for SVG.js:
+
+### pathmorphing
+[svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) to make path animateable
 
 ** Caution: Not tested for SVG.js 2.0 **
 
