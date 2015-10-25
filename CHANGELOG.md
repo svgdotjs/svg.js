@@ -16,6 +16,7 @@
 - fixed pattern and gradient animation (#385)
 - fixed mask animation in Firefox (#287)
 - added ungroup/flatten (#238), toParent and toDoc
+- added UMD-Wrapper with possibility to pass custom window object (#352)
 
 # 2.1.1 (03/10/2015)
 

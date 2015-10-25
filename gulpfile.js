@@ -8,8 +8,7 @@ var del     = require('del')
   , size    = require('gulp-size')
   , trim    = require('gulp-trimlines')
   , uglify  = require('gulp-uglify')
-  , wrapUmd = require('gulp-wrap-umd')
-  , wrapper = require('gulp-wrapper')
+  , wrapUmd = require('gulp-wrap')
   , request = require('request')
   , fs      = require('fs')
   , pkg     = require('./package.json')
@@ -98,10 +97,7 @@ gulp.task('unify', ['clean'], function() {
   return gulp.src(parts)
     .pipe(concat('svg.js', { newLine: '\n' }))
     // wrap the whole thing in an immediate function call
-    .pipe(wrapUmd({
-          namespace: 'SVG',
-          exports: 'SVG'
-      }))
+    .pipe(wrapUmd({ src: 'src/umd.js'}))
     .pipe(header(headerLong, { pkg: pkg }))
     .pipe(trim({ leading: false }))
     .pipe(chmod(644))

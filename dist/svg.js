@@ -6,18 +6,17 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Oct 22 2015 22:36:38 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Oct 25 2015 19:32:15 GMT+0100 (Mitteleuropäische Zeit)
 */;
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require, exports, module);
+    module.exports = root.document ? factory(root, root.document) : function(w){ return factory(w, w.document) };
   } else {
-    root.SVG = factory();
+    root.SVG = factory(root, root.document);
   }
-}(this, function(require, exports, module) {
+}(typeof window !== "undefined" ? window : this, function(window, document) {
 
 // The main wrapping element
 var SVG = this.SVG = function(element) {
@@ -4409,6 +4408,7 @@ if (typeof CustomEvent !== 'function') {
   w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
 
 }(window))
-return SVG;
+
+return SVG
 
 }));
