@@ -390,6 +390,17 @@ describe('Element', function() {
         , rect = group.rect(100,100)
       expect(rect.parent()).toBe(group)
     })
+    it('contains the parent which matches type', function() {
+      var group = draw.group()
+        , rect = group.rect(100,100)
+      expect(rect.parent(SVG.Doc)).toBe(draw)
+    })
+    it('contains the parent which matches selector', function() {
+      var group1 = draw.group().addClass('test')
+        , group2 = group1.group()
+        , rect = group2.rect(100,100)
+      expect(rect.parent('.test')).toBe(group1)
+    })
   })
   
   describe('clone()', function() {

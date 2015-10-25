@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Oct 25 2015 19:32:15 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Oct 25 2015 22:38:57 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1073,16 +1073,16 @@ SVG.Element = SVG.invent({
         // get parent element
         var parent = SVG.adopt(this.node.parentNode)
 
-        // if a specific type is given, find a parent with that class
+        // if a specific type or selector is given, find a parent with that class
         if (type)
-          while (!(parent instanceof type) && parent.node.parentNode instanceof SVGElement)
+          while (parent.node.parentNode instanceof SVGElement && !(typeof type === 'string' ? matches(parent.node, type) : parent instanceof type))
             parent = SVG.adopt(parent.node.parentNode)
 
         return parent
       }
     }
     // Get parent document
-  , doc: function(type) {
+  , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
     // Returns the svg node to call native svg methods on it
@@ -4194,6 +4194,11 @@ SVG.extend(SVG.Parent, {
   }
 
 })
+// tests if a given selector matches an element
+function matches(el, selector) {
+  return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+}
+
 // Convert dash-separated-string to camelCase
 function camelCase(s) {
   return s.toLowerCase().replace(/-(.)/g, function(m, g) {
