@@ -936,6 +936,23 @@ element.parent()
 
 __`returns`: `element`__
 
+Alternatively a class or css selector can be passed as the first argument:
+
+```javascript
+var draw   = SVG('drawing')
+var nested = draw.nested().addClass('test')
+var group  = nested.group()
+var rect   = group.rect(100, 100)
+
+rect.parent()           //-> returns group
+rect.parent(SVG.Doc)    //-> returns draw
+rect.parent(SVG.Nested) //-> returns nested
+rect.parent(SVG.G)      //-> returns group
+rect.parent('.test')    //-> returns nested
+```
+
+__`returns`: `element`__
+
 Even the main svg document:
 
 ```javascript
@@ -948,7 +965,7 @@ __`returns`: `HTMLNode`__
 
 
 ### doc()
-For more specific parent filtering the `doc()` method can be used:
+For retrieving the root svg you can use `doc()`
 
 ```javascript
 var draw = SVG('drawing')
@@ -956,21 +973,6 @@ var rect = draw.rect(100, 100)
 
 rect.doc() //-> returns draw
 ```
-
-Alternatively a class can be passed as the first argument:
-
-```javascript
-var draw   = SVG('drawing')
-var nested = draw.nested()
-var group  = nested.group()
-var rect   = group.rect(100, 100)
-
-rect.doc()           //-> returns draw
-rect.doc(SVG.Doc)    //-> returns draw
-rect.doc(SVG.Nested) //-> returns nested
-rect.doc(SVG.G)      //-> returns group
-```
-__`returns`: `element`__
 
 ## Child references
 
