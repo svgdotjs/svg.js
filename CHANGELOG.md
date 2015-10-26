@@ -2,7 +2,6 @@
 
 - make transform-methods relative as default (breaking change)
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
-- added `parents()` method to get an array of all parenting elements -> __TODO!__
 - added `enqueue()` method to `SVG.FX` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
@@ -16,7 +15,8 @@
 - added `ungroup()/flatten()` (#238), `toParent()` and `toDoc()`
 - added UMD-Wrapper with possibility to pass custom window object (#352)
 - added `morph()` method via plugin [svg.pathmorphing.js](https://github.com/Fuzzyma/svg.pathmorphing.js)
-- added support for css selectors with the `parent()` method
+- added support for css selectors within the `parent()` method
+- added `parents()` method to get an array of all parenting elements
 
 # 2.1.1 (03/10/2015)
 

@@ -974,6 +974,21 @@ var rect = draw.rect(100, 100)
 rect.doc() //-> returns draw
 ```
 
+### parents()
+To get all ancestors of the element filtered by type or css selector (see `parent()` method)
+
+```javascript
+var group1 = draw.group().addClass('test')
+  , group2 = group1.group()
+  , rect   = group2.rect(100,100)
+  
+rect.parents()        // returns [group1, group2, draw]
+rect.parents('.test') // returns [group1]
+rect.parents(SVG.G)   // returns [group1, group2]
+```
+
+__`returns`: `Array`__
+
 ## Child references
 
 ### first()
