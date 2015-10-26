@@ -16,7 +16,7 @@ describe('Ellipse', function() {
     it('sets the value of x with the first argument', function() {
       ellipse.x(123)
       var box = ellipse.bbox()
-      expect(box.x).toBe(123)
+      expect(box.x).toBeCloseTo(123)
     })
   })
   
@@ -75,8 +75,8 @@ describe('Ellipse', function() {
     it('sets the x and y position', function() {
       ellipse.move(123, 456)
       var box = ellipse.bbox()
-      expect(box.x).toBe(123)
-      expect(box.y).toBe(456)
+      expect(box.x).toBeCloseTo(123)
+      expect(box.y).toBeCloseTo(456)
     })
   })
 

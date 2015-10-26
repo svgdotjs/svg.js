@@ -16,7 +16,7 @@ describe('Circle', function() {
     it('sets the value of x with the first argument', function() {
       circle.x(123)
       var box = circle.bbox()
-      expect(box.x).toBe(123)
+      expect(box.x).toBeCloseTo(123)
     })
   })
   
@@ -86,7 +86,7 @@ describe('Circle', function() {
     it('sets the x and y position', function() {
       circle.move(123, 456)
       var box = circle.bbox()
-      expect(box.x).toBe(123)
+      expect(box.x).toBeCloseTo(123)
       expect(box.y).toBe(456)
     })
   })

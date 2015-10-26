@@ -213,7 +213,7 @@ describe('Text', function() {
         add.tspan('The second.')
         add.tspan('The third.')
       })
-      expect(text.length()).toBe(text.lines().get(0).length() + text.lines().get(1).length() + text.lines().get(2).length())
+      expect(text.length()).toBeCloseTo(text.lines().get(0).length() + text.lines().get(1).length() + text.lines().get(2).length(), 3)
     })
   })
   

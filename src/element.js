@@ -157,21 +157,41 @@ SVG.Element = SVG.invent({
     }
     // Returns the parent element instance
   , parent: function(type) {
-      if (this.node.parentNode) {
-        // get parent element
-        var parent = SVG.adopt(this.node.parentNode)
+      var parent = this
 
-        // if a specific type or selector is given, find a parent with that class
-        if (type)
-          while (parent.node.parentNode instanceof SVGElement && !(typeof type === 'string' ? matches(parent.node, type) : parent instanceof type))
-            parent = SVG.adopt(parent.node.parentNode)
+      // check for parent
+      if(!parent.node.parentNode) return null
 
-        return parent
+      // get parent element
+      parent = SVG.adopt(parent.node.parentNode)
+
+      if(!type) return parent
+
+      // loop trough ancestors if type is given
+      while(parent.node instanceof SVGElement){
+        if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+        parent = SVG.adopt(parent.node.parentNode)
       }
     }
     // Get parent document
   , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
+    }
+  , parents: function(type) {
+      var parents = [], parent = this
+
+      do{
+        parent = parent.parent(type)
+        if(!parent || !parent.node) break
+
+        parents.push(parent)
+      } while(parent.parent)
+
+      return parents
+    }
+    // matches the element vs a css selector
+  , matches: function(selector){
+      return matches(this.node, selector)
     }
     // Returns the svg node to call native svg methods on it
   , native: function() {

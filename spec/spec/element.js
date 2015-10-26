@@ -354,20 +354,20 @@ describe('Element', function() {
     it('returns the correct rectangular box', function() {
       var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12)
       var box = rect.rbox()
-      expect(box.x).toBe(2)
-      expect(box.y).toBe(12)
-      expect(box.cx).toBe(54.5)
-      expect(box.cy).toBe(117)
+      expect(box.x).toBeCloseTo(2,0)
+      expect(box.y).toBeCloseTo(12)
+      expect(box.cx).toBeCloseTo(54.5)
+      expect(box.cy).toBeCloseTo(117)
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
     })
     it('returns the correct rectangular box within a viewbox', function() {
       var rect = draw.size(200,150).viewbox(0,0,100,75).rect(105,210).move(2,12)
       var box = rect.rbox()
-      expect(box.x).toBe(4)
-      expect(box.y).toBe(24)
-      expect(box.cx).toBe(56.5)
-      expect(box.cy).toBe(129)
+      expect(box.x).toBeCloseTo(4)
+      expect(box.y).toBeCloseTo(24)
+      expect(box.cx).toBeCloseTo(56.5)
+      expect(box.cy).toBeCloseTo(129)
       expect(box.width).toBe(105)
       expect(box.height).toBe(210)
     })
@@ -380,7 +380,7 @@ describe('Element', function() {
     })
   })
   
-  describe('parent', function() {
+  describe('parent()', function() {
     it('contains the parent svg', function() {
       var rect = draw.rect(100,100)
       expect(rect.parent()).toBe(draw)
@@ -400,6 +400,19 @@ describe('Element', function() {
         , group2 = group1.group()
         , rect = group2.rect(100,100)
       expect(rect.parent('.test')).toBe(group1)
+    })
+  })
+  
+  describe('parents()', function() {
+    it('returns array of parent up to but not including the dom element filtered by type', function() {
+      var group1 = draw.group().addClass('test')
+        , group2 = group1.group()
+        , rect = group2.rect(100,100)
+
+      expect(rect.parents('.test')[0]).toBe(group1)
+      expect(rect.parents(SVG.G)[0]).toBe(group2)
+      expect(rect.parents(SVG.G)[1]).toBe(group1)
+      expect(rect.parents().length).toBe(3)
     })
   })
   

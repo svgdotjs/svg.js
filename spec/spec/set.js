@@ -139,10 +139,10 @@ describe('Set', function() {
 
       var box = set.bbox()
 
-      expect(box.x).toBe(0)
-      expect(box.y).toBe(0)
-      expect(box.width).toBe(300)
-      expect(box.height).toBe(350)
+      expect(box.x).toBeCloseTo(0)
+      expect(box.y).toBeCloseTo(0)
+      expect(box.width).toBeCloseTo(300)
+      expect(box.height).toBeCloseTo(350)
     })
     it('returns an instance of SVG.BBox', function() {
       set.add(e1).add(e2).add(e3).add(e4).add(e5)
