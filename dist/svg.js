@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Oct 26 2015 22:54:39 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Nov 04 2015 02:42:46 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3444,9 +3444,11 @@ SVG.Text = SVG.invent({
       var clone = assignNewId(this.node.cloneNode(true))
 
       // mark first level tspans as newlines
-      clone.lines().each(function(){
-        this.newLined = true
+      this.lines().each(function(i){
+        clone.lines().get(i).newLined = this.newLined;
       })
+
+      clone._leading = new SVG.Number(this._leading.valueOf())
 
       // insert the clone after myself
       this.after(clone)
@@ -3487,7 +3489,22 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       // act as getter
-      if (typeof text === 'undefined') return this.content
+      if (typeof text === 'undefined'){
+        var text = ''
+        var children = this.node.childNodes
+        for(var i = 0, len = children.length; i < len; ++i){
+
+          // add newline if its not the first child and newLined is set to true
+          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).newLined == true){
+            text += '\n'
+          }
+
+          // add content of this node
+          text += children[i].textContent
+        }
+
+        return text
+      }
 
       // remove existing content
       this.clear().build(true)
@@ -3498,7 +3515,7 @@ SVG.Text = SVG.invent({
 
       } else {
         // store text and make sure text is not blank
-        text = (this.content = text).split('\n')
+        text = text.split('\n')
 
         // build new lines
         for (var i = 0, il = text.length; i < il; i++)
@@ -3624,7 +3641,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
       this.clear()
 
     // create text node
-    this.node.appendChild(document.createTextNode((this.content = text)))
+    this.node.appendChild(document.createTextNode(text))
 
     return this
   }
@@ -3649,10 +3666,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
-
-    // reset content references
-    if (this instanceof SVG.Text)
-      this.content = ''
 
     return this
   }

@@ -123,9 +123,9 @@ describe('Text', function() {
       text.text('It is\nJUST\na bear!')
       expect(text.node.childNodes.length).toBe(3)
     })
-    it('stores the text value in the content reference', function() {
+    it('restores the content from the dom', function() {
       text.text('It is\nJUST\na bear!')
-      expect(text.content).toBe('It is\nJUST\na bear!')
+      expect(text.text()).toBe('It is\nJUST\na bear!')
     })
     it('gets the given content of a text element without an argument', function() {
       text.text('It is another bear!')
@@ -155,9 +155,9 @@ describe('Text', function() {
       expect(text.node.childNodes.length).toBe(1)
       expect(text.node.childNodes[0].nodeValue).toBe('It is not a bear!')
     })
-    it('stores the text value in the content reference', function() {
+    it('restores the content from the dom', function() {
       text.plain('Just plain text!')
-      expect(text.content).toBe('Just plain text!')
+      expect(text.text()).toBe('Just plain text!')
     })
   })
 
@@ -184,10 +184,6 @@ describe('Text', function() {
       expect(text.node.childNodes.length).toBe(3)
       text.clear()
       expect(text.node.childNodes.length).toBe(0)
-    })
-    it('clears the stored content value', function() {
-      text.text('Stored locally.')
-      expect(text.content).toBe('Stored locally.')
     })
   })
 

@@ -21,7 +21,7 @@ SVG.supported = (function() {
          !! document.createElementNS(SVG.ns,'svg').createSVGRect
 })()
 
-// Don't bother to continue if SVG is not supported 
+// Don't bother to continue if SVG is not supported
 if (!SVG.supported) return false
 
 // Element id sequence
@@ -36,23 +36,23 @@ SVG.eid = function(name) {
 SVG.create = function(name) {
   // create element
   var element = document.createElementNS(this.ns, name)
-  
+
   // apply unique id
   element.setAttribute('id', this.eid(name))
-  
+
   return element
 }
 
 // Method for extending objects
 SVG.extend = function() {
   var modules, methods, key, i
-  
+
   // Get list of modules
   modules = [].slice.call(arguments)
-  
+
   // Get object with extensions
   methods = modules.pop()
-  
+
   for (i = modules.length - 1; i >= 0; i--)
     if (modules[i])
       for (key in methods)

@@ -2,7 +2,7 @@ SVG.Text = SVG.invent({
   // Initialize node
   create: function() {
     this.constructor.call(this, SVG.create('text'))
-    
+
     this._leading = new SVG.Number(1.3)    // store leading value for rebuilding
     this._rebuild = true                   // enable automatic updating of dy values
     this._build   = false                  // disable build mode for adding multiple lines
@@ -21,10 +21,12 @@ SVG.Text = SVG.invent({
       var clone = assignNewId(this.node.cloneNode(true))
 
       // mark first level tspans as newlines
-      clone.lines().each(function(){
-        this.newLined = true
+      this.lines().each(function(i){
+        clone.lines().get(i).newLined = this.newLined;
       })
       
+      clone._leading = new SVG.Number(this._leading.valueOf())
+
       // insert the clone after myself
       this.after(clone)
 
@@ -35,7 +37,7 @@ SVG.Text = SVG.invent({
       // act as getter
       if (x == null)
         return this.attr('x')
-      
+
       // move lines as well if no textPath is present
       if (!this.textPath)
         this.lines().each(function() { if (this.newLined) this.x(x) })
@@ -64,24 +66,39 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       // act as getter
-      if (typeof text === 'undefined') return this.content
-      
+      if (typeof text === 'undefined'){
+        var text = ''
+        var children = this.node.childNodes
+        for(var i = 0, len = children.length; i < len; ++i){
+          
+          // add newline if its not the first child and newLined is set to true
+          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).newLined == true){
+            text += '\n'
+          }
+          
+          // add content of this node
+          text += children[i].textContent
+        }
+
+        return text
+      }
+
       // remove existing content
       this.clear().build(true)
-      
+
       if (typeof text === 'function') {
         // call block
         text.call(this, this)
 
       } else {
         // store text and make sure text is not blank
-        text = (this.content = text).split('\n')
-        
+        text = text.split('\n')
+
         // build new lines
         for (var i = 0, il = text.length; i < il; i++)
           this.tspan(text[i]).newLine()
       }
-      
+
       // disable build mode and rebuild lines
       return this.build(false).rebuild()
     }
@@ -94,10 +111,10 @@ SVG.Text = SVG.invent({
       // act as getter
       if (value == null)
         return this._leading
-      
+
       // act as setter
       this._leading = new SVG.Number(value)
-      
+
       return this.rebuild()
     }
     // Get all the first level lines
@@ -119,13 +136,13 @@ SVG.Text = SVG.invent({
       // define position of all lines
       if (this._rebuild) {
         var self = this
-        
+
         this.lines().each(function() {
           if (this.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
-            
-            this.attr('dy', self._leading * new SVG.Number(self.attr('font-size'))) 
+
+            this.attr('dy', self._leading * new SVG.Number(self.attr('font-size')))
           }
         })
 
@@ -140,7 +157,7 @@ SVG.Text = SVG.invent({
       return this
     }
   }
-  
+
   // Add parent method
 , construct: {
     // Create text element
@@ -190,7 +207,7 @@ SVG.Tspan = SVG.invent({
       return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
     }
   }
-  
+
 })
 
 SVG.extend(SVG.Text, SVG.Tspan, {
@@ -201,8 +218,8 @@ SVG.extend(SVG.Text, SVG.Tspan, {
       this.clear()
 
     // create text node
-    this.node.appendChild(document.createTextNode((this.content = text)))
-    
+    this.node.appendChild(document.createTextNode(text))
+
     return this
   }
   // Create a tspan
@@ -213,7 +230,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     // clear if build mode is disabled
     if (this._build === false)
       this.clear()
-    
+
     // add new tspan
     node.appendChild(tspan.node)
 
@@ -226,11 +243,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     // remove existing child nodes
     while (node.hasChildNodes())
       node.removeChild(node.lastChild)
-    
-    // reset content references 
-    if (this instanceof SVG.Text)
-      this.content = ''
-    
+
     return this
   }
   // Get length of text element
