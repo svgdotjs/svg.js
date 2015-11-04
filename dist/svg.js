@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 04 2015 02:42:46 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Nov 04 2015 10:50:41 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3647,7 +3647,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
   }
   // Create a tspan
 , tspan: function(text) {
-    var node  = (this.textPath() || this).node
+    var node  = (this.textPath && this.textPath() || this).node
       , tspan = new SVG.Tspan
 
     // clear if build mode is disabled
@@ -3661,7 +3661,7 @@ SVG.extend(SVG.Text, SVG.Tspan, {
   }
   // Clear all lines
 , clear: function() {
-    var node = (this.textPath() || this).node
+    var node = (this.textPath && this.textPath() || this).node
 
     // remove existing child nodes
     while (node.hasChildNodes())
