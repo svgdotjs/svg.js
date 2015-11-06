@@ -13,9 +13,10 @@
 - fixed pattern and gradient animation (#385)
 - fixed mask animation in Firefox (#287)
 - fixed return value of `text()` after import/clone (#393)
+- svgjs now saves crucial data in the dom before export and restores them when element is adopted
 - added `ungroup()/flatten()` (#238), `toParent()` and `toDoc()`
 - added UMD-Wrapper with possibility to pass custom window object (#352)
-- added `morph()` method via plugin [svg.pathmorphing.js](https://github.com/Fuzzyma/svg.pathmorphing.js)
+- added `morph()` method for paths via plugin [svg.pathmorphing.js](https://github.com/Fuzzyma/svg.pathmorphing.js)
 - added support for css selectors within the `parent()` method
 - added `parents()` method to get an array of all parenting elements
 

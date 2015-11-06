@@ -5,6 +5,9 @@ SVG.Element = SVG.invent({
     // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
 
+    // initialize data object
+    this.dom = {}
+
     // create circular reference
     if (this.node = node) {
       this.type = node.nodeName
@@ -177,6 +180,7 @@ SVG.Element = SVG.invent({
   , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
+    // return array of all ancestors of given type up to the root svg
   , parents: function(type) {
       var parents = [], parent = this
 
@@ -216,6 +220,9 @@ SVG.Element = SVG.invent({
         // create a wrapping svg element in case of partial content
         well.appendChild(svg = document.createElement('svg'))
 
+        // write svgjs data to the dom
+        this.writeDataToDom()
+
         // insert a copy of this node
         svg.appendChild(this.node.cloneNode(true))
 
@@ -223,6 +230,27 @@ SVG.Element = SVG.invent({
         return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
       }
 
+      return this
+    }
+  // write svgjs data to the dom
+  , writeDataToDom: function() {
+
+      // dump variables recursively
+      if(this.each || this.lines){
+        var fn = this.each ? this : this.lines();
+        fn.each(function(){
+          this.writeDataToDom()
+        })
+      }
+
+      if(Object.keys(this.dom).length)
+        this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
+        
+      return this
+    }
+  // set given data to the elements data property
+  , setData: function(o){
+      this.dom = o
       return this
     }
   }

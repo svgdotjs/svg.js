@@ -3,9 +3,9 @@ SVG.Text = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('text'))
 
-    this._leading = new SVG.Number(1.3)    // store leading value for rebuilding
-    this._rebuild = true                   // enable automatic updating of dy values
-    this._build   = false                  // disable build mode for adding multiple lines
+    this.dom.leading = new SVG.Number(1.3)    // store leading value for rebuilding
+    this._rebuild = true                      // enable automatic updating of dy values
+    this._build   = false                     // disable build mode for adding multiple lines
 
     // set default font
     this.attr('font-family', SVG.defaults.attrs['font-family'])
@@ -20,13 +20,6 @@ SVG.Text = SVG.invent({
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
-      // mark first level tspans as newlines
-      this.lines().each(function(i){
-        clone.lines().get(i).newLined = this.newLined;
-      })
-      
-      clone._leading = new SVG.Number(this._leading.valueOf())
-
       // insert the clone after myself
       this.after(clone)
 
@@ -40,7 +33,7 @@ SVG.Text = SVG.invent({
 
       // move lines as well if no textPath is present
       if (!this.textPath)
-        this.lines().each(function() { if (this.newLined) this.x(x) })
+        this.lines().each(function() { if (this.dom.newLined) this.x(x) })
 
       return this.attr('x', x)
     }
@@ -72,7 +65,7 @@ SVG.Text = SVG.invent({
         for(var i = 0, len = children.length; i < len; ++i){
           
           // add newline if its not the first child and newLined is set to true
-          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).newLined == true){
+          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
             text += '\n'
           }
           
@@ -110,10 +103,10 @@ SVG.Text = SVG.invent({
   , leading: function(value) {
       // act as getter
       if (value == null)
-        return this._leading
+        return this.dom.leading
 
       // act as setter
-      this._leading = new SVG.Number(value)
+      this.dom.leading = new SVG.Number(value)
 
       return this.rebuild()
     }
@@ -138,11 +131,11 @@ SVG.Text = SVG.invent({
         var self = this
 
         this.lines().each(function() {
-          if (this.newLined) {
+          if (this.dom.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
 
-            this.attr('dy', self._leading * new SVG.Number(self.attr('font-size')))
+            this.attr('dy', self.dom.leading * new SVG.Number(self.attr('font-size')))
           }
         })
 
@@ -154,6 +147,12 @@ SVG.Text = SVG.invent({
     // Enable / disable build mode
   , build: function(build) {
       this._build = !!build
+      return this
+    }
+    // overwrite method from parent to set data properly
+  , setData: function(o){
+      this.dom = o
+      this.dom.leading = o.leading ? new SVG.Number(o.leading.value, o.leading.unit) : new SVG.Number(1.3)
       return this
     }
   }
@@ -201,10 +200,10 @@ SVG.Tspan = SVG.invent({
       var t = this.parent(SVG.Text)
 
       // mark new line
-      this.newLined = true
+      this.dom.newLined = true
 
       // apply new hy¡n
-      return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
+      return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
 

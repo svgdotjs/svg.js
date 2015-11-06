@@ -14,6 +14,7 @@ var SVG = this.SVG = function(element) {
 SVG.ns    = 'http://www.w3.org/2000/svg'
 SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
+SVG.svgjs = 'http://svgjs.com/svgjs'
 
 // Svg support test
 SVG.supported = (function() {
@@ -115,6 +116,9 @@ SVG.adopt = function(node) {
   // SVG.Class specific preparations
   if (element instanceof SVG.Doc)
     element.namespace().defs()
+
+  // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
+  element.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
 
   return element
 }

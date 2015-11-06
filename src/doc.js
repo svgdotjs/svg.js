@@ -2,13 +2,13 @@ SVG.Doc = SVG.invent({
   // Initialize node
   create: function(element) {
     if (element) {
-      /* ensure the presence of a dom element */
+      // ensure the presence of a dom element
       element = typeof element == 'string' ?
         document.getElementById(element) :
         element
       
-      /* If the target is an svg element, use that element as the main wrapper.
-         This allows svg.js to work with svg documents as well. */
+      // If the target is an svg element, use that element as the main wrapper.
+      // This allows svg.js to work with svg documents as well.
       if (element.nodeName == 'svg') {
         this.constructor.call(this, element)
       } else {
@@ -16,7 +16,7 @@ SVG.Doc = SVG.invent({
         element.appendChild(this.node)
       }
       
-      /* set svg element attributes and ensure defs node */
+      // set svg element attributes and ensure defs node
       this.namespace().size('100%', '100%').defs()
     }
   }
@@ -31,6 +31,7 @@ SVG.Doc = SVG.invent({
       return this
         .attr({ xmlns: SVG.ns, version: '1.1' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+        .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
     }
     // Creates and returns defs element
   , defs: function() {

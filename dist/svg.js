@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 04 2015 10:50:41 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Nov 06 2015 21:41:47 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -34,6 +34,7 @@ var SVG = this.SVG = function(element) {
 SVG.ns    = 'http://www.w3.org/2000/svg'
 SVG.xmlns = 'http://www.w3.org/2000/xmlns/'
 SVG.xlink = 'http://www.w3.org/1999/xlink'
+SVG.svgjs = 'http://svgjs.com/svgjs'
 
 // Svg support test
 SVG.supported = (function() {
@@ -135,6 +136,9 @@ SVG.adopt = function(node) {
   // SVG.Class specific preparations
   if (element instanceof SVG.Doc)
     element.namespace().defs()
+
+  // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
+  element.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
 
   return element
 }
@@ -917,6 +921,9 @@ SVG.Element = SVG.invent({
     // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
 
+    // initialize data object
+    this.dom = {}
+
     // create circular reference
     if (this.node = node) {
       this.type = node.nodeName
@@ -1089,6 +1096,7 @@ SVG.Element = SVG.invent({
   , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
+    // return array of all ancestors of given type up to the root svg
   , parents: function(type) {
       var parents = [], parent = this
 
@@ -1128,6 +1136,9 @@ SVG.Element = SVG.invent({
         // create a wrapping svg element in case of partial content
         well.appendChild(svg = document.createElement('svg'))
 
+        // write svgjs data to the dom
+        this.writeDataToDom()
+
         // insert a copy of this node
         svg.appendChild(this.node.cloneNode(true))
 
@@ -1135,6 +1146,27 @@ SVG.Element = SVG.invent({
         return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
       }
 
+      return this
+    }
+  // write svgjs data to the dom
+  , writeDataToDom: function() {
+
+      // dump variables recursively
+      if(this.each || this.lines){
+        var fn = this.each ? this : this.lines();
+        fn.each(function(){
+          this.writeDataToDom()
+        })
+      }
+
+      if(Object.keys(this.dom).length)
+        this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
+
+      return this
+    }
+  // set given data to the elements data property
+  , setData: function(o){
+      this.dom = o
       return this
     }
   }
@@ -2925,13 +2957,13 @@ SVG.Doc = SVG.invent({
   // Initialize node
   create: function(element) {
     if (element) {
-      /* ensure the presence of a dom element */
+      // ensure the presence of a dom element
       element = typeof element == 'string' ?
         document.getElementById(element) :
         element
 
-      /* If the target is an svg element, use that element as the main wrapper.
-         This allows svg.js to work with svg documents as well. */
+      // If the target is an svg element, use that element as the main wrapper.
+      // This allows svg.js to work with svg documents as well.
       if (element.nodeName == 'svg') {
         this.constructor.call(this, element)
       } else {
@@ -2939,7 +2971,7 @@ SVG.Doc = SVG.invent({
         element.appendChild(this.node)
       }
 
-      /* set svg element attributes and ensure defs node */
+      // set svg element attributes and ensure defs node
       this.namespace().size('100%', '100%').defs()
     }
   }
@@ -2954,6 +2986,7 @@ SVG.Doc = SVG.invent({
       return this
         .attr({ xmlns: SVG.ns, version: '1.1' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+        .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
     }
     // Creates and returns defs element
   , defs: function() {
@@ -3426,9 +3459,9 @@ SVG.Text = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('text'))
 
-    this._leading = new SVG.Number(1.3)    // store leading value for rebuilding
-    this._rebuild = true                   // enable automatic updating of dy values
-    this._build   = false                  // disable build mode for adding multiple lines
+    this.dom.leading = new SVG.Number(1.3)    // store leading value for rebuilding
+    this._rebuild = true                      // enable automatic updating of dy values
+    this._build   = false                     // disable build mode for adding multiple lines
 
     // set default font
     this.attr('font-family', SVG.defaults.attrs['font-family'])
@@ -3443,13 +3476,6 @@ SVG.Text = SVG.invent({
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
-      // mark first level tspans as newlines
-      this.lines().each(function(i){
-        clone.lines().get(i).newLined = this.newLined;
-      })
-
-      clone._leading = new SVG.Number(this._leading.valueOf())
-
       // insert the clone after myself
       this.after(clone)
 
@@ -3463,7 +3489,7 @@ SVG.Text = SVG.invent({
 
       // move lines as well if no textPath is present
       if (!this.textPath)
-        this.lines().each(function() { if (this.newLined) this.x(x) })
+        this.lines().each(function() { if (this.dom.newLined) this.x(x) })
 
       return this.attr('x', x)
     }
@@ -3495,7 +3521,7 @@ SVG.Text = SVG.invent({
         for(var i = 0, len = children.length; i < len; ++i){
 
           // add newline if its not the first child and newLined is set to true
-          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).newLined == true){
+          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
             text += '\n'
           }
 
@@ -3533,10 +3559,10 @@ SVG.Text = SVG.invent({
   , leading: function(value) {
       // act as getter
       if (value == null)
-        return this._leading
+        return this.dom.leading
 
       // act as setter
-      this._leading = new SVG.Number(value)
+      this.dom.leading = new SVG.Number(value)
 
       return this.rebuild()
     }
@@ -3561,11 +3587,11 @@ SVG.Text = SVG.invent({
         var self = this
 
         this.lines().each(function() {
-          if (this.newLined) {
+          if (this.dom.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
 
-            this.attr('dy', self._leading * new SVG.Number(self.attr('font-size')))
+            this.attr('dy', self.dom.leading * new SVG.Number(self.attr('font-size')))
           }
         })
 
@@ -3577,6 +3603,12 @@ SVG.Text = SVG.invent({
     // Enable / disable build mode
   , build: function(build) {
       this._build = !!build
+      return this
+    }
+    // overwrite method from parent to set data properly
+  , setData: function(o){
+      this.dom = o
+      this.dom.leading = o.leading ? new SVG.Number(o.leading.value, o.leading.unit) : new SVG.Number(1.3)
       return this
     }
   }
@@ -3624,10 +3656,10 @@ SVG.Tspan = SVG.invent({
       var t = this.parent(SVG.Text)
 
       // mark new line
-      this.newLined = true
+      this.dom.newLined = true
 
       // apply new hy¡n
-      return this.dy(t._leading * t.attr('font-size')).attr('x', t.x())
+      return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
 
