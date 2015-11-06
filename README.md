@@ -3742,9 +3742,10 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 Here are a few nice plugins that are available for SVG.js:
 
 ### pathmorphing
-[svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) to make path animateable
+[svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) to make path animatable
 
-** Caution: Not tested for SVG.js 2.0 **
+### textmorphing
+[svg.textmorph.js](https://github.com/wout/svg.textmorph.js) to make text animatable
 
 ### absorb
 [svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into an SVG.js instance.
