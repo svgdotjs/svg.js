@@ -13,15 +13,15 @@ SVG.extend(SVG.PathArray, {
   }
   // Move path string
 , move: function(x, y) {
-		/* get bounding box of current situation */
-		var box = this.bbox()
-		
-    /* get relative offset */
+    // get bounding box of current situation 
+    var box = this.bbox()
+    
+    // get relative offset 
     x -= box.x
     y -= box.y
 
     if (!isNaN(x) && !isNaN(y)) {
-      /* move every point */
+      // move every point 
       for (var l, i = this.value.length - 1; i >= 0; i--) {
         l = this.value[i][0]
 
@@ -58,10 +58,10 @@ SVG.extend(SVG.PathArray, {
   }
   // Resize path string
 , size: function(width, height) {
-		/* get bounding box of current situation */
-		var i, l, box = this.bbox()
+    // get bounding box of current situation 
+    var i, l, box = this.bbox()
 
-    /* recalculate position of all points according to new size */
+    // recalculate position of all points according to new size 
     for (i = this.value.length - 1; i >= 0; i--) {
       l = this.value[i][0]
 
@@ -87,11 +87,11 @@ SVG.extend(SVG.PathArray, {
         }
 
       } else if (l == 'A')  {
-        /* resize radii */
+        // resize radii 
         this.value[i][1] = (this.value[i][1] * width)  / box.width
         this.value[i][2] = (this.value[i][2] * height) / box.height
 
-        /* move position values */
+        // move position values 
         this.value[i][6] = ((this.value[i][6] - box.x) * width)  / box.width  + box.x
         this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
       }
@@ -102,25 +102,25 @@ SVG.extend(SVG.PathArray, {
   }
   // Absolutize and parse path to array
 , parse: function(array) {
-    /* if it's already is a patharray, no need to parse it */
+    // if it's already is a patharray, no need to parse it 
     if (array instanceof SVG.PathArray) return array.valueOf()
 
-    /* prepare for parsing */
+    // prepare for parsing 
     var i, il, x0, y0, x1, y1, x2, y2, s, seg, segs
       , x = 0
       , y = 0
     
-    /* populate working path */
+    // populate working path 
     SVG.parser.path.setAttribute('d', typeof array === 'string' ? array : arrayToString(array))
     
-    /* get segments */
+    // get segments 
     segs = SVG.parser.path.pathSegList
 
     for (i = 0, il = segs.numberOfItems; i < il; ++i) {
       seg = segs.getItem(i)
       s = seg.pathSegTypeAsLetter
 
-      /* yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex */
+      // yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex 
       if (s == 'M' || s == 'L' || s == 'H' || s == 'V' || s == 'C' || s == 'S' || s == 'Q' || s == 'T' || s == 'A') {
         if ('x' in seg) x = seg.x
         if ('y' in seg) y = seg.y
@@ -157,14 +157,14 @@ SVG.extend(SVG.PathArray, {
         }
       }
 
-      /* record the start of a subpath */
+      // record the start of a subpath 
       if (s == 'M' || s == 'm') {
         x0 = x
         y0 = y
       }
     }
 
-    /* build internal representation */
+    // build internal representation 
     array = []
     segs  = SVG.parser.path.pathSegList
     
@@ -188,7 +188,7 @@ SVG.extend(SVG.PathArray, {
       else if (s == 'A')
         x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag | 0, seg.sweepFlag | 0, seg.x, seg.y)
 
-      /* store segment */
+      // store segment 
       array.push(x)
     }
     

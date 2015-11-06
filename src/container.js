@@ -12,10 +12,10 @@ SVG.Container = SVG.invent({
     // Get the viewBox and calculate the zoom value
     viewbox: function(v) {
       if (arguments.length == 0)
-        /* act as a getter if there are no arguments */
+        // act as a getter if there are no arguments 
         return new SVG.ViewBox(this)
       
-      /* otherwise act as a setter */
+      // otherwise act as a setter 
       v = arguments.length == 1 ?
         [v.x, v.y, v.width, v.height] :
         [].slice.call(arguments)

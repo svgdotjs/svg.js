@@ -1,18 +1,18 @@
 
 SVG.ViewBox = function(element) {
   var x, y, width, height
-    , wm   = 1 /* width multiplier */
-    , hm   = 1 /* height multiplier */
+    , wm   = 1 // width multiplier 
+    , hm   = 1 // height multiplier 
     , box  = element.bbox()
     , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
     , we   = element
     , he   = element
 
-  /* get dimensions of current node */
+  // get dimensions of current node 
   width  = new SVG.Number(element.width())
   height = new SVG.Number(element.height())
 
-  /* find nearest non-percentual dimensions */
+  // find nearest non-percentual dimensions 
   while (width.unit == '%') {
     wm *= width.value
     width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
@@ -24,7 +24,7 @@ SVG.ViewBox = function(element) {
     he = he.parent()
   }
   
-  /* ensure defaults */
+  // ensure defaults 
   this.x      = box.x
   this.y      = box.y
   this.width  = width  * wm
@@ -32,18 +32,18 @@ SVG.ViewBox = function(element) {
   this.zoom   = 1
   
   if (view) {
-    /* get width and height from viewbox */
+    // get width and height from viewbox 
     x      = parseFloat(view[0])
     y      = parseFloat(view[1])
     width  = parseFloat(view[2])
     height = parseFloat(view[3])
     
-    /* calculate zoom accoring to viewbox */
+    // calculate zoom accoring to viewbox 
     this.zoom = ((this.width / this.height) > (width / height)) ?
       this.height / height :
       this.width  / width
 
-    /* calculate real pixel dimensions on parent SVG.Doc element */
+    // calculate real pixel dimensions on parent SVG.Doc element 
     this.x      = x
     this.y      = y
     this.width  = width

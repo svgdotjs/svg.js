@@ -3,7 +3,7 @@ SVG.ClipPath = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('clipPath'))
 
-    /* keep references to clipped elements */
+    // keep references to clipped elements 
     this.targets = []
   }
 
@@ -14,13 +14,13 @@ SVG.ClipPath = SVG.invent({
 , extend: {
     // Unclip all clipped elements and remove itself
     remove: function() {
-      /* unclip all targets */
+      // unclip all targets 
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unclip()
       delete this.targets
 
-      /* remove clipPath from parent */
+      // remove clipPath from parent 
       this.parent().removeElement(this)
       
       return this
@@ -40,13 +40,13 @@ SVG.ClipPath = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
-    /* use given clip or create a new one */
+    // use given clip or create a new one 
     this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
-    /* store reverence on self in mask */
+    // store reverence on self in mask 
     this.clipper.targets.push(this)
     
-    /* apply mask */
+    // apply mask 
     return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
   }
   // Unclip element

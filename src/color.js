@@ -2,27 +2,27 @@
 SVG.Color = function(color) {
   var match
   
-  /* initialize defaults */
+  // initialize defaults 
   this.r = 0
   this.g = 0
   this.b = 0
   
-  /* parse color */
+  // parse color 
   if (typeof color === 'string') {
     if (SVG.regex.isRgb.test(color)) {
-      /* get rgb values */
+      // get rgb values 
       match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
       
-      /* parse numeric values */
+      // parse numeric values 
       this.r = parseInt(match[1])
       this.g = parseInt(match[2])
       this.b = parseInt(match[3])
       
     } else if (SVG.regex.isHex.test(color)) {
-      /* get hex values */
+      // get hex values 
       match = SVG.regex.hex.exec(fullHex(color))
 
-      /* parse numeric values */
+      // parse numeric values 
       this.r = parseInt(match[1], 16)
       this.g = parseInt(match[2], 16)
       this.b = parseInt(match[3], 16)
@@ -68,13 +68,13 @@ SVG.extend(SVG.Color, {
   }
   // Get morphed color at given position
 , at: function(pos) {
-    /* make sure a destination is defined */
+    // make sure a destination is defined 
     if (!this.destination) return this
 
-    /* normalise pos */
+    // normalise pos 
     pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
 
-    /* generate morphed color */
+    // generate morphed color 
     return new SVG.Color({
       r: ~~(this.r + (this.destination.r - this.r) * pos)
     , g: ~~(this.g + (this.destination.g - this.g) * pos)

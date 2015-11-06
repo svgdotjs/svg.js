@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Nov 06 2015 21:41:47 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Nov 06 2015 22:21:59 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -237,7 +237,7 @@ SVG.utils = {
 SVG.defaults = {
   // Default attribute values
   attrs: {
-    /* fill and stroke */
+    // fill and stroke
     'fill-opacity':     1
   , 'stroke-opacity':   1
   , 'stroke-width':     0
@@ -246,23 +246,23 @@ SVG.defaults = {
   , fill:               '#000000'
   , stroke:             '#000000'
   , opacity:            1
-    /* position */
+    // position
   , x:                  0
   , y:                  0
   , cx:                 0
   , cy:                 0
-    /* size */
+    // size
   , width:              0
   , height:             0
-    /* radius */
+    // radius
   , r:                  0
   , rx:                 0
   , ry:                 0
-    /* gradient */
+    // gradient
   , offset:             0
   , 'stop-opacity':     1
   , 'stop-color':       '#000000'
-    /* text */
+    // text
   , 'font-size':        16
   , 'font-family':      'Helvetica, Arial, sans-serif'
   , 'text-anchor':      'start'
@@ -273,27 +273,27 @@ SVG.defaults = {
 SVG.Color = function(color) {
   var match
 
-  /* initialize defaults */
+  // initialize defaults
   this.r = 0
   this.g = 0
   this.b = 0
 
-  /* parse color */
+  // parse color
   if (typeof color === 'string') {
     if (SVG.regex.isRgb.test(color)) {
-      /* get rgb values */
+      // get rgb values
       match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
 
-      /* parse numeric values */
+      // parse numeric values
       this.r = parseInt(match[1])
       this.g = parseInt(match[2])
       this.b = parseInt(match[3])
 
     } else if (SVG.regex.isHex.test(color)) {
-      /* get hex values */
+      // get hex values
       match = SVG.regex.hex.exec(fullHex(color))
 
-      /* parse numeric values */
+      // parse numeric values
       this.r = parseInt(match[1], 16)
       this.g = parseInt(match[2], 16)
       this.b = parseInt(match[3], 16)
@@ -339,13 +339,13 @@ SVG.extend(SVG.Color, {
   }
   // Get morphed color at given position
 , at: function(pos) {
-    /* make sure a destination is defined */
+    // make sure a destination is defined
     if (!this.destination) return this
 
-    /* normalise pos */
+    // normalise pos
     pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
 
-    /* generate morphed color */
+    // generate morphed color
     return new SVG.Color({
       r: ~~(this.r + (this.destination.r - this.r) * pos)
     , g: ~~(this.g + (this.destination.g - this.g) * pos)
@@ -379,11 +379,11 @@ SVG.Color.isColor = function(color) {
 SVG.Array = function(array, fallback) {
   array = (array || []).valueOf()
 
-  /* if array is empty and fallback is provided, use fallback */
+  // if array is empty and fallback is provided, use fallback
   if (array.length == 0 && fallback)
     array = fallback.valueOf()
 
-  /* parse array */
+  // parse array
   this.value = this.parse(array)
 }
 
@@ -392,7 +392,7 @@ SVG.extend(SVG.Array, {
   morph: function(array) {
     this.destination = this.parse(array)
 
-    /* normalize length of arrays */
+    // normalize length of arrays
     if (this.value.length != this.destination.length) {
       var lastValue       = this.value[this.value.length - 1]
         , lastDestination = this.destination[this.destination.length - 1]
@@ -407,20 +407,20 @@ SVG.extend(SVG.Array, {
   }
   // Clean up any duplicate points
 , settle: function() {
-    /* find all unique values */
+    // find all unique values
     for (var i = 0, il = this.value.length, seen = []; i < il; i++)
       if (seen.indexOf(this.value[i]) == -1)
         seen.push(this.value[i])
 
-    /* set new value */
+    // set new value
     return this.value = seen
   }
   // Get morphed array at given position
 , at: function(pos) {
-    /* make sure a destination is defined */
+    // make sure a destination is defined
     if (!this.destination) return this
 
-    /* generate morphed array */
+    // generate morphed array
     for (var i = 0, il = this.value.length, array = []; i < il; i++)
       array.push(this.value[i] + (this.destination[i] - this.value[i]) * pos)
 
@@ -438,7 +438,7 @@ SVG.extend(SVG.Array, {
 , parse: function(array) {
     array = array.valueOf()
 
-    /* if already is an array, no need to parse it */
+    // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
     return this.split(array)
@@ -466,7 +466,7 @@ SVG.PointArray.prototype = new SVG.Array
 SVG.extend(SVG.PointArray, {
   // Convert array to string
   toString: function() {
-    /* convert to a poly point string */
+    // convert to a poly point string
     for (var i = 0, il = this.value.length, array = []; i < il; i++)
       array.push(this.value[i].join(','))
 
@@ -483,10 +483,10 @@ SVG.extend(SVG.PointArray, {
   }
   // Get morphed array at given position
 , at: function(pos) {
-    /* make sure a destination is defined */
+    // make sure a destination is defined
     if (!this.destination) return this
 
-    /* generate morphed point string */
+    // generate morphed point string
     for (var i = 0, il = this.value.length, array = []; i < il; i++)
       array.push([
         this.value[i][0] + (this.destination[i][0] - this.value[i][0]) * pos
@@ -499,13 +499,13 @@ SVG.extend(SVG.PointArray, {
 , parse: function(array) {
     array = array.valueOf()
 
-    /* if already is an array, no need to parse it */
+    // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
-    /* split points */
+    // split points
     array = this.split(array)
 
-    /* parse points */
+    // parse points
     for (var i = 0, il = array.length, p, points = []; i < il; i++) {
       p = array[i].split(',')
       points.push([parseFloat(p[0]), parseFloat(p[1])])
@@ -517,11 +517,11 @@ SVG.extend(SVG.PointArray, {
 , move: function(x, y) {
     var box = this.bbox()
 
-    /* get relative offset */
+    // get relative offset
     x -= box.x
     y -= box.y
 
-    /* move every point */
+    // move every point
     if (!isNaN(x) && !isNaN(y))
       for (var i = this.value.length - 1; i >= 0; i--)
         this.value[i] = [this.value[i][0] + x, this.value[i][1] + y]
@@ -532,7 +532,7 @@ SVG.extend(SVG.PointArray, {
 , size: function(width, height) {
     var i, box = this.bbox()
 
-    /* recalculate position of all points according to new size */
+    // recalculate position of all points according to new size
     for (i = this.value.length - 1; i >= 0; i--) {
       this.value[i][0] = ((this.value[i][0] - box.x) * width)  / box.width  + box.x
       this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.y
@@ -563,15 +563,15 @@ SVG.extend(SVG.PathArray, {
   }
   // Move path string
 , move: function(x, y) {
-		/* get bounding box of current situation */
-		var box = this.bbox()
+    // get bounding box of current situation
+    var box = this.bbox()
 
-    /* get relative offset */
+    // get relative offset
     x -= box.x
     y -= box.y
 
     if (!isNaN(x) && !isNaN(y)) {
-      /* move every point */
+      // move every point
       for (var l, i = this.value.length - 1; i >= 0; i--) {
         l = this.value[i][0]
 
@@ -608,10 +608,10 @@ SVG.extend(SVG.PathArray, {
   }
   // Resize path string
 , size: function(width, height) {
-		/* get bounding box of current situation */
-		var i, l, box = this.bbox()
+    // get bounding box of current situation
+    var i, l, box = this.bbox()
 
-    /* recalculate position of all points according to new size */
+    // recalculate position of all points according to new size
     for (i = this.value.length - 1; i >= 0; i--) {
       l = this.value[i][0]
 
@@ -637,11 +637,11 @@ SVG.extend(SVG.PathArray, {
         }
 
       } else if (l == 'A')  {
-        /* resize radii */
+        // resize radii
         this.value[i][1] = (this.value[i][1] * width)  / box.width
         this.value[i][2] = (this.value[i][2] * height) / box.height
 
-        /* move position values */
+        // move position values
         this.value[i][6] = ((this.value[i][6] - box.x) * width)  / box.width  + box.x
         this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
       }
@@ -652,25 +652,25 @@ SVG.extend(SVG.PathArray, {
   }
   // Absolutize and parse path to array
 , parse: function(array) {
-    /* if it's already is a patharray, no need to parse it */
+    // if it's already is a patharray, no need to parse it
     if (array instanceof SVG.PathArray) return array.valueOf()
 
-    /* prepare for parsing */
+    // prepare for parsing
     var i, il, x0, y0, x1, y1, x2, y2, s, seg, segs
       , x = 0
       , y = 0
 
-    /* populate working path */
+    // populate working path
     SVG.parser.path.setAttribute('d', typeof array === 'string' ? array : arrayToString(array))
 
-    /* get segments */
+    // get segments
     segs = SVG.parser.path.pathSegList
 
     for (i = 0, il = segs.numberOfItems; i < il; ++i) {
       seg = segs.getItem(i)
       s = seg.pathSegTypeAsLetter
 
-      /* yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex */
+      // yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex
       if (s == 'M' || s == 'L' || s == 'H' || s == 'V' || s == 'C' || s == 'S' || s == 'Q' || s == 'T' || s == 'A') {
         if ('x' in seg) x = seg.x
         if ('y' in seg) y = seg.y
@@ -707,14 +707,14 @@ SVG.extend(SVG.PathArray, {
         }
       }
 
-      /* record the start of a subpath */
+      // record the start of a subpath
       if (s == 'M' || s == 'm') {
         x0 = x
         y0 = y
       }
     }
 
-    /* build internal representation */
+    // build internal representation
     array = []
     segs  = SVG.parser.path.pathSegList
 
@@ -738,7 +738,7 @@ SVG.extend(SVG.PathArray, {
       else if (s == 'A')
         x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag | 0, seg.sweepFlag | 0, seg.x, seg.y)
 
-      /* store segment */
+      // store segment
       array.push(x)
     }
 
@@ -854,18 +854,18 @@ SVG.Number = SVG.invent({
 
 SVG.ViewBox = function(element) {
   var x, y, width, height
-    , wm   = 1 /* width multiplier */
-    , hm   = 1 /* height multiplier */
+    , wm   = 1 // width multiplier
+    , hm   = 1 // height multiplier
     , box  = element.bbox()
     , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
     , we   = element
     , he   = element
 
-  /* get dimensions of current node */
+  // get dimensions of current node
   width  = new SVG.Number(element.width())
   height = new SVG.Number(element.height())
 
-  /* find nearest non-percentual dimensions */
+  // find nearest non-percentual dimensions
   while (width.unit == '%') {
     wm *= width.value
     width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
@@ -877,7 +877,7 @@ SVG.ViewBox = function(element) {
     he = he.parent()
   }
 
-  /* ensure defaults */
+  // ensure defaults
   this.x      = box.x
   this.y      = box.y
   this.width  = width  * wm
@@ -885,18 +885,18 @@ SVG.ViewBox = function(element) {
   this.zoom   = 1
 
   if (view) {
-    /* get width and height from viewbox */
+    // get width and height from viewbox
     x      = parseFloat(view[0])
     y      = parseFloat(view[1])
     width  = parseFloat(view[2])
     height = parseFloat(view[3])
 
-    /* calculate zoom accoring to viewbox */
+    // calculate zoom accoring to viewbox
     this.zoom = ((this.width / this.height) > (width / height)) ?
       this.height / height :
       this.width  / width
 
-    /* calculate real pixel dimensions on parent SVG.Doc element */
+    // calculate real pixel dimensions on parent SVG.Doc element
     this.x      = x
     this.y      = y
     this.width  = width
@@ -2231,25 +2231,25 @@ SVG.extend(SVG.Element, {
   // Dynamic style generator
   style: function(s, v) {
     if (arguments.length == 0) {
-      /* get full style */
+      // get full style
       return this.node.style.cssText || ''
 
     } else if (arguments.length < 2) {
-      /* apply every style individually if an object is passed */
+      // apply every style individually if an object is passed
       if (typeof s == 'object') {
         for (v in s) this.style(v, s[v])
 
       } else if (SVG.regex.isCss.test(s)) {
-        /* parse css string */
+        // parse css string
         s = s.split(';')
 
-        /* apply every definition individually */
+        // apply every definition individually
         for (var i = 0; i < s.length; i++) {
           v = s[i].split(':')
           this.style(v[0].replace(/\s+/g, ''), v[1])
         }
       } else {
-        /* act as a getter if the first and only argument is not an object */
+        // act as a getter if the first and only argument is not an object
         return this.node.style[camelCase(s)]
       }
 
@@ -2392,10 +2392,10 @@ SVG.Container = SVG.invent({
     // Get the viewBox and calculate the zoom value
     viewbox: function(v) {
       if (arguments.length == 0)
-        /* act as a getter if there are no arguments */
+        // act as a getter if there are no arguments
         return new SVG.ViewBox(this)
 
-      /* otherwise act as a setter */
+      // otherwise act as a setter
       v = arguments.length == 1 ?
         [v.x, v.y, v.width, v.height] :
         [].slice.call(arguments)
@@ -2421,11 +2421,11 @@ SVG.Container = SVG.invent({
   , 'touchend'
   , 'touchcancel' ].forEach(function(event) {
 
-  /* add event to SVG.Element */
+  // add event to SVG.Element
   SVG.Element.prototype[event] = function(f) {
     var self = this
 
-    /* bind event to element rather than element node */
+    // bind event to element rather than element node
     this.node['on' + event] = typeof f == 'function' ?
       function() { return f.apply(self, arguments) } : null
 
@@ -2675,7 +2675,7 @@ SVG.Mask = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('mask'))
 
-    /* keep references to masked elements */
+    // keep references to masked elements
     this.targets = []
   }
 
@@ -2686,13 +2686,13 @@ SVG.Mask = SVG.invent({
 , extend: {
     // Unmask all masked elements and remove itself
     remove: function() {
-      /* unmask all targets */
+      // unmask all targets
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unmask()
       delete this.targets
 
-      /* remove mask from parent */
+      // remove mask from parent
       this.parent().removeElement(this)
 
       return this
@@ -2712,13 +2712,13 @@ SVG.Mask = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
-    /* use given mask or create a new one */
+    // use given mask or create a new one
     this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
-    /* store reverence on self in mask */
+    // store reverence on self in mask
     this.masker.targets.push(this)
 
-    /* apply mask */
+    // apply mask
     return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
   }
   // Unmask element
@@ -2734,7 +2734,7 @@ SVG.ClipPath = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('clipPath'))
 
-    /* keep references to clipped elements */
+    // keep references to clipped elements
     this.targets = []
   }
 
@@ -2745,13 +2745,13 @@ SVG.ClipPath = SVG.invent({
 , extend: {
     // Unclip all clipped elements and remove itself
     remove: function() {
-      /* unclip all targets */
+      // unclip all targets
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unclip()
       delete this.targets
 
-      /* remove clipPath from parent */
+      // remove clipPath from parent
       this.parent().removeElement(this)
 
       return this
@@ -2771,13 +2771,13 @@ SVG.ClipPath = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
-    /* use given clip or create a new one */
+    // use given clip or create a new one
     this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
-    /* store reverence on self in mask */
+    // store reverence on self in mask
     this.clipper.targets.push(this)
 
-    /* apply mask */
+    // apply mask
     return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
   }
   // Unclip element
@@ -2792,7 +2792,7 @@ SVG.Gradient = SVG.invent({
   create: function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
 
-    /* store type */
+    // store type
     this.type = type
   }
 
@@ -2807,10 +2807,10 @@ SVG.Gradient = SVG.invent({
     }
     // Update gradient
   , update: function(block) {
-      /* remove all stops */
+      // remove all stops
       this.clear()
 
-      /* invoke passed block */
+      // invoke passed block
       if (typeof block == 'function')
         block.call(this, this)
 
@@ -2884,7 +2884,7 @@ SVG.Stop = SVG.invent({
         }
       }
 
-      /* set attributes */
+      // set attributes
       if (o.opacity != null) this.attr('stop-opacity', o.opacity)
       if (o.color   != null) this.attr('stop-color', o.color)
       if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
@@ -2905,24 +2905,24 @@ SVG.Pattern = SVG.invent({
   // Add class methods
 , extend: {
     // Return the fill id
-	  fill: function() {
-	    return 'url(#' + this.id() + ')'
-	  }
-	  // Update pattern by rebuilding
-	, update: function(block) {
+    fill: function() {
+      return 'url(#' + this.id() + ')'
+    }
+    // Update pattern by rebuilding
+  , update: function(block) {
       // remove content
       this.clear()
 
       // invoke passed block
       if (typeof block == 'function')
-      	block.call(this, this)
+        block.call(this, this)
 
       return this
-		}
-	  // Alias string convertion to fill
-	, toString: function() {
-	    return this.fill()
-	  }
+    }
+    // Alias string convertion to fill
+  , toString: function() {
+      return this.fill()
+    }
     // custom attr to handle transform
   , attr: function(a, b, c) {
       if(a == 'transform') a = 'patternTransform'
@@ -2934,9 +2934,9 @@ SVG.Pattern = SVG.invent({
   // Add parent method
 , construct: {
     // Create pattern element in defs
-	  pattern: function(width, height, block) {
-	    return this.defs().pattern(width, height, block)
-	  }
+    pattern: function(width, height, block) {
+      return this.defs().pattern(width, height, block)
+    }
   }
 })
 
@@ -3037,8 +3037,8 @@ SVG.Doc = SVG.invent({
 SVG.Shape = SVG.invent({
   // Initialize node
   create: function(element) {
-	  this.constructor.call(this, element)
-	}
+    this.constructor.call(this, element)
+  }
 
   // Inherit from
 , inherit: SVG.Element
@@ -3100,7 +3100,7 @@ SVG.Use = SVG.invent({
 , extend: {
     // Use element as a reference
     element: function(element, file) {
-      /* Set lined element */
+      // Set lined element
       return this.attr('href', (file || '') + '#' + element, SVG.xlink)
     }
   }
@@ -3848,10 +3848,10 @@ SVG.Marker = SVG.invent({
     }
     // Update marker
   , update: function(block) {
-      /* remove all content */
+      // remove all content
       this.clear()
 
-      /* invoke passed block */
+      // invoke passed block
       if (typeof block == 'function')
         block.call(this, this)
 
@@ -3914,7 +3914,7 @@ var sugar = {
   }
 }
 
-/* Add sugar for fill and stroke */
+// Add sugar for fill and stroke
 ;['fill', 'stroke'].forEach(function(m) {
   var i, extension = {}
 
@@ -3923,7 +3923,7 @@ var sugar = {
       this.attr(m, o)
 
     else
-      /* set all attributes from sugar.fill and sugar.stroke list */
+      // set all attributes from sugar.fill and sugar.stroke list
       for (i = sugar[m].length - 1; i >= 0; i--)
         if (o[sugar[m][i]] != null)
           this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
@@ -4172,13 +4172,13 @@ SVG.Set.inherit = function() {
 
 
 
-//
+
 SVG.extend(SVG.Element, {
-	// Store data values on svg nodes
+  // Store data values on svg nodes
   data: function(a, v, r) {
-  	if (typeof a == 'object') {
-  		for (v in a)
-  			this.data(v, a[v])
+    if (typeof a == 'object') {
+      for (v in a)
+        this.data(v, a[v])
 
     } else if (arguments.length < 2) {
       try {
@@ -4204,16 +4204,16 @@ SVG.extend(SVG.Element, {
 SVG.extend(SVG.Element, {
   // Remember arbitrary data
   remember: function(k, v) {
-    /* remember every item in an object individually */
+    // remember every item in an object individually
     if (typeof arguments[0] == 'object')
       for (var v in k)
         this.remember(v, k[v])
 
-    /* retrieve memory */
+    // retrieve memory
     else if (arguments.length == 1)
       return this.memory()[k]
 
-    /* store memory */
+    // store memory
     else
       this.memory()[k] = v
 

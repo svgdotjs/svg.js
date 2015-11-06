@@ -14,11 +14,11 @@
   , 'touchend'
   , 'touchcancel' ].forEach(function(event) {
   
-  /* add event to SVG.Element */
+  // add event to SVG.Element 
   SVG.Element.prototype[event] = function(f) {
     var self = this
     
-    /* bind event to element rather than element node */
+    // bind event to element rather than element node 
     this.node['on' + event] = typeof f == 'function' ?
       function() { return f.apply(self, arguments) } : null
     

@@ -7,7 +7,7 @@ var sugar = {
   }
 }
 
-/* Add sugar for fill and stroke */
+// Add sugar for fill and stroke 
 ;['fill', 'stroke'].forEach(function(m) {
   var i, extension = {}
 
@@ -16,7 +16,7 @@ var sugar = {
       this.attr(m, o)
 
     else
-      /* set all attributes from sugar.fill and sugar.stroke list */
+      // set all attributes from sugar.fill and sugar.stroke list 
       for (i = sugar[m].length - 1; i >= 0; i--)
         if (o[sugar[m][i]] != null)
           this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])

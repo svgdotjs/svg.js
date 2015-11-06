@@ -3,7 +3,7 @@ SVG.Mask = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('mask'))
 
-    /* keep references to masked elements */
+    // keep references to masked elements 
     this.targets = []
   }
 
@@ -14,13 +14,13 @@ SVG.Mask = SVG.invent({
 , extend: {
     // Unmask all masked elements and remove itself
     remove: function() {
-      /* unmask all targets */
+      // unmask all targets 
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unmask()
       delete this.targets
 
-      /* remove mask from parent */
+      // remove mask from parent 
       this.parent().removeElement(this)
       
       return this
@@ -40,13 +40,13 @@ SVG.Mask = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
-    /* use given mask or create a new one */
+    // use given mask or create a new one 
     this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
-    /* store reverence on self in mask */
+    // store reverence on self in mask 
     this.masker.targets.push(this)
     
-    /* apply mask */
+    // apply mask 
     return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
   }
   // Unmask element

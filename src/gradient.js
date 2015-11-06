@@ -3,7 +3,7 @@ SVG.Gradient = SVG.invent({
   create: function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
     
-    /* store type */
+    // store type 
     this.type = type
   }
 
@@ -18,10 +18,10 @@ SVG.Gradient = SVG.invent({
     }
     // Update gradient
   , update: function(block) {
-      /* remove all stops */
+      // remove all stops 
       this.clear()
       
-      /* invoke passed block */
+      // invoke passed block 
       if (typeof block == 'function')
         block.call(this, this)
       
@@ -95,7 +95,7 @@ SVG.Stop = SVG.invent({
         }
       }
 
-      /* set attributes */
+      // set attributes 
       if (o.opacity != null) this.attr('stop-opacity', o.opacity)
       if (o.color   != null) this.attr('stop-color', o.color)
       if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))

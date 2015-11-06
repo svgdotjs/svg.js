@@ -23,9 +23,9 @@ This will generate the following output:
 
 ```html
 <div id="drawing">
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300">
-		<rect width="100" height="100" fill="#f06"></rect>
-	</svg>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300">
+    <rect width="100" height="100" fill="#f06"></rect>
+  </svg>
 </div>
 ```
 
@@ -888,13 +888,13 @@ var elements = group.select('rect.my-class').fill('#f06')
 Another way is to use [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/). Here is an example:
 
 ```javascript
-/* add elements */
+// add elements 
 var draw   = SVG('drawing')
 var group  = draw.group().addClass('my-group')
 var rect   = group.rect(100,100).addClass('my-element')
 var circle = group.circle(100).addClass('my-element').move(100, 100)
 
-/* get elements in group */
+// get elements in group 
 var elements = $('#drawing g.my-group .my-element').each(function() {
   this.instance.animate().fill('#f09')
 })

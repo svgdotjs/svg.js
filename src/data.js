@@ -1,10 +1,10 @@
-//
+
 SVG.extend(SVG.Element, {
-	// Store data values on svg nodes
+  // Store data values on svg nodes
   data: function(a, v, r) {
-  	if (typeof a == 'object') {
-  		for (v in a)
-  			this.data(v, a[v])
+    if (typeof a == 'object') {
+      for (v in a)
+        this.data(v, a[v])
 
     } else if (arguments.length < 2) {
       try {

@@ -8,24 +8,24 @@ SVG.Pattern = SVG.invent({
   // Add class methods
 , extend: {
     // Return the fill id
-	  fill: function() {
-	    return 'url(#' + this.id() + ')'
-	  }
-	  // Update pattern by rebuilding
-	, update: function(block) {
+    fill: function() {
+      return 'url(#' + this.id() + ')'
+    }
+    // Update pattern by rebuilding
+  , update: function(block) {
       // remove content
       this.clear()
       
       // invoke passed block
       if (typeof block == 'function')
-      	block.call(this, this)
+        block.call(this, this)
       
       return this
-		}
-	  // Alias string convertion to fill
-	, toString: function() {
-	    return this.fill()
-	  }
+    }
+    // Alias string convertion to fill
+  , toString: function() {
+      return this.fill()
+    }
     // custom attr to handle transform
   , attr: function(a, b, c) {
       if(a == 'transform') a = 'patternTransform'
@@ -37,9 +37,9 @@ SVG.Pattern = SVG.invent({
   // Add parent method
 , construct: {
     // Create pattern element in defs
-	  pattern: function(width, height, block) {
-	    return this.defs().pattern(width, height, block)
-	  }
+    pattern: function(width, height, block) {
+      return this.defs().pattern(width, height, block)
+    }
   }
 })
 

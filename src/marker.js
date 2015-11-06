@@ -21,10 +21,10 @@ SVG.Marker = SVG.invent({
     }
     // Update marker
   , update: function(block) {
-      /* remove all content */
+      // remove all content 
       this.clear()
       
-      /* invoke passed block */
+      // invoke passed block 
       if (typeof block == 'function')
         block.call(this, this)
       
