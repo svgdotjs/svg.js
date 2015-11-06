@@ -8,7 +8,7 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.0 (??/??/2015)
+# 2.2.0 (06/11/2015)
 
 - fixed pattern and gradient animation (#385)
 - fixed mask animation in Firefox (#287)
