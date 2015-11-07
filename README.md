@@ -3779,6 +3779,9 @@ Here are a few nice plugins that are available for SVG.js:
 ### path
 [svg.path.js](https://github.com/otm/svg.path.js) for manually drawing paths (by Nils Lagerkvist).
 
+## screenBBox
+[svg.screenbbox.js](https://github.com/fuzzyma/svg.screenbbox.js) to get the bbox in screen coordinates from transformed path/polygon/polyline
+
 ### shapes
 [svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
 
