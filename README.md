@@ -3827,7 +3827,7 @@ for (var i = 0; i < 5; i++)
 
 __Bad__:
 ```javascript
-var text = draw.text("with single quotes here");
+var text = draw.text("with double quotes here");
 var nest = draw.nested().attr("x", "50%");
 
 for (var i = 0; i < 5; i++) {
