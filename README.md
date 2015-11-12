@@ -1395,6 +1395,8 @@ This is an extra method to move an element by its center:
 rect.center(150, 150)
 ```
 
+This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use `cx` and `cy` attributes (such as `circle`) may need to set them with the `attr()` method.
+
 __`returns`: `itself`__
 
 ### cx()
@@ -1409,6 +1411,8 @@ Without an argument the `cx()` method serves as a getter as well:
 ```javascript
 rect.cx() //-> returns 200
 ```
+
+This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use a `cx` attribute (such as `circle`) may need to access it with the `attr()` method.
 
 `getter`__`returns`: `value`__
 
@@ -1426,6 +1430,8 @@ Without an argument the `cy()` method serves as a getter as well:
 ```javascript
 rect.cy() //-> returns 350
 ```
+
+This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use a `cy` attribute (such as `circle`) may need to access it with the `attr()` method.
 
 `getter`__`returns`: `value`__
 
@@ -3686,9 +3692,21 @@ The `SVG.invent()` function always expects an object. The object can have the fo
 - `inherit`: the desired SVG.js class to inherit from (e.g. `SVG.Shape`, `SVG.Element`, `SVG.Container`, `SVG.Rect`, ...); `[optional but recommended]`
 - `extend`: an object with the methods that should be applied to the element's prototype; `[optional]`
 - `construct`: an object with the methods to create the element on the parent element; `[optional]`
-- `parent`: an SVG.js parent class on which the methods in the passed `construct` object should be available; `[optional]`
+- `parent`: an SVG.js parent class on which the methods in the passed `construct` object should be available - defaults to `SVG.Container`; `[optional]`
 
-Svg.js uses the `SVG.invent()` function to create all internal elements, so have a look at the source to see how this function is used in various ways.
+#### Usage notes
+
+It should be emphasized that in the configuration object passed to `SVG.invent()`:
+
+- `construct` does not supply constructors, but rather methods that are likely to *call* constructors;
+- `create` specifies the constructor for the type you are defining, and is not analogous to `Object.create()`.
+
+When defining specialized svg elements (such as `SVG.Rounded` in the example above), the function specified by `create` needs to do all the work of adding the element to the DOM for the svg document and connecting the DOM node to the SVG.js interface. All this is done automatically when the value of `create` is a string identifying an element type. If needed, see the source for a sense of how to do it explicitly.
+
+Though the defaults are geared toward creating svg elements for the SVG.js framework, `SVG.invent()` can be used as a generalized function for defining types in Javascript. When used in this more general way, the function supplied as a value for `create` should be written as an ordinary JS constructor. (Indeed, the function is simply returned as the constructor for your newly defined type.)
+
+Svg.js uses the `SVG.invent()` function to create all internal elements. A look at the source will show how this function is used in various ways.
+
 
 
 ### SVG.extend()
