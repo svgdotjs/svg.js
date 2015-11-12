@@ -3701,7 +3701,7 @@ It should be emphasized that in the configuration object passed to `SVG.invent()
 - `construct` does not supply constructors, but rather methods that are likely to *call* constructors;
 - `create` specifies the constructor for the type you are defining, and is not analogous to `Object.create()`.
 
-When defining specialized svg elements (such as SVG.Rounded in the example above), the function specified by `create` needs to do all the work of adding the element to the DOM for the svg document and connecting the DOM node to the SVG.js interface. All this is done automatically when the value of `create` is a string identifying an element type. If needed, see the source for a sense of how to do it explicitly.
+When defining specialized svg elements (such as `SVG.Rounded` in the example above), the function specified by `create` needs to do all the work of adding the element to the DOM for the svg document and connecting the DOM node to the SVG.js interface. All this is done automatically when the value of `create` is a string identifying an element type. If needed, see the source for a sense of how to do it explicitly.
 
 Though the defaults are geared toward creating svg elements for the SVG.js framework, `SVG.invent()` can be used as a generalized function for defining types in Javascript. When used in this more general way, the function supplied as a value for `create` should be written as an ordinary JS constructor. (Indeed, the function is simply returned as the constructor for your newly defined type.)
 
