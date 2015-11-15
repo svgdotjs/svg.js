@@ -1609,7 +1609,7 @@ rect.putIn(group) //-> returns group
 __`returns`: `element`__
 
 ### toParent()
-Moves an element to a different parent (similar to `add`), but without changing its visual representation. All transformations are merged and applied to the element.
+Moves an element to a different parent (similar to `addTo`), but without changing its visual representation. All transformations are merged and applied to the element.
 
 ```javascript
 rect.toParent(group) // looks the same as before
