@@ -1082,19 +1082,6 @@ draw.clear()
 __`returns`: `itself`__
 
 
-## Attribute references
-
-### reference()
-In cases where an element is linked to another element through an attribute, the linked element instance can be fetched with the `reference()` method. The only thing required is the attribute name:
-
-```javascript
-use.reference('href') //-> returns used element instance
-// or
-rect.reference('fill') //-> returns gradient or pattern instance for example
-// or
-circle.reference('clip-path') //-> returns clip instance
-```
-
 ## Import / export SVG
 
 ### svg()
@@ -1118,7 +1105,7 @@ Importing works on any element that inherits from `SVG.Parent`, which is basical
 
 `setter`__`returns`: `itself`__
 
-## Manipulating elements
+## Attributes and styles
 
 ### attr()
 You can get and set an element's attributes directly using `attr()`.
@@ -1156,6 +1143,162 @@ rect.attr('fill', null)
 `getter`__`returns`: `value`__
 
 `setter`__`returns`: `itself`__
+
+
+### style()
+With the `style()` method the `style` attribute can be managed like attributes with `attr`:
+
+```javascript
+rect.style('cursor', 'pointer')
+```
+
+Multiple styles can be set at once using an object:
+
+```javascript
+rect.style({ cursor: 'pointer', fill: '#f03' })
+```
+
+Or a css string:
+
+```javascript
+rect.style('cursor:pointer;fill:#f03;')
+```
+
+Similar to `attr()` the `style()` method can also act as a getter:
+
+```javascript
+rect.style('cursor')
+// => pointer
+```
+
+Or even a full getter:
+
+```javascript
+rect.style()
+// => 'cursor:pointer;fill:#f03;'
+```
+
+Explicitly deleting individual style definitions works the same as with the `attr()` method:
+
+```javascript
+rect.style('cursor', null)
+```
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### reference()
+In cases where an element is linked to another element through an attribute, the linked element instance can be fetched with the `reference()` method. The only thing required is the attribute name:
+
+```javascript
+use.reference('href') //-> returns used element instance
+// or
+rect.reference('fill') //-> returns gradient or pattern instance for example
+// or
+circle.reference('clip-path') //-> returns clip instance
+```
+
+### hide()
+Hide element:
+
+```javascript
+rect.hide()
+```
+
+__`returns`: `itself`__
+
+### show()
+Show element:
+
+```javascript
+rect.show()
+```
+
+__`returns`: `itself`__
+
+### visible()
+To check if the element is visible:
+
+```javascript
+rect.visible()
+```
+
+__`returns`: `boolean`__
+
+## Classes
+
+### classes()
+Fetches the css classes for the node as an array:
+
+```javascript
+rect.classes()
+```
+
+`getter`__`returns`: `array`__
+
+### hasClass()
+Test the presence of a given css class:
+
+```javascript
+rect.hasClass('purple-rain')
+```
+
+`getter`__`returns`: `boolean`__
+
+### addClass()
+Adds a given css class:
+
+```javascript
+rect.addClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
+
+### removeClass()
+Removes a given css class:
+
+```javascript
+rect.removeClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
+
+### toggleClass()
+Toggles a given css class:
+
+```javascript
+rect.toggleClass('pink-flower')
+```
+
+`setter`__`returns`: `itself`__
+
+## Transforming elements
+
+In addition to the generalized transform method, there are several specific methods for moving elements. While moving an element by directly setting its attributes will only work if the attributes are used natively by that type of element, these positioning methods are much more convenient as they work for all element types.
+
+For example, the following code works because each element is moved by setting native attributes:
+
+```javascript
+rect.attr({ x: 20, y: 60 })
+circle.attr({ cx: 50, cy: 40 })
+```
+
+The `rect` will be moved by its upper left corner to the new coordinates, and the `circle` will be moved by its center. However, trying to move a `circle` by its 'corner' or a `rect` by its center in this way will fail. The following lines will get silently ignored as the attributes that are addressed are not natively used by the element setting them:
+
+```javascript
+rect.attr({ cx: 20, cy: 60 })
+circle.attr({ x: 50, y: 40 })
+```
+
+However, the positioning methods detailed below will work for all element types, regardless of whether the attributes being addressed are native to the type. So, unlike the lines above, these lines work just fine:
+
+```javascript
+rect.cx(20).cy(60)
+circle.x(50).y(40)
+```
+
+It is important to note, though, that these methods are only intended for use with user (unitless) coordinates. If, for example, an element has its size set via percentages or other units, the movement methods that address its native attributes will most likely still work, but the ones that address non-native attributes will give unexpected results -- as both getters and setters!
 
 
 ### transform()
@@ -1222,223 +1365,8 @@ Available transformations are:
 
 `setter`__`returns`: `itself`__
 
-### style()
-With the `style()` method the `style` attribute can be managed like attributes with `attr`:
-
-```javascript
-rect.style('cursor', 'pointer')
-```
-
-Multiple styles can be set at once using an object:
-
-```javascript
-rect.style({ cursor: 'pointer', fill: '#f03' })
-```
-
-Or a css string:
-
-```javascript
-rect.style('cursor:pointer;fill:#f03;')
-```
-
-Similar to `attr()` the `style()` method can also act as a getter:
-
-```javascript
-rect.style('cursor')
-// => pointer
-```
-
-Or even a full getter:
-
-```javascript
-rect.style()
-// => 'cursor:pointer;fill:#f03;'
-```
-
-Explicitly deleting individual style definitions works the same as with the `attr()` method:
-
-```javascript
-rect.style('cursor', null)
-```
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
-
-### classes()
-Fetches an array of css classes on the node:
-
-```javascript
-rect.classes()
-```
-
-`getter`__`returns`: `array`__
-
-### hasClass()
-Test the presence of a given css class:
-
-```javascript
-rect.hasClass('purple-rain')
-```
-
-`getter`__`returns`: `boolean`__
-
-### addClass()
-Adds a given css class:
-
-```javascript
-rect.addClass('pink-flower')
-```
-
-`setter`__`returns`: `itself`__
-
-### removeClass()
-Removes a given css class:
-
-```javascript
-rect.removeClass('pink-flower')
-```
-
-`setter`__`returns`: `itself`__
-
-### toggleClass()
-Toggles a given css class:
-
-```javascript
-rect.toggleClass('pink-flower')
-```
-
-`setter`__`returns`: `itself`__
-
-### move()
-Move the element to a given `x` and `y` position by its upper left corner:
-
-```javascript
-rect.move(200, 350)
-```
-
-Note that you can also use the following code to move some elements (like images and rects) around:
-
-```javascript
-rect.attr({ x: 20, y: 60 })
-``` 
-
-Although `move()` is much more convenient because it will always use the upper left corner as the position reference, whereas with using `attr()` the `x` and `y` reference differ between element types. For example, rect uses the upper left corner with the `x` and `y` attributes, circle and ellipse use their center with the `cx` and `cy` attributes and thereby simply ignoring the `x` and `y` values you might assign.
-
-__`returns`: `itself`__
-
-### x()
-Move element only along x-axis by its upper left corner:
-
-```javascript
-rect.x(200)
-```
-
-Without an argument the `x()` method serves as a getter as well:
-
-```javascript
-rect.x() //-> returns 200
-```
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
-
-### y()
-Move element only along y-axis by its upper left corner:
-
-```javascript
-rect.y(350)
-```
-
-Without an argument the `y()` method serves as a getter as well:
-
-```javascript
-rect.y() //-> returns 350
-```
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
-
-### dmove()
-Move the element to a given `x` and `y` position relative to its current position:
-
-```javascript
-rect.dmove(10, 30)
-```
-
-__`returns`: `itself`__
-
-### dx()
-Move element only along x-axis relative to its current position:
-
-```javascript
-rect.dx(200)
-```
-
-__`returns`: `itself`__
-
-### dy()
-Move element only along y-axis relative to its current position:
-
-```javascript
-rect.dy(200)
-```
-
-__`returns`: `itself`__
-
-### center()
-This is an extra method to move an element by its center:
-
-```javascript
-rect.center(150, 150)
-```
-
-This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use `cx` and `cy` attributes (such as `circle`) may need to set them with the `attr()` method.
-
-__`returns`: `itself`__
-
-### cx()
-Move element only along x-axis by its center:
-
-```javascript
-rect.cx(200)
-```
-
-Without an argument the `cx()` method serves as a getter as well:
-
-```javascript
-rect.cx() //-> returns 200
-```
-
-This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use a `cx` attribute (such as `circle`) may need to access it with the `attr()` method.
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
-
-### cy()
-Move element only along y-axis by its center:
-
-```javascript
-rect.cy(350)
-```
-
-Without an argument the `cy()` method serves as a getter as well:
-
-```javascript
-rect.cy() //-> returns 350
-```
-
-This method only works correctly on elements specified in user (unitless) coordinates. Elements which explicitly use a `cy` attribute (such as `circle`) may need to access it with the `attr()` method.
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
-
 ### size()
-Set the size of an element by a given `width` and `height`:
+Set the size of an element to a given `width` and `height`:
 
 ```javascript
 rect.size(200, 300)
@@ -1456,14 +1384,14 @@ Or by passing `null` as the value for `width`:
 rect.size(null, 200)
 ```
 
-Same as with `move()` the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
+As with positioning, the size of an element could be set by using `attr()`. But because every type of element is handles its size differently the `size()` method is much more convenient.
 
-There is one exceptions though, the `SVG.Text` only takes one argument and applies the given value to the `font-size` attribute.
+There is one exception though: for `SVG.Text` elements, this method takes only one argument and applies the given value to the `font-size` attribute.
 
 __`returns`: `itself`__
 
 ### width()
-Set only width of an element:
+Set the width of an element:
 
 ```javascript
 rect.width(200)
@@ -1480,7 +1408,7 @@ rect.width() //-> returns 200
 `setter`__`returns`: `itself`__
 
 ### height()
-Set only height of an element:
+Set the height of an element:
 
 ```javascript
 rect.height(325)
@@ -1496,32 +1424,120 @@ rect.height() //-> returns 325
 
 `setter`__`returns`: `itself`__
 
-### hide()
-Hide element:
+### move()
+Move the element by its upper left corner to a given `x` and `y` position:
 
 ```javascript
-rect.hide()
+rect.move(200, 350)
 ```
 
 __`returns`: `itself`__
 
-### show()
-Show element:
+### x()
+Move the element by its upper left corner along the x-axis only:
 
 ```javascript
-rect.show()
+rect.x(200)
+```
+
+Without an argument the `x()` method serves as a getter as well:
+
+```javascript
+rect.x() //-> returns 200
+```
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### y()
+Move the element by its upper left corner along the y-axis only:
+
+```javascript
+rect.y(350)
+```
+
+Without an argument the `y()` method serves as a getter as well:
+
+```javascript
+rect.y() //-> returns 350
+```
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### center()
+Move the element by its center to a given `cx` and `cy` position:
+
+```javascript
+rect.center(150, 150)
 ```
 
 __`returns`: `itself`__
 
-### visible()
-To check if the element is visible:
+### cx()
+Move the element by its center in the `x` direction only:
 
 ```javascript
-rect.visible()
+rect.cx(200)
 ```
 
-__`returns`: `boolean`__
+Without an argument the `cx()` method serves as a getter as well:
+
+```javascript
+rect.cx() //-> returns 200
+```
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### cy()
+Move the element by its center in the `y` direction only:
+
+```javascript
+rect.cy(350)
+```
+
+Without an argument the `cy()` method serves as a getter as well:
+
+```javascript
+rect.cy() //-> returns 350
+```
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### dmove()
+Shift the element in both the `x` and `y` directions relative to its current position:
+
+```javascript
+rect.dmove(10, 30)
+```
+
+__`returns`: `itself`__
+
+### dx()
+Shift the element in the `x` direction relative to its current position:
+
+```javascript
+rect.dx(200)
+```
+
+__`returns`: `itself`__
+
+### dy()
+Shift the element in the `y` direction relative to its current position:
+
+```javascript
+rect.dy(200)
+```
+
+__`returns`: `itself`__
+
+## Altering the element tree
 
 ### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
@@ -1532,10 +1548,10 @@ var clone = rect.clone()
 
 __`returns`: `element`__
 
-This will create an new, unlinked copy. If you want to make a linked clone have a look at the [use](#elements/use) element.
+This will create a new, unlinked copy. For making a linked clone, see the [use](#use) element.
 
 ### remove()
-Pretty straightforward:
+Removes the calling element from the svg document:
 
 ```javascript
 rect.remove()
@@ -1544,7 +1560,7 @@ rect.remove()
 __`returns`: `itself`__
 
 ### replace()
-This method will replace the called element with the given element in the same position in the stack:
+At the calling element's position in the svg document, replace the calling element with the element passed to the method.
 
 ```javascript
 rect.replace(draw.circle(100))
@@ -1553,10 +1569,8 @@ rect.replace(draw.circle(100))
 __`returns`: `element`__
 
 
-## Inserting elements
-
 ### add()
-Elements can be moved between parents via the `add()` method on any parent:
+Sets the calling element as the parent node of the argument. Returns the parent:
 
 ```javascript
 var rect = draw.rect(100, 100)
@@ -1568,7 +1582,7 @@ group.add(rect) //-> returns group
 __`returns`: `itself`__
 
 ### put()
-Where the `add()` method returns the parent itself, the `put()` method returns the given element:
+Sets the calling element as the parent node of the argument. Returns the child:
 
 ```javascript
 group.put(rect) //-> returns rect
@@ -1577,7 +1591,7 @@ group.put(rect) //-> returns rect
 __`returns`: `element`__
 
 ### addTo()
-Similar to the `add()` method on a parent element, elements have the `addTo()` method:
+Sets the calling element as a child node of the argument. Returns the child:
 
 ```javascript
 rect.addTo(group) //-> returns rect
@@ -1586,7 +1600,7 @@ rect.addTo(group) //-> returns rect
 __`returns`: `itself`__
 
 ### putIn()
-Similar to the `put()` method on a parent element, elements have the `putIn()` method:
+Sets the calling element as a child node of the argument. Returns the parent:
 
 ```javascript
 rect.putIn(group) //-> returns group
@@ -1595,7 +1609,7 @@ rect.putIn(group) //-> returns group
 __`returns`: `element`__
 
 ### toParent()
-Moves an element to another parent (similar to add) but remains the visual representation. All transformations are merged and applied to the element.
+Moves an element to a different parent (similar to `add`), but without changing its visual representation. All transformations are merged and applied to the element.
 
 ```javascript
 rect.toParent(group) // looks the same as before
@@ -1609,7 +1623,7 @@ Same as `toParent()` but with the root-node as parent
 __`returns`: `itself`__
 
 ### ungroup() / flatten()
-Break up the group/container and places all elements in the given parent while remaining their visual representation. The result is a flat svg structure e.g. for exporting
+Break up a group/container and move all the elements to a given parent node without changing their visual representations. The result is a flat svg structure, e.g. for exporting.
 
 ```javascript
 // ungroups all elements in this group recursively and places them into the given parent
