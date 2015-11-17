@@ -1188,6 +1188,69 @@ rect.style('cursor', null)
 
 `setter`__`returns`: `itself`__
 
+### fill()
+The `fill()` method is a pretty alternative to the `attr()` method:
+
+```javascript
+rect.fill({ color: '#f06', opacity: 0.6 })
+```
+
+A single hex string will work as well:
+
+```javascript
+rect.fill('#f06')
+```
+
+Last but not least, you can also use an image as fill, simply by passing an image url:
+
+```javascript
+rect.fill('images/shade.jpg')
+```
+
+Or if you want more control over the size of the image, you can pass an image instance as well:
+
+```javascript
+rect.fill(draw.image('images/shade.jpg', 20, 20))
+```
+
+__`returns`: `itself`__
+
+### stroke()
+The `stroke()` method is similar to `fill()`:
+
+```javascript
+rect.stroke({ color: '#f06', opacity: 0.6, width: 5 })
+```
+
+Like fill, a single hex string will work as well:
+
+```javascript
+rect.stroke('#f06')
+```
+
+Not unlike the `fill()` method, you can also use an image as stroke, simply by passing an image url:
+
+```javascript
+rect.stroke('images/shade.jpg')
+```
+
+Or if you want more control over the size of the image, you can pass an image instance as well:
+
+```javascript
+rect.stroke(draw.image('images/shade.jpg', 20, 20))
+```
+
+__`returns`: `itself`__
+
+### opacity()
+To set the overall opacity of an element:
+
+```javascript
+rect.opacity(0.5)
+```
+
+__`returns`: `itself`__
+
 ### reference()
 In cases where an element is linked to another element through an attribute, the linked element instance can be fetched with the `reference()` method. The only thing required is the attribute name:
 
@@ -1273,7 +1336,7 @@ rect.toggleClass('pink-flower')
 
 `setter`__`returns`: `itself`__
 
-## Transforming elements
+## Size and position
 
 In addition to the generalized transform method, there are several specific methods for moving elements. While moving an element by directly setting its attributes will only work if the attributes are used natively by that type of element, these positioning methods are much more convenient as they work for all element types.
 
@@ -1300,70 +1363,6 @@ circle.x(50).y(40)
 
 It is important to note, though, that these methods are only intended for use with user (unitless) coordinates. If, for example, an element has its size set via percentages or other units, the movement methods that address its native attributes will most likely still work, but the ones that address non-native attributes will give unexpected results -- as both getters and setters!
 
-
-### transform()
-
-The `transform()` method acts as a full getter without an argument:
-
-```javascript
-element.transform()
-```
-
-The returned __`object`__ contains the following values:
-
-- `x` (translation on the x-axis)
-- `y` (translation on the y-axis)
-- `skewX` (calculated skew on x-axis)
-- `skewY` (calculated skew on y-axis)
-- `scaleX` (calculated scale on x-axis)
-- `scaleY` (calculated scale on y-axis)
-- `rotation` (calculated rotation)
-- `cx` (last used rotation centre on x-axis)
-- `cy` (last used rotation centre on y-axis)
-
-Additionally a string value for the required property can be passed:
-
-```javascript
-element.transform('rotation')
-```
-
-In this case the returned value is a __`number`__.
-
-
-As a setter it has two ways of working. By default transformations are absolute. For example, if you call:
-
-```javascript
-element.transform({ rotation: 125 }).transform({ rotation: 37.5 })
-```
-
-The resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `relative` parameter. That would be:
-
-
-```javascript
-element.transform({ rotation: 125 }).transform({ rotation: 37.5, relative: true })
-```
-
-Alternatively a relative flag can be passed as the second argument:
-
-```javascript
-element.transform({ rotation: 125 }).transform({ rotation: 37.5 }, true)
-```
-
-Available transformations are:
-
-- `rotation` with optional `cx` and `cy`
-- `scale` with optional `cx` and `cy`
-- `scaleX` with optional `cx` and `cy`
-- `scaleY` with optional `cx` and `cy`
-- `skewX` with optional `cx` and `cy`
-- `skewY` with optional `cx` and `cy`
-- `x`
-- `y`
-- `a`, `b`, `c`, `d`, `e` and/or `f` or an existing matrix instead of the object
-
-`getter`__`returns`: `value`__
-
-`setter`__`returns`: `itself`__
 
 ### size()
 Set the size of an element to a given `width` and `height`:
@@ -1423,6 +1422,26 @@ rect.height() //-> returns 325
 `getter`__`returns`: `value`__
 
 `setter`__`returns`: `itself`__
+
+### radius()
+Circles, ellipses, and rects may use the `radius()` method. On rects, it defines rounded corners.
+
+For a circle, the argument sets the `r` attribute. 
+
+```javascript
+circle.radius(10)
+```
+
+For ellipses and rects, pass two arguments to set the `rx` and `ry` attributes individually. Or, pass a single argument, to make the two attributes equal.
+
+```javascript
+ellipse.radius(10, 20)
+rect.radius(5)
+```
+
+_This functionality requires the sugar.js module which is included in the default distribution._
+
+__`returns`: `itself`__
 
 ### move()
 Move the element by its upper left corner to a given `x` and `y` position:
@@ -1645,7 +1664,117 @@ var svgString = drawing.ungroup().svg()
 
 __`returns`: `itself`__
 
+
 ## Geometry
+
+### transform()
+
+The `transform()` method acts as a full getter without an argument:
+
+```javascript
+element.transform()
+```
+
+The returned __`object`__ contains the following values:
+
+- `x` (translation on the x-axis)
+- `y` (translation on the y-axis)
+- `skewX` (calculated skew on x-axis)
+- `skewY` (calculated skew on y-axis)
+- `scaleX` (calculated scale on x-axis)
+- `scaleY` (calculated scale on y-axis)
+- `rotation` (calculated rotation)
+- `cx` (last used rotation centre on x-axis)
+- `cy` (last used rotation centre on y-axis)
+
+Additionally a string value for the required property can be passed:
+
+```javascript
+element.transform('rotation')
+```
+
+In this case the returned value is a __`number`__.
+
+
+As a setter it has two ways of working. By default transformations are absolute. For example, if you call:
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5 })
+```
+
+The resulting rotation will be `37.5` and not the sum of the two transformations. But if that's what you want there is a way out by adding the `relative` parameter. That would be:
+
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5, relative: true })
+```
+
+Alternatively a relative flag can be passed as the second argument:
+
+```javascript
+element.transform({ rotation: 125 }).transform({ rotation: 37.5 }, true)
+```
+
+Available transformations are:
+
+- `rotation` with optional `cx` and `cy`
+- `scale` with optional `cx` and `cy`
+- `scaleX` with optional `cx` and `cy`
+- `scaleY` with optional `cx` and `cy`
+- `skewX` with optional `cx` and `cy`
+- `skewY` with optional `cx` and `cy`
+- `x`
+- `y`
+- `a`, `b`, `c`, `d`, `e` and/or `f` or an existing matrix instead of the object
+
+`getter`__`returns`: `value`__
+
+`setter`__`returns`: `itself`__
+
+### rotate()
+The `rotate()` method will automatically rotate elements according to the center of the element:
+
+```javascript
+// rotate(degrees)
+rect.rotate(45)
+```
+
+Although you can also define a specific rotation point:
+
+```javascript
+// rotate(degrees, cx, cy)
+rect.rotate(45, 50, 50)
+```
+
+__`returns`: `itself`__
+
+### skew()
+The `skew()` method will take an `x` and `y` value:
+
+```javascript
+// skew(x, y)
+rect.skew(0, 45)
+```
+
+__`returns`: `itself`__
+
+### scale()
+The `scale()` method will take an `x` and `y` value:
+
+```javascript
+// scale(x, y)
+rect.scale(0.5, -1)
+```
+
+__`returns`: `itself`__
+
+### translate()
+The `translate()` method will take an `x` and `y` value:
+
+```javascript
+// translate(x, y)
+rect.translate(0.5, -1)
+```
 
 ### viewbox()
 
@@ -2053,136 +2182,6 @@ Available values are:
 - `reversing` (`true` if the loop is currently reversing, otherwise `false`)
 - `during` (the function that should be called on every keyframe)
 - `after` (the function that should be called after completion)
-
-
-## Syntax sugar
-
-Fill and stroke are used quite often. Therefore two convenience methods are provided:
-
-### fill()
-The `fill()` method is a pretty alternative to the `attr()` method:
-
-```javascript
-rect.fill({ color: '#f06', opacity: 0.6 })
-```
-
-A single hex string will work as well:
-
-```javascript
-rect.fill('#f06')
-```
-
-Last but not least, you can also use an image as fill, simply by passing an image url:
-
-```javascript
-rect.fill('images/shade.jpg')
-```
-
-Or if you want more control over the size of the image, you can pass an image instance as well:
-
-```javascript
-rect.fill(draw.image('images/shade.jpg', 20, 20))
-```
-
-__`returns`: `itself`__
-
-### stroke()
-The `stroke()` method is similar to `fill()`:
-
-```javascript
-rect.stroke({ color: '#f06', opacity: 0.6, width: 5 })
-```
-
-Like fill, a single hex string will work as well:
-
-```javascript
-rect.stroke('#f06')
-```
-
-Not unlike the `fill()` method, you can also use an image as stroke, simply by passing an image url:
-
-```javascript
-rect.stroke('images/shade.jpg')
-```
-
-Or if you want more control over the size of the image, you can pass an image instance as well:
-
-```javascript
-rect.stroke(draw.image('images/shade.jpg', 20, 20))
-```
-
-__`returns`: `itself`__
-
-### opacity()
-To set the overall opacity of an element:
-
-```javascript
-rect.opacity(0.5)
-```
-
-__`returns`: `itself`__
-
-### rotate()
-The `rotate()` method will automatically rotate elements according to the center of the element:
-
-```javascript
-// rotate(degrees)
-rect.rotate(45)
-```
-
-Although you can also define a specific rotation point:
-
-```javascript
-// rotate(degrees, cx, cy)
-rect.rotate(45, 50, 50)
-```
-
-__`returns`: `itself`__
-
-### skew()
-The `skew()` method will take an `x` and `y` value:
-
-```javascript
-// skew(x, y)
-rect.skew(0, 45)
-```
-
-__`returns`: `itself`__
-
-### scale()
-The `scale()` method will take an `x` and `y` value:
-
-```javascript
-// scale(x, y)
-rect.scale(0.5, -1)
-```
-
-__`returns`: `itself`__
-
-### translate()
-The `translate()` method will take an `x` and `y` value:
-
-```javascript
-// translate(x, y)
-rect.translate(0.5, -1)
-```
-
-### radius()
-Rects and ellipses have a `radius()` method. On rects it defines rounded corners, on ellipses the radii:
-
-```javascript
-rect.radius(10)
-```
-
-This will set the `rx` and `ry` attributes to `10`. To set `rx` and `ry` individually:
-
-```javascript
-rect.radius(10, 20)
-```
-
-_This functionality requires the sugar.js module which is included in the default distribution._
-
-__`returns`: `itself`__
 
 
 ## Masking elements
