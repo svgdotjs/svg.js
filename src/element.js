@@ -243,9 +243,12 @@ SVG.Element = SVG.invent({
         })
       }
 
+      // remove previously set data
+      this.node.removeAttribute('svgjs:data')
+
       if(Object.keys(this.dom).length)
         this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
-        
+
       return this
     }
   // set given data to the elements data property

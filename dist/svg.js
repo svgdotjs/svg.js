@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 18 2015 01:14:40 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Nov 18 2015 01:17:09 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1207,6 +1207,9 @@ SVG.Element = SVG.invent({
           this.writeDataToDom()
         })
       }
+
+      // remove previously set data
+      this.node.removeAttribute('svgjs:data')
 
       if(Object.keys(this.dom).length)
         this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
