@@ -8,7 +8,7 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.1 (??/??/????)
+# 2.2.1 (18/11/2015)
 - added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
 - added `gbox()` to group to get bbox with translation included (#405)
 - fixed dom data which was not cleaned up properly (#398)
