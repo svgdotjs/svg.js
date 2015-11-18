@@ -2,7 +2,7 @@ describe('Group', function() {
   var group
 
   beforeEach(function() {
-    group = draw.group()
+    group = draw.group().move(50, 50)
     group.rect(100,100)
   })
   
@@ -12,54 +12,54 @@ describe('Group', function() {
 
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
-      expect(group.x()).toBe(0)
+      expect(group.x()).toBe(50)
     })
     it('sets the value of x with the first argument', function() {
       group.x(123)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.x).toBe(123)
     })
     it('sets the value of x correctly when called multiple times', function() {
       group.x(10).x(100).x(13)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.x).toBe(13)
     })
   })
   
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
-      expect(group.y()).toBe(0)
+      expect(group.y()).toBe(50)
     })
     it('sets the value of y with the first argument', function() {
       group.y(345)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.y).toBe(345)
     })
     it('sets the value of y correctly when called multiple times', function() {
       group.y(1).y(10).y(15)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.y).toBe(15)
     })
   })
   
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
-      expect(group.cx()).toBe(50)
+      expect(group.cx()).toBe(100)
     })
     it('sets the value of cx with the first argument', function() {
       group.cx(123)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.cx).toBe(123)
     })
   })
   
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
-      expect(group.cy()).toBe(50)
+      expect(group.cy()).toBe(100)
     })
     it('sets the value of cy with the first argument', function() {
       group.cy(345)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.cy).toBe(345)
     })
   })
@@ -74,7 +74,7 @@ describe('Group', function() {
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       group.center(321,567)
-      var box = group.tbox()
+      var box = group.gbox()
       expect(box.cx).toBe(321)
       expect(box.cy).toBe(567)
     })

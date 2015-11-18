@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 18 2015 01:17:09 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Nov 18 2015 14:36:43 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2626,6 +2626,21 @@ SVG.G = SVG.invent({
     // Move by center over y-axis
   , cy: function(y) {
       return y == null ? this.tbox().cy : this.y(y - this.tbox().height / 2)
+    }
+  , gbox: function() {
+
+      var bbox  = this.bbox()
+        , trans = this.transform()
+
+      bbox.x  += trans.x
+      bbox.x2 += trans.x
+      bbox.cx += trans.x
+
+      bbox.y  += trans.y
+      bbox.y2 += trans.y
+      bbox.cy += trans.y
+
+      return bbox
     }
   }
 

@@ -10,6 +10,7 @@
 
 # 2.2.1 (??/??/????)
 - added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
+- added `gbox()` to group to get bbox with translation included (#405)
 - fixed dom data which was not cleaned up properly (#398)
 
 # 2.2.0 (06/11/2015)

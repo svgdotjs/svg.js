@@ -4,7 +4,7 @@ SVG.G = SVG.invent({
 
   // Inherit from
 , inherit: SVG.Container
-  
+
   // Add class methods
 , extend: {
     // Move over x-axis
@@ -23,8 +23,23 @@ SVG.G = SVG.invent({
   , cy: function(y) {
       return y == null ? this.tbox().cy : this.y(y - this.tbox().height / 2)
     }
+  , gbox: function() {
+
+      var bbox  = this.bbox()
+        , trans = this.transform()
+
+      bbox.x  += trans.x
+      bbox.x2 += trans.x
+      bbox.cx += trans.x
+
+      bbox.y  += trans.y
+      bbox.y2 += trans.y
+      bbox.cy += trans.y
+
+      return bbox
+    }
   }
-  
+
   // Add parent method
 , construct: {
     // Create a group element
