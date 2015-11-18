@@ -12,7 +12,7 @@ describe('FX', function() {
   
   it('creates a new queue and pushes one animation into it', function() {
     expect(fx._queue.length).toBe(1)
-    expect(fx._queue[0] instance of SVG.QueueItem).toBe(true)
+    expect(fx._queue[0] instance of SVG.Situation).toBe(true)
   })
   
   describe('queue()', function() {
