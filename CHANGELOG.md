@@ -8,6 +8,10 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.2.1 (??/??/????)
+- added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
+- fixed dom data which was not cleaned up properly (#398)
+
 # 2.2.0 (06/11/2015)
 
 - fixed pattern and gradient animation (#385)
