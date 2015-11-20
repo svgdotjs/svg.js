@@ -1338,9 +1338,9 @@ rect.toggleClass('pink-flower')
 
 ## Size and position
 
-In addition to the generalized transform method, there are several specific methods for moving elements. While moving an element by directly setting its attributes will only work if the attributes are used natively by that type of element, these positioning methods are much more convenient as they work for all element types.
+While positioning an element by directly setting its attributes works only if the attributes are used natively by that type of element, the positioning methods described below are much more convenient as they work for all element types.
 
-For example, the following code works because each element is moved by setting native attributes:
+For example, the following code works because each element is positioned by setting native attributes:
 
 ```javascript
 rect.attr({ x: 20, y: 60 })
@@ -1361,7 +1361,7 @@ rect.cx(20).cy(60)
 circle.x(50).y(40)
 ```
 
-It is important to note, though, that these methods are only intended for use with user (unitless) coordinates. If, for example, an element has its size set via percentages or other units, the movement methods that address its native attributes will most likely still work, but the ones that address non-native attributes will give unexpected results -- as both getters and setters!
+It is important to note, though, that these methods are only intended for use with user (unitless) coordinates. If, for example, an element has its size set via percentages or other units, the positioning methods that address its native attributes will most likely still work, but the ones that address non-native attributes will give unexpected results -- as both getters and setters!
 
 
 ### size()
@@ -1556,7 +1556,7 @@ rect.dy(200)
 
 __`returns`: `itself`__
 
-## Altering the element tree
+## Document tree manipulations
 
 ### clone()
 To make an exact copy of an element the `clone()` method comes in handy:
@@ -1665,7 +1665,7 @@ var svgString = drawing.ungroup().svg()
 __`returns`: `itself`__
 
 
-## Geometry
+## Transforms
 
 ### transform()
 
@@ -1775,6 +1775,9 @@ The `translate()` method will take an `x` and `y` value:
 // translate(x, y)
 rect.translate(0.5, -1)
 ```
+
+
+## Geometry
 
 ### viewbox()
 
