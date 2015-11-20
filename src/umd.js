@@ -2,14 +2,14 @@
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
-    module.exports = root.document ? factory(root, root.document) : function(w){ return factory(w, w.document) };
+    module.exports = factory();
   } else {
-    root.SVG = factory(root, root.document);
+    root.SVG = factory();
   }
-}(typeof window !== "undefined" ? window : this, function(window, document) {
+}(this, function() {
 
-<%= contents %>
+  <%= contents %>
 
-return SVG
+  return SVG
 
 }));

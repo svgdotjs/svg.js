@@ -6,19 +6,19 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 18 2015 14:42:33 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Nov 20 2015 17:26:48 GMT+0300 (MSK)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
-    module.exports = root.document ? factory(root, root.document) : function(w){ return factory(w, w.document) };
+    module.exports = factory();
   } else {
-    root.SVG = factory(root, root.document);
+    root.SVG = factory();
   }
-}(typeof window !== "undefined" ? window : this, function(window, document) {
+}(this, function() {
 
-// The main wrapping element
+  // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
@@ -4546,6 +4546,6 @@ if (typeof CustomEvent !== 'function') {
 
 }(window))
 
-return SVG
+  return SVG
 
 }));
