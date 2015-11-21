@@ -6,11 +6,14 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 18 2015 14:42:33 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Nov 21 2015 19:16:12 GMT+0300 (MSK)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(factory);
+    var amdFactoryFunction = function() {
+      return factory.apply(factory, [root, root.document]);
+    };
+    define(amdFactoryFunction);
   } else if (typeof exports === 'object') {
     module.exports = root.document ? factory(root, root.document) : function(w){ return factory(w, w.document) };
   } else {
