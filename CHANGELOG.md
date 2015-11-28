@@ -8,6 +8,11 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.2.2 (28/11.2015)
+- fixed leading point bug in path parsing (#416)
+- added null check in image onload callback (#415)
+- documentation rework (#407) [thanks @snowyplover]
+
 # 2.2.1 (18/11/2015)
 - added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
 - added `gbox()` to group to get bbox with translation included (#405)
