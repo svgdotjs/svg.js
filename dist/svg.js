@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Nov 28 2015 11:37:48 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Nov 29 2015 00:24:09 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3496,7 +3496,7 @@ SVG.Image = SVG.invent({
       img.onload = function() {
         var p = self.parent(SVG.Pattern)
 
-        if(!p) return
+        if(p === null) return
 
         // ensure image size
         if (self.width() == 0 && self.height() == 0)
