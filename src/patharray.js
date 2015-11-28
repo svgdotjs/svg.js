@@ -13,15 +13,15 @@ SVG.extend(SVG.PathArray, {
   }
   // Move path string
 , move: function(x, y) {
-    // get bounding box of current situation 
+    // get bounding box of current situation
     var box = this.bbox()
-    
-    // get relative offset 
+
+    // get relative offset
     x -= box.x
     y -= box.y
 
     if (!isNaN(x) && !isNaN(y)) {
-      // move every point 
+      // move every point
       for (var l, i = this.value.length - 1; i >= 0; i--) {
         l = this.value[i][0]
 
@@ -58,10 +58,10 @@ SVG.extend(SVG.PathArray, {
   }
   // Resize path string
 , size: function(width, height) {
-    // get bounding box of current situation 
+    // get bounding box of current situation
     var i, l, box = this.bbox()
 
-    // recalculate position of all points according to new size 
+    // recalculate position of all points according to new size
     for (i = this.value.length - 1; i >= 0; i--) {
       l = this.value[i][0]
 
@@ -87,11 +87,11 @@ SVG.extend(SVG.PathArray, {
         }
 
       } else if (l == 'A')  {
-        // resize radii 
+        // resize radii
         this.value[i][1] = (this.value[i][1] * width)  / box.width
         this.value[i][2] = (this.value[i][2] * height) / box.height
 
-        // move position values 
+        // move position values
         this.value[i][6] = ((this.value[i][6] - box.x) * width)  / box.width  + box.x
         this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
       }
@@ -127,7 +127,18 @@ SVG.extend(SVG.PathArray, {
         return [].concat.apply(prev, curr)
       }, [])
     }
-    
+
+    // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
+    // we fix this elements in the next loop
+    for(i = 0; i < array.length; ++i){
+      if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
+        var split = array[i].split('.') // split at the point
+        var first = [split.shift(), split.shift()].join('.') // join the first number together
+        array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
+        i += split.length // dont forget to update the index
+      }
+    }
+
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
 
     var arr = []
@@ -217,9 +228,9 @@ SVG.extend(SVG.PathArray, {
       arr.push(seg)
 
     }while(array.length)
-    
+
     return arr
-    
+
   }
   // Get bounding box of path
 , bbox: function() {

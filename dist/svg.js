@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Nov 18 2015 14:42:33 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Nov 28 2015 11:16:20 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -698,6 +698,17 @@ SVG.extend(SVG.PathArray, {
       array = array.reduce(function(prev, curr){
         return [].concat.apply(prev, curr)
       }, [])
+    }
+
+    // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
+    // we fix this elements in the next loop
+    for(i = 0; i < array.length; ++i){
+      if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
+        var split = array[i].split('.') // split at the point
+        var first = [split.shift(), split.shift()].join('.') // join the first number together
+        array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
+        i += split.length // dont forget to update the index
+      }
     }
 
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
