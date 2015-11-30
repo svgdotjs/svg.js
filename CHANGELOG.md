@@ -8,7 +8,12 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.2 (28/11.2015)
+# 2.2.3 (30/11/2015)
+- fixed null check in image (see 2.2.2)
+- fixed bug related to the new path parser (see 2.2.2)
+- fixed amd loader (#412)
+
+# 2.2.2 (28/11/2015)
 - fixed leading point bug in path parsing (#416)
 - added null check in image onload callback (#415)
 - documentation rework (#407) [thanks @snowyplover]
