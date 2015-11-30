@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Nov 29 2015 00:24:09 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Mon Nov 30 2015 22:16:36 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -694,21 +694,20 @@ SVG.extend(SVG.PathArray, {
         .trim()                                 // trim
         .split(SVG.regex.whitespaces)           // split into array
 
+      // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
+      // we fix this elements in the next loop
+      for(i = array.length; --i;){
+        if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
+          var split = array[i].split('.') // split at the point
+          var first = [split.shift(), split.shift()].join('.') // join the first number together
+          array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
+        }
+      }
+
     }else{
       array = array.reduce(function(prev, curr){
         return [].concat.apply(prev, curr)
       }, [])
-    }
-
-    // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
-    // we fix this elements in the next loop
-    for(i = 0; i < array.length; ++i){
-      if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
-        var split = array[i].split('.') // split at the point
-        var first = [split.shift(), split.shift()].join('.') // join the first number together
-        array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
-        i += split.length // dont forget to update the index
-      }
     }
 
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
@@ -722,8 +721,10 @@ SVG.extend(SVG.PathArray, {
         s = array[0]
         array.shift()
       // If last letter was a move command and we got no new, it defaults to [L]ine
-      }else if(s.toUpperCase() == 'M'){
+      }else if(s == 'M'){
         s = 'L'
+      }else if(s == 'm'){
+        s = 'l'
       }
 
       // add path letter as first element
@@ -3718,6 +3719,8 @@ SVG.Tspan = SVG.invent({
 , extend: {
     // Set text content
     text: function(text) {
+      if(text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+
       typeof text === 'function' ? text.call(this, this) : this.plain(text)
 
       return this

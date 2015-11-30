@@ -63,12 +63,12 @@ SVG.Text = SVG.invent({
         var text = ''
         var children = this.node.childNodes
         for(var i = 0, len = children.length; i < len; ++i){
-          
+
           // add newline if its not the first child and newLined is set to true
           if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
             text += '\n'
           }
-          
+
           // add content of this node
           text += children[i].textContent
         }
@@ -182,6 +182,8 @@ SVG.Tspan = SVG.invent({
 , extend: {
     // Set text content
     text: function(text) {
+      if(text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+
       typeof text === 'function' ? text.call(this, this) : this.plain(text)
 
       return this
