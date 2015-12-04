@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Nov 30 2015 22:46:17 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Dec 04 2015 17:47:39 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1906,6 +1906,12 @@ SVG.Matrix = SVG.invent({
       , scaleY:   Math.sqrt(this.c * this.c + this.d * this.d)
         // rotation
       , rotation: skewX
+      , a: this.a
+      , b: this.b
+      , c: this.c
+      , d: this.d
+      , e: this.e
+      , f: this.f
       }
     }
     // Clone matrix
@@ -3668,13 +3674,20 @@ SVG.Text = SVG.invent({
       // define position of all lines
       if (this._rebuild) {
         var self = this
+          , blankLineOffset = 0
+          , dy = this.dom.leading * new SVG.Number(this.attr('font-size'))
 
         this.lines().each(function() {
           if (this.dom.newLined) {
             if (!this.textPath)
               this.attr('x', self.attr('x'))
 
-            this.attr('dy', self.dom.leading * new SVG.Number(self.attr('font-size')))
+            if(this.text() == '\n') {
+              blankLineOffset += dy
+            }else{
+              this.attr('dy', dy + blankLineOffset)
+              blankLineOffset = 0
+            }
           }
         })
 

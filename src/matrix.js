@@ -40,6 +40,12 @@ SVG.Matrix = SVG.invent({
       , scaleY:   Math.sqrt(this.c * this.c + this.d * this.d)
         // rotation
       , rotation: skewX
+      , a: this.a
+      , b: this.b
+      , c: this.c
+      , d: this.d
+      , e: this.e
+      , f: this.f
       }
     }
     // Clone matrix
