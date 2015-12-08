@@ -125,8 +125,8 @@ SVG.RBox = SVG.invent({
     fullBox(this)
 
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-    this.x += window.scrollX
-    this.y += window.scrollY
+    this.x += window.pageXOffset
+    this.y += window.pageYOffset
   }
 
   // define Parent

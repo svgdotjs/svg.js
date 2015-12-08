@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Fri Dec 04 2015 17:47:39 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Dec 08 2015 13:52:24 GMT+0000 (GMT Standard Time)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1826,8 +1826,8 @@ SVG.RBox = SVG.invent({
     fullBox(this)
 
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-    this.x += window.scrollX
-    this.y += window.scrollY
+    this.x += window.pageXOffset
+    this.y += window.pageYOffset
   }
 
   // define Parent
