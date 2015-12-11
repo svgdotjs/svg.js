@@ -8,7 +8,7 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.4
+# 2.2.4 (12/12/2014)
 - fixed `transform()` which returns the matrix values (a-f) now, too (#423)
 - double newlines (\n\n) are correctly handled as blank line from `text()`
 - fixed use of scrollX vs pageXOffset in `rbox()` (#425)
