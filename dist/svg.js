@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Dec 08 2015 13:52:24 GMT+0000 (GMT Standard Time)
+* BUILT: Fri Dec 11 2015 09:19:16 GMT-0600 (Central Standard Time)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2777,7 +2777,7 @@ SVG.Mask = SVG.invent({
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unmask()
-      delete this.targets
+      this.targets = [];
 
       // remove mask from parent
       this.parent().removeElement(this)
@@ -2836,7 +2836,7 @@ SVG.ClipPath = SVG.invent({
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unclip()
-      delete this.targets
+      this.targets = [];
 
       // remove clipPath from parent
       this.parent().removeElement(this)

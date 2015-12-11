@@ -18,7 +18,7 @@ SVG.ClipPath = SVG.invent({
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unclip()
-      delete this.targets
+      this.targets = [];
 
       // remove clipPath from parent 
       this.parent().removeElement(this)
