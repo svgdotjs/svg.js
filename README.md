@@ -1886,7 +1886,7 @@ This will return an instance of `SVG.RBox` containing the following values:
 - `x2` (lower right `x` of the bounding box)
 - `y2` (lower right `y` of the bounding box)
 
-__Important__: Mozilla browsers include stroke widths where other browsers do not. Therefore the resulting box might be different in Mozulla browsers. It is very hard to modify this behavior so for the time being this is an inconvenience we have to live with.
+__Important__: Mozilla browsers include stroke widths where other browsers do not. Therefore the resulting box might be different in Mozilla browsers. It is very hard to modify this behavior so for the time being this is an inconvenience we have to live with.
 
 __`returns`: `SVG.RBox`__
 

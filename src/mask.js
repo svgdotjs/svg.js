@@ -18,7 +18,7 @@ SVG.Mask = SVG.invent({
       for (var i = this.targets.length - 1; i >= 0; i--)
         if (this.targets[i])
           this.targets[i].unmask()
-      this.targets = [];
+      this.targets = []
 
       // remove mask from parent 
       this.parent().removeElement(this)

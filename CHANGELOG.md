@@ -8,6 +8,12 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.2.4
+- fixed `transform()` which returns the matrix values (a-f) now, too (#423)
+- double newlines (\n\n) are correctly handled as blank line from `text()`
+- fixed use of scrollX vs pageXOffset in `rbox()` (#425)
+- fixed target array in mask and clip which was removed instead of reinitialized (#429)
+ 
 # 2.2.3 (30/11/2015)
 - fixed null check in image (see 2.2.2)
 - fixed bug related to the new path parser (see 2.2.2)
