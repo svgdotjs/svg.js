@@ -20,6 +20,7 @@ SVG.Situation = SVG.invent({
 
     this.easing = SVG.easing[o.easing || '-'] || o.easing // when easing is a function, its not in SVG.easing
     this.pos = 0        // position before easing
+    this.lastPos = 0    // needed for once callbacks
     this.paused = false
     this.finished = false
     this.active = false
@@ -29,6 +30,11 @@ SVG.Situation = SVG.invent({
       // functionToCall: [morphable object, destination value]
       // e.g. x: [SVG.Number, 5]
       // this way its assured, that the start value is set correctly
+    }
+    
+    this._once = {
+      // functions to fire at a specific position
+      // e.g. "0.5": function foo(){}
     }
 
   }
@@ -54,9 +60,7 @@ SVG.Situation = SVG.invent({
     }
 
   , start: function(){
-  
-      
-  
+
       if(this.fx().current() == this){
         // morph values from the current position to the destination - maybe move this to another place
         for(var i in this.animations){
@@ -153,6 +157,14 @@ SVG.Situation = SVG.invent({
       if(this.pos > 1) this.pos = 1
       if(this.pos < 0) this.pos = 0
 
+      var eased = this.easing(this.pos)
+      
+      for(var i in this._once){
+        if(i > this.lastPos && i < eased) this._once[i](this.pos, eased)
+      }
+      
+      this.fx().target.fire('during', {pos: this.pos, eased: eased})
+      
       this.eachAt(function(method, args){
         this.fx().target[method].apply(this.fx().target, args)
       })
@@ -160,13 +172,16 @@ SVG.Situation = SVG.invent({
       if(this.pos == 1){
         this.finished = true
         this.active = false
-        var next = this.fx().next()
-        if(next)next.start()
+        this.fx().target.fire('situationfinished')
+        this.fx().startNext()
+        //var next = this.fx().next()
+        //if(next)next.start()
         cancelAnimationFrame(this.animationFrame)
       }else{
         this.startAnimFrame()
       }
 
+      this.lastPos = eased
       return this
 
     }
@@ -194,6 +209,17 @@ SVG.Situation = SVG.invent({
 
       return this._fx
     }
+  
+  
+  , once: function(pos, fn, isEased){
+
+      if(!isEased)pos = this.easing(pos)
+
+      this._once[pos] = fn
+
+      return this
+    }
+    
   }
 
 })
@@ -243,16 +269,16 @@ SVG.FX = SVG.invent({
         if(!attr) continue
         
         // if not yet morphed we extract the destination from the array
-        if(attr instanceof Array) return attr[1]
+        //if(attr instanceof Array) return attr[1]
         
         // otherwise from the morphed object
         return attr.destination
-      
+
       }
-      
+
       // return the elements attribute as fallback
       return this.target[attr]()
-  
+
     }
 
   , prev: function() {
@@ -267,27 +293,40 @@ SVG.FX = SVG.invent({
       if(!this._queue[i]) return null
       return this._queue[i]
     }
+    
+  , startNext: function() {
+      
+      var next = this.next()
+      if(next) next.start()
+      else this.finish()
+      
+      return this
+    }
 
   , pause: function() {
-      this.active = false
+      this.current().pause()
+      return this
     }
 
   , play: function() {
-      this.reverse = false
-      this.active = true
+      this.current().play()
+      return this
     }
 
+    /*
   , resume: function() {
       this.active = true
-    }
+    }*/
 
   , finish: function() {
       this.active = false
-      return this.progress(1)
+      this.target.fire('fxfinished')
+      return this
     }
 
   , reverse: function() {
       this.reverse = true
+      this.current().play()
       return this
     }
 
