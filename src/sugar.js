@@ -61,11 +61,11 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Relative move over x axis
 , dx: function(x) {
-    return this.x((this.target || this).x() + x)
+    return this.x((this.search ? this.search('x') : this.x()) + x)
   }
   // Relative move over y axis
 , dy: function(y) {
-    return this.y((this.target || this).y() + y)
+    return this.y((this.search ? this.search('x') : this.y()) + y)
   }
   // Relative move over x and y axes
 , dmove: function(x, y) {
