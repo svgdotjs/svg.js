@@ -297,30 +297,30 @@ describe('Event', function() {
     })
     it('attaches multiple handlers on different element', function() {
       var listenerCnt = SVG.listeners.length
-      
+
       var rect2 = draw.rect(100,100);
       var rect3 = draw.rect(100,100);
-      
+
       rect.on('event', action)
       rect2.on('event', action)
       rect3.on('event', function(){ butter = 'melting' })
       rect3.on('event', action)
-      
+
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(1)  // 1 listener on rect
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['event']['*']).length).toBe(2) // 2 listener on rect3
       expect(SVG.listeners.length).toBe(listenerCnt + 3)                                                  // added listeners on 3 different elements
     })
     if('attaches a handler to a namespaced event', function(){
       var listenerCnt = SVG.listeners.length
-      
+
       var rect2 = draw.rect(100,100);
       var rect3 = draw.rect(100,100);
-      
+
       rect.on('event.namespace1', action)
       rect2.on('event.namespace2', action)
       rect3.on('event.namespace3', function(){ butter = 'melting' })
       rect3.on('event', action)
-      
+
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'])).toBeUndefined()          // no global listener on rect
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace1']).length).toBe( 1) // 1 namespaced listener on rect
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect2.node)]['event']['namespace2']).length).toBe(1) // 1 namespaced listener on rect
@@ -355,47 +355,47 @@ describe('Event', function() {
     it('detaches a specific event listener, all other still working', function() {
       rect2 = draw.rect(100,100);
       rect3 = draw.rect(100,100);
-      
+
       rect.on('event', action)
       rect2.on('event', action)
       rect3.on('event', function(){ butter = 'melting' })
-      
+
       rect.off('event', action)
-      
+
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(0)
-      
+
       dispatchEvent(rect, 'event')
       expect(toast).toBeNull()
-      
+
       dispatchEvent(rect2, 'event')
       expect(toast).toBe('ready')
-      
+
       dispatchEvent(rect3, 'event')
       expect(butter).toBe('melting')
-      
+
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).toBeUndefined()
     })
     it('detaches a specific namespaced event listener, all other still working', function() {
       rect2 = draw.rect(100,100);
       rect3 = draw.rect(100,100);
-      
+
       rect.on('event.namespace', action)
       rect2.on('event.namespace', action)
       rect3.on('event.namespace', function(){ butter = 'melting' })
-      
+
       rect.off('event.namespace', action)
-      
+
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace']).length).toBe(0)
-      
+
       dispatchEvent(rect, 'event')
       expect(toast).toBeNull()
-      
+
       dispatchEvent(rect2, 'event')
       expect(toast).toBe('ready')
-      
+
       dispatchEvent(rect3, 'event')
       expect(butter).toBe('melting')
-      
+
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace'][action]).toBeUndefined()
     })
     it('detaches all listeners for a specific namespace', function() {
@@ -459,7 +459,7 @@ describe('Event', function() {
       expect(toast).toBe('ready')
     })
   })
-  
+
 
 })
 
