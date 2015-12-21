@@ -21,8 +21,8 @@ SVG.extend(SVG.Element, SVG.FX, {
     }
 
     // get current matrix
-    matrix = this instanceof SVG.FX && this.attrs.transform ?
-      this.attrs.transform :
+    matrix = /*this instanceof SVG.FX && this.attrs.transform ?
+      this.attrs.transform :*/
       new SVG.Matrix(target)
 
     // ensure relative flag
@@ -42,23 +42,25 @@ SVG.extend(SVG.Element, SVG.FX, {
       ensureCentre(o, target)
 
       // relativize rotation value
-      if (relative) {
+      /*if (relative) {
         o.rotation += this.param && this.param.rotation != null ?
           this.param.rotation :
           matrix.extract().rotation
-      }
+      }*/
 
       // store parametric values
-      this.param = o
+      //this.param = o
 
+      if(this instanceof SVG.FX) return this.attr('transform', o)
+      
       // apply transformation
-      if (this instanceof SVG.Element) {
+      //if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
           matrix.rotate(o.rotation, o.cx, o.cy) :
           // absolute
           matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
-      }
+      //}
 
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {

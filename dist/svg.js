@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sun Dec 20 2015 15:41:48 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Mon Dec 21 2015 18:36:03 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1270,17 +1270,23 @@ SVG.FX = SVG.invent({
     }
 
     this.attrs = {
-      // todo: check if attr is present in animation before saving
+      // holds all attributes which are not represented from a function svg.js provides
     }
 
     this.styles = {
-
+      // holds all styles which should be animated
     }
+
+    this.transforms = [
+      // holds all transformations of teh form:
+      // [A, B, C] or, [A, [25, 0, 0]] where ABC are matrixes and the array represents a rotation
+    ]
 
     this._once = {
       // functions to fire at a specific position
       // e.g. "0.5": function foo(){}
     }
+
 
   }
 
@@ -1288,15 +1294,15 @@ SVG.FX = SVG.invent({
 
     // sets up the animation
     animate: function(o){
+      // the end time of the previous is our start
+      var start = this._prev ? this._prev._end : +new Date
+
       o = o || {}
 
       if(typeof o == 'number') o = {duration:o}
 
       this._duration = o.duration || 1000
       this._delay = o.delay || 0
-
-      // the end time of the previous is our start
-      var start = this._prev ? this._prev._end : +new Date
 
       this._start = start + this._delay
       this._end = this._start + this._duration
@@ -1395,7 +1401,6 @@ SVG.FX = SVG.invent({
     // kicks off the animation - only does something when this obejct is the current
     // todo: remove timeout. we dont rly need a delay. it can be accomplished from the user itself
   , start: function(){
-
       // dont start if already started
       if(!this.active && this.current() == this){
         this._start = +new Date + this._delay
@@ -1421,12 +1426,21 @@ SVG.FX = SVG.invent({
       }
 
       for(i in this.attrs){
-        this.attrs[i].value = this.target.attr(i)
+        if(this.attrs[i] instanceof SVG.Color){
+          var color = new SVG.Color(this.target.attr(i))
+          this.attrs[i].r = color.r
+          this.attrs[i].g = color.g
+          this.attrs[i].b = color.b
+        }else{
+          this.attrs[i].value = this.target.attr(i)
+        }
       }
 
       for(i in this.styles){
         this.styles[i].value = this.target.style(i)
       }
+
+      this.transformations = this.target.matrixify()
 
       this.init = true
     }
@@ -1629,9 +1643,7 @@ SVG.FX = SVG.invent({
       this.target.fire('during', {pos: this.pos, eased: eased, fx: this})
 
       // apply the actual animation to every property
-      this.eachAt(function(method, args){
-        this.target[method].apply(this.target, args)
-      })
+      this.eachAt()
 
       // do final code when situation is finished
       if(this.pos == 1){
@@ -1688,40 +1700,54 @@ SVG.FX = SVG.invent({
 
     // calculates the step for every property and calls block with it
     // todo: include block directly cause it is used only for this purpose
-  , eachAt: function(block){
-      var i, at
+  , eachAt: function(){
+      var i, at, self = this, target = this.target
 
+      // apply animations which can be called trough a method
       for(i in this.animations){
 
         at = [].concat(this.animations[i]).map(function(el){
-          if(el.at) return el.at(this.easing(this.pos), this.pos)
-          return el
-        }.bind(this))
+          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        })
 
-        block.call(this, i, at)
+        target[i].apply(target, at)
 
       }
 
+      // apply animation which has to be applied with attr()
       for(i in this.attrs){
 
         at = [i].concat(this.attrs[i]).map(function(el){
-          if(el.at) return el.at(this.easing(this.pos), this.pos)
-          return el
-        }.bind(this))
+          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        })
 
-        block.call(this, 'attr', at)
+        target.attr.apply(target, at)
 
       }
 
+      // apply animation which has to be applied with style()
       for(i in this.styles){
 
         at = [i].concat(this.styles[i]).map(function(el){
-          if(el.at) return el.at(this.easing(this.pos), this.pos)
-          return el
-        }.bind(this))
+          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        })
 
-        block.call(this, 'style', at)
+        target.style.apply(target, at)
 
+      }
+
+      // animate transformations which has to be chained
+      if(this.transforms.length){
+        at = this.transformations
+        for(i in this.transforms){
+          if(Array.isArray(this.transforms[i])){
+            at = at.rotate(this.transforms[i][0].at(this.easing(this.pos)), this.transforms[i][1], this.transforms[i][2])
+          }else{
+            at = at.multiply(this.transforms[i].at(this.easing(this.pos)))
+          }
+        }
+
+        target.matrix(at)
       }
 
       return this
@@ -1818,11 +1844,19 @@ SVG.extend(SVG.FX, {
       // detect format
       if (a == 'transform') {
         // merge given transformation with an existing one
-        if (this.attrs[a])
-          v = this.attrs[a].multiply(v)
+        //if (this.attrs[a])
+        //  v = this.attrs[a].multiply(v)
+
+        if(v.rotation && !v.a){
+          this.transforms.push([new SVG.Number(0).morph(v.rotation), v.cx || 0, v.cy || 0])
+          this.start()
+        }else{
+          this.transforms.push(new SVG.Matrix(this.target).morph(v))
+          this.start()
+        }
 
         // prepare matrix for morphing
-        this.push(a, (new SVG.Matrix(this.target)).morph(v), 'attrs')
+        //this.push(a, (new SVG.Matrix(this.target)).morph(v), 'transforms')
 
         // add parametric rotation values
         /*if (this.param) {
@@ -1837,9 +1871,9 @@ SVG.extend(SVG.FX, {
         }*/
 
       } else {
-        if(typeof this[a] == 'function'){
+        /*if(typeof this[a] == 'function'){
           return this[a](v)
-        }
+        }*/
 
         this.push(a, new SVG.MorphObj(from, v), 'attrs')
       }
@@ -2387,8 +2421,8 @@ SVG.extend(SVG.Element, SVG.FX, {
     }
 
     // get current matrix
-    matrix = this instanceof SVG.FX && this.attrs.transform ?
-      this.attrs.transform :
+    matrix = /*this instanceof SVG.FX && this.attrs.transform ?
+      this.attrs.transform :*/
       new SVG.Matrix(target)
 
     // ensure relative flag
@@ -2408,23 +2442,25 @@ SVG.extend(SVG.Element, SVG.FX, {
       ensureCentre(o, target)
 
       // relativize rotation value
-      if (relative) {
+      /*if (relative) {
         o.rotation += this.param && this.param.rotation != null ?
           this.param.rotation :
           matrix.extract().rotation
-      }
+      }*/
 
       // store parametric values
-      this.param = o
+      //this.param = o
+
+      if(this instanceof SVG.FX) return this.attr('transform', o)
 
       // apply transformation
-      if (this instanceof SVG.Element) {
+      //if (this instanceof SVG.Element) {
         matrix = relative ?
           // relative
           matrix.rotate(o.rotation, o.cx, o.cy) :
           // absolute
           matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
-      }
+      //}
 
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
