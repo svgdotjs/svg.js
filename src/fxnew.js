@@ -183,6 +183,8 @@ SVG.FX = SVG.invent({
       for(i in this.animations){
         // TODO: this is not a clean clone of the array. We may have some unchecked references
         this.animations[i].value = (i == 'plot' ? this.target.array().value : this.target[i]())
+        if(this.animations[i].relative)
+          this.animations[i].destination.value = this.animations[i].destination.value + this.animations[i].value
       }
 
       for(i in this.attrs){
@@ -192,7 +194,7 @@ SVG.FX = SVG.invent({
           this.attrs[i].g = color.g
           this.attrs[i].b = color.b
         }else{
-          this.attrs[i].value = this.target.attr(i)
+          this.attrs[i].value = this.target.attr(i) + this.attrs[i].value
         }
       }
 
@@ -353,7 +355,8 @@ SVG.FX = SVG.invent({
     // adds one property to the animations
   , push: function(method, args, type){
       this[type || 'animations'][method] = args
-      return this.start()
+      setTimeout(function(){this.start()}.bind(this), 0)
+      return this
     }
 
     // removes the specified animation and returns it
@@ -653,20 +656,24 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Animatable x-axis
-, x: function(x) {
-    return this.push('x', new SVG.Number(this.search('x')).morph(x))
+, x: function(x, relative) {
+    var num = new SVG.Number(/*this.search('x')*/0).morph(x)
+    num.relative = relative
+    return this.push('x', num)
   }
   // Animatable y-axis
-, y: function(y) {
-    return this.push('y', new SVG.Number(this.search('y')).morph(y))
+, y: function(y, relative) {
+    var num = new SVG.Number(/*this.search('y')*/).morph(y)
+    num.relative = relative
+    return this.push('y', num)
   }
   // Animatable center x-axis
 , cx: function(x) {
-    return this.push('cx', new SVG.Number(this.search('cx')).morph(x))
+    return this.push('cx', new SVG.Number(/*this.search('cx')*/).morph(x))
   }
   // Animatable center y-axis
 , cy: function(y) {
-    return this.push('cy', new SVG.Number(this.search('cy')).morph(y))
+    return this.push('cy', new SVG.Number(/*this.search('cy')*/).morph(y))
   }
   // Add animatable move
 , move: function(x, y) {
@@ -692,8 +699,8 @@ SVG.extend(SVG.FX, {
         box = this.target.bbox()
       }
 
-      this.push('width' , new SVG.Number(w || box.width).morph(width))
-          .push('height', new SVG.Number(h || box.height).morph(height))
+      this.push('width' , new SVG.Number(/*w || box.width*/).morph(width))
+          .push('height', new SVG.Number(/*h || box.height*/).morph(height))
 
     }
 
@@ -706,7 +713,7 @@ SVG.extend(SVG.FX, {
   // Add leading method
 , leading: function(value) {
     return this.target.leading ?
-      this.push('leading', new SVG.Number(this.search('leading')).morph(value)) :
+      this.push('leading', new SVG.Number(/*this.search('leading')*/).morph(value)) :
       this
   }
   // Add animatable viewbox
