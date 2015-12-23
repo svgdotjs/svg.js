@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Dec 23 2015 19:00:21 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Dec 23 2015 19:09:42 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -112,6 +112,9 @@ SVG.invent = function(config) {
 
 // Adopt existing svg elements
 SVG.adopt = function(node) {
+  // check for presence of node
+  if (!node) return null
+
   // make sure a node isn't already adopted
   if (node.instance) return node.instance
 

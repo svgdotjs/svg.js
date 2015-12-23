@@ -90,6 +90,9 @@ SVG.invent = function(config) {
 
 // Adopt existing svg elements
 SVG.adopt = function(node) {
+  // check for presence of node
+  if (!node) return null
+
   // make sure a node isn't already adopted
   if (node.instance) return node.instance
 
