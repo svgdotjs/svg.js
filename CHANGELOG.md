@@ -8,7 +8,7 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.5
+# 2.2.5 (29/12/2015)
 - added check for existence of node (#431)
 - `group.move()` now allows string numbers as input (#433)
 - `matrixify()` will not apply the calculated matrix to the node anymore
