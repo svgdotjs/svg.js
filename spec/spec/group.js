@@ -5,7 +5,7 @@ describe('Group', function() {
     group = draw.group().move(50, 50)
     group.rect(100,100)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
@@ -24,8 +24,13 @@ describe('Group', function() {
       var box = group.gbox()
       expect(box.x).toBe(13)
     })
+    it('sets the value of x correctly when the first argument is a string number', function(){
+      group.x('123')
+      var box = group.gbox()
+      expect(box.x).toBe(123)
+    })
   })
-  
+
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(group.y()).toBe(50)
@@ -40,8 +45,13 @@ describe('Group', function() {
       var box = group.gbox()
       expect(box.y).toBe(15)
     })
+    it('sets the value of y correctly when the first argument is a string number', function(){
+      group.y('124')
+      var box = group.gbox()
+      expect(box.y).toBe(124)
+    })
   })
-  
+
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       expect(group.cx()).toBe(100)
@@ -52,7 +62,7 @@ describe('Group', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
       expect(group.cy()).toBe(100)
@@ -70,7 +80,7 @@ describe('Group', function() {
       expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,123,456)')
     })
   })
-  
+
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       group.center(321,567)
@@ -103,6 +113,6 @@ describe('Group', function() {
       expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,130,85)')
     })
   })
-  
+
 
 })
