@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Tue Dec 29 2015 14:37:10 GMT+0300 (MSK)
+* BUILT: Tue Dec 29 2015 13:14:32 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2261,7 +2261,7 @@ SVG.extend(SVG.Element, {
   untransform: function() {
     return this.attr('transform', null)
   },
-  // merge the whole transformation chain into one matrix
+  // merge the whole transformation chain into one matrix and returns it
   matrixify: function() {
 
     var matrix = (this.attr('transform') || '')
@@ -2278,8 +2278,6 @@ SVG.extend(SVG.Element, {
         return matrix[transform[0]].apply(matrix, transform[1])
 
       }, new SVG.Matrix())
-    // apply calculated matrix to element
-    this.attr('transform', matrix)
 
     return matrix
   },
