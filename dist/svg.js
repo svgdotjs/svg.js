@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Dec 23 2015 19:05:43 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Dec 29 2015 14:37:10 GMT+0300 (MSK)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2636,11 +2636,11 @@ SVG.G = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      return x == null ? this.transform('x') : this.transform({ x: -this.x() + x }, true)
+      return x == null ? this.transform('x') : this.transform({ x: x - this.x() }, true)
     }
     // Move over y-axis
   , y: function(y) {
-      return y == null ? this.transform('y') : this.transform({ y: -this.y() + y }, true)
+      return y == null ? this.transform('y') : this.transform({ y: y - this.y() }, true)
     }
     // Move by center over x-axis
   , cx: function(x) {
@@ -2675,6 +2675,7 @@ SVG.G = SVG.invent({
     }
   }
 })
+
 // ### This module adds backward / forward functionality to elements.
 
 //
