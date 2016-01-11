@@ -44,6 +44,7 @@ var parts = [
 , 'src/fx.js'
 , 'src/boxes.js'
 , 'src/matrix.js'
+, 'src/point.js'
 , 'src/attr.js'
 , 'src/transform.js'
 , 'src/style.js'

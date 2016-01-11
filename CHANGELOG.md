@@ -8,6 +8,10 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.3.0
+- added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
+- added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
+
 # 2.2.5 (29/12/2015)
 - added check for existence of node (#431)
 - `group.move()` now allows string numbers as input (#433)

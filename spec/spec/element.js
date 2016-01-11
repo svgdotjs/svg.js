@@ -616,4 +616,12 @@ describe('Element', function() {
       })
     })
   })
+  
+  describe('point()', function() {
+    it('creates a point from screen coordinates transformed in the elements space', function(){
+      var rect = draw.rect(100,100)
+      expect(rect.point(2,5).x).toBeCloseTo(-6)
+      expect(rect.point(2,5).y).toBeCloseTo(-3)
+    })
+  })
 })
