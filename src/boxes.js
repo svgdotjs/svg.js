@@ -10,17 +10,11 @@ SVG.BBox = SVG.invent({
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
-        if(element instanceof SVG.Shape){
-          var clone = element.clone().addTo(SVG.parser.draw)
-          box = clone.bbox()
-          clone.remove()
-        }else{
-          box = {
-            x:      element.node.clientLeft
-          , y:      element.node.clientTop
-          , width:  element.node.clientWidth
-          , height: element.node.clientHeight
-          }
+        box = {
+          x:      element.node.clientLeft
+        , y:      element.node.clientTop
+        , width:  element.node.clientWidth
+        , height: element.node.clientHeight
         }
       }
       
