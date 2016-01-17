@@ -45,6 +45,22 @@ describe('Regex', function() {
         expect(SVG.regex.isRgb.test('hsb(255, 100, 100)')).toBeFalsy()
       })
     })
+    
+    describe('isNumber', function() {
+
+      it('is true with a number', function() {
+        ["1", "-1", "+15", "1.55", ".5", "5.", "1.3e2", "1E-4", "1e+12"].forEach(function(s) {
+          expect(SVG.regex.isNumber.test(s)).toBeTruthy()
+        })
+      })
+      
+      it('is false with a faulty number', function() {
+        ["1a", "+-1", "1.2.3", "1+1", "1e4.5", ".5.", "1f5", "."].forEach(function(s) {
+          expect(SVG.regex.isNumber.test(s)).toBeFalsy()
+        })
+      })
+    
+    })
 
   })
 

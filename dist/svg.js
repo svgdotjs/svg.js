@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Jan 11 2016 23:32:59 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Mon Jan 18 2016 00:39:02 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -203,7 +203,7 @@ SVG.regex = {
 , isBlank:          /^(\s+)?$/
 
   // Test for numeric string
-, isNumber:         /^-?[\d\.]+$/
+, isNumber:         /^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i
 
   // Test for percent value
 , isPercent:        /^-?[\d\.]+%$/
@@ -234,6 +234,7 @@ SVG.regex = {
   // matches X
 , X:                /X/g
 }
+
 SVG.utils = {
     // Map function
     map: function(array, block) {
