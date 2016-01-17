@@ -34,7 +34,7 @@ SVG.regex = {
 , isBlank:          /^(\s+)?$/
   
   // Test for numeric string
-, isNumber:         /^-?[\d\.]+$/
+, isNumber:         /^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i
 
   // Test for percent value
 , isPercent:        /^-?[\d\.]+%$/
