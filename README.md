@@ -1918,6 +1918,17 @@ path.matrixify()
 __`returns`: `SVG.Matrix`__
 
 
+### point()
+Transforms a point from screen coordinates to the elements coordinate system
+
+```javascript
+// e is some mouseevent
+var point = path.point(e.screeX, e.screenY) // {x, y}
+```
+
+__`returns`: `SVG.Point`__
+
+
 ### inside()
 To check if a given point is inside the bounding box of an element you can use the `inside()` method:
 
