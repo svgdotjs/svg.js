@@ -159,7 +159,7 @@ SVG.Text = SVG.invent({
     // overwrite method from parent to set data properly
   , setData: function(o){
       this.dom = o
-      this.dom.leading = o.leading ? new SVG.Number(o.leading.value, o.leading.unit) : new SVG.Number(1.3)
+      this.dom.leading = new SVG.Number(o.leading || 1.3)
       return this
     }
   }

@@ -48,6 +48,9 @@ SVG.Number = SVG.invent({
           this.value
       ) + this.unit
     }
+  , toJSON: function() {
+      return this.toString()
+    }
   , // Convert to primitive
     valueOf: function() {
       return this.value

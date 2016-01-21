@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Jan 18 2016 00:39:02 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Jan 21 2016 16:57:48 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -869,6 +869,9 @@ SVG.Number = SVG.invent({
           this.value
       ) + this.unit
     }
+  , toJSON: function() {
+      return this.toString()
+    }
   , // Convert to primitive
     valueOf: function() {
       return this.value
@@ -1230,7 +1233,7 @@ SVG.Element = SVG.invent({
       this.node.removeAttribute('svgjs:data')
 
       if(Object.keys(this.dom).length)
-        this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
+        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
 
       return this
     }
@@ -3781,7 +3784,7 @@ SVG.Text = SVG.invent({
     // overwrite method from parent to set data properly
   , setData: function(o){
       this.dom = o
-      this.dom.leading = o.leading ? new SVG.Number(o.leading.value, o.leading.unit) : new SVG.Number(1.3)
+      this.dom.leading = new SVG.Number(o.leading || 1.3)
       return this
     }
   }

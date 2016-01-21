@@ -247,7 +247,7 @@ SVG.Element = SVG.invent({
       this.node.removeAttribute('svgjs:data')
 
       if(Object.keys(this.dom).length)
-        this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
+        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
 
       return this
     }
