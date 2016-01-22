@@ -12,20 +12,20 @@ SVG.Number = SVG.invent({
       this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
     } else if (typeof value === 'string') {
-      unit = value.match(SVG.regex.unit)
+      unit = value.match(SVG.regex.numberAndUnit)
 
       if (unit) {
         // make value numeric
         this.value = parseFloat(unit[1])
-      
+
         // normalize
-        if (unit[2] == '%')
+        if (unit[5] == '%')
           this.value /= 100
-        else if (unit[2] == 's')
+        else if (unit[5] == 's')
           this.value *= 1000
-      
+
         // store unit
-        this.unit = unit[2]
+        this.unit = unit[5]
       }
 
     } else {
@@ -74,7 +74,7 @@ SVG.Number = SVG.invent({
     // Convert to different unit
   , to: function(unit) {
       var number = new SVG.Number(this)
-      
+
       if (typeof unit === 'string')
         number.unit = unit
 

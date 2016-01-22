@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Thu Jan 21 2016 16:57:48 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Jan 23 2016 00:23:13 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -170,7 +170,7 @@ SVG.prepare = function(element) {
 // Storage for regular expressions
 SVG.regex = {
   // Parse unit value
-  unit:             /^(-?[\d\.]+)([a-z%]{0,2})$/
+  numberAndUnit:    /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i
 
   // Parse hex value
 , hex:              /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
@@ -833,20 +833,20 @@ SVG.Number = SVG.invent({
       this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
     } else if (typeof value === 'string') {
-      unit = value.match(SVG.regex.unit)
+      unit = value.match(SVG.regex.numberAndUnit)
 
       if (unit) {
         // make value numeric
         this.value = parseFloat(unit[1])
 
         // normalize
-        if (unit[2] == '%')
+        if (unit[5] == '%')
           this.value /= 100
-        else if (unit[2] == 's')
+        else if (unit[5] == 's')
           this.value *= 1000
 
         // store unit
-        this.unit = unit[2]
+        this.unit = unit[5]
       }
 
     } else {
@@ -1493,7 +1493,7 @@ SVG.FX = SVG.invent({
           this.attrs[a] = SVG.Color.isColor(v) ?
             // prepare color for morphing
             new SVG.Color(from).morph(v) :
-          SVG.regex.unit.test(v) ?
+          SVG.regex.numberAndUnit.test(v) ?
             // prepare number for morphing
             new SVG.Number(from).morph(v) :
             // prepare for plain morphing
