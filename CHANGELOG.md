@@ -12,6 +12,7 @@
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
 - added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
 - fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
+- fixed `isNumber` and `numberAndUnit` regex (#405)
 
 # 2.2.5 (29/12/2015)
 - added check for existence of node (#431)
