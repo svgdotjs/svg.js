@@ -97,7 +97,7 @@ SVG.Element = SVG.invent({
     }
     // Checks whether the given point inside the bounding box of the element
   , inside: function(x, y) {
-      var box = this.bbox()
+      var box = this.tbox()
 
       return x > box.x
           && y > box.y
