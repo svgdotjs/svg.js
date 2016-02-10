@@ -125,7 +125,7 @@ SVG.extend(SVG.Element, {
   untransform: function() {
     return this.attr('transform', null)
   },
-  // merge the whole transformation chain into one matrix
+  // merge the whole transformation chain into one matrix and returns it
   matrixify: function() {
 
     var matrix = (this.attr('transform') || '')
@@ -142,8 +142,6 @@ SVG.extend(SVG.Element, {
         return matrix[transform[0]].apply(matrix, transform[1])
 
       }, new SVG.Matrix())
-    // apply calculated matrix to element
-    this.attr('transform', matrix)
 
     return matrix
   },

@@ -4,15 +4,15 @@
 
 describe('Text', function() {
   var text
-  
+
   beforeEach(function() {
     text = draw.text(loremIpsum).size(5)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
       expect(text.x()).toBe(0)
@@ -28,7 +28,7 @@ describe('Text', function() {
       expect(box.x).toBeCloseTo(123)
     })
   })
-  
+
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(text.y(0).y()).toBe(0)
@@ -46,7 +46,7 @@ describe('Text', function() {
       expect(text.node.getAttribute('y')).toBe('40%')
     })
   })
-  
+
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       var box = text.bbox()
@@ -63,7 +63,7 @@ describe('Text', function() {
       expect(box.cx).toBeCloseTo(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
       var box = text.bbox()
@@ -75,7 +75,7 @@ describe('Text', function() {
       expect(Math.round(box.cy * 10) / 10).toBe(345)
     })
   })
-  
+
   describe('move()', function() {
     it('sets the x and y position', function() {
       text.move(123,456)
@@ -84,7 +84,7 @@ describe('Text', function() {
       expect(box.y).toBeCloseTo(456)
     })
   })
-  
+
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       text.center(321, 567)
@@ -93,7 +93,7 @@ describe('Text', function() {
       expect(box.cy).toBeCloseTo(567, 1)
     })
   })
-  
+
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       text.size(50)
@@ -212,7 +212,7 @@ describe('Text', function() {
       expect(text.length()).toBeCloseTo(text.lines().get(0).length() + text.lines().get(1).length() + text.lines().get(2).length(), 3)
     })
   })
-  
+
   describe('build()', function() {
     it('enables adding multiple plain text nodes when given true', function() {
       text.clear().build(true)
@@ -243,7 +243,20 @@ describe('Text', function() {
       expect(text.node.childNodes[1]).toBe(undefined)
     })
   })
-  
+
+  describe('setData()', function() {
+    it('read all data from the svgjs:data attribute and assign it to el.dom', function(){
+
+      text.attr('svgjs:data', '{"foo":"bar","leading":"3px"}')
+      text.setData(JSON.parse(text.attr('svgjs:data')))
+
+      expect(text.dom.foo).toBe('bar')
+      expect(text.dom.leading instanceof SVG.Number).toBeTruthy()
+      expect(text.dom.leading.value).toBe(3)
+      expect(text.dom.leading.unit).toBe('px')
+    })
+  })
+
 })
 
 

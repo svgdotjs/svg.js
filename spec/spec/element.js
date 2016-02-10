@@ -1,5 +1,5 @@
 describe('Element', function() {
-  
+
   beforeEach(function() {
     draw.attr('viewBox', null)
   })
@@ -7,7 +7,7 @@ describe('Element', function() {
   afterEach(function() {
     draw.clear()
   })
-  
+
   it('should create a circular reference on the node', function() {
     var rect = draw.rect(100,100)
     expect(rect.node.instance).toBe(rect)
@@ -19,10 +19,10 @@ describe('Element', function() {
       expect(rect.native()).toBe(rect.node)
     })
   })
-  
+
   describe('attr()', function() {
     var rect
-    
+
     beforeEach(function() {
       rect = draw.rect(100,100)
     })
@@ -103,11 +103,11 @@ describe('Element', function() {
 
   describe('id()', function() {
     var rect
-    
+
     beforeEach(function() {
       rect = draw.rect(100,100)
     })
-    
+
     it('gets the value if the id attribute without an argument', function() {
       expect(rect.id()).toBe(rect.attr('id'))
     })
@@ -116,7 +116,7 @@ describe('Element', function() {
       expect(rect.attr('id')).toBe('new_id')
     })
   })
-  
+
   describe('style()', function() {
     it('sets the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
@@ -149,14 +149,14 @@ describe('Element', function() {
       expect(rect.style()).toBe('')
     })
   })
-  
+
   describe('transform()', function() {
     var rect, ctm
-    
+
     beforeEach(function() {
       rect = draw.rect(100,100)
     })
-    
+
     it('gets the current transformations', function() {
       expect(rect.transform()).toEqual(new SVG.Matrix(rect).extract())
     })
@@ -246,7 +246,7 @@ describe('Element', function() {
 
   describe('untransform()', function() {
     var circle
-    
+
     beforeEach(function() {
       circle = draw.circle(100).translate(50, 100)
     })
@@ -265,11 +265,11 @@ describe('Element', function() {
 
   describe('ctm()', function() {
     var rect
-    
+
     beforeEach(function() {
       rect = draw.rect(100, 100)
     })
-    
+
     it('gets the current transform matrix of the element', function() {
       rect.translate(10, 20)
       expect(rect.ctm().toString()).toBe('matrix(1,0,0,1,10,20)')
@@ -278,7 +278,7 @@ describe('Element', function() {
       expect(rect.ctm() instanceof SVG.Matrix).toBeTruthy()
     })
   })
-  
+
   describe('data()', function() {
     it('sets a data attribute and convert value to json', function() {
       var rect = draw.rect(100,100).data('test', 'value')
@@ -310,10 +310,10 @@ describe('Element', function() {
     it('maintains data type for an object', function() {
       var rect = draw.rect(100,100).data('test', { string: 'value', array: [1,2,3] })
       expect(typeof rect.data('test')).toBe('object')
-      expect(Array.isArray(rect.data('test').array)).toBe(true) 
+      expect(Array.isArray(rect.data('test').array)).toBe(true)
     })
   })
-  
+
   describe('remove()', function() {
     it('removes an element and return it', function() {
       var rect = draw.rect(100,100)
@@ -345,7 +345,7 @@ describe('Element', function() {
       expect(rect.parent()).toBe(group)
     })
   })
-  
+
   describe('rbox()', function() {
     it('returns an instance of SVG.RBox', function() {
       var rect = draw.rect(100,100)
@@ -372,14 +372,14 @@ describe('Element', function() {
       expect(box.height).toBe(210)
     })
   })
-  
+
   describe('doc()', function() {
     it('returns the parent document', function() {
       var rect = draw.rect(100,100)
       expect(rect.doc()).toBe(draw)
     })
   })
-  
+
   describe('parent()', function() {
     it('contains the parent svg', function() {
       var rect = draw.rect(100,100)
@@ -402,7 +402,7 @@ describe('Element', function() {
       expect(rect.parent('.test')).toBe(group1)
     })
   })
-  
+
   describe('parents()', function() {
     it('returns array of parent up to but not including the dom element filtered by type', function() {
       var group1 = draw.group().addClass('test')
@@ -415,7 +415,7 @@ describe('Element', function() {
       expect(rect.parents().length).toBe(3)
     })
   })
-  
+
   describe('clone()', function() {
     var rect, group, circle
 
@@ -463,20 +463,20 @@ describe('Element', function() {
       var rectIndex = draw.children().indexOf(rect)
 
       rect.replace(circle)
-      
+
       expect(rectIndex).toBe(draw.children().indexOf(circle))
     })
     it('removes the original element', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
 
       rect.replace(draw.circle(200))
-      
+
       expect(draw.has(rect)).toBe(false)
     })
     it('returns the new element', function() {
       var circle  = draw.circle(200)
       var element = draw.rect(100,100).center(321,567).fill('#f06').replace(circle)
-      
+
       expect(element).toBe(circle)
     })
   })
@@ -614,6 +614,38 @@ describe('Element', function() {
           , result = rect.svg('<circle r="300"></rect>')
         expect(result).toBe('<rect width="100" height="100"></rect>')
       })
+    })
+  })
+
+  describe('writeDataToDom()', function() {
+    it('set all properties in el.dom to the svgjs:data attribute', function(){
+      var rect = draw.rect(100,100)
+      rect.dom.foo = 'bar'
+      rect.dom.number = new SVG.Number('3px')
+
+      rect.writeDataToDom()
+
+      expect(rect.attr('svgjs:data')).toBe('{"foo":"bar","number":"3px"}')
+    })
+  })
+
+  describe('setData()', function() {
+    it('read all data from the svgjs:data attribute and assign it to el.dom', function(){
+      var rect = draw.rect(100,100)
+
+      rect.attr('svgjs:data', '{"foo":"bar","number":"3px"}')
+      rect.setData(JSON.parse(rect.attr('svgjs:data')))
+
+      expect(rect.dom.foo).toBe('bar')
+      expect(rect.dom.number).toBe('3px')
+    })
+  })
+
+  describe('point()', function() {
+    it('creates a point from screen coordinates transformed in the elements space', function(){
+      var rect = draw.rect(100,100)
+      expect(rect.point(2,5).x).toBeCloseTo(-6)
+      expect(rect.point(2,5).y).toBeCloseTo(-3)
     })
   })
 })

@@ -8,7 +8,19 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.2.4 (12/12/2014)
+# 2.3.0
+- added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
+- added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
+- fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
+- fixed `isNumber` and `numberAndUnit` regex (#405)
+- fixed error where a parent node is not found when loading an image but the canvas was cleared (#447)
+
+# 2.2.5 (29/12/2015)
+- added check for existence of node (#431)
+- `group.move()` now allows string numbers as input (#433)
+- `matrixify()` will not apply the calculated matrix to the node anymore
+
+# 2.2.4 (12/12/2015)
 - fixed `transform()` which returns the matrix values (a-f) now, too (#423)
 - double newlines (\n\n) are correctly handled as blank line from `text()`
 - fixed use of scrollX vs pageXOffset in `rbox()` (#425)
