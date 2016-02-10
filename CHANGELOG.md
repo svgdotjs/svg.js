@@ -13,6 +13,7 @@
 - added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
 - fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
 - fixed `isNumber` and `numberAndUnit` regex (#405)
+- fixed error where a parent node is not found when loading an image but the canvas was cleared (#447)
 
 # 2.2.5 (29/12/2015)
 - added check for existence of node (#431)

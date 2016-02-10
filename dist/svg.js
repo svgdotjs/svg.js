@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Sat Jan 23 2016 00:23:13 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Feb 10 2016 21:15:39 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1157,7 +1157,7 @@ SVG.Element = SVG.invent({
       if(!type) return parent
 
       // loop trough ancestors if type is given
-      while(parent.node instanceof SVGElement){
+      while(parent && parent.node instanceof SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
         parent = SVG.adopt(parent.node.parentNode)
       }
