@@ -53,21 +53,25 @@ SVG.FX = SVG.invent({
 , extend: {
 
     // sets up the animation
-    animate: function(o){
+    animate: function(o, easing, delay){
       // the end time of the previous is our start
       var start = this._prev ? this._prev._end : +new Date
 
-      o = o || {}
+      if(typeof o == 'object'){
+        easing = o.ease
+        delay = o.delay
+        o = o.duration
+      }
 
-      if(typeof o == 'number') o = {duration:o}
+      //if(typeof o == 'number') o = {duration:o}
 
-      this._duration = o.duration || 1000
-      this._delay = o.delay || 0
+      this._duration = o || 1000
+      this._delay = delay || 0
 
       this._start = start + this._delay
       this._end = this._start + this._duration
 
-      this.easing = SVG.easing[o.easing || '-'] || o.easing // when easing is a function, its not in SVG.easing
+      this.easing = SVG.easing[easing || '-'] || easing // when easing is a function, its not in SVG.easing
 
       this.init = false
 
