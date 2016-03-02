@@ -1,4 +1,4 @@
-/* svg.js 1.1.0 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.1.0-2-g73992b2 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -197,8 +197,30 @@
   , isImage:      /\.(jpg|jpeg|png|gif)(\?[^=]+.*)?/i
     
     /* test for namespaced event */
-  , isEvent:      /^[\w]+:[\w]+$/
+  , isEvent:      /^[\w]+.[\w]+$/
   
+    // The following regex are used to parse the d attribute of a path
+  
+    // Replaces all negative exponents
+  , negExp:           /e\-/gi
+  
+    // Replaces all comma
+  , comma:            /,/g
+  
+    // Replaces all hyphens
+  , hyphen:           /\-/g
+  
+    // Replaces and tests for all path letters
+  , pathLetters:      /[MLHVCSQTAZ]/gi
+  
+    // yes we need this one, too
+  , isPathLetter:     /[MLHVCSQTAZ]/i
+  
+    // split at whitespaces
+  , whitespaces:      /\s+/
+  
+    // matches X
+  , X:                /X/g
   }
 
   SVG.defaults = {
@@ -640,97 +662,124 @@
     }
     // Absolutize and parse path to array
   , parse: function(array) {
-      /* if it's already is a patharray, no need to parse it */
+      // if it's already a patharray, no need to parse it
       if (array instanceof SVG.PathArray) return array.valueOf()
   
-      /* prepare for parsing */
-      var i, il, x0, y0, x1, y1, x2, y2, s, seg, segs
+      // prepare for parsing
+      var i, x0, y0, s, seg, arr
         , x = 0
         , y = 0
-      
-      /* populate working path */
-      SVG.parser.path.setAttribute('d', typeof array === 'string' ? array : arrayToString(array))
-      
-      /* get segments */
-      segs = SVG.parser.path.pathSegList
+        , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7 }
   
-      for (i = 0, il = segs.numberOfItems; i < il; ++i) {
-        seg = segs.getItem(i)
-        s = seg.pathSegTypeAsLetter
+      if(typeof array == 'string'){
   
-        /* yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex */
-        if (s == 'M' || s == 'L' || s == 'H' || s == 'V' || s == 'C' || s == 'S' || s == 'Q' || s == 'T' || s == 'A') {
-          if ('x' in seg) x = seg.x
-          if ('y' in seg) y = seg.y
+        array = array
+          .replace(SVG.regex.negExp, 'X')         // replace all negative exponents with certain char
+          .replace(SVG.regex.pathLetters, ' $& ') // put some room between letters and numbers
+          .replace(SVG.regex.hyphen, ' -')        // add space before hyphen
+          .replace(SVG.regex.comma, ' ')          // unify all spaces
+          .replace(SVG.regex.X, 'e-')             // add back the expoent
+          .trim()                                 // trim
+          .split(SVG.regex.whitespaces)           // split into array
   
-        } else {
-          if ('x1' in seg) x1 = x + seg.x1
-          if ('x2' in seg) x2 = x + seg.x2
-          if ('y1' in seg) y1 = y + seg.y1
-          if ('y2' in seg) y2 = y + seg.y2
-          if ('x'  in seg) x += seg.x
-          if ('y'  in seg) y += seg.y
+      }else{
+        array = array.reduce(function(prev, curr){
+          return [].concat.apply(prev, curr)
+        }, [])
+      }
   
-          if (s == 'm')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegMovetoAbs(x, y), i)
-          else if (s == 'l')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoAbs(x, y), i)
-          else if (s == 'h')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoHorizontalAbs(x), i)
-          else if (s == 'v')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoVerticalAbs(y), i)
-          else if (s == 'c')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2), i)
-          else if (s == 's')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicSmoothAbs(x, y, x2, y2), i)
-          else if (s == 'q')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticAbs(x, y, x1, y1), i)
-          else if (s == 't')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticSmoothAbs(x, y), i)
-          else if (s == 'a')
-            segs.replaceItem(SVG.parser.path.createSVGPathSegArcAbs(x, y, seg.r1, seg.r2, seg.angle, seg.largeArcFlag, seg.sweepFlag), i)
-          else if (s == 'z' || s == 'Z') {
-            x = x0
-            y = y0
-          }
+      // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
+  
+      var arr = []
+  
+      do{
+  
+        // Test if we have a path letter
+        if(SVG.regex.isPathLetter.test(array[0])){
+          s = array[0]
+          array.shift()
+          // If last letter was a move command and we got no new, it defaults to [L]ine
+        }else if(s.toUpperCase() == 'M'){
+          s = 'L'
         }
   
-        /* record the start of a subpath */
-        if (s == 'M' || s == 'm') {
+        // add path letter as first element
+        seg = [s.toUpperCase()]
+  
+        // push all necessary parameters to segment
+        for(i = 0; i < paramCnt[seg[0]]; ++i){
+          seg.push(parseFloat(array.shift()))
+        }
+  
+        // upper case
+        if(s == seg[0]){
+  
+          if(s == 'M' || s == 'L' || s == 'C' || s == 'Q'){
+            x = seg[paramCnt[seg[0]]-1]
+            y = seg[paramCnt[seg[0]]]
+          }else if(s == 'V'){
+            y = seg[1]
+          }else if(s == 'H'){
+            x = seg[1]
+          }else if(s == 'A'){
+            x = seg[6]
+            y = seg[7]
+          }
+  
+          // lower case
+        }else{
+  
+          // convert relative to absolute values
+          if(s == 'm' || s == 'l' || s == 'c' || s == 's' || s == 'q' || s == 't'){
+  
+            seg[1] += x
+            seg[2] += y
+  
+            if(seg[3] != null){
+              seg[3] += x
+              seg[4] += y
+            }
+  
+            if(seg[5] != null){
+              seg[5] += x
+              seg[6] += y
+            }
+  
+            // move pointer
+            x = seg[paramCnt[seg[0]]-1]
+            y = seg[paramCnt[seg[0]]]
+  
+          }else if(s == 'v'){
+            seg[1] += y
+            y = seg[1]
+          }else if(s == 'h'){
+            seg[1] += x
+            x = seg[1]
+          }else if(s == 'a'){
+            seg[6] += x
+            seg[7] += y
+            x = seg[6]
+            y = seg[7]
+          }
+  
+        }
+  
+        if(seg[0] == 'M'){
           x0 = x
           y0 = y
         }
-      }
   
-      /* build internal representation */
-      array = []
-      segs  = SVG.parser.path.pathSegList
-      
-      for (i = 0, il = segs.numberOfItems; i < il; ++i) {
-        seg = segs.getItem(i)
-        s = seg.pathSegTypeAsLetter
-        x = [s]
+        if(seg[0] == 'Z'){
+          x = x0
+          y = y0
+        }
   
-        if (s == 'M' || s == 'L' || s == 'T')
-          x.push(seg.x, seg.y)
-        else if (s == 'H')
-          x.push(seg.x)
-        else if (s == 'V')
-          x.push(seg.y)
-        else if (s == 'C')
-          x.push(seg.x1, seg.y1, seg.x2, seg.y2, seg.x, seg.y)
-        else if (s == 'S')
-          x.push(seg.x2, seg.y2, seg.x, seg.y)
-        else if (s == 'Q')
-          x.push(seg.x1, seg.y1, seg.x, seg.y)
-        else if (s == 'A')
-          x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag|0, seg.sweepFlag|0, seg.x, seg.y)
+        arr.push(seg)
   
-        /* store segment */
-        array.push(x)
-      }
-      
-      return array
+      }while(array.length)
+  
+      return arr
+  
     }
     // Get bounding box of path
   , bbox: function() {
