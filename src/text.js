@@ -1,4 +1,3 @@
-
 SVG.Text = SVG.invent({
   // Initialize node
   create: function() {
@@ -142,6 +141,8 @@ SVG.TSpan = SVG.invent({
 , extend: {
     // Set text content
     text: function(text) {
+      if(text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+
       typeof text === 'function' ? text.call(this, this) : this.plain(text)
 
       return this
