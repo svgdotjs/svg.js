@@ -1,4 +1,4 @@
-/* svg.js 1.1.0-2-g73992b2 - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
+/* svg.js 1.1.0-5-gc66d24a - svg selector inventor polyfill regex default color array pointarray patharray number viewbox bbox rbox element parent container fx relative event defs group arrange mask clip gradient pattern doc shape symbol use rect ellipse line poly path image text textpath nested hyperlink marker sugar set data memory helpers - svgjs.com/license */
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -573,15 +573,16 @@
     }
     // Move path string
   , move: function(x, y) {
-  		/* get bounding box of current situation */
-  		var box = this.bbox()
+      // get bounding box of current situation
+      var box = this.bbox()
   		
       /* get relative offset */
       x -= box.x
       y -= box.y
   
+      // get relative offset
       if (!isNaN(x) && !isNaN(y)) {
-        /* move every point */
+        // move every point
         for (var l, i = this.value.length - 1; i >= 0; i--) {
           l = this.value[i][0]
   
@@ -618,10 +619,10 @@
     }
     // Resize path string
   , size: function(width, height) {
-  		/* get bounding box of current situation */
-  		var i, l, box = this.bbox()
+      // get bounding box of current situation
+      var i, l, box = this.bbox()
   
-      /* recalculate position of all points according to new size */
+      // recalculate position of all points according to new size
       for (i = this.value.length - 1; i >= 0; i--) {
         l = this.value[i][0]
   
@@ -647,11 +648,11 @@
           }
   
         } else if (l == 'A')  {
-          /* resize radii */
+          // resize radii
           this.value[i][1] = (this.value[i][1] * width)  / box.width
           this.value[i][2] = (this.value[i][2] * height) / box.height
   
-          /* move position values */
+          // move position values
           this.value[i][6] = ((this.value[i][6] - box.x) * width)  / box.width  + box.x
           this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
         }
@@ -682,6 +683,16 @@
           .trim()                                 // trim
           .split(SVG.regex.whitespaces)           // split into array
   
+        // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
+        // we fix this elements in the next loop
+        for(i = array.length; --i;){
+          if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
+            var split = array[i].split('.') // split at the point
+            var first = [split.shift(), split.shift()].join('.') // join the first number together
+            array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
+          }
+        }
+          
       }else{
         array = array.reduce(function(prev, curr){
           return [].concat.apply(prev, curr)
@@ -699,8 +710,10 @@
           s = array[0]
           array.shift()
           // If last letter was a move command and we got no new, it defaults to [L]ine
-        }else if(s.toUpperCase() == 'M'){
+        }else if(s == 'M'){
           s = 'L'
+        }else if(s == 'm'){
+          s = 'l'
         }
   
         // add path letter as first element
@@ -789,6 +802,7 @@
     }
   
   })
+
 
   SVG.Number = function(value) {
   
@@ -3256,6 +3270,8 @@
   , extend: {
       // Set text content
       text: function(text) {
+        if(text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+  
         typeof text === 'function' ? text.call(this, this) : this.plain(text)
   
         return this
