@@ -36,4 +36,26 @@ SVG.regex = {
   /* test for namespaced event */
 , isEvent:      /^[\w]+.[\w]+$/
 
+  // The following regex are used to parse the d attribute of a path
+
+  // Replaces all negative exponents
+, negExp:           /e\-/gi
+
+  // Replaces all comma
+, comma:            /,/g
+
+  // Replaces all hyphens
+, hyphen:           /\-/g
+
+  // Replaces and tests for all path letters
+, pathLetters:      /[MLHVCSQTAZ]/gi
+
+  // yes we need this one, too
+, isPathLetter:     /[MLHVCSQTAZ]/i
+
+  // split at whitespaces
+, whitespaces:      /\s+/
+
+  // matches X
+, X:                /X/g
 }

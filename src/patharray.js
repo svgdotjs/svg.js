@@ -13,15 +13,16 @@ SVG.extend(SVG.PathArray, {
   }
   // Move path string
 , move: function(x, y) {
-		/* get bounding box of current situation */
-		var box = this.bbox()
+    // get bounding box of current situation
+    var box = this.bbox()
 		
     /* get relative offset */
     x -= box.x
     y -= box.y
 
+    // get relative offset
     if (!isNaN(x) && !isNaN(y)) {
-      /* move every point */
+      // move every point
       for (var l, i = this.value.length - 1; i >= 0; i--) {
         l = this.value[i][0]
 
@@ -58,10 +59,10 @@ SVG.extend(SVG.PathArray, {
   }
   // Resize path string
 , size: function(width, height) {
-		/* get bounding box of current situation */
-		var i, l, box = this.bbox()
+    // get bounding box of current situation
+    var i, l, box = this.bbox()
 
-    /* recalculate position of all points according to new size */
+    // recalculate position of all points according to new size
     for (i = this.value.length - 1; i >= 0; i--) {
       l = this.value[i][0]
 
@@ -87,11 +88,11 @@ SVG.extend(SVG.PathArray, {
         }
 
       } else if (l == 'A')  {
-        /* resize radii */
+        // resize radii
         this.value[i][1] = (this.value[i][1] * width)  / box.width
         this.value[i][2] = (this.value[i][2] * height) / box.height
 
-        /* move position values */
+        // move position values
         this.value[i][6] = ((this.value[i][6] - box.x) * width)  / box.width  + box.x
         this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
       }
@@ -102,97 +103,136 @@ SVG.extend(SVG.PathArray, {
   }
   // Absolutize and parse path to array
 , parse: function(array) {
-    /* if it's already is a patharray, no need to parse it */
+    // if it's already a patharray, no need to parse it
     if (array instanceof SVG.PathArray) return array.valueOf()
 
-    /* prepare for parsing */
-    var i, il, x0, y0, x1, y1, x2, y2, s, seg, segs
+    // prepare for parsing
+    var i, x0, y0, s, seg, arr
       , x = 0
       , y = 0
-    
-    /* populate working path */
-    SVG.parser.path.setAttribute('d', typeof array === 'string' ? array : arrayToString(array))
-    
-    /* get segments */
-    segs = SVG.parser.path.pathSegList
+      , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7 }
 
-    for (i = 0, il = segs.numberOfItems; i < il; ++i) {
-      seg = segs.getItem(i)
-      s = seg.pathSegTypeAsLetter
+    if(typeof array == 'string'){
 
-      /* yes, this IS quite verbose but also about 30 times faster than .test() with a precompiled regex */
-      if (s == 'M' || s == 'L' || s == 'H' || s == 'V' || s == 'C' || s == 'S' || s == 'Q' || s == 'T' || s == 'A') {
-        if ('x' in seg) x = seg.x
-        if ('y' in seg) y = seg.y
+      array = array
+        .replace(SVG.regex.negExp, 'X')         // replace all negative exponents with certain char
+        .replace(SVG.regex.pathLetters, ' $& ') // put some room between letters and numbers
+        .replace(SVG.regex.hyphen, ' -')        // add space before hyphen
+        .replace(SVG.regex.comma, ' ')          // unify all spaces
+        .replace(SVG.regex.X, 'e-')             // add back the expoent
+        .trim()                                 // trim
+        .split(SVG.regex.whitespaces)           // split into array
 
-      } else {
-        if ('x1' in seg) x1 = x + seg.x1
-        if ('x2' in seg) x2 = x + seg.x2
-        if ('y1' in seg) y1 = y + seg.y1
-        if ('y2' in seg) y2 = y + seg.y2
-        if ('x'  in seg) x += seg.x
-        if ('y'  in seg) y += seg.y
-
-        if (s == 'm')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegMovetoAbs(x, y), i)
-        else if (s == 'l')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoAbs(x, y), i)
-        else if (s == 'h')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoHorizontalAbs(x), i)
-        else if (s == 'v')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegLinetoVerticalAbs(y), i)
-        else if (s == 'c')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2), i)
-        else if (s == 's')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoCubicSmoothAbs(x, y, x2, y2), i)
-        else if (s == 'q')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticAbs(x, y, x1, y1), i)
-        else if (s == 't')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegCurvetoQuadraticSmoothAbs(x, y), i)
-        else if (s == 'a')
-          segs.replaceItem(SVG.parser.path.createSVGPathSegArcAbs(x, y, seg.r1, seg.r2, seg.angle, seg.largeArcFlag, seg.sweepFlag), i)
-        else if (s == 'z' || s == 'Z') {
-          x = x0
-          y = y0
+      // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
+      // we fix this elements in the next loop
+      for(i = array.length; --i;){
+        if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
+          var split = array[i].split('.') // split at the point
+          var first = [split.shift(), split.shift()].join('.') // join the first number together
+          array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
         }
       }
+        
+    }else{
+      array = array.reduce(function(prev, curr){
+        return [].concat.apply(prev, curr)
+      }, [])
+    }
 
-      /* record the start of a subpath */
-      if (s == 'M' || s == 'm') {
+    // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
+
+    var arr = []
+
+    do{
+
+      // Test if we have a path letter
+      if(SVG.regex.isPathLetter.test(array[0])){
+        s = array[0]
+        array.shift()
+        // If last letter was a move command and we got no new, it defaults to [L]ine
+      }else if(s == 'M'){
+        s = 'L'
+      }else if(s == 'm'){
+        s = 'l'
+      }
+
+      // add path letter as first element
+      seg = [s.toUpperCase()]
+
+      // push all necessary parameters to segment
+      for(i = 0; i < paramCnt[seg[0]]; ++i){
+        seg.push(parseFloat(array.shift()))
+      }
+
+      // upper case
+      if(s == seg[0]){
+
+        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q'){
+          x = seg[paramCnt[seg[0]]-1]
+          y = seg[paramCnt[seg[0]]]
+        }else if(s == 'V'){
+          y = seg[1]
+        }else if(s == 'H'){
+          x = seg[1]
+        }else if(s == 'A'){
+          x = seg[6]
+          y = seg[7]
+        }
+
+        // lower case
+      }else{
+
+        // convert relative to absolute values
+        if(s == 'm' || s == 'l' || s == 'c' || s == 's' || s == 'q' || s == 't'){
+
+          seg[1] += x
+          seg[2] += y
+
+          if(seg[3] != null){
+            seg[3] += x
+            seg[4] += y
+          }
+
+          if(seg[5] != null){
+            seg[5] += x
+            seg[6] += y
+          }
+
+          // move pointer
+          x = seg[paramCnt[seg[0]]-1]
+          y = seg[paramCnt[seg[0]]]
+
+        }else if(s == 'v'){
+          seg[1] += y
+          y = seg[1]
+        }else if(s == 'h'){
+          seg[1] += x
+          x = seg[1]
+        }else if(s == 'a'){
+          seg[6] += x
+          seg[7] += y
+          x = seg[6]
+          y = seg[7]
+        }
+
+      }
+
+      if(seg[0] == 'M'){
         x0 = x
         y0 = y
       }
-    }
 
-    /* build internal representation */
-    array = []
-    segs  = SVG.parser.path.pathSegList
-    
-    for (i = 0, il = segs.numberOfItems; i < il; ++i) {
-      seg = segs.getItem(i)
-      s = seg.pathSegTypeAsLetter
-      x = [s]
+      if(seg[0] == 'Z'){
+        x = x0
+        y = y0
+      }
 
-      if (s == 'M' || s == 'L' || s == 'T')
-        x.push(seg.x, seg.y)
-      else if (s == 'H')
-        x.push(seg.x)
-      else if (s == 'V')
-        x.push(seg.y)
-      else if (s == 'C')
-        x.push(seg.x1, seg.y1, seg.x2, seg.y2, seg.x, seg.y)
-      else if (s == 'S')
-        x.push(seg.x2, seg.y2, seg.x, seg.y)
-      else if (s == 'Q')
-        x.push(seg.x1, seg.y1, seg.x, seg.y)
-      else if (s == 'A')
-        x.push(seg.r1, seg.r2, seg.angle, seg.largeArcFlag|0, seg.sweepFlag|0, seg.x, seg.y)
+      arr.push(seg)
 
-      /* store segment */
-      array.push(x)
-    }
-    
-    return array
+    }while(array.length)
+
+    return arr
+
   }
   // Get bounding box of path
 , bbox: function() {
