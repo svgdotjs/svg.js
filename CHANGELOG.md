@@ -1,3 +1,7 @@
+# 1.1.1 (03/3/2016)
+
+- backport fix for pathSpec (see #462)
+
 # 1.1.0 (25/5/2015)
 
 - fixed file permission
