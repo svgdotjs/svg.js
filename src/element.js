@@ -256,5 +256,8 @@ SVG.Element = SVG.invent({
       this.dom = o
       return this
     }
+  , is: function(obj){
+      return is(this, obj)
+    }
   }
 })

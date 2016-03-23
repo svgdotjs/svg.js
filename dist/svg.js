@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Wed Dec 23 2015 19:09:42 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Mar 23 2016 22:45:17 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -170,7 +170,7 @@ SVG.prepare = function(element) {
 // Storage for regular expressions
 SVG.regex = {
   // Parse unit value
-  unit:             /^(-?[\d\.]+)([a-z%]{0,2})$/
+  numberAndUnit:    /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i
 
   // Parse hex value
 , hex:              /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
@@ -203,7 +203,7 @@ SVG.regex = {
 , isBlank:          /^(\s+)?$/
 
   // Test for numeric string
-, isNumber:         /^-?[\d\.]+$/
+, isNumber:         /^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i
 
   // Test for percent value
 , isPercent:        /^-?[\d\.]+%$/
@@ -234,6 +234,7 @@ SVG.regex = {
   // matches X
 , X:                /X/g
 }
+
 SVG.utils = {
     // Map function
     map: function(array, block) {
@@ -832,20 +833,20 @@ SVG.Number = SVG.invent({
       this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
 
     } else if (typeof value === 'string') {
-      unit = value.match(SVG.regex.unit)
+      unit = value.match(SVG.regex.numberAndUnit)
 
       if (unit) {
         // make value numeric
         this.value = parseFloat(unit[1])
 
         // normalize
-        if (unit[2] == '%')
+        if (unit[5] == '%')
           this.value /= 100
-        else if (unit[2] == 's')
+        else if (unit[5] == 's')
           this.value *= 1000
 
         // store unit
-        this.unit = unit[2]
+        this.unit = unit[5]
       }
 
     } else {
@@ -867,6 +868,9 @@ SVG.Number = SVG.invent({
           this.value / 1e3 :
           this.value
       ) + this.unit
+    }
+  , toJSON: function() {
+      return this.toString()
     }
   , // Convert to primitive
     valueOf: function() {
@@ -918,65 +922,117 @@ SVG.Number = SVG.invent({
   }
 })
 
-SVG.ViewBox = function(element) {
-  var x, y, width, height
-    , wm   = 1 // width multiplier
-    , hm   = 1 // height multiplier
-    , box  = element.bbox()
-    , view = (element.attr('viewBox') || '').match(/-?[\d\.]+/g)
-    , we   = element
-    , he   = element
+SVG.ViewBox = SVG.invent({
 
-  // get dimensions of current node
-  width  = new SVG.Number(element.width())
-  height = new SVG.Number(element.height())
+  create: function(source) {
+    var i, base = [1, 0, 0, 1]
 
-  // find nearest non-percentual dimensions
-  while (width.unit == '%') {
-    wm *= width.value
-    width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
-    we = we.parent()
+    var x, y, width, height, box, view, we, he
+      , wm   = 1 // width multiplier
+      , hm   = 1 // height multiplier
+      , reg  = /-?[\d\.]+/g
+
+    if(source instanceof SVG.Element){
+
+      we = source
+      he = source
+      view = (source.attr('viewBox') || '').match(reg)
+      box = source.bbox
+
+      // get dimensions of current node
+      width  = new SVG.Number(source.width())
+      height = new SVG.Number(source.height())
+
+      // find nearest non-percentual dimensions
+      while (width.unit == '%') {
+        wm *= width.value
+        width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
+        we = we.parent()
+      }
+      while (height.unit == '%') {
+        hm *= height.value
+        height = new SVG.Number(he instanceof SVG.Doc ? he.parent().offsetHeight : he.parent().height())
+        he = he.parent()
+      }
+
+      // ensure defaults
+      this.x      = 0
+      this.y      = 0
+      this.width  = width  * wm
+      this.height = height * hm
+      this.zoom   = 1
+
+      if (view) {
+        // get width and height from viewbox
+        x      = parseFloat(view[0])
+        y      = parseFloat(view[1])
+        width  = parseFloat(view[2])
+        height = parseFloat(view[3])
+
+        // calculate zoom accoring to viewbox
+        this.zoom = ((this.width / this.height) > (width / height)) ?
+          this.height / height :
+          this.width  / width
+
+        // calculate real pixel dimensions on parent SVG.Doc element
+        this.x      = x
+        this.y      = y
+        this.width  = width
+        this.height = height
+
+      }
+
+    }else{
+      // ensure source as object
+      source = typeof source === 'string' ?
+        source.match(reg).map(function(el){ return parseFloat(el) }) :
+      Array.isArray(source) ?
+        source :
+      typeof source == 'object' ?
+        [source.x, source.y, source.width, source.height] :
+      arguments.length == 4 ?
+        [].slice.call(arguments) :
+        base
+
+      this.x = source[0]
+      this.y = source[1]
+      this.width = source[2]
+      this.height = source[3]
+    }
+
+
   }
-  while (height.unit == '%') {
-    hm *= height.value
-    height = new SVG.Number(he instanceof SVG.Doc ? he.parent().offsetHeight : he.parent().height())
-    he = he.parent()
-  }
 
-  // ensure defaults
-  this.x      = box.x
-  this.y      = box.y
-  this.width  = width  * wm
-  this.height = height * hm
-  this.zoom   = 1
+, extend: {
 
-  if (view) {
-    // get width and height from viewbox
-    x      = parseFloat(view[0])
-    y      = parseFloat(view[1])
-    width  = parseFloat(view[2])
-    height = parseFloat(view[3])
+    toString: function() {
+      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+    }
+  , morph: function(v){
 
-    // calculate zoom accoring to viewbox
-    this.zoom = ((this.width / this.height) > (width / height)) ?
-      this.height / height :
-      this.width  / width
+      var v = arguments.length == 1 ?
+        [v.x, v.y, v.width, v.height] :
+        [].slice.call(arguments)
 
-    // calculate real pixel dimensions on parent SVG.Doc element
-    this.x      = x
-    this.y      = y
-    this.width  = width
-    this.height = height
+      this.destination = new SVG.ViewBox(v)
 
-  }
+      return this
 
-}
+    }
 
-//
-SVG.extend(SVG.ViewBox, {
-  // Parse viewbox to string
-  toString: function() {
-    return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+  , at: function(pos) {
+
+    if(!this.destination) return this
+
+    return new SVG.ViewBox([
+        this.x + (this.destination.x - this.x) * pos
+      , this.y + (this.destination.y - this.y) * pos
+      , this.width + (this.destination.width - this.width) * pos
+      , this.height + (this.destination.height - this.height) * pos
+    ])
+
+    }
+
   }
 
 })
@@ -1153,7 +1209,7 @@ SVG.Element = SVG.invent({
       if(!type) return parent
 
       // loop trough ancestors if type is given
-      while(parent.node instanceof SVGElement){
+      while(parent && parent.node instanceof SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
         parent = SVG.adopt(parent.node.parentNode)
       }
@@ -1229,7 +1285,7 @@ SVG.Element = SVG.invent({
       this.node.removeAttribute('svgjs:data')
 
       if(Object.keys(this.dom).length)
-        this.node.setAttributeNS(SVG.svgjs, 'svgjs:data', JSON.stringify(this.dom))
+        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
 
       return this
     }
@@ -1237,6 +1293,9 @@ SVG.Element = SVG.invent({
   , setData: function(o){
       this.dom = o
       return this
+    }
+  , is: function(obj){
+      return is(this, obj)
     }
   }
 })
@@ -1250,137 +1309,132 @@ SVG.easing = {
 
 var someVar = 0
 
-SVG.FX = SVG.invent({
+SVG.Situation = SVG.invent({
 
-  create: function(element) {
+  create: function(o){
+    this.init = false
+    this.reversed = false
 
-    this.pos = 0        // position before easing
-    this.lastPos = 0    // needed for once callbacks
-    this.paused = false
-    this.finished = false
-    this.active = false
-    this.shared = {current:this}
-    this.target = element
-    this._next = null
-    this._prev = null
+    this.duration = o.duration
+    this.delay = o.delay
 
-    this.id = someVar++
+    this.start = +new Date() + this.delay
+    this.end = this.start + this.duration
+    this.easing = o.easing
 
     this.animations = {
-      // functionToCall: [morphable object, destination value]
-      // e.g. x: [SVG.Number, 5]
-      // this way its assured, that the start value is set correctly
+      // functionToCall: [list of morphable objects]
+      // e.g. move: [SVG.Number, SVG.Number]
     }
 
     this.attrs = {
       // holds all attributes which are not represented from a function svg.js provides
+      // e.g. someAttr: SVG.Number
     }
 
     this.styles = {
       // holds all styles which should be animated
+      // e.g. fill-color: SVG.Color
     }
 
     this.transforms = [
-      // holds all transformations of teh form:
+      // holds all transformations of the form:
       // [A, B, C] or, [A, [25, 0, 0]] where ABC are matrixes and the array represents a rotation
     ]
 
-    this._once = {
+    this.once = {
       // functions to fire at a specific position
       // e.g. "0.5": function foo(){}
     }
 
+  }
 
+})
+
+SVG.Delay = function(delay){
+  this.delay = delay
+}
+
+SVG.FX = SVG.invent({
+
+  create: function(element) {
+    this._target = element
+    this.situations = []
+    this.active = false
+    this.current = null
+    this.paused = false
+    this.lastPos = 0
+    this.pos = 0
   }
 
 , extend: {
 
-    // sets up the animation
-    animate: function(o){
-      // the end time of the previous is our start
-      var start = this._prev ? this._prev._end : +new Date
+    /**
+     * sets or returns the target of this animation
+     * @param o object || number In case of Object it holds all parameters. In case of number its the duration of the animation
+     * @param easing function || string Function which should be used for easing or easing keyword
+     * @param delay Number indicating the delay before the animation starts
+     * @return target || this
+     */
+    animate: function(o, easing, delay){
 
-      o = o || {}
-
-      if(typeof o == 'number') o = {duration:o}
-
-      this._duration = o.duration || 1000
-      this._delay = o.delay || 0
-
-      this._start = start + this._delay
-      this._end = this._start + this._duration
-
-      this.easing = SVG.easing[o.easing || '-'] || o.easing // when easing is a function, its not in SVG.easing
-
-      this.init = false
-
-      return this
-    }
-
-    // adds a new fx obj to the animation chain
-  , enqueue: function(o){
-      // create new istance from o or use it directly
-      return this.next(
-        o instanceof SVG.FX ? o :
-          new SVG.FX(this.target)
-      ).next().share(this.shared).animate(o)
-    }
-
-    // sets or gets the next situation object in the animation queue
-  , next: function(next){
-      if(!next) return this._next
-
-      this._next = next
-      next._prev = this // dont use function to prevent recursion
-      return this
-    }
-
-    // sets or gets the previous situation object in the animation queue
-  , prev: function(prev){
-      if(!prev) return this._prev
-
-      this._prev = prev
-      prev._next = this
-      return this
-    }
-
-    // returns the first situation object...
-  , first: function(){
-      var prev = this
-      while(prev.prev()){
-        prev = prev.prev()
+      if(typeof o == 'object'){
+        easing = o.ease
+        delay = o.delay
+        o = o.duration
       }
-      return prev
-    }
 
-    // returns the last situation object...
-  , last: function(){
-      var next = this
-      while(next.next()){
-        next = next.next()
-      }
-      return next
-    }
+      var situation = new SVG.Situation({
+        duration: o || 1000,
+        delay: delay || 0,
+        easing: SVG.easing[easing || '-'] || easing
+      })
 
-    // sets the shared object which is just a shared reference between all objects
-  , share: function(shared){
-      this.shared = shared
+      this.queue(situation)
+
       return this
+    }
+
+    /**
+     * sets a delay before the next element of the queue is called
+     * @param delay Duration of delay in milliseconds
+     * @return this.target()
+     */
+    // FIXME: the function needs to get a delay property to make sure, that the totalProgress can be calculated
+  , delay: function(delay){
+      var delay = new SVG.Delay(delay)
+
+      return this.queue(delay)
+    }
+
+    /**
+     * sets or returns the target of this animation
+     * @param null || target SVG.Elemenet which should be set as new target
+     * @return target || this
+     */
+  , target: function(target){
+      if(target && target instanceof SVG.Element){
+        this._target = target
+        return this
+      }
+
+      return this._target
     }
 
     // returns the position at a given time
   , timeToPos: function(timestamp){
-      return (timestamp - this._start) / (this._duration)
+      return (timestamp - this.current.start) / (this.current.duration)
     }
 
     // returns the timestamp from a given positon
   , posToTime: function(pos){
-      return this._duration * pos + this._start
+      return this.current.duration * pos + this.current.start
     }
 
     // starts the animationloop
     // TODO: It may be enough to call just this.step()
   , startAnimFrame: function(){
+      this.stopAnimFrame()
       this.animationFrame = requestAnimationFrame(function(){ this.step() }.bind(this))
     }
 
@@ -1390,29 +1444,64 @@ SVG.FX = SVG.invent({
       cancelAnimationFrame(this.animationFrame)
     }
 
-    // returns the current (active) fx object
-  , current: function(){
-      return this.shared.current
-    }
+    // kicks off the animation - only does something when the queue is curretly not active and at least one situation is set
+  , start: function(){
+      // dont start if already started
+      if(!this.active && this.current){
+        this.current.start = +new Date + this.current.delay
+        this.current.end = this.current.start + this.current.duration
 
-    // set this object as current
-  , setAsCurrent: function(){
-      this.shared.current = this
+        this.initAnimations()
+        this.active = true
+        this.startAnimFrame()
+      }
+
       return this
     }
 
-    // kicks off the animation - only does something when this obejct is the current
-    // todo: remove timeout. we dont rly need a delay. it can be accomplished from the user itself
-  , start: function(){
-      // dont start if already started
-      if(!this.active && this.current() == this){
-        this._start = +new Date + this._delay
-        this._end = this._start + this._duration
-        this.active = true
+    /**
+     * adds a function / Situation to the animation queue
+     * @param fn function / situation to add
+     * @return this
+     */
+  , queue: function(fn){
+      if(typeof fn == 'function' || fn instanceof SVG.Situation || fn instanceof SVG.Delay)
+        this.situations.push(fn)
 
-        this.init || this.initAnimations()
+      if(!this.current) this.current = this.situations.shift()
 
-        this.timeout = setTimeout(function(){ this.startAnimFrame() }.bind(this), this.delay)
+      return this
+    }
+
+    /**
+     * pulls next element from the queue and execute it
+     * @return this
+     */
+  , dequeue: function(){
+      // stop current animation
+      this.current && this.current.stop && this.current.stop()
+
+      // get next animation from queue
+      this.current = this.situations.shift()
+
+      if(this.current){
+
+        var fn = function(){
+          if(this.current instanceof SVG.Situation)
+            this.initAnimations().seek(0)
+          else if(this.current instanceof SVG.Delay)
+            this.dequeue()
+          else
+            this.current.call(this)
+        }.bind(this)
+
+        // start next animation
+        if(this.current.delay){
+          setTimeout(function(){fn()}, this.current.delay)
+        }else{
+          fn()
+        }
+
       }
 
       return this
@@ -1422,67 +1511,128 @@ SVG.FX = SVG.invent({
     // this is important when one property could be changed from another property
   , initAnimations: function() {
       var i
+      var s = this.current
 
-      for(i in this.animations){
-        // TODO: this is not a clean clone of the array. We may have some unchecked references
-        this.animations[i].value = (i == 'plot' ? this.target.array().value : this.target[i]())
-        if(this.animations[i].relative)
-          this.animations[i].destination.value = this.animations[i].destination.value + this.animations[i].value
+      if(s.init) return this
+
+      for(i in s.animations){
+
+        if(i == 'viewbox'){
+          s.animations[i] = this.target().viewbox().morph(s.animations[i])
+        }else{
+
+          // TODO: this is not a clean clone of the array. We may have some unchecked references
+          s.animations[i].value = (i == 'plot' ? this.target().array().value : this.target()[i]())
+
+          // sometimes we get back an object and not the real value, fix this
+          if(s.animations[i].value.value){
+            s.animations[i].value = s.animations[i].value.value
+          }
+
+          if(s.animations[i].relative)
+            s.animations[i].destination.value = s.animations[i].destination.value + s.animations[i].value
+
+        }
+
       }
 
-      for(i in this.attrs){
-        if(this.attrs[i] instanceof SVG.Color){
-          var color = new SVG.Color(this.target.attr(i))
-          this.attrs[i].r = color.r
-          this.attrs[i].g = color.g
-          this.attrs[i].b = color.b
+      for(i in s.attrs){
+        if(s.attrs[i] instanceof SVG.Color){
+          var color = new SVG.Color(this.target().attr(i))
+          s.attrs[i].r = color.r
+          s.attrs[i].g = color.g
+          s.attrs[i].b = color.b
         }else{
-          this.attrs[i].value = this.target.attr(i) + this.attrs[i].value
+          s.attrs[i].value = this.target().attr(i)// + s.attrs[i].value
         }
       }
 
-      for(i in this.styles){
-        this.styles[i].value = this.target.style(i)
+      for(i in s.styles){
+        s.styles[i].value = this.target().style(i)
       }
 
-      this.transformations = this.target.matrixify()
+      s.transformations = this.target().matrixify()
 
-      this.init = true
+      s.init = true
+      return this
     }
+  , clearQueue: function(){
+      this.situations = []
+      return this
+    }
+  , clearCurrent: function(){
+      this.current = null
+      return this
+    }
+    /** stops the animation immediately
+     * @param jumpToEnd A Boolean indicating whether to complete the current animation immediately.
+     * @param clearQueue A Boolean indicating whether to remove queued animation as well.
+     * @return this
+     */
+  , stop: function(jumpToEnd, clearQueue){
+      if(!this.active) this.start()
 
-    // resets the animation to the initial state
-    // TODO: maybe rename to reset
-  , stop: function(){
-      if(!this.active) return false
+      if(clearQueue){
+        this.clearQueue()
+      }
+
       this.active = false
+
+      if(jumpToEnd){
+        this.seek(1)
+      }
+
       this.stopAnimFrame()
       clearTimeout(this.timeout)
 
-      return this.seek(0)
+      return this.clearCurrent()
     }
 
-    // finish off the animation
-    // TODO: does it kickoff the next animation in the queue?
-    //       global finish or fx specific finish?
+    /** resets the element to the state where the current element has started
+     * @return this
+     */
+  , reset: function(){
+      if(this.current){
+        var temp = this.current
+        this.stop()
+        this.current = temp
+        this.seek(0)
+      }
+      return this
+    }
+
+    // Stop the currently-running animation, remove all queued animations, and complete all animations for the element.
   , finish: function(){
-      this.finished = true
-      return this.stop().seek(1)
+
+      this.stop(true, false)
+
+      while(this.dequeue().current && this.stop(true, false));
+
+      return this.clearQueue().clearCurrent()
     }
 
     // set the internal animation pointer to the specified position and updates the visualisation
   , seek: function(pos){
       this.pos = pos
-      this._start = +new Date - pos * this._duration
-      this._end = this._start + this._duration
+      this.current.start = +new Date - pos * this.current.duration
+      this.current.end = this.current.start + this.current.duration
       return this.step(true)
     }
 
     // speeds up the animation by the given factor
     // this changes the duration of the animation
   , speed: function(speed){
-      this._duration = this._duration * this.pos + (1-this.pos) * this._duration / speed
-      this._end = this._start + this._duration
+      this.current.duration = this.current.duration * this.pos + (1-this.pos) * this.current.duration / speed
+      this.current.end = this.current.start + this.current.duration
       return this.seek(this.pos)
+    }
+    // Make loopable
+  , loop: function(times, reverse) {
+      // store current loop and total loops
+      this.current.loop = times || true
+
+      if(reverse) return this.reverse()
+      return this
     }
 
     // pauses the animation
@@ -1493,61 +1643,66 @@ SVG.FX = SVG.invent({
       return this
     }
 
-    // sets the direction to forward
+    // unpause the animation
   , play: function(){
-      if(this.shared.reversed){
-        this.shared.reversed = false
-        this.seek(this.pos)
-      }
+      if(!this.paused) return this
+      this.paused = false
+      return this.seek(this.pos)
+    }
+
+    /** toggle or set the direction of the animation
+     * true sets direction to backwards while false sets it to forwards
+     * @param reversed Boolean indicating whether to reverse the animation or not (default: toggle the reverse status)
+     * @return this
+     */
+  , reverse: function(reversed){
+      var c = this.last()
+
+      if(typeof reversed == 'undefined') c.reversed = !c.reversed
+      else c.reversed = reversed
 
       return this
     }
 
-    // sets the direction to backwards
-  , reverse: function(){
-      if(!this.shared.reversed){
-        this.shared.reversed = true
-        this.seek(1-this.pos)
-      }
-      return this
+
+    /**
+     * returns a float from 0-1 indicating the progress of the current animation
+     * @param eased Boolean indicating whether the returned position should be eased or not
+     * @return number
+     */
+  , progress: function(easeIt){
+      return easeIt ? this.current.easing(this.pos) : this.pos
     }
 
-    // resumes a currently paused animation
-  , resume: function(){
-      if(this.paused){
-        this.seek(this.shared.reversed ? 1-this.pos : this.pos)
-        this.paused = false
-        this.startAnimFrame()
-      }
-      return this
-    }
-
-    // adds a callback function for the current animation which is called when this animation finished
+    /**
+     * adds a callback function which is called when the current animation is finished
+     * @param fn Function which should be executed as callback
+     * @return number
+     */
   , after: function(fn){
-      var _this = this
+      var c = this.last()
         , wrapper = function wrapper(e){
-            if(e.detail.fx == _this){
-              fn.call(this)
+            if(e.detail.situation == c){
+              fn.call(this, c)
               this.off('finished.fx', wrapper) // prevent memory leak
             }
           }
 
-      // unbind previously set bindings because they would be overwritten anyway
-      this.target.off('finished.fx', wrapper).on('finished.fx', wrapper)
+      this.target().on('finished.fx', wrapper)
       return this
     }
 
     // adds a callback which is called whenever one animation step is performed
   , during: function(fn){
-      var _this = this
+      var c = this.last()
         , wrapper = function(e){
-            if(e.detail.fx == _this){
-              fn.call(this, e.detail.pos, e.detail.eased, e.detail.fx)
+            if(e.detail.situation == c){
+              fn.call(this, e.detail.pos, e.detail.eased, c)
             }
           }
 
       // see above
-      this.target.off('during.fx', wrapper).on('during.fx', wrapper)
+      this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
       return this.after(function(){
         this.off('during.fx', wrapper)
@@ -1562,137 +1717,113 @@ SVG.FX = SVG.invent({
           }
 
       // see above
-      this.target.off('allfinished.fx', wrapper).on('allfinished.fx', wrapper)
+      this.target().off('allfinished.fx', wrapper).on('allfinished.fx', wrapper)
       return this
     }
 
     // calls on every animation step for all animations
   , duringAll: function(fn){
-      var _this = this
-        , wrapper = function(e){
-            fn.call(this, e.detail.fx.totalPosition(), e.detail.pos, e.detail.eased, e.detail.fx)
+      var wrapper = function(e){
+            fn.call(this, e.detail.pos, e.detail.eased, e.detail.fx, e.detail.situation)
           }
 
-      this.target.off('during.fx', wrapper).on('during.fx', wrapper)
+      this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
       return this.afterAll(function(){
         this.off('during.fx', wrapper)
       })
     }
 
-    // returns an integer from 0-1 indicating the progress of the whole animation queue
-    // we recalculate the end time because it may be changed from methods like seek()
-    // todo: rename position to progress?
-  , totalPosition: function(){
-      var start = this.first()._start
-        , end = this._end
-        , next = this
+    /**
+     * returns a float from 0-1 indicating the progress of the whole animation queue
+     * we recalculate the end time because it may be changed from methods like seek()
+     * @return number
+     */
+   // FIXME: current start always changes so the progress get a reset whenever one situation finishes. We need a global start which is only modified on pause and stop
+  , totalProgress: function(){
+      var start = this.current.start
+        , end = this.current
 
-      while(next = next.next()){
-        end += next._duration + next._delay
+      for(var i = 0, len = this.situations.length; i < len; ++i){
+        end += (situations[i].duration || 0) + (situations[i].delay || 0)
       }
 
-      return (this.pos * this._duration + this._start - start) / (end - start)
+      return (this.pos * this.current.duration + this.start - start) / (end - start)
+    }
+
+  , last: function(){
+      return this.situations.length ? this.situations[this.situations.length-1] : this.current
     }
 
     // adds one property to the animations
-  , push: function(method, args, type){
-      this[type || 'animations'][method] = args
+  , add: function(method, args, type){
+      //if(this.situations.length){
+      //  this.situations[this.situations.length-1][type || 'animations'][method] = args
+      //}else{
+      //  this.current[type || 'animations'][method] = args
+      //}
+      this.last()[type || 'animations'][method] = args
       setTimeout(function(){this.start()}.bind(this), 0)
       return this
     }
 
-    // removes the specified animation and returns it
-  , pop: function(method, type){
-      var ret = this[type || 'animations'][method]
-      this.drop(method)
-      return ret
-    }
-
-    // removes the specified animation
-  , drop: function(method, type){
-      delete this[type || 'animations'][method]
-      return this
-    }
-
-    // returns the specified animation
-  , get: function(method, type){
-      return this[type || 'animations'][method]
-    }
-
-    // perform one step of the animation
-    // when ignoreTime is set the method uses the currently set position.
-    // Otherwise it will calculate the position based on the time passed
+    /** perform one step of the animation
+     *  @param ignoreTime Boolean indicating whether to ignore time and use position directly or recalculate position based on time
+     *  @return this
+     */
   , step: function(ignoreTime){
+
+      console.log(this.current)
 
       // convert current time to position
       if(!ignoreTime) this.pos = this.timeToPos(+new Date)
 
-      if(this.shared.reversed) this.pos = 1 - this.pos
+      if(this.pos >= 1 && (this.current.loop === true || (typeof this.current.loop == 'number' && --this.current.loop))){
+        return this.seek(this.pos-1)
+      }
+
+      if(this.current.reversed) this.pos = 1 - this.pos
 
       // correct position
-      if(this.pos > 1) this.pos = 1
-      if(this.pos < 0) this.pos = 0
+      if(this.pos > 1)this.pos = 1
+      if(this.pos < 0)this.pos = 0
 
       // apply easing
-      var eased = this.easing(this.pos)
+      var eased = this.current.easing(this.pos)
 
       // call once-callbacks
-      for(var i in this._once){
+      for(var i in this.current.once){
         if(i > this.lastPos && i <= eased){
-          this._once[i](this.pos, eased)
-          delete this._once[i]
+          this.current.once[i].call(this.target(), this.pos, eased)
+          delete this.current.once[i]
         }
       }
 
       // fire during callback with position, eased position and current situation as parameter
-      this.target.fire('during', {pos: this.pos, eased: eased, fx: this})
+      this.target().fire('during', {pos: this.pos, eased: eased, fx: this, situation: this.current})
 
       // apply the actual animation to every property
       this.eachAt()
 
       // do final code when situation is finished
-      if(this.pos == 1){
+      if((this.pos == 1 && !this.current.reversed) || (this.current.reversed && this.pos == 0)){
 
         // stop animation callback
         cancelAnimationFrame(this.animationFrame)
 
-        this.finished = true
-        this.active = false
-
         // fire finished callback with current situation as parameter
-        this.target.fire('finished', {fx:this})
+        this.target().fire('finished', {fx:this, situation: this.current})
 
-        // start the next animation in the queue and mark it as current
-        if(this.next()){
-          this.next().setAsCurrent().start()
-        // or finish off the animation
-        }else{
-          this.target.fire('allfinished')
-          this.target.off('.fx')
-          this.target.fx = null
+        if(!this.situations.length && !this.current && this.active){
+          this.target().fire('allfinished')
+          this.target().off('.fx')
+          this.active = false
         }
 
-      // todo: this is more or less duplicate code. has to be removed
-      }else if(this.shared.reversed && this.pos == 0){
-        // stop animation callback
-        cancelAnimationFrame(this.animationFrame)
+        // start next animation
+        if(this.active) this.dequeue()
+        else this.clearCurrent()
 
-        this.finished = true
-        this.active = false
-
-        // fire finished callback with current situation as parameter
-        this.target.fire('finished', {fx:this})
-
-        // start the next animation in the queue and mark it as current
-        if(this.prev()){
-          this.prev().setAsCurrent().start()
-        // or finish off the animation
-        }else{
-          this.target.fire('allfinished')
-          this.target.off('.fx')
-          this.target.fx = null
-        }
       }else if(!this.paused && this.active){
         // we continue animating when we are not at the end
         this.startAnimFrame()
@@ -1707,13 +1838,13 @@ SVG.FX = SVG.invent({
     // calculates the step for every property and calls block with it
     // todo: include block directly cause it is used only for this purpose
   , eachAt: function(){
-      var i, at, self = this, target = this.target
-
+      var i, at, self = this, target = this.target(), c = this.current
+      console.log(this.current, c)
       // apply animations which can be called trough a method
-      for(i in this.animations){
+      for(i in c.animations){
 
-        at = [].concat(this.animations[i]).map(function(el){
-          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        at = [].concat(c.animations[i]).map(function(el){
+          return el.at ? el.at(c.easing(self.pos), self.pos) : el
         })
 
         target[i].apply(target, at)
@@ -1721,10 +1852,10 @@ SVG.FX = SVG.invent({
       }
 
       // apply animation which has to be applied with attr()
-      for(i in this.attrs){
+      for(i in c.attrs){
 
-        at = [i].concat(this.attrs[i]).map(function(el){
-          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        at = [i].concat(c.attrs[i]).map(function(el){
+          return el.at ? el.at(c.easing(self.pos), self.pos) : el
         })
 
         target.attr.apply(target, at)
@@ -1732,10 +1863,10 @@ SVG.FX = SVG.invent({
       }
 
       // apply animation which has to be applied with style()
-      for(i in this.styles){
+      for(i in c.styles){
 
-        at = [i].concat(this.styles[i]).map(function(el){
-          return el.at ? el.at(self.easing(self.pos), self.pos) : el
+        at = [i].concat(c.styles[i]).map(function(el){
+          return el.at ? el.at(c.easing(self.pos), self.pos) : el
         })
 
         target.style.apply(target, at)
@@ -1743,16 +1874,37 @@ SVG.FX = SVG.invent({
       }
 
       // animate transformations which has to be chained
-      if(this.transforms.length){
-        at = this.transformations
-        for(i in this.transforms){
-          if(Array.isArray(this.transforms[i])){
-            at = at.rotate(this.transforms[i][0].at(this.easing(this.pos)), this.transforms[i][1], this.transforms[i][2])
-          }else{
-            at = at.multiply(this.transforms[i].at(this.easing(this.pos)))
+      if(c.transforms.length){
+
+        // get inital transformations
+        at = c.transformations
+        for(i in c.transforms){
+
+          // get next transformation in chain
+          var a = c.transforms[i]
+
+          // multiply matrix directly
+          if(a instanceof SVG.Matrix){
+
+            if(a.relative){
+              at = at.multiply(a.at(this.pos))
+            }else{
+              at = at.morph(a).at(c.easing(this.pos))
+            }
+            continue
           }
+
+          // when transformation is absolute we have to reset the needed transformation first
+          if(!a.relative)
+            a.undo(at.extract())
+
+          // and reapply it after
+          at = at.multiply(a.at(c.easing(this.pos)))
+          continue;
+
         }
 
+        // set new matrix on element
         target.matrix(at)
       }
 
@@ -1764,32 +1916,11 @@ SVG.FX = SVG.invent({
     // adds an once-callback which is called at a specific position and never again
   , once: function(pos, fn, isEased){
 
-      if(!isEased)pos = this.easing(pos)
+      if(!isEased)pos = this.current.easing(pos)
 
-      this._once[pos] = fn
+      this.current.once[pos] = fn
 
       return this
-    }
-
-    // searchs for a property in the animation chain to make relative movement possible
-    // TODO: this method is outdated because of the use of initAnimations which cover this topic quite well
-  , search: function(method, key) {
-      var situation = this
-
-      while(situation = situation.prev()){
-
-        // get method of situation if present (always try animation object first before accessing attrs or styles)
-        var attr = situation.get(key || method) || this.styles[key] || this.attrs[key]
-        if(!attr) continue
-
-        // return value from the morphed object
-        return attr.destination
-
-      }
-
-      // return the elements attribute as fallback
-      return this.target[method](key)
-
     }
 
   }
@@ -1799,11 +1930,31 @@ SVG.FX = SVG.invent({
   // Add method to parent elements
 , construct: {
     // Get fx module or create a new one, then animate with given duration and ease
-    animate: function(o) {
-      return (this.fx || (this.fx = new SVG.FX(this))).animate(o)
+    animate: function(o, easing, delay) {
+      return (this.fx || (this.fx = new SVG.FX(this))).animate(o, easing, delay)
     }
   , delay: function(delay){
-      return (this.fx || (this.fx = new SVG.FX(this))).animate({delay:delay})
+      return (this.fx || (this.fx = new SVG.FX(this))).delay(delay)
+    }
+  , stop: function(jumpToEnd, clearQueue) {
+      if (this.fx)
+        this.fx.stop(jumpToEnd, clearQueue)
+
+      return this
+    }
+    // Pause current animation
+  , pause: function() {
+      if (this.fx)
+        this.fx.pause()
+
+      return this
+    }
+    // Play paused current animation
+  , play: function() {
+      if (this.fx)
+        this.fx.play()
+
+      return this
     }
   }
 
@@ -1812,14 +1963,14 @@ SVG.FX = SVG.invent({
 // MorphObj is used whenever no morphable object is given
 SVG.MorphObj = SVG.invent({
 
-  create: function(from, to){
+  create: function(to){
     // prepare color for morphing
-    if(SVG.Color.isColor(to)) return new SVG.Color(from).morph(to)
+    if(SVG.Color.isColor(to)) return new SVG.Color().morph(to)
     // prepare number for morphing
-    if(SVG.regex.unit.test(to) || typeof from == 'number') return new SVG.Number(from).morph(to)
+    if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number().morph(to)
 
     // prepare for plain morphing
-    this.value = from
+    this.value = 0
     this.destination = to
   }
 
@@ -1837,52 +1988,15 @@ SVG.MorphObj = SVG.invent({
 
 SVG.extend(SVG.FX, {
   // Add animatable attributes
-  attr: function(a, v) {
+  attr: function(a, v, relative) {
     // apply attributes individually
     if (typeof a == 'object') {
       for (var key in a)
         this.attr(key, a[key])
 
     } else {
-      // get the current state
-      var from = this.search('attr', a)
-
-      // detect format
-      if (a == 'transform') {
-        // merge given transformation with an existing one
-        //if (this.attrs[a])
-        //  v = this.attrs[a].multiply(v)
-
-        if(v.rotation && !v.a){
-          this.transforms.push([new SVG.Number(0).morph(v.rotation), v.cx || 0, v.cy || 0])
-          this.start()
-        }else{
-          this.transforms.push(new SVG.Matrix(this.target).morph(v))
-          this.start()
-        }
-
-        // prepare matrix for morphing
-        //this.push(a, (new SVG.Matrix(this.target)).morph(v), 'transforms')
-
-        // add parametric rotation values
-        /*if (this.param) {
-          // get initial rotation
-          v = this.target.transform('rotation')
-
-          // add param
-          this.attrs[a].param = {
-            from: this.target.param || { rotation: v, cx: this.param.cx, cy: this.param.cy }
-          , to:   this.param
-          }
-        }*/
-
-      } else {
-        /*if(typeof this[a] == 'function'){
-          return this[a](v)
-        }*/
-
-        this.push(a, new SVG.MorphObj(from, v), 'attrs')
-      }
+      // the MorphObj takes care about the right function used
+      this.add(a, new SVG.MorphObj(v), 'attrs')
     }
 
     return this
@@ -1894,29 +2008,39 @@ SVG.extend(SVG.FX, {
         this.style(key, s[key])
 
     else
-      this.push(s, new SVG.MorphObj(this.search('style', s), v), 'styles')
+      this.add(s, new SVG.MorphObj(v), 'styles')
 
     return this
   }
   // Animatable x-axis
 , x: function(x, relative) {
-    var num = new SVG.Number(/*this.search('x')*/0).morph(x)
+    if(this.target() instanceof SVG.G){
+      this.transform({x:x}, relative)
+      return this
+    }
+
+    var num = new SVG.Number().morph(x)
     num.relative = relative
-    return this.push('x', num)
+    return this.add('x', num)
   }
   // Animatable y-axis
 , y: function(y, relative) {
-    var num = new SVG.Number(/*this.search('y')*/).morph(y)
+    if(this.target() instanceof SVG.G){
+      this.transform({y:y}, relative)
+      return this
+    }
+
+    var num = new SVG.Number().morph(y)
     num.relative = relative
-    return this.push('y', num)
+    return this.add('y', num)
   }
   // Animatable center x-axis
 , cx: function(x) {
-    return this.push('cx', new SVG.Number(/*this.search('cx')*/).morph(x))
+    return this.add('cx', new SVG.Number().morph(x))
   }
   // Animatable center y-axis
 , cy: function(y) {
-    return this.push('cy', new SVG.Number(/*this.search('cy')*/).morph(y))
+    return this.add('cy', new SVG.Number().morph(y))
   }
   // Add animatable move
 , move: function(x, y) {
@@ -1928,22 +2052,28 @@ SVG.extend(SVG.FX, {
   }
   // Add animatable size
 , size: function(width, height) {
-    if (this.target instanceof SVG.Text) {
+    if (this.target() instanceof SVG.Text) {
       // animate font size for Text elements
       this.attr('font-size', width)
 
     } else {
       // animate bbox based size for all other elements
-      var w = this.search('width')
-        , h = this.search('height')
-        , box
+      var box
 
-      if(!w || !h){
-        box = this.target.bbox()
+      if(!width || !height){
+        box = this.target().bbox()
       }
 
-      this.push('width' , new SVG.Number(/*w || box.width*/).morph(width))
-          .push('height', new SVG.Number(/*h || box.height*/).morph(height))
+      if(!width){
+        width = box.width / box.height  * height
+      }
+
+      if(!height){
+        height = box.height / box.width  * width
+      }
+
+      this.add('width' , new SVG.Number().morph(width))
+          .add('height', new SVG.Number().morph(height))
 
     }
 
@@ -1951,24 +2081,35 @@ SVG.extend(SVG.FX, {
   }
   // Add animatable plot
 , plot: function(p) {
-    return this.push('plot', this.target.array().morph(p))
+    return this.add('plot', this.target().array().morph(p))
   }
   // Add leading method
 , leading: function(value) {
-    return this.target.leading ?
-      this.push('leading', new SVG.Number(/*this.search('leading')*/).morph(value)) :
+    return this.target().leading ?
+      this.add('leading', new SVG.Number().morph(value)) :
       this
   }
   // Add animatable viewbox
 , viewbox: function(x, y, width, height) {
-    if (this.target instanceof SVG.Container) {
-      var box = this.target.viewbox()
-      this.push('viewbox', [
-        new SVG.Number(box.x).morph(x),
-        new SVG.Number(box.y).morph(y),
-        new SVG.Number(box.width).morph(width),
-        new SVG.Number(box.height).morph(height)
-      ])
+    if (this.target() instanceof SVG.Container) {
+      this.add('viewbox', new SVG.ViewBox(x, y, width, height))
+    }
+
+    return this
+  }
+, update: function(o) {
+    if (this.target() instanceof SVG.Stop) {
+      if (typeof o == 'number' || o instanceof SVG.Number) {
+        return this.update({
+          offset:  arguments[0]
+        , color:   arguments[1]
+        , opacity: arguments[2]
+        })
+      }
+
+      if (o.opacity != null) this.attr('stop-opacity', o.opacity)
+      if (o.color   != null) this.attr('stop-color', o.color)
+      if (o.offset  != null) this.attr('offset', o.offset)
     }
 
     return this
@@ -2155,7 +2296,7 @@ SVG.Matrix = SVG.invent({
       source : base
 
     // merge source
-    for (i = abcdef.length - 1; i >= 0; i--)
+    for (i = abcdef.length - 1; i >= 0; --i)
       this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
@@ -2173,6 +2314,8 @@ SVG.Matrix = SVG.invent({
         // translation
         x:        this.e
       , y:        this.f
+      , transformedX:(this.e * Math.cos(skewX * Math.PI / 180) + this.f * Math.sin(skewX * Math.PI / 180)) / Math.sqrt(this.a * this.a + this.b * this.b)
+      , transformedY:(this.f * Math.cos(skewX * Math.PI / 180) + this.e * Math.sin(-skewX * Math.PI / 180)) / Math.sqrt(this.c * this.c + this.d * this.d)
         // skew
       , skewX:    -skewX
       , skewY:    180 / Math.PI * Math.atan2(py.y, py.x)
@@ -2187,6 +2330,7 @@ SVG.Matrix = SVG.invent({
       , d: this.d
       , e: this.e
       , f: this.f
+      , matrix: new SVG.Matrix(this)
       }
     }
     // Clone matrix
@@ -2325,6 +2469,80 @@ SVG.Matrix = SVG.invent({
   }
 
 })
+
+SVG.Point = SVG.invent({
+  // Initialize
+  create: function(x,y) {
+    var i, source, base = {x:0, y:0}
+
+    // ensure source as object
+    source = Array.isArray(x) ?
+      {x:x[0], y:x[1]} :
+    typeof x === 'object' ?
+      {x:x.x, y:x.y} :
+    y != null ?
+      {x:x, y:y} : base
+
+    // merge source
+    this.x = source.x
+    this.y = source.y
+  }
+
+  // Add methods
+, extend: {
+    // Clone point
+    clone: function() {
+      return new SVG.Point(this)
+    }
+    // Morph one point into another
+  , morph: function(point) {
+      // store new destination
+      this.destination = new SVG.Point(point)
+
+      return this
+    }
+    // Get morphed point at a given position
+  , at: function(pos) {
+      // make sure a destination is defined
+      if (!this.destination) return this
+
+      // calculate morphed matrix at a given position
+      var point = new SVG.Point({
+        x: this.x + (this.destination.x - this.x) * pos
+      , y: this.y + (this.destination.y - this.y) * pos
+      })
+
+      return point
+    }
+    // Convert to native SVGPoint
+  , native: function() {
+      // create new point
+      var point = SVG.parser.draw.node.createSVGPoint()
+
+      // update with current values
+      point.x = this.x
+      point.y = this.y
+
+      return point
+    }
+    // transform point with matrix
+  , transform: function(matrix) {
+      return new SVG.Point(this.native().matrixTransform(matrix.native()))
+    }
+
+  }
+
+})
+
+SVG.extend(SVG.Element, {
+
+  // Get point
+  point: function(x, y) {
+    return new SVG.Point(x,y).transform(this.screenCTM().inverse());
+  }
+
+})
+
 SVG.extend(SVG.Element, {
   // Set svg element attribute
   attr: function(a, v, n) {
@@ -2408,11 +2626,11 @@ SVG.extend(SVG.Element, {
     return this
   }
 })
-SVG.extend(SVG.Element, SVG.FX, {
+SVG.extend(SVG.Element, {
   // Add transformations
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
-    var target = this.target || this
+    var target = this
       , matrix
 
     // act as a getter
@@ -2420,20 +2638,11 @@ SVG.extend(SVG.Element, SVG.FX, {
       // get current matrix
       matrix = new SVG.Matrix(target).extract()
 
-      // add parametric rotation
-      if (typeof this.param === 'object') {
-        matrix.rotation = this.param.rotation
-        matrix.cx       = this.param.cx
-        matrix.cy       = this.param.cy
-      }
-
       return typeof o === 'string' ? matrix[o] : matrix
     }
 
     // get current matrix
-    matrix = /*this instanceof SVG.FX && this.attrs.transform ?
-      this.attrs.transform :*/
-      new SVG.Matrix(target)
+    matrix = new SVG.Matrix(target)
 
     // ensure relative flag
     relative = !!relative || !!o.relative
@@ -2451,26 +2660,12 @@ SVG.extend(SVG.Element, SVG.FX, {
       // ensure centre point
       ensureCentre(o, target)
 
-      // relativize rotation value
-      /*if (relative) {
-        o.rotation += this.param && this.param.rotation != null ?
-          this.param.rotation :
-          matrix.extract().rotation
-      }*/
-
-      // store parametric values
-      //this.param = o
-
-      if(this instanceof SVG.FX) return this.attr('transform', o)
-
       // apply transformation
-      //if (this instanceof SVG.Element) {
-        matrix = relative ?
-          // relative
-          matrix.rotate(o.rotation, o.cx, o.cy) :
-          // absolute
-          matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
-      //}
+      matrix = relative ?
+        // relative
+        matrix.rotate(o.rotation, o.cx, o.cy) :
+        // absolute
+        matrix.rotate(o.rotation - matrix.extract().rotation, o.cx, o.cy)
 
     // act on scale
     } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
@@ -2526,7 +2721,84 @@ SVG.extend(SVG.Element, SVG.FX, {
       }
     }
 
-    return this.attr(this instanceof SVG.Pattern ? 'patternTransform' : this instanceof SVG.Gradient ? 'gradientTransform' : 'transform', matrix)
+    return this.attr('transform', matrix)
+  }
+})
+
+SVG.extend(SVG.FX, {
+  transform: function(o, relative) {
+    // get target in case of the fx module, otherwise reference this
+    var target = this.target()
+      , matrix
+
+    // act as a getter
+    if (typeof o !== 'object') {
+      // get current matrix
+      matrix = new SVG.Matrix(target).extract()
+
+      return typeof o === 'string' ? matrix[o] : matrix
+    }
+
+    // ensure relative flag
+    relative = !!relative || !!o.relative
+
+    // act on matrix
+    if (o.a != null) {
+      matrix = new SVG.Matrix(o)
+
+    // act on rotation
+    } else if (o.rotation != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // apply transformation
+      matrix = new SVG.Rotate(o.rotation, o.cx, o.cy)
+
+    // act on scale
+    } else if (o.scale != null || o.scaleX != null || o.scaleY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure scale values on both axes
+      o.scaleX = o.scale != null ? o.scale : o.scaleX != null ? o.scaleX : 1
+      o.scaleY = o.scale != null ? o.scale : o.scaleY != null ? o.scaleY : 1
+
+      matrix = new SVG.Scale(o.scaleX, o.scaleY, o.cx, o.cy)
+
+    // act on skew
+    } else if (o.skewX != null || o.skewY != null) {
+      // ensure centre point
+      ensureCentre(o, target)
+
+      // ensure skew values on both axes
+      o.skewX = o.skewX != null ? o.skewX : 0
+      o.skewY = o.skewY != null ? o.skewY : 0
+
+      matrix = new SVG.Skew(o.skewX, o.skewY, o.cx, o.cy)
+
+    // act on flip
+    } else if (o.flip) {
+      matrix = new SVG.Matrix().morph(new SVG.Matrix().flip(
+        o.flip
+      , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+      ))
+
+    // act on translate
+    } else if (o.x != null || o.y != null) {
+      matrix = new SVG.Translate(o.x, o.y)
+    }
+
+    if(!matrix) return this
+
+    matrix.relative = relative
+
+    var situation = this.situations.length ? this.situations[this.situations.length-1] : this.current
+
+    situation.transforms.push(matrix)
+
+    setTimeout(function(){this.start()}.bind(this), 0)
+
+    return this
   }
 })
 
@@ -2535,7 +2807,7 @@ SVG.extend(SVG.Element, {
   untransform: function() {
     return this.attr('transform', null)
   },
-  // merge the whole transformation chain into one matrix
+  // merge the whole transformation chain into one matrix and returns it
   matrixify: function() {
 
     var matrix = (this.attr('transform') || '')
@@ -2552,8 +2824,6 @@ SVG.extend(SVG.Element, {
         return matrix[transform[0]].apply(matrix, transform[1])
 
       }, new SVG.Matrix())
-    // apply calculated matrix to element
-    this.attr('transform', matrix)
 
     return matrix
   },
@@ -2572,6 +2842,136 @@ SVG.extend(SVG.Element, {
   // same as above with parent equals root-svg
   toDoc: function() {
     return this.toParent(this.doc())
+  }
+
+})
+
+SVG.Transformation = SVG.invent({
+
+  create: function(source, inversed){
+
+    if(arguments.length > 1 && typeof inversed != 'boolean'){
+      return this.create([].slice.call(arguments))
+    }
+
+    if(typeof source == 'object'){
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        this[this.arguments[i]] = source[this.arguments[i]]
+      }
+    }
+
+    if(Array.isArray(source)){
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        this[this.arguments[i]] = source[i]
+      }
+    }
+
+    this.inversed = false
+
+    if(inversed === true){
+      this.inversed = true
+    }
+
+  }
+
+, extend: {
+
+    at: function(pos){
+
+      var params = []
+
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        params.push(this[this.arguments[i]])
+      }
+
+      var m = this._undo || new SVG.Matrix()
+
+      m = new SVG.Matrix().morph(SVG.Matrix.prototype[this.method].apply(m, params)).at(pos)
+
+      return this.inversed ? m.inverse() : m
+
+    }
+
+  , undo: function(o){
+      this._undo = new SVG[capitalize(this.method)](o, true).at(1)
+      return this
+    }
+
+  }
+
+})
+
+SVG.Translate = SVG.invent({
+
+  parent: SVG.Matrix
+, inherit: SVG.Transformation
+
+, create: function(source, inversed){
+    if(typeof source == 'object') this.constructor.call(this, source, inversed)
+    else this.constructor.call(this, [].slice.call(arguments))
+  }
+
+, extend: {
+    arguments: ['transformedX', 'transformedY']
+  , method: 'translate'
+  }
+
+})
+
+SVG.Rotate = SVG.invent({
+
+  parent: SVG.Matrix
+, inherit: SVG.Transformation
+
+, create: function(source, inversed){
+    if(typeof source == 'object') this.constructor.call(this, source, inversed)
+    else this.constructor.call(this, [].slice.call(arguments))
+  }
+
+, extend: {
+    arguments: ['rotation', 'cx', 'cy']
+  , method: 'rotate'
+  , at: function(pos){
+      var m = new SVG.Matrix().rotate(new SVG.Number().morph(this.rotation - (this._undo ? this._undo.rotation : 0)).at(pos), this.cx, this.cy)
+      return this.inversed ? m.inverse() : m
+    }
+  , undo: function(o){
+      this._undo = o
+    }
+  }
+
+})
+
+SVG.Scale = SVG.invent({
+
+  parent: SVG.Matrix
+, inherit: SVG.Transformation
+
+, create: function(source, inversed){
+    if(typeof source == 'object') this.constructor.call(this, source, inversed)
+    else this.constructor.call(this, [].slice.call(arguments))
+  }
+
+, extend: {
+    arguments: ['scaleX', 'scaleY', 'cx', 'cy']
+  , method: 'scale'
+  }
+
+})
+
+SVG.Skew = SVG.invent({
+
+  parent: SVG.Matrix
+, inherit: SVG.Transformation
+
+, create: function(source, inversed){
+    if(typeof source == 'object') this.constructor.call(this, source, inversed)
+    else this.constructor.call(this, [].slice.call(arguments))
+  }
+
+, extend: {
+    arguments: ['skewX', 'skewY', 'cx', 'cy']
+  , method: 'skew'
   }
 
 })
@@ -2786,6 +3186,7 @@ SVG.Container = SVG.invent({
 // Initialize listeners stack
 SVG.listeners = []
 SVG.handlerMap = []
+SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener, binding) {
@@ -2801,8 +3202,11 @@ SVG.on = function(node, event, listener, binding) {
   SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
   SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
 
+  if(!listener._svgjsListenerId)
+    listener._svgjsListenerId = ++SVG.listenerId
+
   // reference listener
-  SVG.listeners[index][ev][ns][listener] = l
+  SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
 
   // add listener
   node.addEventListener(ev, l, false)
@@ -2817,6 +3221,9 @@ SVG.off = function(node, event, listener) {
   if(index == -1) return
 
   if (listener) {
+    if(typeof listener == 'function') listener = listener._svgjsListenerId
+    if(!listener) return
+
     // remove listener reference
     if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
       // remove listener
@@ -2910,19 +3317,19 @@ SVG.G = SVG.invent({
 , extend: {
     // Move over x-axis
     x: function(x) {
-      return x == null ? this.transform('x') : this.transform({ x: -this.x() + x }, true)
+      return x == null ? this.transform('x') : this.transform({ x: x - this.x() }, true)
     }
     // Move over y-axis
   , y: function(y) {
-      return y == null ? this.transform('y') : this.transform({ y: -this.y() + y }, true)
+      return y == null ? this.transform('y') : this.transform({ y: y - this.y() }, true)
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.tbox().cx : this.x(x - this.tbox().width / 2)
+      return x == null ? this.gbox().cx : this.x(x - this.gbox().width / 2)
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.tbox().cy : this.y(y - this.tbox().height / 2)
+      return y == null ? this.gbox().cy : this.y(y - this.gbox().height / 2)
     }
   , gbox: function() {
 
@@ -2949,6 +3356,7 @@ SVG.G = SVG.invent({
     }
   }
 })
+
 // ### This module adds backward / forward functionality to elements.
 
 //
@@ -3934,8 +4342,10 @@ SVG.Text = SVG.invent({
     }
     // Get all the first level lines
   , lines: function() {
+      var node = (this.textPath && this.textPath() || this).node
+
       // filter tspans and map them to SVG.js instances
-      var lines = SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(el){
+      var lines = SVG.utils.map(SVG.utils.filterSVGElements(node.childNodes), function(el){
         return SVG.adopt(el)
       })
 
@@ -3981,7 +4391,7 @@ SVG.Text = SVG.invent({
     // overwrite method from parent to set data properly
   , setData: function(o){
       this.dom = o
-      this.dom.leading = o.leading ? new SVG.Number(o.leading.value, o.leading.unit) : new SVG.Number(1.3)
+      this.dom.leading = new SVG.Number(o.leading || 1.3)
       return this
     }
   }
@@ -4087,7 +4497,7 @@ SVG.TextPath = SVG.invent({
   create: 'textPath'
 
   // Inherit from
-, inherit: SVG.Element
+, inherit: SVG.Parent
 
   // Define parent class
 , parent: SVG.Text
@@ -4634,6 +5044,10 @@ SVG.extend(SVG.Parent, {
   }
 
 })
+function is(el, obj){
+  return el instanceof obj
+}
+
 // tests if a given selector matches an element
 function matches(el, selector) {
   return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);

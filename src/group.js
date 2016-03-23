@@ -17,11 +17,11 @@ SVG.G = SVG.invent({
     }
     // Move by center over x-axis
   , cx: function(x) {
-      return x == null ? this.tbox().cx : this.x(x - this.tbox().width / 2)
+      return x == null ? this.gbox().cx : this.x(x - this.gbox().width / 2)
     }
     // Move by center over y-axis
   , cy: function(y) {
-      return y == null ? this.tbox().cy : this.y(y - this.tbox().height / 2)
+      return y == null ? this.gbox().cy : this.y(y - this.gbox().height / 2)
     }
   , gbox: function() {
 

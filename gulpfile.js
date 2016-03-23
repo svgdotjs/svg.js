@@ -41,7 +41,7 @@ var parts = [
 , 'src/number.js'
 , 'src/viewbox.js'
 , 'src/element.js'
-, 'src/fxnew.js'
+, 'src/fxnew2.js'
 , 'src/boxes.js'
 , 'src/matrix.js'
 , 'src/point.js'

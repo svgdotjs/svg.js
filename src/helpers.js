@@ -1,3 +1,7 @@
+function is(el, obj){
+  return el instanceof obj
+}
+
 // tests if a given selector matches an element
 function matches(el, selector) {
   return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
