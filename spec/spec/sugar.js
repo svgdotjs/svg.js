@@ -1,4 +1,6 @@
-describe('Element', function() {
+describe('Sugar', function() {
+
+  var rect
 
   beforeEach(function() {
     draw.attr('viewBox', null)
@@ -8,15 +10,41 @@ describe('Element', function() {
     draw.clear()
   })
 
-  it('should create a circular reference on the node', function() {
-    var rect = draw.rect(100,100)
-    expect(rect.node.instance).toBe(rect)
-  })
-
-  describe('native()', function() {
+  describe('fill()', function() {
     it('returns the node reference', function() {
-      var rect = draw.rect(100,100)
-      expect(rect.native()).toBe(rect.node)
+      rect = draw.rect(100,100)
+      expect(rect.fill('red')).toBe(rect)
+    })
+
+    it('returns the value with no argument given', function() {
+      rect = draw.rect(100,100).fill('red')
+      expect(rect.fill('red')).toBe('red')
+    })
+    
+    describe('color, opacity, rule', function() {
+    
+      ['color', 'opacity', 'rule'].forEach(function(a){
+      
+        describe('fill-'+a+'()', function(){
+        
+          rect = draw.rect(100,100).fill('red')
+        
+        })
+      
+      })
+    
+    })
+  })
+  
+  describe('()', function() {
+    it('returns the node reference', function() {
+      rect = draw.rect(100,100)
+      expect(rect.fill('red')).toBe(rect)
+    })
+
+    it('returns the value with no argument given', function() {
+      rect = draw.rect(100,100).fill('red')
+      expect(rect.fill('red')).toBe('red')
     })
   })
 
@@ -645,7 +673,7 @@ describe('Element', function() {
     it('creates a point from screen coordinates transformed in the elements space', function(){
       var rect = draw.rect(100,100)
       expect(rect.point(2,5).x).toBeCloseTo(-6)
-      expect(rect.point(2,5).y).toBeCloseTo(-21)
+      expect(rect.point(2,5).y).toBeCloseTo(-3)
     })
   })
 })

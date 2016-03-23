@@ -307,7 +307,9 @@ describe('Event', function() {
       rect3.on('event', action)
 
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(1)  // 1 listener on rect
+      expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect2.node)]['event']['*']).length).toBe(1) // 1 listener on rect2
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect3.node)]['event']['*']).length).toBe(2) // 2 listener on rect3
+
       expect(SVG.listeners.length).toBe(listenerCnt + 3)                                                  // added listeners on 3 different elements
     })
     if('attaches a handler to a namespaced event', function(){
@@ -338,7 +340,7 @@ describe('Event', function() {
     })
     it('stores the listener for future reference', function() {
       rect.on('event', action)
-      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).not.toBeUndefined()
+      expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action._svgjsListenerId]).not.toBeUndefined()
     })
     it('returns the called element', function() {
       expect(rect.on('event', action)).toBe(rect)

@@ -4,96 +4,62 @@ describe('FX', function() {
   beforeEach(function() {
     rect = draw.rect(100,100).move(100,100)
     fx = rect.animate(500)
-    fx2 = fx.enqueue()
+  })
+  
+  afterEach(function() {
+    //fx.finish()
+    //rect.off('.fx')
   })
 
   it('creates an instance of SVG.FX and sets parameter', function() {
     expect(fx instanceof SVG.FX).toBe(true)
-    expect(fx.target).toBe(rect)
+    expect(fx._target).toBe(rect)
     expect(fx.pos).toBe(0)
-    expect(fx.paused).toBe(false)
-    expect(fx.finished).toBe(false)
-    expect(fx.active).toBe(false)
-    expect(fx.shared.current).toBe(fx)
-    expect(fx._next).toBe(fx2)
-    expect(fx._prev).toBe(null)
-    expect(fx._duration).toBe(500)
-
+    expect(fx.lastPos).toBe(0)
+    expect(fx.paused).toBeFalsy()
+    expect(fx.active).toBeFalsy()
+    expect(fx.situations).toEqual([])
+    expect(fx.current.init).toBeFalsy()
+    expect(fx.current.reversed).toBeFalsy()
+    expect(fx.current.duration).toBe(500)
+    expect(fx.current.delay).toBe(0)
+    expect(fx.current.animations).toEqual({})
+    expect(fx.current.attrs).toEqual({})
+    expect(fx.current.styles).toEqual({})
+    expect(fx.current.transforms).toEqual([])
+    expect(fx.current.once).toEqual({})
   })
 
-  describe('current()', function(){
+  describe('target()', function(){
     it('returns the current fx object', function(){
-      expect(fx.current()).toBe(fx.shared.current)
-    })
-  })
-
-  describe('first()', function(){
-    it('returns the first fx object in the queue', function(){
-      expect(fx.first()).toBe(fx)
-    })
-  })
-
-  describe('last()', function(){
-    it('returns the last fx object in the queue', function(){
-      expect(fx.last()).toBe(fx2)
-    })
-  })
-
-  describe('next()', function(){
-    it('returns the next fx object in the queue', function(){
-      expect(fx.next()).toBe(fx2)
-    })
-    it('returns null when it hits the end of the queue', function(){
-      expect(fx2.next()).toBe(null)
-    })
-  })
-
-  describe('prev()', function(){
-    it('returns the previous fx object in the queue', function(){
-      expect(fx2.prev()).toBe(fx)
-    })
-    it('returns null whn it hits the start of the queue', function(){
-      expect(fx.prev()).toBe(null)
-    })
-  })
-
-  describe('share()', function() {
-    it('sets a new shared object', function() {
-      var newObj = {}
-      var ret = fx.share(newObj)
-
-      expect(fx.shared).toBe(newObj)
-      expect(ret).toBe(fx)
-
-      // reset the value
-      fx.share({current:fx})
+      expect(fx.target()).toBe(rect)
     })
   })
 
   describe('timeToPos()', function() {
     it('converts a timestamp to a progress', function() {
-      expect(fx.timeToPos(fx._start+fx._duration/2)).toBe(0.5)
+      expect(fx.timeToPos(fx.current.start+fx.current.duration/2)).toBe(0.5)
     })
   })
 
   describe('posToTime()', function() {
     it('converts a progress to a timestamp', function() {
-      expect(fx.posToTime(0.5)).toBe(fx._start+fx._duration/2)
+      expect(fx.posToTime(0.5)).toBe(fx.current.start+fx.current.duration/2)
     })
   })
 
   describe('seek()', function() {
     it('sets the progress to the specified position', function() {
-      var start = fx._start
+      var start = fx.current.start
       expect(fx.seek(0.5).pos).toBe(0.5)
       // time is running so we cant compare it directly
-      expect(fx._start).toBeLessThan(start - fx._duration * 0.5 + 1)
-      expect(fx._start).toBeGreaterThan(start - fx._duration * 0.5 - 10)
+      expect(fx.current.start).toBeLessThan(start - fx.current.duration * 0.5 + 1)
+      expect(fx.current.start).toBeGreaterThan(start - fx.current.duration * 0.5 - 10)
     })
   })
 
   describe('start()', function(){
-    it('starts the animation if it is the current', function(done) {
+    it('starts the animation', function(done) {
       fx.start()
       expect(fx.active).toBe(true)
       expect(fx.timeout).not.toBe(0)
@@ -105,17 +71,17 @@ describe('FX', function() {
   })
 
   describe('pause()', function() {
-    it('starts the animation if it is the current', function() {
+    it('pause the animation', function() {
       expect(fx.pause().paused).toBe(true)
     })
   })
 
   describe('play()', function() {
     it('unpause the animation', function(done) {
-      var start = fx.start().pause()._start
+      var start = fx.start().pause().current.start
       setTimeout(function(){
         expect(fx.play().paused).toBe(false)
-        expect(fx._start).not.toBe(start)
+        expect(fx.current.start).not.toBe(start)
         done()
       }, 200)
     })
@@ -123,24 +89,167 @@ describe('FX', function() {
 
   describe('speed()', function() {
     it('speeds up the animation by the given factor', function(){
-    //console.log(fx.pos)
-      expect(fx.speed(2)._duration).toBe(250)
-      expect(fx.speed(0.5)._duration).toBe(500)
-      expect(fx.seek(0.2).speed(2)._duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
+
+      expect(fx.speed(2).current.duration).toBe(250)
+      expect(fx.speed(0.5).current.duration).toBe(500)
+      expect(fx.seek(0.2).speed(2).current.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
     })
   })
 
-  /*describe('reverse()', function() {
-    it('sets the direction of the animation to -1', function() {
-      expect(fx.reverse()._direction).toBe(-1)
+  describe('reverse()', function() {
+    it('toggles the direction of the animation without a parameter', function() {
+      expect(fx.reverse().current.reversed).toBe(true)
+    })
+  })
+
+  describe('reverse()', function() {
+    it('sets the direction to backwards with true given', function() {
+      expect(fx.reverse(true).current.reversed).toBe(true)
+    })
+  })
+
+  describe('reverse()', function() {
+    it('sets the direction to forwards with false given', function() {
+      expect(fx.reverse(false).current.reversed).toBe(false)
+    })
+  })
+
+  describe('stop()', function() {
+    it('stops the animation immediately without a parameter', function() {
+      fx.animate(500)
+      expect(fx.stop().current).toBeNull()
+      expect(fx.active).toBeFalsy()
+      expect(fx.situations.length).toBe(1)
+    })
+  })
+
+  describe('stop()', function() {
+    it('stops the animation immediately and fullfill it if first parameter true', function() {
+      fx.animate(500)
+      expect(fx.stop(true).current).toBeNull()
+      expect(fx.active).toBeFalsy()
+      expect(fx.pos).toBe(1)
+      expect(fx.situations.length).toBe(1)
+    })
+  })
+
+  describe('stop()', function() {
+    it('stops the animation immediately and remove all items from queue when second parameter true', function() {
+      fx.animate(500)
+      expect(fx.stop(false, true).current).toBeNull()
+      expect(fx.active).toBeFalsy()
+      expect(fx.situations.length).toBe(0)
     })
   })
 
   describe('finish()', function() {
-    it('sets the position of the whole animation queue to 1', function() {
-      expect(fx.finish()._pos).toBe(1)
+    it('finish the whole animation by fullfilling every single one', function() {
+      fx.animate(500)
+      expect(fx.finish().pos).toBe(1)
+      expect(fx.situations.length).toBe(0)
+      expect(fx.current).toBeNull()
     })
-  })*/
+  })
+
+  describe('progress()', function() {
+    it('returns the current position', function() {
+      expect(fx.progress()).toBe(0)
+      expect(fx.progress()).toBe(fx.pos)
+    })
+  })
+
+  describe('after()', function() {
+    it('adds a callback which is called when the current animation is finished', function(done) {
+      fx.start().after(function(situation){
+        expect(fx.current).toBe(situation)
+        expect(fx.pos).toBe(1)
+        done()
+      })
+    })
+  })
+
+  describe('afterAll()', function() {
+    it('adds a callback which is called when the current animation is finished', function(done) {
+      fx.start().after(function(){
+        expect(fx.pos).toBe(1)
+        expect(fx.situations.length).toBe(0)
+        done()
+      })
+    })
+  })
+
+  describe('during()', function() {
+    it('adds a callback which is called on every animation step', function(done) {
+
+      fx.start().during(function(pos, eased, situation){
+
+        expect(fx.current).toBe(situation)
+
+        if(fx.pos > 0.9){
+          rect.off('.fx')
+          fx.stop()
+          
+          done()
+        }
+      })
+    })
+  })
+
+  describe('duringAll()', function() {
+    it('adds a callback which is called on every animation step for the whole chain', function(done) {
+
+      fx.finish()
+      rect.off('.fx')
+    
+      fx.animate(500).start().animate(500)
+
+      var sit = null
+
+      var pos1 = false
+      var pos2 = false
+
+      setTimeout(function(){
+        pos1 = true
+      }, 300)
+
+      setTimeout(function(){
+        pos2 = true
+      }, 800)
+
+      fx.duringAll(function(pos, eased, fx2, situation){
+
+        if(pos1){
+          pos1 = false
+          sit = situation
+          expect(fx2.pos).toBeGreaterThan(0.5)
+        }
+
+        if(pos2){
+          console.log('asd')
+          pos2 = null
+          expect(situation).not.toBe(sit)
+          expect(fx2.pos).toBeGreaterThan(0.5)
+          done()
+        }
+      })
+
+      setTimeout(function(){
+        if(pos2 === null) return
+        fail('Not enough situations called')
+        done()
+      }, 1200)
+    })
+  })
+
+  describe('once()', function() {
+    it('adds a callback which is called once at the specified position', function(done) {
+
+      fx.start().once(0.5, function(pos, eased){
+        expect(true).toBe(true)
+        done()
+      })
+    })
+  })
 
   it('animates the x/y-attr', function(done) {
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2014 Pivotal Labs
+Copyright (c) 2008-2015 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -54,7 +54,10 @@ getJasmineRequireObj().ConsoleReporter = function() {
         red: '\x1B[31m',
         yellow: '\x1B[33m',
         none: '\x1B[0m'
-      };
+      },
+      failedSuites = [];
+
+    print('ConsoleReporter is deprecated and will be removed in a future version.');
 
     this.jasmineStarted = function() {
       specCount = 0;
@@ -89,8 +92,11 @@ getJasmineRequireObj().ConsoleReporter = function() {
       printNewline();
       var seconds = timer.elapsed() / 1000;
       print('Finished in ' + seconds + ' ' + plural('second', seconds));
-
       printNewline();
+
+      for(i = 0; i < failedSuites.length; i++) {
+        suiteFailureDetails(failedSuites[i]);
+      }
 
       onComplete(failureCount === 0);
     };
@@ -113,6 +119,13 @@ getJasmineRequireObj().ConsoleReporter = function() {
         failureCount++;
         failedSpecs.push(result);
         print(colored('red', 'F'));
+      }
+    };
+
+    this.suiteDone = function(result) {
+      if (result.failedExpectations && result.failedExpectations.length > 0) {
+        failureCount++;
+        failedSuites.push(result);
       }
     };
 
@@ -154,9 +167,21 @@ getJasmineRequireObj().ConsoleReporter = function() {
       for (var i = 0; i < result.failedExpectations.length; i++) {
         var failedExpectation = result.failedExpectations[i];
         printNewline();
+        print(indent(failedExpectation.message, 2));
         print(indent(failedExpectation.stack, 2));
       }
 
+      printNewline();
+    }
+
+    function suiteFailureDetails(result) {
+      for (var i = 0; i < result.failedExpectations.length; i++) {
+        printNewline();
+        print(colored('red', 'An error was thrown in an afterAll'));
+        printNewline();
+        print(colored('red', 'AfterAll ' + result.failedExpectations[i].message));
+
+      }
       printNewline();
     }
   }
