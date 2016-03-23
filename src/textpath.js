@@ -3,7 +3,7 @@ SVG.TextPath = SVG.invent({
   create: 'textPath'
 
   // Inherit from
-, inherit: SVG.Element
+, inherit: SVG.Parent
 
   // Define parent class
 , parent: SVG.Text

@@ -112,8 +112,10 @@ SVG.Text = SVG.invent({
     }
     // Get all the first level lines
   , lines: function() {
+      var node = (this.textPath && this.textPath() || this).node
+  
       // filter tspans and map them to SVG.js instances
-      var lines = SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(el){
+      var lines = SVG.utils.map(SVG.utils.filterSVGElements(node.childNodes), function(el){
         return SVG.adopt(el)
       })
 
