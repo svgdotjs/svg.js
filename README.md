@@ -2031,8 +2031,32 @@ rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' })
 
 By default `duration` will be set to `1000`, `ease` will be set to `<>`.
 
+You can chain multiple animations together by calling `animate` again:
+
+```javascript
+rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' }).animate().dmove(50,50)
+```
+
 __`returns`: `SVG.FX`__
 
+### delay()
+Alternatively you can call `delay()` which will set an delay in ms before the next animation in the queue is run
+
+```javascript
+rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' }).delay(500).animate().dmove(50,50)
+```
+
+### queue()
+If you want to call a custom funtion between two chained animations, you simply can queue them up:
+
+```javascript
+rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' }).queue(function(){
+
+    this.target().fill('#000')
+    this.dequeue() // dont forget to call dequeue when the queue should continue running
+
+}).animate().dmove(50,50)
+```
 
 ### pause()
 Pausing an animations is fairly straightforward:
@@ -2057,31 +2081,32 @@ rect.mouseout(function() { this.play() })
 __`returns`: `itself`__
 
 ### stop()
-Animations can be stopped in two ways.
+If you just want to stop an animation you can call the `stop()` method which has two optional arguments:
 
-By calling the `stop()` method:
+ - jumpToEnd: Sets the values to the end of the animation
+ - clearQueue: Remove all items from queue
+
 ```javascript
 rect.animate().move(200, 200)
 
 rect.stop()
-```
-
-Or by invoking another animation:
-```javascript
-rect.animate().move(200, 200)
-
-rect.animate().center(200, 200)
-```
-
-By calling `stop()`, the transition is left at its current position. By passing `true` as the first argument to `stop()`, the animation will be fulfilled instantly:
-
-```javascript
-rect.animate().move(200, 200)
-
+// or e.g.
 rect.stop(true)
 ```
 
 Stopping an animation is irreversable.
+
+__`returns`: `itself`__
+
+
+### finish()
+This method finishes the whole animation chain. All values are set to their corresponding end values and every situation gets fullfilled
+
+```javascript
+rect.animate().move(200, 200).animate().dmove(50,50).size(300,400)
+
+rect.finish() // rect at 250,250 with size 300,400
+```
 
 __`returns`: `itself`__
 
@@ -2093,28 +2118,13 @@ var position
   , from = 100
   , to   = 300
 
-rect.animate(3000).move(100, 100).during(function(pos) {
+rect.animate(3000).move(100, 100).during(function(pos, eased, situation) {
   position = from + (to - from) * pos 
 })
 ```
 Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
-
-To make things easier a morphing function is passed as the second argument. This function accepts a `from` and `to` value as the first and second argument and they can be a number, unit or hex color:
-
-```javascript
-var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
-
-rect.animate(3000).move(100, 100).during(function(pos, morph) {
-  // numeric values
-  ellipse.size(morph(100, 200), morph(100, 50))
-  
-  // unit strings
-  ellipse.attr('cx', morph('20%', '80%'))
-  
-  // hex color strings
-  ellipse.fill(morph('#333', '#ff0066'))
-})
-```
+The `eased` parameter contains the position after the easing function was applied.
+The last parameter holds the current situation related to that `during` call
 
 __`returns`: `SVG.FX`__
 
