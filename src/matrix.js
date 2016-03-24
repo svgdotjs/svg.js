@@ -14,7 +14,7 @@ SVG.Matrix = SVG.invent({
       source : base
 
     // merge source
-    for (i = abcdef.length - 1; i >= 0; i--)
+    for (i = abcdef.length - 1; i >= 0; --i)
       this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
         source[abcdef[i]] : base[abcdef[i]]
   }
@@ -32,6 +32,8 @@ SVG.Matrix = SVG.invent({
         // translation
         x:        this.e
       , y:        this.f
+      , transformedX:(this.e * Math.cos(skewX * Math.PI / 180) + this.f * Math.sin(skewX * Math.PI / 180)) / Math.sqrt(this.a * this.a + this.b * this.b)
+      , transformedY:(this.f * Math.cos(skewX * Math.PI / 180) + this.e * Math.sin(-skewX * Math.PI / 180)) / Math.sqrt(this.c * this.c + this.d * this.d)
         // skew
       , skewX:    -skewX
       , skewY:    180 / Math.PI * Math.atan2(py.y, py.x)
@@ -46,6 +48,7 @@ SVG.Matrix = SVG.invent({
       , d: this.d
       , e: this.e
       , f: this.f
+      , matrix: new SVG.Matrix(this)
       }
     }
     // Clone matrix

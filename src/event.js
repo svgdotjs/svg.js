@@ -30,6 +30,7 @@
 // Initialize listeners stack
 SVG.listeners = []
 SVG.handlerMap = []
+SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function(node, event, listener, binding) {
@@ -45,8 +46,11 @@ SVG.on = function(node, event, listener, binding) {
   SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
   SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
 
+  if(!listener._svgjsListenerId)
+    listener._svgjsListenerId = ++SVG.listenerId
+  
   // reference listener
-  SVG.listeners[index][ev][ns][listener] = l
+  SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
 
   // add listener
   node.addEventListener(ev, l, false)
@@ -59,8 +63,11 @@ SVG.off = function(node, event, listener) {
     , ns    = event && event.split('.')[1]
 
   if(index == -1) return
-  
+
   if (listener) {
+    if(typeof listener == 'function') listener = listener._svgjsListenerId
+    if(!listener) return
+
     // remove listener reference
     if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
       // remove listener

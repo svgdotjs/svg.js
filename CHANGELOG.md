@@ -14,6 +14,12 @@
 - fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
 - fixed `isNumber` and `numberAndUnit` regex (#405)
 - fixed error where a parent node is not found when loading an image but the canvas was cleared (#447)
+- textpath now is a parent element, the lines method of text will return the tspans inside the textpath (#450)
+- fx module rewritten to support animation chaining and several other stuff (see docs)
+- fixed absolute transformation animations (not perfect but better)
+- fixed event listeners which didnt work correctly when identic funtions used
+- added `element.is()` which helps to check for the object instance faster (instanceof check)
+- added more fx specs
 
 # 2.2.5 (29/12/2015)
 - added check for existence of node (#431)
