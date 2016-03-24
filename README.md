@@ -6,7 +6,7 @@ Svg.js has no dependencies and aims to be as small as possible.
 
 Svg.js is licensed under the terms of the MIT License.
 
-See [svgjs.com](http://svgjs.com) for an introduction, [documentation](http://documentup.com/wout/SVG.js) and [some action](http://svgjs.com/test).
+Want to know more? Check the [documentation](http://documentup.com/wout/SVG.js).
 
 ## Usage
 
