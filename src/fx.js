@@ -12,6 +12,7 @@ SVG.Situation = SVG.invent({
   create: function(o){
     this.init = false
     this.reversed = false
+    this.reversing = false
 
     this.duration = o.duration
     this.delay = o.delay
@@ -329,7 +330,7 @@ SVG.FX = SVG.invent({
       // store current loop and total loops
       this.current.loop = times || true
 
-      if(reverse) return this.reverse()
+      if(reverse) this.last().reversing = true
       return this
     }
 
@@ -455,11 +456,6 @@ SVG.FX = SVG.invent({
 
     // adds one property to the animations
   , add: function(method, args, type){
-      //if(this.situations.length){
-      //  this.situations[this.situations.length-1][type || 'animations'][method] = args
-      //}else{
-      //  this.current[type || 'animations'][method] = args
-      //}
       this.last()[type || 'animations'][method] = args
       setTimeout(function(){this.start()}.bind(this), 0)
       return this
@@ -475,6 +471,10 @@ SVG.FX = SVG.invent({
       if(!ignoreTime) this.pos = this.timeToPos(+new Date)
 
       if(this.pos >= 1 && (this.current.loop === true || (typeof this.current.loop == 'number' && --this.current.loop))){
+        
+        if(this.current.reversing){
+          this.current.reversed = !this.current.reversed
+        }
         return this.seek(this.pos-1)
       }
 
