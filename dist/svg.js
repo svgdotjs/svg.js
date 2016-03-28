@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Mar 28 2016 17:47:29 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Mar 28 2016 17:50:03 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1590,11 +1590,9 @@ SVG.FX = SVG.invent({
 
         // TODO: test this
         if(this.situation.loops % 2 == 0 && this.situation.reversing){
-          console.log('EVEN LOOPS')
           this.situation.reversed = true
         }
 
-        console.log('go')
         this.at(1)
 
       }
@@ -1770,8 +1768,6 @@ SVG.FX = SVG.invent({
      */
   , step: function(ignoreTime){
 
-      console.log('here we are: step', ignoreTime, this.pos)
-
       // convert current time to position
       if(!ignoreTime) this.pos = this.timeToPos(+new Date)
 
@@ -1800,29 +1796,20 @@ SVG.FX = SVG.invent({
         }
       }
 
-      console.log('firing during now:', this.active)
-
       // fire during callback with position, eased position and current situation as parameter
       if(this.active) this.target().fire('during', {pos: this.pos, eased: eased, fx: this, situation: this.situation})
 
-      console.log('fired')
-
       // the user may call stop or finish in the during callback
       // so make sure that we still have a valid situation
-      // FIXME: callbacks not getting called!
       if(!this.situation){
         return this
       }
-
-      console.log('still there?')
 
       // apply the actual animation to every property
       this.eachAt()
 
       // do final code when situation is finished
       if((this.pos == 1 && !this.situation.reversed) || (this.situation.reversed && this.pos == 0)){
-
-        console.log('finish up animation')
 
         // stop animation callback
         cancelAnimationFrame(this.animationFrame)
@@ -1831,7 +1818,6 @@ SVG.FX = SVG.invent({
         this.target().fire('finished', {fx:this, situation: this.situation})
 
         if(!this.situations.length/* && this.active*/){
-          console.log('all finished')
           this.target().fire('allfinished')
           this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
           this.active = false
