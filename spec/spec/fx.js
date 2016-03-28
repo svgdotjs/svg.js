@@ -26,8 +26,13 @@ describe('FX', function() {
   })
 
   describe('target()', function(){
-    it('returns the current fx object', function(){
+    it('returns the current fx object with no argument given', function(){
       expect(fx.target()).toBe(rect)
+    })
+    
+    it('changes the target of the animation when parameter given', function(){
+      var c = draw.circle(5)
+      expect(fx.target(c).target()).toBe(c)
     })
   })
 

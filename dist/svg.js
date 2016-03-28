@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Mar 28 2016 17:23:22 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Mar 28 2016 17:47:29 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1590,7 +1590,8 @@ SVG.FX = SVG.invent({
 
         // TODO: test this
         if(this.situation.loops % 2 == 0 && this.situation.reversing){
-          this.situation.reverse = true
+          console.log('EVEN LOOPS')
+          this.situation.reversed = true
         }
 
         console.log('go')
@@ -1625,9 +1626,6 @@ SVG.FX = SVG.invent({
       while(this.dequeue().situation && this.stop(true, false));
 
       this.clearQueue().clearCurrent()
-
-      // fire allfinished manually because the normal routine wont fire it
-      //this.target().fire('allfinished') // TODO: Here we stoped working!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       return this
     }

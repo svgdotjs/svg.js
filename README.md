@@ -2198,11 +2198,20 @@ document.onmousemove = function(event) {
 ```
 
 The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
-Note that the value is eased after you set it. The position specifies a position in time.
+Also note that the value is eased after calling the function. Therefore the position specifies a position in time not in space.
 
 _This functionality requires the fx.js module which is included in the default distribution._
 
 __`returns`: `SVG.FX`__
+
+### target()
+The target method returns the element the animation is applied to:
+
+```javascript
+rect.fx.target() // returns rect
+```
+
+`getter`__`returns`: `SVG.Element`__
 
 
 ### situation
