@@ -5,11 +5,6 @@ describe('FX', function() {
     rect = draw.rect(100,100).move(100,100)
     fx = rect.animate(500)
   })
-  
-  afterEach(function() {
-    //fx.finish()
-    //rect.off('.fx')
-  })
 
   it('creates an instance of SVG.FX and sets parameter', function() {
     expect(fx instanceof SVG.FX).toBe(true)
@@ -19,15 +14,15 @@ describe('FX', function() {
     expect(fx.paused).toBeFalsy()
     expect(fx.active).toBeFalsy()
     expect(fx.situations).toEqual([])
-    expect(fx.current.init).toBeFalsy()
-    expect(fx.current.reversed).toBeFalsy()
-    expect(fx.current.duration).toBe(500)
-    expect(fx.current.delay).toBe(0)
-    expect(fx.current.animations).toEqual({})
-    expect(fx.current.attrs).toEqual({})
-    expect(fx.current.styles).toEqual({})
-    expect(fx.current.transforms).toEqual([])
-    expect(fx.current.once).toEqual({})
+    expect(fx.situation.init).toBeFalsy()
+    expect(fx.situation.reversed).toBeFalsy()
+    expect(fx.situation.duration).toBe(500)
+    expect(fx.situation.delay).toBe(0)
+    expect(fx.situation.animations).toEqual({})
+    expect(fx.situation.attrs).toEqual({})
+    expect(fx.situation.styles).toEqual({})
+    expect(fx.situation.transforms).toEqual([])
+    expect(fx.situation.once).toEqual({})
   })
 
   describe('target()', function(){
@@ -38,23 +33,23 @@ describe('FX', function() {
 
   describe('timeToPos()', function() {
     it('converts a timestamp to a progress', function() {
-      expect(fx.timeToPos(fx.current.start+fx.current.duration/2)).toBe(0.5)
+      expect(fx.timeToPos(fx.situation.start+fx.situation.duration/2)).toBe(0.5)
     })
   })
 
   describe('posToTime()', function() {
     it('converts a progress to a timestamp', function() {
-      expect(fx.posToTime(0.5)).toBe(fx.current.start+fx.current.duration/2)
+      expect(fx.posToTime(0.5)).toBe(fx.situation.start+fx.situation.duration/2)
     })
   })
 
-  describe('seek()', function() {
+  describe('at()', function() {
     it('sets the progress to the specified position', function() {
-      var start = fx.current.start
-      expect(fx.seek(0.5).pos).toBe(0.5)
+      var start = fx.situation.start
+      expect(fx.at(0.5).pos).toBe(0.5)
       // time is running so we cant compare it directly
-      expect(fx.current.start).toBeLessThan(start - fx.current.duration * 0.5 + 1)
-      expect(fx.current.start).toBeGreaterThan(start - fx.current.duration * 0.5 - 10)
+      expect(fx.situation.start).toBeLessThan(start - fx.situation.duration * 0.5 + 1)
+      expect(fx.situation.start).toBeGreaterThan(start - fx.situation.duration * 0.5 - 10)
     })
   })
 
@@ -78,10 +73,10 @@ describe('FX', function() {
 
   describe('play()', function() {
     it('unpause the animation', function(done) {
-      var start = fx.start().pause().current.start
+      var start = fx.start().pause().situation.start
       setTimeout(function(){
         expect(fx.play().paused).toBe(false)
-        expect(fx.current.start).not.toBe(start)
+        expect(fx.situation.start).not.toBe(start)
         done()
       }, 200)
     })
@@ -90,34 +85,34 @@ describe('FX', function() {
   describe('speed()', function() {
     it('speeds up the animation by the given factor', function(){
 
-      expect(fx.speed(2).current.duration).toBe(250)
-      expect(fx.speed(0.5).current.duration).toBe(500)
-      expect(fx.seek(0.2).speed(2).current.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
+      expect(fx.speed(2).situation.duration).toBe(250)
+      expect(fx.speed(0.5).situation.duration).toBe(500)
+      expect(fx.at(0.2).speed(2).situation.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
     })
   })
 
   describe('reverse()', function() {
     it('toggles the direction of the animation without a parameter', function() {
-      expect(fx.reverse().current.reversed).toBe(true)
+      expect(fx.reverse().situation.reversed).toBe(true)
     })
   })
 
   describe('reverse()', function() {
     it('sets the direction to backwards with true given', function() {
-      expect(fx.reverse(true).current.reversed).toBe(true)
+      expect(fx.reverse(true).situation.reversed).toBe(true)
     })
   })
 
   describe('reverse()', function() {
     it('sets the direction to forwards with false given', function() {
-      expect(fx.reverse(false).current.reversed).toBe(false)
+      expect(fx.reverse(false).situation.reversed).toBe(false)
     })
   })
 
   describe('stop()', function() {
     it('stops the animation immediately without a parameter', function() {
       fx.animate(500)
-      expect(fx.stop().current).toBeNull()
+      expect(fx.stop().situation).toBeNull()
       expect(fx.active).toBeFalsy()
       expect(fx.situations.length).toBe(1)
     })
@@ -126,7 +121,7 @@ describe('FX', function() {
   describe('stop()', function() {
     it('stops the animation immediately and fullfill it if first parameter true', function() {
       fx.animate(500)
-      expect(fx.stop(true).current).toBeNull()
+      expect(fx.stop(true).situation).toBeNull()
       expect(fx.active).toBeFalsy()
       expect(fx.pos).toBe(1)
       expect(fx.situations.length).toBe(1)
@@ -136,7 +131,7 @@ describe('FX', function() {
   describe('stop()', function() {
     it('stops the animation immediately and remove all items from queue when second parameter true', function() {
       fx.animate(500)
-      expect(fx.stop(false, true).current).toBeNull()
+      expect(fx.stop(false, true).situation).toBeNull()
       expect(fx.active).toBeFalsy()
       expect(fx.situations.length).toBe(0)
     })
@@ -147,7 +142,7 @@ describe('FX', function() {
       fx.animate(500)
       expect(fx.finish().pos).toBe(1)
       expect(fx.situations.length).toBe(0)
-      expect(fx.current).toBeNull()
+      expect(fx.situation).toBeNull()
     })
   })
 
@@ -161,7 +156,7 @@ describe('FX', function() {
   describe('after()', function() {
     it('adds a callback which is called when the current animation is finished', function(done) {
       fx.start().after(function(situation){
-        expect(fx.current).toBe(situation)
+        expect(fx.situation).toBe(situation)
         expect(fx.pos).toBe(1)
         done()
       })
@@ -181,9 +176,9 @@ describe('FX', function() {
   describe('during()', function() {
     it('adds a callback which is called on every animation step', function(done) {
 
-      fx.start().during(function(pos, eased, situation){
+      fx.start().during(function(pos, morph, eased, situation){
 
-        expect(fx.current).toBe(situation)
+        expect(fx.situation).toBe(situation)
 
         if(fx.pos > 0.9){
           rect.off('.fx')
@@ -216,7 +211,7 @@ describe('FX', function() {
         pos2 = true
       }, 800)
 
-      fx.duringAll(function(pos, eased, fx2, situation){
+      fx.duringAll(function(pos, morph, eased, fx2, situation){
 
         if(pos1){
           pos1 = false
@@ -225,7 +220,6 @@ describe('FX', function() {
         }
 
         if(pos2){
-          console.log('asd')
           pos2 = null
           expect(situation).not.toBe(sit)
           expect(fx2.pos).toBeGreaterThan(0.5)

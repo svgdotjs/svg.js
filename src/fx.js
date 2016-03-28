@@ -5,7 +5,9 @@ SVG.easing = {
 , '<': function(pos){return -Math.cos(pos * Math.PI / 2) + 1}
 }
 
-var someVar = 0
+SVG.morph = function(from, to) {
+  return new MorphObj(from, to).at(pos)
+}
 
 SVG.Situation = SVG.invent({
 
@@ -14,12 +16,15 @@ SVG.Situation = SVG.invent({
     this.reversed = false
     this.reversing = false
 
-    this.duration = o.duration
-    this.delay = o.delay
+    this.duration = new SVG.Number(o.duration).valueOf()
+    this.delay = new SVG.Number(o.delay).valueOf()
 
     this.start = +new Date() + this.delay
-    this.end = this.start + this.duration
-    this.easing = o.easing
+    this.finish = this.start + this.duration
+    this.ease = o.ease
+    
+    this.loop = false
+    this.loops = false
 
     this.animations = {
       // functionToCall: [list of morphable objects]
@@ -51,7 +56,7 @@ SVG.Situation = SVG.invent({
 })
 
 SVG.Delay = function(delay){
-  this.delay = delay
+  this.delay = new SVG.Number(delay).valueOf()
 }
 
 SVG.FX = SVG.invent({
@@ -60,7 +65,7 @@ SVG.FX = SVG.invent({
     this._target = element
     this.situations = []
     this.active = false
-    this.current = null
+    this.situation = null
     this.paused = false
     this.lastPos = 0
     this.pos = 0
@@ -71,14 +76,14 @@ SVG.FX = SVG.invent({
     /**
      * sets or returns the target of this animation
      * @param o object || number In case of Object it holds all parameters. In case of number its the duration of the animation
-     * @param easing function || string Function which should be used for easing or easing keyword
+     * @param ease function || string Function which should be used for easing or easing keyword
      * @param delay Number indicating the delay before the animation starts
      * @return target || this
      */
-    animate: function(o, easing, delay){
+    animate: function(o, ease, delay){
 
       if(typeof o == 'object'){
-        easing = o.ease
+        ease = o.ease
         delay = o.delay
         o = o.duration
       }
@@ -86,7 +91,7 @@ SVG.FX = SVG.invent({
       var situation = new SVG.Situation({
         duration: o || 1000,
         delay: delay || 0,
-        easing: SVG.easing[easing || '-'] || easing
+        ease: SVG.easing[ease || '-'] || ease
       })
 
       this.queue(situation)
@@ -122,12 +127,12 @@ SVG.FX = SVG.invent({
 
     // returns the position at a given time
   , timeToPos: function(timestamp){
-      return (timestamp - this.current.start) / (this.current.duration)
+      return (timestamp - this.situation.start) / (this.situation.duration)
     }
 
     // returns the timestamp from a given positon
   , posToTime: function(pos){
-      return this.current.duration * pos + this.current.start
+      return this.situation.duration * pos + this.situation.start
     }
 
     // starts the animationloop
@@ -146,9 +151,9 @@ SVG.FX = SVG.invent({
     // kicks off the animation - only does something when the queue is curretly not active and at least one situation is set
   , start: function(){
       // dont start if already started
-      if(!this.active && this.current){
-        this.current.start = +new Date + this.current.delay
-        this.current.end = this.current.start + this.current.duration
+      if(!this.active && this.situation){
+        this.situation.start = +new Date + this.situation.delay
+        this.situation.finish = this.situation.start + this.situation.duration
 
         this.initAnimations()
         this.active = true
@@ -167,7 +172,7 @@ SVG.FX = SVG.invent({
       if(typeof fn == 'function' || fn instanceof SVG.Situation || fn instanceof SVG.Delay)
         this.situations.push(fn)
 
-      if(!this.current) this.current = this.situations.shift()
+      if(!this.situation) this.situation = this.situations.shift()
 
       return this
     }
@@ -178,25 +183,25 @@ SVG.FX = SVG.invent({
      */
   , dequeue: function(){
       // stop current animation
-      this.current && this.current.stop && this.current.stop()
+      this.situation && this.situation.stop && this.situation.stop()
 
       // get next animation from queue
-      this.current = this.situations.shift()
+      this.situation = this.situations.shift()
 
-      if(this.current){
+      if(this.situation){
 
         var fn = function(){
-          if(this.current instanceof SVG.Situation)
-            this.initAnimations().seek(0)
-          else if(this.current instanceof SVG.Delay)
+          if(this.situation instanceof SVG.Situation)
+            this.initAnimations().at(0)
+          else if(this.situation instanceof SVG.Delay)
             this.dequeue()
           else
-            this.current.call(this)
+            this.situation.call(this)
         }.bind(this)
 
         // start next animation
-        if(this.current.delay){
-          setTimeout(function(){fn()}, this.current.delay)
+        if(this.situation.delay){
+          setTimeout(function(){fn()}, this.situation.delay)
         }else{
           fn()
         }
@@ -210,7 +215,7 @@ SVG.FX = SVG.invent({
     // this is important when one property could be changed from another property
   , initAnimations: function() {
       var i
-      var s = this.current
+      var s = this.situation
 
       if(s.init) return this
 
@@ -260,7 +265,7 @@ SVG.FX = SVG.invent({
       return this
     }
   , clearCurrent: function(){
-      this.current = null
+      this.situation = null
       return this
     }
     /** stops the animation immediately
@@ -278,7 +283,17 @@ SVG.FX = SVG.invent({
       this.active = false
 
       if(jumpToEnd){
-        this.seek(1)
+
+        this.situation.loop = false
+        
+        // TODO: test this
+        if(this.situation.loops % 2 == 0 && this.situation.reversing){
+          this.situation.reverse = true
+        }
+        
+        console.log('go')
+        this.at(1)
+        
       }
 
       this.stopAnimFrame()
@@ -291,11 +306,11 @@ SVG.FX = SVG.invent({
      * @return this
      */
   , reset: function(){
-      if(this.current){
-        var temp = this.current
+      if(this.situation){
+        var temp = this.situation
         this.stop()
-        this.current = temp
-        this.seek(0)
+        this.situation = temp
+        this.at(0)
       }
       return this
     }
@@ -305,30 +320,35 @@ SVG.FX = SVG.invent({
 
       this.stop(true, false)
 
-      while(this.dequeue().current && this.stop(true, false));
+      while(this.dequeue().situation && this.stop(true, false));
 
-      return this.clearQueue().clearCurrent()
+      this.clearQueue().clearCurrent()
+      
+      // fire allfinished manually because the normal routine wont fire it
+      //this.target().fire('allfinished') // TODO: Here we stoped working!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
+      return this
     }
 
     // set the internal animation pointer to the specified position and updates the visualisation
-  , seek: function(pos){
+  , at: function(pos){
       this.pos = pos
-      this.current.start = +new Date - pos * this.current.duration
-      this.current.end = this.current.start + this.current.duration
+      this.situation.start = +new Date - pos * this.situation.duration
+      this.situation.finish = this.situation.start + this.situation.duration
       return this.step(true)
     }
 
     // speeds up the animation by the given factor
     // this changes the duration of the animation
   , speed: function(speed){
-      this.current.duration = this.current.duration * this.pos + (1-this.pos) * this.current.duration / speed
-      this.current.end = this.current.start + this.current.duration
-      return this.seek(this.pos)
+      this.situation.duration = this.situation.duration * this.pos + (1-this.pos) * this.situation.duration / speed
+      this.situation.finish = this.situation.start + this.situation.duration
+      return this.at(this.pos)
     }
     // Make loopable
   , loop: function(times, reverse) {
       // store current loop and total loops
-      this.current.loop = times || true
+      this.situation.loop = this.situation.loops = times || true
 
       if(reverse) this.last().reversing = true
       return this
@@ -346,7 +366,7 @@ SVG.FX = SVG.invent({
   , play: function(){
       if(!this.paused) return this
       this.paused = false
-      return this.seek(this.pos)
+      return this.at(this.pos)
     }
 
     /** toggle or set the direction of the animation
@@ -370,7 +390,7 @@ SVG.FX = SVG.invent({
      * @return number
      */
   , progress: function(easeIt){
-      return easeIt ? this.current.easing(this.pos) : this.pos
+      return easeIt ? this.situation.ease(this.pos) : this.pos
     }
 
     /**
@@ -396,7 +416,7 @@ SVG.FX = SVG.invent({
       var c = this.last()
         , wrapper = function(e){
             if(e.detail.situation == c){
-              fn.call(this, e.detail.pos, e.detail.eased, c)
+              fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, c)
             }
           }
 
@@ -423,7 +443,7 @@ SVG.FX = SVG.invent({
     // calls on every animation step for all animations
   , duringAll: function(fn){
       var wrapper = function(e){
-            fn.call(this, e.detail.pos, e.detail.eased, e.detail.fx, e.detail.situation)
+            fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, e.detail.fx, e.detail.situation)
           }
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
@@ -435,23 +455,23 @@ SVG.FX = SVG.invent({
 
     /**
      * returns a float from 0-1 indicating the progress of the whole animation queue
-     * we recalculate the end time because it may be changed from methods like seek()
+     * we recalculate the finish time because it may be changed from methods like at()
      * @return number
      */
    // FIXME: current start always changes so the progress get a reset whenever one situation finishes. We need a global start which is only modified on pause and stop
   , totalProgress: function(){
-      var start = this.current.start
-        , end = this.current
+      var start = this.situation.start
+        , finish = this.situation
 
       for(var i = 0, len = this.situations.length; i < len; ++i){
-        end += (situations[i].duration || 0) + (situations[i].delay || 0)
+        finish += (situations[i].duration || 0) + (situations[i].delay || 0)
       }
 
-      return (this.pos * this.current.duration + this.start - start) / (end - start)
+      return (this.pos * this.situation.duration + this.start - start) / (finish - start)
     }
 
   , last: function(){
-      return this.situations.length ? this.situations[this.situations.length-1] : this.current
+      return this.situations.length ? this.situations[this.situations.length-1] : this.situation
     }
 
     // adds one property to the animations
@@ -467,52 +487,70 @@ SVG.FX = SVG.invent({
      */
   , step: function(ignoreTime){
 
+      console.log('here we are: step', ignoreTime, this.pos)
+  
       // convert current time to position
       if(!ignoreTime) this.pos = this.timeToPos(+new Date)
 
-      if(this.pos >= 1 && (this.current.loop === true || (typeof this.current.loop == 'number' && --this.current.loop))){
+      if(this.pos >= 1 && (this.situation.loop === true || (typeof this.situation.loop == 'number' && --this.situation.loop))){
         
-        if(this.current.reversing){
-          this.current.reversed = !this.current.reversed
+        if(this.situation.reversing){
+          this.situation.reversed = !this.situation.reversed
         }
-        return this.seek(this.pos-1)
+        return this.at(this.pos-1)
       }
 
-      if(this.current.reversed) this.pos = 1 - this.pos
+      if(this.situation.reversed) this.pos = 1 - this.pos
 
       // correct position
       if(this.pos > 1)this.pos = 1
       if(this.pos < 0)this.pos = 0
 
       // apply easing
-      var eased = this.current.easing(this.pos)
+      var eased = this.situation.ease(this.pos)
 
       // call once-callbacks
-      for(var i in this.current.once){
+      for(var i in this.situation.once){
         if(i > this.lastPos && i <= eased){
-          this.current.once[i].call(this.target(), this.pos, eased)
-          delete this.current.once[i]
+          this.situation.once[i].call(this.target(), this.pos, eased)
+          delete this.situation.once[i]
         }
       }
 
+      console.log('firing during now:', this.active)
+      
       // fire during callback with position, eased position and current situation as parameter
-      this.target().fire('during', {pos: this.pos, eased: eased, fx: this, situation: this.current})
+      if(this.active) this.target().fire('during', {pos: this.pos, eased: eased, fx: this, situation: this.situation})
 
+      console.log('fired')
+      
+      // the user may call stop or finish in the during callback
+      // so make sure that we still have a valid situation
+      // FIXME: callbacks not getting called!
+      if(!this.situation){
+        return this
+      }
+      
+      console.log('still there?')
+      
       // apply the actual animation to every property
       this.eachAt()
 
       // do final code when situation is finished
-      if((this.pos == 1 && !this.current.reversed) || (this.current.reversed && this.pos == 0)){
+      if((this.pos == 1 && !this.situation.reversed) || (this.situation.reversed && this.pos == 0)){
 
+        console.log('finish up animation')
+      
         // stop animation callback
         cancelAnimationFrame(this.animationFrame)
 
         // fire finished callback with current situation as parameter
-        this.target().fire('finished', {fx:this, situation: this.current})
+        this.target().fire('finished', {fx:this, situation: this.situation})
 
-        if(!this.situations.length && !this.current && this.active){
+        if(!this.situations.length/* && this.active*/){
+          console.log('all finished')
           this.target().fire('allfinished')
-          this.target().off('.fx')
+          this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
           this.active = false
         }
 
@@ -532,15 +570,14 @@ SVG.FX = SVG.invent({
     }
 
     // calculates the step for every property and calls block with it
-    // todo: include block directly cause it is used only for this purpose
   , eachAt: function(){
-      var i, at, self = this, target = this.target(), c = this.current
-
+      var i, at, self = this, target = this.target(), c = this.situation
+      
       // apply animations which can be called trough a method
       for(i in c.animations){
 
         at = [].concat(c.animations[i]).map(function(el){
-          return el.at ? el.at(c.easing(self.pos), self.pos) : el
+          return el.at ? el.at(c.ease(self.pos), self.pos) : el
         })
 
         target[i].apply(target, at)
@@ -551,7 +588,7 @@ SVG.FX = SVG.invent({
       for(i in c.attrs){
 
         at = [i].concat(c.attrs[i]).map(function(el){
-          return el.at ? el.at(c.easing(self.pos), self.pos) : el
+          return el.at ? el.at(c.ease(self.pos), self.pos) : el
         })
 
         target.attr.apply(target, at)
@@ -562,7 +599,7 @@ SVG.FX = SVG.invent({
       for(i in c.styles){
 
         at = [i].concat(c.styles[i]).map(function(el){
-          return el.at ? el.at(c.easing(self.pos), self.pos) : el
+          return el.at ? el.at(c.ease(self.pos), self.pos) : el
         })
 
         target.style.apply(target, at)
@@ -585,7 +622,7 @@ SVG.FX = SVG.invent({
             if(a.relative){
               at = at.multiply(a.at(this.pos))
             }else{
-              at = at.morph(a).at(c.easing(this.pos))
+              at = at.morph(a).at(c.ease(this.pos))
             }
             continue
           }
@@ -595,7 +632,7 @@ SVG.FX = SVG.invent({
             a.undo(at.extract())
 
           // and reapply it after
-          at = at.multiply(a.at(c.easing(this.pos)))
+          at = at.multiply(a.at(c.ease(this.pos)))
           continue;
 
         }
@@ -612,9 +649,9 @@ SVG.FX = SVG.invent({
     // adds an once-callback which is called at a specific position and never again
   , once: function(pos, fn, isEased){
 
-      if(!isEased)pos = this.current.easing(pos)
+      if(!isEased)pos = this.situation.ease(pos)
 
-      this.current.once[pos] = fn
+      this.situation.once[pos] = fn
 
       return this
     }
@@ -626,8 +663,8 @@ SVG.FX = SVG.invent({
   // Add method to parent elements
 , construct: {
     // Get fx module or create a new one, then animate with given duration and ease
-    animate: function(o, easing, delay) {
-      return (this.fx || (this.fx = new SVG.FX(this))).animate(o, easing, delay)
+    animate: function(o, ease, delay) {
+      return (this.fx || (this.fx = new SVG.FX(this))).animate(o, ease, delay)
     }
   , delay: function(delay){
       return (this.fx || (this.fx = new SVG.FX(this))).delay(delay)
@@ -659,11 +696,11 @@ SVG.FX = SVG.invent({
 // MorphObj is used whenever no morphable object is given
 SVG.MorphObj = SVG.invent({
 
-  create: function(to){
+  create: function(from, to){
     // prepare color for morphing
-    if(SVG.Color.isColor(to)) return new SVG.Color().morph(to)
+    if(SVG.Color.isColor(to)) return new SVG.Color(from).morph(to)
     // prepare number for morphing
-    if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number().morph(to)
+    if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
     // prepare for plain morphing
     this.value = 0
@@ -692,7 +729,7 @@ SVG.extend(SVG.FX, {
 
     } else {
       // the MorphObj takes care about the right function used
-      this.add(a, new SVG.MorphObj(v), 'attrs')
+      this.add(a, new SVG.MorphObj(null, v), 'attrs')
     }
 
     return this
@@ -704,7 +741,7 @@ SVG.extend(SVG.FX, {
         this.style(key, s[key])
 
     else
-      this.add(s, new SVG.MorphObj(v), 'styles')
+      this.add(s, new SVG.MorphObj(null, v), 'styles')
 
     return this
   }

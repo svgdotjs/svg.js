@@ -2118,13 +2118,31 @@ var position
   , from = 100
   , to   = 300
 
-rect.animate(3000).move(100, 100).during(function(pos, eased, situation) {
+rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
   position = from + (to - from) * pos 
 })
 ```
 Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
+
+To make things easier a morphing function is passed as the second argument. This function accepts a `from` and `to` value as the first and second argument and they can be a number, unit or hex color:
+
+```javascript
+var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
+
+rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
+  // numeric values
+  ellipse.size(morph(100, 200), morph(100, 50))
+  
+  // unit strings
+  ellipse.attr('cx', morph('20%', '80%'))
+  
+  // hex color strings
+  ellipse.fill(morph('#333', '#ff0066'))
+})
+```
 The `eased` parameter contains the position after the easing function was applied.
-The last parameter holds the current situation related to that `during` call
+The last parameter holds the current situation related to that `during` call.
+You can call `during()` multiple times to add more functions which should be executed.
 
 __`returns`: `SVG.FX`__
 
@@ -2157,12 +2175,14 @@ __`returns`: `SVG.FX`__
 Finally, you can add callback methods using `after()`:
 
 ```javascript
-rect.animate(3000).move(100, 100).after(function() {
+rect.animate(3000).move(100, 100).after(function(situation) {
   this.animate().attr({ fill: '#f06' })
 })
 ```
 
-Note that the `after()` method will never be called if the animation is looping eternally. 
+The function gets the situation which was finished as first parameter.
+Note that the `after()` method will never be called if the animation is looping eternally.
+You can call `after()` multiple times to add more functions which should be executed.
 
 __`returns`: `SVG.FX`__
 
@@ -2177,7 +2197,8 @@ document.onmousemove = function(event) {
 }
 ```
 
-In order to be able to use the `at()` method, the duration of the animation should be set to `'='`. The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
+The value passed as the first argument of `at()` should be a number between `0` and `1`, `0` being the beginning of the animation and `1` being the end. Note that any values below `0` and above `1` will be normalized.
+Note that the value is eased after you set it. The position specifies a position in time.
 
 _This functionality requires the fx.js module which is included in the default distribution._
 
@@ -2202,10 +2223,8 @@ Available values are:
 - `finish` (start + duration)
 - `loop` (the current loop; counting down if a number; `true`, `false` or a number)
 - `loops` (if a number, the total number loops; `true`, `false` or a number)
-- `reverse` (whether or not the loop should be reversed; `true` or `false`)
+- `reverse` (whether or not the animation should run backwards)
 - `reversing` (`true` if the loop is currently reversing, otherwise `false`)
-- `during` (the function that should be called on every keyframe)
-- `after` (the function that should be called after completion)
 
 
 ## Masking elements

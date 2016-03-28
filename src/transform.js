@@ -161,15 +161,13 @@ SVG.extend(SVG.FX, {
     }
 
     if(!matrix) return this
-    
+
     matrix.relative = relative
-    
-    var situation = this.situations.length ? this.situations[this.situations.length-1] : this.current
-    
-    situation.transforms.push(matrix)
+
+    this.last().transforms.push(matrix)
 
     setTimeout(function(){this.start()}.bind(this), 0)
-    
+
     return this
   }
 })
@@ -263,7 +261,7 @@ SVG.Transformation = SVG.invent({
       return this.inversed ? m.inverse() : m
 
     }
-    
+
   , undo: function(o){
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
       return this
