@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@impinc.co.uk>
 * @license MIT
 *
-* BUILT: Mon Mar 28 2016 17:17:10 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Mar 28 2016 17:23:22 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1753,23 +1753,6 @@ SVG.FX = SVG.invent({
       return this.afterAll(function(){
         this.off('during.fx', wrapper)
       })
-    }
-
-    /**
-     * returns a float from 0-1 indicating the progress of the whole animation queue
-     * we recalculate the finish time because it may be changed from methods like at()
-     * @return number
-     */
-   // FIXME: current start always changes so the progress get a reset whenever one situation finishes. We need a global start which is only modified on pause and stop
-  , totalProgress: function(){
-      var start = this.situation.start
-        , finish = this.situation
-
-      for(var i = 0, len = this.situations.length; i < len; ++i){
-        finish += (situations[i].duration || 0) + (situations[i].delay || 0)
-      }
-
-      return (this.pos * this.situation.duration + this.start - start) / (finish - start)
     }
 
   , last: function(){
