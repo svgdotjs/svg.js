@@ -2,13 +2,12 @@
 
 - make transform-methods relative as default (breaking change)
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
-- added `enqueue()` method to `SVG.FX` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.3.0
+# 2.3.0 (30/03/2016)
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
 - added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
 - fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
