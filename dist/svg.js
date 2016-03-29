@@ -3,10 +3,10 @@
 * @version 2.2.5
 * http://www.svgjs.com
 *
-* @copyright Wout Fierens <wout@impinc.co.uk>
+* @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Mon Mar 28 2016 17:50:03 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Mar 29 2016 12:17:54 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1344,8 +1344,8 @@ SVG.Situation = SVG.invent({
     }
 
     this.transforms = [
-      // holds all transformations of the form:
-      // [A, B, C] or, [A, [25, 0, 0]] where ABC are matrixes and the array represents a rotation
+      // holds all transformations as transformation objects
+      // e.g. [SVG.Rotate, SVG.Translate, SVG.Matrix]
     ]
 
     this.once = {
@@ -1406,7 +1406,6 @@ SVG.FX = SVG.invent({
      * @param delay Duration of delay in milliseconds
      * @return this.target()
      */
-    // FIXME: the function needs to get a delay property to make sure, that the totalProgress can be calculated
   , delay: function(delay){
       var delay = new SVG.Delay(delay)
 
@@ -1438,14 +1437,12 @@ SVG.FX = SVG.invent({
     }
 
     // starts the animationloop
-    // TODO: It may be enough to call just this.step()
   , startAnimFrame: function(){
       this.stopAnimFrame()
       this.animationFrame = requestAnimationFrame(function(){ this.step() }.bind(this))
     }
 
     // cancels the animationframe
-    // TODO: remove this in favour of the oneliner
   , stopAnimFrame: function(){
       cancelAnimationFrame(this.animationFrame)
     }
@@ -1557,7 +1554,7 @@ SVG.FX = SVG.invent({
         s.styles[i].value = this.target().style(i)
       }
 
-      s.transformations = this.target().matrixify()
+      s.initialTransformation = this.target().matrixify()
 
       s.init = true
       return this
@@ -1588,7 +1585,6 @@ SVG.FX = SVG.invent({
 
         this.situation.loop = false
 
-        // TODO: test this
         if(this.situation.loops % 2 == 0 && this.situation.reversing){
           this.situation.reversed = true
         }
@@ -1667,7 +1663,8 @@ SVG.FX = SVG.invent({
       return this.at(this.pos)
     }
 
-    /** toggle or set the direction of the animation
+    /**
+     * toggle or set the direction of the animation
      * true sets direction to backwards while false sets it to forwards
      * @param reversed Boolean indicating whether to reverse the animation or not (default: toggle the reverse status)
      * @return this
@@ -1741,7 +1738,7 @@ SVG.FX = SVG.invent({
     // calls on every animation step for all animations
   , duringAll: function(fn){
       var wrapper = function(e){
-            fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, e.detail.fx, e.detail.situation)
+            fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, e.detail.situation)
           }
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
@@ -1812,12 +1809,12 @@ SVG.FX = SVG.invent({
       if((this.pos == 1 && !this.situation.reversed) || (this.situation.reversed && this.pos == 0)){
 
         // stop animation callback
-        cancelAnimationFrame(this.animationFrame)
+        this.stopAnimFrame()
 
         // fire finished callback with current situation as parameter
         this.target().fire('finished', {fx:this, situation: this.situation})
 
-        if(!this.situations.length/* && this.active*/){
+        if(!this.situations.length){
           this.target().fire('allfinished')
           this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
           this.active = false
@@ -1840,13 +1837,13 @@ SVG.FX = SVG.invent({
 
     // calculates the step for every property and calls block with it
   , eachAt: function(){
-      var i, at, self = this, target = this.target(), c = this.situation
+      var i, at, self = this, target = this.target(), s = this.situation
 
       // apply animations which can be called trough a method
-      for(i in c.animations){
+      for(i in s.animations){
 
-        at = [].concat(c.animations[i]).map(function(el){
-          return el.at ? el.at(c.ease(self.pos), self.pos) : el
+        at = [].concat(s.animations[i]).map(function(el){
+          return el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target[i].apply(target, at)
@@ -1854,10 +1851,10 @@ SVG.FX = SVG.invent({
       }
 
       // apply animation which has to be applied with attr()
-      for(i in c.attrs){
+      for(i in s.attrs){
 
-        at = [i].concat(c.attrs[i]).map(function(el){
-          return el.at ? el.at(c.ease(self.pos), self.pos) : el
+        at = [i].concat(s.attrs[i]).map(function(el){
+          return el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.attr.apply(target, at)
@@ -1865,33 +1862,33 @@ SVG.FX = SVG.invent({
       }
 
       // apply animation which has to be applied with style()
-      for(i in c.styles){
+      for(i in s.styles){
 
-        at = [i].concat(c.styles[i]).map(function(el){
-          return el.at ? el.at(c.ease(self.pos), self.pos) : el
+        at = [i].concat(s.styles[i]).map(function(el){
+          return el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.style.apply(target, at)
 
       }
 
-      // animate transformations which has to be chained
-      if(c.transforms.length){
+      // animate initialTransformation which has to be chained
+      if(s.transforms.length){
 
-        // get inital transformations
-        at = c.transformations
-        for(i in c.transforms){
+        // get inital initialTransformation
+        at = s.initialTransformation
+        for(i in s.transforms){
 
           // get next transformation in chain
-          var a = c.transforms[i]
+          var a = s.transforms[i]
 
           // multiply matrix directly
           if(a instanceof SVG.Matrix){
 
             if(a.relative){
-              at = at.multiply(a.at(this.pos))
+              at = at.multiply(a.at(s.ease(this.pos)))
             }else{
-              at = at.morph(a).at(c.ease(this.pos))
+              at = at.morph(a).at(s.ease(this.pos))
             }
             continue
           }
@@ -1901,8 +1898,7 @@ SVG.FX = SVG.invent({
             a.undo(at.extract())
 
           // and reapply it after
-          at = at.multiply(a.at(c.ease(this.pos)))
-          continue;
+          at = at.multiply(a.at(s.ease(this.pos)))
 
         }
 
@@ -1941,6 +1937,12 @@ SVG.FX = SVG.invent({
   , stop: function(jumpToEnd, clearQueue) {
       if (this.fx)
         this.fx.stop(jumpToEnd, clearQueue)
+
+      return this
+    }
+  , finish: function() {
+      if (this.fx)
+        this.fx.finish()
 
       return this
     }

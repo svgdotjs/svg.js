@@ -216,18 +216,18 @@ describe('FX', function() {
         pos2 = true
       }, 800)
 
-      fx.duringAll(function(pos, morph, eased, fx2, situation){
+      fx.duringAll(function(pos, morph, eased, situation){
 
         if(pos1){
           pos1 = false
           sit = situation
-          expect(fx2.pos).toBeGreaterThan(0.5)
+          expect(this.fx.pos).toBeGreaterThan(0.5)
         }
 
         if(pos2){
           pos2 = null
           expect(situation).not.toBe(sit)
-          expect(fx2.pos).toBeGreaterThan(0.5)
+          expect(this.fx.pos).toBeGreaterThan(0.5)
           done()
         }
       })
@@ -244,7 +244,7 @@ describe('FX', function() {
     it('adds a callback which is called once at the specified position', function(done) {
 
       fx.start().once(0.5, function(pos, eased){
-        expect(true).toBe(true)
+        expect(pos).toBeGreaterThan(0.49)
         done()
       })
     })

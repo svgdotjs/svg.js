@@ -2110,42 +2110,6 @@ rect.finish() // rect at 250,250 with size 300,400
 
 __`returns`: `itself`__
 
-### during()
-If you want to perform your own actions during the animations you can use the `during()` method:
-
-```javascript
-var position
-  , from = 100
-  , to   = 300
-
-rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
-  position = from + (to - from) * pos 
-})
-```
-Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
-
-To make things easier a morphing function is passed as the second argument. This function accepts a `from` and `to` value as the first and second argument and they can be a number, unit or hex color:
-
-```javascript
-var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
-
-rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
-  // numeric values
-  ellipse.size(morph(100, 200), morph(100, 50))
-  
-  // unit strings
-  ellipse.attr('cx', morph('20%', '80%'))
-  
-  // hex color strings
-  ellipse.fill(morph('#333', '#ff0066'))
-})
-```
-The `eased` parameter contains the position after the easing function was applied.
-The last parameter holds the current situation related to that `during` call.
-You can call `during()` multiple times to add more functions which should be executed.
-
-__`returns`: `SVG.FX`__
-
 ### loop()
 By default the `loop()` method creates and eternal loop:
 
@@ -2171,18 +2135,103 @@ Loops will then be completely reversed before starting over (`0->1->0->1->0->1.`
 
 __`returns`: `SVG.FX`__
 
-### after()
-Finally, you can add callback methods using `after()`:
+### reverse()
+Toggles the direction of the animation or sets it to a specific direction:
+
+```javascript
+// will run from 100,100 to rects initial position
+rect.animate(3000).move(100, 100).reverse()
+
+// sets direction to backwards
+rect.animate(3000).move(100, 100).reverse(true)
+
+// sets direction to forwards (same as not calling reverse ever)
+rect.animate(3000).move(100, 100).reverse(false)
+```
+
+__`returns`: `SVG.FX`__
+
+### during/duringAll()
+If you want to perform your own actions during one/all animation you can use the `during()/duringAll()` method:
+
+```javascript
+var position
+  , from = 100
+  , to   = 300
+
+rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
+  position = from + (to - from) * pos 
+})
+
+// or
+rect.animate(3000).move(100, 100).duringAll(function(pos, morph, eased, situation) {
+  position = from + (to - from) * pos 
+})
+```
+Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
+
+To make things easier a morphing function is passed as the second argument. This function accepts a `from` and `to` value as the first and second argument and they can be a number, unit or hex color:
+
+```javascript
+var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
+
+rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
+  // numeric values
+  ellipse.size(morph(100, 200), morph(100, 50))
+  
+  // unit strings
+  ellipse.attr('cx', morph('20%', '80%'))
+  
+  // hex color strings
+  ellipse.fill(morph('#333', '#ff0066'))
+})
+```
+The `eased` parameter contains the position after the easing function was applied.
+The last parameter holds the current situation related to the current `during` call.
+You can call `during()/duringAll()` multiple times to add more functions which should be executed.
+
+__`returns`: `SVG.FX`__
+
+### after/afterAll()
+Furthermore, you can add callback methods using `after()/afterAll()`:
 
 ```javascript
 rect.animate(3000).move(100, 100).after(function(situation) {
   this.animate().attr({ fill: '#f06' })
 })
+
+// or
+rect.animate(3000).move(100, 100).afterAll(function() {
+  this.animate().attr({ fill: '#f06' })
+})
 ```
 
-The function gets the situation which was finished as first parameter.
-Note that the `after()` method will never be called if the animation is looping eternally.
-You can call `after()` multiple times to add more functions which should be executed.
+The function gets the situation which was finished as first parameter. This doesn't apply to afterAll where no parameter is passed
+Note that the `after()/afterAll()` method will never be called if the animation is looping eternally.
+You can call `after()/afterAll()` multiple times to add more functions which should be executed.
+
+__`returns`: `SVG.FX`__
+
+### once()
+Finally, you can perform an action at a specific position only once.
+Just pass the position and the function which should be executed to the `once` method.
+You can also decide whether the position which is passed should be handled as position in time (not eased) or position in space (easing applied):
+
+```javascript
+// the 0.5 is handled as uneased value (you can omit the false)
+rect.animate(3000).move(100, 100).once(0.5, function(pos, eased) {
+  // do something
+}, false)
+```
+
+```javascript
+// the 0.5 is handled as eased value
+rect.animate(3000).move(100, 100).once(0.5, function(pos, eased) {
+  // do something
+}, true)
+```
+
+The callback function gets the current position uneased and eased
 
 __`returns`: `SVG.FX`__
 
