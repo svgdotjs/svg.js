@@ -16,6 +16,7 @@ declare namespace svgjs {
         extend(parent: Object, obj: Object): void;
         invent(config: Object): any;
         atopt(node: HTMLElement): Element;
+        prepare(element: HTMLElement): void;
     }
     interface LinkedHTMLElement extends HTMLElement {
         instance: Element;
