@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Wed Mar 30 2016 01:17:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Apr 01 2016 23:54:46 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -23,12 +23,7 @@
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
-    element = new SVG.Doc(element)
-
-    if (!SVG.parser)
-      SVG.prepare(element)
-
-    return element
+    return new SVG.Doc(element)
   }
 }
 
@@ -149,23 +144,24 @@ SVG.adopt = function(node) {
 }
 
 // Initialize parsing element
-SVG.prepare = function(element) {
+SVG.prepare = function() {
   // Select document body and create invisible svg element
   var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) : element.nested()).size(2, 0)
-    , path = SVG.create('path')
-
-  // Insert parsers
-  draw.node.appendChild(path)
+    , draw = (body ? new SVG.Doc(body) :  new SVG.Doc(document.documentElement).nested()).size(2, 0)
 
   // Create parser object
   SVG.parser = {
-    body: body || element.parent()
+    body: body || document.documentElement
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
   , poly: draw.polyline().node
-  , path: path
+  , path: draw.path().node
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  if(!SVG.parser)
+    SVG.prepare()
+}, false)
 
 // Storage for regular expressions
 SVG.regex = {
@@ -305,6 +301,8 @@ SVG.Color = function(color) {
   this.r = 0
   this.g = 0
   this.b = 0
+
+  if(!color) return
 
   // parse color
   if (typeof color === 'string') {
