@@ -45,7 +45,7 @@ SVG.Point = SVG.invent({
     // Convert to native SVGPoint
   , native: function() {
       // create new point
-      var point = SVG.parser.draw.node.createSVGPoint()
+      var point = SVG.parser.native.createSVGPoint()
 
       // update with current values
       point.x = this.x

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Fri Apr 01 2016 23:54:46 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat Apr 02 2016 00:37:31 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -23,7 +23,12 @@
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
-    return new SVG.Doc(element)
+    element = new SVG.Doc(element)
+
+    if(!SVG.parser.draw)
+      SVG.prepare()
+
+    return element
   }
 }
 
@@ -155,11 +160,16 @@ SVG.prepare = function() {
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
   , poly: draw.polyline().node
   , path: draw.path().node
+  , native: SVG.create('svg')
   }
 }
 
+SVG.parser = {
+  native: SVG.create('svg')
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  if(!SVG.parser)
+  if(!SVG.parser.draw)
     SVG.prepare()
 }, false)
 
@@ -2440,7 +2450,7 @@ SVG.Matrix = SVG.invent({
     // Convert to native SVGMatrix
   , native: function() {
       // create new matrix
-      var matrix = SVG.parser.draw.node.createSVGMatrix()
+      var matrix = SVG.parser.native.createSVGMatrix()
 
       // update with current values
       for (var i = abcdef.length - 1; i >= 0; i--)
@@ -2519,7 +2529,7 @@ SVG.Point = SVG.invent({
     // Convert to native SVGPoint
   , native: function() {
       // create new point
-      var point = SVG.parser.draw.node.createSVGPoint()
+      var point = SVG.parser.native.createSVGPoint()
 
       // update with current values
       point.x = this.x

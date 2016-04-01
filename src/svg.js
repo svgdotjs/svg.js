@@ -1,7 +1,12 @@
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
-    return new SVG.Doc(element)
+    element = new SVG.Doc(element)
+    
+    if(!SVG.parser.draw)
+      SVG.prepare()
+      
+    return element
   }
 }
 
@@ -133,10 +138,15 @@ SVG.prepare = function() {
   , draw: draw.style('opacity:0;position:fixed;left:100%;top:100%;overflow:hidden')
   , poly: draw.polyline().node
   , path: draw.path().node
+  , native: SVG.create('svg')
   }
 }
 
+SVG.parser = {
+  native: SVG.create('svg')
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  if(!SVG.parser)
+  if(!SVG.parser.draw)
     SVG.prepare()
 }, false)

@@ -156,7 +156,7 @@ SVG.Matrix = SVG.invent({
     // Convert to native SVGMatrix
   , native: function() {
       // create new matrix
-      var matrix = SVG.parser.draw.node.createSVGMatrix()
+      var matrix = SVG.parser.native.createSVGMatrix()
 
       // update with current values
       for (var i = abcdef.length - 1; i >= 0; i--)
