@@ -29,7 +29,7 @@ describe('FX', function() {
     it('returns the current fx object with no argument given', function(){
       expect(fx.target()).toBe(rect)
     })
-    
+
     it('changes the target of the animation when parameter given', function(){
       var c = draw.circle(5)
       expect(fx.target(c).target()).toBe(c)
@@ -184,11 +184,12 @@ describe('FX', function() {
       fx.start().during(function(pos, morph, eased, situation){
 
         expect(fx.situation).toBe(situation)
+        expect(morph(0, 100)).toBeCloseTo(pos*100)
 
         if(fx.pos > 0.9){
           rect.off('.fx')
           fx.stop()
-          
+
           done()
         }
       })
@@ -200,7 +201,7 @@ describe('FX', function() {
 
       fx.finish()
       rect.off('.fx')
-    
+
       fx.animate(500).start().animate(500)
 
       var sit = null

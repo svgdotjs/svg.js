@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sat Apr 02 2016 00:37:31 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 03 2016 13:03:00 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1315,8 +1315,10 @@ SVG.easing = {
 , '<': function(pos){return -Math.cos(pos * Math.PI / 2) + 1}
 }
 
-SVG.morph = function(from, to) {
-  return new MorphObj(from, to).at(pos)
+SVG.morph = function(pos){
+  return function(from, to) {
+    return new SVG.MorphObj(from, to).at(pos)
+  }
 }
 
 SVG.Situation = SVG.invent({
@@ -1719,7 +1721,7 @@ SVG.FX = SVG.invent({
       var c = this.last()
         , wrapper = function(e){
             if(e.detail.situation == c){
-              fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, c)
+              fn.call(this, e.detail.pos, SVG.morph(e.detail.pos), e.detail.eased, c)
             }
           }
 
@@ -1746,7 +1748,7 @@ SVG.FX = SVG.invent({
     // calls on every animation step for all animations
   , duringAll: function(fn){
       var wrapper = function(e){
-            fn.call(this, e.detail.pos, SVG.morph, e.detail.eased, e.detail.situation)
+            fn.call(this, e.detail.pos, SVG.morph(e.detail.pos), e.detail.eased, e.detail.situation)
           }
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)

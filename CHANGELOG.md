@@ -7,6 +7,9 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.3.1
+- fixed `SVG.morph()` (#473)
+
 # 2.3.0 (30/03/2016)
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
 - added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
