@@ -12,6 +12,7 @@
 - fixed parser error (#471)
 - fixed bug in `SVG.Color` with new fx
 - fixed `radius()` for circles when animating and other related code (#477) 
+- fixed bug where `stop(true)` throws an error when element is not animated (#475)
 
 # 2.3.0 (30/03/2016)
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sat Apr 09 2016 18:05:18 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat Apr 09 2016 18:26:54 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1591,7 +1591,7 @@ SVG.FX = SVG.invent({
 
       this.active = false
 
-      if(jumpToEnd){
+      if(jumpToEnd && this.situation){
 
         this.situation.loop = false
 

@@ -281,7 +281,7 @@ SVG.FX = SVG.invent({
 
       this.active = false
 
-      if(jumpToEnd){
+      if(jumpToEnd && this.situation){
 
         this.situation.loop = false
 
