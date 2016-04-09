@@ -55,13 +55,13 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Gradient, SVG.FX, {
   // From position
   from: function(x, y) {
-    return (this.target || this).type == 'radial' ?
+    return (this._target || this).type == 'radial' ?
       this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
       this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
-    return (this.target || this).type == 'radial' ?
+    return (this._target || this).type == 'radial' ?
       this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
       this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }

@@ -9,6 +9,9 @@
 
 # 2.3.1
 - fixed `SVG.morph()` (#473)
+- fixed parser error (#471)
+- fixed bug in `SVG.Color` with new fx
+- fixed `radius()` for circles when animating and other related code (#477) 
 
 # 2.3.0 (30/03/2016)
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)

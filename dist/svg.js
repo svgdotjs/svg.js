@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sun Apr 03 2016 13:03:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat Apr 09 2016 18:05:18 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3628,13 +3628,13 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Gradient, SVG.FX, {
   // From position
   from: function(x, y) {
-    return (this.target || this).type == 'radial' ?
+    return (this._target || this).type == 'radial' ?
       this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
       this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
-    return (this.target || this).type == 'radial' ?
+    return (this._target || this).type == 'radial' ?
       this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
       this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }
@@ -4780,9 +4780,9 @@ SVG.extend(SVG.Element, SVG.FX, {
 SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    var type = (this.target || this).type;
+    var type = (this._target || this).type;
     return type == 'radial' || type == 'circle' ?
-      this.attr({ 'r': new SVG.Number(x) }) :
+      this.attr('r', new SVG.Number(x)) :
       this.rx(x).ry(y == null ? x : y)
   }
 })

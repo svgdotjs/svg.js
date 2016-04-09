@@ -76,9 +76,9 @@ SVG.extend(SVG.Element, SVG.FX, {
 SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
-    var type = (this.target || this).type;
+    var type = (this._target || this).type;
     return type == 'radial' || type == 'circle' ?
-      this.attr({ 'r': new SVG.Number(x) }) :
+      this.attr('r', new SVG.Number(x)) :
       this.rx(x).ry(y == null ? x : y)
   }
 })
