@@ -6,7 +6,7 @@ SVG.Doc = SVG.invent({
       element = typeof element == 'string' ?
         document.getElementById(element) :
         element
-      
+
       // If the target is an svg element, use that element as the main wrapper.
       // This allows svg.js to work with svg documents as well.
       if (element.nodeName == 'svg') {
@@ -14,10 +14,11 @@ SVG.Doc = SVG.invent({
       } else {
         this.constructor.call(this, SVG.create('svg'))
         element.appendChild(this.node)
+        this.size('100%', '100%')
       }
-      
+
       // set svg element attributes and ensure defs node
-      this.namespace().size('100%', '100%').defs()
+      this.namespace().defs()
     }
   }
 
@@ -58,7 +59,7 @@ SVG.Doc = SVG.invent({
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
   , spof: function(spof) {
       var pos = this.node.getScreenCTM()
-      
+
       if (pos)
         this
           .style('left', (-pos.e % 1) + 'px')
@@ -66,7 +67,7 @@ SVG.Doc = SVG.invent({
 
       return this
     }
-    
+
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {
@@ -76,5 +77,5 @@ SVG.Doc = SVG.invent({
       return this;
     }
   }
-  
+
 })

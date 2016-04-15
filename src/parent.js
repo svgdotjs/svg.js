@@ -22,7 +22,7 @@ SVG.Parent = SVG.invent({
         i = i == null ? this.children().length : i
         
         // add element references
-        this.node.insertBefore(element.node, this.node.childNodes[i] || null)
+        this.node.insertBefore(element.node, SVG.utils.filterSVGElements(this.node.childNodes)[i] || null)
       }
 
       return this

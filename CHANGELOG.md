@@ -13,6 +13,9 @@
 - fixed bug in `SVG.Color` with new fx
 - fixed `radius()` for circles when animating and other related code (#477) 
 - fixed bug where `stop(true)` throws an error when element is not animated (#475)
+- added typings for svg.js (#470)
+- fixed bug in `add()` when altering svgs with whitespaces
+- fixed bug in `SVG.Doc().create` where size was set to 100% even if size was already specified
 
 # 2.3.0 (30/03/2016)
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)

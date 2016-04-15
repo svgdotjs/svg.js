@@ -19,6 +19,10 @@ describe('SVG', function() {
     it('creates an instance of SVG.Doc', function() {
       expect(drawing instanceof SVG.Doc).toBe(true)
     })
+    it('sets size to 100%', function() {
+      expect(drawing.width()).toBe('100%')
+      expect(drawing.height()).toBe('100%')
+    })
   })
   
   describe('create()', function() {
@@ -66,7 +70,7 @@ describe('SVG', function() {
       expect(typeof SVG.Path.prototype.soft).toBe('function')
       expect(draw.path().soft().attr('opacity')).toBe(0.5)
     })
-    it('ignones non existant objects', function() {
+    it('ignores non existant objects', function() {
       SVG.extend(SVG.Rect, SVG.Bogus, {
         soft: function() {
           return this.opacity(0.3)

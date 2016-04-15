@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sat Apr 09 2016 18:26:54 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Apr 15 2016 19:52:52 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3045,7 +3045,7 @@ SVG.Parent = SVG.invent({
         i = i == null ? this.children().length : i
 
         // add element references
-        this.node.insertBefore(element.node, this.node.childNodes[i] || null)
+        this.node.insertBefore(element.node, SVG.utils.filterSVGElements(this.node.childNodes)[i] || null)
       }
 
       return this
@@ -3753,10 +3753,11 @@ SVG.Doc = SVG.invent({
       } else {
         this.constructor.call(this, SVG.create('svg'))
         element.appendChild(this.node)
+        this.size('100%', '100%')
       }
 
       // set svg element attributes and ensure defs node
-      this.namespace().size('100%', '100%').defs()
+      this.namespace().defs()
     }
   }
 
