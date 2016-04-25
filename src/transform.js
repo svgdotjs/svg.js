@@ -263,7 +263,12 @@ SVG.Transformation = SVG.invent({
     }
 
   , undo: function(o){
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
+      }
+      
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
+      
       return this
     }
 
