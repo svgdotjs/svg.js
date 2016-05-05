@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Fri Apr 15 2016 19:52:52 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu May 05 2016 15:38:13 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -752,7 +752,7 @@ SVG.extend(SVG.PathArray, {
       // upper case
       if(s == seg[0]){
 
-        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q'){
+        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q' || s == 'S' || s == 'T'){
           x = seg[paramCnt[seg[0]]-1]
           y = seg[paramCnt[seg[0]]]
         }else if(s == 'V'){

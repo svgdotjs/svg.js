@@ -578,7 +578,7 @@ describe('Element', function() {
       it('returns full raw svg when called on the main svg doc', function() {
         draw.size(100,100).rect(100,100).id(null)
         draw.circle(100).fill('#f06').id(null)
-        expect(draw.svg()).toBe('<svg id="SvgjsSvg1000" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>')
+        expect(draw.svg()).toBe('<svg id="SvgjsSvg1001" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>')
       })
       it('returns partial raw svg when called on a sub group', function() {
         var group = draw.group().id(null)

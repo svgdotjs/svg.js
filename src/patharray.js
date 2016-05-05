@@ -166,7 +166,7 @@ SVG.extend(SVG.PathArray, {
       // upper case
       if(s == seg[0]){
 
-        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q'){
+        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q' || s == 'S' || s == 'T'){
           x = seg[paramCnt[seg[0]]-1]
           y = seg[paramCnt[seg[0]]]
         }else if(s == 'V'){
