@@ -7,11 +7,15 @@ SVG.BBox = SVG.invent({
 
       // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
       try {
+
+        // the element is NOT in the dom, throw error
+        if(!document.contains(element.node)) throw new Exception('Element not in the dom')
+
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
         if(element instanceof SVG.Shape){
-          var clone = element.clone().addTo(SVG.parser.draw)
+          var clone = element.clone(SVG.parser.draw)
           box = clone.bbox()
           clone.remove()
         }else{
@@ -23,7 +27,7 @@ SVG.BBox = SVG.invent({
           }
         }
       }
-      
+
       // plain x and y
       this.x = box.x
       this.y = box.y
@@ -57,7 +61,7 @@ SVG.TBox = SVG.invent({
     if (element) {
       var t   = element.ctm().extract()
         , box = element.bbox()
-      
+
       // width and height including transformations
       this.width  = box.width  * t.scaleX
       this.height = box.height * t.scaleY
@@ -92,20 +96,20 @@ SVG.RBox = SVG.invent({
       var e    = element.doc().parent()
         , box  = element.node.getBoundingClientRect()
         , zoom = 1
-      
+
       // get screen offset
       this.x = box.left
       this.y = box.top
-      
+
       // subtract parent offset
       this.x -= e.offsetLeft
       this.y -= e.offsetTop
-      
+
       while (e = e.offsetParent) {
         this.x -= e.offsetLeft
         this.y -= e.offsetTop
       }
-      
+
       // calculate cumulative zoom from svg documents
       e = element
       while (e.parent && (e = e.parent())) {
@@ -120,7 +124,7 @@ SVG.RBox = SVG.invent({
       this.width  = box.width  /= zoom
       this.height = box.height /= zoom
     }
-    
+
     // add center, right and bottom
     fullBox(this)
 
@@ -155,7 +159,7 @@ SVG.RBox = SVG.invent({
       b.y      = Math.min(this.y, box.y)
       b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
       b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-      
+
       return fullBox(b)
     }
 

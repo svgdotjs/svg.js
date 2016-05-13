@@ -61,12 +61,13 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function() {
+  , clone: function(parent) {
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
-      // insert the clone after myself
-      this.after(clone)
+      // insert the clone in the given parent or after myself
+      if(parent) parent.add(clone)
+      else this.after(clone)
 
       return clone
     }

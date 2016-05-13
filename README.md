@@ -888,13 +888,13 @@ var elements = group.select('rect.my-class').fill('#f06')
 Another way is to use [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/). Here is an example:
 
 ```javascript
-// add elements 
+// add elements
 var draw   = SVG('drawing')
 var group  = draw.group().addClass('my-group')
 var rect   = group.rect(100,100).addClass('my-element')
 var circle = group.circle(100).addClass('my-element').move(100, 100)
 
-// get elements in group 
+// get elements in group
 var elements = $('#drawing g.my-group .my-element').each(function() {
   this.instance.animate().fill('#f09')
 })
@@ -981,7 +981,7 @@ To get all ancestors of the element filtered by type or css selector (see `paren
 var group1 = draw.group().addClass('test')
   , group2 = group1.group()
   , rect   = group2.rect(100,100)
-  
+
 rect.parents()        // returns [group1, group2, draw]
 rect.parents('.test') // returns [group1]
 rect.parents(SVG.G)   // returns [group1, group2]
@@ -1426,7 +1426,7 @@ rect.height() //-> returns 325
 ### radius()
 Circles, ellipses, and rects may use the `radius()` method. On rects, it defines rounded corners.
 
-For a circle, the argument sets the `r` attribute. 
+For a circle, the argument sets the `r` attribute.
 
 ```javascript
 circle.radius(10)
@@ -1568,6 +1568,8 @@ var clone = rect.clone()
 __`returns`: `element`__
 
 This will create a new, unlinked copy. For making a linked clone, see the [use](#use) element.
+By default the cloned element is placed directly after the orginal element.
+When you pass a parent parameter to the `clone()` function it will append the cloned element to the given parent.
 
 ### remove()
 Removes the calling element from the svg document:
@@ -1825,7 +1827,7 @@ This will return an instance of `SVG.BBox` containing the following values:
 - `height` (value from native `getBBox`)
 - `w` (shorthand for `width`)
 - `h` (shorthand for `height`)
-- `x` (value from native `getBBox`) 
+- `x` (value from native `getBBox`)
 - `y` (value from native `getBBox`)
 - `cx` (center `x` of the bounding box)
 - `cy` (center `y` of the bounding box)
@@ -2160,12 +2162,12 @@ var position
   , to   = 300
 
 rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
-  position = from + (to - from) * pos 
+  position = from + (to - from) * pos
 })
 
 // or
 rect.animate(3000).move(100, 100).duringAll(function(pos, morph, eased, situation) {
-  position = from + (to - from) * pos 
+  position = from + (to - from) * pos
 })
 ```
 Note that `pos` is `0` in the beginning of the animation and `1` at the end of the animation.
@@ -2178,10 +2180,10 @@ var ellipse = draw.ellipse(100, 100).attr('cx', '20%').fill('#333')
 rect.animate(3000).move(100, 100).during(function(pos, morph, eased, situation) {
   // numeric values
   ellipse.size(morph(100, 200), morph(100, 50))
-  
+
   // unit strings
   ellipse.attr('cx', morph('20%', '80%'))
-  
+
   // hex color strings
   ellipse.fill(morph('#333', '#ff0066'))
 })
@@ -2650,7 +2652,7 @@ var gradient = draw.gradient('linear', function(stop) {
 __`returns`: `SVG.Gradient`__
 
 ### at()
-The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`). 
+The `offset` and `color` parameters are required for stops, `opacity` is optional. Offset is float between 0 and 1, or a percentage value (e.g. `33%`).
 
 ```javascript
 stop.at(0, '#333')
@@ -2978,7 +2980,7 @@ __`returns`: `itself`__
 
 ## Memory
 
-### remember() 
+### remember()
 Storing data in-memory is very much like setting attributes:
 
 ```javascript
@@ -3110,12 +3112,12 @@ Now you are ready to fire the event whenever you need:
 
 ```javascript
 function whenSomethingHappens() {
-  rect.fire('myevent') 
+  rect.fire('myevent')
 }
 
 // or if you want to pass an event
 function whenSomethingHappens(event) {
-  rect.fire(event) 
+  rect.fire(event)
 }
 
 ```
@@ -3124,7 +3126,7 @@ You can also pass some data to the event:
 
 ```javascript
 function whenSomethingHappens() {
-  rect.fire('myevent', {some:'data'}) 
+  rect.fire('myevent', {some:'data'})
 }
 
 rect.on('myevent', function(e) {
@@ -3308,13 +3310,13 @@ Is for simple, whitespace separated value strings:
 Can also be passed like this in a more manageable format:
 
 ```javascript
-new SVG.Array([ .343,  .669, .119, 0,   0 
+new SVG.Array([ .343,  .669, .119, 0,   0
               , .249, -.626, .130, 0,   0
               , .172,  .334, .111, 0,   0
               , .000,  .000, .000, 1,  -0 ])
 ```
 
-### SVG.PointArray 
+### SVG.PointArray
 Is a bit more complex and is used for polyline and polygon elements. This is a poly-point string:
 
 ```javascript
@@ -3786,7 +3788,7 @@ SVG.Rounded = SVG.invent({
     rounded: function(width, height) {
       return this.put(new SVG.Rounded).size(width, height)
     }
-    
+
   }
 })
 ```

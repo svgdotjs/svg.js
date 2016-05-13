@@ -1,9 +1,9 @@
 describe('BBox', function() {
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   it('creates a new instance without passing an element', function() {
     var box = new SVG.BBox
     expect(box.x).toBe(0)
@@ -13,7 +13,7 @@ describe('BBox', function() {
     expect(box.width).toBe(0)
     expect(box.height).toBe(0)
   })
-  
+
   describe('merge()', function() {
     it('merges various bounding boxes', function() {
       var box1 = draw.rect(100,100).move(50,50).bbox()
@@ -39,15 +39,15 @@ describe('BBox', function() {
       expect(box2.y).toBe(400)
     })
   })
-  
+
 })
 
 describe('TBox', function() {
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   it('creates a new instance without passing an element', function() {
     var box = new SVG.TBox
     expect(box.x).toBe(0)
@@ -57,7 +57,7 @@ describe('TBox', function() {
     expect(box.width).toBe(0)
     expect(box.height).toBe(0)
   })
-  
+
   describe('merge()', function() {
     it('merges various bounding boxes', function() {
       var box1 = draw.rect(100,100).move(50,50).bbox()
@@ -83,15 +83,15 @@ describe('TBox', function() {
       expect(box2.y).toBe(400)
     })
   })
-  
+
 })
 
 describe('RBox', function() {
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   it('creates a new instance without passing an element', function() {
     var box = new SVG.RBox
     expect(box.x).toBe(0)
@@ -101,7 +101,7 @@ describe('RBox', function() {
     expect(box.width).toBe(0)
     expect(box.height).toBe(0)
   })
-  
+
   describe('merge()', function() {
     it('merges various bounding boxes', function() {
       var box1 = draw.rect(100,100).move(50,50).bbox()
@@ -127,7 +127,7 @@ describe('RBox', function() {
       expect(box2.y).toBe(400)
     })
   })
-  
+
 })
 
 describe('Boxes', function() {
@@ -156,6 +156,16 @@ describe('Boxes', function() {
       expect(box.h).toBe(180)
       expect(box.x2).toBe(75)
       expect(box.y2).toBe(270)
+    })
+    it('returns a box even if the element is not in the dom', function() {
+      var line = new SVG.Line().plot(0, 0, 50, 50)
+      var box = line.bbox()
+
+      expect(box.x).toBe(0)
+      expect(box.y).toBe(0)
+      expect(box.width).toBe(50)
+      expect(box.height).toBe(50)
+      expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
     })
   })
 

@@ -10,12 +10,14 @@
 # 2.3.2
 - fixed string parsing in viewbox (#483)
 - added specs for `SVG.ViewBox`
+- fixed bbox when element is not in the dom (#480)
+- added `parent` parameter for `clone()`
 
 # 2.3.1 (05/05/2016)
 - fixed `SVG.morph()` (#473)
 - fixed parser error (#471)
 - fixed bug in `SVG.Color` with new fx
-- fixed `radius()` for circles when animating and other related code (#477) 
+- fixed `radius()` for circles when animating and other related code (#477)
 - fixed bug where `stop(true)` throws an error when element is not animated (#475)
 - added typings for svg.js (#470)
 - fixed bug in `add()` when altering svgs with whitespaces
@@ -45,7 +47,7 @@
 - double newlines (\n\n) are correctly handled as blank line from `text()`
 - fixed use of scrollX vs pageXOffset in `rbox()` (#425)
 - fixed target array in mask and clip which was removed instead of reinitialized (#429)
- 
+
 # 2.2.3 (30/11/2015)
 - fixed null check in image (see 2.2.2)
 - fixed bug related to the new path parser (see 2.2.2)

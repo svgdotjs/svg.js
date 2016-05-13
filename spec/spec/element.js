@@ -447,6 +447,11 @@ describe('Element', function() {
       clone = rect.clone()
       expect(rect.next()).toBe(clone)
     })
+    it('inserts the clone in the specided parent', function() {
+      var g = draw.group()
+      clone = rect.clone(g)
+      expect(g.get(0)).toBe(clone)
+    })
   })
 
   describe('toString()', function() {

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Fri May 13 2016 13:28:35 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri May 13 2016 14:01:40 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -992,12 +992,13 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function() {
+  , clone: function(parent) {
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
-      // insert the clone after myself
-      this.after(clone)
+      // insert the clone in the given parent or after myself
+      if(parent) parent.add(clone)
+      else this.after(clone)
 
       return clone
     }
@@ -2023,11 +2024,15 @@ SVG.BBox = SVG.invent({
 
       // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
       try {
+
+        // the element is NOT in the dom, throw error
+        if(!document.contains(element.node)) throw new Exception('Element not in the dom')
+
         // find native bbox
         box = element.node.getBBox()
       } catch(e) {
         if(element instanceof SVG.Shape){
-          var clone = element.clone().addTo(SVG.parser.draw)
+          var clone = element.clone(SVG.parser.draw)
           box = clone.bbox()
           clone.remove()
         }else{
