@@ -9,6 +9,7 @@
 
 # 2.3.2
 - fixed string parsing in viewbox (#483)
+- added specs for `SVG.ViewBox`
 
 # 2.3.1 (05/05/2016)
 - fixed `SVG.morph()` (#473)
