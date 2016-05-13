@@ -2,9 +2,9 @@ describe('Matrix', function() {
   var matrix
 
   describe('initialization', function() {
-    
+
     describe('without a source', function() {
-      
+
       beforeEach(function() {
         matrix = new SVG.Matrix
       })
@@ -57,7 +57,7 @@ describe('Matrix', function() {
           .transform({ rotation: -10 }, true)
           .transform({ x: 40, y: 50 }, true)
           .transform({ scale: 2 }, true)
-          
+
         matrix = new SVG.Matrix(rect)
       })
 
@@ -96,7 +96,7 @@ describe('Matrix', function() {
         })
 
       })
-      
+
     })
 
     describe('with a string given', function() {
@@ -144,7 +144,7 @@ describe('Matrix', function() {
       expect(matrix3.toString()).toBe('matrix(1.5,0,0,3,2,1.5)')
     })
   })
-  
+
   describe('multiply()', function() {
     it('multiplies two matices', function() {
       var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
@@ -259,7 +259,7 @@ describe('Matrix', function() {
     describe('with y given', function() {
       it('performs a flip over the vertical axis with one argument', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y')
-        
+
         expect(matrix.a).toBe(1)
         expect(matrix.d).toBe(-1)
         expect(matrix.e).toBe(4)
@@ -267,7 +267,7 @@ describe('Matrix', function() {
       })
       it('performs a flip over the vertical axis over a given point with two arguments', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y', 100)
-  
+
         expect(matrix.a).toBe(1)
         expect(matrix.d).toBe(-1)
         expect(matrix.e).toBe(4)

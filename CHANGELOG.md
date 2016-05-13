@@ -7,7 +7,10 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.3.1
+# 2.3.2
+- fixed string parsing in viewbox (#483)
+
+# 2.3.1 (05/05/2016)
 - fixed `SVG.morph()` (#473)
 - fixed parser error (#471)
 - fixed bug in `SVG.Color` with new fx

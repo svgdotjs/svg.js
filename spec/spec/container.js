@@ -3,7 +3,7 @@ describe('Container', function() {
   beforeEach(function() {
     draw.clear()
   })
-  
+
   describe('rect()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -23,7 +23,7 @@ describe('Container', function() {
       expect(draw.rect(100,100) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('ellipse()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -43,7 +43,7 @@ describe('Container', function() {
       expect(draw.ellipse(100,100) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('circle()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -63,7 +63,7 @@ describe('Container', function() {
       expect(draw.circle(100) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('line()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -83,7 +83,7 @@ describe('Container', function() {
       expect(draw.line(0,100,100,0) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('polyline()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -103,7 +103,7 @@ describe('Container', function() {
       expect(draw.polyline('0,0 100,0 100,100 0,100') instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('polygon()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -123,7 +123,7 @@ describe('Container', function() {
       expect(draw.polygon('0,0 100,0 100,100 0,100') instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('path()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -143,7 +143,7 @@ describe('Container', function() {
       expect(draw.path(svgPath) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('image()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
@@ -163,7 +163,7 @@ describe('Container', function() {
       expect(draw.image(imageUrl, 100, 100) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('text()', function() {
     it('increases children by 1', function() {
       var initial = draw.children().length
@@ -203,7 +203,7 @@ describe('Container', function() {
       expect(draw.plain(loremIpsum) instanceof SVG.Element).toBe(true)
     })
   })
-  
+
   describe('clear()', function() {
     it('removes all children', function() {
       draw.rect(100,100)
@@ -222,15 +222,15 @@ describe('Container', function() {
       expect(draw.defs().children().length).toBe(0)
     })
   })
-  
+
   describe('each()', function() {
     it('should iterate over all children', function() {
       var children = []
-      
+
       draw.rect(100,100)
       draw.ellipse(100, 100)
       draw.polygon()
-      
+
       draw.each(function() {
         children.push(this.type)
       })
@@ -239,64 +239,36 @@ describe('Container', function() {
     it('should only include the its own children', function() {
       var children = []
         , group = draw.group()
-      
+
       draw.rect(100,200)
       draw.circle(300)
-      
+
       group.rect(100,100)
       group.ellipse(100, 100)
       group.polygon()
-      
+
       group.each(function() {
         children.push(this)
       })
-      
+
       expect(children).toEqual(group.children())
     })
     it('should traverse recursively when set to deep', function() {
       var children = []
         , group = draw.group()
-      
+
       draw.rect(100,200)
       draw.circle(300)
-      
+
       group.rect(100,100)
       group.ellipse(100, 100)
       group.polygon()
-      
+
       draw.each(function() {
         children.push(this)
       }, true)
-      
+
       expect(children.length).toEqual(draw.children().length + group.children().length)
-    })
-  })
-  
-  describe('viewbox()', function() {
-
-    beforeEach(function() {
-      draw.attr('viewBox', null)
-    })
-
-    it('should set the viewbox when four arguments are provided', function() {
-      draw.viewbox(0,0,100,100)
-      expect(draw.node.getAttribute('viewBox')).toBe('0 0 100 100')
-    })
-    it('should set the viewbox when an object is provided as first argument', function() {
-      draw.viewbox({ x: 0, y: 0, width: 50, height: 50 })
-      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
-    })
-    it('should accept negative values', function() {
-      draw.size(100,100).viewbox(-100, -100, 50, 50)
-      expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 50 50')
-    })
-    it('should get the viewbox if no arguments are given', function() {
-      draw.viewbox(0, 0, 100, 100)
-      expect(draw.viewbox()).toEqual(new SVG.ViewBox(draw))
-    })
-    it('should define the zoom of the viewbox in relation to the canvas size', function() {
-      draw.size(100,100).viewbox(0,0,50,50)
-      expect(draw.viewbox().zoom).toEqual(100 / 50)
     })
   })
 
@@ -326,7 +298,7 @@ describe('Container', function() {
       expect(group.has(line)).toBe(true)
     })
   })
-  
+
   describe('index()', function() {
     it('determines the index of given element', function() {
       var rect = draw.rect(100,100)
@@ -340,14 +312,14 @@ describe('Container', function() {
       expect(group.index(line)).toBe(0)
     })
   })
-  
+
   describe('parent()', function() {
     it('returns the parent element instance', function() {
       var rect = draw.rect(100,100)
       expect(rect.parent()).toBe(rect.node.parentNode.instance)
     })
   })
-  
+
 })
 
 

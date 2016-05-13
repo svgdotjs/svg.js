@@ -2,12 +2,12 @@
 SVG.ViewBox = SVG.invent({
 
   create: function(source) {
-    var i, base = [1, 0, 0, 1]
+    var i, base = [0, 0, 0, 0]
 
     var x, y, width, height, box, view, we, he
       , wm   = 1 // width multiplier
       , hm   = 1 // height multiplier
-      , reg  = /-?[\d\.]+/g
+      , reg  = /[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/gi
 
     if(source instanceof SVG.Element){
 
@@ -60,6 +60,7 @@ SVG.ViewBox = SVG.invent({
       }
 
     }else{
+
       // ensure source as object
       source = typeof source === 'string' ?
         source.match(reg).map(function(el){ return parseFloat(el) }) :
@@ -92,7 +93,7 @@ SVG.ViewBox = SVG.invent({
         [].slice.call(arguments)
 
       this.destination = new SVG.ViewBox(v)
-      
+
       return this
 
     }
@@ -108,6 +109,28 @@ SVG.ViewBox = SVG.invent({
       , this.height + (this.destination.height - this.height) * pos
     ])
 
+    }
+
+  }
+
+  // Define parent
+, parent: SVG.Container
+
+  // Add parent method
+, construct: {
+
+    // get/set viewbox
+    viewbox: function(v) {
+      if (arguments.length == 0)
+        // act as a getter if there are no arguments
+        return new SVG.ViewBox(this)
+
+      // otherwise act as a setter
+      v = arguments.length == 1 ?
+        [v.x, v.y, v.width, v.height] :
+        [].slice.call(arguments)
+
+      return this.attr('viewBox', v)
     }
 
   }
