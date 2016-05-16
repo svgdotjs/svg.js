@@ -8,18 +8,7 @@ Svg.js is licensed under the terms of the MIT License.
 
 Want to know more? Check the [documentation](http://documentup.com/wout/SVG.js).
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-  <input type="hidden" name="cmd" value="_donations">
-  <input type="hidden" name="business" value="pay@woutfierens.com">
-  <input type="hidden" name="lc" value="US">
-  <input type="hidden" name="item_name" value="SVG.JS">
-  <input type="hidden" name="no_note" value="0">
-  <input type="hidden" name="currency_code" value="EUR">
-  <input type="hidden" name="bn" value="PP-DonationsBF:btn_donate_74x21.png:NonHostedGuest">
-  <input type="image" src="https://www.paypalobjects.com/webstatic/en_US/btn/btn_donate_74x21.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-  <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
 
 ## Usage
 
