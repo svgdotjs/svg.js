@@ -16,7 +16,7 @@ SVG.Line = SVG.invent({
     }
     // Overwrite native plot() method
   , plot: function(x1, y1, x2, y2) {
-      if (arguments.length == 4)
+      if (typeof y1 !== 'undefined')
         x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
       else 
         x1 = new SVG.PointArray(x1).toLine()

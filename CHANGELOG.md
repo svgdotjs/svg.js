@@ -12,6 +12,8 @@
 - added specs for `SVG.ViewBox`
 - fixed bbox when element is not in the dom (#480)
 - added `parent` parameter for `clone()`
+- fixed line constructor which doesn't work with Array as input (#487)
+- added spec for mentioned issue
 
 # 2.3.1 (05/05/2016)
 - fixed `SVG.morph()` (#473)

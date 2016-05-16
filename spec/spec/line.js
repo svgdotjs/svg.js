@@ -9,6 +9,18 @@ describe('Line', function() {
     draw.clear()
   })
   
+  // #487
+  describe('()', function(){
+    it('will take an array as input', function(){
+      line = draw.line([[0,100],[100,0]])
+      var attrs = line.attr()
+      expect(attrs.x1).toBe(0)
+      expect(attrs.y1).toBe(100)
+      expect(attrs.x2).toBe(100)
+      expect(attrs.y2).toBe(0)
+    })
+  })
+  
   describe('x()', function() {
     it('should return the value of x without an argument', function() {
       expect(line.x()).toBe(0)

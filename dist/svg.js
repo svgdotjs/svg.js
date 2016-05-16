@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Fri May 13 2016 14:01:40 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon May 16 2016 16:59:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4031,7 +4031,7 @@ SVG.Line = SVG.invent({
     }
     // Overwrite native plot() method
   , plot: function(x1, y1, x2, y2) {
-      if (arguments.length == 4)
+      if (typeof y1 !== 'undefined')
         x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
       else
         x1 = new SVG.PointArray(x1).toLine()
