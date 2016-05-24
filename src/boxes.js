@@ -9,7 +9,7 @@ SVG.BBox = SVG.invent({
       try {
 
         // the element is NOT in the dom, throw error
-        if(!document.contains(element.node)) throw new Exception('Element not in the dom')
+        if(!document.body.contains(element.node)) throw new Exception('Element not in the dom')
 
         // find native bbox
         box = element.node.getBBox()
