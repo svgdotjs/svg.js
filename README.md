@@ -4054,7 +4054,7 @@ SVG.extend(SVG.Rect, {
 Once your implementation is ready, revisit and rework it. We like to keep it [DRY](http://en.wikipedia.org/wiki/Don't_repeat_yourself).
 
 ### Test. Your. Code.
-It's not that hard to write at least one example per implementation, although we prefer more. Your code might seem to work by quickly testing it in your brwoser but more than often you can't forsee everything.
+It's not that hard to write at least one example per implementation, although we prefer more. Your code might seem to work by quickly testing it in your browser but more than often you can't forsee everything.
 
 Before running the specs you will need to build the library. Be aware that pull requests without specs will be declined.
 
