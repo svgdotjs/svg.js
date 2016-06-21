@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.3.1
+* @version 2.3.2
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Mon May 16 2016 16:59:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Jun 21 2016 10:02:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2026,7 +2026,7 @@ SVG.BBox = SVG.invent({
       try {
 
         // the element is NOT in the dom, throw error
-        if(!document.contains(element.node)) throw new Exception('Element not in the dom')
+        if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
 
         // find native bbox
         box = element.node.getBBox()
@@ -2795,7 +2795,12 @@ SVG.Transformation = SVG.invent({
     }
 
   , undo: function(o){
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
+      }
+
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
+
       return this
     }
 
