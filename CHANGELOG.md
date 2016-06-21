@@ -14,6 +14,8 @@
 - added `parent` parameter for `clone()`
 - fixed line constructor which doesn't work with Array as input (#487)
 - added spec for mentioned issue
+- fixed problem in IE with `document.contains` (#490) related to (#480)
+- fixed `undo` when undoing transformations (#494)
 
 # 2.3.1 (05/05/2016)
 - fixed `SVG.morph()` (#473)
