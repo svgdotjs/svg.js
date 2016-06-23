@@ -543,7 +543,7 @@ SVG.FX = SVG.invent({
       for(i in s.animations){
 
         at = [].concat(s.animations[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target[i].apply(target, at)
@@ -554,7 +554,7 @@ SVG.FX = SVG.invent({
       for(i in s.attrs){
 
         at = [i].concat(s.attrs[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.attr.apply(target, at)
@@ -565,7 +565,7 @@ SVG.FX = SVG.invent({
       for(i in s.styles){
 
         at = [i].concat(s.styles[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.style.apply(target, at)
