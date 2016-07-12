@@ -38,11 +38,22 @@ SVG.Image = SVG.invent({
           })
       }
 
+      img.onerror = function(e){
+        if (typeof self._error === 'function'){
+            self._error.call(self, e)
+        }
+      }
+
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }
     // Add loaded callback
   , loaded: function(loaded) {
       this._loaded = loaded
+      return this
+    }
+
+  , error: function(error) {
+      this._error = error
       return this
     }
   }
