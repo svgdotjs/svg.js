@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.3.2
+* @version 2.3.3
 * http://www.svgjs.com
 *
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Tue Jun 21 2016 10:02:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Aug 02 2016 18:42:47 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2032,7 +2032,7 @@ SVG.BBox = SVG.invent({
         box = element.node.getBBox()
       } catch(e) {
         if(element instanceof SVG.Shape){
-          var clone = element.clone(SVG.parser.draw)
+          var clone = element.clone(SVG.parser.draw).show()
           box = clone.bbox()
           clone.remove()
         }else{
@@ -4239,11 +4239,22 @@ SVG.Image = SVG.invent({
           })
       }
 
+      img.onerror = function(e){
+        if (typeof self._error === 'function'){
+            self._error.call(self, e)
+        }
+      }
+
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }
     // Add loaded callback
   , loaded: function(loaded) {
       this._loaded = loaded
+      return this
+    }
+
+  , error: function(error) {
+      this._error = error
       return this
     }
   }
@@ -4275,17 +4286,8 @@ SVG.Text = SVG.invent({
 
   // Add class methods
 , extend: {
-    clone: function(){
-      // clone element and assign new id
-      var clone = assignNewId(this.node.cloneNode(true))
-
-      // insert the clone after myself
-      this.after(clone)
-
-      return clone
-    }
     // Move over x-axis
-  , x: function(x) {
+    x: function(x) {
       // act as getter
       if (x == null)
         return this.attr('x')

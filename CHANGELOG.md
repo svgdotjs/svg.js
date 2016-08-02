@@ -7,6 +7,11 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.3.3 (02.08.2016)
+- add error callback on image loading (#508)
+- fixed bug when getting bbox of text elements which are not in the dom (#514) 
+- fixed bug when getting bbox of element which is hidden with css (#516)
+
 # 2.3.2 (21/06/2016)
 - fixed string parsing in viewbox (#483)
 - added specs for `SVG.ViewBox`
