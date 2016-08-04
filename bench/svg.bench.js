@@ -6,6 +6,7 @@
   , _before: function() {}
   , _after:  function() {}
   , draw:    SVG('draw')
+  , snap:    Snap(100, 100)
   , raw:     document.getElementById('native')
 
     // Add test
@@ -57,7 +58,7 @@
   , write: function(name, ms) {
       var test = document.createElement('div')
       test.className = 'test'
-      test.innerHTML = 'Compleded <span class="name">' + name + '</span> in <span class="ms">' + ms + 'ms</span>'
+      test.innerHTML = 'Completed <span class="name">' + name + '</span> in <span class="ms">' + ms + 'ms</span>'
 
       this.pad().appendChild(test)
 
@@ -81,6 +82,7 @@
       while(this.raw.hasChildNodes())
         this.raw.removeChild(this.raw.lastChild)
       this.draw.clear()
+      this.snap.clear()
     }
   }
 
