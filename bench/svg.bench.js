@@ -53,7 +53,7 @@
   , write: function(name, ms) {
       var test = document.createElement('div')
       test.className = 'test'
-      test.innerHTML = 'Compleded "' + name + '"" in ' + ms + 'ms'
+      test.innerHTML = 'Compleded "' + name + '" in ' + ms + 'ms'
 
       this.pad().appendChild(test)
 
