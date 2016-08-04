@@ -57,7 +57,7 @@
   , write: function(name, ms) {
       var test = document.createElement('div')
       test.className = 'test'
-      test.innerHTML = 'Compleded "' + name + '" in ' + ms + 'ms'
+      test.innerHTML = 'Compleded <span class="name">' + name + '</span> in <span class="ms">' + ms + 'ms</span>'
 
       this.pad().appendChild(test)
 
