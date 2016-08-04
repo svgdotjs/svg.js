@@ -31,7 +31,7 @@ SVG.Path = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
       
       return this.attr('d', this.array().size(p.width, p.height))
     }

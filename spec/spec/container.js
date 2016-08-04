@@ -281,7 +281,7 @@ describe('Container', function() {
       expect(draw.get(0)).toBe(rect)
       expect(draw.get(1)).toBe(circle)
       expect(draw.get(2)).toBe(line)
-      expect(draw.get(3)).toBe(undefined)
+      expect(draw.get(3)).toBeNull()
     })
   })
 

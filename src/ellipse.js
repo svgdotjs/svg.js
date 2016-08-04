@@ -80,7 +80,7 @@ SVG.extend(SVG.Circle, SVG.Ellipse, {
     }
     // Custom size function
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this
         .rx(new SVG.Number(p.width).divide(2))

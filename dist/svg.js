@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Tue Aug 02 2016 18:42:47 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu Aug 04 2016 08:57:16 GMT+0200 (CEST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -242,8 +242,8 @@ SVG.regex = {
 }
 
 SVG.utils = {
-    // Map function
-    map: function(array, block) {
+  // Map function
+  map: function(array, block) {
     var i
       , il = array.length
       , result = []
@@ -254,16 +254,31 @@ SVG.utils = {
     return result
   }
 
+  // Filter function
+, filter: function(array, block) {
+    var i
+      , il = array.length
+      , result = []
+
+    for (i = 0; i < il; i++)
+      if (block(array[i]))
+        result.push(array[i])
+
+    return result
+  }
+
   // Degrees to radians
 , radians: function(d) {
     return d % 360 * Math.PI / 180
   }
+
   // Radians to degrees
 , degrees: function(r) {
     return r * 180 / Math.PI % 360
   }
-, filterSVGElements: function(p) {
-    return [].filter.call(p, function(el){ return el instanceof SVGElement })
+
+, filterSVGElements: function(nodes) {
+    return this.filter( nodes, function(el) { return el instanceof SVGElement })
   }
 
 }
@@ -985,7 +1000,7 @@ SVG.Element = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this
         .width(new SVG.Number(p.width))
@@ -2935,13 +2950,10 @@ SVG.Parent = SVG.invent({
     }
     // Add given element at a position
   , add: function(element, i) {
-      if (!this.has(element)) {
-        // define insertion index if none given
-        i = i == null ? this.children().length : i
-
-        // add element references
-        this.node.insertBefore(element.node, SVG.utils.filterSVGElements(this.node.childNodes)[i] || null)
-      }
+      if (i == null)
+        this.node.appendChild(element.node)
+      else if (element.node != this.node.childNodes[i])
+        this.node.insertBefore(element.node, this.node.childNodes[i])
 
       return this
     }
@@ -2956,19 +2968,19 @@ SVG.Parent = SVG.invent({
     }
     // Gets index of given element
   , index: function(element) {
-      return this.children().indexOf(element)
+      return [].slice.call(this.node.childNodes).indexOf(element.node)
     }
     // Get a element at the given index
   , get: function(i) {
-      return this.children()[i]
+      return SVG.adopt(this.node.childNodes[i])
     }
-    // Get first child, skipping the defs node
+    // Get first child
   , first: function() {
-      return this.children()[0]
+      return this.get(0)
     }
     // Get the last child
   , last: function() {
-      return this.children()[this.children().length - 1]
+      return this.get(this.node.childNodes.length - 1)
     }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {
@@ -4011,7 +4023,7 @@ SVG.extend(SVG.Circle, SVG.Ellipse, {
     }
     // Custom size function
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this
         .rx(new SVG.Number(p.width).divide(2))
@@ -4049,7 +4061,7 @@ SVG.Line = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this.attr(this.array().size(p.width, p.height).toLine())
     }
@@ -4112,7 +4124,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
   // Set element size to given width and height
 , size: function(width, height) {
-    var p = proportionalSize(this.bbox(), width, height)
+    var p = proportionalSize(this, width, height)
 
     return this.attr('points', this.array().size(p.width, p.height))
   }
@@ -4176,7 +4188,7 @@ SVG.Path = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this.attr('d', this.array().size(p.width, p.height))
     }
@@ -5113,11 +5125,15 @@ function compToHex(comp) {
 }
 
 // Calculate proportional width and height values when necessary
-function proportionalSize(box, width, height) {
-  if (height == null)
-    height = box.height / box.width * width
-  else if (width == null)
-    width = box.width / box.height * height
+function proportionalSize(element, width, height) {
+  if (width == null || height == null) {
+    var box = element.bbox()
+
+    if (width == null)
+      width = box.width / box.height * height
+    else if (height == null)
+      height = box.height / box.width * width
+  }
 
   return {
     width:  width

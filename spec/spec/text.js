@@ -55,12 +55,12 @@ describe('Text', function() {
     it('sets the value of cx with the first argument', function() {
       text.cx(123)
       var box = text.bbox()
-      expect(box.cx).toBeCloseTo(123)
+      expect(box.cx).toBeCloseTo(123, 0.0001)
     })
     it('sets the value of cx based on the anchor with the first argument', function() {
       text.cx(123, true)
       var box = text.bbox()
-      expect(box.cx).toBeCloseTo(123)
+      expect(box.cx).toBeCloseTo(123, 0.0001)
     })
   })
 
@@ -89,8 +89,8 @@ describe('Text', function() {
     it('sets the cx and cy position', function() {
       text.center(321, 567)
       var box = text.bbox()
-      expect(box.cx).toBeCloseTo(321)
-      expect(box.cy).toBeCloseTo(567, 1)
+      expect(box.cx).toBeCloseTo(321, 0.0001)
+      expect(box.cy).toBeCloseTo(567, 0.0001)
     })
   })
 

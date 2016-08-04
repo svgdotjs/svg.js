@@ -53,7 +53,7 @@ describe('FX', function() {
       var start = fx.situation.start
       expect(fx.at(0.5).pos).toBe(0.5)
       // time is running so we cant compare it directly
-      expect(fx.situation.start).toBeLessThan(start - fx.situation.duration * 0.5 + 1)
+      expect(fx.situation.start).toBeLessThan(start - fx.situation.duration * 0.5 + 1, 0.0001)
       expect(fx.situation.start).toBeGreaterThan(start - fx.situation.duration * 0.5 - 10)
     })
   })
