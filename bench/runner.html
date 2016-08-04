@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG.js benchmarker</title>
+  <style>
+    body {
+      font-family: 'Helvetica Light', Helvetica, sans-serif;
+      font-weight: 300;
+    }
+    #draw {
+      width: 2px;
+      height: 2px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="draw"></div>
+  <script src="../dist/svg.js"></script>
+  <script src="svg.bench.js"></script>
+  <script src="tests/element-creation.js"></script>
+  <script>
+    SVG.bench.run()
+  </script>
+</body>
+</html>
