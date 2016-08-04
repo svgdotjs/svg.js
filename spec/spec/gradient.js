@@ -107,7 +107,7 @@ describe('Gradient', function() {
       })
       expect(gradient.get(0)).toBe(s1)
       expect(gradient.get(1)).toBe(s2)
-      expect(gradient.get(2)).toBe(undefined)
+      expect(gradient.get(2)).toBeNull()
     })
 
   })

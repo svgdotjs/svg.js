@@ -17,13 +17,10 @@ SVG.Parent = SVG.invent({
     }
     // Add given element at a position
   , add: function(element, i) {
-      if (!this.has(element)) {
-        // define insertion index if none given
-        i = i == null ? this.children().length : i
-        
-        // add element references
-        this.node.insertBefore(element.node, SVG.utils.filterSVGElements(this.node.childNodes)[i] || null)
-      }
+      if (i == null)
+        this.node.appendChild(element.node)
+      else if (element.node != this.node.childNodes[i])
+        this.node.insertBefore(element.node, this.node.childNodes[i])
 
       return this
     }
@@ -38,19 +35,19 @@ SVG.Parent = SVG.invent({
     }
     // Gets index of given element
   , index: function(element) {
-      return this.children().indexOf(element)
+      return [].slice.call(this.node.childNodes).indexOf(element.node)
     }
     // Get a element at the given index
   , get: function(i) {
-      return this.children()[i]
+      return SVG.adopt(this.node.childNodes[i])
     }
-    // Get first child, skipping the defs node
+    // Get first child
   , first: function() {
-      return this.children()[0]
+      return this.get(0)
     }
     // Get the last child
   , last: function() {
-      return this.children()[this.children().length - 1]
+      return this.get(this.node.childNodes.length - 1)
     }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {

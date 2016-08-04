@@ -54,7 +54,7 @@ SVG.Element = SVG.invent({
     }
     // Set element size to given width and height
   , size: function(width, height) {
-      var p = proportionalSize(this.bbox(), width, height)
+      var p = proportionalSize(this, width, height)
 
       return this
         .width(new SVG.Number(p.width))

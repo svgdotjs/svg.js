@@ -36,11 +36,15 @@ function compToHex(comp) {
 }
 
 // Calculate proportional width and height values when necessary
-function proportionalSize(box, width, height) {
-  if (height == null)
-    height = box.height / box.width * width
-  else if (width == null)
-    width = box.width / box.height * height
+function proportionalSize(element, width, height) {
+  if (width == null || height == null) {
+    var box = element.bbox()
+    
+    if (width == null)
+      width = box.width / box.height * height
+    else if (height == null)
+      height = box.height / box.width * width
+  }
   
   return {
     width:  width
