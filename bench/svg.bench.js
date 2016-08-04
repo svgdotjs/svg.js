@@ -6,6 +6,7 @@
   , _before: function() {}
   , _after:  function() {}
   , draw:    SVG('draw')
+  , raw:     document.getElementById('native')
 
     // Add test
   , test: function(name, closure) {
@@ -45,7 +46,10 @@
         this.write( this._tests[i].name, ( new Date ).getTime() - s )
 
         // run after
-        this._after(this._tests[i])        
+        this._after(this._tests[i])
+
+        // clear everything
+        this.clear()
       }
     }
 
@@ -70,6 +74,13 @@
       }
 
       return pad
+    }
+
+    // Clear canvasses
+  , clear: function() {
+      while(this.raw.hasChildNodes())
+        this.raw.removeChild(this.raw.lastChild)
+      this.draw.clear()
     }
   }
 
