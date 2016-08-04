@@ -7,6 +7,10 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.3.4 (04.08.2016)
+- reworked parent module for speed improvemenents
+- reworked `filterSVGElements` utility to use and a for loop instead of the native filter function
+
 # 2.3.3 (02.08.2016)
 - add error callback on image loading (#508)
 - fixed bug when getting bbox of text elements which are not in the dom (#514) 
