@@ -22,6 +22,15 @@
     span.ms {
       color: #FF0066;
     }
+    h1 {
+      font-size: 1.2em;
+    }
+    .test {
+      text-indent: 1em;
+    }
+    .skipped {
+      color: #FBCB72;
+    }
   </style>
 </head>
 <body>
@@ -30,7 +39,8 @@
   <script src="../dist/svg.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
   <script src="svg.bench.js"></script>
-  <script src="tests/element-creation.js"></script>
+  <script src="tests/10000-rects.js"></script>
+  <script src="tests/10000-circles.js"></script>
   <script>
     SVG.bench.run()
   </script>

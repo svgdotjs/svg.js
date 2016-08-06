@@ -2,74 +2,75 @@
 
   SVG.bench = {
     // Initalize test store
-    _tests:  []
+    _chain:  []
   , _before: function() {}
   , _after:  function() {}
   , draw:    SVG('draw')
   , snap:    Snap(100, 100)
   , raw:     document.getElementById('native')
 
-    // Add test
-  , test: function(name, closure) {
-      this._tests.push({
+    // Add descriptor
+  , describe: function(name, closure) {
+      this._chain.push({
         name: name
-      , test: closure
+      , run:  closure
       })
 
       return this
     }
 
-    // Set before runner
-  , before: function(closure) {
-      this._before = closure
+    // Add test
+  , test: function(name, run) {
+      // run test
+      var start = ( new Date ).getTime()
+      run()
+      this.write( name, ( new Date ).getTime() - start )
 
-      return this
+      // clear everything
+      this.clear()
     }
 
-    // Set after runner
-  , after: function(closure) {
-      this._after = closure
-
-      return this
+    // Skip test
+  , skip: function(name, run) {
+      this.write( name, false )
     }
 
     // Run tests
   , run: function() {
       this.pad(true)
       
-      for (var s, i = 0, il = this._tests.length; i < il; i++) {
-        // run before
-        this._before(this._tests[i])
+      for (var h, i = 0, il = this._chain.length; i < il; i++) {
+        var h = document.createElement('h1')
+        h.innerHTML = this._chain[i].name
 
-        // run test
-        s = ( new Date ).getTime()
-        this._tests[i].test()
-        this.write( this._tests[i].name, ( new Date ).getTime() - s )
+        this.pad().appendChild(h)
 
-        // run after
-        this._after(this._tests[i])
-
-        // clear everything
-        this.clear()
+        this._chain[i].run(this)
       }
     }
 
     // Write result
   , write: function(name, ms) {
       var test = document.createElement('div')
-      test.className = 'test'
-      test.innerHTML = 'Completed <span class="name">' + name + '</span> in <span class="ms">' + ms + 'ms</span>'
 
+      if (typeof ms === 'number') {
+        test.className = 'test'
+        test.innerHTML = '<span class="name">' + name + '</span> completed in <span class="ms">' + ms + 'ms</span>'
+      } else {
+        test.className = 'test skipped'
+        test.innerHTML = name + ' (skipped)'
+      }
+      
       this.pad().appendChild(test)
 
       return this
     }
 
     // Reference writable element
-  , pad: function(regenerate) {
+  , pad: function() {
       var pad = document.getElementById('pad')
 
-      if (regenerate || !pad) {
+      if (!pad) {
         pad = document.createElement('div')
         document.getElementsByTagName('body')[0].appendChild(pad)
       }
