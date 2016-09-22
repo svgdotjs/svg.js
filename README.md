@@ -3909,6 +3909,9 @@ Here are a few nice plugins that are available for SVG.js:
 ### import
 [svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
 
+### intersections
+[svg.intersections.js](https://github.com/amatiash/svg.intersections.js) find intersections of paths and lines (by amatiash)
+
 ### math
 [svg.math.js](https://github.com/otm/svg.math.js) a math extension (by Nils Lagerkvist).
 
