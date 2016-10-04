@@ -1,4 +1,4 @@
-# SVG.js
+# SVG.js [![Build Status](https://travis-ci.org/dotnetCarpenter/svg.js.svg?branch=unittest)](https://travis-ci.org/dotnetCarpenter/svg.js)
 
 A lightweight library for manipulating and animating SVG.
 
