@@ -1,7 +1,7 @@
 'use strict'
 
 function get(uri) {
-	let xhr = new XMLHttpRequest()
+	var xhr = new XMLHttpRequest()
 	xhr.open('GET', uri, false)
 	xhr.send()
 	if(xhr.status !== 200)
@@ -10,7 +10,7 @@ function get(uri) {
 }
 
 function main() {
-	let style = document.createElement("style")
+	var style = document.createElement("style")
 	document.head.appendChild(style)
 	style.sheet.insertRule( get('/base/spec/fixture.css'), 0 )
 
