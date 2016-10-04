@@ -109,7 +109,7 @@ describe('Point', function() {
 
       expect(point.transform(matrox)).toEqual(new SVG.Point(5,1))
     })
-  }
+  })
 
   describe('native()', function() {
     it('returns native SVGPoint', function() {
