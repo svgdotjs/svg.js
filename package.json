@@ -49,8 +49,7 @@
   "license": "MIT",
   "typings": "./svg.js.d.ts",
   "scripts": {
-    "build": "gulp",
-    "prepublish": "npm run build"
+    "build": "gulp"
   },
   "devDependencies": {
     "del": "^2.2.0",
