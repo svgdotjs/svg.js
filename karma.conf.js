@@ -17,6 +17,11 @@ module.exports = function(config) {
     files: [
       'spec/pretest.js',
       {
+        pattern: 'spec/fixture.css',
+        included: false,
+        served: true
+      },
+      {
         pattern: 'spec/fixture.svg',
         included: false,
         served: true

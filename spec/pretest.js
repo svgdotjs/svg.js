@@ -1,9 +1,20 @@
 'use strict'
 
-var svg, xhr = new XMLHttpRequest()
-xhr.open('GET', '/base/spec/fixture.svg', false)
-xhr.send()
-if(xhr.status !== 200)
-	console.error('SVG fixture could not be loaded. Tests will fail.')
-svg = xhr.responseText
-document.body.innerHTML = svg
+function get(uri) {
+	let xhr = new XMLHttpRequest()
+	xhr.open('GET', uri, false)
+	xhr.send()
+	if(xhr.status !== 200)
+		console.error('SVG.js fixture could not be loaded. Tests will fail.')
+	return xhr.responseText
+}
+
+function main() {
+	let style = document.createElement("style")
+	document.head.appendChild(style)
+	style.sheet.insertRule( get('/base/spec/fixture.css'), 0 )
+
+	document.body.innerHTML = get('/base/spec/fixture.svg')
+}
+
+main()
