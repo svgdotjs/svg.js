@@ -1,8 +1,6 @@
 // Karma configuration
 // Generated on Tue Oct 04 2016 13:53:46 GMT+0200 (CEST)
 
-var pkg = require('./package.json')
-
 module.exports = function(config) {
   config.set({
 
@@ -16,13 +14,15 @@ module.exports = function(config) {
 
 
     // list of files / patterns to load in the browser
-    files: pkg.files.concat([
+    files: [
+      'dist/svg.js',
       'spec/**/*.js'
-    ]),
+    ],
 
 
     // list of files to exclude
     exclude: [
+      'spec/lib/**/*.js'
     ],
 
 
