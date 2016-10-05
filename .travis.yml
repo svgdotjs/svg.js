@@ -5,6 +5,6 @@ script: npm test
 sudo: true
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -y firefox
+    - sudo apt-get install -y chromium
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
