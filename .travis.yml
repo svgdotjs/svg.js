@@ -2,7 +2,7 @@ language: node_js
 node_js:
     - "node"
 script: npm test
-sudo: true
+#sudo: true
 before_install:
     - export CHROME_BIN=chromium-browser
     - export DISPLAY=:99.0
