@@ -50,7 +50,8 @@
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "gulp",
-    "test": "karma start karma.conf.js --single-run"
+    "pretest": "node .config/chrome_linux.js",
+    "test": "karma start .config/karma.conf.js --single-run"
   },
   "devDependencies": {
     "del": "^2.2.0",
