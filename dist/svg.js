@@ -6,8 +6,8 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Wed Oct 05 2016 15:27:51 GMT+0200 (CEST)
-*/
+* BUILT: Wed Oct 12 2016 12:53:00 GMT-0200 (WGST)
+*/;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(function(){
@@ -553,16 +553,28 @@ SVG.extend(SVG.PointArray, {
     // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
-    // split points
-    array = this.split(array)
 
     // parse points
-    for (var i = 0, il = array.length, p, points = []; i < il; i++) {
-      p = array[i].split(',')
-      points.push([parseFloat(p[0]), parseFloat(p[1])])
-    }
+    var points = array.split(/\s|,/)
+
+    // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
+    // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
+    if (points.length % 2 !== 0) points.pop()
+
+    // parse points as floats
+    points = points.map(function(x) { return parseFloat(x) })
+
+    // wrap points in two-tuples
+    points = points.map(wrapPoints()).filter(function(x) { return x })
 
     return points
+
+    function wrapPoints() {
+      var a
+      return function(b, i) {
+        return i % 2 === 0 ? (a = b, null) : [a,b]
+      }
+    }
   }
   // Move point string
 , move: function(x, y) {
