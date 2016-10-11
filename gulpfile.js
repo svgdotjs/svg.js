@@ -22,10 +22,10 @@ var headerLong = ['/*!'
   , '* @license <%= pkg.license %>'
   , '*'
   , '* BUILT: <%= pkg.buildDate %>'
-  , '*/'
+  , '*/;'
   , ''].join('\n')
 
-var headerShort = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.license %>*/'
+var headerShort = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.license %>*/;'
 
 // all files in the right order (currently we don't use any dependency management system)
 var parts = [
