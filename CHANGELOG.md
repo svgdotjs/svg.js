@@ -6,6 +6,9 @@
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
+- added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js)
+- updated dependencies
+- added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
 # 2.3.4 (04.08.2016)
 - reworked parent module for speed improvemenents

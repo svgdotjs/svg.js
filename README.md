@@ -4072,7 +4072,7 @@ $ npm install
 Build SVG.js by running `gulp`:
 
 ``` sh
-$ gulp
+$ npm test
 ```
 
 The resulting files are:
