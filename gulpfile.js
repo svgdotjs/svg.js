@@ -3,7 +3,6 @@ var del     = require('del')
   , chmod   = require('gulp-chmod')
   , concat  = require('gulp-concat')
   , header  = require('gulp-header')
-  , jasmine = require('gulp-jasmine')
   , rename  = require('gulp-rename')
   , size    = require('gulp-size')
   , trim    = require('gulp-trimlines')
@@ -84,8 +83,8 @@ var parts = [
 , 'src/polyfill.js'
 ]
 
-gulp.task('clean', function(cb) {
-  del([ 'dist/*' ], cb);
+gulp.task('clean', function() {
+  return del([ 'dist/*' ])
 })
 
 /**
@@ -142,9 +141,4 @@ gulp.task('docs', function() {
   })
 })
 
-gulp.task('default', ['clean', 'unify', 'minify'], function() {})
-
-
-
-
-
+gulp.task('default', ['clean', 'unify', 'minify'])

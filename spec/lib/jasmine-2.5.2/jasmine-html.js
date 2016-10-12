@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2015 Pivotal Labs
+Copyright (c) 2008-2016 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -209,9 +209,10 @@ jasmineRequire.HtmlReporter = function(j$) {
 
       if (specsExecuted < totalSpecsDefined) {
         var skippedMessage = 'Ran ' + specsExecuted + ' of ' + totalSpecsDefined + ' specs - run all';
+        var skippedLink = order && order.random ? '?random=true' : '?';
         alert.appendChild(
           createDom('span', {className: 'jasmine-bar jasmine-skipped'},
-            createDom('a', {href: '?', title: 'Run all specs'}, skippedMessage)
+            createDom('a', {href: skippedLink, title: 'Run all specs'}, skippedMessage)
           )
         );
       }
@@ -237,13 +238,20 @@ jasmineRequire.HtmlReporter = function(j$) {
 
       alert.appendChild(createDom('span', {className: statusBarClassName}, statusBarMessage, seedBar));
 
-      for(i = 0; i < failedSuites.length; i++) {
+      var errorBarClassName = 'jasmine-bar jasmine-errored';
+      var errorBarMessagePrefix = 'AfterAll ';
+
+      for(var i = 0; i < failedSuites.length; i++) {
         var failedSuite = failedSuites[i];
         for(var j = 0; j < failedSuite.failedExpectations.length; j++) {
-          var errorBarMessage = 'AfterAll ' + failedSuite.failedExpectations[j].message;
-          var errorBarClassName = 'jasmine-bar jasmine-errored';
-          alert.appendChild(createDom('span', {className: errorBarClassName}, errorBarMessage));
+          alert.appendChild(createDom('span', {className: errorBarClassName}, errorBarMessagePrefix + failedSuite.failedExpectations[j].message));
         }
+      }
+
+      var globalFailures = (doneResult && doneResult.failedExpectations) || [];
+      for(i = 0; i < globalFailures.length; i++) {
+        var failure = globalFailures[i];
+        alert.appendChild(createDom('span', {className: errorBarClassName}, errorBarMessagePrefix + failure.message));
       }
 
       var results = find('.jasmine-results');
@@ -309,7 +317,7 @@ jasmineRequire.HtmlReporter = function(j$) {
         setMenuModeTo('jasmine-failure-list');
 
         var failureNode = find('.jasmine-failures');
-        for (var i = 0; i < failures.length; i++) {
+        for (i = 0; i < failures.length; i++) {
           failureNode.appendChild(failures[i]);
         }
       }

@@ -1,5 +1,5 @@
 describe('Adopter', function() {
-  var path
+  var path, polyline, polygon
 
   beforeEach(function() {
     path      = SVG.get('lineAB')
@@ -56,6 +56,6 @@ describe('Adopter', function() {
       expect(desc instanceof SVG.Element).toBeTruthy()
     })
   })
-  
+
 
 })

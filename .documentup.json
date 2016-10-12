@@ -2,7 +2,7 @@
   "twitter": [
     "svg_js"
   ],
-  "travis": false,
+  "travis": true,
   "issues": true,
   "theme":  "v1"
 }
