@@ -2,16 +2,11 @@ language: node_js
 node_js:
     - "node"
 script: npm test
-# sudo is needed to install the newest firefox
-sudo: true
+sudo: required
+dist: trusty
+addons:
+  firefox: "49.0"
 before_install:
-    - firefox -v
-    # install newest firefox
-    - sudo add-apt-repository -y ppa:mozillateam/firefox-next
-    - sudo apt-get update
-    #- sudo apt-get -q update
-    - sudo apt-get install -y firefox
-    - firefox -v
     # Start a display server where all graphical operations happens in memory
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
