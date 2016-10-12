@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Wed Oct 12 2016 18:14:40 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Wed Oct 12 2016 19:19:47 GMT-0200 (WGST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -548,19 +548,23 @@ SVG.extend(SVG.PointArray, {
   }
   // Parse point string
 , parse: function(array) {
+    var points = []
+
     array = array.valueOf()
 
     // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
-    // split points
-    array = this.split(array)
-
     // parse points
-    for (var i = 0, il = array.length, p, points = []; i < il; i++) {
-      p = array[i].split(',')
-      points.push([parseFloat(p[0]), parseFloat(p[1])])
-    }
+    array = array.split(/\s|,/)
+
+    // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
+    // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
+    if (array.length % 2 !== 0) array.pop()
+
+    // wrap points in two-tuples and parse points as floats
+    for(var i = 0, len = array.length; i < len; i = i + 2)
+      points.push([ parseFloat(array[i]), parseFloat(array[i+1]) ])
 
     return points
   }
