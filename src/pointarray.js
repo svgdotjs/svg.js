@@ -55,8 +55,8 @@ SVG.extend(SVG.PointArray, {
     if (array.length % 2 !== 0) array.pop()
 
     // wrap points in two-tuples and parse points as floats
-    for(var i = 0, len = points.length; i < len; i + 2)
-      point.push([ parseFloat(points[i]), parseFloat(points[i+1]) ])
+    for(var i = 0, len = array.length; i < len; i = i + 2)
+      points.push([ parseFloat(array[i]), parseFloat(array[i+1]) ])
 
     return points
   }
