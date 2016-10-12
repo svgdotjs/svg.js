@@ -8,6 +8,7 @@
 
 # 2.3.5
 - calling `fill()`, `stroke()` without an argument is now a nop
+- Polygon now accepts comma less points to achieve parity with Adobe Illustrator.
 - added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js)
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
