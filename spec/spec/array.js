@@ -33,7 +33,7 @@ describe('PointArray', function () {
 
     expect(array + '').toBe('0,0.15 -100,-3.141592654 50,100')
   })
-  it('parses Polygon points string correctly', function() {
+  it('parses points with space delimitered x/y coordinates', function() {
     var array = new SVG.PointArray('221.08 191.79 0.46 191.79 0.46 63.92 63.8 0.46 284.46 0.46 284.46 128.37 221.08 191.79')
 
     expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
