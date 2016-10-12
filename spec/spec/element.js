@@ -585,8 +585,8 @@ describe('Element', function() {
 
         // Test for different browsers namely Firefox and Chrome
         expect(
-            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="SvgjsSvg1001"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
-         || toBeTested === '<svg id="SvgjsSvg1001" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>').toBeTruthy()
+            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="' + draw.id() + '"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
+         || toBeTested === '<svg id="' + draw.id() + '" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>').toBeTruthy()
 
       })
       it('returns partial raw svg when called on a sub group', function() {
