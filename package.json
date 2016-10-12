@@ -1,6 +1,6 @@
 {
   "name": "svg.js",
-  "version": "3.0.0-0",
+  "version": "2.3.4",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "http://svgjs.com",
   "homepage": "http://www.svgjs.com",
