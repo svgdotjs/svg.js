@@ -1,11 +1,8 @@
 describe('Element', function() {
 
   beforeEach(function() {
-    draw.attr('viewBox', null)
-  })
-
-  afterEach(function() {
     draw.clear()
+    draw.attr('viewBox', null)
   })
 
   it('should create a circular reference on the node', function() {
@@ -583,19 +580,35 @@ describe('Element', function() {
       it('returns full raw svg when called on the main svg doc', function() {
         draw.size(100,100).rect(100,100).id(null)
         draw.circle(100).fill('#f06').id(null)
-        expect(draw.svg()).toBe('<svg id="SvgjsSvg1001" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>')
+
+        var toBeTested = draw.svg()
+
+        // Test for different browsers namely Firefox and Chrome
+        expect(
+            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="SvgjsSvg1001"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
+         || toBeTested === '<svg id="SvgjsSvg1001" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>').toBeTruthy()
+
       })
       it('returns partial raw svg when called on a sub group', function() {
         var group = draw.group().id(null)
         group.rect(100,100).id(null)
         group.circle(100).fill('#f06').id(null)
-        expect(group.svg()).toBe('<g><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></g>')
+
+        var toBeTested = group.svg()
+
+        expect(
+            toBeTested === '<g><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></g>'
+         || toBeTested === '<g><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></g>').toBeTruthy()
       })
       it('returns a single element when called on an element', function() {
         var group = draw.group().id(null)
         group.rect(100,100).id(null)
         var circle = group.circle(100).fill('#f06').id(null)
-        expect(circle.svg()).toBe('<circle r="50" cx="50" cy="50" fill="#ff0066"></circle>')
+        var toBeTested = circle.svg()
+
+        expect(
+            toBeTested === '<circle r="50" cx="50" cy="50" fill="#ff0066"></circle>'
+         || toBeTested === '<circle fill="#ff0066" cy="50" cx="50" r="50"></circle>').toBeTruthy()
       })
     })
     describe('with raw svg given', function() {
@@ -617,7 +630,9 @@ describe('Element', function() {
       it('does not import on single elements, even with an argument it acts as a getter', function() {
         var rect   = draw.rect(100,100).id(null)
           , result = rect.svg('<circle r="300"></rect>')
-        expect(result).toBe('<rect width="100" height="100"></rect>')
+        expect(
+            result === '<rect width="100" height="100"></rect>'
+         || result === '<rect height="100" width="100"></rect>').toBeTruthy()
       })
     })
   })
@@ -649,8 +664,15 @@ describe('Element', function() {
   describe('point()', function() {
     it('creates a point from screen coordinates transformed in the elements space', function(){
       var rect = draw.rect(100,100)
-      expect(rect.point(2,5).x).toBeCloseTo(-6)
-      expect(rect.point(2,5).y).toBeCloseTo(-21)
+
+      var m = draw.node.getScreenCTM()
+      // alert([m.a, m.a, m.c, m.d, m.e, m.f].join(', '))
+
+      var translation = {x: m.e, y: m.f}
+      var pos = {x: 2, y:5}
+
+      expect(rect.point(pos.x, pos.y).x).toBeCloseTo(pos.x - translation.x)
+      expect(rect.point(pos.x, pos.y).y).toBeCloseTo(pos.y - translation.y)
     })
   })
 })

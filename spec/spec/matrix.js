@@ -166,11 +166,16 @@ describe('Matrix', function() {
 
   describe('inverse()', function() {
     it('inverses matrix', function() {
+
       var matrix1 = new SVG.Matrix(2, 0, 0, 5, 4, 3)
         , matrix2 = matrix1.inverse()
+        , abcdef = [0.5,0,0,0.2,-2,-0.6]
 
       expect(matrix1.toString()).toBe('matrix(2,0,0,5,4,3)')
-      expect(matrix2.toString()).toBe('matrix(0.5,0,0,0.2,-2,-0.6)')
+
+      for(var i in 'abcdef') {
+        expect(matrix2['abcdef'[i]]).toBeCloseTo(abcdef[i])
+      }
     })
   })
 

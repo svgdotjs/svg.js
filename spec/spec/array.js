@@ -74,7 +74,20 @@ describe('PathArray', function () {
       expect(p2.size(600,200).toString()).toBe('M10 80C45.82089552238806 83.70370370370371 68.2089552238806 83.70370370370371 95.07462686567165 109.62962962962963S229.40298507462686 165.1851851851852 256.2686567164179 139.25925925925927T524.9253731343283 250.37037037037038Q571.4925373134329 254.07407407407408 610 280Z ')
     })
     it('resizes all points in a arc path', function() {
-      expect(p3.size(600,200).toString()).toBe('M80 80A599.9998982747568 199.9999660915856 0 0 0 679.9998982747568 279.99996609158563L679.9998982747568 80Z ')
+      var expected = [
+        ['M', 80, 80],
+        ['A', 600, 200, 0, 0, 0, 680, 280],
+        ['L', 680, 80],
+        ['Z']
+      ]
+
+      var toBeTested = p3.size(600,200).value
+      for(var i in toBeTested) {
+        expect(toBeTested[i].shift().toUpperCase()).toBe(expected[i].shift().toUpperCase())
+        for(var j in toBeTested[i]) {
+          expect(toBeTested[i][j]).toBeCloseTo(expected[i][j])
+        }
+      }
     })
   })
 
