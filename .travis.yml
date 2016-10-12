@@ -5,7 +5,7 @@ script: npm test
 sudo: required
 dist: trusty
 addons:
-  firefox: "49.0"
+  firefox: "latest"
 before_install:
     # Start a display server where all graphical operations happens in memory
     - export DISPLAY=:99.0
