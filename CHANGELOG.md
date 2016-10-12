@@ -1,11 +1,13 @@
 # 3.0.0
-
 - make transform-methods relative as default (breaking change)
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
+
+# 2.3.5
+- calling `fill()`, `stroke()` without an argument is now a nop
 - added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js)
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Wed Oct 12 2016 12:54:20 GMT-0200 (WGST)
+* BUILT: Wed Oct 12 2016 19:19:47 GMT-0200 (WGST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4751,6 +4751,8 @@ var sugar = {
   var i, extension = {}
 
   extension[m] = function(o) {
+    if (typeof o == 'undefined')
+      return this
     if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
       this.attr(m, o)
 

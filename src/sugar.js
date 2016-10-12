@@ -12,6 +12,8 @@ var sugar = {
   var i, extension = {}
 
   extension[m] = function(o) {
+    if (typeof o == 'undefined')
+      return this
     if (typeof o == 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function'))
       this.attr(m, o)
 
