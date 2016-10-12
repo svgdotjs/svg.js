@@ -10,6 +10,9 @@
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
+# 2.3.5
+- calling `fill()`, `stroke()` without an argument is now a nop
+
 # 2.3.4 (04.08.2016)
 - reworked parent module for speed improvemenents
 - reworked `filterSVGElements` utility to use and a for loop instead of the native filter function
