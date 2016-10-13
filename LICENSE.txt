@@ -1,4 +1,4 @@
-Copyright (c) 2012-2014 Wout Fierens
+Copyright (c) 2012-2016 Wout Fierens
 http://svgjs.com/
 
 Permission is hereby granted, free of charge, to any person obtaining
