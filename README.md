@@ -1839,8 +1839,8 @@ This will return an instance of `SVG.BBox` containing the following values:
 The `SVG.BBox` has one other nifty little feature, enter the `merge()` method. With `merge()` two `SVG.BBox` instances can be merged into one new instance, basically being the bounding box of the two original bounding boxes:
 
 ```javascript
-var box1 = draw.rect(100,100).move(50,50)
-var box2 = draw.rect(100,100).move(200,200)
+var box1 = draw.rect(100,100).move(50,50).bbox()
+var box2 = draw.rect(100,100).move(200,200).bbox()
 var box3 = box1.merge(box2)
 ```
 
