@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Thu Oct 13 2016 17:32:45 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat Oct 15 2016 19:45:15 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1556,10 +1556,12 @@ SVG.FX = SVG.invent({
     }
     // Make loopable
   , loop: function(times, reverse) {
-      // store current loop and total loops
-      this.situation.loop = this.situation.loops = times || true
+      var c = this.last()
 
-      if(reverse) this.last().reversing = true
+      // store current loop and total loops
+      c.loop = c.loops = times || true
+
+      if(reverse) c.reversing = true
       return this
     }
 
@@ -2034,6 +2036,7 @@ SVG.extend(SVG.FX, {
     return this
   }
 })
+
 SVG.BBox = SVG.invent({
   // Initialize
   create: function(element) {

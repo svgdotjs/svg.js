@@ -341,10 +341,12 @@ SVG.FX = SVG.invent({
     }
     // Make loopable
   , loop: function(times, reverse) {
-      // store current loop and total loops
-      this.situation.loop = this.situation.loops = times || true
+      var c = this.last()
 
-      if(reverse) this.last().reversing = true
+      // store current loop and total loops
+      c.loop = c.loops = times || true
+
+      if(reverse) c.reversing = true
       return this
     }
 
