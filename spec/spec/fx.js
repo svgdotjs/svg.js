@@ -251,6 +251,158 @@ describe('FX', function() {
     })
   })
 
+  describe('loop()', function() {
+    it('should create an eternal loop when no arguments are given', function(done) {
+      fx.loop()
+      expect(fx.situation.loop).toBe(true)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.start()
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(true)
+        expect(fx.situation.loops).toBe(true)
+        expect(fx.pos).toBeCloseTo(0.6, 1)
+        done()
+      }, 800)
+    })
+
+    it('should create an eternal loop when the first argument is true', function(done) {
+      fx.loop(true)
+      expect(fx.situation.loop).toBe(true)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.start()
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(true)
+        expect(fx.situation.loops).toBe(true)
+        expect(fx.pos).toBeCloseTo(0.3, 1)
+        done()
+      }, 650)
+    })
+
+    it('should loop for the specified number of times', function(done) {
+      fx.loop(3)
+      expect(fx.situation.loop).toBe(3)
+      expect(fx.situation.loops).toBe(3)
+
+      fx.start()
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(3)
+        expect(fx.situation.loops).toBe(3)
+        expect(fx.pos).toBeCloseTo(0.4, 1)
+      }, 200)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(2)
+        expect(fx.situation.loops).toBe(3)
+        expect(fx.pos).toBeCloseTo(0.5, 1)
+      }, 750)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(1)
+        expect(fx.situation.loops).toBe(3)
+        expect(fx.pos).toBeCloseTo(0.64, 1)
+      }, 1320)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(false)
+        expect(fx.situation).toBeNull()
+        expect(fx.pos).toBe(1)
+        done()
+      }, 1600)
+    })
+
+    it('should go from beginning to end and start over again (0->1.0->1.0->1.) by default', function(done) {
+      fx.loop(2)
+      expect(fx.situation.loop).toBe(2)
+      expect(fx.situation.loops).toBe(2)
+      expect(fx.situation.reversing).toBe(false)
+      expect(fx.situation.reversed).toBe(false)
+
+      fx.start()
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(2)
+        expect(fx.situation.loops).toBe(2)
+        expect(fx.situation.reversing).toBe(false)
+        expect(fx.situation.reversed).toBe(false)
+        expect(fx.pos).toBeCloseTo(0.65, 1)
+      }, 325)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(1)
+        expect(fx.situation.loops).toBe(2)
+        expect(fx.situation.reversing).toBe(false)
+        expect(fx.situation.reversed).toBe(false)
+        expect(fx.pos).toBeCloseTo(0.8, 1)
+      }, 900)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(false)
+        expect(fx.situation).toBeNull()
+        expect(fx.pos).toBe(1)
+        done()
+      }, 1100)
+    })
+
+    it('should be completely reversed before starting over (0->1->0->1->0->1.) when the reverse flag is passed', function(done) {
+      fx.loop(2, true)
+      expect(fx.situation.loop).toBe(2)
+      expect(fx.situation.loops).toBe(2)
+      expect(fx.situation.reversing).toBe(true)
+      expect(fx.situation.reversed).toBe(false)
+
+      fx.start()
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(2)
+        expect(fx.situation.loops).toBe(2)
+        expect(fx.situation.reversing).toBe(true)
+        expect(fx.situation.reversed).toBe(false)
+        expect(fx.pos).toBeCloseTo(0.65, 1)
+      }, 325)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situation.loop).toBe(1)
+        expect(fx.situation.loops).toBe(2)
+        expect(fx.situation.reversing).toBe(true)
+        expect(fx.situation.reversed).toBe(true)
+        expect(fx.pos).toBeCloseTo(0.2, 1)
+      }, 900)
+
+      setTimeout(function(){
+        expect(fx.active).toBe(false)
+        expect(fx.situation).toBeNull()
+        expect(fx.pos).toBe(0)
+        done()
+      }, 1100)
+    })
+
+    it('should be applied on the last situation', function() {
+      fx.loop(5)
+      expect(fx.situation.loop).toBe(5)
+      expect(fx.situation.loops).toBe(5)
+      expect(fx.situation.reversing).toBe(false)
+
+      fx.animate().loop(3, true)
+      expect(fx.situation.loop).toBe(5)
+      expect(fx.situation.loops).toBe(5)
+      expect(fx.situation.reversing).toBe(false)
+
+      var c = fx.last()
+      expect(c.loop).toBe(3)
+      expect(c.loops).toBe(3)
+      expect(c.reversing).toBe(true)
+    })
+  })
+
   it('animates the x/y-attr', function(done) {
 
     fx.move(200,200).after(function(){
