@@ -6,18 +6,21 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.3.5
+# 2.3.6
+- make SVG.FX.loop modify the last situation instead of the current one (#532)
+
+# 2.3.5 (13/10/2016)
 - calling `fill()`, `stroke()` without an argument is now a nop
 - Polygon now accepts comma less points to achieve parity with Adobe Illustrator.
 - added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js)
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
-# 2.3.4 (04.08.2016)
+# 2.3.4 (04/08/2016)
 - reworked parent module for speed improvemenents
 - reworked `filterSVGElements` utility to use and a for loop instead of the native filter function
 
-# 2.3.3 (02.08.2016)
+# 2.3.3 (02/08/2016)
 - add error callback on image loading (#508)
 - fixed bug when getting bbox of text elements which are not in the dom (#514) 
 - fixed bug when getting bbox of element which is hidden with css (#516)
