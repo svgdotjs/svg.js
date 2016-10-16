@@ -170,7 +170,7 @@ describe('FX', function() {
 
   describe('afterAll()', function() {
     it('adds a callback which is called when all animations are finished', function(done) {
-      fx.start().after(function(){
+      fx.animate(150).animate(125).start().afterAll(function(){
         expect(fx.pos).toBe(1)
         expect(fx.situations.length).toBe(0)
         done()
