@@ -92,7 +92,11 @@ describe('FX', function() {
 
       expect(fx.speed(2).situation.duration).toBe(250)
       expect(fx.speed(0.5).situation.duration).toBe(500)
-      expect(fx.at(0.2).speed(2).situation.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
+      expect(fx.at(0.2).speed(2).situation.duration).toBe(250)
+    })
+
+    it('should not change the position when the animation is run backward', function(){
+      expect(fx.at(0.4).reverse(true).speed(2).pos).toBe(0.4)
     })
   })
 
