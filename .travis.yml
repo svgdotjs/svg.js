@@ -1,9 +1,11 @@
 language: node_js
 node_js:
-    - "node"
-script: npm test
-sudo: required
-dist: trusty
+    - "stable"
+script:
+    - npm run build
+    - npm test
+#sudo: required
+#dist: trusty
 addons:
   firefox: "latest"
 before_install:
