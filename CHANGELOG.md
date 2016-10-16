@@ -8,11 +8,12 @@
 
 # 2.3.6
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
+- fixed test of `SVG.FX.afterAll` (#534)
 
 # 2.3.5 (13/10/2016)
 - calling `fill()`, `stroke()` without an argument is now a nop
-- Polygon now accepts comma less points to achieve parity with Adobe Illustrator.
-- added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js)
+- Polygon now accepts comma less points to achieve parity with Adobe Illustrator (#529)
+- added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js) (#527)
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
