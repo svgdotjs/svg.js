@@ -4072,7 +4072,7 @@ $ npm install
 Build SVG.js by running `gulp`:
 
 ``` sh
-$ npm test
+$ npm run build
 ```
 
 The resulting files are:
@@ -4080,6 +4080,16 @@ The resulting files are:
 1. `dist/svg.js`
 2. `dist/svg.min.js`
 
+## Testing
+There is two ways to run the test suite. One is from the command line and the other is in your browser.
+To run the test suit at the command line, you need to have Firefox installed.
+
+```sh
+$ npm test
+```
+
+To run the test suite in your browser, you need to serve the root project folder with an HTTP server like [ecstatic](https://github.com/jfhbrook/node-ecstatic) or [Apache](https://httpd.apache.org/).
+Navigate to `/spec/SpecRunner.htm` to run the tests.
 
 ## Compatibility
 
