@@ -115,7 +115,7 @@ SVG.FX = SVG.invent({
 
     /**
      * sets or returns the target of this animation
-     * @param null || target SVG.Elemenet which should be set as new target
+     * @param null || target SVG.Element which should be set as new target
      * @return target || this
      */
   , target: function(target){
@@ -335,7 +335,11 @@ SVG.FX = SVG.invent({
       return this.step(true)
     }
 
-    // set/get the speed of the animation
+    /**
+     * sets or returns the speed of the animations
+     * @param spd null || Number The new speed of the animations
+     * @return Number || this
+     */
   , speed: function(spd){
       if (spd === 0) return this.pause()
 
@@ -665,6 +669,16 @@ SVG.FX = SVG.invent({
   , play: function() {
       if (this.fx)
         this.fx.play()
+
+      return this
+    }
+    // Set/Get the speed of the animations
+  , speed: function(spd) {
+      if (this.fx)
+        if (spd == null)
+          return this.fx.speed()
+        else
+          this.fx.speed(spd)
 
       return this
     }
