@@ -13,7 +13,7 @@ describe('FX', function() {
     expect(fx.lastPos).toBe(0)
     expect(fx.paused).toBeFalsy()
     expect(fx.active).toBeFalsy()
-    expect(fx.spd).toBe(1)
+    expect(fx._speed).toBe(1)
     expect(fx.situations).toEqual([])
     expect(fx.situation.init).toBeFalsy()
     expect(fx.situation.reversed).toBeFalsy()
@@ -150,22 +150,22 @@ describe('FX', function() {
 
       spd = 2
       fx.speed(spd)
-      expect(fx.spd).toBe(spd)
+      expect(fx._speed).toBe(spd)
       expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
 
       spd = 0.5
       fx.speed(spd)
-      expect(fx.spd).toBe(spd)
+      expect(fx._speed).toBe(spd)
       expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
 
       spd = 2
       fx.at(0.2).speed(spd)
-      expect(fx.spd).toBe(spd)
+      expect(fx._speed).toBe(spd)
       expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
 
       spd = 1
       fx.speed(spd)
-      expect(fx.spd).toBe(spd)
+      expect(fx._speed).toBe(spd)
       expect(fx.situation.finish-fx.situation.start).toBe(dur)
     })
 
@@ -179,23 +179,23 @@ describe('FX', function() {
       var spd
 
       spd = 2
-      fx.speed(spd)
+      fx._speed = spd
       expect(fx.speed()).toBe(spd)
 
       spd = 0.5
-      fx.speed(spd)
+      fx._speed = spd
       expect(fx.speed()).toBe(spd)
 
       spd = 1
-      fx.speed(spd)
+      fx._speed = spd
       expect(fx.speed()).toBe(spd)
     })
 
     it('pause the animation when a speed of 0 is passed', function(){
-      var spd = fx.speed()
+      var spd = fx._speed
 
       expect(fx.speed(0)).toBe(fx)
-      expect(fx.speed()).toBe(spd)
+      expect(fx._speed).toBe(spd)
       expect(fx.paused).toBe(true)
     })
 

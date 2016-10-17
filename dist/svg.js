@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Mon Oct 17 2016 16:23:17 GMT-0400 (EDT)
+* BUILT: Mon Oct 17 2016 19:18:57 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1286,7 +1286,7 @@ SVG.FX = SVG.invent({
     this.paused = false
     this.lastPos = 0
     this.pos = 0
-    this.spd = 1
+    this._speed = 1
   }
 
 , extend: {
@@ -1344,12 +1344,12 @@ SVG.FX = SVG.invent({
 
     // returns the position at a given time
   , timeToPos: function(timestamp){
-      return (timestamp - this.situation.start) / (this.situation.duration/this.spd)
+      return (timestamp - this.situation.start) / (this.situation.duration/this._speed)
     }
 
     // returns the timestamp from a given positon
   , posToTime: function(pos){
-      return this.situation.duration/this.spd * pos + this.situation.start
+      return this.situation.duration/this._speed * pos + this.situation.start
     }
 
     // starts the animationloop
@@ -1368,7 +1368,7 @@ SVG.FX = SVG.invent({
       // dont start if already started
       if(!this.active && this.situation){
         this.situation.start = +new Date + this.situation.delay
-        this.situation.finish = this.situation.start + this.situation.duration/this.spd
+        this.situation.finish = this.situation.start + this.situation.duration/this._speed
 
         this.initAnimations()
         this.active = true
@@ -1542,7 +1542,7 @@ SVG.FX = SVG.invent({
 
     // set the internal animation pointer to the specified position and updates the visualisation
   , at: function(pos){
-      var durDivSpd = this.situation.duration/this.spd
+      var durDivSpd = this.situation.duration/this._speed
 
       this.pos = pos
       this.situation.start = +new Date - pos * durDivSpd
@@ -1552,16 +1552,16 @@ SVG.FX = SVG.invent({
 
     /**
      * sets or returns the speed of the animations
-     * @param spd null || Number The new speed of the animations
+     * @param speed null || Number The new speed of the animations
      * @return Number || this
      */
-  , speed: function(spd){
-      if (spd === 0) return this.pause()
+  , speed: function(speed){
+      if (speed === 0) return this.pause()
 
-      if (spd) {
-        this.spd = spd
+      if (speed) {
+        this._speed = speed
         return this.at(this.situation.reversed ? 1-this.pos : this.pos)
-      } else return this.spd
+      } else return this._speed
     }
 
     // Make loopable
@@ -1888,12 +1888,12 @@ SVG.FX = SVG.invent({
       return this
     }
     // Set/Get the speed of the animations
-  , speed: function(spd) {
+  , speed: function(speed) {
       if (this.fx)
-        if (spd == null)
+        if (speed == null)
           return this.fx.speed()
         else
-          this.fx.speed(spd)
+          this.fx.speed(speed)
 
       return this
     }
