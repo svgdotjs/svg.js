@@ -39,7 +39,7 @@ describe('FX', function() {
 
   describe('timeToPos()', function() {
     it('converts a timestamp to a progress', function() {
-      expect(fx.timeToPos(fx.situation.start+fx.situation.duration/2)).toBe(0.5)
+      expect(fx.timeToPos( fx.situation.start + fx.situation.duration*0.5 )).toBe(0.5)
     })
 
     it('should take speed into consideration', function() {
@@ -47,17 +47,17 @@ describe('FX', function() {
 
       spd = 4
       fx.speed(spd)
-      expect(fx.timeToPos(fx.situation.start+(fx.situation.duration/spd)/2)).toBe(0.5)
+      expect(fx.timeToPos( fx.situation.start + (fx.situation.duration/spd)*0.5 )).toBe(0.5)
 
       spd = 0.5
       fx.speed(spd)
-      expect(fx.timeToPos(fx.situation.start+(fx.situation.duration/spd)/4)).toBe(0.25)
+      expect(fx.timeToPos( fx.situation.start + (fx.situation.duration/spd)*0.25 )).toBe(0.25)
     })
   })
 
   describe('posToTime()', function() {
     it('converts a progress to a timestamp', function() {
-      expect(fx.posToTime(0.5)).toBe(fx.situation.start+fx.situation.duration/2)
+      expect(fx.posToTime(0.5)).toBe( fx.situation.start + fx.situation.duration*0.5 )
     })
 
     it('should take speed into consideration', function() {
@@ -65,11 +65,11 @@ describe('FX', function() {
 
       spd = 4
       fx.speed(spd)
-      expect(fx.posToTime(0.5)).toBe(fx.situation.start+(fx.situation.duration/spd)/2)
+      expect(fx.posToTime(0.5)).toBe( fx.situation.start + (fx.situation.duration/spd)*0.5 )
 
       spd = 0.5
       fx.speed(spd)
-      expect(fx.posToTime(0.25)).toBe(fx.situation.start+(fx.situation.duration/spd)/4)
+      expect(fx.posToTime(0.25)).toBe( fx.situation.start + (fx.situation.duration/spd)*0.25 )
     })
   })
 
