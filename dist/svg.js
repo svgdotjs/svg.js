@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sun Oct 16 2016 20:20:34 GMT-0400 (EDT)
+* BUILT: Mon Oct 17 2016 14:13:08 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1552,6 +1552,8 @@ SVG.FX = SVG.invent({
 
     // set/get the speed of the animation
   , speed: function(spd){
+      if (spd === 0) return this.pause()
+
       if (spd) {
         this.spd = spd
         return this.at(this.situation.reversed ? 1-this.pos : this.pos)

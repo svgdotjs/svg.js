@@ -337,6 +337,8 @@ SVG.FX = SVG.invent({
 
     // set/get the speed of the animation
   , speed: function(spd){
+      if (spd === 0) return this.pause()
+
       if (spd) {
         this.spd = spd
         return this.at(this.situation.reversed ? 1-this.pos : this.pos)

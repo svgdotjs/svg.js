@@ -148,11 +148,16 @@ describe('FX', function() {
       fx.speed(0.5)
       expect(fx.speed()).toBe(0.5)
 
-      fx.speed(0)
-      expect(fx.speed()).toBe(0.5)
-
       fx.speed(1)
       expect(fx.speed()).toBe(1)
+    })
+
+    it('pause the animation when a speed of 0 is passed', function(){
+      var currentSpeed = fx.speed()
+
+      expect(fx.speed(0)).toBe(fx)
+      expect(fx.speed()).toBe(currentSpeed)
+      expect(fx.paused).toBe(true)
     })
 
     it('should affect all animations in the queue', function(done){
