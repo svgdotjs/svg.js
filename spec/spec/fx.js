@@ -13,6 +13,7 @@ describe('FX', function() {
     expect(fx.lastPos).toBe(0)
     expect(fx.paused).toBeFalsy()
     expect(fx.active).toBeFalsy()
+    expect(fx.spd).toBe(1)
     expect(fx.situations).toEqual([])
     expect(fx.situation.init).toBeFalsy()
     expect(fx.situation.reversed).toBeFalsy()
@@ -40,11 +41,25 @@ describe('FX', function() {
     it('converts a timestamp to a progress', function() {
       expect(fx.timeToPos(fx.situation.start+fx.situation.duration/2)).toBe(0.5)
     })
+
+    it('should take speed into consideration', function() {
+      fx.speed(4)
+      expect(fx.timeToPos(fx.situation.start+fx.situation.duration/4/2)).toBe(0.5)
+      fx.speed(0.5)
+      expect(fx.timeToPos(fx.situation.start+fx.situation.duration/0.5/4)).toBe(0.25)
+    })
   })
 
   describe('posToTime()', function() {
     it('converts a progress to a timestamp', function() {
       expect(fx.posToTime(0.5)).toBe(fx.situation.start+fx.situation.duration/2)
+    })
+
+    it('should take speed into consideration', function() {
+      fx.speed(4)
+      expect(fx.posToTime(0.5)).toBe(fx.situation.start+fx.situation.duration/4/2)
+      fx.speed(0.5)
+      expect(fx.posToTime(0.25)).toBe(fx.situation.start+fx.situation.duration/0.5/4)
     })
   })
 
@@ -55,6 +70,17 @@ describe('FX', function() {
       // time is running so we cant compare it directly
       expect(fx.situation.start).toBeLessThan(start - fx.situation.duration * 0.5 + 1, 0.0001)
       expect(fx.situation.start).toBeGreaterThan(start - fx.situation.duration * 0.5 - 10)
+    })
+
+    it('should take speed into consideration', function() {
+      fx.speed(4).at(0)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/4)
+      fx.speed(5).at(0.75)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/5)
+      fx.speed(0.25).at(0.75)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/0.25)
+      fx.speed(0.5).at(0.83)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/0.5)
     })
   })
 
@@ -67,6 +93,11 @@ describe('FX', function() {
         expect(fx.pos).toBeGreaterThan(0)
         done()
       }, 200)
+    })
+
+    it('should take speed into consideration', function() {
+      fx.speed(4).start()
+      expect(fx.situation.finish-fx.situation.start).toBe(500/4)
     })
   })
 
@@ -88,11 +119,59 @@ describe('FX', function() {
   })
 
   describe('speed()', function() {
-    it('speeds up the animation by the given factor', function(){
+    it('set the speed of the animation', function(){
+      fx.speed(2)
+      expect(fx.spd).toBe(2)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/2)
 
-      expect(fx.speed(2).situation.duration).toBe(250)
-      expect(fx.speed(0.5).situation.duration).toBe(500)
-      expect(fx.at(0.2).speed(2).situation.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
+      fx.speed(0.5)
+      expect(fx.spd).toBe(0.5)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/0.5)
+
+      fx.at(0.2).speed(2)
+      expect(fx.spd).toBe(2)
+      expect(fx.situation.finish-fx.situation.start).toBe(500/2)
+
+      fx.speed(1)
+      expect(fx.spd).toBe(1)
+      expect(fx.situation.finish-fx.situation.start).toBe(500)
+    })
+
+    it('should not change the position when the animation is run backward', function(){
+      expect(fx.at(0.4).reverse(true).speed(2).pos).toBe(0.4)
+    })
+
+    it('return the current speed with no argument given', function(){
+      fx.speed(2)
+      expect(fx.speed()).toBe(2)
+
+      fx.speed(0.5)
+      expect(fx.speed()).toBe(0.5)
+
+      fx.speed(0)
+      expect(fx.speed()).toBe(0.5)
+
+      fx.speed(1)
+      expect(fx.speed()).toBe(1)
+    })
+
+    it('should affect all animations in the queue', function(done){
+      fx.speed(2).animate(300).start()
+      expect(fx.situations.length).not.toBe(0)
+      expect(fx.pos).not.toBe(1)
+
+      setTimeout(function(){
+        expect(fx.active).toBeTruthy()
+        expect(fx.situations.length).toBe(0)
+        expect(fx.pos).not.toBe(1)
+      }, 300)
+
+      setTimeout(function(){
+        expect(fx.active).toBeFalsy()
+        expect(fx.situations.length).toBe(0)
+        expect(fx.pos).toBe(1)
+        done()
+      }, 450)
     })
   })
 
