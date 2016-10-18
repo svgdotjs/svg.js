@@ -13,6 +13,7 @@ describe('FX', function() {
     expect(fx.lastPos).toBe(0)
     expect(fx.paused).toBeFalsy()
     expect(fx.active).toBeFalsy()
+    expect(fx._speed).toBe(1)
     expect(fx.situations).toEqual([])
     expect(fx.situation.init).toBeFalsy()
     expect(fx.situation.reversed).toBeFalsy()
@@ -38,13 +39,37 @@ describe('FX', function() {
 
   describe('timeToPos()', function() {
     it('converts a timestamp to a progress', function() {
-      expect(fx.timeToPos(fx.situation.start+fx.situation.duration/2)).toBe(0.5)
+      expect(fx.timeToPos( fx.situation.start + fx.situation.duration*0.5 )).toBe(0.5)
+    })
+
+    it('should take speed into consideration', function() {
+      var spd
+
+      spd = 4
+      fx.speed(spd)
+      expect(fx.timeToPos( fx.situation.start + (fx.situation.duration/spd)*0.5 )).toBe(0.5)
+
+      spd = 0.5
+      fx.speed(spd)
+      expect(fx.timeToPos( fx.situation.start + (fx.situation.duration/spd)*0.25 )).toBe(0.25)
     })
   })
 
   describe('posToTime()', function() {
     it('converts a progress to a timestamp', function() {
-      expect(fx.posToTime(0.5)).toBe(fx.situation.start+fx.situation.duration/2)
+      expect(fx.posToTime(0.5)).toBe( fx.situation.start + fx.situation.duration*0.5 )
+    })
+
+    it('should take speed into consideration', function() {
+      var spd
+
+      spd = 4
+      fx.speed(spd)
+      expect(fx.posToTime(0.5)).toBe( fx.situation.start + (fx.situation.duration/spd)*0.5 )
+
+      spd = 0.5
+      fx.speed(spd)
+      expect(fx.posToTime(0.25)).toBe( fx.situation.start + (fx.situation.duration/spd)*0.25 )
     })
   })
 
@@ -55,6 +80,28 @@ describe('FX', function() {
       // time is running so we cant compare it directly
       expect(fx.situation.start).toBeLessThan(start - fx.situation.duration * 0.5 + 1, 0.0001)
       expect(fx.situation.start).toBeGreaterThan(start - fx.situation.duration * 0.5 - 10)
+    })
+
+    it('should take speed into consideration', function() {
+      var dur, spd
+
+      dur = fx.situation.duration
+
+      spd = 4
+      fx.speed(spd).at(0)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 5
+      fx.speed(spd).at(0.15)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 0.25
+      fx.speed(spd).at(0.75)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 0.5
+      fx.speed(spd).at(0.83)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
     })
   })
 
@@ -67,6 +114,14 @@ describe('FX', function() {
         expect(fx.pos).toBeGreaterThan(0)
         done()
       }, 200)
+    })
+
+    it('should take speed into consideration', function() {
+      var dur = fx.situation.duration
+        , spd = 4
+
+      fx.speed(spd).start()
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
     })
   })
 
@@ -88,11 +143,88 @@ describe('FX', function() {
   })
 
   describe('speed()', function() {
-    it('speeds up the animation by the given factor', function(){
+    it('set the speed of the animation', function(){
+      var dur, spd
 
-      expect(fx.speed(2).situation.duration).toBe(250)
-      expect(fx.speed(0.5).situation.duration).toBe(500)
-      expect(fx.at(0.2).speed(2).situation.duration).toBe(0.2 * 500 + 0.8 * 500 / 2)
+      dur = fx.situation.duration
+
+      spd = 2
+      fx.speed(spd)
+      expect(fx._speed).toBe(spd)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 0.5
+      fx.speed(spd)
+      expect(fx._speed).toBe(spd)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 2
+      fx.at(0.2).speed(spd)
+      expect(fx._speed).toBe(spd)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur/spd)
+
+      spd = 1
+      fx.speed(spd)
+      expect(fx._speed).toBe(spd)
+      expect(fx.situation.finish-fx.situation.start).toBe(dur)
+    })
+
+    it('should not change the position when the animation is run backward', function(){
+      var pos = 0.4
+
+      expect(fx.at(pos).reverse(true).speed(2).pos).toBe(pos)
+    })
+
+    it('return the current speed with no argument given', function(){
+      var spd
+
+      spd = 2
+      fx._speed = spd
+      expect(fx.speed()).toBe(spd)
+
+      spd = 0.5
+      fx._speed = spd
+      expect(fx.speed()).toBe(spd)
+
+      spd = 1
+      fx._speed = spd
+      expect(fx.speed()).toBe(spd)
+    })
+
+    it('pause the animation when a speed of 0 is passed', function(){
+      var spd = fx._speed
+
+      expect(fx.speed(0)).toBe(fx)
+      expect(fx._speed).toBe(spd)
+      expect(fx.paused).toBe(true)
+    })
+
+    it('should affect all animations in the queue', function(done){
+      fx.speed(2).animate(300)
+      expect(fx.situations.length).not.toBe(0)
+      expect(fx.pos).not.toBe(1)
+
+      // At this point, there should be 2 animations in the queue to be played:
+      // the one of 500ms that is added before every test and the one of 300ms
+      // we just added. Normally, it would take 800ms before both of these
+      // animations are done, but because we set the speed to 2, it should
+      // only take 400ms to do both animations.
+      fx.start()
+
+      // We expect this timeout to happen while the second animation is running
+      setTimeout(function(){
+        expect(fx.active).toBe(true)
+        expect(fx.situations.length).toBe(0)
+        expect(fx.pos).not.toBe(1)
+      }, 300)
+
+      // Here, we expect that all the animations are done
+      setTimeout(function(){
+        expect(fx.active).toBe(false)
+        expect(fx.situations.length).toBe(0)
+        expect(fx.pos).toBe(1)
+        done()
+      }, 450)
     })
   })
 
