@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Sat Oct 15 2016 19:45:15 GMT-0400 (EDT)
+* BUILT: Sun Oct 16 2016 01:24:13 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1550,9 +1550,8 @@ SVG.FX = SVG.invent({
     // speeds up the animation by the given factor
     // this changes the duration of the animation
   , speed: function(speed){
-      this.situation.duration = this.situation.duration * this.pos + (1-this.pos) * this.situation.duration / speed
-      this.situation.finish = this.situation.start + this.situation.duration
-      return this.at(this.pos)
+      this.situation.duration = this.situation.duration / speed
+      return this.at(this.situation.reversed ? 1-this.pos : this.pos)
     }
     // Make loopable
   , loop: function(times, reverse) {
