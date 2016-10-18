@@ -9,6 +9,7 @@
 # 2.3.6
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
 - fixed test of `SVG.FX.afterAll` (#534)
+- fixed `SVG.FX.speed()` (#536)
 
 # 2.3.5 (13/10/2016)
 - calling `fill()`, `stroke()` without an argument is now a nop
@@ -19,7 +20,7 @@
 
 # 2.3.4 (04/08/2016)
 - reworked parent module for speed improvemenents
-- reworked `filterSVGElements` utility to use and a for loop instead of the native filter function
+- reworked `filterSVGElements` utility to use a for loop instead of the native filter function
 
 # 2.3.3 (02/08/2016)
 - add error callback on image loading (#508)
