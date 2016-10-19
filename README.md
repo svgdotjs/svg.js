@@ -4082,14 +4082,13 @@ The resulting files are:
 
 ## Testing
 There is two ways to run the test suite. One is from the command line and the other is in your browser.
-To run the test suit at the command line, you need to have Firefox installed.
+To run the test suite at the command line, you need to have Firefox installed.
 
 ```sh
 $ npm test
 ```
 
-To run the test suite in your browser, you need to serve the root project folder with an HTTP server like [ecstatic](https://github.com/jfhbrook/node-ecstatic) or [Apache](https://httpd.apache.org/).
-Navigate to `/spec/SpecRunner.htm` to run the tests.
+To run the test suite in your default browser, simply open `/spec/SpecRunner.html`. Usually by double click.
 
 ## Compatibility
 
