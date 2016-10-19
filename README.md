@@ -4088,7 +4088,7 @@ To run the test suite at the command line, you need to have Firefox installed.
 $ npm test
 ```
 
-To run the test suite in your default browser, simply open `/spec/SpecRunner.htm`. Usually by double click.
+To run the test suite in your default browser, simply open `/spec/SpecRunner.html`. Usually by double click.
 
 ## Compatibility
 
