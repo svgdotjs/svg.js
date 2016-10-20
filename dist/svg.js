@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Thu Oct 20 2016 15:35:29 GMT-0200 (WGST)
+* BUILT: Thu Oct 20 2016 16:47:32 GMT-0200 (WGST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -556,7 +556,7 @@ SVG.extend(SVG.PointArray, {
     if (Array.isArray(array)) return array
 
     // parse points
-    array = array.split(/\s+|,/)
+    array = array.trim().split(/\s+|,/)
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
