@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@woutfierens.com>
 * @license MIT
 *
-* BUILT: Thu Oct 20 2016 16:47:32 GMT-0200 (WGST)
+* BUILT: Thu Oct 20 2016 16:53:19 GMT-0200 (WGST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {

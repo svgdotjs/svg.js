@@ -43,10 +43,10 @@ describe('PointArray', function () {
 
     expect(array + '').toBe('2176.6,1708.8 2176.4,1755.8 2245.8,1801.5 2297,1787.8')
   })
-  it('parses points with space delimitered x/y coordinates', function() {
-    var array = new SVG.PointArray('  1 2 3  ')
+  it('parses points with space delimitered x/y coordinates - even with leading or trailing space', function() {
+    var array = new SVG.PointArray('  1 2 3 4  ')
 
-    expect(array + '').toBe('1,2,3')
+    expect(array + '').toBe('1,2,3,4')
   })
 })
 
