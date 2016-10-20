@@ -48,7 +48,7 @@ SVG.extend(SVG.PointArray, {
     if (Array.isArray(array)) return array
 
     // parse points
-    array = array.split(/\s|,/)
+    array = array.split(/\s|,/).filter(function(a){ return a !== '' })
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
