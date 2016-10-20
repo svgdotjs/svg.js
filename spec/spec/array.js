@@ -38,7 +38,7 @@ describe('PointArray', function () {
 
     expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
   })
-  it('parses points with space delimitered x/y coordinates', function() {
+  it('parses points with redundant spaces at the end', function() {
     var array = new SVG.PointArray('2176.6,1708.8 2176.4,1755.8 2245.8,1801.5 2297,1787.8  ')
 
     expect(array + '').toBe('2176.6,1708.8 2176.4,1755.8 2245.8,1801.5 2297,1787.8')
