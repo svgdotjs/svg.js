@@ -46,7 +46,14 @@ describe('PointArray', function () {
   it('parses points with space delimitered x/y coordinates - even with leading or trailing space', function() {
     var array = new SVG.PointArray('  1 2 3 4  ')
 
-    expect(array + '').toBe('1,2,3,4')
+    expect(array + '').toBe('1,2 3,4')
+  })
+  it('parses odd number of points with space delimitered x/y coordinates and silently remove the odd point', function() {
+    // this  is according to spec: https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
+
+    var array = new SVG.PointArray('1 2 3')
+
+    expect(array + '').toBe('1,2')
   })
 })
 
