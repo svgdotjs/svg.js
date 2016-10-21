@@ -1,6 +1,6 @@
 {
   "name": "svg.js",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "http://svgjs.com",
   "homepage": "http://www.svgjs.com",
@@ -33,6 +33,11 @@
     {
       "name": "Ulrich-Matthias Schäfer",
       "email": "ulima.ums@googlemail.com"
+    },
+    {
+      "name": "Jon Ege Ronnenberg",
+      "email": "jon.ronnenberg+svgjs@gmail.com",
+      "url": "https://keybase.io/dotnetcarpenter"
     }
   ],
   "licenses": [
@@ -50,8 +55,7 @@
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "gulp",
-    "test": "karma start .config/karma.conf.js --single-run",
-    "version": "npm run build && git add -A dist"
+    "test": "karma start .config/karma.conf.js --single-run"
   },
   "devDependencies": {
     "del": "^2.2.0",
