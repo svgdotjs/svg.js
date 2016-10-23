@@ -7,7 +7,7 @@
 - added specs for `SVG.FX` -> __TODO!__
 
 # 2.3.6
-- fixed leading and trailing in SVG.PointArray would return NaN for some points (695f26a)
+- fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#527)
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
 - fixed test of `SVG.FX.afterAll` (#534)
 - fixed `SVG.FX.speed()` (#536)
