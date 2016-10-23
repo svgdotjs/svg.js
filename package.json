@@ -10,7 +10,7 @@
     "graphics",
     "animation"
   ],
-  "author": "Wout Fierens <wout@woutfierens.com>",
+  "author": "Wout Fierens <wout@mick-wout.com.com>",
   "main": "dist/svg.js",
   "jam": {
     "include": [
@@ -22,7 +22,7 @@
   "maintainers": [
     {
       "name": "Wout Fierens",
-      "email": "wout@svgjs.com",
+      "email": "wout@mick-wout.com.com",
       "web": "http://svgjs.com"
     },
     {
