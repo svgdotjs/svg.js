@@ -48,14 +48,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/wout/svg.js.git"
+    "url": "https://github.com/svgdotjs/svg.js.git"
   },
-  "github": "https://github.com/wout/svg.js",
+  "github": "https://github.com/svgdotjs/svg.js",
   "license": "MIT",
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "gulp",
-    "test": "karma start .config/karma.conf.js --single-run"
+    "test": "karma start .config/karma.conf.js --single-run",
+    "docs": "gulp docs"
   },
   "devDependencies": {
     "del": "^2.2.0",
