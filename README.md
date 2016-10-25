@@ -1,4 +1,6 @@
-# SVG.js [![Build Status](https://travis-ci.org/wout/svg.js.svg?branch=master)](https://travis-ci.org/wout/svg.js)
+# SVG.js
+
+[![Build Status](https://travis-ci.org/svgdotjs/svg.js.svg?branch=master)](https://travis-ci.org/svgdotjs/svg.js)
 
 A lightweight library for manipulating and animating SVG.
 
@@ -6,7 +8,7 @@ Svg.js has no dependencies and aims to be as small as possible.
 
 Svg.js is licensed under the terms of the MIT License.
 
-Want to know more? Check the [documentation](http://documentup.com/wout/SVG.js).
+Want to know more? Check the [documentation](http://documentup.com/svgdotjs/SVG.js).
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
 
@@ -2012,7 +2014,7 @@ For the latter, here is an example of the default `<>` function:
 function(pos) { return (-Math.cos(pos * Math.PI) / 2) + 0.5 }
 ```
 
-For more easing equations, have a look at the [svg.easing.js](https://github.com/wout/svg.easing.js) plugin.
+For more easing equations, have a look at the [svg.easing.js](https://github.com/svgdotjs/svg.easing.js) plugin.
 
 ### animate()
 Animating elements is very much the same as manipulating elements, the only difference is you have to include the `animate()` method:
@@ -3435,7 +3437,7 @@ array.morph('100,0 0,100 200,200')
 
 This method will prepare the array ensuring both the source and destination arrays have the same length.
 
-In order to morph paths you need to include the [svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) extension.
+In order to morph paths you need to include the [svg.pathmorphing.js](https://github.com/svgdotjs/svg.pathmorphing.js) extension.
 
 __`returns`: `itself`__
 
@@ -3878,16 +3880,16 @@ SVG.extend(SVG.Ellipse, SVG.Path, SVG.Polygon, {
 Here are a few nice plugins that are available for SVG.js:
 
 ### pathmorphing
-[svg.pathmorphing.js](https://github.com/wout/svg.pathmorphing.js) to make path animatable
+[svg.pathmorphing.js](https://github.com/svgdotjs/svg.pathmorphing.js) to make path animatable
 
 ### textmorphing
-[svg.textmorph.js](https://github.com/wout/svg.textmorph.js) to make text animatable
+[svg.textmorph.js](https://github.com/svgdotjs/svg.textmorph.js) to make text animatable
 
 ### absorb
-[svg.absorb.js](https://github.com/wout/svg.absorb.js) absorb raw SVG data into an SVG.js instance.
+[svg.absorb.js](https://github.com/svgdotjs/svg.absorb.js) absorb raw SVG data into an SVG.js instance.
 
 ### draggable
-[svg.draggable.js](https://github.com/wout/svg.draggable.js) to make elements draggable.
+[svg.draggable.js](https://github.com/svgdotjs/svg.draggable.js) to make elements draggable.
 
 ### connectable
 [svg.connectable.js](https://github.com/jillix/svg.connectable.js) to connect elements.
@@ -3895,19 +3897,19 @@ Here are a few nice plugins that are available for SVG.js:
 [svg.connectable.js fork](https://github.com/loredanacirstea/svg.connectable.js) to connect elements (added: curved connectors, you can use any self-made path as a connector, choosable 'center'/'perifery' attachment, 'perifery' attachment for source / target SVG Paths uses smallest-distance algorithm between PathArray points)
 
 ### easing
-[svg.easing.js](https://github.com/wout/svg.easing.js) for more easing methods on animations.
+[svg.easing.js](https://github.com/svgdotjs/svg.easing.js) for more easing methods on animations.
 
 ### export
-[svg.export.js](https://github.com/wout/svg.export.js) export raw SVG.
+[svg.export.js](https://github.com/svgdotjs/svg.export.js) export raw SVG.
 
 ### filter
-[svg.filter.js](https://github.com/wout/svg.filter.js) adding svg filters to elements.
+[svg.filter.js](https://github.com/svgdotjs/svg.filter.js) adding svg filters to elements.
 
 ### foreignobject
 [svg.foreignobject.js](https://github.com/john-memloom/svg.foreignobject.js) foreignObject implementation (by john-memloom).
 
 ### import
-[svg.import.js](https://github.com/wout/svg.import.js) import raw SVG data.
+[svg.import.js](https://github.com/svgdotjs/svg.import.js) import raw SVG data.
 
 ### intersections
 [svg.intersections.js](https://github.com/amatiash/svg.intersections.js) find intersections of paths and lines (by amatiash)
@@ -3922,16 +3924,16 @@ Here are a few nice plugins that are available for SVG.js:
 [svg.screenbbox.js](https://github.com/fuzzyma/svg.screenbbox.js) to get the bbox in screen coordinates from transformed path/polygon/polyline
 
 ### shapes
-[svg.shapes.js](https://github.com/wout/svg.shapes.js) for more polygon based shapes.
+[svg.shapes.js](https://github.com/svgdotjs/svg.shapes.js) for more polygon based shapes.
 
 ### topath
-[svg.topath.js](https://github.com/wout/svg.topath.js) to convert any other shape to a path.
+[svg.topath.js](https://github.com/svgdotjs/svg.topath.js) to convert any other shape to a path.
 
 ### topoly
-[svg.topoly.js](https://github.com/wout/svg.topoly.js) to convert a path to polygon or polyline.
+[svg.topoly.js](https://github.com/svgdotjs/svg.topoly.js) to convert a path to polygon or polyline.
 
 ### wiml
-[svg.wiml.js](https://github.com/wout/svg.wiml.js) a templating language for svg output.
+[svg.wiml.js](https://github.com/svgdotjs/svg.wiml.js) a templating language for svg output.
 
 ### comic
 [comic.js](https://github.com/balint42/comic.js) to cartoonize any given svg.
