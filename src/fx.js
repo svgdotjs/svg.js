@@ -59,9 +59,6 @@ SVG.Situation = SVG.invent({
 
 })
 
-SVG.Delay = function(delay){
-  this.delay = new SVG.Number(delay).valueOf()
-}
 
 SVG.FX = SVG.invent({
 
@@ -113,9 +110,15 @@ SVG.FX = SVG.invent({
      * @return this.target()
      */
   , delay: function(delay){
-      var delay = new SVG.Delay(delay)
+      // The delay is performed by an empty situation with its duration
+      // attribute set to the duration of the delay
+      var situation = new SVG.Situation({
+        duration: delay,
+        delay: 0,
+        ease: SVG.easing['-']
+      })
 
-      return this.queue(delay)
+      return this.queue(situation)
     }
 
     /**
@@ -153,19 +156,22 @@ SVG.FX = SVG.invent({
       cancelAnimationFrame(this.animationFrame)
     }
 
-    // kicks off the animation - only does something when the queue is curretly not active and at least one situation is set
+    // kicks off the animation - only does something when the queue is currently not active and at least one situation is set
   , start: function(){
       // dont start if already started
       if(!this.active && this.situation){
-        this.situation.start = +new Date + this.situation.delay/this._speed
-        this.situation.finish = this.situation.start + this.situation.duration/this._speed
-
-        this.initAnimations()
         this.active = true
-        this.startAnimFrame()
+        this.startCurrent()
       }
 
       return this
+    }
+
+    // start the current situation
+  , startCurrent: function(){
+      this.situation.start = +new Date + this.situation.delay/this._speed
+      this.situation.finish = this.situation.start + this.situation.duration/this._speed
+      return this.initAnimations().step()
     }
 
     /**
@@ -174,7 +180,7 @@ SVG.FX = SVG.invent({
      * @return this
      */
   , queue: function(fn){
-      if(typeof fn == 'function' || fn instanceof SVG.Situation || fn instanceof SVG.Delay)
+      if(typeof fn == 'function' || fn instanceof SVG.Situation)
         this.situations.push(fn)
 
       if(!this.situation) this.situation = this.situations.shift()
@@ -194,23 +200,12 @@ SVG.FX = SVG.invent({
       this.situation = this.situations.shift()
 
       if(this.situation){
-
-        var fn = function(){
-          if(this.situation instanceof SVG.Situation)
-            this.initAnimations().atStart()
-          else if(this.situation instanceof SVG.Delay)
-            this.dequeue()
-          else
-            this.situation.call(this)
-        }.bind(this)
-
-        // start next animation
-        if(this.situation.delay){
-          setTimeout(function(){fn()}, this.situation.delay)
-        }else{
-          fn()
+        if(this.situation instanceof SVG.Situation) {
+          this.startCurrent()
+        } else {
+          // If it is not a SVG.Situation, then it is a function, we execute it
+          this.situation.call(this)
         }
-
       }
 
       return this
@@ -292,7 +287,6 @@ SVG.FX = SVG.invent({
       }
 
       this.stopAnimFrame()
-      clearTimeout(this.timeout)
 
       return this.clearCurrent()
     }
@@ -390,7 +384,7 @@ SVG.FX = SVG.invent({
   , pause: function(){
       this.paused = true
       this.stopAnimFrame()
-      clearTimeout(this.timeout)
+
       return this
     }
 
