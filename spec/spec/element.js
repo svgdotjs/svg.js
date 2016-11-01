@@ -260,6 +260,43 @@ describe('Element', function() {
     })
   })
 
+  describe('matrixify', function() {
+    var rect
+
+    beforeEach(function() {
+      rect = draw.rect(100, 100)
+    })
+
+    it('allow individual transform definitions to be separated by whitespace', function(){
+      // One space
+      rect.attr('transform', 'translate(20) translate(20)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,40,0)')
+
+      // More than one space
+      rect.attr('transform', 'translate(20)   translate(-60)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,-40,0)')
+    })
+
+    it('allow individual transform definitions to be separated by a comma', function(){
+      rect.attr('transform', 'translate(20,16),translate(20)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,40,16)')
+    })
+
+    it('allow individual transform definitions to be separated by whitespace and a comma', function(){
+      // Spaces before the comma
+      rect.attr('transform', 'translate(20,16)  ,translate(20)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,40,16)')
+
+      // Spaces after the comma
+      rect.attr('transform', 'translate(12),  translate(10,14)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,22,14)')
+
+      // Spaces before and after the comma
+      rect.attr('transform', 'translate(24,14)  , translate(36,6)')
+      expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,60,20)')
+    })
+  })
+
   describe('ctm()', function() {
     var rect
 
