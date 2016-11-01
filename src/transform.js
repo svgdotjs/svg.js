@@ -182,7 +182,7 @@ SVG.extend(SVG.Element, {
 
     var matrix = (this.attr('transform') || '')
       // split transformations
-      .split(/\)\s*/).slice(0,-1).map(function(str){
+      .split(/\)\s*,?\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
         return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
@@ -266,9 +266,9 @@ SVG.Transformation = SVG.invent({
       for(var i = 0, len = this.arguments.length; i < len; ++i){
         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
       }
-      
+
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
-      
+
       return this
     }
 

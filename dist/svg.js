@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.3.5
+* @version 2.3.6
 * http://www.svgjs.com
 *
-* @copyright Wout Fierens <wout@woutfierens.com>
+* @copyright Wout Fierens <wout@mick-wout.com.com>
 * @license MIT
 *
-* BUILT: Fri Oct 21 2016 13:38:14 GMT-0200 (WGST)
+* BUILT: Tue Nov 01 2016 17:15:59 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2756,7 +2756,7 @@ SVG.extend(SVG.Element, {
 
     var matrix = (this.attr('transform') || '')
       // split transformations
-      .split(/\)\s*/).slice(0,-1).map(function(str){
+      .split(/\)\s*,?\s*/).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
         return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
