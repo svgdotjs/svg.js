@@ -8,8 +8,9 @@
 
 # 2.3.7
 - moved project to [svgdotjs](https://github.com/svgdotjs)
+- make matrixify work with transformation chain separated by commas (#543)
 
-# 2.3.6
+# 2.3.6 (21/10/2016)
 - fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#527)
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
 - fixed test of `SVG.FX.afterAll` (#534)
