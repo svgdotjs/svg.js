@@ -113,12 +113,13 @@ SVG.Matrix = SVG.invent({
     }
     // Scale matrix
   , scale: function(x, y, cx, cy) {
-      // support universal scale
-      if (arguments.length == 1 || arguments.length == 3)
+      // support uniformal scale
+      if (arguments.length == 1) {
         y = x
-      if (arguments.length == 3) {
+      } else if (arguments.length == 3) {
         cy = cx
         cx = y
+        y = x
       }
 
       return this.around(cx, cy, new SVG.Matrix(x, 0, 0, y, 0, 0))
@@ -136,15 +137,28 @@ SVG.Matrix = SVG.invent({
     }
     // Skew
   , skew: function(x, y, cx, cy) {
-      return this.around(cx, cy, this.native().skewX(x || 0).skewY(y || 0))
+      // support uniformal skew
+      if (arguments.length == 1) {
+        y = x
+      } else if (arguments.length == 3) {
+        cy = cx
+        cx = y
+        y = x
+      }
+
+      // convert degrees to radians
+      x = SVG.utils.radians(x)
+      y = SVG.utils.radians(y)
+
+      return this.around(cx, cy, new SVG.Matrix(1, Math.tan(y), Math.tan(x), 1, 0, 0))
     }
     // SkewX
   , skewX: function(x, cx, cy) {
-      return this.around(cx, cy, this.native().skewX(x || 0))
+      return this.skew(x, 0, cx, cy)
     }
     // SkewY
   , skewY: function(y, cx, cy) {
-      return this.around(cx, cy, this.native().skewY(y || 0))
+      return this.skew(0, y, cx, cy)
     }
     // Transform around a center point
   , around: function(cx, cy, matrix) {
