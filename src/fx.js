@@ -25,7 +25,9 @@ SVG.Situation = SVG.invent({
     this.finish = this.start + this.duration
     this.ease = o.ease
 
-    this.loop = false
+    // this.loop is incremented from 0 to this.loops
+    // it is also incremented when in an infinite loop (when this.loops is true)
+    this.loop = 0
     this.loops = false
 
     this.animations = {
@@ -71,6 +73,9 @@ SVG.FX = SVG.invent({
     this.paused = false
     this.lastPos = 0
     this.pos = 0
+    // The absolute position of an animation is its position in the context of its complete duration (including delay and loops)
+    // When performing a delay, absPos is below 0 and when performing a loop, its value is above 1
+    this.absPos = 0
     this._speed = 1
   }
 
@@ -127,14 +132,14 @@ SVG.FX = SVG.invent({
       return this._target
     }
 
-    // returns the position at a given time
-  , timeToPos: function(timestamp){
+    // returns the absolute position at a given time
+  , timeToAbsPos: function(timestamp){
       return (timestamp - this.situation.start) / (this.situation.duration/this._speed)
     }
 
-    // returns the timestamp from a given positon
-  , posToTime: function(pos){
-      return this.situation.duration/this._speed * pos + this.situation.start
+    // returns the timestamp from a given absolute positon
+  , absPosToTime: function(absPos){
+      return this.situation.duration/this._speed * absPos + this.situation.start
     }
 
     // starts the animationloop
@@ -152,7 +157,7 @@ SVG.FX = SVG.invent({
   , start: function(){
       // dont start if already started
       if(!this.active && this.situation){
-        this.situation.start = +new Date + this.situation.delay
+        this.situation.start = +new Date + this.situation.delay/this._speed
         this.situation.finish = this.situation.start + this.situation.duration/this._speed
 
         this.initAnimations()
@@ -192,7 +197,7 @@ SVG.FX = SVG.invent({
 
         var fn = function(){
           if(this.situation instanceof SVG.Situation)
-            this.initAnimations().at(0)
+            this.initAnimations().atStart()
           else if(this.situation instanceof SVG.Delay)
             this.dequeue()
           else
@@ -283,15 +288,7 @@ SVG.FX = SVG.invent({
       this.active = false
 
       if(jumpToEnd && this.situation){
-
-        this.situation.loop = false
-
-        if(this.situation.loops % 2 == 0 && this.situation.reversing){
-          this.situation.reversed = true
-        }
-
-        this.at(1)
-
+        this.atEnd()
       }
 
       this.stopAnimFrame()
@@ -308,7 +305,7 @@ SVG.FX = SVG.invent({
         var temp = this.situation
         this.stop()
         this.situation = temp
-        this.at(0)
+        this.atStart()
       }
       return this
     }
@@ -325,13 +322,40 @@ SVG.FX = SVG.invent({
       return this
     }
 
+    // set the internal animation pointer at the start position, before any loops, and updates the visualisation
+  , atStart: function() {
+    return this.at(0, true)
+  }
+
+    // set the internal animation pointer at the end position, after all the loops, and updates the visualisation
+  , atEnd: function() {
+    if (this.situation.loops === true) {
+      // If in a infinite loop, we end the current iteration
+      return this.at(this.situation.loop+1, true)
+    } else if(typeof this.situation.loops == 'number') {
+      // If performing a finite number of loops, we go after all the loops
+      return this.at(this.situation.loops, true)
+    } else {
+      // If no loops, we just go at the end
+      return this.at(1, true)
+    }
+  }
+
     // set the internal animation pointer to the specified position and updates the visualisation
-  , at: function(pos){
+    // if isAbsPos is true, pos is treated as an absolute position
+  , at: function(pos, isAbsPos){
       var durDivSpd = this.situation.duration/this._speed
 
-      this.pos = pos
-      this.situation.start = +new Date - pos * durDivSpd
+      this.absPos = pos
+      // If pos is not an absolute position, we convert it into one
+      if (!isAbsPos) {
+        if (this.situation.reversed) this.absPos = 1 - this.absPos
+        this.absPos += this.situation.loop
+      }
+
+      this.situation.start = +new Date - this.absPos * durDivSpd
       this.situation.finish = this.situation.start + durDivSpd
+
       return this.step(true)
     }
 
@@ -345,7 +369,8 @@ SVG.FX = SVG.invent({
 
       if (speed) {
         this._speed = speed
-        return this.at(this.situation.reversed ? 1-this.pos : this.pos)
+        // We use an absolute position here so that speed can affect the delay before the animation
+        return this.at(this.absPos, true)
       } else return this._speed
     }
 
@@ -353,8 +378,9 @@ SVG.FX = SVG.invent({
   , loop: function(times, reverse) {
       var c = this.last()
 
-      // store current loop and total loops
-      c.loop = c.loops = times || true
+      // store total loops
+      c.loops = (times != null) ? times : true
+      c.loop = 0
 
       if(reverse) c.reversing = true
       return this
@@ -372,7 +398,8 @@ SVG.FX = SVG.invent({
   , play: function(){
       if(!this.paused) return this
       this.paused = false
-      return this.at(this.pos)
+      // We use an absolute position here so that the delay before the animation can be paused
+      return this.at(this.absPos, true)
     }
 
     /**
@@ -477,22 +504,45 @@ SVG.FX = SVG.invent({
      */
   , step: function(ignoreTime){
 
-      // convert current time to position
-      if(!ignoreTime) this.pos = this.timeToPos(+new Date)
+      // convert current time to an absolute position
+      if(!ignoreTime) this.absPos = this.timeToAbsPos(+new Date)
 
-      if(this.pos >= 1 && (this.situation.loop === true || (typeof this.situation.loop == 'number' && --this.situation.loop))){
+      // This part convert an absolute position to a position
+      if(this.situation.loops !== false) {
+        var absPos, absPosInt, lastLoop
 
-        if(this.situation.reversing){
-          this.situation.reversed = !this.situation.reversed
+        // If the absolute position is below 0, we just treat it as if it was 0
+        absPos = Math.max(this.absPos, 0)
+        absPosInt = Math.floor(absPos)
+
+        if(this.situation.loops === true || absPosInt < this.situation.loops) {
+          this.pos = absPos - absPosInt
+          lastLoop = this.situation.loop
+          this.situation.loop = absPosInt
+        } else {
+          this.absPos = this.situation.loops
+          this.pos = 1
+          // The -1 here is because we don't want to toggle reversed when all the loops have been completed
+          lastLoop = this.situation.loop - 1
+          this.situation.loop = this.situation.loops
         }
-        return this.at(this.pos-1)
+
+        if(this.situation.reversing) {
+          // Toggle reversed if an odd number of loops as occured since the last call of step
+          this.situation.reversed = this.situation.reversed != Boolean((this.situation.loop - lastLoop) % 2)
+        }
+
+      } else {
+        // If there are no loop, the absolute position must not be above 1
+        this.absPos = Math.min(this.absPos, 1)
+        this.pos = this.absPos
       }
+
+      // while the absolute position can be below 0, the position must not be below 0
+      if(this.pos < 0) this.pos = 0
 
       if(this.situation.reversed) this.pos = 1 - this.pos
 
-      // correct position
-      if(this.pos > 1)this.pos = 1
-      if(this.pos < 0)this.pos = 0
 
       // apply easing
       var eased = this.situation.ease(this.pos)
