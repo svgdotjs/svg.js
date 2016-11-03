@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com.com>
 * @license MIT
 *
-* BUILT: Wed Nov 02 2016 18:24:49 GMT-0400 (EDT)
+* BUILT: Thu Nov 03 2016 11:00:28 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1820,7 +1820,7 @@ SVG.FX = SVG.invent({
       for(i in s.animations){
 
         at = [].concat(s.animations[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target[i].apply(target, at)
@@ -1831,7 +1831,7 @@ SVG.FX = SVG.invent({
       for(i in s.attrs){
 
         at = [i].concat(s.attrs[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.attr.apply(target, at)
@@ -1842,7 +1842,7 @@ SVG.FX = SVG.invent({
       for(i in s.styles){
 
         at = [i].concat(s.styles[i]).map(function(el){
-          return el.at ? el.at(s.ease(self.pos), self.pos) : el
+          return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
         target.style.apply(target, at)
