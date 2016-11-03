@@ -1533,4 +1533,21 @@ describe('FX', function() {
     expect(called).toBe(true)
   })
 
+  it('animate a scale transform without translating it when there is already a transform in place', function(){
+    var ctm
+
+    rect.scale(2) // The transform in place
+
+    fx.scale(0.5)
+    jasmine.clock().tick(500) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(75)
+    expect(ctm.f).toBe(75)
+  })
 })

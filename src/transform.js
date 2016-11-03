@@ -267,6 +267,12 @@ SVG.Transformation = SVG.invent({
         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
       }
 
+      // The method SVG.Matrix.extract which was used before calling this
+      // method to obtain a value for the parameter o doesn't return a cx and
+      // a cy so we use the ones that were provided to this object at its creation
+      o.cx = this.cx
+      o.cy = this.cy
+
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
 
       return this

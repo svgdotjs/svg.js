@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com.com>
 * @license MIT
 *
-* BUILT: Thu Nov 03 2016 18:30:19 GMT-0400 (EDT)
+* BUILT: Tue Nov 08 2016 01:59:42 GMT-0500 (EST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2898,6 +2898,12 @@ SVG.Transformation = SVG.invent({
       for(var i = 0, len = this.arguments.length; i < len; ++i){
         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
       }
+
+      // The method SVG.Matrix.extract which was used before calling this
+      // method to obtain a value for the parameter o doesn't return a cx and
+      // a cy so we use the ones that were provided to this object at its creation
+      o.cx = this.cx
+      o.cy = this.cy
 
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
 
