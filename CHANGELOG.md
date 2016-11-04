@@ -11,6 +11,7 @@
 - made matrixify work with transformation chain separated by commas (#543)
 - fixed `SVG.Matrix.skew()` (#545)
 - fixed broken animations, if using polyfills for es6/7 proposals (#504)
+- fixed and improved `SVG.FX.dequeue()` (#546)
 
 # 2.3.6 (21/10/2016)
 - fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#527)
