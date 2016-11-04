@@ -487,9 +487,8 @@ describe('FX', function() {
     it('starts the animation', function() {
       fx.start()
       expect(fx.active).toBe(true)
-      expect(fx.timeout).not.toBe(0)
 
-      jasmine.clock().tick(201)
+      jasmine.clock().tick(200)
       fx.step() // Call step to update the animation
 
       expect(fx.pos).toBeGreaterThan(0)
@@ -520,6 +519,14 @@ describe('FX', function() {
       jasmine.clock().tick(501)
       fx.step() // Call step to update the animation
       expect(fx.active).toBe(false)
+    })
+  })
+
+  describe('delay()', function() {
+    it('should push an empty situation with its duration attribute set to the duration of the delay', function() {
+      var delay = 8300
+      fx.delay(delay)
+      expect(fx.situations[0].duration).toBe(delay)
     })
   })
 
@@ -733,7 +740,49 @@ describe('FX', function() {
   })
 
 
+  describe('queue()', function() {
+    it('can add a situation to the queue', function() {
+      var situation = new SVG.Situation({duration: 1000, delay: 0, ease: SVG.easing['-']})
+
+      fx.queue(situation)
+      expect(fx.situations[0]).toBe(situation)
+    })
+
+    it('can add a function to the queue', function() {
+      var f = function(){}
+
+      fx.queue(f)
+      expect(fx.situations[0]).toBe(f)
+    })
+
+    it('should set the situation attribute before pushing something in the situations queue', function(){
+      var situation = new SVG.Situation({duration: 1000, delay: 0, ease: SVG.easing['-']})
+
+      // Clear the animation that is created before each test
+      fx.stop()
+
+      expect(fx.situation).toBeNull()
+      expect(fx.situations.length).toBe(0)
+      fx.queue(situation)
+      expect(fx.situation).toBe(situation)
+      expect(fx.situations.length).toBe(0)
+    })
+  })
+
+
   describe('dequeue()', function() {
+    it('should pull the next situtation from the queue', function() {
+      var situation = new SVG.Situation({duration: 1000, delay: 0, ease: SVG.easing['-']})
+
+      fx.queue(situation)
+      expect(fx.situtation).not.toBe(situation)
+      expect(fx.situations[0]).toBe(situation)
+
+      fx.dequeue()
+      expect(fx.situation).toBe(situation)
+      expect(fx.situations.length).toBe(0)
+    })
+
     it('initialize the animation pulled from the queue to its start position', function() {
       // When the animation is forward, the start position is 0
       fx.animate()
@@ -744,6 +793,13 @@ describe('FX', function() {
       fx.animate().reverse(true)
       fx.pos = 0.5
       expect(fx.dequeue().pos).toBe(1)
+    })
+
+    it('when the first element of the queue is a function, it should execute it', function() {
+      var called = false
+
+      fx.queue(function(){ called=true; expect(this).toBe(fx) }).dequeue()
+      expect(called).toBe(true)
     })
   })
 
