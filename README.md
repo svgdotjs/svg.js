@@ -23,6 +23,14 @@ var draw = SVG('drawing').size(300, 300)
 var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 ```
 The first argument can either be an id of the element or the selected element itself.
+Be aware that the HTML element must exist before running the svg.js code.
+
+Given this HTML:
+
+```html
+<div id="drawing"></div>
+```
+
 This will generate the following output:
 
 ```html
