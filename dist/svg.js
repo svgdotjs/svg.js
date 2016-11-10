@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com.com>
 * @license MIT
 *
-* BUILT: Thu Nov 03 2016 18:30:19 GMT-0400 (EDT)
+* BUILT: Wed Nov 09 2016 21:32:26 GMT-0500 (EST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1857,7 +1857,7 @@ SVG.FX = SVG.invent({
           if(a instanceof SVG.Matrix){
 
             if(a.relative){
-              at = at.multiply(a.at(s.ease(this.pos)))
+              at = at.multiply(new SVG.Matrix().morph(a).at(s.ease(this.pos)))
             }else{
               at = at.morph(a).at(s.ease(this.pos))
             }
@@ -2690,13 +2690,13 @@ SVG.extend(SVG.Element, {
       matrix = matrix.scale(o.scaleX, o.scaleY, o.cx, o.cy)
 
     // act on skew
-    } else if (o.skewX != null || o.skewY != null) {
+    } else if (o.skew != null || o.skewX != null || o.skewY != null) {
       // ensure centre point
       ensureCentre(o, target)
 
       // ensure skew values on both axes
-      o.skewX = o.skewX != null ? o.skewX : 0
-      o.skewY = o.skewY != null ? o.skewY : 0
+      o.skewX = o.skew != null ? o.skew : o.skewX != null ? o.skewX : 0
+      o.skewY = o.skew != null ? o.skew : o.skewY != null ? o.skewY : 0
 
       if (!relative) {
         // absolute; reset skew values
@@ -2898,6 +2898,12 @@ SVG.Transformation = SVG.invent({
       for(var i = 0, len = this.arguments.length; i < len; ++i){
         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
       }
+
+      // The method SVG.Matrix.extract which was used before calling this
+      // method to obtain a value for the parameter o doesn't return a cx and
+      // a cy so we use the ones that were provided to this object at its creation
+      o.cx = this.cx
+      o.cy = this.cy
 
       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
 
@@ -4857,7 +4863,9 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Map skew to transform
 , skew: function(x, y, cx, cy) {
-    return this.transform({ skewX: x, skewY: y, cx: cx, cy: cy })
+    return arguments.length == 1  || arguments.length == 3 ?
+      this.transform({ skew: x, cx: y, cy: cx }) :
+      this.transform({ skewX: x, skewY: y, cx: cx, cy: cy })
   }
   // Map scale to transform
 , scale: function(x, y, cx, cy) {
@@ -4931,7 +4939,6 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
     return this
   }
 })
-
 
 SVG.Set = SVG.invent({
   // Initialize
