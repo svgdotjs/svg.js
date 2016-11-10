@@ -173,7 +173,7 @@ describe('Element', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
     })
-    it('sets the scaleX and scaleY of and element', function() {
+    it('sets the scaleX and scaleY of an element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,25,-50)')
     })
@@ -189,7 +189,7 @@ describe('Element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)
       expect(rect.node.getAttribute('transform')).toBe('matrix(1.5,0,0,8,-25,-350)')
     })
-    it('sets the skewX of and element with center on the element', function() {
+    it('sets the skewX of an element with center on the element', function() {
       ctm = rect.transform({ skewX: 10 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBe(0)
@@ -198,7 +198,7 @@ describe('Element', function() {
       expect(ctm.e).toBeCloseTo(-8.81634903542325)
       expect(ctm.f).toBe(0)
     })
-    it('sets the skewX of and element with given center', function() {
+    it('sets the skewX of an element with given center', function() {
       ctm = rect.transform({ skewX: 10, cx: 0, cy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBe(0)
@@ -207,11 +207,29 @@ describe('Element', function() {
       expect(ctm.e).toBe(0)
       expect(ctm.f).toBe(0)
     })
-    it('sets the skewY of and element', function() {
+    it('sets the skewY of an element', function() {
       ctm = rect.transform({ skewY: -10, cx: 0, cy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBeCloseTo(-0.17632698070846498)
       expect(ctm.c).toBe(0)
+      expect(ctm.d).toBe(1)
+      expect(ctm.e).toBe(0)
+      expect(ctm.f).toBe(0)
+    })
+    it('sets the skewX and skewY of an element', function() {
+      ctm = rect.transform({ skewX: 10, skewY: -10, cx: 0, cy: 0 }).ctm()
+      expect(ctm.a).toBe(1)
+      expect(ctm.b).toBeCloseTo(-0.17632698070846498)
+      expect(ctm.c).toBeCloseTo(0.17632698070846498)
+      expect(ctm.d).toBe(1)
+      expect(ctm.e).toBe(0)
+      expect(ctm.f).toBe(0)
+    })
+    it('performs a uniform skew with skew given', function() {
+      ctm = rect.transform({ skew: 5, cx: 0, cy: 0 }).ctm()
+      expect(ctm.a).toBe(1)
+      expect(ctm.b).toBeCloseTo(0.08748866352592401)
+      expect(ctm.c).toBeCloseTo(0.08748866352592401)
       expect(ctm.d).toBe(1)
       expect(ctm.e).toBe(0)
       expect(ctm.f).toBe(0)

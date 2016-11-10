@@ -1533,8 +1533,10 @@ describe('FX', function() {
     expect(called).toBe(true)
   })
 
-  it('animate a scale transform without translating it when there is already a transform in place', function(){
+  it('animate a scale transform using the passed center point when there is already a transform in place', function(){
     var ctm
+
+    // When no ceter point is passed to the method scale, it use the center of the element as the center point
 
     rect.scale(2) // The transform in place
 
@@ -1549,5 +1551,33 @@ describe('FX', function() {
     expect(ctm.d).toBe(0.5)
     expect(ctm.e).toBe(75)
     expect(ctm.f).toBe(75)
+  })
+
+  it('animate relative matrix transform', function(){
+    var ctm
+
+    fx.transform(new SVG.Matrix().scale(2,0,0), true)
+
+    jasmine.clock().tick(250) // Have the animation be half way
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1.5)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(0)
+
+    jasmine.clock().tick(250) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(2)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(2)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(0)
   })
 })

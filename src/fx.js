@@ -642,7 +642,7 @@ SVG.FX = SVG.invent({
           if(a instanceof SVG.Matrix){
 
             if(a.relative){
-              at = at.multiply(a.at(s.ease(this.pos)))
+              at = at.multiply(new SVG.Matrix().morph(a).at(s.ease(this.pos)))
             }else{
               at = at.morph(a).at(s.ease(this.pos))
             }

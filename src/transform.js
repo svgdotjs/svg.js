@@ -58,13 +58,13 @@ SVG.extend(SVG.Element, {
       matrix = matrix.scale(o.scaleX, o.scaleY, o.cx, o.cy)
 
     // act on skew
-    } else if (o.skewX != null || o.skewY != null) {
+    } else if (o.skew != null || o.skewX != null || o.skewY != null) {
       // ensure centre point
       ensureCentre(o, target)
 
       // ensure skew values on both axes
-      o.skewX = o.skewX != null ? o.skewX : 0
-      o.skewY = o.skewY != null ? o.skewY : 0
+      o.skewX = o.skew != null ? o.skew : o.skewX != null ? o.skewX : 0
+      o.skewY = o.skew != null ? o.skew : o.skewY != null ? o.skewY : 0
 
       if (!relative) {
         // absolute; reset skew values
