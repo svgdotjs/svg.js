@@ -633,7 +633,7 @@ SVG.FX = SVG.invent({
 
         // get inital initialTransformation
         at = s.initialTransformation
-        for(i in s.transforms){
+        for(i = 0 ; i < s.transforms.length ; i++){
 
           // get next transformation in chain
           var a = s.transforms[i]
