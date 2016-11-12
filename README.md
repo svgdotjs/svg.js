@@ -4075,13 +4075,13 @@ Before running the specs you will need to build the library. Be aware that pull 
 ## Building
 After contributing you probably want to build the library to run some specs. Make sure you have Node.js installed on your system, `cd` to the svg.js directory and run:
 
-``` sh
+```sh
 $ npm install
 ```
 
 Build SVG.js by running `gulp`:
 
-``` sh
+```sh
 $ npm run build
 ```
 
@@ -4099,6 +4099,10 @@ $ npm test
 ```
 
 To run the test suite in your default browser, simply open `/spec/SpecRunner.html`. Usually by double click.
+
+If you are the cautious type, you might want to read,
+[before you push](https://github.com/svgdotjs/svg.js/wiki/Before-you-push)
+, on how to prevent pushing failing commits.
 
 ## Compatibility
 
