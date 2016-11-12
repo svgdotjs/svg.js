@@ -9,3 +9,4 @@ test/
 src/index.js
 node_modules/
 .vscode/
+coverage/

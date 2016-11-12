@@ -4,6 +4,7 @@ node_js:
 script:
     - npm run build
     - npm test
+    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 #sudo: required
 #dist: trusty
 addons:
