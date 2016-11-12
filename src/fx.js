@@ -631,9 +631,9 @@ SVG.FX = SVG.invent({
       // animate initialTransformation which has to be chained
       if(s.transforms.length){
 
-        // get inital initialTransformation
+        // get initial initialTransformation
         at = s.initialTransformation
-        for(i = 0 ; i < s.transforms.length ; i++){
+        for(i = 0, len = s.transforms.length; i < len; i++){
 
           // get next transformation in chain
           var a = s.transforms[i]
