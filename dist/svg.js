@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com.com>
 * @license MIT
 *
-* BUILT: Wed Nov 09 2016 21:32:26 GMT-0500 (EST)
+* BUILT: Sat Nov 12 2016 21:28:15 GMT+0100 (CET)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1848,7 +1848,7 @@ SVG.FX = SVG.invent({
 
         // get inital initialTransformation
         at = s.initialTransformation
-        for(i in s.transforms){
+        for(i = 0 ; i < s.transforms.length ; i++){
 
           // get next transformation in chain
           var a = s.transforms[i]
