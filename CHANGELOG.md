@@ -14,8 +14,8 @@
 - fixed and improved `SVG.FX.dequeue()` (#546)
 - fixed an error in `SVG.FX.step`, if custom properties is added to `Array.prototype` (#549)
 - updated dev dependencies; request and gulp-chmod - `npm run build` now requires nodejs 4.x
-- added code coverage https://coveralls.io/github/svgdotjs/svg.js
-- added `npm run test:quick` which aim at being fast rather than correct - great for git hooks
+- added code coverage https://coveralls.io/github/svgdotjs/svg.js (3e614d4)
+- added `npm run test:quick` which aim at being fast rather than correct - great for git hooks (981ce24)
 
 # 2.3.6 (21/10/2016)
 - fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#529)
