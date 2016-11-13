@@ -16,4 +16,3 @@ before_install:
 cache:
   directories:
     - node_modules
-

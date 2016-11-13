@@ -15,9 +15,10 @@
 - fixed an error in `SVG.FX.step`, if custom properties is added to `Array.prototype` (#549)
 - updated dev dependencies; request and gulp-chmod - `npm run build` now requires nodejs 4.x
 - added code coverage https://coveralls.io/github/svgdotjs/svg.js
+- added `npm run test:quick` which aim at being fast rather than correct - great for git hooks
 
 # 2.3.6 (21/10/2016)
-- fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#527)
+- fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#529)
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
 - fixed test of `SVG.FX.afterAll` (#534)
 - fixed `SVG.FX.speed()` (#536)
