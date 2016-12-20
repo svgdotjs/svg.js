@@ -2,15 +2,15 @@ SVG.Point = SVG.invent({
   // Initialize
   create: function(x,y) {
     var i, source, base = {x:0, y:0}
-    
+
     // ensure source as object
     source = Array.isArray(x) ?
       {x:x[0], y:x[1]} :
     typeof x === 'object' ?
       {x:x.x, y:x.y} :
-    y != null ?
-      {x:x, y:y} : base
-
+    x != null ?
+      {x:x, y:(y != null ? y : x)} : base // If y has no value, then x is used has its value
+                                          // This allow element-wise operations to be passed a single number
     // merge source
     this.x = source.x
     this.y = source.y
@@ -23,9 +23,9 @@ SVG.Point = SVG.invent({
       return new SVG.Point(this)
     }
     // Morph one point into another
-  , morph: function(point) {
+  , morph: function(x, y) {
       // store new destination
-      this.destination = new SVG.Point(point)
+      this.destination = new SVG.Point(x, y)
 
       return this
     }
@@ -57,7 +57,38 @@ SVG.Point = SVG.invent({
   , transform: function(matrix) {
       return new SVG.Point(this.native().matrixTransform(matrix.native()))
     }
-
+    // return an array of the x and y coordinates
+  , toArray: function() {
+      return [this.x, this.y]
+    }
+    // perform an element-wise addition with the passed point or number
+  , plus: function(x, y) {
+      var point = new SVG.Point(x, y)
+      return new SVG.Point(this.x + point.x, this.y + point.y)
+    }
+    // perform an element-wise subtraction with the passed point or number
+  , minus: function(x, y) {
+      var point = new SVG.Point(x, y)
+      return new SVG.Point(this.x - point.x, this.y - point.y)
+    }
+    // perform an element-wise multiplication with the passed point or number
+  , times: function(x, y) {
+      var point = new SVG.Point(x, y)
+      return new SVG.Point(this.x * point.x, this.y * point.y)
+    }
+    // perform an element-wise division with the passed point or number
+  , divide: function(x, y) {
+      var point = new SVG.Point(x, y)
+      return new SVG.Point(this.x / point.x, this.y / point.y)
+    }
+    // calculate the Euclidean norm
+  , norm: function() {
+      return Math.sqrt(this.x*this.x + this.y*this.y)
+    }
+    // calculate the distance to the passed point
+  , distance: function(x, y) {
+      return this.minus(x, y).norm()
+    }
   }
 
 })
