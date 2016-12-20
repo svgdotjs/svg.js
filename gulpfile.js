@@ -80,6 +80,7 @@ var parts = [
 , 'src/memory.js'
 , 'src/selector.js'
 , 'src/helpers.js'
+, 'src/makepathsmorphable.js'
 , 'src/polyfill.js'
 ]
 

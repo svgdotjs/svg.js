@@ -100,6 +100,71 @@ SVG.extend(SVG.PathArray, {
 
     return this
   }
+  // Test if the passed path array use the same commands as this path array
+, haveSameCommands: function(pathArray) {
+    var i, il, haveSameCommands
+
+    pathArray = new SVG.PathArray(pathArray)
+
+    haveSameCommands = this.value.length === pathArray.value.length
+    for(i = 0, il = this.value.length; haveSameCommands && i < il; i++) {
+      haveSameCommands = this.value[i][0] === pathArray.value[i][0]
+    }
+
+    return haveSameCommands
+  }
+  // Make path array morphable
+, morph: function(pathArray) {
+    var pathsMorphable
+
+    this.destination = new SVG.PathArray(pathArray)
+
+    if(this.haveSameCommands(this.destination)) {
+      this.sourceMorphable = this
+      this.destinationMorphable = this.destination
+    } else {
+      pathsMorphable = SVG.utils.makePathsMorphable(this.value, this.destination)
+      this.sourceMorphable = pathsMorphable[0]
+      this.destinationMorphable = pathsMorphable[1]
+    }
+
+    return this
+  }
+  // Get morphed path array at given position
+, at: function(pos) {
+    if(pos === 1) {
+      return this.destination
+    } else if(pos === 0) {
+      return this
+    } else {
+      var sourceArray = this.sourceMorphable.value
+        , destinationArray = this.destinationMorphable.value
+        , array = [], pathArray = new SVG.PathArray()
+        , i, il, j, jl
+
+      // Animate has specified in the SVG spec
+      // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
+      for (i = 0, il = sourceArray.length; i < il; i++) {
+        array[i] = [sourceArray[i][0]]
+        for(j=1, jl = sourceArray[i].length; j < jl; j++) {
+          array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
+        }
+        // For the two flags of the elliptical arc command, the SVG spec say:
+        // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
+        // Elliptical arc command as an array followed by corresponding indexes:
+        // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
+        //   0    1   2        3                 4             5      6  7
+        if(array[i][0] === 'A') {
+          array[i][4] = +(array[i][4] != 0)
+          array[i][5] = +(array[i][5] != 0)
+        }
+      }
+
+      // Directly modify the value of a path array, this is done this way for performance
+      pathArray.value = array
+      return pathArray
+    }
+  }
   // Absolutize and parse path to array
 , parse: function(array) {
     // if it's already a patharray, no need to parse it
@@ -131,7 +196,7 @@ SVG.extend(SVG.PathArray, {
           array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
         }
       }
-        
+
     }else{
       array = array.reduce(function(prev, curr){
         return [].concat.apply(prev, curr)
