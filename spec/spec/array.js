@@ -129,49 +129,42 @@ describe('PathArray', function () {
   })
 
   describe('morph()', function() {
-    it('should set the attributes sourceMorphable to this path array and destinationMorphable to the passed path array when the passed path array have the same comands as this path array', function() {
+    it('should set the attribute destination to the passed path array when it have the same comands as this path array', function() {
       var pathArray1 = new SVG.PathArray('m -1500,-478 a 292,195 0 0 1 262,205 l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
         , pathArray2 = new SVG.PathArray('m  -680, 527 a 292,195 0 0 1 262,205 l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
 
       pathArray1.morph(pathArray2)
-      expect(pathArray1.sourceMorphable).toEqual(pathArray1)
-      expect(pathArray1.destinationMorphable).toEqual(pathArray2)
       expect(pathArray1.destination).toEqual(pathArray2)
     })
-    it('should set the attributes sourceMorphable and destinationMorphable to path arrays that use the same commands when the passed path array do not use the same comands as this path array', function() {
+    it('should set the attribute destination to undefined when the passed path array does not have the same comands as this path array', function() {
       var pathArray1 = new SVG.PathArray('m -1500,-478 a 292,195 0 0 1 262,205   l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
         , pathArray2 = new SVG.PathArray('m - 663, 521 c 147,178 118,-25 245,210 l -565,319 c 0,0 -134,-374 51,-251 185,122 268,-278 268,-278 z')
 
       pathArray1.morph(pathArray2)
-      expect(pathArray1.sourceMorphable.haveSameCommands(pathArray1.destinationMorphable)).toBe(true)
-      expect(pathArray1.destination).toEqual(pathArray2)
+      expect(pathArray1.destination).toBeUndefined()
     })
   })
 
   describe('at()', function() {
-    it('should interpolate between sourceMorphable and destinationMorphable', function() {
-      var pathArray1 = new SVG.PathArray("M 19,73 C 19,73 31,45 29,30 26,9 48,24 48,24 l 0,13 c -17,-19 0,0 -29,35 z")
-        , pathArray2 = new SVG.PathArray("M 84,34 111,18 c 0,0 -29,16 -41,52")
-        , interpolatedPathArray = pathArray1.morph(pathArray2).at(0.5)
-        , sourceArray = pathArray1.sourceMorphable.value, destinationArray = pathArray1.destinationMorphable.value
-        , interpolatedArray = interpolatedPathArray.value
+    it('returns a morphed path array at a given position', function() {
+      var pathArray1 = new SVG.PathArray("M  63 25 A 15 15 0 0 1  73 40 A 15 15 0 0 1  61 53 C  49 36  50 59  50 59 L  33 55 Z")
+        , pathArray2 = new SVG.PathArray("M 132 40 A 15 15 0 0 1 141 54 A 15 15 0 0 1 130 67 C 118 51 119 73 119 73 L 103 69 Z")
+        , morphedPathArray = pathArray1.morph(pathArray2).at(0.5)
+        , sourceArray = pathArray1.value, destinationArray = pathArray1.destination.value
+        , morphedArray = morphedPathArray.value
         , i, il, j, jl
 
-      expect(destinationArray.length).toBe(sourceArray.length)
-      expect(interpolatedArray.length).toBe(sourceArray.length)
+      expect(morphedArray.length).toBe(sourceArray.length)
 
       // For all the commands
       for(i = 0, il = sourceArray.length; i < il; i++) {
-        expect(destinationArray[i].length).toBe(sourceArray[i].length)
-        expect(interpolatedArray[i].length).toBe(sourceArray[i].length)
-
-        // Expect the current command to be the same for all the arrays
-        expect(destinationArray[i][0]).toBe(sourceArray[i][0])
-        expect(interpolatedArray[i][0]).toBe(sourceArray[i][0])
+        // Expect the current command to be the same
+        expect(morphedArray[i][0]).toBe(sourceArray[i][0])
+        expect(morphedArray[i].length).toBe(sourceArray[i].length)
 
         // For all the parameters of the current command
         for(j = 1, jl = sourceArray[i].length; j < jl; j++) {
-          expect(interpolatedArray[i][j]).toBe((sourceArray[i][j] + destinationArray[i][j]) / 2)
+          expect(morphedArray[i][j]).toBe((sourceArray[i][j] + destinationArray[i][j]) / 2)
         }
       }
     })
@@ -180,25 +173,25 @@ describe('PathArray', function () {
       // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
       var pathArray1 = new SVG.PathArray('M  13 13 A 25 37 0 0 1  43 25')
         , pathArray2 = new SVG.PathArray('M 101 55 A 25 37 0 1 0 130 67')
-        , interpolatedPathArray
+        , morphedPathArray
 
       pathArray1.morph(pathArray2)
 
-      // The interpolatedArray contain 2 commands: [['M', ...], ['A', ...]]
+      // The morphedPathArray.value contain 2 commands: [['M', ...], ['A', ...]]
       // Elliptical arc command in a path array followed by corresponding indexes:
       // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
       //   0    1   2        3                 4             5      6  7
-      interpolatedPathArray = pathArray1.at(0)
-      expect(interpolatedPathArray.value[1][4]).toBe(0)
-      expect(interpolatedPathArray.value[1][5]).toBe(1)
+      morphedPathArray = pathArray1.at(0)
+      expect(morphedPathArray.value[1][4]).toBe(0)
+      expect(morphedPathArray.value[1][5]).toBe(1)
 
-      interpolatedPathArray = pathArray1.at(0.5)
-      expect(interpolatedPathArray.value[1][4]).toBe(1)
-      expect(interpolatedPathArray.value[1][5]).toBe(1)
+      morphedPathArray = pathArray1.at(0.5)
+      expect(morphedPathArray.value[1][4]).toBe(1)
+      expect(morphedPathArray.value[1][5]).toBe(1)
 
-      interpolatedPathArray = pathArray1.at(1)
-      expect(interpolatedPathArray.value[1][4]).toBe(1)
-      expect(interpolatedPathArray.value[1][5]).toBe(0)
+      morphedPathArray = pathArray1.at(1)
+      expect(morphedPathArray.value[1][4]).toBe(1)
+      expect(morphedPathArray.value[1][5]).toBe(0)
     })
   })
 
