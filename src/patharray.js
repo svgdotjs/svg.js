@@ -115,55 +115,47 @@ SVG.extend(SVG.PathArray, {
   }
   // Make path array morphable
 , morph: function(pathArray) {
-    var pathsMorphable
+    pathArray = new SVG.PathArray(pathArray)
 
-    this.destination = new SVG.PathArray(pathArray)
-
-    if(this.haveSameCommands(this.destination)) {
-      this.sourceMorphable = this
-      this.destinationMorphable = this.destination
+    if(this.haveSameCommands(pathArray)) {
+      this.destination = pathArray
     } else {
-      pathsMorphable = SVG.utils.makePathsMorphable(this.value, this.destination)
-      this.sourceMorphable = pathsMorphable[0]
-      this.destinationMorphable = pathsMorphable[1]
+      this.destination = undefined
     }
 
     return this
   }
   // Get morphed path array at given position
 , at: function(pos) {
-    if(pos === 1) {
-      return this.destination
-    } else if(pos === 0) {
-      return this
-    } else {
-      var sourceArray = this.sourceMorphable.value
-        , destinationArray = this.destinationMorphable.value
-        , array = [], pathArray = new SVG.PathArray()
-        , i, il, j, jl
+    // make sure a destination is defined
+    if (!this.destination) return this
 
-      // Animate has specified in the SVG spec
-      // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
-      for (i = 0, il = sourceArray.length; i < il; i++) {
-        array[i] = [sourceArray[i][0]]
-        for(j=1, jl = sourceArray[i].length; j < jl; j++) {
-          array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
-        }
-        // For the two flags of the elliptical arc command, the SVG spec say:
-        // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
-        // Elliptical arc command as an array followed by corresponding indexes:
-        // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
-        //   0    1   2        3                 4             5      6  7
-        if(array[i][0] === 'A') {
-          array[i][4] = +(array[i][4] != 0)
-          array[i][5] = +(array[i][5] != 0)
-        }
+    var sourceArray = this.value
+      , destinationArray = this.destination.value
+      , array = [], pathArray = new SVG.PathArray()
+      , i, il, j, jl
+
+    // Animate has specified in the SVG spec
+    // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
+    for (i = 0, il = sourceArray.length; i < il; i++) {
+      array[i] = [sourceArray[i][0]]
+      for(j = 1, jl = sourceArray[i].length; j < jl; j++) {
+        array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
       }
-
-      // Directly modify the value of a path array, this is done this way for performance
-      pathArray.value = array
-      return pathArray
+      // For the two flags of the elliptical arc command, the SVG spec say:
+      // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
+      // Elliptical arc command as an array followed by corresponding indexes:
+      // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
+      //   0    1   2        3                 4             5      6  7
+      if(array[i][0] === 'A') {
+        array[i][4] = +(array[i][4] != 0)
+        array[i][5] = +(array[i][5] != 0)
+      }
     }
+
+    // Directly modify the value of a path array, this is done this way for performance
+    pathArray.value = array
+    return pathArray
   }
   // Absolutize and parse path to array
 , parse: function(array) {

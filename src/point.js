@@ -10,7 +10,7 @@ SVG.Point = SVG.invent({
       {x:x.x, y:x.y} :
     x != null ?
       {x:x, y:(y != null ? y : x)} : base // If y has no value, then x is used has its value
-                                          // This allow element-wise operations to be passed a single number
+
     // merge source
     this.x = source.x
     this.y = source.y
@@ -57,38 +57,7 @@ SVG.Point = SVG.invent({
   , transform: function(matrix) {
       return new SVG.Point(this.native().matrixTransform(matrix.native()))
     }
-    // return an array of the x and y coordinates
-  , toArray: function() {
-      return [this.x, this.y]
-    }
-    // perform an element-wise addition with the passed point or number
-  , plus: function(x, y) {
-      var point = new SVG.Point(x, y)
-      return new SVG.Point(this.x + point.x, this.y + point.y)
-    }
-    // perform an element-wise subtraction with the passed point or number
-  , minus: function(x, y) {
-      var point = new SVG.Point(x, y)
-      return new SVG.Point(this.x - point.x, this.y - point.y)
-    }
-    // perform an element-wise multiplication with the passed point or number
-  , times: function(x, y) {
-      var point = new SVG.Point(x, y)
-      return new SVG.Point(this.x * point.x, this.y * point.y)
-    }
-    // perform an element-wise division with the passed point or number
-  , divide: function(x, y) {
-      var point = new SVG.Point(x, y)
-      return new SVG.Point(this.x / point.x, this.y / point.y)
-    }
-    // calculate the Euclidean norm
-  , norm: function() {
-      return Math.sqrt(this.x*this.x + this.y*this.y)
-    }
-    // calculate the distance to the passed point
-  , distance: function(x, y) {
-      return this.minus(x, y).norm()
-    }
+
   }
 
 })
