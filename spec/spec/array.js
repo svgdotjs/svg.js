@@ -113,18 +113,18 @@ describe('PathArray', function () {
     })
   })
 
-  describe('haveSameCommands()', function() {
+  describe('equalCommands()', function() {
     it('return true if the passed path array use the same commands', function() {
       var pathArray1 = new SVG.PathArray('m -1500,-478 a 292,195 0 0 1 262,205 l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
         , pathArray2 = new SVG.PathArray('m  -680, 527 a 292,195 0 0 1 262,205 l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
 
-      expect(pathArray1.haveSameCommands(pathArray2)).toBe(true)
+      expect(pathArray1.equalCommands(pathArray2)).toBe(true)
     })
     it('return false if the passed path array does not use the same commands', function() {
       var pathArray1 = new SVG.PathArray('m -1500,-478 a 292,195 0 0 1 262,205   l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
         , pathArray2 = new SVG.PathArray('m - 663, 521 c 147,178 118,-25 245,210 l -565,319 c 0,0 -134,-374 51,-251 185,122 268,-278 268,-278 z')
 
-      expect(pathArray1.haveSameCommands(pathArray2)).toBe(false)
+      expect(pathArray1.equalCommands(pathArray2)).toBe(false)
     })
   })
 
@@ -136,12 +136,12 @@ describe('PathArray', function () {
       pathArray1.morph(pathArray2)
       expect(pathArray1.destination).toEqual(pathArray2)
     })
-    it('should set the attribute destination to undefined when the passed path array does not have the same comands as this path array', function() {
+    it('should set the attribute destination to null when the passed path array does not have the same comands as this path array', function() {
       var pathArray1 = new SVG.PathArray('m -1500,-478 a 292,195 0 0 1 262,205   l -565,319 c 0,0 -134,-374 51,-251 185,122 251,-273 251,-273 z')
         , pathArray2 = new SVG.PathArray('m - 663, 521 c 147,178 118,-25 245,210 l -565,319 c 0,0 -134,-374 51,-251 185,122 268,-278 268,-278 z')
 
       pathArray1.morph(pathArray2)
-      expect(pathArray1.destination).toBeUndefined()
+      expect(pathArray1.destination).toBeNull()
     })
   })
 
@@ -192,6 +192,11 @@ describe('PathArray', function () {
       morphedPathArray = pathArray1.at(1)
       expect(morphedPathArray.value[1][4]).toBe(1)
       expect(morphedPathArray.value[1][5]).toBe(0)
+    })
+    it('return itself if the destination attribute is null', function(){
+      var pathArray = new SVG.PathArray('M  13 13 A 25 37 0 0 1  43 25')
+      pathArray.destination = null
+      expect(pathArray.at(0.45)).toBe(pathArray)
     })
   })
 
