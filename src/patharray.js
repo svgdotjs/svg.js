@@ -100,27 +100,27 @@ SVG.extend(SVG.PathArray, {
 
     return this
   }
-  // Test if the passed path array use the same commands as this path array
-, haveSameCommands: function(pathArray) {
-    var i, il, haveSameCommands
+  // Test if the passed path array use the same path data commands as this path array
+, equalCommands: function(pathArray) {
+    var i, il, equalCommands
 
     pathArray = new SVG.PathArray(pathArray)
 
-    haveSameCommands = this.value.length === pathArray.value.length
-    for(i = 0, il = this.value.length; haveSameCommands && i < il; i++) {
-      haveSameCommands = this.value[i][0] === pathArray.value[i][0]
+    equalCommands = this.value.length === pathArray.value.length
+    for(i = 0, il = this.value.length; equalCommands && i < il; i++) {
+      equalCommands = this.value[i][0] === pathArray.value[i][0]
     }
 
-    return haveSameCommands
+    return equalCommands
   }
   // Make path array morphable
 , morph: function(pathArray) {
     pathArray = new SVG.PathArray(pathArray)
 
-    if(this.haveSameCommands(pathArray)) {
+    if(this.equalCommands(pathArray)) {
       this.destination = pathArray
     } else {
-      this.destination = undefined
+      this.destination = null
     }
 
     return this
