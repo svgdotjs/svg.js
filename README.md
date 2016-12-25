@@ -24,7 +24,7 @@ var draw = SVG('drawing').size(300, 300)
 var rect = draw.rect(100, 100).attr({ fill: '#f06' })
 ```
 The first argument can either be an id of the element or the selected element itself.
-Be aware that the HTML element must exist before running the svg.js code.
+Be aware that the HTML element must exist before running the SVG.js code.
 
 Given this HTML:
 
@@ -418,8 +418,18 @@ http://www.w3.org/TR/SVG/paths.html#PathData
 Paths can be updated using the `plot()` method:
 
 ```javascript
-path.plot('M100,200L300,400')
+path.plot('M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80')
 ```
+
+The `plot()` method can also be animated:
+
+```javascript
+path.animate(2000).plot('M10 80 C 40 150, 65 150, 95 80 S 150 10, 180 80').loop(true, true)
+```
+
+There is only basic support for animating paths baked into SVG.js, which means that only paths with the same commands (`M`,`C`,`S` etc.) are animatable.
+
+If you need to animate paths that does not share the same commands in order, you can use https://github.com/Fuzzyma/svg.pathmorphing.js
 
 __`returns`: `itself`__
 
@@ -3147,7 +3157,7 @@ rect.on('myevent', function(e) {
 })
 ```
 
-svg.js supports namespaced events following the syntax `event.namespace`.
+SVG.js supports namespaced events following the syntax `event.namespace`.
 
 A namespaced event behaves like a normal event with the difference that you can remove it without touching handlers from other namespaces.
 
