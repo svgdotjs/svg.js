@@ -2,15 +2,15 @@
   "name": "svg.js",
   "version": "2.3.6",
   "description": "A lightweight library for manipulating and animating SVG.",
-  "url": "http://svgjs.com",
-  "homepage": "http://www.svgjs.com",
+  "url": "https://svgdotjs.github.io/",
+  "homepage": "https://svgdotjs.github.io/",
   "keywords": [
     "svg",
     "vector",
     "graphics",
     "animation"
   ],
-  "author": "Wout Fierens <wout@mick-wout.com.com>",
+  "author": "Wout Fierens <wout@mick-wout.com>",
   "main": "dist/svg.js",
   "jam": {
     "include": [
@@ -22,8 +22,8 @@
   "maintainers": [
     {
       "name": "Wout Fierens",
-      "email": "wout@mick-wout.com.com",
-      "web": "http://svgjs.com"
+      "email": "wout@mick-wout.com",
+      "web": "https://svgdotjs.github.io/"
     },
     {
       "name": "Alex Ewerlöf",
