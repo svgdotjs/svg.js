@@ -1,3 +1,8 @@
+export = svgjs;
+export as namespace svgjs;
+
+declare var svgjs: svgjs.Library;
+
 // todo add SVG.FX
 declare namespace svgjs {
     export interface Library {
@@ -886,9 +891,4 @@ declare namespace svgjs {
 
         // TODO style, etc, bbox...
     }
-}
-
-declare var SVG: svgjs.Library;
-declare module "svg.js" {
-    export default SVG;
 }
