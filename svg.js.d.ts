@@ -77,7 +77,7 @@ declare namespace svgjs {
 
     // boxes.js
     export interface BBox {
-        new (element?: Element)
+        new (element?: Element): BBox;
         height: number;
         width: number;
         y: number;
@@ -86,8 +86,12 @@ declare namespace svgjs {
         cy: number;
         merge(bbox: BBox): BBox;
     }
-    export interface RBox extends BBox { }
-    export interface TBox extends BBox { }
+    export interface RBox extends BBox {
+        new (element?: Element): RBox;
+    }
+    export interface TBox extends BBox {
+        new (element?: Element): TBox;
+    }
     interface Container {
         bbox(): BBox;
         rbox(): RBox;
@@ -100,7 +104,9 @@ declare namespace svgjs {
     }
 
     // clip.js
-    export interface ClipPath extends Container { }
+    export interface ClipPath extends Container {
+        new (): ClipPath;
+    }
     interface Container {
         clip(): ClipPath;
     }
@@ -113,6 +119,7 @@ declare namespace svgjs {
 
     // color.js
     export interface Color {
+        new (): Color;
         new (color: string): Color;
         new (color: Color): Color;
         r: number;
@@ -131,6 +138,7 @@ declare namespace svgjs {
 
     // container.js
     export interface Container extends Parent {
+        new (): Container;
         viewbox(): ViewBox;
         viewbox(v): this;
     }
@@ -174,11 +182,14 @@ declare namespace svgjs {
     }
 
     // defs.js
-    export interface Defs extends Container { }
+    export interface Defs extends Container {
+        new (): Defs;
+    }
     interface Library { Defs: Defs }
 
     // doc.js
     export interface Doc extends Container {
+        new (): Doc;
         new (selector: string): Doc;
         new (domElement: HTMLElement): Doc;
         namespace(): this;
@@ -187,12 +198,11 @@ declare namespace svgjs {
         spof(spof): this;
         remove(): this;
     }
-    interface Library {
-        Doc: Dec;
-    }
+    interface Library { Doc: Doc; }
 
     // element.js
     export interface Element {
+        new (): Element;
         node: LinkedHTMLElement;
         type: string;
 
@@ -269,8 +279,12 @@ declare namespace svgjs {
         size(width: any, height: any): this;
         radius(x: number, y?: number): this;
     }
-    export interface Circle extends CircleMethods { }
-    export interface Ellipse extends CircleMethods { }
+    export interface Circle extends CircleMethods {
+        new (): Circle;
+    }
+    export interface Ellipse extends CircleMethods {
+        new (): Ellipse;
+    }
     interface Container {
         circle(size?: any): Circle;
         ellipse(width?: any, height?: any): Ellipse;
@@ -317,11 +331,12 @@ declare namespace svgjs {
 
     // gradient.js
     export interface Stop extends Element {
+        new (): Stop;
         update(offset?: number | _Number, color?: any, opacity?: number | _Number): this;
         update(opts: { color: string | Color, offset: number | _Number, opacity: number | _Number }): this;
     }
     export interface Gradient extends Container {
-        new (type: string): Gradient;
+        new (type?: string): Gradient;
         at(offset?: number | _Number, color?: any, opacity?: number | _Number): Stop;
         at(opts: { color: string | Color, offset: number | _Number, opacity: number | _Number }): Stop;
         update(block?: Function): this;
@@ -341,6 +356,7 @@ declare namespace svgjs {
 
     // group.js
     export interface G extends Container {
+        new (): G;
         gbox(): BBox;
     }
     interface Container { group(): G; }
@@ -348,6 +364,7 @@ declare namespace svgjs {
 
     // hyperlink.js
     export interface A extends Container {
+        new (): A;
         to(url: any): this;
         show(target?: any): this;
         target(target: any): this;
@@ -361,6 +378,7 @@ declare namespace svgjs {
 
     // image.js
     export interface Image extends Shape {
+        new (): Image;
         load(url?: string): this;
         loaded(cb: (image: Image, info: { width: number, height: number, ratio: number, url: string }) => any): this;
         error(cb: (image: Image, info: { width: number, height: number, ratio: number, url: string }) => any): this;
@@ -374,6 +392,7 @@ declare namespace svgjs {
 
     // line.js
     export interface Line extends Shape {
+        new (): Line;
         array(): PointArray;
         plot(points: number[][]): this;
         plot(x1: number, y1: number, x2: number, y2: number): this;
@@ -388,6 +407,7 @@ declare namespace svgjs {
 
     // marker.js
     export interface Marker extends Container {
+        new (): Marker;
         ref(x, y): this;
         update(block: (marker: Marker) => any): this;
         toString(): string;
@@ -420,6 +440,7 @@ declare namespace svgjs {
 
     // mask.js
     export interface Mask extends Container {
+        new (): Mask;
         targets: Element[];
     }
     interface Container { mask(): Mask; }
@@ -496,7 +517,9 @@ declare namespace svgjs {
     }
 
     // nested.js
-    export interface Nested extends Container { }
+    export interface Nested extends Container {
+        new (): Nested;
+    }
     interface Container { nested(): Nested; }
     interface Library { Nested: Nested; }
 
@@ -521,6 +544,7 @@ declare namespace svgjs {
 
     // parent.js
     export interface Parent extends Element {
+        new (): Parent;
         children(): Element[];
         add(element: Element, i?: number): this;
         put(element: Element, i?: number): Element;
@@ -538,6 +562,7 @@ declare namespace svgjs {
 
     // path.js
     export interface Path extends Shape {
+        new (): Path;
         morphArray: PathArray;
         array(): PathArray;
         plot(d: string): this;
@@ -553,6 +578,7 @@ declare namespace svgjs {
     // pathArray.js
     interface PathArrayPoint extends Array<any> { }
     export interface PathArray extends _Array {
+        new (): PathArray;
         new (d: string): PathArray;
         new (array: PathArrayPoint[]): PathArray;
         move(x: number, y: number): this;
@@ -564,6 +590,7 @@ declare namespace svgjs {
 
     // pattern.js
     export interface Pattern extends Container {
+        new (): Pattern;
         update(block: (pattern: Pattern) => any): this;
         toString(): string;
     }
@@ -577,7 +604,7 @@ declare namespace svgjs {
     export interface Point {
         new (): Point;
         new (position: ArrayPoint): Point;
-        new (position: Point): Point;
+        new (point: Point): Point;
         new (position: { x: number, y: number }): Point;
         new (x: number, y: number): Point;
 
@@ -597,6 +624,7 @@ declare namespace svgjs {
 
     // pointArray.js
     export interface PointArray extends _Array {
+        new (): PointArray;
         new (points: string): PointArray;
         new (points: ArrayPoint[]): PointArray;
         toStirng(): string;
@@ -621,13 +649,17 @@ declare namespace svgjs {
         move(x: number, y: number): this;
         size(width: number, height: number): this;
     }
-    export interface PolyLine extends poly { }
+    export interface PolyLine extends poly {
+        new (): PolyLine;
+    }
     interface Library { PolyLine: PolyLine; }
     interface Container {
         polyLine(points: string): PolyLine;
         polyLine(points: ArrayPoint[]): PolyLine;
     }
-    export interface Polygon extends poly { }
+    export interface Polygon extends poly {
+        new (): Polygon;
+    }
     interface Library { Polygon: Polygon; }
     interface Container {
         polygon(points: string): Polygon;
@@ -635,7 +667,9 @@ declare namespace svgjs {
     }
 
     // rect.js
-    export interface Rect extends Shape { }
+    export interface Rect extends Shape {
+        new (): Rect;
+    }
     interface Library { Rect: Rect; }
     interface Container {
         rect(width?: number, height?: number): Rect;
@@ -697,7 +731,9 @@ declare namespace svgjs {
     interface Library { Set: Set; }
 
     // shape.js
-    export interface Shape extends Element { }
+    export interface Shape extends Element {
+        new (): Shape;
+    }
     interface Library { Shape: Shape; }
 
     // style.js
@@ -758,6 +794,7 @@ declare namespace svgjs {
 
     // text.js
     export interface Text extends Shape {
+        new (): Text;
         clone(): Text;
         text(): string;
         text(text: any): this;
@@ -777,6 +814,7 @@ declare namespace svgjs {
     }
     interface Library { Text: Text; }
     export interface Tspan extends Shape {
+        new (): Tspan;
         text(): string;
         text(text: any): this;
         dx(x: number): this;
@@ -790,7 +828,9 @@ declare namespace svgjs {
     interface Library { Tspan: Tspan; }
 
     // textpath.js
-    export interface TextPath extends Parent { }
+    export interface TextPath extends Parent {
+        new (): TextPath;
+    }
     interface Text {
         path(d: any): this;
         plot(d: any): this;
@@ -831,10 +871,10 @@ declare namespace svgjs {
         new (source: Transform, inversed?: boolean): Transformation;
         at(pos: number): Matrix;
     }
-    export interface Translate extends Transformation { }
-    export interface Rotate extends Transformation { }
-    export interface Scale extends Transformation { }
-    export interface Skew extends Transformation { }
+    export interface Translate extends Transformation {new (): Translate}
+    export interface Rotate extends Transformation {new (): Rotate}
+    export interface Scale extends Transformation {new (): Scale}
+    export interface Skew extends Transformation {new (): Skew}
     interface Library {
         Transformation: Transformation;
         Translate: Translate;
@@ -851,6 +891,7 @@ declare namespace svgjs {
 
     // use.js
     export interface Use extends Shape {
+        new (): Use;
         element(element: Element, file?: string): this;
     }
     interface Container {
