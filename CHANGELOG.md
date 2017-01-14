@@ -6,6 +6,9 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+# 2.4.0 (14/01/2017)
+- added support for basic path animations (#561)
+
 # 2.3.7 (14/01/2017)
 - moved project to [svgdotjs](https://github.com/svgdotjs)
 - made matrixify work with transformation chain separated by commas (#543)
@@ -16,7 +19,6 @@
 - updated dev dependencies; request and gulp-chmod - `npm run build` now requires nodejs 4.x
 - added code coverage https://coveralls.io/github/svgdotjs/svg.js (3e614d4)
 - added `npm run test:quick` which aim at being fast rather than correct - great for git hooks (981ce24)
-- added support for basic path animations (#561)
 
 # 2.3.6 (21/10/2016)
 - fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#529)
