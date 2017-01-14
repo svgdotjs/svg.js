@@ -1,5 +1,6 @@
 # 3.0.0
 - make transform-methods relative as default (breaking change)
+- change from SVG() to use querySelector instead of getElementById (breaking change)
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
