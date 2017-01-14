@@ -6,7 +6,7 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.3.7
+# 2.3.7 (14/01/2017)
 - moved project to [svgdotjs](https://github.com/svgdotjs)
 - made matrixify work with transformation chain separated by commas (#543)
 - fixed `SVG.Matrix.skew()` (#545)

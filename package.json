@@ -57,8 +57,7 @@
     "build": "gulp",
     "build:test": "gulp unify",
     "test": "karma start .config/karma.conf.js --single-run",
-    "test:quick": "karma start .config/karma.quick.js",
-    "docs": "gulp docs"
+    "test:quick": "karma start .config/karma.quick.js"
   },
   "devDependencies": {
     "coveralls": "^2.11.15",

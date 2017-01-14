@@ -2,7 +2,7 @@
   "name": "svg.js",
   "repo": "svgdotjs/svg.js",
   "description": "A lightweight library for manipulating and animating SVG",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "keywords": ["svg"],
   "author": "Wout Fierens <wout@mick-wout.com>",
   "main": "dist/svg.js",
