@@ -20,7 +20,7 @@ declare namespace svgjs {
         create(name: string): any;
         extend(parent: Object, obj: Object): void;
         invent(config: Object): any;
-        atopt(node: HTMLElement): Element;
+        adopt(node: HTMLElement): Element;
         prepare(element: HTMLElement): void;
     }
     interface LinkedHTMLElement extends HTMLElement {
