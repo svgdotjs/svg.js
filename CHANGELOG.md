@@ -1,4 +1,11 @@
-# 3.0.0
+# Change Log
+
+All notable changes to this project will be documented in this file.
+
+The document follows the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com).
+
+
+## 3.0.0
 - make transform-methods relative as default (breaking change)
 - change from SVG() to use querySelector instead of getElementById (breaking change)
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
@@ -7,10 +14,10 @@
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
-# 2.4.0 - 2017-01-14
+## 2.4.0 - 2017-01-14
 - added support for basic path animations (#561)
 
-# 2.3.7 - 2017-01-14
+## 2.3.7 - 2017-01-14
 - moved project to [svgdotjs](https://github.com/svgdotjs)
 - made matrixify work with transformation chain separated by commas (#543)
 - fixed `SVG.Matrix.skew()` (#545)
@@ -21,29 +28,29 @@
 - added code coverage https://coveralls.io/github/svgdotjs/svg.js (3e614d4)
 - added `npm run test:quick` which aim at being fast rather than correct - great for git hooks (981ce24)
 
-# 2.3.6 - 2016-10-21
+## 2.3.6 - 2016-10-21
 - fixed leading and trailing space in SVG.PointArray would return NaN for some points (695f26a) (#529)
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
 - fixed test of `SVG.FX.afterAll` (#534)
 - fixed `SVG.FX.speed()` (#536)
 
-# 2.3.5 - 2016-10-13
+## 2.3.5 - 2016-10-13
 - calling `fill()`, `stroke()` without an argument is now a nop
 - Polygon now accepts comma less points to achieve parity with Adobe Illustrator (#529)
 - added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js) (#527)
 - updated dependencies
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
-# 2.3.4 - 2016-08-04
+## 2.3.4 - 2016-08-04
 - reworked parent module for speed improvemenents
 - reworked `filterSVGElements` utility to use a for loop instead of the native filter function
 
-# 2.3.3 - 2016-08-02
+## 2.3.3 - 2016-08-02
 - add error callback on image loading (#508)
 - fixed bug when getting bbox of text elements which are not in the dom (#514) 
 - fixed bug when getting bbox of element which is hidden with css (#516)
 
-# 2.3.2 - 2016-06-21
+## 2.3.2 - 2016-06-21
 - fixed string parsing in viewbox (#483)
 - added specs for `SVG.ViewBox`
 - fixed bbox when element is not in the dom (#480)
@@ -53,7 +60,7 @@
 - fixed problem in IE with `document.contains` (#490) related to (#480)
 - fixed `undo` when undoing transformations (#494)
 
-# 2.3.1 - 2016-05-05
+## 2.3.1 - 2016-05-05
 - fixed `SVG.morph()` (#473)
 - fixed parser error (#471)
 - fixed bug in `SVG.Color` with new fx
@@ -64,7 +71,7 @@
 - fixed bug in `SVG.Doc().create` where size was set to 100% even if size was already specified
 - fixed bug in `parse()` from `SVG.PathArray` which does not correctly handled `S` and `T` (#485)
 
-# 2.3.0 - 2016-03-30
+## 2.3.0 - 2016-03-30
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
 - added `element.point(x,y)` which transforms a point from screen coordinates to the elements space (#403)
 - fixed `svgjs:data` attribute which was not set properly in all browsers (#428)
@@ -77,33 +84,33 @@
 - added `element.is()` which helps to check for the object instance faster (instanceof check)
 - added more fx specs
 
-# 2.2.5 - 2015-12-29
+## 2.2.5 - 2015-12-29
 - added check for existence of node (#431)
 - `group.move()` now allows string numbers as input (#433)
 - `matrixify()` will not apply the calculated matrix to the node anymore
 
-# 2.2.4 - 2015-12-12
+## 2.2.4 - 2015-12-12
 - fixed `transform()` which returns the matrix values (a-f) now, too (#423)
 - double newlines (\n\n) are correctly handled as blank line from `text()`
 - fixed use of scrollX vs pageXOffset in `rbox()` (#425)
 - fixed target array in mask and clip which was removed instead of reinitialized (#429)
 
-# 2.2.3 - 2015-11-30
+## 2.2.3 - 2015-11-30
 - fixed null check in image (see 2.2.2)
 - fixed bug related to the new path parser (see 2.2.2)
 - fixed amd loader (#412)
 
-# 2.2.2 - 2015-11-28
+## 2.2.2 - 2015-11-28
 - fixed leading point bug in path parsing (#416)
 - added null check in image onload callback (#415)
 - documentation rework (#407) [thanks @snowyplover]
 
-# 2.2.1 - 2015-11-18
+## 2.2.1 - 2015-11-18
 - added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
 - added `gbox()` to group to get bbox with translation included (#405)
 - fixed dom data which was not cleaned up properly (#398)
 
-# 2.2.0 - 2015-11-06
+## 2.2.0 - 2015-11-06
 
 - fixed pattern and gradient animation (#385)
 - fixed mask animation in Firefox (#287)
@@ -115,11 +122,11 @@
 - added support for css selectors within the `parent()` method
 - added `parents()` method to get an array of all parenting elements
 
-# 2.1.1 - 2015-10-03
+## 2.1.1 - 2015-10-03
 
 - added custom context binding to event callback (default is the element the event is bound to)
 
-# 2.1.0 - 2015-09-20
+## 2.1.0 - 2015-09-20
 
 - added transform to pattern and gradients (#383)
 - fixed clone of textnodes (#369)
@@ -127,11 +134,11 @@
 - fixed typo that leads to broken gradients (#370)
 - fixed animate radius for circles (#367)
 
-# 2.0.2 - 2015-06-22
+## 2.0.2 - 2015-06-22
 
 - Fixed zoom consideration in circle and ellipse
 
-# 2.0.1 - 2015-06-21
+## 2.0.1 - 2015-06-21
 
 - fixed bug with `doc()` which always should return root svg
 - removed target reference from use which caused bugs in `dmove()` and `use()` with external file
@@ -139,7 +146,7 @@
 - fixed bug in `SVG.FX` when animating with `plot()`
 - removed scale consideration in `move()` duo to incompatibilities with other move-functions e.g. in `SVG.PointArray`
 
-# 2.0.0 - 2015-06-11
+## 2.0.0 - 2015-06-11
 
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
 - changed `parent` reference on elements to `parent()` method
@@ -181,7 +188,7 @@
 - fixed a bug where events are not detached properly
 - added event-based or complete detaching of event listeners in `off()` method
 
-# 1.0.0-rc.9 - 2014-06-17
+## 1.0.0-rc.9 - 2014-06-17
 
 - added `SVG.Marker`
 - added `SVG.Symbol`
@@ -191,12 +198,12 @@
 - added `reference()` method to get referenced elements from a given attribute value
 - fixed infinite loop in viewbox when element has a percentage width / height [thanks @shabegger]
 
-# 1.0.0-rc.8 - 2014-06-12
+## 1.0.0-rc.8 - 2014-06-12
 
 - fixed bug in `SVG.off`
 - fixed offset by window scroll position in `rbox()` [thanks @bryhoyt]
 
-# 1.0.0-rc.7 - 2014-06-11
+## 1.0.0-rc.7 - 2014-06-11
 
 - calling `after()` when calling `stop(true)` (fulfill flag) [thanks @vird]
 - added `classes()`, `hasClass()`, `addClass()`, `removeClass()` and `toggleClass()` [thanks @pklingem]
@@ -208,7 +215,7 @@
 - fix for `text()` method on text element when acting as getter [thanks @Lochemage]
 - fix in `style()` method with a css string [thanks @TobiasHeckel]
 
-# 1.0.0-rc.6 - 2014-03-03
+## 1.0.0-rc.6 - 2014-03-03
 
 - fine-tuned text element positioning
 - fixed a bug in text `dy()` method
@@ -221,7 +228,7 @@
 - moved helpers to a separate file
 - added more output values to `bbox()` and `rbox()` methods
 
-# 1.0.0-rc.5 - 2014-02-14
+## 1.0.0-rc.5 - 2014-02-14
 
 - added `plain()` method to `SVG.Text` element to add plain text content, without tspans
 - added `plain()` method to parent elements to create a text element without tspans
@@ -236,7 +243,7 @@
 - applied Helvetica as default font
 - building `SVG.FX` class with `SVG.invent()` function
 
-# 1.0.0-rc.4 - 2014-02-04
+## 1.0.0-rc.4 - 2014-02-04
 
 - switched to `MAJOR`.`MINOR`.`PATCH` versioning format to play nice with package managers
 - made svg.pattern.js part of the core library
@@ -247,7 +254,7 @@
 - moved `length()` method to sugar module
 - fix for arcs in patharray `toString()` method [thanks @dotnetCarpenter]
 
-# v1.0rc3 - 2014-02-03
+## v1.0rc3 - 2014-02-03
 
 - fix for html-less documents
 - added the `SVG.invent` function to ease invention of new elements
@@ -256,13 +263,13 @@
 - fix for arcs in patharray `toString()` method
 - added `length()` mehtod to path, wrapping the native `getTotalLength()`
 
-# v1.0rc2 - 2014-02-01
+## v1.0rc2 - 2014-02-01
 
 - added `index()` method to `SVG.Parent` and `SVG.Set`
 - modified `cx()` and `cy()` methods on elements with native `x`, `y`, `width` and `height` attributes for better performance
 - added `morph()` and `at()` methods to `SVG.Number` for unit morphing
 
-# v1.0rc1 - 2014-01-31
+## v1.0rc1 - 2014-01-31
 
 - added `SVG.PathArray` for real path transformations
 - removed `unbiased` system for paths
@@ -273,31 +280,31 @@
 - added `relative()` method for moves relative to the current position
 - added `morph()` and `at()` methods to `SVG.Color` for color morphing
 
-# v0.38 - 2014-01-28
+## v0.38 - 2014-01-28
 
 - added `loop()` method to `SVG.FX`
 - switched from `setInterval` to `requestAnimFrame` for animations
 
-# v0.37 - 2014-01-26
+## v0.37 - 2014-01-26
 
 - added `get()` to `SVG.Set`
 - moved `SVG.PointArray` to a separate file
 
-# v0.36 - 2014-01-25
+## v0.36 - 2014-01-25
 
 - added `linkTo()`, `addTo()` and `putIn()` methods on `SVG.Element`
 - provided more detailed documentation on parent elements
 
-# v0.35 - 2014-01-23
+## v0.35 - 2014-01-23
 
 - added `SVG.A` element with the `link()`
 
-# v0.34 - 2014-01-23
+## v0.34 - 2014-01-23
 
 - added `pause()` and `play()` to `SVG.FX`
 - storing animation values in `situation` object
 
-# v0.33 - 2014-01-22
+## v0.33 - 2014-01-22
 
 - added `has()` method to `SVG.Set`
 - added `width()` and `height()` as setter and getter methods on all shapes
@@ -307,6 +314,6 @@
 - added reference to parent node in defs
 - merged plotable.js and path.js
 
-# v0.32
+## v0.32
 
 - added library to [cdnjs](http://cdnjs.com)
