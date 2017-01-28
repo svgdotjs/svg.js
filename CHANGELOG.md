@@ -22,13 +22,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
-## 2.4.0 - 2017-01-14
+## [2.4.0] - 2017-01-14
 
 ### Added
 - added support for basic path animations (#561)
 
 
-## 2.3.7 - 2017-01-14
+## [2.3.7] - 2017-01-14
 
 ### Added
 - added code coverage https://coveralls.io/github/svgdotjs/svg.js (3e614d4)
@@ -46,7 +46,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed an error in `SVG.FX.step`, if custom properties is added to `Array.prototype` (#549)
 
 
-## 2.3.6 - 2016-10-21
+## [2.3.6] - 2016-10-21
 
 ### Changed
 - make SVG.FX.loop modify the last situation instead of the current one (#532)
@@ -57,7 +57,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed `SVG.FX.speed()` (#536)
 
 
-## 2.3.5 - 2016-10-13
+## [2.3.5] - 2016-10-13
 
 ### Added
 - added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js) (#527)
@@ -69,14 +69,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - updated dependencies
 
 
-## 2.3.4 - 2016-08-04
+## [2.3.4] - 2016-08-04
 
 ### Changed
 - reworked parent module for speed improvemenents
 - reworked `filterSVGElements` utility to use a for loop instead of the native filter function
 
 
-## 2.3.3 - 2016-08-02
+## [2.3.3] - 2016-08-02
 
 ### Added
 - add error callback on image loading (#508)
@@ -86,7 +86,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed bug when getting bbox of element which is hidden with css (#516)
 
 
-## 2.3.2 - 2016-06-21
+## [2.3.2] - 2016-06-21
 
 ### Added
 - added specs for `SVG.ViewBox`
@@ -101,7 +101,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed `undo` when undoing transformations (#494)
 
 
-## 2.3.1 - 2016-05-05
+## [2.3.1] - 2016-05-05
 
 ### Added
 - added typings for svg.js (#470)
@@ -117,7 +117,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed bug in `parse()` from `SVG.PathArray` which does not correctly handled `S` and `T` (#485)
 
 
-## 2.3.0 - 2016-03-30
+## [2.3.0] - 2016-03-30
 
 ### Added
 - added `SVG.Point` which serves as Wrapper to the native `SVGPoint` (#437)
@@ -137,7 +137,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed event listeners which didnt work correctly when identic funtions used
 
 
-## 2.2.5 - 2015-12-29
+## [2.2.5] - 2015-12-29
 
 ### Added
 - added check for existence of node (#431)
@@ -147,7 +147,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `matrixify()` will not apply the calculated matrix to the node anymore
 
 
-## 2.2.4 - 2015-12-12
+## [2.2.4] - 2015-12-12
 
 ### Fixed
 - fixed `transform()` which returns the matrix values (a-f) now, too (#423)
@@ -156,7 +156,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed target array in mask and clip which was removed instead of reinitialized (#429)
 
 
-## 2.2.3 - 2015-11-30
+## [2.2.3] - 2015-11-30
 
 ### Fixed
 - fixed null check in image (see 2.2.2)
@@ -164,7 +164,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed amd loader (#412)
 
 
-## 2.2.2 - 2015-11-28
+## [2.2.2] - 2015-11-28
 
 ### Added
 - added null check in image onload callback (#415)
@@ -176,7 +176,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed leading point bug in path parsing (#416)
 
 
-## 2.2.1 - 2015-11-18
+## [2.2.1] - 2015-11-18
 
 ### Added
 - added workaround for `SvgPathSeg` which is removed in Chrome 48 (#409)
@@ -186,7 +186,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed dom data which was not cleaned up properly (#398)
 
 
-## 2.2.0 - 2015-11-06
+## [2.2.0] - 2015-11-06
 
 ### Added
 - added `ungroup()/flatten()` (#238), `toParent()` and `toDoc()`
@@ -204,13 +204,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed return value of `text()` after import/clone (#393)
 
 
-## 2.1.1 - 2015-10-03
+## [2.1.1] - 2015-10-03
 
 ### Added
 - added custom context binding to event callback (default is the element the event is bound to)
 
 
-## 2.1.0 - 2015-09-20
+## [2.1.0] - 2015-09-20
 
 ### Added
 - added transform to pattern and gradients (#383)
@@ -222,13 +222,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed animate radius for circles (#367)
 
 
-## 2.0.2 - 2015-06-22
+## [2.0.2] - 2015-06-22
 
 ### Fixed
 - Fixed zoom consideration in circle and ellipse
 
 
-## 2.0.1 - 2015-06-21
+## [2.0.1] - 2015-06-21
 
 ### Added
 - added possibility to remove all events from a certain namespace
@@ -242,7 +242,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed scale consideration in `move()` duo to incompatibilities with other move-functions e.g. in `SVG.PointArray`
 
 
-## 2.0.0 - 2015-06-11
+## [2.0.0] - 2015-06-11
 
 ### Added
 - implemented an SVG adoption system to be able to manipulate existing SVG's not created with svg.js
@@ -290,7 +290,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug where events are not detached properly
 
 
-## 1.0.0-rc.9 - 2014-06-17
+## [1.0.0-rc.9] - 2014-06-17
 
 ### Added
 - added `SVG.Marker`
@@ -306,14 +306,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed infinite loop in viewbox when element has a percentage width / height [thanks @shabegger]
 
 
-## 1.0.0-rc.8 - 2014-06-12
+## [1.0.0-rc.8] - 2014-06-12
 
 ### Fixed
 - fixed bug in `SVG.off`
 - fixed offset by window scroll position in `rbox()` [thanks @bryhoyt]
 
 
-## 1.0.0-rc.7 - 2014-06-11
+## [1.0.0-rc.7] - 2014-06-11
 
 ### Added
 - added `classes()`, `hasClass()`, `addClass()`, `removeClass()` and `toggleClass()` [thanks @pklingem]
@@ -331,7 +331,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fix in `style()` method with a css string [thanks @TobiasHeckel]
 
 
-## 1.0.0-rc.6 - 2014-03-03
+## [1.0.0-rc.6] - 2014-03-03
 
 ### Added
 - added `leading()` method to `SVG.FX`
@@ -352,7 +352,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed internal representation for `style`
 
 
-## 1.0.0-rc.5 - 2014-02-14
+## [1.0.0-rc.5] - 2014-02-14
 
 ### Added
 - added `plain()` method to `SVG.Text` element to add plain text content, without tspans
@@ -373,7 +373,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed verbose style application to tspans
 
 
-## 1.0.0-rc.4 - 2014-02-04
+## [1.0.0-rc.4] - 2014-02-04
 
 ### Added
 - automatic pattern creation by passing an image url or instance as `fill` attribute on elements
@@ -390,7 +390,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fix for arcs in patharray `toString()` method [thanks @dotnetCarpenter]
 
 
-## v1.0rc3 - 2014-02-03
+## [v1.0rc3] - 2014-02-03
 
 ### Added
 - added the `SVG.invent` function to ease invention of new elements
@@ -405,7 +405,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fix for arcs in patharray `toString()` method
 
 
-## v1.0rc2 - 2014-02-01
+## [v1.0rc2] - 2014-02-01
 
 ### Added
 - added `index()` method to `SVG.Parent` and `SVG.Set`
@@ -415,7 +415,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - modified `cx()` and `cy()` methods on elements with native `x`, `y`, `width` and `height` attributes for better performance
 
 
-## v1.0rc1 - 2014-01-31
+## [v1.0rc1] - 2014-01-31
 
 ### Added
 - added `SVG.PathArray` for real path transformations
@@ -432,7 +432,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `unbiased` system for paths
 
 
-## v0.38 - 2014-01-28
+## [v0.38] - 2014-01-28
 
 ### Added
 - added `loop()` method to `SVG.FX`
@@ -441,7 +441,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - switched from `setInterval` to `requestAnimFrame` for animations
 
 
-## v0.37 - 2014-01-26
+## [v0.37] - 2014-01-26
 
 ### Added
 - added `get()` to `SVG.Set`
@@ -450,7 +450,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - moved `SVG.PointArray` to a separate file
 
 
-## v0.36 - 2014-01-25
+## [v0.36] - 2014-01-25
 
 ### Added
 - added `linkTo()`, `addTo()` and `putIn()` methods on `SVG.Element`
@@ -461,13 +461,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 
 
-## v0.35 - 2014-01-23
+## [v0.35] - 2014-01-23
 
 ### Added
 - added `SVG.A` element with the `link()`
 
 
-## v0.34 - 2014-01-23
+## [v0.34] - 2014-01-23
 
 ### Added
 - added `pause()` and `play()` to `SVG.FX`
@@ -476,7 +476,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - storing animation values in `situation` object
 
 
-## v0.33 - 2014-01-22
+## [v0.33] - 2014-01-22
 
 ### Added
 - added `has()` method to `SVG.Set`
@@ -490,8 +490,52 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - merged plotable.js and path.js
 
 
-## v0.32
+## [v0.32]
 
 ### Added
 - added library to [cdnjs](http://cdnjs.com)
 
+
+<!-- Headings above link to the releases listed here -->
+[2.4.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.4.0
+
+[2.3.7]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.7
+[2.3.6]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.6
+[2.3.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.5
+[2.3.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.4
+[2.3.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.3
+[2.3.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.2
+[2.3.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.1
+[2.3.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.0
+
+[2.2.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.5
+[2.2.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.4
+[2.2.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.3
+[2.2.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.2
+[2.2.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.1
+[2.2.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.2.0
+
+[2.1.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.1.1
+[2.1.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.1.0
+
+[2.0.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.0.2
+[2.0.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.0.1
+[2.0.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.0.0
+
+[1.0.0-rc.9]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.9
+[1.0.0-rc.8]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.8
+[1.0.0-rc.7]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.7
+[1.0.0-rc.6]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.6
+[1.0.0-rc.5]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.5
+[1.0.0-rc.4]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.4
+[v1.0rc3]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc3
+[v1.0rc2]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc2
+[v1.0rc1]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc1
+
+[v0.38]: https://github.com/svgdotjs/svg.js/releases/tag/v0.38
+[v0.37]: https://github.com/svgdotjs/svg.js/releases/tag/v0.37
+[v0.36]: https://github.com/svgdotjs/svg.js/releases/tag/v0.36
+[v0.35]: https://github.com/svgdotjs/svg.js/releases/tag/v0.35
+[v0.34]: https://github.com/svgdotjs/svg.js/releases/tag/v0.34
+[v0.33]: https://github.com/svgdotjs/svg.js/releases/tag/v0.33
+[v0.32]: https://github.com/svgdotjs/svg.js/releases/tag/v0.32
