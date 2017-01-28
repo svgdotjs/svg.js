@@ -5,8 +5,10 @@ All notable changes to this project will be documented in this file.
 The document follows the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com).
 
 
+====
 
-## 3.0.0
+
+## UNRELEASED 3.0.0
 
 ### Added
 - added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
@@ -20,6 +22,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
+
+
+====
 
 
 ## [2.4.0] - 2017-01-14
