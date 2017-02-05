@@ -26,7 +26,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 2.4.1
 
 ### Changed
-- change CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com).
+- change CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
 
 ====
 
