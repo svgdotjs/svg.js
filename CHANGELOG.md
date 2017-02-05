@@ -17,7 +17,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Changed
 - make transform-methods relative as default (breaking change)
-- change from SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
+- change SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
