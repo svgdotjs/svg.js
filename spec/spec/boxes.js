@@ -195,15 +195,15 @@ describe('Boxes', function() {
     it('matches the size of the target element, including transformations', function() {
       var box = rect.rbox()
       expect(box.x).toBeCloseTo(60)
-      expect(box.y).toBeCloseTo(281)
+      expect(box.y).toBeCloseTo(281, 0)
       expect(box.cx).toBeCloseTo(110)
-      expect(box.cy).toBeCloseTo(551)
+      expect(box.cy).toBeCloseTo(551, 0)
       expect(box.width).toBe(100)
       expect(box.height).toBe(540)
       expect(box.w).toBe(100)
       expect(box.h).toBe(540)
       expect(box.x2).toBeCloseTo(160)
-      expect(box.y2).toBeCloseTo(821)
+      expect(box.y2).toBeCloseTo(821, 0)
     })
   })
 

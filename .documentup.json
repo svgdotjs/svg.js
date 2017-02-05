@@ -1,8 +1,7 @@
 {
   "twitter": [
-    "svg_js"
+    "svgdotjs"
   ],
-  "travis": true,
   "issues": true,
   "theme":  "v1"
 }

@@ -121,24 +121,5 @@ gulp.task('minify', ['unify'], function() {
     .pipe(size({ showFiles: true, gzip: true, title: 'Gzipped' }))
 })
 
-/**
- ‎* rebuild documentation using documentup
- */
-
-gulp.task('docs', function() {
-  fs.readFile('README.md', 'utf8', function (err, data) {
-    request.post(
-      'http://documentup.com/compiled'
-    , { form: { content: data, name: 'SVG.js', theme: 'v1' } }
-    , function (error, response, body) {
-        // Replace stylesheet
-        body = body.replace('//documentup.com/stylesheets/themes/v1.css', 'svgjs.css')
-
-        // Write file
-        fs.writeFile('docs/index.html', body, function(err) {})
-      }
-    )
-  })
-})
 
 gulp.task('default', ['clean', 'unify', 'minify'])

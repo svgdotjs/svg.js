@@ -140,7 +140,7 @@ describe('Set', function() {
       var box = set.bbox()
 
       expect(box.x).toBeCloseTo(0)
-      expect(box.y).toBeCloseTo(0)
+      expect(box.y).toBeCloseTo(0, 0)
       expect(box.width).toBeCloseTo(300)
       expect(box.height).toBeCloseTo(350)
     })

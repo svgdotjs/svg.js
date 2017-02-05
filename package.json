@@ -1,16 +1,16 @@
 {
   "name": "svg.js",
-  "version": "2.3.6",
+  "version": "2.4.0",
   "description": "A lightweight library for manipulating and animating SVG.",
-  "url": "http://svgjs.com",
-  "homepage": "http://www.svgjs.com",
+  "url": "https://svgdotjs.github.io/",
+  "homepage": "https://svgdotjs.github.io/",
   "keywords": [
     "svg",
     "vector",
     "graphics",
     "animation"
   ],
-  "author": "Wout Fierens <wout@mick-wout.com.com>",
+  "author": "Wout Fierens <wout@mick-wout.com>",
   "main": "dist/svg.js",
   "jam": {
     "include": [
@@ -22,8 +22,8 @@
   "maintainers": [
     {
       "name": "Wout Fierens",
-      "email": "wout@mick-wout.com.com",
-      "web": "http://svgjs.com"
+      "email": "wout@mick-wout.com",
+      "web": "https://svgdotjs.github.io/"
     },
     {
       "name": "Alex Ewerlöf",
@@ -57,8 +57,7 @@
     "build": "gulp",
     "build:test": "gulp unify",
     "test": "karma start .config/karma.conf.js --single-run",
-    "test:quick": "karma start .config/karma.quick.js",
-    "docs": "gulp docs"
+    "test:quick": "karma start .config/karma.quick.js"
   },
   "devDependencies": {
     "coveralls": "^2.11.15",
