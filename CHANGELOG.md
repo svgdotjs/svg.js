@@ -17,12 +17,16 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Changed
 - make transform-methods relative as default (breaking change)
-- change from SVG() to use querySelector instead of getElementById (breaking change)
+- change from SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## UNRELEASED 2.4.1
+
+### Changed
+- change CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com).
 
 ====
 
@@ -42,7 +46,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Changed
 - moved project to [svgdotjs](https://github.com/svgdotjs)
 - made matrixify work with transformation chain separated by commas (#543)
-- updated dev dependencies; request and gulp-chmod - `npm run build` now requires nodejs 4.x
+- updated dev dependencies; request and gulp-chmod - `npm run build` now requires nodejs 4.x+
 
 ### Fixed
 - fixed `SVG.Matrix.skew()` (#545)
