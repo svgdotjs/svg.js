@@ -11,6 +11,7 @@ SVG.js is licensed under the terms of the MIT License.
 ## Installation
 
 #### Bower:
+
 `bower install svg.js`
 
 #### Node:
