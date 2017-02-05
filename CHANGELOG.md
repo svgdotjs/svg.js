@@ -16,8 +16,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added specs for `SVG.FX` -> __TODO!__
 
 ### Changed
-- make transform-methods relative as default (breaking change)
-- change SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
+- made transform-methods relative as default (breaking change)
+- changed SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
+- made `parents()` method on `SVG.Element` return an instance of SVG.Set (breaking change) -> __TODO!__
+- replaced static reference to `masker` in `SVG.Mask` with the `masker()` method (breaking change) -> __TODO!__
+- replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method (breaking change) -> __TODO!__
+- replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method (breaking change) -> __TODO!__
+- moved all regexes to `SVG.regex` (in color, element, pointarray, style, transform and viewbox) -> __TODO!__
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
@@ -26,7 +31,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 2.4.1
 
 ### Changed
-- change CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
+- changed CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
 
 ====
 
