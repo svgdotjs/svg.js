@@ -84,6 +84,10 @@ SVG.Number = SVG.invent({
   , morph: function(number) {
       this.destination = new SVG.Number(number)
 
+      if(number.relative) {
+        this.destination.value += this.value
+      }
+
       return this
     }
     // Get morphed number at given position

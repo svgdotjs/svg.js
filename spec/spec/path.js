@@ -1,13 +1,21 @@
 describe('Path', function() {
   var path
-  
+
   beforeEach(function() {
     path = draw.path(svgPath)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
+
+  describe('()', function() {
+    it('falls back to a single point without an argument', function() {
+      path = draw.path()
+      expect(path.attr('d')).toBe('M0 0 ')
+    })
+  })
+
 
   describe('array()', function() {
     it('returns an instance of SVG.PathArray', function() {
@@ -17,7 +25,7 @@ describe('Path', function() {
       expect(path.array()).toBe(path._array)
     })
   })
-  
+
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
       expect(path.x()).toBe(0)
@@ -28,7 +36,7 @@ describe('Path', function() {
       expect(box.x).toBe(123)
     })
   })
-  
+
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(path.y()).toBe(0)
@@ -39,7 +47,7 @@ describe('Path', function() {
       expect(box.y).toBe(345)
     })
   })
-  
+
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       expect(path.cx()).toBe(50)
@@ -50,7 +58,7 @@ describe('Path', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
       expect(path.cy()).toBe(50)
@@ -61,7 +69,7 @@ describe('Path', function() {
       expect(box.cy).toBe(345)
     })
   })
-  
+
   describe('move()', function() {
     it('sets the x and y position', function() {
       path.move(123,456)
@@ -104,7 +112,7 @@ describe('Path', function() {
       expect(box.y).toBe(85)
     })
   })
-  
+
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       path.center(321,567)
@@ -137,7 +145,7 @@ describe('Path', function() {
       expect(path.height()).toBeCloseTo(321)
     })
   })
-  
+
   describe('size()', function() {
     it('defines the width and height of the element', function() {
       path.size(987,654)
@@ -158,19 +166,19 @@ describe('Path', function() {
       expect(path.width() / path.height()).toBe(box.width / box.height)
     })
   })
-  
+
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
       var box1 = path.tbox()
         , box2 = path.scale(2).tbox()
-      
+
       expect(box1.width * 2).toBe(box2.width)
       expect(box1.height * 2).toBe(box2.height)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
       var box1 = path.tbox()
         , box2 = path.scale(2, 3.5).tbox()
-      
+
       expect(box1.width * 2).toBe(box2.width)
       expect(box1.height * 3.5).toBe(box2.height)
     })
@@ -184,9 +192,16 @@ describe('Path', function() {
   })
 
   describe('plot()', function() {
-    it('falls back to a single point without an argument', function() {
-      path = draw.path()
-      expect(path.node.getAttribute('d')).toBe('M0 0 ')
+    it('with an argument, change the d attribute of the underlying path node', function() {
+      var pathString = 'm 3,2 c 0,0 -0,13 8,14 L 5,4'
+        , pathArray = new SVG.PathArray(pathString)
+
+      expect(path.plot(pathString)).toBe(path)
+      expect(path.attr('d')).toBe(pathArray.toString())
+    })
+
+    it('without an argument, return the path array', function () {
+      expect(path.plot()).toBe(path.array())
     })
   })
 
@@ -212,14 +227,4 @@ describe('Path', function() {
       expect(path.pointAt(100)).toEqual(path.node.getPointAtLength(100))
     })
   })
-
-  
 })
-
-
-
-
-
-
-
-

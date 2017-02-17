@@ -38,17 +38,22 @@ SVG.extend(SVG.PointArray, {
 
     return new SVG.PointArray(array)
   }
-  // Parse point string
+  // Parse point string and flat array
 , parse: function(array) {
     var points = []
 
     array = array.valueOf()
 
-    // if already is an array, no need to parse it
-    if (Array.isArray(array)) return array
-
-    // parse points
-    array = array.trim().split(/\s+|,/)
+    // if it is an array
+    if (Array.isArray(array)) {
+      // and it is not flat, there is no need to parse it
+      if(Array.isArray(array[0])) {
+        return array
+      }
+    } else { // Else, it is considered as a string
+      // parse points
+      array = array.trim().split(/[\s,]+/)
+    }
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.

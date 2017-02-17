@@ -1580,4 +1580,353 @@ describe('FX', function() {
     expect(ctm.e).toBe(0)
     expect(ctm.f).toBe(0)
   })
+
+  describe('when animating plots', function() {
+    it('should allow plot animations to be chained', function() {
+      var pathString1 = 'M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80'
+        , pathString2 = 'M10 80 C 40 150, 65 150, 95 80 S 150 10, 180 80'
+        , path = draw.path(pathString1)
+        , morph
+
+      fx = path.animate(1000).plot(pathString2).animate(1000).plot(pathString1)
+      morph = new SVG.PathArray(pathString1).morph(pathString2)
+
+      fx.start()
+      expect(path.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(500) // Have the first animation be half way
+      fx.step()
+      expect(path.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(500) // Have the first animation reach its end
+      fx.step()
+      expect(path.array()).toEqual(morph.at(1))
+      morph = new SVG.PathArray(pathString2).morph(pathString1)
+      expect(path.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(500) // Have the second animation be half way
+      fx.step()
+      expect(path.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(500) // Have the second animation reach its end
+      fx.step()
+      expect(path.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called on a polyline', function() {
+      var startValue = [[0,0], [100,50], [50,100], [150,50], [200,50]]
+        , endValue = [[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]]
+        , morph = new SVG.PointArray(startValue).morph(endValue)
+        , polyline = draw.polyline(startValue)
+
+      fx = polyline.animate(3000).plot(endValue)
+
+      fx.start()
+      expect(polyline.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(polyline.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(polyline.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called on a polygon', function() {
+      var startValue = [[0,0], [100,50], [50,100], [150,50], [200,50]]
+        , endValue = [[0,0], [100,50], [50,100], [150,50], [200,50], [250,100], [300,50], [350,50]]
+        , morph = new SVG.PointArray(startValue).morph(endValue)
+        , polygon = draw.polygon(startValue)
+
+      fx = polygon.animate(3000).plot(endValue)
+
+      fx.start()
+      expect(polygon.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(polygon.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(polygon.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called on a path', function() {
+      var startValue = new SVG.PathArray('M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80')
+        , endValue = new SVG.PathArray('M10 80 C 40 150, 65 150, 95 80 S 150 10, 180 80')
+        , morph = new SVG.PathArray(startValue).morph(endValue)
+        , path = draw.path(startValue)
+
+      fx = path.animate(2000).plot(endValue)
+
+      fx.start()
+      expect(path.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(1000) // Have the animation be half way
+      fx.step()
+      expect(path.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(1000) // Have the animation reach its end
+      fx.step()
+      expect(path.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called on a textpath', function() {
+      var startValue = new SVG.PathArray('M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80')
+        , endValue = new SVG.PathArray('M10 80 C 40 150, 65 150, 95 80 S 150 10, 180 80')
+        , morph = new SVG.PathArray(startValue).morph(endValue)
+
+      var text = draw.text(function(add) {
+        add.tspan("We go up and down, then we go down, then up again")
+      })
+
+      fx = text.path(startValue).animate(500).plot(endValue)
+
+      fx.start()
+      expect(text.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(text.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(text.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called on a line', function() {
+      var startValue = '0,0 100,150'
+        , endValue = [[50,30], [120,250]]
+        , morph = new SVG.PointArray(startValue).morph(endValue)
+        , line = draw.line(startValue)
+
+      fx = line.animate(3000).plot(endValue)
+
+      fx.start()
+      expect(line.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(line.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(line.array()).toEqual(morph.at(1))
+    })
+
+    it('should allow plot to be called with 4 parameters on a line', function () {
+      var startPointArray = new SVG.PointArray('0,0 100,150')
+        , endPointArray = new SVG.PointArray([[50,30], [120,250]])
+        , morph = new SVG.PointArray(startPointArray).morph(endPointArray)
+        , a
+
+      a = startPointArray.value
+      var line = draw.line(a[0][0], a[0][1], a[1][0], a[1][1])
+
+      a = endPointArray.value
+      fx = line.animate(3000).plot(a[0][0], a[0][1], a[1][0], a[1][1])
+
+      fx.start()
+      expect(line.array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(line.array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(line.array()).toEqual(morph.at(1))
+    })
+  })
+
+
+  describe('when animating attributes', function() {
+    it('should be possible to animate numeric attributes', function () {
+      var startValue = 0
+        , endValue = 150
+        , morph = new SVG.Number(startValue).morph(endValue)
+
+      var text = draw.text(function(add) {
+        add.tspan('We go ')
+        add.tspan('up').fill('#f09').dy(-40)
+        add.tspan(', then we go down, then up again').dy(40)
+      })
+
+      var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
+
+      text.path(path).font({ size: 42.5, family: 'Verdana' })
+
+      text.textPath().attr('startOffset', startValue)
+      fx = text.textPath().animate(1000).attr('startOffset', endValue)
+
+      fx.start()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(0).value)
+
+      jasmine.clock().tick(500) // Have the animation be half way
+      fx.step()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(0.5).value)
+
+      jasmine.clock().tick(500) // Have the animation reach its end
+      fx.step()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(1).value)
+    })
+
+    it('should be possible to animate non-numeric attributes', function () {
+      var startValue = 'butt'
+        , endValue = 'round'
+        , line = draw.line('0,0 100,150').attr('stroke-linecap', startValue)
+
+      fx = line.animate(3000).attr('stroke-linecap', endValue)
+
+      fx.start()
+      expect(line.attr('stroke-linecap')).toBe(startValue)
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(line.attr('stroke-linecap')).toBe(startValue)
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(line.attr('stroke-linecap')).toBe(endValue)
+    })
+
+    it('should be possible to animate color attributes by using SVG.Color', function() {
+      var startValue = 'rgb(42,251,100)'
+        , endValue = 'rgb(10,80,175)'
+        , morph = new SVG.Color(startValue).morph(endValue)
+
+      rect.attr('fill', startValue)
+      fx.attr('fill', endValue)
+
+      fx.start()
+      expect(rect.attr('fill')).toBe(morph.at(0).toString())
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.attr('fill')).toBe(morph.at(0.5).toString())
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.attr('fill')).toBe(morph.at(1).toString())
+    })
+
+    it('should be possible to pass percentage strings to numeric attributes', function () {
+      var startValue = '0%'
+        , endValue = '80%'
+        , morph = new SVG.Number(startValue).morph(endValue)
+
+      var text = draw.text(function(add) {
+        add.tspan('We go ')
+        add.tspan('up').fill('#f09').dy(-40)
+        add.tspan(', then we go down, then up again').dy(40)
+      })
+
+      var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
+
+      text.path(path).font({ size: 42.5, family: 'Verdana' })
+
+      text.textPath().attr('startOffset', startValue)
+      fx = text.textPath().animate(1000).attr('startOffset', endValue)
+
+      fx.start()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(0).toString())
+
+      jasmine.clock().tick(500) // Have the animation be half way
+      fx.step()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(0.5).toString())
+
+      jasmine.clock().tick(500) // Have the animation reach its end
+      fx.step()
+      expect(text.textPath().attr('startOffset')).toBe(morph.at(1).toString())
+    })
+  })
+
+
+  describe('when animating styles', function() {
+    it('should be possible to animate numeric styles', function () {
+      var startValue = 0
+        , endValue = 5
+        , morph = new SVG.Number(startValue).morph(endValue)
+
+      rect.style('stroke-width', startValue)
+      fx.style('stroke-width', endValue)
+
+      fx.start()
+      expect(rect.style('stroke-width')).toBe(morph.at(0).toString())
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.style('stroke-width')).toBe(morph.at(0.5).toString())
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.style('stroke-width')).toBe(morph.at(1).toString())
+    })
+
+    it('should be possible to animate non-numeric styles', function () {
+      var startValue = 'butt'
+        , endValue = 'round'
+        , line = draw.line('0,0 100,150').style('stroke-linecap', startValue)
+
+      fx = line.animate(3000).style('stroke-linecap', endValue)
+
+      fx.start()
+      expect(line.style('stroke-linecap')).toBe(startValue)
+
+      jasmine.clock().tick(1500) // Have the animation be half way
+      fx.step()
+      expect(line.style('stroke-linecap')).toBe(startValue)
+
+      jasmine.clock().tick(1500) // Have the animation reach its end
+      fx.step()
+      expect(line.style('stroke-linecap')).toBe(endValue)
+    })
+
+    it('should be possible to animate color styles by using SVG.Color', function() {
+      var startValue = '#81DE01'
+        , endValue = '#B1835D'
+        , morph = new SVG.Color(startValue).morph(endValue)
+
+      rect.style('fill', startValue)
+      fx.style('fill', endValue)
+
+
+      fx.start()
+      // When setting a style color, it get saved as  a rgb() string even if it was passed as an hex code
+      // The style rgb string as spaces while the one returned by SVG.Color do not as show bellow
+      // CSS: rgb(255, 255, 255)                    SVG.Color: rgb(255,255,255)
+      // The space in the style rbg string are removed so they can be equal
+      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(0).toRgb())
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(0.5).toRgb())
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(1).toRgb())
+    })
+
+    it('should be possible to pass percentage strings to numeric styles', function () {
+      var startValue = '0%'
+        , endValue = '5%'
+        , morph = new SVG.Number(startValue).morph(endValue)
+
+      rect.style('stroke-width', startValue)
+      fx.style('stroke-width', endValue)
+
+      fx.start()
+      expect(rect.style('stroke-width')).toBe(morph.at(0).toString())
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.style('stroke-width')).toBe(morph.at(0.5).toString())
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.style('stroke-width')).toBe(morph.at(1).toString())
+    })
+  })
 })

@@ -57,17 +57,17 @@ describe('Number', function() {
     })
     it('appends the unit', function() {
       number.value = 1.21
-      number.unit = 'px' 
+      number.unit = 'px'
       expect(number.toString()).toBe('1.21px')
     })
     it('converts percent values properly', function() {
       number.value = 1.36
-      number.unit = '%' 
+      number.unit = '%'
       expect(number.toString()).toBe('136%')
     })
     it('converts second values properly', function() {
       number.value = 2500
-      number.unit = 's' 
+      number.unit = 's'
       expect(number.toString()).toBe('2.5s')
     })
   })
@@ -180,6 +180,14 @@ describe('Number', function() {
       number.morph(destination)
       expect(number.destination).toEqual(destination)
     })
+    it('if the passed object as a relative attribute set to true, destination is relative to the current value', function() {
+      var n1 = new SVG.Number(3)
+        , n2 = new SVG.Number(7)
+
+      n2.relative = true
+      n1.morph(n2)
+      expect(n1.destination.value).toBe(n1.value + n2.value)
+    })
   })
 
   describe('at()', function() {
@@ -202,15 +210,3 @@ describe('Number', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-
-
-
-

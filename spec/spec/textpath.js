@@ -7,7 +7,7 @@ describe('TextPath', function() {
   })
 
   afterEach(function() {
-    draw.clear() 
+    draw.clear()
   })
 
   describe('path()', function() {
@@ -32,4 +32,31 @@ describe('TextPath', function() {
     })
   })
 
+  describe('array()', function() {
+    it('return the path array of the underlying path', function() {
+      expect(text.path(data).array()).toEqual(new SVG.PathArray(data))
+    })
+    it('return null if there is no underlying path', function () {
+      expect(text.array()).toBe(null)
+    })
+  })
+
+  describe('plot()', function() {
+    it('with an argument, change the array of the underlying path', function() {
+      expect(text.path().plot(data)).toBe(text)
+      expect(text.array()).toEqual(new SVG.PathArray(data))
+    })
+    it('with an argument, do nothing if there is no underlying path', function() {
+      expect(text.plot(data)).toBe(text)
+      expect(text.array()).toEqual(null)
+    })
+    it('without an argument, return the path array of the underlying path', function () {
+      text.path(data)
+      expect(text.plot()).toBe(text.array())
+      expect(text.plot()).not.toBe(null)
+    })
+    it('without an argument, return null if there is no underlying path', function () {
+      expect(text.plot()).toBe(null)
+    })
+  })
 })

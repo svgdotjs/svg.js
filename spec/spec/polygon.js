@@ -1,13 +1,21 @@
 describe('Polygon', function() {
   var polygon
-  
+
   beforeEach(function() {
     polygon = draw.polygon('0,0 100,0 100,100 0,100')
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
+
+  describe('()', function(){
+    it('falls back to a single point without an argument', function() {
+      polygon = draw.polygon()
+      expect(polygon.attr('points')).toBe('0,0')
+    })
+  })
+
 
   describe('array()', function() {
     it('returns an instance of SVG.PointArray', function() {
@@ -17,7 +25,7 @@ describe('Polygon', function() {
       expect(polygon.array()).toBe(polygon._array)
     })
   })
-  
+
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
       expect(polygon.x()).toBe(0)
@@ -28,7 +36,7 @@ describe('Polygon', function() {
       expect(box.x).toBe(123)
     })
   })
-  
+
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(polygon.y()).toBe(0)
@@ -39,7 +47,7 @@ describe('Polygon', function() {
       expect(box.y).toBe(345)
     })
   })
-  
+
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       expect(polygon.cx()).toBe(50)
@@ -50,7 +58,7 @@ describe('Polygon', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
       expect(polygon.cy()).toBe(50)
@@ -61,7 +69,7 @@ describe('Polygon', function() {
       expect(box.cy).toBe(345)
     })
   })
-  
+
   describe('move()', function() {
     it('sets the x and y position', function() {
       polygon.move(123,456)
@@ -98,7 +106,7 @@ describe('Polygon', function() {
       expect(box.y).toBe(85)
     })
   })
-  
+
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       polygon.center(321,567)
@@ -131,7 +139,7 @@ describe('Polygon', function() {
       expect(polygon.height()).toBeCloseTo(789)
     })
   })
-  
+
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       polygon.size(987,654)
@@ -152,19 +160,19 @@ describe('Polygon', function() {
       expect(polygon.width() / polygon.height()).toBe(box.width / box.height)
     })
   })
-  
+
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
       var box1 = polygon.tbox()
         , box2 = polygon.scale(2).tbox()
-      
+
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
       var box1 = polygon.tbox()
         , box2 = polygon.scale(2, 3.5).tbox()
-      
+
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 3.5)
     })
@@ -176,13 +184,19 @@ describe('Polygon', function() {
       expect(polygon.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
-  
+
+
+  describe('plot()', function() {
+    it('with an argument, change the points attribute of the underlying polygon node', function() {
+      var pointString = '100,50 75,20 200,100'
+        , pointArray = new SVG.PointArray(pointString)
+
+      expect(polygon.plot(pointString)).toBe(polygon)
+      expect(polygon.attr('points')).toBe(pointArray.toString())
+    })
+
+    it('without an argument, return the point array', function () {
+      expect(polygon.plot()).toBe(polygon.array())
+    })
+  })
 })
-
-
-
-
-
-
-
-
