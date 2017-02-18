@@ -42,20 +42,20 @@ describe('TextPath', function() {
   })
 
   describe('plot()', function() {
-    it('with an argument, change the array of the underlying path', function() {
+    it('change the array of the underlying path when a string is passed', function() {
       expect(text.path().plot(data)).toBe(text)
       expect(text.array()).toEqual(new SVG.PathArray(data))
     })
-    it('with an argument, do nothing if there is no underlying path', function() {
+    it('do nothing when a string is passed and there is no underlying path', function() {
       expect(text.plot(data)).toBe(text)
       expect(text.array()).toEqual(null)
     })
-    it('without an argument, return the path array of the underlying path', function () {
+    it('return the path array of the underlying path when no arguments is passed', function () {
       text.path(data)
       expect(text.plot()).toBe(text.array())
       expect(text.plot()).not.toBe(null)
     })
-    it('without an argument, return null if there is no underlying path', function () {
+    it('return null when no arguments is passed and there is no underlying path', function () {
       expect(text.plot()).toBe(null)
     })
   })

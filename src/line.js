@@ -41,12 +41,12 @@ SVG.Line = SVG.invent({
 , construct: {
     // Create a line element
     line: function(x1, y1, x2, y2) {
-      var line = this.put(new SVG.Line)
-
       // make sure plot is called as a setter
-      return (x1 != null) ?
-        line.plot(x1, y1, x2, y2) :
-        line.plot([[0,0], [0,0]])
+      // x1 is not necessarily a number, it can also be an array, a string and a SVG.PointArray
+      return SVG.Line.prototype.plot.apply(
+        this.put(new SVG.Line)
+      , x1 != null ? [x1, y1, x2, y2] : [0, 0, 0, 0]
+      )
     }
   }
 })

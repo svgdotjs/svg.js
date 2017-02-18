@@ -53,7 +53,7 @@ SVG.Path = SVG.invent({
     // Create a wrapped path element
     path: function(d) {
       // make sure plot is called as a setter
-      return this.put(new SVG.Path).plot(d != null ? d : new SVG.PathArray)
+      return this.put(new SVG.Path).plot(d || new SVG.PathArray)
     }
   }
 })

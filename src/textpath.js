@@ -32,7 +32,7 @@ SVG.TextPath = SVG.invent({
   , array: function() {
       var track = this.track()
 
-      return (track) ? track.array() : null
+      return track ? track.array() : null
     }
     // Plot path if any
   , plot: function(d) {

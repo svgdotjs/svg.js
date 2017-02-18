@@ -10,7 +10,7 @@ SVG.Polyline = SVG.invent({
     // Create a wrapped polyline element
     polyline: function(p) {
       // make sure plot is called as a setter
-      return this.put(new SVG.Polyline).plot(p != null ? p : new SVG.PointArray())
+      return this.put(new SVG.Polyline).plot(p || new SVG.PointArray)
     }
   }
 })
@@ -27,7 +27,7 @@ SVG.Polygon = SVG.invent({
     // Create a wrapped polygon element
     polygon: function(p) {
       // make sure plot is called as a setter
-      return this.put(new SVG.Polygon).plot(p != null ? p : new SVG.PointArray())
+      return this.put(new SVG.Polygon).plot(p || new SVG.PointArray)
     }
   }
 })

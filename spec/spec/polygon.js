@@ -187,7 +187,7 @@ describe('Polygon', function() {
 
 
   describe('plot()', function() {
-    it('with an argument, change the points attribute of the underlying polygon node', function() {
+    it('change the points attribute of the underlying polygon node when a string is passed', function() {
       var pointString = '100,50 75,20 200,100'
         , pointArray = new SVG.PointArray(pointString)
 
@@ -195,7 +195,7 @@ describe('Polygon', function() {
       expect(polygon.attr('points')).toBe(pointArray.toString())
     })
 
-    it('without an argument, return the point array', function () {
+    it('return the point array when no arguments are passed', function () {
       expect(polygon.plot()).toBe(polygon.array())
     })
   })

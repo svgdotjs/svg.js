@@ -216,7 +216,7 @@ describe('Line', function() {
       expect(box.x + box.width).toBe(300)
       expect(box.y + box.height).toBe(400)
     })
-    it('with one argument, change the x1,y1,x2,y2 attributes of the underlying line node', function() {
+    it('change the x1,y1,x2,y2 attributes of the underlying line node when a string is passed', function() {
       expect(line.plot('100,50 200,10')).toBe(line)
 
       var attrs  = line.attr()
@@ -225,7 +225,7 @@ describe('Line', function() {
       expect(attrs.x2).toBe(200)
       expect(attrs.y2).toBe(10)
     })
-    it('with four arguments, change the x1,y1,x2,y2 attributes of the underlying line node', function() {
+    it('change the x1,y1,x2,y2 attributes of the underlying line node when 4 numbers are passed', function() {
       expect(line.plot(45, 24, 220, 300)).toBe(line)
 
       var attrs  = line.attr()
@@ -234,7 +234,7 @@ describe('Line', function() {
       expect(attrs.x2).toBe(220)
       expect(attrs.y2).toBe(300)
     })
-    it('without an argument, return the coordinates in a point array', function () {
+    it('return the coordinates in a point array when no arguments are passed', function () {
       var attrs = line.attr()
         , pointArray = new SVG.PointArray([[attrs.x1, attrs.y1], [attrs.x2, attrs.y2]])
 

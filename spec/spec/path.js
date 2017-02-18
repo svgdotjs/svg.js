@@ -192,7 +192,7 @@ describe('Path', function() {
   })
 
   describe('plot()', function() {
-    it('with an argument, change the d attribute of the underlying path node', function() {
+    it('change the d attribute of the underlying path node when a string is passed', function() {
       var pathString = 'm 3,2 c 0,0 -0,13 8,14 L 5,4'
         , pathArray = new SVG.PathArray(pathString)
 
@@ -200,7 +200,7 @@ describe('Path', function() {
       expect(path.attr('d')).toBe(pathArray.toString())
     })
 
-    it('without an argument, return the path array', function () {
+    it('return the path array when no arguments are passed', function () {
       expect(path.plot()).toBe(path.array())
     })
   })

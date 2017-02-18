@@ -186,7 +186,7 @@ describe('Polyline', function() {
   })
 
   describe('plot()', function() {
-    it('with an argument, change the points attribute of the underlying polyline node', function() {
+    it('change the points attribute of the underlying polyline node when a string is passed', function() {
       var pointString = '100,50 75,20 200,100'
         , pointArray = new SVG.PointArray(pointString)
 
@@ -194,7 +194,7 @@ describe('Polyline', function() {
       expect(polyline.attr('points')).toBe(pointArray.toString())
     })
 
-    it('without an argument, return the point array', function () {
+    it('return the point array when no arguments are passed', function () {
       expect(polyline.plot()).toBe(polyline.array())
     })
   })
