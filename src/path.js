@@ -15,7 +15,9 @@ SVG.Path = SVG.invent({
     }
     // Plot new poly points
   , plot: function(p) {
-      return this.attr('d', (this._array = new SVG.PathArray(p)))
+      return (p == null) ?
+        this.array() :
+        this.attr('d', (this._array = new SVG.PathArray(p)))
     }
     // Move by left top corner
   , move: function(x, y) {
@@ -32,7 +34,7 @@ SVG.Path = SVG.invent({
     // Set element size to given width and height
   , size: function(width, height) {
       var p = proportionalSize(this, width, height)
-      
+
       return this.attr('d', this.array().size(p.width, p.height))
     }
     // Set width of element
@@ -43,14 +45,15 @@ SVG.Path = SVG.invent({
   , height: function(height) {
       return height == null ? this.bbox().height : this.size(this.bbox().width, height)
     }
-    
+
   }
-  
+
   // Add parent method
 , construct: {
     // Create a wrapped path element
     path: function(d) {
-      return this.put(new SVG.Path).plot(d)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Path).plot(d || new SVG.PathArray)
     }
   }
 })

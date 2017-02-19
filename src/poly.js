@@ -4,12 +4,13 @@ SVG.Polyline = SVG.invent({
 
   // Inherit from
 , inherit: SVG.Shape
-  
+
   // Add parent method
 , construct: {
     // Create a wrapped polyline element
     polyline: function(p) {
-      return this.put(new SVG.Polyline).plot(p)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Polyline).plot(p || new SVG.PointArray)
     }
   }
 })
@@ -20,12 +21,13 @@ SVG.Polygon = SVG.invent({
 
   // Inherit from
 , inherit: SVG.Shape
-  
+
   // Add parent method
 , construct: {
     // Create a wrapped polygon element
     polygon: function(p) {
-      return this.put(new SVG.Polygon).plot(p)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Polygon).plot(p || new SVG.PointArray)
     }
   }
 })
@@ -38,7 +40,9 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
   // Plot new path
 , plot: function(p) {
-    return this.attr('points', (this._array = new SVG.PointArray(p)))
+    return (p == null) ?
+      this.array() :
+      this.attr('points', (this._array = new SVG.PointArray(p)))
   }
   // Move by left top corner
 , move: function(x, y) {

@@ -28,14 +28,22 @@ SVG.TextPath = SVG.invent({
 
       return this
     }
+    // return the array of the path track element
+  , array: function() {
+      var track = this.track()
+
+      return track ? track.array() : null
+    }
     // Plot path if any
   , plot: function(d) {
       var track = this.track()
+        , pathArray = null
 
-      if (track)
-        track.plot(d)
+      if (track) {
+        pathArray = track.plot(d)
+      }
 
-      return this
+      return (d == null) ? pathArray : this
     }
     // Get the path track element
   , track: function() {

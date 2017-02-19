@@ -1,14 +1,14 @@
 describe('Line', function() {
   var line
-  
+
   beforeEach(function() {
     line = draw.line(0,100,100,0)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   // #487
   describe('()', function(){
     it('will take an array as input', function(){
@@ -19,8 +19,17 @@ describe('Line', function() {
       expect(attrs.x2).toBe(100)
       expect(attrs.y2).toBe(0)
     })
+
+    it('falls back to a line with its two points at [0,0] without an argument', function() {
+      line = draw.line()
+      var attrs = line.attr()
+      expect(attrs.x1).toBe(0)
+      expect(attrs.y1).toBe(0)
+      expect(attrs.x2).toBe(0)
+      expect(attrs.y2).toBe(0)
+    })
   })
-  
+
   describe('x()', function() {
     it('should return the value of x without an argument', function() {
       expect(line.x()).toBe(0)
@@ -31,7 +40,7 @@ describe('Line', function() {
       expect(box.x).toBe(123)
     })
   })
-  
+
   describe('y()', function() {
     it('should return the value of y without an argument', function() {
       expect(line.y()).toBe(0)
@@ -42,7 +51,7 @@ describe('Line', function() {
       expect(box.y).toBe(345)
     })
   })
-  
+
   describe('cx()', function() {
     it('should return the value of cx without an argument', function() {
       expect(line.cx()).toBe(50)
@@ -53,7 +62,7 @@ describe('Line', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('should return the value of cy without an argument', function() {
       expect(line.cy()).toBe(50)
@@ -64,7 +73,7 @@ describe('Line', function() {
       expect(box.cy).toBe(345)
     })
   })
-  
+
   describe('move()', function() {
     it('should set the x and y position', function() {
       line.move(123,456)
@@ -111,7 +120,7 @@ describe('Line', function() {
       expect(box.y).toBe(85)
     })
   })
-  
+
   describe('center()', function() {
     it('should set the cx and cy position', function() {
       line.center(321,567)
@@ -150,7 +159,7 @@ describe('Line', function() {
       expect(line.height()).toBe(box.height)
     })
   })
-  
+
   describe('size()', function() {
     it('should define the width and height of the element', function() {
       line.size(987,654)
@@ -173,19 +182,19 @@ describe('Line', function() {
       expect(line.width() / line.height()).toBe(box.width / box.height)
     })
   })
-  
+
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
       var box1 = line.tbox()
         , box2 = line.scale(2).tbox()
-      
+
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
       var box1 = line.tbox()
-        , box2 = line.scale(2,3.5).tbox() 
-      
+        , box2 = line.scale(2,3.5).tbox()
+
       expect(box2.width).toBe(box1.width * 2)
       expect(box2.height).toBe(box1.height * 3.5)
     })
@@ -197,7 +206,7 @@ describe('Line', function() {
       expect(line.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
-  
+
   describe('plot()', function() {
     it('should update the start and end points', function() {
       line.plot(100,200,300,400)
@@ -207,14 +216,29 @@ describe('Line', function() {
       expect(box.x + box.width).toBe(300)
       expect(box.y + box.height).toBe(400)
     })
+    it('change the x1,y1,x2,y2 attributes of the underlying line node when a string is passed', function() {
+      expect(line.plot('100,50 200,10')).toBe(line)
+
+      var attrs  = line.attr()
+      expect(attrs.x1).toBe(100)
+      expect(attrs.y1).toBe(50)
+      expect(attrs.x2).toBe(200)
+      expect(attrs.y2).toBe(10)
+    })
+    it('change the x1,y1,x2,y2 attributes of the underlying line node when 4 numbers are passed', function() {
+      expect(line.plot(45, 24, 220, 300)).toBe(line)
+
+      var attrs  = line.attr()
+      expect(attrs.x1).toBe(45)
+      expect(attrs.y1).toBe(24)
+      expect(attrs.x2).toBe(220)
+      expect(attrs.y2).toBe(300)
+    })
+    it('return the coordinates in a point array when no arguments are passed', function () {
+      var attrs = line.attr()
+        , pointArray = new SVG.PointArray([[attrs.x1, attrs.y1], [attrs.x2, attrs.y2]])
+
+      expect(line.plot()).toEqual(pointArray)
+    })
   })
-  
 })
-
-
-
-
-
-
-
-

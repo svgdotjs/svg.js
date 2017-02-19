@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Feb 05 2017 03:51:27 GMT+0100 (CET)
+* BUILT: Fri Feb 17 2017 22:19:12 GMT-0500 (EST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -546,17 +546,22 @@ SVG.extend(SVG.PointArray, {
 
     return new SVG.PointArray(array)
   }
-  // Parse point string
+  // Parse point string and flat array
 , parse: function(array) {
     var points = []
 
     array = array.valueOf()
 
-    // if already is an array, no need to parse it
-    if (Array.isArray(array)) return array
-
-    // parse points
-    array = array.trim().split(/\s+|,/)
+    // if it is an array
+    if (Array.isArray(array)) {
+      // and it is not flat, there is no need to parse it
+      if(Array.isArray(array[0])) {
+        return array
+      }
+    } else { // Else, it is considered as a string
+      // parse points
+      array = array.trim().split(/[\s,]+/)
+    }
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
@@ -603,6 +608,7 @@ SVG.extend(SVG.PointArray, {
   }
 
 })
+
 // Path points array
 SVG.PathArray = function(array, fallback) {
   this.constructor.call(this, array, fallback || [['M', 0, 0]])
@@ -990,6 +996,10 @@ SVG.Number = SVG.invent({
   , morph: function(number) {
       this.destination = new SVG.Number(number)
 
+      if(number.relative) {
+        this.destination.value += this.value
+      }
+
       return this
     }
     // Get morphed number at given position
@@ -1006,6 +1016,7 @@ SVG.Number = SVG.invent({
 
   }
 })
+
 
 SVG.Element = SVG.invent({
   // Initialize node
@@ -1487,45 +1498,28 @@ SVG.FX = SVG.invent({
     // updates all animations to the current state of the element
     // this is important when one property could be changed from another property
   , initAnimations: function() {
-      var i
+      var i, source
       var s = this.situation
 
       if(s.init) return this
 
       for(i in s.animations){
+        source = this.target()[i]()
 
-        if(i == 'viewbox'){
-          s.animations[i] = this.target().viewbox().morph(s.animations[i])
-        }else{
+        // The condition is because some methods return a normal number instead
+        // of a SVG.Number
+        if(s.animations[i] instanceof SVG.Number)
+          source = new SVG.Number(source)
 
-          // TODO: this is not a clean clone of the array. We may have some unchecked references
-          s.animations[i].value = (i == 'plot' ? this.target().array().value : this.target()[i]())
-
-          // sometimes we get back an object and not the real value, fix this
-          if(s.animations[i].value.value){
-            s.animations[i].value = s.animations[i].value.value
-          }
-
-          if(s.animations[i].relative)
-            s.animations[i].destination.value = s.animations[i].destination.value + s.animations[i].value
-
-        }
-
+        s.animations[i] = source.morph(s.animations[i])
       }
 
       for(i in s.attrs){
-        if(s.attrs[i] instanceof SVG.Color){
-          var color = new SVG.Color(this.target().attr(i))
-          s.attrs[i].r = color.r
-          s.attrs[i].g = color.g
-          s.attrs[i].b = color.b
-        }else{
-          s.attrs[i].value = this.target().attr(i)// + s.attrs[i].value
-        }
+        s.attrs[i] = new SVG.MorphObj(this.target().attr(i), s.attrs[i])
       }
 
       for(i in s.styles){
-        s.styles[i].value = this.target().style(i)
+        s.styles[i] = new SVG.MorphObj(this.target().style(i), s.styles[i])
       }
 
       s.initialTransformation = this.target().matrixify()
@@ -2013,7 +2007,7 @@ SVG.MorphObj = SVG.invent({
     if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
     // prepare for plain morphing
-    this.value = 0
+    this.value = from
     this.destination = to
   }
 
@@ -2038,8 +2032,7 @@ SVG.extend(SVG.FX, {
         this.attr(key, a[key])
 
     } else {
-      // the MorphObj takes care about the right function used
-      this.add(a, new SVG.MorphObj(null, v), 'attrs')
+      this.add(a, v, 'attrs')
     }
 
     return this
@@ -2051,7 +2044,7 @@ SVG.extend(SVG.FX, {
         this.style(key, s[key])
 
     else
-      this.add(s, new SVG.MorphObj(null, v), 'styles')
+      this.add(s, v, 'styles')
 
     return this
   }
@@ -2062,7 +2055,7 @@ SVG.extend(SVG.FX, {
       return this
     }
 
-    var num = new SVG.Number().morph(x)
+    var num = new SVG.Number(x)
     num.relative = relative
     return this.add('x', num)
   }
@@ -2073,17 +2066,17 @@ SVG.extend(SVG.FX, {
       return this
     }
 
-    var num = new SVG.Number().morph(y)
+    var num = new SVG.Number(y)
     num.relative = relative
     return this.add('y', num)
   }
   // Animatable center x-axis
 , cx: function(x) {
-    return this.add('cx', new SVG.Number().morph(x))
+    return this.add('cx', new SVG.Number(x))
   }
   // Animatable center y-axis
 , cy: function(y) {
-    return this.add('cy', new SVG.Number().morph(y))
+    return this.add('cy', new SVG.Number(y))
   }
   // Add animatable move
 , move: function(x, y) {
@@ -2115,21 +2108,22 @@ SVG.extend(SVG.FX, {
         height = box.height / box.width  * width
       }
 
-      this.add('width' , new SVG.Number().morph(width))
-          .add('height', new SVG.Number().morph(height))
+      this.add('width' , new SVG.Number(width))
+          .add('height', new SVG.Number(height))
 
     }
 
     return this
   }
   // Add animatable plot
-, plot: function(p) {
-    return this.add('plot', this.target().array().morph(p))
+, plot: function() {
+    // We use arguments here since SVG.Line's plot method can be passed 4 parameters
+    return this.add('plot', arguments.length > 1 ? [].slice.call(arguments) : arguments[0])
   }
   // Add leading method
 , leading: function(value) {
     return this.target().leading ?
-      this.add('leading', new SVG.Number().morph(value)) :
+      this.add('leading', new SVG.Number(value)) :
       this
   }
   // Add animatable viewbox
@@ -4197,7 +4191,9 @@ SVG.Line = SVG.invent({
     }
     // Overwrite native plot() method
   , plot: function(x1, y1, x2, y2) {
-      if (typeof y1 !== 'undefined')
+      if (x1 == null)
+        return this.array()
+      else if (typeof y1 !== 'undefined')
         x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
       else
         x1 = new SVG.PointArray(x1).toLine()
@@ -4220,7 +4216,12 @@ SVG.Line = SVG.invent({
 , construct: {
     // Create a line element
     line: function(x1, y1, x2, y2) {
-      return this.put(new SVG.Line).plot(x1, y1, x2, y2)
+      // make sure plot is called as a setter
+      // x1 is not necessarily a number, it can also be an array, a string and a SVG.PointArray
+      return SVG.Line.prototype.plot.apply(
+        this.put(new SVG.Line)
+      , x1 != null ? [x1, y1, x2, y2] : [0, 0, 0, 0]
+      )
     }
   }
 })
@@ -4236,7 +4237,8 @@ SVG.Polyline = SVG.invent({
 , construct: {
     // Create a wrapped polyline element
     polyline: function(p) {
-      return this.put(new SVG.Polyline).plot(p)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Polyline).plot(p || new SVG.PointArray)
     }
   }
 })
@@ -4252,7 +4254,8 @@ SVG.Polygon = SVG.invent({
 , construct: {
     // Create a wrapped polygon element
     polygon: function(p) {
-      return this.put(new SVG.Polygon).plot(p)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Polygon).plot(p || new SVG.PointArray)
     }
   }
 })
@@ -4265,7 +4268,9 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
   // Plot new path
 , plot: function(p) {
-    return this.attr('points', (this._array = new SVG.PointArray(p)))
+    return (p == null) ?
+      this.array() :
+      this.attr('points', (this._array = new SVG.PointArray(p)))
   }
   // Move by left top corner
 , move: function(x, y) {
@@ -4279,6 +4284,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
   }
 
 })
+
 // unify all point to point elements
 SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, {
   // Define morphable array
@@ -4321,7 +4327,9 @@ SVG.Path = SVG.invent({
     }
     // Plot new poly points
   , plot: function(p) {
-      return this.attr('d', (this._array = new SVG.PathArray(p)))
+      return (p == null) ?
+        this.array() :
+        this.attr('d', (this._array = new SVG.PathArray(p)))
     }
     // Move by left top corner
   , move: function(x, y) {
@@ -4356,10 +4364,12 @@ SVG.Path = SVG.invent({
 , construct: {
     // Create a wrapped path element
     path: function(d) {
-      return this.put(new SVG.Path).plot(d)
+      // make sure plot is called as a setter
+      return this.put(new SVG.Path).plot(d || new SVG.PathArray)
     }
   }
 })
+
 SVG.Image = SVG.invent({
   // Initialize node
   create: 'image'
@@ -4714,14 +4724,22 @@ SVG.TextPath = SVG.invent({
 
       return this
     }
+    // return the array of the path track element
+  , array: function() {
+      var track = this.track()
+
+      return track ? track.array() : null
+    }
     // Plot path if any
   , plot: function(d) {
       var track = this.track()
+        , pathArray = null
 
-      if (track)
-        track.plot(d)
+      if (track) {
+        pathArray = track.plot(d)
+      }
 
-      return this
+      return (d == null) ? pathArray : this
     }
     // Get the path track element
   , track: function() {
@@ -4737,6 +4755,7 @@ SVG.TextPath = SVG.invent({
     }
   }
 })
+
 SVG.Nested = SVG.invent({
   // Initialize node
   create: function() {

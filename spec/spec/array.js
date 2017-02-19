@@ -33,8 +33,28 @@ describe('PointArray', function () {
 
     expect(array + '').toBe('0,0.15 -100,-3.141592654 50,100')
   })
+  it('parses a flat array of x/y coordinates to a point array', function() {
+    var array = new SVG.PointArray([1,4, 5,68, 12,24])
+
+    expect(array.value).toEqual([[1,4], [5,68], [12,24]])
+  })
   it('parses points with space delimitered x/y coordinates', function() {
     var array = new SVG.PointArray('221.08 191.79 0.46 191.79 0.46 63.92 63.8 0.46 284.46 0.46 284.46 128.37 221.08 191.79')
+
+    expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
+  })
+  it('parses points with comma delimitered x/y coordinates', function() {
+    var array = new SVG.PointArray('221.08,191.79,0.46,191.79,0.46,63.92,63.8,0.46,284.46,0.46,284.46,128.37,221.08,191.79')
+
+    expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
+  })
+  it('parses points with comma and space delimitered x/y coordinates', function() {
+    var array = new SVG.PointArray('221.08, 191.79, 0.46, 191.79, 0.46, 63.92, 63.8, 0.46, 284.46, 0.46, 284.46, 128.37, 221.08, 191.79')
+
+    expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
+  })
+  it('parses points with space and comma delimitered x/y coordinates', function() {
+    var array = new SVG.PointArray('221.08 ,191.79 ,0.46 ,191.79 ,0.46 ,63.92 ,63.8 ,0.46 ,284.46 ,0.46 ,284.46 ,128.37 ,221.08 ,191.79')
 
     expect(array + '').toBe('221.08,191.79 0.46,191.79 0.46,63.92 63.8,0.46 284.46,0.46 284.46,128.37 221.08,191.79')
   })
@@ -54,6 +74,13 @@ describe('PointArray', function () {
     var array = new SVG.PointArray('1 2 3')
 
     expect(array + '').toBe('1,2')
+  })
+  it('parses odd number of points in a flat array of x/y coordinates and silently remove the odd point', function() {
+    // this  is according to spec: https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
+
+    var array = new SVG.PointArray([1, 2, 3])
+
+    expect(array.value).toEqual([[1,2]])
   })
 })
 

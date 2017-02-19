@@ -16,9 +16,11 @@ SVG.Line = SVG.invent({
     }
     // Overwrite native plot() method
   , plot: function(x1, y1, x2, y2) {
-      if (typeof y1 !== 'undefined')
+      if (x1 == null)
+        return this.array()
+      else if (typeof y1 !== 'undefined')
         x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
-      else 
+      else
         x1 = new SVG.PointArray(x1).toLine()
 
       return this.attr(x1)
@@ -34,12 +36,17 @@ SVG.Line = SVG.invent({
       return this.attr(this.array().size(p.width, p.height).toLine())
     }
   }
-  
+
   // Add parent method
 , construct: {
     // Create a line element
     line: function(x1, y1, x2, y2) {
-      return this.put(new SVG.Line).plot(x1, y1, x2, y2)
+      // make sure plot is called as a setter
+      // x1 is not necessarily a number, it can also be an array, a string and a SVG.PointArray
+      return SVG.Line.prototype.plot.apply(
+        this.put(new SVG.Line)
+      , x1 != null ? [x1, y1, x2, y2] : [0, 0, 0, 0]
+      )
     }
   }
 })

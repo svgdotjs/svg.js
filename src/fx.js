@@ -214,45 +214,28 @@ SVG.FX = SVG.invent({
     // updates all animations to the current state of the element
     // this is important when one property could be changed from another property
   , initAnimations: function() {
-      var i
+      var i, source
       var s = this.situation
 
       if(s.init) return this
 
       for(i in s.animations){
+        source = this.target()[i]()
 
-        if(i == 'viewbox'){
-          s.animations[i] = this.target().viewbox().morph(s.animations[i])
-        }else{
+        // The condition is because some methods return a normal number instead
+        // of a SVG.Number
+        if(s.animations[i] instanceof SVG.Number)
+          source = new SVG.Number(source)
 
-          // TODO: this is not a clean clone of the array. We may have some unchecked references
-          s.animations[i].value = (i == 'plot' ? this.target().array().value : this.target()[i]())
-
-          // sometimes we get back an object and not the real value, fix this
-          if(s.animations[i].value.value){
-            s.animations[i].value = s.animations[i].value.value
-          }
-
-          if(s.animations[i].relative)
-            s.animations[i].destination.value = s.animations[i].destination.value + s.animations[i].value
-
-        }
-
+        s.animations[i] = source.morph(s.animations[i])
       }
 
       for(i in s.attrs){
-        if(s.attrs[i] instanceof SVG.Color){
-          var color = new SVG.Color(this.target().attr(i))
-          s.attrs[i].r = color.r
-          s.attrs[i].g = color.g
-          s.attrs[i].b = color.b
-        }else{
-          s.attrs[i].value = this.target().attr(i)// + s.attrs[i].value
-        }
+        s.attrs[i] = new SVG.MorphObj(this.target().attr(i), s.attrs[i])
       }
 
       for(i in s.styles){
-        s.styles[i].value = this.target().style(i)
+        s.styles[i] = new SVG.MorphObj(this.target().style(i), s.styles[i])
       }
 
       s.initialTransformation = this.target().matrixify()
@@ -740,7 +723,7 @@ SVG.MorphObj = SVG.invent({
     if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
     // prepare for plain morphing
-    this.value = 0
+    this.value = from
     this.destination = to
   }
 
@@ -765,8 +748,7 @@ SVG.extend(SVG.FX, {
         this.attr(key, a[key])
 
     } else {
-      // the MorphObj takes care about the right function used
-      this.add(a, new SVG.MorphObj(null, v), 'attrs')
+      this.add(a, v, 'attrs')
     }
 
     return this
@@ -778,7 +760,7 @@ SVG.extend(SVG.FX, {
         this.style(key, s[key])
 
     else
-      this.add(s, new SVG.MorphObj(null, v), 'styles')
+      this.add(s, v, 'styles')
 
     return this
   }
@@ -789,7 +771,7 @@ SVG.extend(SVG.FX, {
       return this
     }
 
-    var num = new SVG.Number().morph(x)
+    var num = new SVG.Number(x)
     num.relative = relative
     return this.add('x', num)
   }
@@ -800,17 +782,17 @@ SVG.extend(SVG.FX, {
       return this
     }
 
-    var num = new SVG.Number().morph(y)
+    var num = new SVG.Number(y)
     num.relative = relative
     return this.add('y', num)
   }
   // Animatable center x-axis
 , cx: function(x) {
-    return this.add('cx', new SVG.Number().morph(x))
+    return this.add('cx', new SVG.Number(x))
   }
   // Animatable center y-axis
 , cy: function(y) {
-    return this.add('cy', new SVG.Number().morph(y))
+    return this.add('cy', new SVG.Number(y))
   }
   // Add animatable move
 , move: function(x, y) {
@@ -842,21 +824,22 @@ SVG.extend(SVG.FX, {
         height = box.height / box.width  * width
       }
 
-      this.add('width' , new SVG.Number().morph(width))
-          .add('height', new SVG.Number().morph(height))
+      this.add('width' , new SVG.Number(width))
+          .add('height', new SVG.Number(height))
 
     }
 
     return this
   }
   // Add animatable plot
-, plot: function(p) {
-    return this.add('plot', this.target().array().morph(p))
+, plot: function() {
+    // We use arguments here since SVG.Line's plot method can be passed 4 parameters
+    return this.add('plot', arguments.length > 1 ? [].slice.call(arguments) : arguments[0])
   }
   // Add leading method
 , leading: function(value) {
     return this.target().leading ?
-      this.add('leading', new SVG.Number().morph(value)) :
+      this.add('leading', new SVG.Number(value)) :
       this
   }
   // Add animatable viewbox
