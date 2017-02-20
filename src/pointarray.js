@@ -1,10 +1,11 @@
 // Poly points array
 SVG.PointArray = function(array, fallback) {
-  this.constructor.call(this, array, fallback || [[0,0]])
+  SVG.Array.call(this, array, fallback || [[0,0]])
 }
 
 // Inherit from SVG.Array
 SVG.PointArray.prototype = new SVG.Array
+SVG.PointArray.prototype.constructor = SVG.PointArray
 
 SVG.extend(SVG.PointArray, {
   // Convert array to string
@@ -98,5 +99,4 @@ SVG.extend(SVG.PointArray, {
 
     return SVG.parser.poly.getBBox()
   }
-
 })

@@ -1,10 +1,11 @@
 // Path points array
 SVG.PathArray = function(array, fallback) {
-  this.constructor.call(this, array, fallback || [['M', 0, 0]])
+  SVG.Array.call(this, array, fallback || [['M', 0, 0]])
 }
 
 // Inherit from SVG.Array
 SVG.PathArray.prototype = new SVG.Array
+SVG.PathArray.prototype.constructor = SVG.PathArray
 
 SVG.extend(SVG.PathArray, {
   // Convert array to string

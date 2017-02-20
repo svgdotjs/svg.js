@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Feb 17 2017 22:19:12 GMT-0500 (EST)
+* BUILT: Mon Feb 20 2017 15:25:03 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -504,15 +504,20 @@ SVG.extend(SVG.Array, {
 
     return this
   }
-
+, clone: function() {
+    var clone = new this.constructor()
+    clone.value = array_clone(this.value)
+    return clone
+  }
 })
 // Poly points array
 SVG.PointArray = function(array, fallback) {
-  this.constructor.call(this, array, fallback || [[0,0]])
+  SVG.Array.call(this, array, fallback || [[0,0]])
 }
 
 // Inherit from SVG.Array
 SVG.PointArray.prototype = new SVG.Array
+SVG.PointArray.prototype.constructor = SVG.PointArray
 
 SVG.extend(SVG.PointArray, {
   // Convert array to string
@@ -606,16 +611,16 @@ SVG.extend(SVG.PointArray, {
 
     return SVG.parser.poly.getBBox()
   }
-
 })
 
 // Path points array
 SVG.PathArray = function(array, fallback) {
-  this.constructor.call(this, array, fallback || [['M', 0, 0]])
+  SVG.Array.call(this, array, fallback || [['M', 0, 0]])
 }
 
 // Inherit from SVG.Array
 SVG.PathArray.prototype = new SVG.Array
+SVG.PathArray.prototype.constructor = SVG.PathArray
 
 SVG.extend(SVG.PathArray, {
   // Convert array to string
@@ -5258,6 +5263,18 @@ SVG.extend(SVG.Parent, {
   }
 
 })
+// creates deep clone of array
+function array_clone(arr){
+  var clone = arr.slice(0)
+  for(var i = clone.length; i--;){
+    if(Array.isArray(clone[i])){
+      clone[i] = array_clone(clone[i])
+    }
+  }
+  return clone
+}
+
+// tests if a given element is instance of an object
 function is(el, obj){
   return el instanceof obj
 }

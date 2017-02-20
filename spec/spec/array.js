@@ -19,6 +19,46 @@ describe('Array', function () {
       expect(array.reverse()).toBe(array)
     })
   })
+  describe('clone()', function() {
+    it('creates a deep clone of the array', function() {
+      array = new SVG.Array([1, 2, 3, 4, 5])
+
+      clone = array.clone()
+
+      expect(array).toEqual(clone)
+      expect(array).not.toBe(clone)
+
+      array = new SVG.Array([[1,2], [3, 4], [5]])
+      clone = array.clone()
+
+      expect(array).toEqual(array)
+      for(var i = 0, len = array.value.length; i; ++i){
+        expect(array[i]).not.toBe(clone[i])
+      }
+    })
+    it('also works with PointArray', function() {
+      array = new SVG.PointArray([1,2,3,4,5,6])
+      clone = array.clone()
+      
+      expect(array).toEqual(clone)
+      expect(array).not.toBe(clone)
+      
+      for(var i = 0, len = array.value.length; i; ++i){
+        expect(array[i]).not.toBe(clone[i])
+      }
+    })
+    it('also works with PathArray', function() {
+      array = new SVG.PathArray([['M',1,2],['L',3,4],['L',5,6]])
+      clone = array.clone()
+      
+      expect(array).toEqual(clone)
+      expect(array).not.toBe(clone)
+      
+      for(var i = 0, len = array.value.length; i; ++i){
+        expect(array[i]).not.toBe(clone[i])
+      }
+    })
+  })
 })
 
 

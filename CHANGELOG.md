@@ -28,22 +28,23 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
-## UNRELEASED 2.4.1
+## UNRELEASED 2.5.0
 
 ### Added
-- added a plot and array method to SVG.TextPath (#582)
+- added a plot and array method to `SVG.TextPath` (#582)
+- added `clone` method to `SVG.Array/PointArray/PathArray` (#590)
 
 ### Changed
 - changed CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
-- make the method plot a getter when no parameter is passed for SVG.Polyline,SVG.Polygon, SVG.Line, SVG.Path (related #547)
-- allow SVG.PointArray to be passed flat array
-- change the regexp SVG.PointArray use to parse string to allow more flexibility in the way spaces and commas can be used
-- allow plot to be called with 4 parameters when animating an SVG.Line
-- relative value for SVG.Number are now calculated in its morph method (related #547)
+- make the method plot a getter when no parameter is passed for `SVG.Polyline`,`SVG.Polygon`, `SVG.Line`, `SVG.Path` (related #547)
+- allow `SVG.PointArray` to be passed flat array
+- change the regexp `SVG.PointArray` use to parse string to allow more flexibility in the way spaces and commas can be used
+- allow `plot` to be called with 4 parameters when animating an `SVG.Line`
+- relative value for `SVG.Number` are now calculated in its `morph` method (related #547)
 - clean up the implementation of the `initAnimation` method of the FX module (#547, #552, #584)
 
 ### Fixed
-- fixed a bug in the plain morphing part of SVG.MorphObj that is in the FX module
+- fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
 
 ====
 

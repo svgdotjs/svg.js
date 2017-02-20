@@ -2,11 +2,11 @@
 SVG.Array = function(array, fallback) {
   array = (array || []).valueOf()
 
-  // if array is empty and fallback is provided, use fallback 
+  // if array is empty and fallback is provided, use fallback
   if (array.length == 0 && fallback)
     array = fallback.valueOf()
 
-  // parse array 
+  // parse array
   this.value = this.parse(array)
 }
 
@@ -15,7 +15,7 @@ SVG.extend(SVG.Array, {
   morph: function(array) {
     this.destination = this.parse(array)
 
-    // normalize length of arrays 
+    // normalize length of arrays
     if (this.value.length != this.destination.length) {
       var lastValue       = this.value[this.value.length - 1]
         , lastDestination = this.destination[this.destination.length - 1]
@@ -25,25 +25,25 @@ SVG.extend(SVG.Array, {
       while(this.value.length < this.destination.length)
         this.value.push(lastValue)
     }
-    
+
     return this
   }
   // Clean up any duplicate points
 , settle: function() {
-    // find all unique values 
+    // find all unique values
     for (var i = 0, il = this.value.length, seen = []; i < il; i++)
       if (seen.indexOf(this.value[i]) == -1)
         seen.push(this.value[i])
 
-    // set new value 
+    // set new value
     return this.value = seen
   }
   // Get morphed array at given position
 , at: function(pos) {
-    // make sure a destination is defined 
+    // make sure a destination is defined
     if (!this.destination) return this
 
-    // generate morphed array 
+    // generate morphed array
     for (var i = 0, il = this.value.length, array = []; i < il; i++)
       array.push(this.value[i] + (this.destination[i] - this.value[i]) * pos)
 
@@ -61,7 +61,7 @@ SVG.extend(SVG.Array, {
 , parse: function(array) {
     array = array.valueOf()
 
-    // if already is an array, no need to parse it 
+    // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
     return this.split(array)
@@ -76,5 +76,9 @@ SVG.extend(SVG.Array, {
 
     return this
   }
-
+, clone: function() {
+    var clone = new this.constructor()
+    clone.value = array_clone(this.value)
+    return clone
+  }
 })
