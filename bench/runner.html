@@ -3,8 +3,9 @@
 <head>
   <title>SVG.js benchmarker</title>
   <style>
+    @import url('https://fonts.googleapis.com/css?family=Inconsolata');
     body {
-      font-family: 'Menlo', monospace;
+      font-family: 'Inconsolata', 'Menlo', monospace;
       font-weight: 300;
       color: #999;
       font-size: 14px;
@@ -41,6 +42,7 @@
   <script src="svg.bench.js"></script>
   <script src="tests/10000-rects.js"></script>
   <script src="tests/10000-circles.js"></script>
+  <script src="tests/10000-paths.js"></script>
   <script>
     SVG.bench.run()
   </script>
