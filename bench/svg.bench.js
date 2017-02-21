@@ -37,7 +37,7 @@
 
     // Run tests
   , run: function() {
-      this.pad(true)
+      this.pad()
       
       for (var h, i = 0, il = this._chain.length; i < il; i++) {
         var h = document.createElement('h1')
