@@ -48,7 +48,7 @@
         this._chain[i].run(this)
       }
     }
-
+    
     // Write result
   , write: function(name, ms) {
       var test = document.createElement('div')
