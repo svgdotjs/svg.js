@@ -59,20 +59,31 @@ SVG.TBox = SVG.invent({
   create: function(element) {
     // get values if element is given
     if (element) {
-      var t   = element.ctm().extract()
+      var ctm = element.ctm().extract()
+        , rbox = element.rbox()
         , box = element.bbox()
+        // the black list ensure that new transformations are picked up automagically
+        , blacklistTranProps = ['a','b','c','d','e','f','matrix','x','y']
 
-      // width and height including transformations
-      this.width  = box.width  * t.scaleX
-      this.height = box.height * t.scaleY
+      // full box properties
+      for(var p in box) {
+        if(box.hasOwnProperty(p))
+          this[p] = box[p]
+      }
 
-      // x and y including transformations
-      this.x = box.x + t.x
-      this.y = box.y + t.y
+      // get the correct cx and cy values to position the tbox at its center
+      this.cx = rbox.cx
+      this.cy = rbox.cy
+
+      // apply transformations
+      this.matrix = new SVG.Matrix(ctm.matrix)
+      for(var p in ctm) {
+        if(ctm.hasOwnProperty(p) && blacklistTranProps.indexOf(p) === -1)
+          this[p] = ctm[p]
+      }
+    } else {
+      fullBox(this)
     }
-
-    // add center, right and bottom
-    fullBox(this)
   }
 
   // Define Parent
