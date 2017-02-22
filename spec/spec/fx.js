@@ -1841,6 +1841,48 @@ describe('FX', function() {
       fx.step()
       expect(text.textPath().attr('startOffset')).toBe(morph.at(1).toString())
     })
+
+    it('should allow 0 to be specified without unit', function () {
+      // This code snippet come from issue #552
+
+      var gradient = draw.gradient('linear', function(stop) {
+        s1 = stop.at(0, '#33235b')
+        s2 = stop.at(0.5, '#E97639')
+        s3 = stop.at(1, '#33235b')
+      })
+
+      var r1, r2;
+      var fill = draw.pattern('300%', '100%', function(add) {
+        r1 = add.rect('150%', '100%').fill(gradient)
+        r2 = add.rect('150%', '100%').fill(gradient)
+      });
+      fill.attr({patternUnits: 'userSpaceOnUse'})
+
+      r1.attr('x', 0).animate('0.5s').attr('x', '150%')
+      r2.attr('x', '-150%').animate('0.5s').attr('x', 0)
+
+      var text = draw.text('Manifesto').move('50%', '50%').fill(fill)
+      text.font({
+        size: 70
+        , anchor: 'middle'
+        , leading: 1
+      })
+
+      r1.fx.start()
+      r2.fx.start()
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      r1.fx.step()
+      r2.fx.step()
+      expect(r1.attr('x')).toBe('75%')
+      expect(r2.attr('x')).toBe('-75%')
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      r1.fx.step()
+      r2.fx.step()
+      expect(r1.attr('x')).toBe('150%')
+      expect(r2.attr('x')).toBe('0%')
+    })
   })
 
 
@@ -1927,6 +1969,31 @@ describe('FX', function() {
       jasmine.clock().tick(250) // Have the animation reach its end
       fx.step()
       expect(rect.style('stroke-width')).toBe(morph.at(1).toString())
+    })
+
+    it('should allow 0 to be specified without a unit', function () {
+      var r1 = draw.rect(100,100).move(200,200)
+        , r2 = draw.rect(100,100).move(400,400)
+
+      r1.style('stroke-width', '100%').animate(500).style('stroke-width', 0)
+      r2.style('stroke-width', 0).animate(500).style('stroke-width', '100%')
+
+      r1.fx.start()
+      r2.fx.start()
+      expect(r1.style('stroke-width')).toBe('100%')
+      expect(r2.style('stroke-width')).toBe('0%')
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      r1.fx.step()
+      r2.fx.step()
+      expect(r1.style('stroke-width')).toBe('50%')
+      expect(r2.style('stroke-width')).toBe('50%')
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      r1.fx.step()
+      r2.fx.step()
+      expect(r1.style('stroke-width')).toBe('0%')
+      expect(r2.style('stroke-width')).toBe('100%')
     })
   })
 })

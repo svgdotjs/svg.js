@@ -127,6 +127,12 @@ describe('Number', function() {
     it('adds a given pixel value', function() {
       expect(number.plus('83px').valueOf()).toBe(83)
     })
+    it('use the unit of this number as the unit of the returned number by default', function (){
+      expect(new SVG.Number('12s').plus('3%').unit).toBe('s')
+    })
+    it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
+      expect(number.plus('15%').unit).toBe('%')
+    })
   })
 
   describe('minus()', function() {
@@ -138,6 +144,12 @@ describe('Number', function() {
     })
     it('subtracts a given pixel value', function() {
       expect(number.minus('85px').valueOf()).toBe(-85)
+    })
+    it('use the unit of this number as the unit of the returned number by default', function (){
+      expect(new SVG.Number('12s').minus('3%').unit).toBe('s')
+    })
+    it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
+      expect(number.minus('15%').unit).toBe('%')
     })
   })
 
@@ -154,6 +166,12 @@ describe('Number', function() {
     it('multiplies with a given pixel value', function() {
       expect(number.times('85px').valueOf()).toBe(340)
     })
+    it('use the unit of this number as the unit of the returned number by default', function (){
+      expect(new SVG.Number('12s').times('3%').unit).toBe('s')
+    })
+    it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
+      expect(number.times('15%').unit).toBe('%')
+    })
   })
 
   describe('divide()', function() {
@@ -168,6 +186,12 @@ describe('Number', function() {
     })
     it('divides by a given pixel value', function() {
       expect(number.divide('45px').valueOf()).toBe(2)
+    })
+    it('use the unit of this number as the unit of the returned number by default', function (){
+      expect(new SVG.Number('12s').divide('3%').unit).toBe('s')
+    })
+    it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
+      expect(number.divide('15%').unit).toBe('%')
     })
   })
 
@@ -206,6 +230,12 @@ describe('Number', function() {
       var destination = new SVG.Number('100%')
       var morphed = number.morph(destination).at(0.72)
       expect(morphed.toString()).toBe('72%')
+    })
+    it('use the unit of the destination number as the unit of the returned number by default', function() {
+      expect(new SVG.Number('100s').morph('50%').at(0.5).unit).toBe('%')
+    })
+    it('use the unit of this number as the unit of the returned number when the destination number as no unit', function() {
+      expect(expect(new SVG.Number('100s').morph(50).at(0.5).unit).toBe('s'))
     })
   })
 
