@@ -150,13 +150,13 @@ describe('Rect', function() {
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box = rect.scale(2).tbox()
+      var box = rect.scale(2).rbox()
       
       expect(box.width).toBe(rect.attr('width') * 2)
       expect(box.height).toBe(rect.attr('height') * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box = rect.scale(2, 3.5).tbox()
+      var box = rect.scale(2, 3.5).rbox()
       
       expect(box.width).toBe(rect.attr('width') * 2)
       expect(box.height).toBe(rect.attr('height') * 3.5)

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Feb 22 2017 00:19:11 GMT-0500 (EST)
+* BUILT: Thu Feb 23 2017 21:14:34 GMT+0100 (CET)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2218,40 +2218,9 @@ SVG.BBox = SVG.invent({
 
 })
 
-SVG.TBox = SVG.invent({
-  // Initialize
-  create: function(element) {
-    // get values if element is given
-    if (element) {
-      var t   = element.ctm().extract()
-        , box = element.bbox()
-
-      // width and height including transformations
-      this.width  = box.width  * t.scaleX
-      this.height = box.height * t.scaleY
-
-      // x and y including transformations
-      this.x = box.x + t.x
-      this.y = box.y + t.y
-    }
-
-    // add center, right and bottom
-    fullBox(this)
-  }
-
-  // Define Parent
-, parent: SVG.Element
-
-  // Constructor
-, construct: {
-    // Get transformed bounding box
-    tbox: function() {
-      return new SVG.TBox(this)
-    }
-  }
-
-})
-
+SVG.TBox = function() {
+  throw 'TBox is removed. Use RBox instead.'
+}
 
 SVG.RBox = SVG.invent({
   // Initialize
@@ -2311,7 +2280,7 @@ SVG.RBox = SVG.invent({
 })
 
 // Add universal merge method
-;[SVG.BBox, SVG.TBox, SVG.RBox].forEach(function(c) {
+;[SVG.BBox, SVG.RBox].forEach(function(c) {
 
   SVG.extend(c, {
     // Merge rect box with another, return a new instance

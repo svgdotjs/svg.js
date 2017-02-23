@@ -154,13 +154,13 @@ describe('Circle', function() {
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box = circle.scale(2).tbox()
+      var box = circle.scale(2).rbox()
       
       expect(box.width).toBe(circle.attr('r') * 2 * 2)
       expect(box.height).toBe(circle.attr('r') * 2 * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box = circle.scale(2, 3.5).tbox()
+      var box = circle.scale(2, 3.5).rbox()
       
       expect(box.width).toBe(circle.attr('r') * 2 * 2)
       expect(box.height).toBe(circle.attr('r') * 2 * 3.5)

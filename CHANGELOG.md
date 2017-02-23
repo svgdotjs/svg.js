@@ -46,6 +46,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
 
+### Removed
+- removed `.tbox()`. If you were using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
+
 ====
 
 

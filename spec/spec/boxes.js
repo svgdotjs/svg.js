@@ -44,44 +44,8 @@ describe('BBox', function() {
 
 describe('TBox', function() {
 
-  afterEach(function() {
-    draw.clear()
-  })
-
-  it('creates a new instance without passing an element', function() {
-    var box = new SVG.TBox
-    expect(box.x).toBe(0)
-    expect(box.y).toBe(0)
-    expect(box.cx).toBe(0)
-    expect(box.cy).toBe(0)
-    expect(box.width).toBe(0)
-    expect(box.height).toBe(0)
-  })
-
-  describe('merge()', function() {
-    it('merges various bounding boxes', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
-      var box3 = draw.rect(100,100).move(500,100).bbox()
-      var merged = box1.merge(box2).merge(box3)
-      expect(merged.x).toBe(50)
-      expect(merged.y).toBe(50)
-      expect(merged.cx).toBe(325)
-      expect(merged.cy).toBe(275)
-      expect(merged.width).toBe(550)
-      expect(merged.height).toBe(450)
-    })
-    it('returns a new bbox instance', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
-      var merged = box1.merge(box2)
-      expect(box1).not.toBe(merged)
-      expect(box2).not.toBe(merged)
-      expect(box1.x).toBe(50)
-      expect(box1.y).toBe(50)
-      expect(box2.x).toBe(300)
-      expect(box2.y).toBe(400)
-    })
+  it('should trow an error in 2.x and be removed in 3.x', function() {
+    expect(function() { new SVG.TBox }).toThrow('TBox is removed. Use RBox instead.')
   })
 
 })
@@ -166,25 +130,6 @@ describe('Boxes', function() {
       expect(box.width).toBe(50)
       expect(box.height).toBe(50)
       expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
-    })
-  })
-
-  describe('tbox()', function() {
-    it('returns an instance of SVG.TBox', function() {
-      expect(rect.tbox() instanceof SVG.TBox).toBeTruthy()
-    })
-    it('matches the size of the target element, including transformations', function() {
-      var box = rect.tbox()
-      expect(box.x).toBe(35)
-      expect(box.y).toBe(101)
-      expect(box.cx).toBe(85)
-      expect(box.cy).toBe(371)
-      expect(box.width).toBe(100)
-      expect(box.height).toBe(540)
-      expect(box.w).toBe(100)
-      expect(box.h).toBe(540)
-      expect(box.x2).toBe(135)
-      expect(box.y2).toBe(641)
     })
   })
 

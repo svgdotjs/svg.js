@@ -156,13 +156,13 @@ describe('Ellipse', function() {
   
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box = ellipse.scale(2).tbox()
+      var box = ellipse.scale(2).rbox()
       
       expect(box.width).toBe(ellipse.attr('rx') * 2 * 2)
       expect(box.height).toBe(ellipse.attr('ry') * 2 * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box = ellipse.scale(2, 3.5).tbox()
+      var box = ellipse.scale(2, 3.5).rbox()
       
       expect(box.width).toBe(ellipse.attr('rx') * 2 * 2)
       expect(box.height).toBe(ellipse.attr('ry') * 2 * 3.5)

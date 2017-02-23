@@ -169,15 +169,15 @@ describe('Path', function() {
 
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
-      var box1 = path.tbox()
-        , box2 = path.scale(2).tbox()
+      var box1 = path.rbox()
+        , box2 = path.scale(2).rbox()
 
       expect(box1.width * 2).toBe(box2.width)
       expect(box1.height * 2).toBe(box2.height)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
-      var box1 = path.tbox()
-        , box2 = path.scale(2, 3.5).tbox()
+      var box1 = path.rbox()
+        , box2 = path.scale(2, 3.5).rbox()
 
       expect(box1.width * 2).toBe(box2.width)
       expect(box1.height * 3.5).toBe(box2.height)
