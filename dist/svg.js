@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Feb 24 2017 20:05:12 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Feb 24 2017 21:46:50 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -496,7 +496,7 @@ SVG.extend(SVG.Array, {
   }
   // Strip unnecessary whitespace
 , split: function(string) {
-    return string.trim().split(/\s+/)
+    return string.trim().split(/[\s,]+/).map(parseFloat)
   }
   // Reverse array
 , reverse: function() {
@@ -4021,6 +4021,7 @@ SVG.extend(SVG.Parent, {
     return this.put(new SVG.Bare(element, inherit))
   }
 })
+
 SVG.Symbol = SVG.invent({
   // Initialize node
   create: 'symbol'
@@ -4035,6 +4036,7 @@ SVG.Symbol = SVG.invent({
     }
   }
 })
+
 SVG.Use = SVG.invent({
   // Initialize node
   create: 'use'
