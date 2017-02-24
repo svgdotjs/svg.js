@@ -54,21 +54,10 @@ SVG.BBox = SVG.invent({
 
 })
 
-SVG.TBox = SVG.invent({
-  create: function(element) {
+SVG.extend(SVG.Element, {
+  tbox: function(){
     console.warn('Use of TBox is deprecated and mapped to RBox. Use .rbox() instead.')
-    // delegate calls to SVG.RBox
-    return SVG.RBox.call(this, element)
-  }
-
-  // define Parent
-, parent: SVG.Element
-
-// Constructor
-, construct: {
-    tbox: function() {
-      return new SVG.TBox(this)
-    }
+    return this.rbox()
   }
 })
 

@@ -42,6 +42,32 @@ describe('BBox', function() {
 
 })
 
+describe('TBox', function() {
+
+  afterEach(function() {
+    draw.clear()
+  })
+
+  it('should map to RBox and be removed in 3.x', function() {
+    var rect = draw.rect(100, 100).move(100, 25)
+    var tbox = rect.tbox()
+
+    expect(tbox.x).toBe(100)
+    expect(tbox.y).toBe(25)
+
+    rect.transform({ scale: 1.5 })
+    tbox = rect.tbox()
+    expect(tbox.x).toBe(75)
+    expect(tbox.y).toBe(0)
+
+    rect.transform({ skewX: 5 })
+    tbox = rect.tbox()
+    expect(tbox.x|0).toBe(68)
+    expect(tbox.y|0).toBe(0)
+  })
+
+})
+
 describe('RBox', function() {
 
   afterEach(function() {

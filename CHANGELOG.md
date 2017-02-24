@@ -42,12 +42,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - allow `plot` to be called with 4 parameters when animating an `SVG.Line`
 - relative value for `SVG.Number` are now calculated in its `morph` method (related #547)
 - clean up the implementation of the `initAnimation` method of the FX module (#547, #552, #584)
+- deprecated `.tbox()`. `.tbox()` now map to `.rbox()`. If you are using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
 
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
-
-### Removed
-- removed `.tbox()`. If you were using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
 
 ====
 
