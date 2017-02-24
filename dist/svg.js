@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Feb 24 2017 16:25:13 GMT+0100 (CET)
+* BUILT: Fri Feb 24 2017 20:05:12 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4020,11 +4020,20 @@ SVG.extend(SVG.Parent, {
   element: function(element, inherit) {
     return this.put(new SVG.Bare(element, inherit))
   }
-  // Add symbol element
-, symbol: function() {
-    return this.defs().element('symbol', SVG.Container)
-  }
+})
+SVG.Symbol = SVG.invent({
+  // Initialize node
+  create: 'symbol'
 
+  // Inherit from
+, inherit: SVG.Container
+
+, construct: {
+    // create symbol
+    symbol: function() {
+      return this.put(new SVG.Symbol)
+    }
+  }
 })
 SVG.Use = SVG.invent({
   // Initialize node

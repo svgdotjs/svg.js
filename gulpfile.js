@@ -61,6 +61,7 @@ var parts = [
 , 'src/doc.js'
 , 'src/shape.js'
 , 'src/bare.js'
+, 'src/symbol.js'
 , 'src/use.js'
 , 'src/rect.js'
 , 'src/ellipse.js'

@@ -37,9 +37,4 @@ SVG.extend(SVG.Parent, {
   element: function(element, inherit) {
     return this.put(new SVG.Bare(element, inherit))
   }
-  // Add symbol element
-, symbol: function() {
-    return this.defs().element('symbol', SVG.Container)
-  }
-
 })
