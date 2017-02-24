@@ -27,6 +27,16 @@
 
 <body>
   <svg height="0" width="0" id="inlineSVG">
+    <defs>
+      <linearGradient>
+        <stop offset="5%"  stop-color="green"/>
+        <stop offset="95%" stop-color="gold"/>
+      </linearGradient>
+      <radialGradient>
+        <stop offset="10%" stop-color="gold"/>
+        <stop offset="95%" stop-color="green"/>
+      </radialGradient>
+    </defs>
     <desc>Some description</desc>
     <path id="lineAB" d="M 100 350 l 150 -300" stroke="red" stroke-width="3" fill="none" />
     <path id="lineBC" d="M 250 50 l 150 300" stroke="red" stroke-width="3" fill="none" />
@@ -44,6 +54,7 @@
     </g>
     <polygon points="200,10 250,190 160,210" />
     <polyline points="20,20 40,25 60,40 80,120 120,140 200,180" />
+    
   </svg>
 
   <!-- include spec files here... -->
@@ -88,6 +99,7 @@
   <script src="spec/viewbox.js"></script>
   <script src="spec/sugar.js"></script>
   <script src="spec/fx.js"></script>
+  <script src="spec/utils.js"></script>
 
   <script type="text/javascript" src="spec/helper.js"></script>
 </body>

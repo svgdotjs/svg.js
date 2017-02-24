@@ -730,4 +730,40 @@ describe('Element', function() {
       expect(rect.point(pos.x, pos.y).y).toBeCloseTo(pos.y - translation.y)
     })
   })
+  
+  describe('inside()', function() {
+    it('checks whether the given point inside the bounding box of the element', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.inside(50,50)).toBeTruthy()
+      expect(rect.inside(150,150)).toBeFalsy()
+    })
+  })  
+  describe('show()', function() {
+    it('sets display property to ""', function() {
+      var rect = draw.rect(100,100).show()
+      expect(rect.style('display')).toBe('')
+    })
+  })
+  describe('hide()', function() {
+    it('sets display property to none', function() {
+      var rect = draw.rect(100,100).hide()
+      expect(rect.style('display')).toBe('none')
+    })
+  })
+  describe('visible()', function() {
+    it('checks if element is hidden or not', function() {
+      var rect = draw.rect(100,100).hide()
+      expect(rect.visible()).toBeFalsy()
+      rect.show()
+      expect(rect.visible()).toBeTruthy()
+    })
+  })
+  describe('is()', function() {
+    it('checks if element is instance of a certain kind', function() {
+      var rect = draw.rect(100,100)
+      expect(rect.is(SVG.Rect)).toBeTruthy()
+      expect(rect.is(SVG.Element)).toBeTruthy()
+      expect(rect.is(SVG.Parent)).toBeFalsy()
+    })
+  })
 })

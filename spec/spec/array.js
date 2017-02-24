@@ -1,5 +1,5 @@
 describe('Array', function () {
-  var array
+  var array, arr1, arr2
 
   it('parses a matrix array correctly to string', function() {
     array = new SVG.Array([ .343,  .669, .119, 0,   0
@@ -8,6 +8,12 @@ describe('Array', function () {
                           , .000,  .000, .000, 1,  -0 ])
 
     expect(array + '').toBe('0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0')
+  })
+  it('parses space seperated string and converts it to array', function() {
+    expect((new SVG.Array('1 2 3 4')).value).toEqual([1,2,3,4])
+  })
+  it('parses comma seperated string and converts it to array', function() {
+    expect((new SVG.Array('1,2,3,4')).value).toEqual([1,2,3,4])
   })
   describe('reverse()', function() {
     it('reverses the array', function() {
@@ -57,6 +63,65 @@ describe('Array', function () {
       for(var i = 0, len = array.value.length; i; ++i){
         expect(array[i]).not.toBe(clone[i])
       }
+    })
+  })
+  describe('morph()', function() {
+    it('adds entries so that destination array has equal length', function() {
+    
+      arr1 = new SVG.Array([1,2,3,4,5])
+      arr2 = new SVG.Array([1,2,3,4])
+      
+      arr1.morph(arr2)
+      
+      expect(arr1.destination.length).toBe(arr1.value.length)
+    })
+    it('does the same the other way round', function() {
+    
+      arr1 = new SVG.Array([1,2,3,4])
+      arr2 = new SVG.Array([1,2,3,4,5])
+      
+      arr1.morph(arr2)
+      
+      expect(arr1.destination.length).toBe(arr1.value.length)
+    })
+  })
+  describe('settle()', function() {
+    it('cleans up any duplicate value', function() {
+      array = new SVG.Array([1,2,3,4,5,4,3,2,1])
+      expect(array.settle().sort()).toEqual([1,2,3,4,5].sort())
+    })
+  })
+  describe('at()', function() {
+    it('returns a new array instance', function() {
+      arr1 = new SVG.Array([1,2,3,4])
+      arr2 = new SVG.Array([2,3,4,5])
+      
+      arr1.morph(arr2)
+      
+      start = arr1.at(0)
+      end = arr1.at(1)
+      
+      expect(start instanceof SVG.Array).toBeTruthy()
+      expect(start).not.toBe(arr1)  
+      
+      expect(end instanceof SVG.Array).toBeTruthy()
+      expect(end).not.toBe(arr2)
+    })
+    it('morphs all values of the array', function() {
+      arr1 = new SVG.Array([1,2,3,4])
+      arr2 = new SVG.Array([2,3,4,5])
+      
+      arr1.morph(arr2)
+      
+      expect(arr1.at(0.5).value).toEqual([1.5, 2.5, 3.5, 4.5])
+    })
+    it('returns array if no destination was specified', function() {
+      arr1 = new SVG.Array([1,2,3,4])
+      
+      arr2 = arr1.at(0.5)
+      
+      expect(arr2.value).toEqual([1,2,3,4])
+      expect(arr2).toBe(arr1)
     })
   })
 })

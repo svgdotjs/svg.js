@@ -1,4 +1,14 @@
 <svg height="0" width="0" id="inlineSVG">
+    <defs>
+      <linearGradient>
+        <stop offset="5%"  stop-color="green"/>
+        <stop offset="95%" stop-color="gold"/>
+      </linearGradient>
+      <radialGradient>
+        <stop offset="10%" stop-color="gold"/>
+        <stop offset="95%" stop-color="green"/>
+      </radialGradient>
+    </defs>
 	<desc>Some description</desc>
 	<path id="lineAB" d="M 100 350 l 150 -300" stroke="red" stroke-width="3" fill="none" />
 	<path id="lineBC" d="M 250 50 l 150 300" stroke="red" stroke-width="3" fill="none" />
