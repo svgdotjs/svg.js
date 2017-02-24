@@ -42,14 +42,6 @@ describe('BBox', function() {
 
 })
 
-describe('TBox', function() {
-
-  it('should trow an error in 2.x and be removed in 3.x', function() {
-    expect(function() { new SVG.TBox }).toThrow('TBox is removed. Use RBox instead.')
-  })
-
-})
-
 describe('RBox', function() {
 
   afterEach(function() {

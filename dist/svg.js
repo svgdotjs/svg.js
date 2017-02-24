@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Feb 23 2017 21:14:34 GMT+0100 (CET)
+* BUILT: Fri Feb 24 2017 14:18:56 GMT+0100 (CET)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2218,9 +2218,23 @@ SVG.BBox = SVG.invent({
 
 })
 
-SVG.TBox = function() {
-  throw 'TBox is removed. Use RBox instead.'
-}
+SVG.TBox = SVG.invent({
+  create: function(element) {
+    console.warn('Use of TBox is deprecated and mapped to RBox. Use .rbox() instead.')
+    // delegate calls to SVG.RBox
+    return SVG.RBox.call(this, element)
+  }
+
+  // define Parent
+, parent: SVG.Element
+
+// Constructor
+, construct: {
+    tbox: function() {
+      return new SVG.TBox(this)
+    }
+  }
+})
 
 SVG.RBox = SVG.invent({
   // Initialize
