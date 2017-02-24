@@ -90,11 +90,11 @@ describe('FX', function() {
   describe('atStart()', function () {
     it('sets the animation at the start', function() {
       // When the animation is running forward, the start position is 0
-      this.pos = 0.5
+      fx.pos = 0.5
       expect(fx.atStart().pos).toBe(0)
 
       // When the animation is running backward, the start position is 1
-      this.pos = 0.5
+      fx.pos = 0.5
       expect(fx.reverse(true).atStart().pos).toBe(1)
     })
 
@@ -161,7 +161,7 @@ describe('FX', function() {
   describe('atEnd()', function () {
     it('sets the animation at the end', function() {
       // When the animation is running forward, the end position is 1
-      this.pos = 0.5
+      fx.pos = 0.5
       expect(fx.atEnd().pos).toBe(1)
       expect(fx.situation).toBeNull()
 
@@ -169,7 +169,7 @@ describe('FX', function() {
       fx.animate()
 
       // When the animation is running backward, the end position is 0
-      this.pos = 0.5
+      fx.pos = 0.5
       expect(fx.reverse(true).atEnd().pos).toBe(0)
       expect(fx.situation).toBeNull()
     })
