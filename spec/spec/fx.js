@@ -37,6 +37,50 @@ describe('FX', function() {
     expect(fx.situation.once).toEqual({})
   })
 
+  describe('animate()', function () {
+    it('set duration, ease and delay of the new situation to their default value when they are not passed', function() {
+      var defaultDuration = 1000
+        , defaultEase = SVG.easing['-']
+        , defaultDelay = 0
+        , lastSituation = fx.animate().last()
+
+      expect(lastSituation.duration).toBe(defaultDuration)
+      expect(lastSituation.ease).toBe(defaultEase)
+      expect(lastSituation.delay).toBe(defaultDelay)
+    })
+
+    it('use the passed values to set duration, ease and delay of the new situation', function() {
+      var duration = 14502
+        , ease = '>'
+        , delay = 450
+        , lastSituation = fx.animate(duration, ease, delay).last()
+
+      expect(lastSituation.duration).toBe(duration)
+      expect(lastSituation.ease).toBe(SVG.easing[ease])
+      expect(lastSituation.delay).toBe(delay)
+    })
+
+    it('allow duration, ease and delay to be passed in an object', function() {
+      var o = {
+                duration: 7892
+              , ease: '<'
+              , delay: 1145
+              }
+        , lastSituation = fx.animate(o).last()
+
+      expect(lastSituation.duration).toBe(o.duration)
+      expect(lastSituation.ease).toBe(SVG.easing[o.ease])
+      expect(lastSituation.delay).toBe(o.delay)
+    })
+
+    it('allow ease to be a custom function', function () {
+      var customEase = function() {}
+        , lastSituation = fx.animate({ease: customEase}).last()
+
+      expect(lastSituation.ease).toBe(customEase)
+    })
+  })
+
   describe('target()', function(){
     it('returns the current fx object with no argument given', function(){
       expect(fx.target()).toBe(rect)
