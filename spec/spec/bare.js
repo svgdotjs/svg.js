@@ -13,11 +13,20 @@ describe('Bare', function() {
     it('creates element in called parent', function() {
       expect(element.parent()).toBe(draw)
     })
+    it('inherits from given parent', function() {
+      expect(draw.element('g', SVG.Container).rect).toBeTruthy()
+      expect(draw.element('g', SVG.Container).group).toBeTruthy()
+    })
   })
 
   describe('words()', function() {
     it('inserts plain text in a node', function() {
       var element = draw.element('title').words('These are some words.').id(null)
+      expect(element.svg()).toBe('<title>These are some words.</title>')
+    })
+    it('removes all nodes before adding words', function() {
+      var element = draw.element('title').words('These are some words.').id(null)
+      element.words('These are some words.')
       expect(element.svg()).toBe('<title>These are some words.</title>')
     })
   })

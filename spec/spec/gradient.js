@@ -13,7 +13,7 @@ describe('Gradient', function() {
     rect.remove()
     gradient.remove()
   })
-  
+
   it('is an instance of SVG.Gradient', function() {
     expect(gradient instanceof SVG.Gradient).toBe(true)
   })
@@ -22,10 +22,16 @@ describe('Gradient', function() {
     gradient = draw.gradient('linear')
     expect(gradient.children().length).toBe(0)
   })
-  
+
   describe('fill()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
       expect(gradient.fill()).toBe('url(#' + gradient.attr('id') + ')')
+    })
+  })
+
+  describe('attr()', function() {
+    it('will catch transform attribues and convert them to gradientTransform', function() {
+      expect(gradient.translate(100,100).attr('gradientTransform')).toBe('matrix(1,0,0,1,100,100)')
     })
   })
 
@@ -95,7 +101,7 @@ describe('Gradient', function() {
       expect(s2.attr('stop-color')).toBe('#ffffff')
       expect(s2.attr('stop-opacity')).toBe(0.5)
     })
-    
+
   })
 
   describe('get()', function() {
@@ -111,5 +117,5 @@ describe('Gradient', function() {
     })
 
   })
-  
+
 })

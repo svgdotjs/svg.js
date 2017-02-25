@@ -13,7 +13,7 @@ describe('Pattern', function() {
     rect.remove()
     pattern.remove()
   })
-  
+
   it('is an instance of SVG.Pattern', function() {
     expect(pattern instanceof SVG.Pattern).toBe(true)
   })
@@ -22,10 +22,16 @@ describe('Pattern', function() {
     pattern = draw.pattern(10,30)
     expect(pattern.children().length).toBe(0)
   })
-  
+
   describe('fill()', function() {
     it('returns the id of the pattern wrapped in url()', function() {
       expect(pattern.fill()).toBe('url(#' + pattern.attr('id') + ')')
+    })
+  })
+
+  describe('attr()', function() {
+    it('will catch transform attribues and convert them to patternTransform', function() {
+      expect(pattern.translate(100,100).attr('patternTransform')).toBe('matrix(1,0,0,1,100,100)')
     })
   })
 
@@ -59,5 +65,5 @@ describe('Pattern', function() {
     })
 
   })
-  
+
 })
