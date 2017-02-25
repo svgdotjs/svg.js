@@ -86,28 +86,21 @@ SVG.ViewBox = SVG.invent({
     toString: function() {
       return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
     }
-  , morph: function(v){
-
-      var v = arguments.length == 1 ?
-        [v.x, v.y, v.width, v.height] :
-        [].slice.call(arguments)
-
-      this.destination = new SVG.ViewBox(v)
-
+  , morph: function(x, y, width, height){
+      this.destination = new SVG.ViewBox(x, y, width, height)
       return this
-
     }
 
   , at: function(pos) {
 
-    if(!this.destination) return this
+      if(!this.destination) return this
 
-    return new SVG.ViewBox([
-        this.x + (this.destination.x - this.x) * pos
-      , this.y + (this.destination.y - this.y) * pos
-      , this.width + (this.destination.width - this.width) * pos
-      , this.height + (this.destination.height - this.height) * pos
-    ])
+      return new SVG.ViewBox([
+          this.x + (this.destination.x - this.x) * pos
+        , this.y + (this.destination.y - this.y) * pos
+        , this.width + (this.destination.width - this.width) * pos
+        , this.height + (this.destination.height - this.height) * pos
+      ])
 
     }
 
@@ -120,17 +113,13 @@ SVG.ViewBox = SVG.invent({
 , construct: {
 
     // get/set viewbox
-    viewbox: function(v) {
+    viewbox: function(x, y, width, height) {
       if (arguments.length == 0)
         // act as a getter if there are no arguments
         return new SVG.ViewBox(this)
 
       // otherwise act as a setter
-      v = arguments.length == 1 ?
-        [v.x, v.y, v.width, v.height] :
-        [].slice.call(arguments)
-
-      return this.attr('viewBox', v)
+      return this.attr('viewBox', new SVG.ViewBox(x, y, width, height))
     }
 
   }

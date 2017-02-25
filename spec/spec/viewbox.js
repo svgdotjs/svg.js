@@ -101,6 +101,14 @@ describe('Viewbox', function() {
       draw.viewbox({ x: 0, y: 0, width: 50, height: 50 })
       expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
     })
+    it('should set the viewbox when a string is provided as first argument', function() {
+      draw.viewbox('0 0 50 50')
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
+    })
+    it('should set the viewbox when an array is provided as first argument', function() {
+      draw.viewbox([0, 0, 50, 50])
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
+    })
     it('should accept negative values', function() {
       draw.size(100,100).viewbox(-100, -100, 50, 50)
       expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 50 50')
@@ -125,7 +133,7 @@ describe('Viewbox', function() {
 
       expect(viewbox1.destination).toEqual(viewbox2)
     })
-    it('stores a clone, not the given matrix itself', function() {
+    it('stores a clone, not the given viewbox itself', function() {
       var viewbox1 = new SVG.ViewBox(10, 100, 200, 300)
         , viewbox2 = new SVG.ViewBox(50, -100, 300, 300)
 
