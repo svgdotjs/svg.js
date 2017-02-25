@@ -46,6 +46,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
+- viewbox now also accepts strings and arrays as constructor arguments
+- `SVG.Array` now accepts a comma seperated string and returns array of numbers instead of strings
 
 ====
 
