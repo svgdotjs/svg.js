@@ -76,6 +76,10 @@ describe('Color', function() {
 			expect(morphed.g).toBe(102)
 			expect(morphed.b).toBe(255)
 		})
+    
+    it('returns itself when no destination specified', function() {
+      expect(color.at(0.5)).toBe(color)
+    })
 	})
 
 })

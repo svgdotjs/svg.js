@@ -75,7 +75,7 @@ describe('Point', function() {
   describe('clone()', function() {
     it('returns cloned point', function() {
       var point1 = new SVG.Point(1,1)
-        , point2 = new SVG.Point(point1)
+        , point2 = point1.clone()
 
       expect(point1).toEqual(point2)
       expect(point1).not.toBe(point2)
@@ -116,6 +116,10 @@ describe('Point', function() {
         , point3 = point1.morph(point2).at(0.5)
 
       expect(point3).toEqual(new SVG.Point(1.5, 1.5))
+    })
+    it('returns itself when no destination specified', function() {
+      var point = new SVG.Point(1,1)
+      expect(point.at(0.4)).toBe(point)
     })
   })
 

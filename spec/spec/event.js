@@ -291,9 +291,16 @@ describe('Event', function() {
 
   describe('on()', function() {
 
-    it('attaches and event to the element', function() {
+    it('attaches an event to the element', function() {
       dispatchEvent(rect.on('event', action), 'event')
       expect(toast).toBe('ready')
+    })
+    it('attaches an event to a non svg element', function() {
+      var body = document.getElementsByTagName('body')[0]
+      SVG.on(body, 'event', action)
+      body.dispatchEvent(new CustomEvent('event'))
+      expect(toast).toBe('ready')
+      SVG.off(body, 'event', action)
     })
     it('attaches multiple handlers on different element', function() {
       var listenerCnt = SVG.listeners.length

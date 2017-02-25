@@ -92,10 +92,12 @@ describe('Array', function () {
     })
   })
   describe('at()', function() {
-    it('returns a new array instance', function() {
+    beforeEach(function() {
       arr1 = new SVG.Array([1,2,3,4])
       arr2 = new SVG.Array([2,3,4,5])
-      
+    })
+  
+    it('returns a new array instance', function() {
       arr1.morph(arr2)
       
       start = arr1.at(0)
@@ -108,20 +110,11 @@ describe('Array', function () {
       expect(end).not.toBe(arr2)
     })
     it('morphs all values of the array', function() {
-      arr1 = new SVG.Array([1,2,3,4])
-      arr2 = new SVG.Array([2,3,4,5])
-      
       arr1.morph(arr2)
-      
       expect(arr1.at(0.5).value).toEqual([1.5, 2.5, 3.5, 4.5])
     })
-    it('returns array if no destination was specified', function() {
-      arr1 = new SVG.Array([1,2,3,4])
-      
-      arr2 = arr1.at(0.5)
-      
-      expect(arr2.value).toEqual([1,2,3,4])
-      expect(arr2).toBe(arr1)
+    it('returns itself if no destination was specified', function() {
+      expect(arr1.at(0.5)).toBe(arr1)
     })
   })
 })
@@ -187,6 +180,35 @@ describe('PointArray', function () {
 
     expect(array.value).toEqual([[1,2]])
   })
+  
+  describe('at()', function() {
+    var arr1, arr2
+  
+    beforeEach(function() {
+      arr1 = new SVG.PointArray([[1,2],[3,4]])
+      arr2 = new SVG.Array([[2,3],[4,5]])
+    })
+  
+    it('returns a new array instance', function() {
+      arr1.morph(arr2)
+      
+      start = arr1.at(0)
+      end = arr1.at(1)
+      
+      expect(start instanceof SVG.PointArray).toBeTruthy()
+      expect(start).not.toBe(arr1)  
+      
+      expect(end instanceof SVG.PointArray).toBeTruthy()
+      expect(end).not.toBe(arr2)
+    })
+    it('morphs all values of the array', function() {
+      arr1.morph(arr2)
+      expect(arr1.at(0.5).value).toEqual([[1.5, 2.5], [3.5, 4.5]])
+    })
+    it('returns itself if no destination was specified', function() {
+      expect(arr1.at(0.5)).toBe(arr1)
+    })
+  })
 })
 
 describe('PathArray', function () {
@@ -205,7 +227,21 @@ describe('PathArray', function () {
     expect(p2.toString()).toBe('M10 80C50 90 75 90 105 160S255 310 285 240T585 540Q637 550 680 620Z ')
     expect(p3.toString()).toBe('M80 80A45 45 0 0 0 125 125L125 80Z ')
     expect(p4.toString()).toBe('M215.458 245.23C215.458 245.23 292.861 245.23 309.73199999999997 245.23S405 216.451 405 138.054S329.581 15 287.9 15C246.21999999999997 15 147.97599999999997 15 117.21199999999999 15C86.45 15 15 60.65 15 134.084C15 207.518 111.259 246.221 129.122 246.221C146.984 246.221 215.458 245.23 215.458 245.23Z ')
-
+  })
+  
+  // this test is designed to cover a certain line but it doesnt work because of #608
+  it('returns the valueOf when PathArray is given', function() {
+    var p = new SVG.PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')
+    
+    expect((new SVG.PathArray(p)).value).toEqual(p.value)
+  })
+  
+  it('can handle all formats which can be used', function() {
+    // when no command is specified after move, line is used automatically (specs say so)
+    expect(new SVG.PathArray('M10 10 80 80 30 30 Z').toString()).toBe('M10 10L80 80L30 30Z ')
+    
+    // parsing can handle 0.5.3.3.2 stuff 
+    expect(new SVG.PathArray('M10 10L.5.5.3.3Z').toString()).toBe('M10 10L0.5 0.5L0.3 0.3Z ')
   })
 
   describe('move()', function() {

@@ -145,6 +145,10 @@ describe('Viewbox', function() {
       expect(viewbox2.toString()).toBe('50 -100 300 300')
       expect(viewbox3.toString()).toBe('30 0 250 300')
     })
+    it('returns itself when no destination given', function() {
+      var viewbox = new SVG.ViewBox(10, 100, 200, 300)
+      expect(viewbox.at(0.5)).toBe(viewbox)
+    })
   })
 
 })

@@ -83,4 +83,27 @@ describe('SVG', function() {
     })
   })
   
+  describe('prepare()', function() {
+    var drawing, wrapper, parser
+  
+    beforeEach(function() {
+      wrapper = document.createElement('div')
+      document.getElementsByTagName('body')[0].appendChild(wrapper)
+      drawing = SVG(wrapper)
+      
+      parser = document.getElementsByTagName('body')[0].lastChild
+    })
+  
+    it('creates a parser element when calling SVG()', function() {
+      expect(SVG.parser.draw.node.nodeName).toBe('svg')
+    })
+    it('hides the parser', function() {
+      expect(SVG.parser.draw.node.getAttribute('style')).toBe('opacity: 0; position: fixed; left: 100%; top: 100%; overflow: hidden;')
+    })
+    it('holds polyline and path', function() {
+      expect(SVG.select('polyline', SVG.parser.draw.node).first().type).toBe('polyline')
+      expect(SVG.select('path', SVG.parser.draw.node).first().type).toBe('path')
+    })
+  })
+  
 })

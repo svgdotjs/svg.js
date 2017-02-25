@@ -284,6 +284,26 @@ describe('Container', function() {
       expect(draw.get(3)).toBeNull()
     })
   })
+  
+  describe('first()', function() {
+    it('gets the first child', function() {
+      draw.clear()
+      var rect = draw.rect(100,100)
+      var circle = draw.circle(100)
+      var line = draw.line(0,0,100,100)
+      expect(draw.first()).toBe(rect)
+    })
+  })
+  
+  describe('last()', function() {
+    it('gets the last child', function() {
+      draw.clear()
+      var rect = draw.rect(100,100)
+      var circle = draw.circle(100)
+      var line = draw.line(0,0,100,100)
+      expect(draw.last()).toBe(line)
+    })
+  })
 
   describe('has()', function() {
     it('determines if a given element is a child of the parent', function() {
@@ -317,6 +337,14 @@ describe('Container', function() {
     it('returns the parent element instance', function() {
       var rect = draw.rect(100,100)
       expect(rect.parent()).toBe(rect.node.parentNode.instance)
+    })
+  })
+
+  describe('defs()', function() {
+    it('returns the defs from the svg', function() {
+      var g = draw.group()
+      expect(g.defs()).toBe(draw.doc().defs())
+      expect(g.defs() instanceof SVG.Defs).toBeTruthy()
     })
   })
 

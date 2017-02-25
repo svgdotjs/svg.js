@@ -237,6 +237,9 @@ describe('Number', function() {
     it('use the unit of this number as the unit of the returned number when the destination number as no unit', function() {
       expect(expect(new SVG.Number('100s').morph(50).at(0.5).unit).toBe('s'))
     })
+    it('returns itself when no destination specified', function() {
+      expect(number.at(0.5)).toBe(number)
+    })
   })
 
 })

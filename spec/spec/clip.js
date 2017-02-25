@@ -30,6 +30,11 @@ describe('ClipPath', function() {
   it('references the clipped element in the clipPath target list', function() {
     expect(rect.clipper.targets.indexOf(rect) > -1).toBe(true)
   })
+  
+  it('reuses clip element when clip was given', function() {
+    var clip = rect.clipper
+    expect(draw.rect(100,100).clipWith(clip).clipper).toBe(clip)
+  })
 
   it('unclips all clipped elements when being removed', function() {
     rect.clipper.remove()

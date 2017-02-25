@@ -31,6 +31,11 @@ describe('Mask', function() {
     expect(rect.masker.targets.indexOf(rect) > -1).toBe(true)
   })
 
+  it('reuses mask element when mask was given', function() {
+    var mask = rect.masker
+    expect(draw.rect(100,100).maskWith(mask).masker).toBe(mask)
+  })
+  
   it('unmasks all masked elements when being removed', function() {
     rect.masker.remove()
     expect(rect.attr('mask')).toBe(undefined)

@@ -702,6 +702,23 @@ describe('Element', function() {
 
       expect(rect.attr('svgjs:data')).toBe('{"foo":"bar","number":"3px"}')
     })
+    it('recursively dumps the data', function() {
+      var g = draw.group()
+      rect = g.rect(100,100)
+      g.dom.foo = 'bar'
+      rect.dom.number = new SVG.Number('3px')
+      
+      g.writeDataToDom()
+      
+      expect(g.attr('svgjs:data')).toBe('{"foo":"bar"}')
+      expect(rect.attr('svgjs:data')).toBe('{"number":"3px"}')
+    })
+    it('uses lines() instead of each() when dealing with text', function() {
+      var text = draw.text('Hello\nWorld')
+      text.writeDataToDom()
+      expect(text.attr('svgjs:data')).toBe('{"leading":"1.3"}')
+      expect(text.lines().first().attr('svgjs:data')).toBe('{"newLined":true}')
+    })
   })
 
   describe('setData()', function() {
