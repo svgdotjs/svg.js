@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Feb 25 2017 15:05:15 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Feb 25 2017 16:58:49 GMT-0500 (EST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1594,22 +1594,24 @@ SVG.FX = SVG.invent({
 
     // set the internal animation pointer at the start position, before any loops, and updates the visualisation
   , atStart: function() {
-    return this.at(0, true)
-  }
+      return this.at(0, true)
+    }
 
     // set the internal animation pointer at the end position, after all the loops, and updates the visualisation
   , atEnd: function() {
-    if (this.situation.loops === true) {
-      // If in a infinite loop, we end the current iteration
-      return this.at(this.situation.loop+1, true)
-    } else if(typeof this.situation.loops == 'number') {
-      // If performing a finite number of loops, we go after all the loops
-      return this.at(this.situation.loops, true)
-    } else {
-      // If no loops, we just go at the end
-      return this.at(1, true)
+      if (this.situation.loops === true) {
+        // If in a infinite loop, we end the current iteration
+        this.situation.loops = this.situation.loop + 1
+      }
+
+      if(typeof this.situation.loops == 'number') {
+        // If performing a finite number of loops, we go after all the loops
+        return this.at(this.situation.loops, true)
+      } else {
+        // If no loops, we just go at the end
+        return this.at(1, true)
+      }
     }
-  }
 
     // set the internal animation pointer to the specified position and updates the visualisation
     // if isAbsPos is true, pos is treated as an absolute position

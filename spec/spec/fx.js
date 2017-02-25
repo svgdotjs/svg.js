@@ -216,8 +216,8 @@ describe('FX', function() {
     it('sets the animation at the end, after all loops when reversing is true', function() {
       var loops
 
-      // When reversing is true, the end position equal the start position when
-      // loops is even
+      // When reversing is true, the end position is 0 when loops is even and
+      // 1 when loops is odd
 
       // The animation is running forward
       loops = 6
@@ -231,13 +231,15 @@ describe('FX', function() {
 
       fx.atEnd()
       expect(fx.absPos).toBe(loops)
-      expect(fx.pos).toBe(0) // Equal start position because loops is even
+      expect(fx.pos).toBe(0) // End position is 0 because loops is even
       expect(fx.active).toBe(false)
       expect(fx.situation).toBeNull()
 
       // Recreate an animation since the other one was ended
       fx.animate()
 
+      // When reversing is true and the animation is running backward,
+      // the end position is 1 when loops is even and 0 when loops is odd
 
       // The animation is running backward
       loops = 3
@@ -251,7 +253,134 @@ describe('FX', function() {
 
       fx.atEnd()
       expect(fx.absPos).toBe(loops)
-      expect(fx.pos).toBe(0) // Not equal to the start position because loops is odd
+      expect(fx.pos).toBe(0) // End position is 0 because loops is odd
+      expect(fx.active).toBe(false)
+      expect(fx.situation).toBeNull()
+    })
+
+    it('sets the animation at the end of the current iteration when in an infinite loop', function () {
+      // When the animation is running forward, the end position is 1
+      fx.loop(true).start().step()
+      expect(fx.absPos).toBe(0)
+      expect(fx.pos).toBe(0)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(0)
+      expect(fx.situation.loops).toBe(true)
+
+      // Should be halfway through iteration 10
+      jasmine.clock().tick(500 * 10 + 250)
+      fx.step()
+      expect(fx.absPos).toBe(10.5)
+      expect(fx.pos).toBe(0.5)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(10)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.atEnd()
+      expect(fx.absPos).toBe(11)
+      expect(fx.pos).toBe(1)
+      expect(fx.active).toBe(false)
+      expect(fx.situation).toBeNull()
+
+      // Recreate an animation since the other one was ended
+      fx.animate(500)
+
+      // When the animation is running backward, the end position is 0
+      fx.reverse(true).loop(true).start().step()
+      expect(fx.absPos).toBe(0)
+      expect(fx.pos).toBe(1)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(0)
+      expect(fx.situation.loops).toBe(true)
+      expect(fx.situation.reversed).toBe(true)
+
+      // Should be halfway through iteration 21
+      jasmine.clock().tick(500 * 21 + 250)
+      fx.step()
+      expect(fx.absPos).toBe(21.5)
+      expect(fx.pos).toBe(0.5)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(21)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.atEnd()
+      expect(fx.absPos).toBe(22)
+      expect(fx.pos).toBe(0)
+      expect(fx.active).toBe(false)
+      expect(fx.situation).toBeNull()
+    })
+
+
+    it('sets the animation at the end of the current iteration when in an infinite loop and reversing is true', function () {
+      // When reversing is true, the end position is 1 when ending on an even
+      // iteration and 0 when ending on an odd iteration as illustrated below:
+
+      //   0          Iteration          1
+      //   |--------------0------------->|
+      //   |<-------------1--------------|
+      //   |--------------2------------->|
+      //   |<-------------3--------------|
+      //                 ...
+
+
+      // The animation is running forward
+      fx.loop(true, true).start().step()
+      expect(fx.absPos).toBe(0)
+      expect(fx.pos).toBe(0)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(0)
+      expect(fx.situation.loops).toBe(true)
+
+      // Should be halfway through iteration 11
+      jasmine.clock().tick(500 * 11 + 250)
+      fx.step()
+      expect(fx.absPos).toBe(11.5)
+      expect(fx.pos).toBe(0.5)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(11)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.atEnd()
+      expect(fx.absPos).toBe(12)
+      expect(fx.pos).toBe(0) // End position is 0 because ended on a odd iteration
+      expect(fx.active).toBe(false)
+      expect(fx.situation).toBeNull()
+
+      // Recreate an animation since the other one was ended
+      fx.animate(500)
+
+      // When reversing is true and the animation is running backward,
+      // the end position is 0 when ending on an even iteration and
+      // 1 when ending on an odd iteration as illustrated below:
+
+      //   0          Iteration          1
+      //   |<-------------0--------------|
+      //   |--------------1------------->|
+      //   |<-------------2--------------|
+      //   |--------------3------------->|
+      //                 ...
+
+      // The animation is running backward
+      fx.reverse(true).loop(true).start().step()
+      expect(fx.absPos).toBe(0)
+      expect(fx.pos).toBe(1)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(0)
+      expect(fx.situation.loops).toBe(true)
+      expect(fx.situation.reversed).toBe(true)
+
+      // Should be halfway through iteration 42
+      jasmine.clock().tick(500 * 42 + 250)
+      fx.step()
+      expect(fx.absPos).toBe(42.5)
+      expect(fx.pos).toBe(0.5)
+      expect(fx.active).toBe(true)
+      expect(fx.situation.loop).toBe(42)
+      expect(fx.situation.loops).toBe(true)
+
+      fx.atEnd()
+      expect(fx.absPos).toBe(43)
+      expect(fx.pos).toBe(0) // End position is 0 because ended on an even iteration
       expect(fx.active).toBe(false)
       expect(fx.situation).toBeNull()
     })
