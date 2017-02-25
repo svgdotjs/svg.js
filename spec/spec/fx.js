@@ -1605,6 +1605,18 @@ describe('FX', function() {
         expect(fx.pos).toBe(1) // It should end not reversed, which mean the position is expected to be 1
                                // ((9-1)-6) is even, the -1 is because we do not want reversed to be toggled after the last loop
       })
+
+      it('should not throw an error when stop is called in a during callback', function () {
+        fx.move(100,100).start()
+        fx.during(function () {this.stop()})
+        expect(fx.step.bind(fx)).not.toThrow()
+      })
+
+      it('should not throw an error when finish is called in a during callback', function () {
+        fx.move(100,100).start()
+        fx.during(function () {this.finish()})
+        expect(fx.step.bind(fx)).not.toThrow()
+      })
     })
   })
 
