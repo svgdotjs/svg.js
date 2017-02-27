@@ -13,6 +13,30 @@ describe('Text', function() {
     draw.clear()
   })
 
+  describe('leading()', function() {
+    it('returns the leading value of the text without an argument', function() {
+      expect(text.leading() instanceof SVG.Number)
+      expect(text.leading().valueOf()).toBe(1.3)
+    })
+    it('sets the leading value of the text with the first argument', function() {
+      expect(text.leading(1.5).dom.leading.valueOf()).toBe(1.5)
+    })
+  })
+
+  describe('rebuild()', function() {
+    it('disables the rebuild if called with false', function() {
+      expect(text.rebuild(false)._rebuild).toBeFalsy()
+    })
+    it('enables the rebuild if called with true', function() {
+      expect(text.rebuild(true)._rebuild).toBeTruthy()
+    })
+    it('rebuilds the text without an argument given', function() {
+      var dy = text.lines().get(2).attr('dy')
+      text.leading(1.7)
+      expect(dy == text.lines().get(2).attr('dy')).toBeFalsy()
+    })
+  })
+
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
       expect(text.x()).toBe(0)
@@ -20,6 +44,12 @@ describe('Text', function() {
     it('sets the value of x with the first argument', function() {
       text.x(123)
       expect(text.node.getAttribute('x')).toBeCloseTo(123)
+    })
+    it('sets the value of all lines', function() {
+      text.x(200)
+      text.lines().each(function() {
+        expect(this.x()).toBe(200)
+      })
     })
     it('sets the value of y with a percent value', function() {
       text.x('40%')
@@ -267,11 +297,3 @@ describe('Text', function() {
   })
 
 })
-
-
-
-
-
-
-
-

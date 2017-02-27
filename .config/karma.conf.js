@@ -26,9 +26,18 @@ module.exports = function(config) {
         included: false,
         served: true
       },
+      {
+        pattern: 'spec/fixtures/pixel.png',
+        included: false,
+        served: true
+      },
       'dist/svg.js',
       'spec/spec/**/*.js'
     ],
+    
+    proxies: {
+      '/fixtures/': '/base/spec/fixtures/'
+    },
 
 
     // list of files to exclude
