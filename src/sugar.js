@@ -57,7 +57,7 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Map matrix to transform
 , matrix: function(m) {
-    return this.attr('transform', new SVG.Matrix(m))
+    return this.attr('transform', new SVG.Matrix(arguments.length == 6 ? [].slice.call(arguments) : m))
   }
   // Opacity
 , opacity: function(value) {

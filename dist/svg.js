@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 28 2017 12:01:38 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Feb 28 2017 13:49:34 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2317,6 +2317,8 @@ SVG.Matrix = SVG.invent({
       stringToMatrix(source) :
     arguments.length == 6 ?
       arrayToMatrix([].slice.call(arguments)) :
+    Array.isArray(source) ?
+      arrayToMatrix(source) :
     typeof source === 'object' ?
       source : base
 
@@ -4919,7 +4921,7 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Map matrix to transform
 , matrix: function(m) {
-    return this.attr('transform', new SVG.Matrix(m))
+    return this.attr('transform', new SVG.Matrix(arguments.length == 6 ? [].slice.call(arguments) : m))
   }
   // Opacity
 , opacity: function(value) {

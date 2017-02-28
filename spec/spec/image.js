@@ -25,6 +25,10 @@ describe('Image', function() {
         done()
       })
     })
+    it('returns itself when no url given', function() {
+      var img = new SVG.Image()
+      expect(img.load()).toBe(img)
+    })
   })
 
   describe('loaded()', function() {

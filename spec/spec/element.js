@@ -109,6 +109,18 @@ describe('Element', function() {
       expect(draw.defs().select('pattern image').length()).toBe(1)
       expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
     })
+    it('correctly creates SVG.Array if array given', function() {
+      rect.attr('something', [2,3,4])
+      expect(rect.attr('something')).toBe('2 3 4')
+    })
+    it('redirects to the leading() method when setting leading', function() {
+      var text = draw.text(loremIpsum)
+      spyOn(text, 'leading')
+      
+      text.attr('leading', 2)
+      expect(text.leading).toHaveBeenCalled()
+      text.remove()
+    })
   })
 
   describe('id()', function() {
@@ -270,6 +282,10 @@ describe('Element', function() {
       rect.transform({ a: 0.5, c: 0.5 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,0,0)')
     })
+    it('transforms relative using a matrix', function() {
+      rect.transform({ a: 0.5, c: 0.5 }).transform(new SVG.Matrix({ e: 20, f: 20 }), true)
+      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,20,20)')
+    })
   })
 
   describe('untransform()', function() {
@@ -290,7 +306,7 @@ describe('Element', function() {
       expect(circle.ctm()).toEqual(new SVG.Matrix)
     })
   })
-
+  
   describe('matrixify', function() {
     var rect
 
@@ -367,6 +383,14 @@ describe('Element', function() {
     it('gets data value if only one argument is passed', function() {
       var rect = draw.rect(100,100).data('test', 101)
       expect(rect.data('test')).toBe(101)
+    })
+    it('gets the raw value when value is no valid json', function() {
+      var rect = draw.rect(100,100).data('test', '{["sd":12}]', true)
+      expect(rect.data('test')).toBe('{["sd":12}]')
+    })
+    it('removes data when null given', function() {
+      var rect = draw.rect(100,100).data('test', '{"sd":12}', true)
+      expect(rect.data('test', null).attr('data-test')).toBeFalsy()
     })
     it('maintains data type for a number', function() {
       var rect = draw.rect(100,100).data('test', 101)

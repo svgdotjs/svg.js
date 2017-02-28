@@ -7,6 +7,10 @@ describe('Gradient', function() {
       stop.at({ offset: 0, color: '#333', opacity: 1 })
       stop.at({ offset: 1, color: '#fff', opacity: 1 })
     })
+    radial = draw.gradient('radial', function(stop) {
+      stop.at({ offset: 0, color: '#333', opacity: 1 })
+      stop.at({ offset: 1, color: '#fff', opacity: 1 })
+    })
   })
 
   afterEach(function() {
@@ -26,6 +30,32 @@ describe('Gradient', function() {
   describe('fill()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
       expect(gradient.fill()).toBe('url(#' + gradient.attr('id') + ')')
+    })
+  })
+  
+  describe('from()', function() {
+    it('sets fx and fy attribute for radial gradients', function() {
+      radial.from(7, 10)
+      expect(radial.attr('fx')).toBe(7)
+      expect(radial.attr('fy')).toBe(10)
+    })
+    it('sets x1 and y1 attribute for linear gradients', function() {
+      gradient.from(7, 10)
+      expect(gradient.attr('x1')).toBe(7)
+      expect(gradient.attr('y1')).toBe(10)
+    })
+  })
+  
+  describe('to()', function() {
+    it('sets cx and cy attribute for radial gradients', function() {
+      radial.to(75, 105)
+      expect(radial.attr('cx')).toBe(75)
+      expect(radial.attr('cy')).toBe(105)
+    })
+    it('sets x2 and y2 attribute for linear gradients', function() {
+      gradient.to(75, 105)
+      expect(gradient.attr('x2')).toBe(75)
+      expect(gradient.attr('y2')).toBe(105)
     })
   })
 

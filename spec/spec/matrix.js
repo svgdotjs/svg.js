@@ -112,6 +112,45 @@ describe('Matrix', function() {
       })
     })
 
+    describe('with an array given', function() {
+      it('parses the array correctly', function() {
+        var matrix = new SVG.Matrix([2, 0, 0, 2, 100, 50])
+
+        expect(matrix.a).toBe(2)
+        expect(matrix.b).toBe(0)
+        expect(matrix.c).toBe(0)
+        expect(matrix.d).toBe(2)
+        expect(matrix.e).toBe(100)
+        expect(matrix.f).toBe(50)
+      })
+    })
+
+    describe('with an object given', function() {
+      it('parses the object correctly', function() {
+        var matrix = new SVG.Matrix({a:2, b:0, c:0, d:2, e:100, f:50})
+
+        expect(matrix.a).toBe(2)
+        expect(matrix.b).toBe(0)
+        expect(matrix.c).toBe(0)
+        expect(matrix.d).toBe(2)
+        expect(matrix.e).toBe(100)
+        expect(matrix.f).toBe(50)
+      })
+    })
+
+    describe('with 6 arguments given', function() {
+      it('parses the arguments correctly', function() {
+        var matrix = new SVG.Matrix(2, 0, 0, 2, 100, 50)
+
+        expect(matrix.a).toBe(2)
+        expect(matrix.b).toBe(0)
+        expect(matrix.c).toBe(0)
+        expect(matrix.d).toBe(2)
+        expect(matrix.e).toBe(100)
+        expect(matrix.f).toBe(50)
+      })
+    })
+
   })
   
   describe('clone()', function() {

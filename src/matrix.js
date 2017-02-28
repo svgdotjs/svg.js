@@ -10,6 +10,8 @@ SVG.Matrix = SVG.invent({
       stringToMatrix(source) :
     arguments.length == 6 ?
       arrayToMatrix([].slice.call(arguments)) :
+    Array.isArray(source) ?
+      arrayToMatrix(source) :
     typeof source === 'object' ?
       source : base
 

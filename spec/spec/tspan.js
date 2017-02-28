@@ -26,6 +26,12 @@ describe('Tspan', function() {
       tspan = text.tspan('Hello World').newLine()
       expect(tspan.text()).toBe('Hello World\n')
     })
+    it('calls the function when function given', function() {
+      var spy = jasmine.createSpy('dummy')
+      tspan = text.tspan('Hello World')
+      tspan.text(spy)
+      expect(spy).toHaveBeenCalledWith(tspan)
+    })
   })
 
   describe('dx()', function() {
