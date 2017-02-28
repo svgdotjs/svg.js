@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 28 2017 13:49:34 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Feb 28 2017 18:53:10 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2866,18 +2866,16 @@ SVG.Transformation = SVG.invent({
   create: function(source, inversed){
 
     if(arguments.length > 1 && typeof inversed != 'boolean'){
-      return this.create([].slice.call(arguments))
-    }
-
-    if(typeof source == 'object'){
-      for(var i = 0, len = this.arguments.length; i < len; ++i){
-        this[this.arguments[i]] = source[this.arguments[i]]
-      }
+      return this.constructor.call(this, [].slice.call(arguments))
     }
 
     if(Array.isArray(source)){
       for(var i = 0, len = this.arguments.length; i < len; ++i){
         this[this.arguments[i]] = source[i]
+      }
+    } else if(typeof source == 'object'){
+      for(var i = 0, len = this.arguments.length; i < len; ++i){
+        this[this.arguments[i]] = source[this.arguments[i]]
       }
     }
 
@@ -2891,7 +2889,10 @@ SVG.Transformation = SVG.invent({
 
 , extend: {
 
-    at: function(pos){
+    arguments: []
+  , method: ''
+
+  , at: function(pos){
 
       var params = []
 
@@ -2933,8 +2934,7 @@ SVG.Translate = SVG.invent({
 , inherit: SVG.Transformation
 
 , create: function(source, inversed){
-    if(typeof source == 'object') this.constructor.call(this, source, inversed)
-    else this.constructor.call(this, [].slice.call(arguments))
+    this.constructor.apply(this, [].slice.call(arguments))
   }
 
 , extend: {
@@ -2950,8 +2950,7 @@ SVG.Rotate = SVG.invent({
 , inherit: SVG.Transformation
 
 , create: function(source, inversed){
-    if(typeof source == 'object') this.constructor.call(this, source, inversed)
-    else this.constructor.call(this, [].slice.call(arguments))
+    this.constructor.apply(this, [].slice.call(arguments))
   }
 
 , extend: {
@@ -2974,8 +2973,7 @@ SVG.Scale = SVG.invent({
 , inherit: SVG.Transformation
 
 , create: function(source, inversed){
-    if(typeof source == 'object') this.constructor.call(this, source, inversed)
-    else this.constructor.call(this, [].slice.call(arguments))
+    this.constructor.apply(this, [].slice.call(arguments))
   }
 
 , extend: {
@@ -2991,8 +2989,7 @@ SVG.Skew = SVG.invent({
 , inherit: SVG.Transformation
 
 , create: function(source, inversed){
-    if(typeof source == 'object') this.constructor.call(this, source, inversed)
-    else this.constructor.call(this, [].slice.call(arguments))
+    this.constructor.apply(this, [].slice.call(arguments))
   }
 
 , extend: {
