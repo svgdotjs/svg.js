@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Feb 25 2017 16:58:49 GMT-0500 (EST)
+* BUILT: Tue Feb 28 2017 12:01:38 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2384,26 +2384,6 @@ SVG.Matrix = SVG.invent({
       , f: this.f + (this.destination.f - this.f) * pos
       })
 
-      // process parametric rotation if present
-      if (this.param && this.param.to) {
-        // calculate current parametric position
-        var param = {
-          rotation: this.param.from.rotation + (this.param.to.rotation - this.param.from.rotation) * pos
-        , cx:       this.param.from.cx
-        , cy:       this.param.from.cy
-        }
-
-        // rotate matrix
-        matrix = matrix.rotate(
-          (this.param.to.rotation - this.param.from.rotation * 2) * pos
-        , param.cx
-        , param.cy
-        )
-
-        // store current parametric values
-        matrix.param = param
-      }
-
       return matrix
     }
     // Multiplies by given matrix
@@ -2640,10 +2620,6 @@ SVG.extend(SVG.Element, {
       // parse array values
       else if (Array.isArray(v))
         v = new SVG.Array(v)
-
-      // store parametric transformation values locally
-      else if (v instanceof SVG.Matrix && v.param)
-        this.param = v.param
 
       // if the passed attribute is leading...
       if (a == 'leading') {

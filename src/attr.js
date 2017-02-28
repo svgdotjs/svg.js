@@ -57,10 +57,6 @@ SVG.extend(SVG.Element, {
       else if (Array.isArray(v))
         v = new SVG.Array(v)
 
-      // store parametric transformation values locally
-      else if (v instanceof SVG.Matrix && v.param)
-        this.param = v.param
-
       // if the passed attribute is leading...
       if (a == 'leading') {
         // ... call the leading method instead

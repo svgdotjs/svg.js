@@ -77,26 +77,6 @@ SVG.Matrix = SVG.invent({
       , f: this.f + (this.destination.f - this.f) * pos
       })
 
-      // process parametric rotation if present
-      if (this.param && this.param.to) {
-        // calculate current parametric position
-        var param = {
-          rotation: this.param.from.rotation + (this.param.to.rotation - this.param.from.rotation) * pos
-        , cx:       this.param.from.cx
-        , cy:       this.param.from.cy
-        }
-
-        // rotate matrix
-        matrix = matrix.rotate(
-          (this.param.to.rotation - this.param.from.rotation * 2) * pos
-        , param.cx
-        , param.cy
-        )
-
-        // store current parametric values
-        matrix.param = param
-      }
-
       return matrix
     }
     // Multiplies by given matrix
