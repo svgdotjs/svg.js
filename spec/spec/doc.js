@@ -35,10 +35,11 @@ describe('Doc', function() {
 
   describe('remove()', function() {
     it('removes the doc from the dom', function() {
+      var cnt = document.getElementsByTagName('body')[0].querySelectorAll('svg').length
       draw.remove()
-      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(2)
+      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(cnt-1)
       draw = SVG(drawing).size(100,100);
-      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(3)
+      expect(document.getElementsByTagName('body')[0].querySelectorAll('svg').length).toBe(cnt)
     })
   })
 

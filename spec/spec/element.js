@@ -26,6 +26,7 @@ describe('Element', function() {
 
     afterEach(function() {
       rect.remove()
+      draw.defs().select('pattern').each(function() { this.remove() })
     })
 
     it('sets one attribute when two arguments are given', function() {
@@ -95,6 +96,18 @@ describe('Element', function() {
     it('leaves unit values alone as a global getter', function() {
       rect.attr('x', '69%')
       expect(rect.attr().x).toBe('69%')
+    })
+    it('creates an image in defs when image path is specified for fill', function() {
+      rect.attr('fill', imageUrl)
+      expect(draw.defs().select('pattern').length()).toBe(1)
+      expect(draw.defs().select('pattern image').length()).toBe(1)
+      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
+    })
+    it('creates pattern in defs when image object is specified for fill', function() {
+      rect.attr('fill', new SVG.Image().load(imageUrl))
+      expect(draw.defs().select('pattern').length()).toBe(1)
+      expect(draw.defs().select('pattern image').length()).toBe(1)
+      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
     })
   })
 
@@ -707,9 +720,9 @@ describe('Element', function() {
       rect = g.rect(100,100)
       g.dom.foo = 'bar'
       rect.dom.number = new SVG.Number('3px')
-      
+
       g.writeDataToDom()
-      
+
       expect(g.attr('svgjs:data')).toBe('{"foo":"bar"}')
       expect(rect.attr('svgjs:data')).toBe('{"number":"3px"}')
     })
@@ -747,14 +760,14 @@ describe('Element', function() {
       expect(rect.point(pos.x, pos.y).y).toBeCloseTo(pos.y - translation.y)
     })
   })
-  
+
   describe('inside()', function() {
     it('checks whether the given point inside the bounding box of the element', function() {
       var rect = draw.rect(100,100)
       expect(rect.inside(50,50)).toBeTruthy()
       expect(rect.inside(150,150)).toBeFalsy()
     })
-  })  
+  })
   describe('show()', function() {
     it('sets display property to ""', function() {
       var rect = draw.rect(100,100).show()
