@@ -711,6 +711,11 @@ describe('FX', function() {
   })
 
   describe('play()', function() {
+    it('returns itself when animation not paused', function() {
+      expect(fx.paused).toBe(false)
+      expect(fx.play()).toBe(fx)
+    })
+
     it('unpause the animation', function() {
       var start = fx.start().pause().situation.start
 
@@ -974,6 +979,23 @@ describe('FX', function() {
       fx.queue(function(){ called=true; expect(this).toBe(fx) }).dequeue()
       expect(called).toBe(true)
     })
+
+    /*it('should stop the currently running animation when there is one', function() {
+      var called = false
+
+      fx.start().once(0.5, function(pos, eased) {
+        console.warn('asds')
+        expect(pos).toBeCloseTo(0.5)
+        this.fx.dequeue()
+      })//.queue(function(){ called=true; expect(this).toBe(fx) })
+
+      //jasmine.clock().tick(125)
+      //fx.step()
+      //expect(called).toBe(false)
+      //jasmine.clock().tick(125)
+      //fx.step()
+      //expect(called).toBe(true)
+    })*/
   })
 
 
@@ -1044,6 +1066,13 @@ describe('FX', function() {
     it('returns the current position', function() {
       expect(fx.progress()).toBe(0)
       expect(fx.progress()).toBe(fx.pos)
+    })
+    it('returns the current position as eased value if fist argument is true', function() {
+      var anim = draw.rect(100,100).animate(500,'>').start()
+      expect(anim.progress(true)).toBe(0)
+
+      anim.at(0.25)
+      expect(anim.progress(true)).toBeCloseTo(anim.situation.ease(0.25))
     })
   })
 
@@ -2180,5 +2209,119 @@ describe('FX', function() {
       expect(r1.style('stroke-width')).toBe('0%')
       expect(r2.style('stroke-width')).toBe('100%')
     })
+  })
+
+  /* shortcuts for animation */
+  describe('animate()', function() {
+    it('creates a new fx instance on the element', function() {
+      var rect = draw.rect(100,100)
+      rect.animate(100)
+      expect(rect.fx instanceof SVG.FX).toBeTruthy()
+    })
+
+    it('redirects the call to fx.animate()', function() {
+      spyOn(fx, 'animate')
+      rect.animate()
+      expect(fx.animate).toHaveBeenCalled()
+    })
+  })
+  
+  describe('delay()', function() {
+    it('creates a new fx instance on the element', function() {
+      var rect = draw.rect(100,100)
+      rect.delay(100)
+      expect(rect.fx instanceof SVG.FX).toBeTruthy()
+    })
+  
+    it('redirects the call to fx.delay()', function() {
+      spyOn(fx, 'delay')
+      rect.delay(5)
+      expect(fx.delay).toHaveBeenCalled()
+    })
+  })
+
+  describe('stop()', function() {
+    it('redirects the call to fx.stop()', function() {
+      spyOn(fx, 'stop')
+      rect.stop()
+      expect(fx.stop).toHaveBeenCalled()
+    })
+  })
+
+  describe('finish()', function() {
+    it('redirects the call to fx.finish()', function() {
+      spyOn(fx, 'finish')
+      rect.finish()
+      expect(fx.finish).toHaveBeenCalled()
+    })
+  })
+
+  describe('pause()', function() {
+    it('redirects the call to fx.pause()', function() {
+      spyOn(fx, 'pause')
+      rect.pause()
+      expect(fx.pause).toHaveBeenCalled()
+    })
+  })
+
+  describe('play()', function() {
+    it('redirects the call to fx.play()', function() {
+      spyOn(fx, 'play')
+      rect.play()
+      expect(fx.play).toHaveBeenCalled()
+    })
+  })
+
+  describe('speed()', function() {
+    it('redirects the call to fx.speed() as getter', function() {
+      spyOn(fx, 'speed')
+      rect.speed()
+      expect(fx.speed).toHaveBeenCalled()
+    })
+
+    it('redirects the call to fx.speed() as setter', function() {
+      spyOn(fx, 'speed').and.callThrough()
+      expect(rect.speed(5)).toBe(rect)
+      expect(fx.speed).toHaveBeenCalled()
+    })
+  })
+})
+
+describe('SVG.MorphObj', function() {
+  it('accepts color strings and converts them to SVG.Color', function() {
+    var obj = new SVG.MorphObj('#000', '#fff')
+    expect(obj instanceof SVG.Color).toBeTruthy()
+    
+    obj = new SVG.MorphObj('rgb(0,0,0)', 'rgb(255,255,255)')
+    expect(obj instanceof SVG.Color).toBeTruthy()
+  })
+
+  it('accepts numbers and converts them to SVG.Number', function() {
+    var obj = new SVG.MorphObj('0', '10')
+    expect(obj instanceof SVG.Number).toBeTruthy()
+
+    var obj = new SVG.MorphObj(0, 10)
+    expect(obj instanceof SVG.Number).toBeTruthy()
+  })
+  
+  it('accepts any other values', function() {
+    var obj = new SVG.MorphObj('Hello', 'World')
+    
+    expect(obj.value).toBe('Hello')
+    expect(obj.destination).toBe('World')
+  })
+  
+  it('morphes unmorphable objects with plain morphing', function() {
+    var obj = new SVG.MorphObj('Hello', 'World')
+
+    expect(obj.at(0,0)).toBe('Hello')
+    expect(obj.at(0.5,0.5)).toBe('Hello')
+    expect(obj.at(1,1)).toBe('World')
+  })
+  
+  it('converts to its value when casted', function() {
+    var obj = new SVG.MorphObj('Hello', 'World')
+    expect(obj.valueOf()).toBe('Hello')
+    expect(obj + 'World').toBe('HelloWorld')
   })
 })
