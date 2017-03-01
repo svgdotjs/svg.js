@@ -1,5 +1,5 @@
 describe('FX', function() {
-  var rect, fx;
+  var rect, fx, undefined;
 
   beforeEach(function() {
     rect = draw.rect(100,100).move(100,100)
@@ -2211,6 +2211,253 @@ describe('FX', function() {
     })
   })
 
+
+  describe('add()', function() {
+    it('adds to animations obj by default', function() {
+      fx.add('x', 20)
+      expect(fx.situation.animations.x).toBe(20)
+    })
+
+    it('adds to specified obj', function() {
+      fx.add('x', 20, 'animations')
+      fx.add('x', 20, 'attrs')
+      fx.add('x', 20, 'styles')
+      expect(fx.situation.animations.x).toBe(20)
+      expect(fx.situation.attrs.x).toBe(20)
+      expect(fx.situation.styles.x).toBe(20)
+    })
+  })
+
+  describe('attr()', function() {
+    it('should allow an object to be passed', function() {
+      spyOn(fx, 'attr').and.callThrough()
+      fx.attr({
+        x: 20,
+        y: 20
+      })
+
+      expect(fx.attr).toHaveBeenCalledWith('x', 20)
+      expect(fx.attr).toHaveBeenCalledWith('y', 20)
+    })
+
+    it('should call add() with attrs as method', function() {
+      spyOn(fx, 'add')
+      fx.attr('x', 20)
+      expect(fx.add).toHaveBeenCalledWith('x', 20, 'attrs')
+    })
+  })
+
+  describe('style()', function() {
+    it('should allow an object to be passed', function() {
+      spyOn(fx, 'style').and.callThrough()
+      fx.style({
+        x: 20,
+        y: 20
+      })
+
+      expect(fx.style).toHaveBeenCalledWith('x', 20)
+      expect(fx.style).toHaveBeenCalledWith('y', 20)
+    })
+
+    it('should call add() with styles as method', function() {
+      spyOn(fx, 'add')
+      fx.style('x', 20)
+      expect(fx.add).toHaveBeenCalledWith('x', 20, 'styles')
+    })
+  })
+
+  describe('x() / y()', function() {
+    it('should add an entry to the animations obj', function() {
+      spyOn(fx, 'add')
+      fx.x(20)
+      fx.y(20)
+
+      expect(fx.add).toHaveBeenCalledWith('x', jasmine.objectContaining({value:20}))
+      expect(fx.add).toHaveBeenCalledWith('y', jasmine.objectContaining({value:20}))
+    })
+
+    it('allows relative move with relative flag set', function() {
+      spyOn(fx, 'add')
+      fx.x(20, true)
+      fx.y(20, true)
+
+      expect(fx.add).toHaveBeenCalledWith('x', jasmine.objectContaining({value:20, relative:true }))
+      expect(fx.add).toHaveBeenCalledWith('y', jasmine.objectContaining({value:20, relative:true }))
+    })
+
+    it('redirects to transform when target is a group', function() {
+      var group = draw.group()
+        , fx = group.animate(500)
+
+      spyOn(fx, 'transform')
+
+      fx.x(20)
+      fx.y(20)
+
+      expect(fx.transform).toHaveBeenCalledWith({x: 20}, undefined)
+      expect(fx.transform).toHaveBeenCalledWith({y: 20}, undefined)
+    })
+
+    it('redirects to transform when target is a group with relative flag set', function() {
+      var group = draw.group()
+        , fx = group.animate(500)
+
+      spyOn(fx, 'transform')
+
+      fx.x(20, true)
+      fx.y(20, true)
+
+      expect(fx.transform).toHaveBeenCalledWith({x: 20}, true)
+      expect(fx.transform).toHaveBeenCalledWith({y: 20}, true)
+    })
+  })
+
+  describe('cx() / cy()', function() {
+    it('should call add with method and argument', function() {
+      spyOn(fx, 'add')
+      fx.cx(20)
+      fx.cy(20)
+
+      expect(fx.add).toHaveBeenCalledWith('cx', jasmine.objectContaining({value:20}))
+      expect(fx.add).toHaveBeenCalledWith('cy', jasmine.objectContaining({value:20}))
+    })
+  })
+
+  describe('move()', function() {
+    it('should redirect call to x() and y()', function() {
+      spyOn(fx, 'x').and.callThrough()
+      spyOn(fx, 'y').and.callThrough()
+      fx.move(20, 20)
+
+      expect(fx.x).toHaveBeenCalledWith(20)
+      expect(fx.y).toHaveBeenCalledWith(20)
+    })
+  })
+
+  describe('center()', function() {
+    it('should redirect call to cx() and cy()', function() {
+      spyOn(fx, 'cx').and.callThrough()
+      spyOn(fx, 'cy').and.callThrough()
+      fx.center(20, 20)
+
+      expect(fx.cx).toHaveBeenCalledWith(20)
+      expect(fx.cy).toHaveBeenCalledWith(20)
+    })
+  })
+
+  describe('size()', function() {
+    it('should set font-size with attr() when called on a text', function() {
+      var text = draw.text('Hello World')
+        , fx = text.animate(500)
+
+      spyOn(fx, 'attr')
+      fx.size(20)
+      expect(fx.attr).toHaveBeenCalledWith('font-size', 20)
+    })
+
+    it('should set width and height with add()', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.size(20, 20)
+
+      expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:20}))
+      expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:20}))
+    })
+
+    it('should calculate proportional size when only height or width is given', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.size(40, null)
+      fx.size(null, 60)
+
+      expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:40}))
+      expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:40}))
+
+      expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:60}))
+      expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:60}))
+    })
+  })
+
+  describe('plot()', function() {
+    it('should call add with plot as method', function() {
+      var polyline = draw.polyline('10 10 20 20 30 10 50 20')
+        , fx = polyline.animate(500)
+
+      spyOn(fx, 'add')
+      fx.plot('5 5 30 29 40 19 12 30')
+      expect(fx.add).toHaveBeenCalledWith('plot', '5 5 30 29 40 19 12 30')
+    })
+
+    it('also accept parameter list', function() {
+      var line = draw.line('10 10 20 20')
+        , fx = line.animate(500)
+
+      spyOn(fx, 'add')
+      fx.plot(5, 5, 10, 10)
+      expect(fx.add).toHaveBeenCalledWith('plot', [5, 5, 10, 10])
+    })
+  })
+
+  describe('leading()', function() {
+    it('should call add with method and argument', function() {
+      var text = draw.text('Hello World')
+        , fx = text.animate(500)
+      spyOn(fx, 'add')
+      fx.leading(3)
+
+      expect(fx.add).toHaveBeenCalledWith('leading', jasmine.objectContaining({value:3}))
+    })
+
+    it('does nothiing when not called on text', function() {
+      spyOn(fx, 'add')
+      fx.leading(3)
+      expect(fx.add).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('viewbox()', function() {
+    it('should call add with method and argument', function() {
+      var nested = draw.nested()
+        , fx = nested.animate(500)
+      spyOn(fx, 'add')
+      fx.viewbox(1,2,3,4)
+
+      expect(fx.add).toHaveBeenCalledWith('viewbox', jasmine.objectContaining({x:1, y:2, width:3, height:4}))
+    })
+
+    it('does nothing when not called on SVG.Container', function() {
+      spyOn(fx, 'add')
+      fx.viewbox(1,2,3,4)
+      expect(fx.add).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('update()', function() {
+    it('should convert call with 3 arguments to call with obj', function() {
+      var stop = new SVG.Stop()
+        , fx = stop.animate()
+      spyOn(fx, 'update').and.callThrough()
+      fx.update(1,'#ccc',0.5)
+
+      expect(fx.update).toHaveBeenCalledWith({offset: 1, color: '#ccc', opacity: 0.5})
+    })
+
+    it('calls add with method argument and attrs as type', function() {
+      var stop = new SVG.Stop()
+        , fx = stop.animate()
+      spyOn(fx, 'add')
+      fx.update({offset: 1, color: '#ccc', opacity: 0.5})
+
+      expect(fx.add).toHaveBeenCalledWith('stop-opacity', 0.5, 'attrs')
+      expect(fx.add).toHaveBeenCalledWith('stop-color', '#ccc', 'attrs')
+      expect(fx.add).toHaveBeenCalledWith('offset', 1, 'attrs')
+    })
+
+    it('does nothing when not called on SVG.Stop', function() {
+      spyOn(fx, 'add')
+      fx.update({offset: 1, color: '#ccc', opacity: 0.5})
+      expect(fx.add).not.toHaveBeenCalled()
+    })
+  })
+
   /* shortcuts for animation */
   describe('animate()', function() {
     it('creates a new fx instance on the element', function() {
@@ -2225,14 +2472,14 @@ describe('FX', function() {
       expect(fx.animate).toHaveBeenCalled()
     })
   })
-  
+
   describe('delay()', function() {
     it('creates a new fx instance on the element', function() {
       var rect = draw.rect(100,100)
       rect.delay(100)
       expect(rect.fx instanceof SVG.FX).toBeTruthy()
     })
-  
+
     it('redirects the call to fx.delay()', function() {
       spyOn(fx, 'delay')
       rect.delay(5)
@@ -2291,7 +2538,7 @@ describe('SVG.MorphObj', function() {
   it('accepts color strings and converts them to SVG.Color', function() {
     var obj = new SVG.MorphObj('#000', '#fff')
     expect(obj instanceof SVG.Color).toBeTruthy()
-    
+
     obj = new SVG.MorphObj('rgb(0,0,0)', 'rgb(255,255,255)')
     expect(obj instanceof SVG.Color).toBeTruthy()
   })
@@ -2303,14 +2550,14 @@ describe('SVG.MorphObj', function() {
     var obj = new SVG.MorphObj(0, 10)
     expect(obj instanceof SVG.Number).toBeTruthy()
   })
-  
+
   it('accepts any other values', function() {
     var obj = new SVG.MorphObj('Hello', 'World')
-    
+
     expect(obj.value).toBe('Hello')
     expect(obj.destination).toBe('World')
   })
-  
+
   it('morphes unmorphable objects with plain morphing', function() {
     var obj = new SVG.MorphObj('Hello', 'World')
 
@@ -2318,7 +2565,7 @@ describe('SVG.MorphObj', function() {
     expect(obj.at(0.5,0.5)).toBe('Hello')
     expect(obj.at(1,1)).toBe('World')
   })
-  
+
   it('converts to its value when casted', function() {
     var obj = new SVG.MorphObj('Hello', 'World')
     expect(obj.valueOf()).toBe('Hello')
