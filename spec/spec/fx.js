@@ -2457,6 +2457,70 @@ describe('FX', function() {
       expect(fx.add).not.toHaveBeenCalled()
     })
   })
+  
+  describe('transform()', function() {
+    it('gets the current transforms', function() {
+      expect(fx.transform()).toEqual(new SVG.Matrix(rect).extract())
+    })
+    it('gets a certain transformation if used with an argument', function() {
+      expect(fx.transform('x')).toEqual(0)
+    })
+    it('adds an entry to transforms when matrix given', function() {
+      var matrix = new SVG.Matrix(1,2,3,4,5,6)
+      fx.transform(matrix)
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
+    })
+    it('sets relative flag when given', function() {
+      var matrix = new SVG.Matrix(1,2,3,4,5,6)
+      fx.transform(matrix, true)
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
+      expect(fx.situation.transforms[0].relative).toBe(true)
+    })
+    it('adds an entry to transforms when rotation given', function() {
+      fx.transform({rotation: 30, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Rotate(30, 0, 0)))
+    })
+    it('adds an entry to transforms when scale given', function() {
+      fx.transform({scale: 2, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 2, 0, 0)))
+    })
+    it('adds an entry to transforms when scaleX given', function() {
+      fx.transform({scaleX: 2, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 1, 0, 0)))
+    })
+    it('adds an entry to transforms when scaleY given', function() {
+      fx.transform({scaleY: 2, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(1, 2, 0, 0)))
+    })
+    it('adds an entry to transforms when skewX given', function() {
+      fx.transform({skewX: 2, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(2, 0, 0, 0)))
+    })
+    it('adds an entry to transforms when skewY given', function() {
+      fx.transform({skewY: 2, cx:0, cy:0})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(0, 2, 0, 0)))
+    })
+    it('adds an entry to transforms when flip x given', function() {
+      fx.transform({flip: 'x'})
+      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 150)))
+    })
+    it('adds an entry to transforms when flip x with offset given', function() {
+      fx.transform({flip: 'x', offset: 100})
+      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 100)))
+    })
+    it('adds an entry to transforms when flip y given', function() {
+      fx.transform({flip: 'y'})
+      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('y', 150)))
+    })
+    it('adds an entry to transforms when x given', function() {
+      fx.transform({x:20})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(20, undefined)))
+    })
+    it('adds an entry to transforms when y given', function() {
+      fx.transform({y:20})
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(undefined, 20)))
+    })
+  })
 
   /* shortcuts for animation */
   describe('animate()', function() {
