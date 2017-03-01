@@ -206,6 +206,15 @@ describe('Element', function() {
       rect.transform({ scale: 3 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(3,0,0,3,-100,-100)')
     })
+    it('also works with only skaleX', function() {
+      rect.transform({ scaleX: 3 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(3,0,0,1,-100,0)')
+    })
+    it('also works with only skaleY', function() {
+      rect.transform({ scaleY: 3 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,3,0,-100)')
+    })
+    
     it('performs an absolute scale by default', function() {
       rect.transform({ scale: 3 }).transform({ scale: 0.5 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,0.5,25,25)')

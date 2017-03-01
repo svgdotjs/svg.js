@@ -903,15 +903,9 @@ describe('FX', function() {
     it('toggles the direction of the animation without a parameter', function() {
       expect(fx.reverse().situation.reversed).toBe(true)
     })
-  })
-
-  describe('reverse()', function() {
     it('sets the direction to backwards with true given', function() {
       expect(fx.reverse(true).situation.reversed).toBe(true)
     })
-  })
-
-  describe('reverse()', function() {
     it('sets the direction to forwards with false given', function() {
       expect(fx.reverse(false).situation.reversed).toBe(false)
     })
@@ -1006,9 +1000,6 @@ describe('FX', function() {
       expect(fx.active).toBe(false)
       expect(fx.situations.length).toBe(1)
     })
-  })
-
-  describe('stop()', function() {
     it('stops the animation immediately and fullfill it if first parameter true', function() {
       fx.animate(500).start()
       expect(fx.stop(true).situation).toBeNull()
@@ -1016,9 +1007,6 @@ describe('FX', function() {
       expect(fx.pos).toBe(1)
       expect(fx.situations.length).toBe(1)
     })
-  })
-
-  describe('stop()', function() {
     it('stops the animation immediately and remove all items from queue when second parameter true', function() {
       fx.animate(500).start()
       expect(fx.stop(false, true).situation).toBeNull()
@@ -1714,7 +1702,6 @@ describe('FX', function() {
     fx.step()
     expect(called).toBe(true)
   })
-
 
   it('animates matrix', function() {
     var ctm, called = false
@@ -2459,6 +2446,9 @@ describe('FX', function() {
   })
   
   describe('transform()', function() {
+    it('returns itself when no valid transformation was found', function() {
+      expect(fx.transform({})).toBe(fx)
+    })
     it('gets the current transforms', function() {
       expect(fx.transform()).toEqual(new SVG.Matrix(rect).extract())
     })
