@@ -116,7 +116,7 @@ describe('Element', function() {
     it('redirects to the leading() method when setting leading', function() {
       var text = draw.text(loremIpsum)
       spyOn(text, 'leading')
-      
+
       text.attr('leading', 2)
       expect(text.leading).toHaveBeenCalled()
       text.remove()
@@ -306,7 +306,7 @@ describe('Element', function() {
       expect(circle.ctm()).toEqual(new SVG.Matrix)
     })
   })
-  
+
   describe('matrixify', function() {
     var rect
 
@@ -346,7 +346,7 @@ describe('Element', function() {
 
   describe('toParent()', function() {
     var nested, g1, g2, rect1
-    
+
     beforeEach(function() {
       nested = draw.nested()
       g1 = nested.group().translate(20, 20)
@@ -354,15 +354,15 @@ describe('Element', function() {
       rect1 = g2.rect(100,100).scale(2)
       rect2 = nested.rect(100,100).scale(0.5)
     })
-    
+
     afterEach(function() {
       draw.clear()
     })
-  
+
     it('returns itself when given parent and it is the same', function() {
       expect(g2.toParent(g2)).toBe(g2)
     })
-  
+
     it('moves the element to other parent while maintaining the same visal representation', function() {
       expect(rect1.toParent(nested).transform()).toEqual(jasmine.objectContaining({
         a:2, b:0, c:0, d:2, e:70, f:70
@@ -377,22 +377,87 @@ describe('Element', function() {
 
   describe('toDoc()', function() {
     var nested, g1, g2, rect
-    
+
     beforeEach(function() {
       rect = draw.rect(100,100)
       spyOn(rect, 'toParent')
     })
-    
+
     afterEach(function() {
       draw.clear()
     })
-  
+
     it('redirects to toParent(doc)', function() {
       rect.toDoc()
       expect(rect.toParent).toHaveBeenCalledWith(rect.doc())
     })
   })
+
+  describe('ungroup()', function() {
+    var nested, g1, g2, rect1
+
+    beforeEach(function() {
+      draw.defs()
+      nested = draw.nested()
+      g1 = nested.group().translate(20, 20)
+      g2 = g1.group().translate(100, 100)
+      rect1 = g2.rect(100,100).scale(2)
+      rect2 = g1.rect(100,100).scale(0.5)
+    })
+
+    afterEach(function() {
+      draw.clear()
+    })
+
+    it('returns itself when depths is 0 or this is SVG.Defs', function() {
+      expect(draw.defs().ungroup()).toBe(draw.defs())
+      expect(g1.ungroup(null, 0)).toBe(g1)
+    })
+
+    it('breaks up all container and move the elements to the parent', function() {
+      g1.ungroup()
+      expect(rect1.parent()).toBe(nested)
+      expect(rect2.parent()).toBe(nested)
+
+      expect(g1.node.parentNode).toBeFalsy()
+      expect(g2.node.parentNode).toBeFalsy()
+
+      expect(rect1.transform()).toEqual(jasmine.objectContaining({
+        a:2, b:0, c:0, d:2, e:70, f:70
+      }))
+      expect(rect2.transform()).toEqual(jasmine.objectContaining({
+        a:0.5, b:0, c:0, d:0.5, e:45, f:45
+      }))
+    })
+
+    it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs', function() {
+      draw.ungroup()
+      expect(rect1.parent()).toBe(draw)
+      expect(rect2.parent()).toBe(draw)
+
+      expect(g1.node.parentNode).toBeFalsy()
+      expect(g1.node.parentNode).toBeFalsy()
+      expect(nested.node.parentNode).toBeFalsy()
+
+      expect(rect1.transform()).toEqual(jasmine.objectContaining({
+        a:2, b:0, c:0, d:2, e:70, f:70
+      }))
+      expect(rect2.transform()).toEqual(jasmine.objectContaining({
+        a:0.5, b:0, c:0, d:0.5, e:45, f:45
+      }))
+
+      expect(draw.children().length).toBe(3) // 2 * rect + defs
+    })
+  })
   
+  describe('flatten()', function() {
+    it('redirects the call to ungroup()', function() {
+      spyOn(draw, 'ungroup')
+      draw.flatten()
+      expect(draw.ungroup).toHaveBeenCalled()
+    })
+  })
+
   describe('ctm()', function() {
     var rect
 
