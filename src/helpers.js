@@ -107,19 +107,6 @@ function stringToMatrix(source) {
   )
 }
 
-// Calculate position according to from and to
-function at(o, pos) {
-  // number recalculation (don't bother converting to SVG.Number for performance reasons)
-  return typeof o.from == 'number' ?
-    o.from + (o.to - o.from) * pos :
-  
-  // instance recalculation
-  o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
-  
-  // for all other values wait until pos has reached 1 to return the final value
-  pos < 1 ? o.from : o.to
-}
-
 // PathArray Helpers
 function arrayToString(a) {
   for (var i = 0, il = a.length, s = ''; i < il; i++) {

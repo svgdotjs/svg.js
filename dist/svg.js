@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 28 2017 18:53:10 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Mar 03 2017 17:54:03 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -5323,19 +5323,6 @@ function stringToMatrix(source) {
       return parseFloat(n)
     })
   )
-}
-
-// Calculate position according to from and to
-function at(o, pos) {
-  // number recalculation (don't bother converting to SVG.Number for performance reasons)
-  return typeof o.from == 'number' ?
-    o.from + (o.to - o.from) * pos :
-
-  // instance recalculation
-  o instanceof SVG.Color || o instanceof SVG.Number || o instanceof SVG.Matrix ? o.at(pos) :
-
-  // for all other values wait until pos has reached 1 to return the final value
-  pos < 1 ? o.from : o.to
 }
 
 // PathArray Helpers
