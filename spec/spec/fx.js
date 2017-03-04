@@ -11,6 +11,8 @@ describe('FX', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall()
+
+    fx.stop(false, true)
   })
 
 
@@ -970,7 +972,12 @@ describe('FX', function() {
     it('when the first element of the queue is a function, it should execute it', function() {
       var called = false
 
-      fx.queue(function(){ called=true; expect(this).toBe(fx) }).dequeue()
+      fx.queue(function(){
+        called = true
+        expect(this).toBe(fx)
+        this.dequeue()
+      }).dequeue()
+
       expect(called).toBe(true)
     })
 
@@ -2201,17 +2208,17 @@ describe('FX', function() {
 
   describe('add()', function() {
     it('adds to animations obj by default', function() {
-      fx.add('x', 20)
-      expect(fx.situation.animations.x).toBe(20)
+      fx.add('x', new SVG.Number(20))
+      expect(fx.situation.animations.x.value).toBe(20)
     })
 
     it('adds to specified obj', function() {
-      fx.add('x', 20, 'animations')
-      fx.add('x', 20, 'attrs')
-      fx.add('x', 20, 'styles')
-      expect(fx.situation.animations.x).toBe(20)
-      expect(fx.situation.attrs.x).toBe(20)
-      expect(fx.situation.styles.x).toBe(20)
+      fx.add('x', new SVG.Number(20), 'animations')
+      fx.add('x', new SVG.Number(20), 'attrs')
+      fx.add('x', new SVG.Number(20), 'styles')
+      expect(fx.situation.animations.x.value).toBe(20)
+      expect(fx.situation.attrs.x.value).toBe(20)
+      expect(fx.situation.styles.x.value).toBe(20)
     })
   })
 
@@ -2444,7 +2451,7 @@ describe('FX', function() {
       expect(fx.add).not.toHaveBeenCalled()
     })
   })
-  
+
   describe('transform()', function() {
     it('returns itself when no valid transformation was found', function() {
       expect(fx.transform({})).toBe(fx)
