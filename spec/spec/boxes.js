@@ -1,42 +1,76 @@
+describe('Box', function() {
+  it('creates a new instance without passing anything', function() {
+    var box = new SVG.Box
+
+    expect(box instanceof SVG.Box).toBe(true)
+    expect(box).toEqual(jasmine.objectContaining({
+      x:0, y:0, cx:0, cy:0, width:0, height:0
+    }))
+  })
+
+  it('creates a new instance with 4 arguments given', function() {
+    var box = new SVG.Box(10, 20, 100, 50)
+
+    expect(box instanceof SVG.Box).toBe(true)
+    expect(box).toEqual(jasmine.objectContaining({
+      x:10, y:20, cx:60, cy:45, width:100, height:50
+    }))
+  })
+
+  it('creates a new instance with object given', function() {
+    var box = new SVG.Box({x:10, y:20, width: 100, height:50})
+
+    expect(box instanceof SVG.Box).toBe(true)
+    expect(box).toEqual(jasmine.objectContaining({
+      x:10, y:20, cx:60, cy:45, width:100, height:50
+    }))
+  })
+
+  describe('merge()', function() {
+    it('merges various bounding boxes', function() {
+      var box1 = new SVG.Box(50, 50, 100, 100)
+      var box2 = new SVG.Box(300, 400, 100, 100)
+      var box3 = new SVG.Box(500, 100, 100, 100)
+      var merged = box1.merge(box2).merge(box3)
+      
+      expect(merged).toEqual(jasmine.objectContaining({
+        x: 50, y: 50, cx: 325, cy: 275, width: 550, height: 450
+      }))
+    })
+    it('returns a new instance', function() {
+      var box1 = new SVG.Box(50, 50, 100, 100)
+      var box2 = new SVG.Box(300, 400, 100, 100)
+      var merged = box1.merge(box2)
+      expect(box1).not.toBe(merged)
+      expect(box2).not.toBe(merged)
+      
+      expect(merged instanceof SVG.Box).toBe(true)
+    })
+  })
+})
+
 describe('BBox', function() {
 
   afterEach(function() {
     draw.clear()
   })
 
-  it('creates a new instance without passing an element', function() {
-    var box = new SVG.BBox
-    expect(box.x).toBe(0)
-    expect(box.y).toBe(0)
-    expect(box.cx).toBe(0)
-    expect(box.cy).toBe(0)
-    expect(box.width).toBe(0)
-    expect(box.height).toBe(0)
-  })
+  it('creates a new instance from an element', function() {
+    var rect = draw.rect(100, 100).move(100, 25)
+    var box = new SVG.BBox(rect)
 
+    expect(box).toEqual(jasmine.objectContaining({
+      x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
+    }))
+  })
+  
   describe('merge()', function() {
-    it('merges various bounding boxes', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
-      var box3 = draw.rect(100,100).move(500,100).bbox()
-      var merged = box1.merge(box2).merge(box3)
-      expect(merged.x).toBe(50)
-      expect(merged.y).toBe(50)
-      expect(merged.cx).toBe(325)
-      expect(merged.cy).toBe(275)
-      expect(merged.width).toBe(550)
-      expect(merged.height).toBe(450)
-    })
-    it('returns a new bbox instance', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
+    it('returns an instance of SVG.BBox', function() {
+      var box1 = new SVG.BBox(50, 50, 100, 100)
+      var box2 = new SVG.BBox(300, 400, 100, 100)
       var merged = box1.merge(box2)
-      expect(box1).not.toBe(merged)
-      expect(box2).not.toBe(merged)
-      expect(box1.x).toBe(50)
-      expect(box1.y).toBe(50)
-      expect(box2.x).toBe(300)
-      expect(box2.y).toBe(400)
+      
+      expect(merged instanceof SVG.BBox).toBe(true)
     })
   })
 
@@ -74,52 +108,36 @@ describe('RBox', function() {
     draw.clear()
   })
 
-  it('creates a new instance without passing an element', function() {
-    var box = new SVG.RBox
-    expect(box.x).toBe(0)
-    expect(box.y).toBe(0)
-    expect(box.cx).toBe(0)
-    expect(box.cy).toBe(0)
-    expect(box.width).toBe(0)
-    expect(box.height).toBe(0)
+  it('creates a new instance from an element', function() {
+    var rect = draw.rect(100, 100).move(100, 25)
+    var box = new SVG.RBox(rect).transform(rect.doc().screenCTM().inverse()).addOffset()
+    expect(box).toEqual(jasmine.objectContaining({
+      x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
+    }))
   })
-
+  
   describe('merge()', function() {
-    it('merges various bounding boxes', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
-      var box3 = draw.rect(100,100).move(500,100).bbox()
-      var merged = box1.merge(box2).merge(box3)
-      expect(merged.x).toBe(50)
-      expect(merged.y).toBe(50)
-      expect(merged.cx).toBe(325)
-      expect(merged.cy).toBe(275)
-      expect(merged.width).toBe(550)
-      expect(merged.height).toBe(450)
-    })
-    it('returns a new bbox instance', function() {
-      var box1 = draw.rect(100,100).move(50,50).bbox()
-      var box2 = draw.rect(100,100).move(300,400).bbox()
+    it('returns an instance of SVG.RBox', function() {
+      var box1 = new SVG.RBox(50, 50, 100, 100)
+      var box2 = new SVG.RBox(300, 400, 100, 100)
       var merged = box1.merge(box2)
-      expect(box1).not.toBe(merged)
-      expect(box2).not.toBe(merged)
-      expect(box1.x).toBe(50)
-      expect(box1.y).toBe(50)
-      expect(box2.x).toBe(300)
-      expect(box2.y).toBe(400)
+      
+      expect(merged instanceof SVG.RBox).toBe(true)
     })
   })
-
 })
 
 describe('Boxes', function() {
-  var rect
+  var rect, nested, offset
 
   beforeEach(function() {
-    rect = draw.rect(50, 180).move(25, 90).scale(2, 3, 25, 90).translate(10, 11)
+    offset = draw.screenCTM()
+    draw.viewbox(100,100, 200, 200)
+    nested = draw.nested().size(200, 200).move(100,100).viewbox(0, 0, 100, 100)
+    rect = nested.rect(50, 180).move(25, 90).scale(2, 0, 0).transform({x:10, y:10}, true)
   })
   afterEach(function() {
-    draw.clear()
+    draw.clear().attr('viewBox', null)
   })
 
   describe('bbox()', function() {
@@ -128,25 +146,29 @@ describe('Boxes', function() {
     })
     it('matches the size of the target element, ignoring transformations', function() {
       var box = rect.bbox()
-      expect(box.x).toBe(25)
-      expect(box.y).toBe(90)
-      expect(box.cx).toBe(50)
-      expect(box.cy).toBe(180)
-      expect(box.width).toBe(50)
-      expect(box.height).toBe(180)
-      expect(box.w).toBe(50)
-      expect(box.h).toBe(180)
-      expect(box.x2).toBe(75)
-      expect(box.y2).toBe(270)
+
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 25, y: 90, cx: 50, cy: 180, width: 50, height: 180
+      }))
     })
     it('returns a box even if the element is not in the dom', function() {
       var line = new SVG.Line().plot(0, 0, 50, 50)
       var box = line.bbox()
 
-      expect(box.x).toBe(0)
-      expect(box.y).toBe(0)
-      expect(box.width).toBe(50)
-      expect(box.height).toBe(50)
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 0, y: 0, width: 50, height: 50
+      }))
+
+      expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
+    })
+    it('returns a box even if the element is not in the dom and invisible', function() {
+      var line = new SVG.Line().plot(0, 0, 50, 50).hide()
+      var box = line.bbox()
+
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 0, y: 0, width: 50, height: 50
+      }))
+
       expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
     })
   })
@@ -155,18 +177,31 @@ describe('Boxes', function() {
     it('returns an instance of SVG.RBox', function() {
       expect(rect.rbox() instanceof SVG.RBox).toBeTruthy()
     })
-    it('matches the size of the target element, including transformations', function() {
+
+    it('returns the elements box in absolute screen coordinates by default', function() {
       var box = rect.rbox()
-      expect(box.x).toBeCloseTo(60)
-      expect(box.y).toBeCloseTo(281, 0)
-      expect(box.cx).toBeCloseTo(110)
-      expect(box.cy).toBeCloseTo(551, 0)
-      expect(box.width).toBe(100)
-      expect(box.height).toBe(540)
-      expect(box.w).toBe(100)
-      expect(box.h).toBe(540)
-      expect(box.x2).toBeCloseTo(160)
-      expect(box.y2).toBeCloseTo(821, 0)
+
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 70 + offset.e, y: 200 + offset.f, width: 100, height: 360
+      }))
+
+    })
+
+    it('returns the elements box in coordinates of given element (doc)', function() {
+      var box = rect.rbox(draw)
+
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 240, y: 500, width: 200, height: 720
+      }))
+    })
+
+    it('returns the elements box in coordinates of given element (nested)', function() {
+      var box = rect.rbox(nested)
+      console.warn(nested.screenCTM(), draw.screenCTM())
+
+      expect(box).toEqual(jasmine.objectContaining({
+        x: 70, y: 200, width: 100, height: 360
+      }))
     })
   })
 

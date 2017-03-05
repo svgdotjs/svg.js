@@ -34,6 +34,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added a plot and array method to `SVG.TextPath` (#582)
 - added `clone()` method to `SVG.Array/PointArray/PathArray` (#590)
 - added `font()` method to `SVG.Tspan`
+- added `SVG.Box()`
+- added `transform()` method to boxes
 
 ### Changed
 - changed CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
@@ -44,19 +46,19 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - relative value for `SVG.Number` are now calculated in its `morph` method (related #547)
 - clean up the implementation of the `initAnimation` method of the FX module (#547, #552, #584)
 - deprecated `.tbox()`. `.tbox()` now map to `.rbox()`. If you are using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
+- all boxes now accept 4 values or an object on creation
+- `el.rbox()` now always returns the right boxes in screen coordinates and has an additional paramater to transform the box into other coordinate systems
+
+### Fixed
+- fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
+- fixed bug which produces an error when removing an event from a node which was formerly removed with a global `off()` (#518)
+- fixed a bug in `size()` for poly elements when their height/width is zero (#505)
 - viewbox now also accepts strings and arrays as constructor arguments
 - `SVG.Array` now accepts a comma seperated string and returns array of numbers instead of strings
 - `SVG.Matrix` now accepts an array as input
 - `SVG.Element.matrix()` now accepts also 6 values
 - `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
 - `flip()` now flips on both axis when no parameter is passed
-
-### Fixed
-- fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
-- fixed bug which produces an error when removing an event from a node which was formerly removed with a global `off()` (#518)
-- fixed a bug in `size()` for poly elements when their height/width is zero (#505)
-
-====
 
 
 ## [2.4.0] - 2017-01-14
