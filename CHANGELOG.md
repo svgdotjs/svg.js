@@ -43,6 +43,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - relative value for `SVG.Number` are now calculated in its `morph` method (related #547)
 - clean up the implementation of the `initAnimation` method of the FX module (#547, #552, #584)
 - deprecated `.tbox()`. `.tbox()` now map to `.rbox()`. If you are using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
+- `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
 
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module

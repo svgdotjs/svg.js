@@ -65,11 +65,11 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Relative move over x axis
 , dx: function(x) {
-    return this.x((this instanceof SVG.FX ? 0 : this.x()) + x, true)
+    return this.x(new SVG.Number(x).plus(this instanceof SVG.FX ? 0 : this.x()), true)
   }
   // Relative move over y axis
 , dy: function(y) {
-    return this.y((this instanceof SVG.FX ? 0 : this.y()) + y, true)
+    return this.y(new SVG.Number(y).plus(this instanceof SVG.FX ? 0 : this.y()), true)
   }
   // Relative move over x and y axes
 , dmove: function(x, y) {
