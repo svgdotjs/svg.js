@@ -98,7 +98,7 @@ SVG.extend(SVG.Path, {
   }
 })
 
-SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
+SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
   // Set font
   font: function(o) {
     for (var k in o)

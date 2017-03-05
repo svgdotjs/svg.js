@@ -32,7 +32,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Added
 - added a plot and array method to `SVG.TextPath` (#582)
-- added `clone` method to `SVG.Array/PointArray/PathArray` (#590)
+- added `clone()` method to `SVG.Array/PointArray/PathArray` (#590)
+- added `font()` method to `SVG.Tspan`
 
 ### Changed
 - changed CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 05 2017 14:05:04 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Mar 05 2017 15:40:03 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4960,7 +4960,7 @@ SVG.extend(SVG.Path, {
   }
 })
 
-SVG.extend(SVG.Parent, SVG.Text, SVG.FX, {
+SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
   // Set font
   font: function(o) {
     for (var k in o)
