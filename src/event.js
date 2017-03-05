@@ -110,6 +110,7 @@ SVG.off = function(node, event, listener) {
       SVG.off(node, event)
 
     delete SVG.listeners[index]
+    delete SVG.handlerMap[index]
 
   }
 }

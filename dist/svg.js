@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 03 2017 17:54:03 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Mar 05 2017 13:49:40 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3396,6 +3396,7 @@ SVG.off = function(node, event, listener) {
       SVG.off(node, event)
 
     delete SVG.listeners[index]
+    delete SVG.handlerMap[index]
 
   }
 }

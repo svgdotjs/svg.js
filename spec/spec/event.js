@@ -439,6 +439,20 @@ describe('Event', function() {
     it('returns the called element', function() {
       expect(rect.off('event', action)).toBe(rect)
     })
+    it('does not throw when event is removed which was already removed with a global off', function() {
+      var undefined
+
+      rect.on('event', action)
+      rect.off()
+      try{
+        rect.off('event')
+      }catch(e){
+        expect('Should not error out').toBe(true)
+      }
+
+      expect(SVG.handlerMap[SVG.handlerMap.indexOf(rect.node)]).toBe(undefined)
+
+    })
   })
 
   describe('fire()', function() {

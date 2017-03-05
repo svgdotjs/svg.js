@@ -50,6 +50,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Array` now accepts a comma seperated string and returns array of numbers instead of strings
 - `SVG.Matrix` now accepts an array as input
 - `SVG.Element.matrix()` now accepts also 6 values
+- fixed bug which produces an error when removing an event from a node which was formerly removed with a global `off()` (#518)
 
 ====
 
