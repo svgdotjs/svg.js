@@ -2,24 +2,17 @@ SVG.Box = SVG.invent({
   create: function(x, y, width, height) {
     if (typeof x == 'object' && !(x instanceof SVG.Element)) {
       // chromes getBoundingClientRect has no x and y property
-      SVG.Box.call(this, x.left || x.x, x.top || x.y, x.width, x.height)
+      return SVG.Box.call(this, x.left || x.x, x.top || x.y, x.width, x.height)
     } else if (arguments.length == 4) {
       this.x = x
       this.y = y
       this.width = width
       this.height = height
 
-      // add center, right and bottom
-      fullBox(this)
-    } else {
-      this.x = 0
-      this.y = 0
-      this.width = 0
-      this.height = 0
-      
-      // add center, right and bottom
-      fullBox(this)
     }
+
+    // add center, right, bottom...
+    fullBox(this)
   }
 , extend: {
     // Merge rect box with another, return a new instance

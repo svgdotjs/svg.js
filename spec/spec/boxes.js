@@ -197,7 +197,6 @@ describe('Boxes', function() {
 
     it('returns the elements box in coordinates of given element (nested)', function() {
       var box = rect.rbox(nested)
-      console.warn(nested.screenCTM(), draw.screenCTM())
 
       expect(box).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
