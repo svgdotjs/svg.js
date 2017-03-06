@@ -22,10 +22,6 @@ SVG.Text = SVG.invent({
       if (x == null)
         return this.attr('x')
 
-      // move lines as well if no textPath is present
-      if (!this.textPath)
-        this.lines().each(function() { if (this.dom.newLined) this.x(x) })
-
       return this.attr('x', x)
     }
     // Move over y-axis
@@ -127,9 +123,8 @@ SVG.Text = SVG.invent({
         
         this.lines().each(function() {
           if (this.dom.newLined) {
-            if (!this.textPath)
+            if (!self.textPath())
               this.attr('x', self.attr('x'))
-
             if(this.text() == '\n') {
               blankLineOffset += dy
             }else{
