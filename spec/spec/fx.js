@@ -981,22 +981,15 @@ describe('FX', function() {
       expect(called).toBe(true)
     })
 
-    /*it('should stop the currently running animation when there is one', function() {
-      var called = false
-
-      fx.start().once(0.5, function(pos, eased) {
-        console.warn('asds')
-        expect(pos).toBeCloseTo(0.5)
-        this.fx.dequeue()
-      })//.queue(function(){ called=true; expect(this).toBe(fx) })
-
-      //jasmine.clock().tick(125)
-      //fx.step()
-      //expect(called).toBe(false)
-      //jasmine.clock().tick(125)
-      //fx.step()
-      //expect(called).toBe(true)
-    })*/
+    it('should stop the currently running animation when there is one', function() {
+      fx.start()
+      expect(fx.active).toBe(true)
+      fx.queue(function() {
+        expect(this.active).toBe(false)
+        this.dequeue()
+      })
+      fx.dequeue()
+    })
   })
 
 

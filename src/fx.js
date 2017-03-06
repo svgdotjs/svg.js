@@ -194,14 +194,14 @@ SVG.FX = SVG.invent({
      */
   , dequeue: function(){
       // stop current animation
-      this.situation && this.situation.stop && this.situation.stop()
+      this.stop()
 
       // get next animation from queue
       this.situation = this.situations.shift()
 
       if(this.situation){
         if(this.situation instanceof SVG.Situation) {
-          this.startCurrent()
+          this.start()
         } else {
           // If it is not a SVG.Situation, then it is a function, we execute it
           this.situation.call(this)
@@ -257,15 +257,16 @@ SVG.FX = SVG.invent({
      * @return this
      */
   , stop: function(jumpToEnd, clearQueue){
-      if(!this.active) this.start()
+      var active = this.active
+      this.active = false
 
       if(clearQueue){
         this.clearQueue()
       }
 
-      this.active = false
-
       if(jumpToEnd && this.situation){
+        // initialize the situation if it was not
+        !active && this.startCurrent()
         this.atEnd()
       }
 
