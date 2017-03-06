@@ -295,17 +295,25 @@ describe('Element', function() {
       rect.transform({ a: 0.5, c: 0.5 }).transform(new SVG.Matrix({ e: 20, f: 20 }), true)
       expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,20,20)')
     })
-    it('flips the element', function() {
+    it('flips the element on x axis', function() {
       rect.transform({ flip: 'x' })
       expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,1,100,0)')
     })
-    it('flips the element with offset', function() {
+    it('flips the element on x axis with offset', function() {
       rect.transform({ flip: 'x', offset: 20 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,1,40,0)')
     })
     it('flips the element on y axis with offset', function() {
       rect.transform({ flip: 'y', offset: 20 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,-1,0,40)')
+    })
+    it('flips the element on both axis with offset', function() {
+      rect.transform({ flip: 'both', offset: 20 })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,-1,40,40)')
+    })
+    it('flips the element on both axis', function() {
+      rect.transform({ flip: 'both' })
+      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,-1,0,0)')
     })
   })
 

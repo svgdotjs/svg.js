@@ -53,7 +53,8 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Map flip to transform
 , flip: function(a, o) {
-    return this.transform({ flip: a, offset: o })
+    o = typeof a == 'number' ? a : o
+    return this.transform({ flip: a || 'both', offset: o })
   }
   // Map matrix to transform
 , matrix: function(m) {

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Mar 06 2017 15:14:24 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Mon Mar 06 2017 18:48:59 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2407,7 +2407,12 @@ SVG.Matrix = SVG.invent({
     }
     // Flip matrix on x or y, at a given offset
   , flip: function(a, o) {
-      return a == 'x' ? this.scale(-1, 1, o, 0) : this.scale(1, -1, 0, o)
+      o = typeof a == 'number' ? a : o
+      return a == 'x' ?
+          this.scale(-1, 1, o, 0) :
+        a == 'y' ?
+          this.scale(1, -1, 0, o) :
+          this.scale(-1, -1, o, o)
     }
     // Skew
   , skew: function(x, y, cx, cy) {
@@ -4895,7 +4900,8 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
   // Map flip to transform
 , flip: function(a, o) {
-    return this.transform({ flip: a, offset: o })
+    o = typeof a == 'number' ? a : o
+    return this.transform({ flip: a || 'both', offset: o })
   }
   // Map matrix to transform
 , matrix: function(m) {

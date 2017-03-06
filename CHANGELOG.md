@@ -44,14 +44,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - relative value for `SVG.Number` are now calculated in its `morph` method (related #547)
 - clean up the implementation of the `initAnimation` method of the FX module (#547, #552, #584)
 - deprecated `.tbox()`. `.tbox()` now map to `.rbox()`. If you are using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
-- `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
-
-### Fixed
-- fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
 - viewbox now also accepts strings and arrays as constructor arguments
 - `SVG.Array` now accepts a comma seperated string and returns array of numbers instead of strings
 - `SVG.Matrix` now accepts an array as input
 - `SVG.Element.matrix()` now accepts also 6 values
+- `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
+- `flip()` now flips on both axis when no parameter is passed
+
+### Fixed
+- fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
 - fixed bug which produces an error when removing an event from a node which was formerly removed with a global `off()` (#518)
 
 ====
