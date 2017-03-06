@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 05 2017 15:40:03 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Mon Mar 06 2017 13:38:10 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -217,16 +217,13 @@ SVG.regex = {
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
 
+  // split at whitespace and comma
+, delimiter:        /[\s,]+/
+
   // The following regex are used to parse the d attribute of a path
 
-  // Replaces all negative exponents
-, negExp:           /e\-/gi
-
-  // Replaces all comma
-, comma:            /,/g
-
-  // Replaces all hyphens
-, hyphen:           /\-/g
+  // Matches all hyphens which are not after an exponent
+, hyphen:           /([^e])\-/gi
 
   // Replaces and tests for all path letters
 , pathLetters:      /[MLHVCSQTAZ]/gi
@@ -234,11 +231,11 @@ SVG.regex = {
   // yes we need this one, too
 , isPathLetter:     /[MLHVCSQTAZ]/i
 
-  // split at whitespaces
-, whitespaces:      /\s+/
+  // matches 0.154.23.45
+, numbersWithDots:  /((\d?\.\d+(?:e[+-]?\d+)?)((?:\.\d+(?:e[+-]?\d+)?)+))+/gi
 
-  // matches X
-, X:                /X/g
+  // matches .
+, dots:             /\./g
 }
 
 SVG.utils = {
@@ -496,7 +493,7 @@ SVG.extend(SVG.Array, {
   }
   // Strip unnecessary whitespace
 , split: function(string) {
-    return string.trim().split(/[\s,]+/).map(parseFloat)
+    return string.trim().split(SVG.regex.delimiter).map(parseFloat)
   }
   // Reverse array
 , reverse: function() {
@@ -787,23 +784,11 @@ SVG.extend(SVG.PathArray, {
     if(typeof array == 'string'){
 
       array = array
-        .replace(SVG.regex.negExp, 'X')         // replace all negative exponents with certain char
+        .replace(SVG.regex.numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
         .replace(SVG.regex.pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(SVG.regex.hyphen, ' -')        // add space before hyphen
-        .replace(SVG.regex.comma, ' ')          // unify all spaces
-        .replace(SVG.regex.X, 'e-')             // add back the expoent
+        .replace(SVG.regex.hyphen, '$1 -')      // add space before hyphen
         .trim()                                 // trim
-        .split(SVG.regex.whitespaces)           // split into array
-
-      // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
-      // we fix this elements in the next loop
-      for(i = array.length; --i;){
-        if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
-          var split = array[i].split('.') // split at the point
-          var first = [split.shift(), split.shift()].join('.') // join the first number together
-          array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
-        }
-      }
+        .split(SVG.regex.delimiter)   // split into array
 
     }else{
       array = array.reduce(function(prev, curr){
@@ -5217,6 +5202,10 @@ SVG.extend(SVG.Parent, {
   }
 
 })
+function pathRegReplace(a, b, c, d) {
+  return c + d.replace(SVG.regex.dots, ' .')
+}
+
 // creates deep clone of array
 function array_clone(arr){
   var clone = arr.slice(0)

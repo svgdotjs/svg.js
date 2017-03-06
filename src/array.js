@@ -68,7 +68,7 @@ SVG.extend(SVG.Array, {
   }
   // Strip unnecessary whitespace
 , split: function(string) {
-    return string.trim().split(/[\s,]+/).map(parseFloat)
+    return string.trim().split(SVG.regex.delimiter).map(parseFloat)
   }
   // Reverse array
 , reverse: function() {

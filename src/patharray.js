@@ -172,23 +172,11 @@ SVG.extend(SVG.PathArray, {
     if(typeof array == 'string'){
 
       array = array
-        .replace(SVG.regex.negExp, 'X')         // replace all negative exponents with certain char
+        .replace(SVG.regex.numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
         .replace(SVG.regex.pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(SVG.regex.hyphen, ' -')        // add space before hyphen
-        .replace(SVG.regex.comma, ' ')          // unify all spaces
-        .replace(SVG.regex.X, 'e-')             // add back the expoent
+        .replace(SVG.regex.hyphen, '$1 -')      // add space before hyphen
         .trim()                                 // trim
-        .split(SVG.regex.whitespaces)           // split into array
-
-      // at this place there could be parts like ['3.124.854.32'] because we could not determine the point as seperator till now
-      // we fix this elements in the next loop
-      for(i = array.length; --i;){
-        if(array[i].indexOf('.') != array[i].lastIndexOf('.')){
-          var split = array[i].split('.') // split at the point
-          var first = [split.shift(), split.shift()].join('.') // join the first number together
-          array.splice.apply(array, [i, 1].concat(first, split.map(function(el){ return '.'+el }))) // add first and all other entries back to array
-        }
-      }
+        .split(SVG.regex.delimiter)   // split into array
 
     }else{
       array = array.reduce(function(prev, curr){

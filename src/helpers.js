@@ -1,3 +1,7 @@
+function pathRegReplace(a, b, c, d) {
+  return c + d.replace(SVG.regex.dots, ' .')
+}
+
 // creates deep clone of array
 function array_clone(arr){
   var clone = arr.slice(0)
