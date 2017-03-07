@@ -47,6 +47,26 @@ describe('Box', function() {
       expect(merged instanceof SVG.Box).toBe(true)
     })
   })
+  
+  describe('transform()', function() {
+    it('transforms the box with given matrix', function() {
+      var box1 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(1,0,0,1,20,20))
+      var box2 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(2,0,0,2,0,0))
+      var box3 = new SVG.Box(-200, -200, 100, 100).transform(new SVG.Matrix(1,0,0,1,-20,-20))
+      
+      expect(box1).toEqual(jasmine.objectContaining({
+        x: 70, y: 70, cx: 120, cy: 120, width: 100, height: 100
+      }))
+      
+      expect(box2).toEqual(jasmine.objectContaining({
+        x: 100, y: 100, cx: 200, cy: 200, width: 200, height: 200
+      }))
+      
+      expect(box3).toEqual(jasmine.objectContaining({
+        x: -220, y: -220, cx: -170, cy: -170, width: 100, height: 100
+      }))
+    })
+  })
 })
 
 describe('BBox', function() {

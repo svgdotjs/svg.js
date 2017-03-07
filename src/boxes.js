@@ -27,10 +27,10 @@ SVG.Box = SVG.invent({
 
       return fullBox(b)
     }
-    
+
   , transform: function(m) {
-      var xMin = Infinity, xMax = 0, yMin = Infinity, yMax = 0, p
-  
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p
+
       var pts = [
         new SVG.Point(this.x, this.y),
         new SVG.Point(this.x2, this.y),
@@ -63,7 +63,7 @@ SVG.BBox = SVG.invent({
   // Initialize
   create: function(element) {
     SVG.Box.apply(this, [].slice.call(arguments))
-  
+
     // get values if element is given
     if (element instanceof SVG.Element) {
       var box
@@ -126,14 +126,14 @@ SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
     SVG.Box.apply(this, [].slice.call(arguments))
-  
+
     if (element instanceof SVG.Element) {
       SVG.Box.call(this, element.node.getBoundingClientRect())
     }
   }
 
 , inherit: SVG.Box
-  
+
   // define Parent
 , parent: SVG.Element
 
