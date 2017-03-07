@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 07 2017 20:44:26 GMT-0500 (EST)
+* BUILT: Tue Mar 07 2017 20:45:49 GMT-0500 (EST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2786,10 +2786,10 @@ SVG.extend(SVG.FX, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = new SVG.Matrix().morph(new SVG.Matrix().flip(
+      matrix = new SVG.Matrix().flip(
         o.flip
       , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      ))
+      )
 
     // act on translate
     } else if (o.x != null || o.y != null) {

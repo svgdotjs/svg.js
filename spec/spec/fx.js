@@ -1754,6 +1754,62 @@ describe('FX', function() {
     expect(ctm.f).toBe(75)
   })
 
+  it('animate a flip(x) transform', function() {
+    var ctm
+
+    fx.transform({flip: 'x'}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(75)
+    expect(ctm.f).toBe(0)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(300)
+    expect(ctm.f).toBe(0)
+  })
+
+  it('animate a flip(y) transform', function() {
+    var ctm
+
+    fx.transform({flip: 'y'}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(75)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(300)
+  })
+
   it('animate relative matrix transform', function(){
     var ctm
 
@@ -2492,15 +2548,15 @@ describe('FX', function() {
     })
     it('adds an entry to transforms when flip x given', function() {
       fx.transform({flip: 'x'})
-      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 150)))
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 150)))
     })
     it('adds an entry to transforms when flip x with offset given', function() {
       fx.transform({flip: 'x', offset: 100})
-      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 100)))
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 100)))
     })
     it('adds an entry to transforms when flip y given', function() {
       fx.transform({flip: 'y'})
-      expect(fx.situation.transforms[0].destination).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('y', 150)))
+      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('y', 150)))
     })
     it('adds an entry to transforms when x given', function() {
       fx.transform({x:20})

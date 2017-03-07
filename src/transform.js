@@ -150,10 +150,10 @@ SVG.extend(SVG.FX, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = new SVG.Matrix().morph(new SVG.Matrix().flip(
+      matrix = new SVG.Matrix().flip(
         o.flip
       , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      ))
+      )
 
     // act on translate
     } else if (o.x != null || o.y != null) {
