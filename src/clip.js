@@ -1,11 +1,6 @@
 SVG.ClipPath = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('clipPath'))
-
-    // keep references to clipped elements 
-    this.targets = []
-  }
+  create: 'clipPath'
 
   // Inherit from
 , inherit: SVG.Container
@@ -14,19 +9,22 @@ SVG.ClipPath = SVG.invent({
 , extend: {
     // Unclip all clipped elements and remove itself
     remove: function() {
-      // unclip all targets 
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unclip()
-      this.targets = []
+      // unclip all targets
+      this.targets().each(function() {
+        this.unclip()
+      })
 
-      // remove clipPath from parent 
+      // remove clipPath from parent
       this.parent().removeElement(this)
-      
+
       return this
     }
+    
+  , targets: function() {
+      return SVG.select('svg [clip-path*="' +this.id() +'"]')
+    }
   }
-  
+
   // Add parent method
 , construct: {
     // Create clipping element
@@ -40,19 +38,18 @@ SVG.ClipPath = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
-    // use given clip or create a new one 
-    this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
+    // use given clip or create a new one
+    var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
-    // store reverence on self in mask 
-    this.clipper.targets.push(this)
-    
-    // apply mask 
-    return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
+    // apply mask
+    return this.attr('clip-path', 'url("#' + clipper.attr('id') + '")')
   }
   // Unclip element
 , unclip: function() {
-    delete this.clipper
     return this.attr('clip-path', null)
   }
-  
+, clipper: function() {
+    return this.reference('clip-path')
+  }
+
 })

@@ -2,8 +2,7 @@
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // make stroke value accessible dynamically
-    this._stroke = SVG.defaults.attrs.stroke
+    // last fired event on node
     this._event = null
 
     // initialize data object
@@ -13,9 +12,6 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
-
-      // store current attribute value
-      this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
 

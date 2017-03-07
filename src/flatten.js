@@ -1,6 +1,5 @@
 SVG.extend(SVG.Parent, {
-
-  ungroup: function(parent, depth) {
+  flatten: function(parent, depth) {
     if(depth === 0 || this instanceof SVG.Defs) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
@@ -15,10 +14,5 @@ SVG.extend(SVG.Parent, {
     this.node.firstChild || this.remove()
 
     return this
-  },
-  
-  flatten: function(parent, depth) {
-    return this.ungroup(parent, depth)
   }
-
 })

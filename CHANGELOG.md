@@ -11,17 +11,27 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 3.0.0
 
 ### Added
-- added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
+- added `SVG.$()` and `SVG.$$()` which will query for one/all elements
+- added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added specs for `SVG.FX` -> __TODO!__
 
+### Removed
+- removed `SVG.Array.split()` function
+- removed workaround for browser bug with stroke-width
+- removed polyfills
+- removed `ungroup()` in favour of `flatten()`
+- removed `SVG.Set` -> __TODO!__
+
 ### Changed
+- gradients now have there corresponding node as type and not only radial/linear
+- `SVG.Path.pointAt()` correctly returns an `SVG.Point` now
 - made transform-methods relative as default (breaking change)
 - changed SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
 - made `parents()` method on `SVG.Element` return an instance of SVG.Set (breaking change) -> __TODO!__
-- replaced static reference to `masker` in `SVG.Mask` with the `masker()` method (breaking change) -> __TODO!__
-- replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method (breaking change) -> __TODO!__
-- replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method (breaking change) -> __TODO!__
+- replaced static reference to `masker` in `SVG.Mask` with the `masker()` method
+- replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
+- replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
 - moved all regexes to `SVG.regex` (in color, element, pointarray, style, transform and viewbox) -> __TODO!__
 
 ### Fixed

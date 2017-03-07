@@ -2,9 +2,6 @@ SVG.Gradient = SVG.invent({
   // Initialize node
   create: function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
-    
-    // store type 
-    this.type = type
   }
 
   // Inherit from
@@ -55,13 +52,13 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Gradient, SVG.FX, {
   // From position
   from: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
       this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
       this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }

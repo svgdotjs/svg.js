@@ -1,11 +1,6 @@
 SVG.Mask = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('mask'))
-
-    // keep references to masked elements 
-    this.targets = []
-  }
+  create: 'mask'
 
   // Inherit from
 , inherit: SVG.Container
@@ -14,19 +9,22 @@ SVG.Mask = SVG.invent({
 , extend: {
     // Unmask all masked elements and remove itself
     remove: function() {
-      // unmask all targets 
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unmask()
-      this.targets = []
+      // unmask all targets
+      this.targets().each(function() {
+        this.unmask()
+      })
 
-      // remove mask from parent 
+      // remove mask from parent
       this.parent().removeElement(this)
-      
+
       return this
     }
+
+  , targets: function() {
+      return SVG.select('svg [mask*="' +this.id() +'"]')
+    }
   }
-  
+
   // Add parent method
 , construct: {
     // Create masking element
@@ -40,19 +38,17 @@ SVG.Mask = SVG.invent({
 SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
-    // use given mask or create a new one 
-    this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
+    // use given mask or create a new one
+    var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
-    // store reverence on self in mask 
-    this.masker.targets.push(this)
-    
-    // apply mask 
-    return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
+    // apply mask
+    return this.attr('mask', 'url("#' + masker.attr('id') + '")')
   }
   // Unmask element
 , unmask: function() {
-    delete this.masker
     return this.attr('mask', null)
   }
-  
+, masker: function() {
+    return this.reference('mask')
+  }
 })
