@@ -101,16 +101,17 @@ SVG.extend(SVG.Path, {
 
 SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
   // Set font
-  font: function(o) {
-    for (var k in o)
-      k == 'leading' ?
-        this.leading(o[k]) :
-      k == 'anchor' ?
-        this.attr('text-anchor', o[k]) :
-      k == 'size' || k == 'family' || k == 'weight' || k == 'stretch' || k == 'variant' || k == 'style' ?
-        this.attr('font-'+ k, o[k]) :
-        this.attr(k, o[k])
+  font: function(a, v) {
+    if (typeof a == 'object') {
+      for (v in a) this.font(v, a[v])
+    }
 
-    return this
+    return a == 'leading' ?
+        this.leading(v) :
+      a == 'anchor' ?
+        this.attr('text-anchor', v) :
+      a == 'size' || a == 'family' || a == 'weight' || a == 'stretch' || a == 'variant' || a == 'style' ?
+        this.attr('font-'+ a, v) :
+        this.attr(a, v)
   }
 })

@@ -179,7 +179,7 @@ describe('Sugar', function() {
       rect.flip()
       expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', offset: undefined })
     })
-    
+
     // this works because only x and y are valid flip values. Evereything else flips on both axis
     it('sets flip to number and offset to number when called with offset only', function() {
       rect.flip(5)
@@ -251,21 +251,21 @@ describe('Sugar', function() {
       expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5')), true)
       expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5')), true)
     })
-    
+
     it('allows to add a percentage value', function() {
       rect.move('5%', '5%')
-    
+
       rect.dx('5%')
       rect.dy('5%')
-      
+
       expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('10%')), true)
       expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('10%')), true)
     })
-    
+
     it('allows to add a percentage value when no x/y is set', function() {
       rect.dx('5%')
       rect.dy('5%')
-      
+
       expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5%')), true)
       expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5%')), true)
     })
@@ -342,6 +342,16 @@ describe('Sugar', function() {
       })
       expect(text.attr).toHaveBeenCalledWith('foo', 'bar')
       expect(text.attr).toHaveBeenCalledWith('bar', 'baz')
+    })
+
+    it('sets key value pair when called with 2 parameters', function() {
+      text.font('size', 20)
+      expect(text.attr).toHaveBeenCalledWith('font-size', 20)
+    })
+
+    it('gets value if called with one parameter', function() {
+      text.font('size')
+      expect(text.attr).toHaveBeenCalledWith('font-size', undefined)
     })
   })
 
