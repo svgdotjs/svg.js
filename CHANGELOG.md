@@ -54,6 +54,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
 - fixed bug which produces an error when removing an event from a node which was formerly removed with a global `off()` (#518)
+- fixed a bug in `size()` for poly elements when their height/width is zero (#505)
 
 ====
 
