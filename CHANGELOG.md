@@ -61,6 +61,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
 - `flip()` now flips on both axis when no parameter is passed
 - fixed bug with `documentElement.contains()` in IE
+- fixed offset produced by svg parser (#553)
 
 
 ## [2.4.0] - 2017-01-14
