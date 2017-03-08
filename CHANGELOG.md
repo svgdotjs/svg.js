@@ -48,6 +48,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - deprecated `.tbox()`. `.tbox()` now map to `.rbox()`. If you are using `.tbox()`, you can substitute it with `.rbox()` (#594, #602)
 - all boxes now accept 4 values or an object on creation
 - `el.rbox()` now always returns the right boxes in screen coordinates and has an additional paramater to transform the box into other coordinate systems
+- `font()` method can now be used like `attr()` method (#620)
 
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
