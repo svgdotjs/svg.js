@@ -144,10 +144,10 @@ describe('Set', function() {
       expect(box.width).toBeCloseTo(300)
       expect(box.height).toBeCloseTo(350)
     })
-    it('returns an instance of SVG.BBox', function() {
+    it('returns an instance of SVG.RBox', function() {
       set.add(e1).add(e2).add(e3).add(e4).add(e5)
 
-      expect(set.bbox() instanceof SVG.BBox).toBeTruthy()
+      expect(set.bbox() instanceof SVG.RBox).toBeTruthy()
     })
     it('returns an empty bounding box wiht no members', function() {
       var box = set.bbox()

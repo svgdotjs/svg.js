@@ -182,6 +182,16 @@ SVG.Matrix = SVG.invent({
     },
     // Get current screen matrix
     screenCTM: function() {
+      /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
+         This is needed because FF does not return the transformation matrix
+         for the inner coordinate system when getScreenCTM() is called on nested svgs.
+         However all other Browsers do that */
+      if(this instanceof SVG.Nested) {
+        var rect = this.rect(1,1)
+        var m = rect.node.getScreenCTM()
+        rect.remove()
+        return new SVG.Matrix(m)
+      }
       return new SVG.Matrix(this.node.getScreenCTM())
     }
 

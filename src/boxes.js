@@ -1,8 +1,71 @@
+SVG.Box = SVG.invent({
+  create: function(x, y, width, height) {
+    if (typeof x == 'object' && !(x instanceof SVG.Element)) {
+      // chromes getBoundingClientRect has no x and y property
+      return SVG.Box.call(this, x.left || x.x, x.top || x.y, x.width, x.height)
+    } else if (arguments.length == 4) {
+      this.x = x
+      this.y = y
+      this.width = width
+      this.height = height
+
+    }
+
+    // add center, right, bottom...
+    fullBox(this)
+  }
+, extend: {
+    // Merge rect box with another, return a new instance
+    merge: function(box) {
+      var b = new this.constructor()
+
+      // merge boxes
+      b.x      = Math.min(this.x, box.x)
+      b.y      = Math.min(this.y, box.y)
+      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
+      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
+
+      return fullBox(b)
+    }
+
+  , transform: function(m) {
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p
+
+      var pts = [
+        new SVG.Point(this.x, this.y),
+        new SVG.Point(this.x2, this.y),
+        new SVG.Point(this.x, this.y2),
+        new SVG.Point(this.x2, this.y2)
+      ]
+
+      pts.forEach(function(p) {
+        p = p.transform(m)
+        xMin = Math.min(xMin,p.x)
+        xMax = Math.max(xMax,p.x)
+        yMin = Math.min(yMin,p.y)
+        yMax = Math.max(yMax,p.y)
+      })
+
+      bbox = new this.constructor()
+      bbox.x = xMin
+      bbox.width = xMax-xMin
+      bbox.y = yMin
+      bbox.height = yMax-yMin
+
+      fullBox(bbox)
+
+      return bbox
+    }
+  }
+})
+
 SVG.BBox = SVG.invent({
   // Initialize
   create: function(element) {
+    SVG.Box.apply(this, [].slice.call(arguments))
+
     // get values if element is given
-    if (element) {
+    if (element instanceof SVG.Element) {
       var box
 
       // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
@@ -28,18 +91,13 @@ SVG.BBox = SVG.invent({
         }
       }
 
-      // plain x and y
-      this.x = box.x
-      this.y = box.y
-
-      // plain width and height
-      this.width  = box.width
-      this.height = box.height
+      SVG.Box.call(this, box)
     }
 
-    // add center, right and bottom
-    fullBox(this)
   }
+
+  // Define ancestor
+, inherit: SVG.Box
 
   // Define Parent
 , parent: SVG.Element
@@ -54,87 +112,49 @@ SVG.BBox = SVG.invent({
 
 })
 
+SVG.BBox.prototype.constructor = SVG.BBox
+
+
 SVG.extend(SVG.Element, {
   tbox: function(){
     console.warn('Use of TBox is deprecated and mapped to RBox. Use .rbox() instead.')
-    return this.rbox()
+    return this.rbox(this.doc())
   }
 })
 
 SVG.RBox = SVG.invent({
   // Initialize
   create: function(element) {
-    if (element) {
-      var e    = element.doc().parent()
-        , box  = element.node.getBoundingClientRect()
-        , zoom = 1
+    SVG.Box.apply(this, [].slice.call(arguments))
 
-      // get screen offset
-      this.x = box.left
-      this.y = box.top
-
-      // subtract parent offset
-      this.x -= e.offsetLeft
-      this.y -= e.offsetTop
-
-      while (e = e.offsetParent) {
-        this.x -= e.offsetLeft
-        this.y -= e.offsetTop
-      }
-
-      // calculate cumulative zoom from svg documents
-      e = element
-      while (e.parent && (e = e.parent())) {
-        if (e.viewbox) {
-          zoom *= e.viewbox().zoom
-          this.x -= e.x() || 0
-          this.y -= e.y() || 0
-        }
-      }
-
-      // recalculate viewbox distortion
-      this.width  = box.width  /= zoom
-      this.height = box.height /= zoom
+    if (element instanceof SVG.Element) {
+      SVG.Box.call(this, element.node.getBoundingClientRect())
     }
-
-    // add center, right and bottom
-    fullBox(this)
-
-    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-    this.x += window.pageXOffset
-    this.y += window.pageYOffset
   }
+
+, inherit: SVG.Box
 
   // define Parent
 , parent: SVG.Element
 
+, extend: {
+    addOffset: function() {
+      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+      this.x += window.pageXOffset
+      this.y += window.pageYOffset
+      return this
+    }
+  }
+
   // Constructor
 , construct: {
     // Get rect box
-    rbox: function() {
-      return new SVG.RBox(this)
+    rbox: function(el) {
+      if (el) return new SVG.RBox(this).transform(el.screenCTM().inverse())
+      return new SVG.RBox(this).addOffset()
     }
   }
 
 })
 
-// Add universal merge method
-;[SVG.BBox, SVG.RBox].forEach(function(c) {
-
-  SVG.extend(c, {
-    // Merge rect box with another, return a new instance
-    merge: function(box) {
-      var b = new c()
-
-      // merge boxes
-      b.x      = Math.min(this.x, box.x)
-      b.y      = Math.min(this.y, box.y)
-      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
-      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-
-      return fullBox(b)
-    }
-
-  })
-
-})
+SVG.RBox.prototype.constructor = SVG.RBox
