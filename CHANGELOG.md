@@ -59,6 +59,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Element.matrix()` now accepts also 6 values
 - `dx()/dy()` now accepts percentage values, too but only if the value on the element is already percentage
 - `flip()` now flips on both axis when no parameter is passed
+- fixed bug with `documentElement.contains()` in IE
 
 
 ## [2.4.0] - 2017-01-14
