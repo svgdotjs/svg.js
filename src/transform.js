@@ -201,9 +201,7 @@ SVG.extend(SVG.Element, {
   toParent: function(parent) {
     if(this == parent) return this
     var ctm = this.screenCTM()
-    var temp = parent.rect(1,1)
-    var pCtm = temp.screenCTM().inverse()
-    temp.remove()
+    var pCtm = parent.screenCTM().inverse()
 
     this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
 
