@@ -71,8 +71,17 @@ SVG.BBox = SVG.invent({
       // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
       try {
 
-        // the element is NOT in the dom, throw error
-        if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
+        if (!document.documentElement.contains){
+          // This is IE - it does not support contains() for top-level SVGs
+          var topParent = element.node;
+          while (topParent.parentNode){
+            topParent = topParent.parentNode;
+          }
+          if (topParent != document) throw new Exception('Element not in the dom')
+        } else {      
+          // the element is NOT in the dom, throw error
+          if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
+        }
 
         // find native bbox
         box = element.node.getBBox()
