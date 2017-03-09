@@ -36,6 +36,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `font()` method to `SVG.Tspan`
 - added `SVG.Box()`
 - added `transform()` method to boxes
+- added `event()` to `SVG.Element` to retrieve the event that was fired last on the element (#550)
 
 ### Changed
 - changed CHANGELOG to follow the conventions described in [“Keep a CHANGELOG”](http://keepachangelog.com) (#578)
@@ -49,6 +50,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - all boxes now accept 4 values or an object on creation
 - `el.rbox()` now always returns the right boxes in screen coordinates and has an additional paramater to transform the box into other coordinate systems
 - `font()` method can now be used like `attr()` method (#620)
+- events are now cancelable by default (#550)
 
 ### Fixed
 - fixed a bug in the plain morphing part of `SVG.MorphObj` that is in the FX module
@@ -62,6 +64,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `flip()` now flips on both axis when no parameter is passed
 - fixed bug with `documentElement.contains()` in IE
 - fixed offset produced by svg parser (#553)
+- fixed a bug with clone which didnt copy over dom data (#621)
 
 
 ## [2.4.0] - 2017-01-14

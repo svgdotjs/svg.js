@@ -4,6 +4,7 @@ SVG.Element = SVG.invent({
   create: function(node) {
     // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
+    this._event = null
 
     // initialize data object
     this.dom = {}
@@ -61,7 +62,10 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent) {
+  , clone: function(parent, withData) {
+      // write dom data to the dom so the clone can pickup the data
+      this.writeDataToDom()
+
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 

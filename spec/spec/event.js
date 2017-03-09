@@ -451,7 +451,6 @@ describe('Event', function() {
       }
 
       expect(SVG.handlerMap[SVG.handlerMap.indexOf(rect.node)]).toBe(undefined)
-
     })
   })
 
@@ -481,13 +480,27 @@ describe('Event', function() {
       rect.fire(new CustomEvent('event'))
       expect(toast).toBe('ready')
     })
+    it('makes the event cancelable', function() {
+      rect.on('event', function(e) {
+        e.preventDefault()
+      })
+      rect.fire('event')
+      expect(rect._event.defaultPrevented).toBe(true)
+    })
   })
 
+  describe('event()', function() {
+    it('returns null when no event was fired', function() {
+      expect(rect.event()).toBe(null)
+    })
+    it('returns the last fired event', function() {
+      var event = new CustomEvent('foo')
+      rect.fire(event)
+      expect(rect.event()).toBe(event)
 
+      event = new CustomEvent('bar')
+      rect.fire(event)
+      expect(rect.event()).toBe(event)
+    })
+  })
 })
-
-
-
-
-
-

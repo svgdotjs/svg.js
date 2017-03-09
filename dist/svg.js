@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 08 2017 19:40:52 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 09 2017 22:47:39 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1017,6 +1017,7 @@ SVG.Element = SVG.invent({
   create: function(node) {
     // make stroke value accessible dynamically
     this._stroke = SVG.defaults.attrs.stroke
+    this._event = null
 
     // initialize data object
     this.dom = {}
@@ -1074,7 +1075,10 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent) {
+  , clone: function(parent, withData) {
+      // write dom data to the dom so the clone can pickup the data
+      this.writeDataToDom()
+
       // clone element and assign new id
       var clone = assignNewId(this.node.cloneNode(true))
 
@@ -1700,7 +1704,8 @@ SVG.FX = SVG.invent({
           }
 
       this.target().on('finished.fx', wrapper)
-      return this
+
+      return this._callStart()
     }
 
     // adds a callback which is called whenever one animation step is performed
@@ -1715,9 +1720,11 @@ SVG.FX = SVG.invent({
       // see above
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
-      return this.after(function(){
+      this.after(function(){
         this.off('during.fx', wrapper)
       })
+
+      return this._callStart()
     }
 
     // calls after ALL animations in the queue are finished
@@ -1729,7 +1736,8 @@ SVG.FX = SVG.invent({
 
       // see above
       this.target().off('allfinished.fx', wrapper).on('allfinished.fx', wrapper)
-      return this
+
+      return this._callStart()
     }
 
     // calls on every animation step for all animations
@@ -1740,9 +1748,11 @@ SVG.FX = SVG.invent({
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
-      return this.afterAll(function(){
+      this.afterAll(function(){
         this.off('during.fx', wrapper)
       })
+
+      return this._callStart()
     }
 
   , last: function(){
@@ -1752,8 +1762,7 @@ SVG.FX = SVG.invent({
     // adds one property to the animations
   , add: function(method, args, type){
       this.last()[type || 'animations'][method] = args
-      setTimeout(function(){this.start()}.bind(this), 0)
-      return this
+      return this._callStart()
     }
 
     /** perform one step of the animation
@@ -1938,6 +1947,11 @@ SVG.FX = SVG.invent({
 
       this.situation.once[pos] = fn
 
+      return this
+    }
+
+  , _callStart: function() {
+      setTimeout(function(){this.start()}.bind(this), 0)
       return this
     }
 
@@ -2154,7 +2168,7 @@ SVG.Box = SVG.invent({
   create: function(x, y, width, height) {
     if (typeof x == 'object' && !(x instanceof SVG.Element)) {
       // chromes getBoundingClientRect has no x and y property
-      return SVG.Box.call(this, x.left || x.x, x.top || x.y, x.width, x.height)
+      return SVG.Box.call(this, x.left != null ? x.left : x.x , x.top != null ? x.top : x.y, x.width, x.height)
     } else if (arguments.length == 4) {
       this.x = x
       this.y = y
@@ -2841,9 +2855,7 @@ SVG.extend(SVG.FX, {
 
     this.last().transforms.push(matrix)
 
-    setTimeout(function(){this.start()}.bind(this), 0)
-
-    return this
+    return this._callStart()
   }
 })
 
@@ -3450,10 +3462,14 @@ SVG.extend(SVG.Element, {
     if(event instanceof Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(new CustomEvent(event, {detail:data}))
+        this.node.dispatchEvent(event = new CustomEvent(event, {detail:data, cancelable: true}))
     }
 
+    this._event = event
     return this
+  }
+, event: function() {
+    return this._event
   }
 })
 
