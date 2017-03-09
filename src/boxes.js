@@ -2,7 +2,7 @@ SVG.Box = SVG.invent({
   create: function(x, y, width, height) {
     if (typeof x == 'object' && !(x instanceof SVG.Element)) {
       // chromes getBoundingClientRect has no x and y property
-      return SVG.Box.call(this, x.left || x.x, x.top || x.y, x.width, x.height)
+      return SVG.Box.call(this, x.left != null ? x.left : x.x , x.top != null ? x.top : x.y, x.width, x.height)
     } else if (arguments.length == 4) {
       this.x = x
       this.y = y
