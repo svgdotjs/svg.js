@@ -166,9 +166,7 @@ SVG.extend(SVG.FX, {
 
     this.last().transforms.push(matrix)
 
-    setTimeout(function(){this.start()}.bind(this), 0)
-
-    return this
+    return this._callStart()
   }
 })
 

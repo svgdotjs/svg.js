@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 08 2017 19:40:52 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 09 2017 09:45:46 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1700,7 +1700,8 @@ SVG.FX = SVG.invent({
           }
 
       this.target().on('finished.fx', wrapper)
-      return this
+
+      return this._callStart()
     }
 
     // adds a callback which is called whenever one animation step is performed
@@ -1715,9 +1716,11 @@ SVG.FX = SVG.invent({
       // see above
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
-      return this.after(function(){
+      this.after(function(){
         this.off('during.fx', wrapper)
       })
+
+      return this._callStart()
     }
 
     // calls after ALL animations in the queue are finished
@@ -1729,7 +1732,8 @@ SVG.FX = SVG.invent({
 
       // see above
       this.target().off('allfinished.fx', wrapper).on('allfinished.fx', wrapper)
-      return this
+
+      return this._callStart()
     }
 
     // calls on every animation step for all animations
@@ -1740,9 +1744,11 @@ SVG.FX = SVG.invent({
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
-      return this.afterAll(function(){
+      this.afterAll(function(){
         this.off('during.fx', wrapper)
       })
+
+      return this._callStart()
     }
 
   , last: function(){
@@ -1752,8 +1758,7 @@ SVG.FX = SVG.invent({
     // adds one property to the animations
   , add: function(method, args, type){
       this.last()[type || 'animations'][method] = args
-      setTimeout(function(){this.start()}.bind(this), 0)
-      return this
+      return this._callStart()
     }
 
     /** perform one step of the animation
@@ -1938,6 +1943,11 @@ SVG.FX = SVG.invent({
 
       this.situation.once[pos] = fn
 
+      return this
+    }
+
+  , _callStart: function() {
+      setTimeout(function(){this.start()}.bind(this), 0)
       return this
     }
 
@@ -2841,9 +2851,7 @@ SVG.extend(SVG.FX, {
 
     this.last().transforms.push(matrix)
 
-    setTimeout(function(){this.start()}.bind(this), 0)
-
-    return this
+    return this._callStart()
   }
 })
 
