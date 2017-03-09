@@ -64,6 +64,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `flip()` now flips on both axis when no parameter is passed
 - fixed bug with `documentElement.contains()` in IE
 - fixed offset produced by svg parser (#553)
+- fixed a bug with clone which didnt copy over dom data (#621)
 
 
 ## [2.4.0] - 2017-01-14
