@@ -669,10 +669,17 @@ describe('Element', function() {
       clone = rect.clone()
       expect(rect.next()).toBe(clone)
     })
-    it('inserts the clone in the specided parent', function() {
+    it('inserts the clone in the specified parent', function() {
       var g = draw.group()
       clone = rect.clone(g)
       expect(g.get(0)).toBe(clone)
+    })
+    it('deep copies over dom data', function() {
+      group.dom = {'foo':'bar'}
+      rect.dom = {'foo':'baz'}
+      clone = group.clone()
+      expect(clone.dom.foo).toBe('bar')
+      expect(clone.get(0).dom.foo).toBe('baz')
     })
   })
 
