@@ -949,7 +949,11 @@ declare namespace svgjs {
         to(value: number): Animation;
         after(cb: () => void): Animation;
 
-        rotate(degrees: number, cx: number, cy: number): Animation
+        rotate(degrees: number, cx?: number, cy?: number): Animation
+        skew(x: number, y: number): Animation
+        scale(x: number, y: number): Animation
+        translate(x: number, y: number): Animation
+
         // TODO style, etc, bbox...
     }
 }
