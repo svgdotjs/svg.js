@@ -858,7 +858,7 @@ SVG.extend(SVG.FX, {
   // Add animatable viewbox
 , viewbox: function(x, y, width, height) {
     if (this.target() instanceof SVG.Container) {
-      this.add('viewbox', new SVG.ViewBox(x, y, width, height))
+      this.add('viewbox', new SVG.Box(x, y, width, height))
     }
 
     return this

@@ -571,9 +571,9 @@ describe('Element', function() {
   })
 
   describe('rbox()', function() {
-    it('returns an instance of SVG.RBox', function() {
+    it('returns an instance of SVG.Box', function() {
       var rect = draw.rect(100,100)
-      expect(rect.rbox() instanceof SVG.RBox).toBe(true)
+      expect(rect.rbox() instanceof SVG.Box).toBe(true)
     })
     it('returns the correct rectangular box', function() {
       var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12)

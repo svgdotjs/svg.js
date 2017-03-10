@@ -45,6 +45,8 @@ SVG.regex = {
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
 
+, viewbox:          /[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/gi
+
   // The following regex are used to parse the d attribute of a path
 
   // Matches all hyphens which are not after an exponent
