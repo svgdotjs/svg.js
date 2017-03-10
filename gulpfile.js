@@ -47,7 +47,7 @@ var parts = [
 , 'src/transform.js'
 , 'src/style.js'
 , 'src/parent.js'
-, 'src/ungroup.js'
+, 'src/flatten.js'
 , 'src/container.js'
 , 'src/viewbox.js'
 , 'src/event.js'

@@ -224,7 +224,7 @@ describe('Path', function() {
 
   describe('pointAt()', function() {
     it('gets a point at given length', function() {
-      expect(path.pointAt(100)).toEqual(path.node.getPointAtLength(100))
+      expect(path.pointAt(100)).toEqual(new SVG.Point(path.node.getPointAtLength(100)))
     })
   })
 })

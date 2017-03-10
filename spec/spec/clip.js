@@ -24,20 +24,20 @@ describe('ClipPath', function() {
   })
 
   it('references the clip element in the masked element', function() {
-    expect(rect.clipper).toBe(circle.parent())
+    expect(rect.clipper()).toBe(circle.parent())
   })
 
   it('references the clipped element in the clipPath target list', function() {
-    expect(rect.clipper.targets.indexOf(rect) > -1).toBe(true)
+    expect(rect.clipper().targets().index(rect) > -1).toBe(true)
   })
   
   it('reuses clip element when clip was given', function() {
-    var clip = rect.clipper
-    expect(draw.rect(100,100).clipWith(clip).clipper).toBe(clip)
+    var clip = rect.clipper()
+    expect(draw.rect(100,100).clipWith(clip).clipper()).toBe(clip)
   })
 
   it('unclips all clipped elements when being removed', function() {
-    rect.clipper.remove()
+    rect.clipper().remove()
     expect(rect.attr('clip-path')).toBe(undefined)
   })
 
@@ -50,7 +50,7 @@ describe('ClipPath', function() {
 
     it('removes the reference to the clipping element', function() {
       rect.unclip()
-      expect(rect.clipper).toBe(undefined)
+      expect(rect.clipper()).toBe(null)
     })
 
     it('returns the clipPath element', function() {

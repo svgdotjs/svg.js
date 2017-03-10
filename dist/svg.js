@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 10 2017 09:24:24 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Mar 10 2017 14:56:03 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -489,11 +489,7 @@ SVG.extend(SVG.Array, {
     // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
-    return this.split(array)
-  }
-  // Strip unnecessary whitespace
-, split: function(string) {
-    return string.trim().split(SVG.regex.delimiter).map(parseFloat)
+    return array.trim().split(SVG.regex.delimiter).map(parseFloat)
   }
   // Reverse array
 , reverse: function() {
@@ -1015,8 +1011,7 @@ SVG.Number = SVG.invent({
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // make stroke value accessible dynamically
-    this._stroke = SVG.defaults.attrs.stroke
+    // last fired event on node
     this._event = null
 
     // initialize data object
@@ -1026,9 +1021,6 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
-
-      // store current attribute value
-      this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
 
@@ -2638,11 +2630,6 @@ SVG.extend(SVG.Element, {
         parseFloat(v) : v
 
     } else {
-      // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
-      if (a == 'stroke-width')
-        this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
-      else if (a == 'stroke')
-        this._stroke = v
 
       // convert image fill and stroke to patterns
       if (a == 'fill' || a == 'stroke') {
@@ -3164,8 +3151,7 @@ SVG.Parent = SVG.invent({
 })
 
 SVG.extend(SVG.Parent, {
-
-  ungroup: function(parent, depth) {
+  flatten: function(parent, depth) {
     if(depth === 0 || this instanceof SVG.Defs) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
@@ -3173,19 +3159,14 @@ SVG.extend(SVG.Parent, {
 
     this.each(function(){
       if(this instanceof SVG.Defs) return this
-      if(this instanceof SVG.Parent) return this.ungroup(parent, depth-1)
+      if(this instanceof SVG.Parent) return this.flatten(parent, depth-1)
       return this.toParent(parent)
     })
 
     this.node.firstChild || this.remove()
 
     return this
-  },
-
-  flatten: function(parent, depth) {
-    return this.ungroup(parent, depth)
   }
-
 })
 SVG.Container = SVG.invent({
   // Initialize node
@@ -3619,12 +3600,7 @@ SVG.extend(SVG.Element, {
 })
 SVG.Mask = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('mask'))
-
-    // keep references to masked elements
-    this.targets = []
-  }
+  create: 'mask'
 
   // Inherit from
 , inherit: SVG.Container
@@ -3634,15 +3610,18 @@ SVG.Mask = SVG.invent({
     // Unmask all masked elements and remove itself
     remove: function() {
       // unmask all targets
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unmask()
-      this.targets = []
+      this.targets().each(function() {
+        this.unmask()
+      })
 
       // remove mask from parent
       this.parent().removeElement(this)
 
       return this
+    }
+
+  , targets: function() {
+      return SVG.select('svg [mask*="' +this.id() +'"]')
     }
   }
 
@@ -3660,30 +3639,23 @@ SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
     // use given mask or create a new one
-    this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
-
-    // store reverence on self in mask
-    this.masker.targets.push(this)
+    var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
+    return this.attr('mask', 'url("#' + masker.attr('id') + '")')
   }
   // Unmask element
 , unmask: function() {
-    delete this.masker
     return this.attr('mask', null)
   }
-
+, masker: function() {
+    return this.reference('mask')
+  }
 })
 
 SVG.ClipPath = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('clipPath'))
-
-    // keep references to clipped elements
-    this.targets = []
-  }
+  create: 'clipPath'
 
   // Inherit from
 , inherit: SVG.Container
@@ -3693,15 +3665,18 @@ SVG.ClipPath = SVG.invent({
     // Unclip all clipped elements and remove itself
     remove: function() {
       // unclip all targets
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unclip()
-      this.targets = []
+      this.targets().each(function() {
+        this.unclip()
+      })
 
       // remove clipPath from parent
       this.parent().removeElement(this)
 
       return this
+    }
+
+  , targets: function() {
+      return SVG.select('svg [clip-path*="' +this.id() +'"]')
     }
   }
 
@@ -3719,18 +3694,17 @@ SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
     // use given clip or create a new one
-    this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
-
-    // store reverence on self in mask
-    this.clipper.targets.push(this)
+    var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
+    return this.attr('clip-path', 'url("#' + clipper.attr('id') + '")')
   }
   // Unclip element
 , unclip: function() {
-    delete this.clipper
     return this.attr('clip-path', null)
+  }
+, clipper: function() {
+    return this.reference('clip-path')
   }
 
 })
@@ -3738,9 +3712,6 @@ SVG.Gradient = SVG.invent({
   // Initialize node
   create: function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
-
-    // store type
-    this.type = type
   }
 
   // Inherit from
@@ -3791,13 +3762,13 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Gradient, SVG.FX, {
   // From position
   from: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
       this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
       this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }
@@ -4983,7 +4954,7 @@ SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
     var type = (this._target || this).type;
-    return type == 'radial' || type == 'circle' ?
+    return type == 'radialGradient' || type == 'radialGradient' ?
       this.attr('r', new SVG.Number(x)) :
       this.rx(x).ry(y == null ? x : y)
   }
@@ -4996,7 +4967,7 @@ SVG.extend(SVG.Path, {
   }
   // Get point at length
 , pointAt: function(length) {
-    return this.node.getPointAtLength(length)
+    return new SVG.Point(this.node.getPointAtLength(length))
   }
 })
 
@@ -5245,13 +5216,23 @@ SVG.select = function(query, parent) {
   )
 }
 
+SVG.$$ = function(query, parent) {
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
+}
+
+SVG.$ = function(query, parent) {
+  return SVG.adopt((parent || document).querySelector(query))
+}
+
 SVG.extend(SVG.Parent, {
   // Scoped select method
   select: function(query) {
     return SVG.select(query, this.node)
   }
-
 })
+
 function pathRegReplace(a, b, c, d) {
   return c + d.replace(SVG.regex.dots, ' .')
 }
@@ -5433,55 +5414,13 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = url.toString().match(SVG.regex.reference)
+  var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
 }
 
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
-// Add CustomEvent to IE9 and IE10
-if (typeof CustomEvent !== 'function') {
-  // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  var CustomEvent = function(event, options) {
-    options = options || { bubbles: false, cancelable: false, detail: undefined }
-    var e = document.createEvent('CustomEvent')
-    e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
-    return e
-  }
-
-  CustomEvent.prototype = window.Event.prototype
-
-  window.CustomEvent = CustomEvent
-}
-
-// requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
-(function(w) {
-  var lastTime = 0
-  var vendors = ['moz', 'webkit']
-
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    w.requestAnimationFrame = w[vendors[x] + 'RequestAnimationFrame']
-    w.cancelAnimationFrame  = w[vendors[x] + 'CancelAnimationFrame'] ||
-                              w[vendors[x] + 'CancelRequestAnimationFrame']
-  }
-
-  w.requestAnimationFrame = w.requestAnimationFrame ||
-    function(callback) {
-      var currTime = new Date().getTime()
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime))
-
-      var id = w.setTimeout(function() {
-        callback(currTime + timeToCall)
-      }, timeToCall)
-
-      lastTime = currTime + timeToCall
-      return id
-    }
-
-  w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
-
-}(window))
 
 return SVG
 

@@ -7,7 +7,7 @@ SVG.extend(SVG.Parent, {
 
     this.each(function(){
       if(this instanceof SVG.Defs) return this
-      if(this instanceof SVG.Parent) return this.ungroup(parent, depth-1)
+      if(this instanceof SVG.Parent) return this.flatten(parent, depth-1)
       return this.toParent(parent)
     })
     

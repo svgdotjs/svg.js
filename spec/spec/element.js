@@ -422,7 +422,7 @@ describe('Element', function() {
     })
   })
 
-  describe('ungroup()', function() {
+  describe('flatten()', function() {
     var nested, g1, g2, rect1
 
     beforeEach(function() {
@@ -439,12 +439,12 @@ describe('Element', function() {
     })
 
     it('returns itself when depths is 0 or this is SVG.Defs', function() {
-      expect(draw.defs().ungroup()).toBe(draw.defs())
-      expect(g1.ungroup(null, 0)).toBe(g1)
+      expect(draw.defs().flatten()).toBe(draw.defs())
+      expect(g1.flatten(null, 0)).toBe(g1)
     })
 
     it('breaks up all container and move the elements to the parent', function() {
-      g1.ungroup()
+      g1.flatten()
       expect(rect1.parent()).toBe(nested)
       expect(rect2.parent()).toBe(nested)
 
@@ -459,8 +459,8 @@ describe('Element', function() {
       }))
     })
 
-    it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs', function() {
-      draw.ungroup()
+    it('ungroups everything to the doc root when called on SVG.Doc / does not flatten defs', function() {
+      draw.flatten()
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
 
@@ -476,14 +476,6 @@ describe('Element', function() {
       }))
 
       expect(draw.children().length).toBe(3) // 2 * rect + defs
-    })
-  })
-  
-  describe('flatten()', function() {
-    it('redirects the call to ungroup()', function() {
-      spyOn(draw, 'ungroup')
-      draw.flatten()
-      expect(draw.ungroup).toHaveBeenCalled()
     })
   })
 
