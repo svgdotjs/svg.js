@@ -18,6 +18,11 @@ describe('Box', function() {
       expect(box.y).toBe(100)
       expect(box.width).toBe(200)
       expect(box.height).toBe(300)
+      expect(box.cx).toBe(110)
+      expect(box.cy).toBe(250)
+      expect(box.x2).toBe(210)
+      expect(box.y2).toBe(400)
+
     })
     
     it('creates a new box from array', function() {
