@@ -22,15 +22,14 @@ SVG.Box = SVG.invent({
 , extend: {
     // Merge rect box with another, return a new instance
     merge: function(box) {
-      var b = new this.constructor()
+      var x = Math.min(this.x, box.x)
+        , y = Math.min(this.y, box.y)
 
-      // merge boxes
-      b.x      = Math.min(this.x, box.x)
-      b.y      = Math.min(this.y, box.y)
-      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
-      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-
-      return fullBox(b)
+      return new SVG.Box(
+        x, y,
+        Math.max(this.x + this.width,  box.x + box.width)  - x,
+        Math.max(this.y + this.height, box.y + box.height) - y
+      )
     }
 
   , transform: function(m) {
@@ -51,15 +50,11 @@ SVG.Box = SVG.invent({
         yMax = Math.max(yMax,p.y)
       })
 
-      bbox = new this.constructor()
-      bbox.x = xMin
-      bbox.width = xMax-xMin
-      bbox.y = yMin
-      bbox.height = yMax-yMin
-
-      fullBox(bbox)
-
-      return bbox
+      return new SVG.Box(
+        xMin, yMin,
+        xMax-xMin,
+        yMax-yMin
+      )
     }
     
   , addOffset: function() {
@@ -80,12 +75,12 @@ SVG.Box = SVG.invent({
 
       if(!this.destination) return this
 
-      return new SVG.Box([
+      return new SVG.Box(
           this.x + (this.destination.x - this.x) * pos
         , this.y + (this.destination.y - this.y) * pos
         , this.width + (this.destination.width - this.width) * pos
         , this.height + (this.destination.height - this.height) * pos
-      ])
+      )
 
     }
   }
