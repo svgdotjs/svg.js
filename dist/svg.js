@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 14 2017 08:57:28 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Mar 14 2017 11:58:05 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -5245,7 +5245,7 @@ SVG.Box = SVG.invent({
       } catch(e) {
         try {
           var clone = this.clone(SVG.parser.draw).show()
-          box = clone.bbox()
+          box = clone.node.getBBox()
           clone.remove()
         } catch(e) {
           console.warn('Getting a bounding box of this element is not possible')

@@ -104,7 +104,7 @@ SVG.Box = SVG.invent({
       } catch(e) {
         try {
           var clone = this.clone(SVG.parser.draw).show()
-          box = clone.bbox()
+          box = clone.node.getBBox()
           clone.remove()
         } catch(e) {
           console.warn('Getting a bounding box of this element is not possible')
