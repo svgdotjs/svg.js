@@ -15,8 +15,8 @@ SVG.regex = {
   // Parse matrix wrapper
 , matrix:           /matrix\(|\)/g
 
-  // Elements of a matrix
-, matrixElements:   /,*\s+|,/
+  // splits a transformation chain
+, transforms:       /\)\s*,?\s*/
 
   // Whitespace
 , whitespace:       /\s/g

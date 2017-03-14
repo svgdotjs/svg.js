@@ -129,7 +129,7 @@ SVG.Element = SVG.invent({
   , classes: function() {
       var attr = this.attr('class')
 
-      return attr == null ? [] : attr.trim().split(/\s+/)
+      return attr == null ? [] : attr.trim().split(SVG.regex.delimiter)
     }
     // Return true if class exists on the node, false otherwise
   , hasClass: function(name) {

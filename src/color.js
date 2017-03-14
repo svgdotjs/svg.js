@@ -13,7 +13,7 @@ SVG.Color = function(color) {
   if (typeof color === 'string') {
     if (SVG.regex.isRgb.test(color)) {
       // get rgb values 
-      match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
+      match = SVG.regex.rgb.exec(color.replace(SVG.regex.whitespace,''))
       
       // parse numeric values 
       this.r = parseInt(match[1])
