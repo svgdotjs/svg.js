@@ -105,7 +105,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## [2.3.5] - 2016-10-13
 
 ### Added
-- added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js) (#527)
+- added automated unit tests via [Travis](https://travis-ci.org/svgdotjs/svg.js) (#527)
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
 ### Changed
