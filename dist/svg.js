@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 14 2017 08:36:57 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Mar 14 2017 08:57:28 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -5266,7 +5266,7 @@ SVG.Box = SVG.invent({
 SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
   viewbox: function(x, y, width, height) {
     // act as getter
-    if(x == null) return new SVG.Box(this.attr('viewBox') || '')
+    if(x == null) return new SVG.Box(this.attr('viewBox'))
 
     // act as setter
     return this.attr('viewBox', new SVG.Box(x, y, width, height))

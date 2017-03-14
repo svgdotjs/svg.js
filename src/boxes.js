@@ -10,7 +10,7 @@ SVG.Box = SVG.invent({
       arguments.length == 4 ?
         [].slice.call(arguments) :
         base
-        
+
     this.x = source[0]
     this.y = source[1]
     this.width = source[2]
@@ -56,7 +56,7 @@ SVG.Box = SVG.invent({
         yMax-yMin
       )
     }
-    
+
   , addOffset: function() {
       // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
       this.x += window.pageXOffset
@@ -84,7 +84,7 @@ SVG.Box = SVG.invent({
 
     }
   }
-  
+
     // Define Parent
 , parent: SVG.Element
 
@@ -93,11 +93,11 @@ SVG.Box = SVG.invent({
     // Get bounding box
     bbox: function() {
       var box
-    
+
       try {
         // find native bbox
         box = this.node.getBBox()
-        
+
         if(isNulledBox(box) && !domContains(this.node)) {
           throw new Exception('Element not in the dom')
         }
@@ -106,14 +106,14 @@ SVG.Box = SVG.invent({
           var clone = this.clone(SVG.parser.draw).show()
           box = clone.bbox()
           clone.remove()
-        } catch(e) { 
+        } catch(e) {
           console.warn('Getting a bounding box of this element is not possible')
         }
       }
-      
+
       return new SVG.Box(box)
     }
-    
+
   , rbox: function(el) {
       var box = new SVG.Box(this.node.getBoundingClientRect())
       if (el) return box.transform(el.screenCTM().inverse())
@@ -125,8 +125,8 @@ SVG.Box = SVG.invent({
 SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
   viewbox: function(x, y, width, height) {
     // act as getter
-    if(x == null) return new SVG.Box(this.attr('viewBox') || '')
-    
+    if(x == null) return new SVG.Box(this.attr('viewBox'))
+
     // act as setter
     return this.attr('viewBox', new SVG.Box(x, y, width, height))
   }

@@ -10,7 +10,7 @@ describe('Box', function() {
         x:0, y:0, cx:0, cy:0, width:0, height:0
       }))
     })
-    
+
     it('creates a new box from parsed string', function() {
       box = new SVG.Box('10. 100 200 300')
       expect(box.x).toBe(10)
@@ -30,7 +30,7 @@ describe('Box', function() {
       expect(box.width).toBe(200)
       expect(box.height).toBe(300)
     })
-    
+
     it('creates a new box from array', function() {
       box = new SVG.Box([10, 100, 200, 300])
 
@@ -39,7 +39,7 @@ describe('Box', function() {
       expect(box.width).toBe(200)
       expect(box.height).toBe(300)
     })
-    
+
     it('creates a new box from object', function() {
       box = new SVG.Box({x:10, y:100, width:200, height:300})
 
@@ -47,8 +47,8 @@ describe('Box', function() {
       expect(box.y).toBe(100)
       expect(box.width).toBe(200)
       expect(box.height).toBe(300)
-    })   
-    
+    })
+
     it('creates a new box from object width left and top instead of x and y', function() {
       box = new SVG.Box({left:10, top:100, width:200, height:300})
 
@@ -66,7 +66,7 @@ describe('Box', function() {
       expect(box.width).toBe(200)
       expect(box.height).toBe(300)
     })
-    
+
     it('creates a new box from parsed string with exponential values', function() {
       box = new SVG.Box('-1.12e1 1e-2 +2e2 +.3e+4')
 
@@ -84,7 +84,7 @@ describe('Box', function() {
       var box2 = new SVG.Box(300, 400, 100, 100)
       var box3 = new SVG.Box(500, 100, 100, 100)
       var merged = box1.merge(box2).merge(box3)
-      
+
       expect(merged).toEqual(jasmine.objectContaining({
         x: 50, y: 50, cx: 325, cy: 275, width: 550, height: 450
       }))
@@ -95,31 +95,31 @@ describe('Box', function() {
       var merged = box1.merge(box2)
       expect(box1).not.toBe(merged)
       expect(box2).not.toBe(merged)
-      
+
       expect(merged instanceof SVG.Box).toBe(true)
     })
   })
-  
+
   describe('transform()', function() {
     it('transforms the box with given matrix', function() {
       var box1 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(1,0,0,1,20,20))
       var box2 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(2,0,0,2,0,0))
       var box3 = new SVG.Box(-200, -200, 100, 100).transform(new SVG.Matrix(1,0,0,1,-20,-20))
-      
+
       expect(box1).toEqual(jasmine.objectContaining({
         x: 70, y: 70, cx: 120, cy: 120, width: 100, height: 100
       }))
-      
+
       expect(box2).toEqual(jasmine.objectContaining({
         x: 100, y: 100, cx: 200, cy: 200, width: 200, height: 200
       }))
-      
+
       expect(box3).toEqual(jasmine.objectContaining({
         x: -220, y: -220, cx: -170, cy: -170, width: 100, height: 100
       }))
     })
   })
-  
+
   describe('morph()', function() {
     it('stores a given box for morphing', function() {
       var box1 = new SVG.Box(10, 100, 200, 300)
@@ -233,7 +233,7 @@ describe('Boxes', function() {
       }))
     })
   })
-  
+
   describe('viewbox()', function() {
 
     beforeEach(function() {
@@ -263,6 +263,9 @@ describe('Boxes', function() {
     it('should get the viewbox if no arguments are given', function() {
       draw.viewbox(0, 0, 100, 100)
       expect(draw.viewbox()).toEqual(new SVG.Box(0,0,100,100))
+    })
+    it('should get a nulled viewbox when no viewbox attribute is set', function() {
+      expect(draw.viewbox()).toEqual(new SVG.Box())
     })
   })
 
