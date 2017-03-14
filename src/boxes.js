@@ -2,7 +2,7 @@ SVG.Box = SVG.invent({
   create: function(source) {
     var base = [0,0,0,0]
     source = typeof source === 'string' ?
-        source.match(SVG.regex.viewbox).map(parseFloat) :
+        source.split(SVG.regex.delimiter).map(parseFloat) :
       Array.isArray(source) ?
         source :
       typeof source == 'object' ?

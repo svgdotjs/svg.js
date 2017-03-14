@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 12 2017 21:25:11 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Mar 14 2017 08:36:57 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -219,8 +219,6 @@ SVG.regex = {
 
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
-
-, viewbox:          /[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/gi
 
   // The following regex are used to parse the d attribute of a path
 
@@ -5140,11 +5138,12 @@ function idFromReference(url) {
 
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
+
 SVG.Box = SVG.invent({
   create: function(source) {
     var base = [0,0,0,0]
     source = typeof source === 'string' ?
-        source.match(SVG.regex.viewbox).map(parseFloat) :
+        source.split(SVG.regex.delimiter).map(parseFloat) :
       Array.isArray(source) ?
         source :
       typeof source == 'object' ?

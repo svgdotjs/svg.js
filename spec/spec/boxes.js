@@ -13,7 +13,6 @@ describe('Box', function() {
     
     it('creates a new box from parsed string', function() {
       box = new SVG.Box('10. 100 200 300')
-
       expect(box.x).toBe(10)
       expect(box.y).toBe(100)
       expect(box.width).toBe(200)
@@ -22,7 +21,14 @@ describe('Box', function() {
       expect(box.cy).toBe(250)
       expect(box.x2).toBe(210)
       expect(box.y2).toBe(400)
+    })
 
+    it('creates a new box from parsed string with comma as delimiter', function() {
+      box = new SVG.Box('10,100, 200  , 300')
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
     })
     
     it('creates a new box from array', function() {
