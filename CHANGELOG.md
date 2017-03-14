@@ -28,7 +28,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
-## UNRELEASED 2.5.0
+## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
 
 ### Added
 - added a plot and array method to `SVG.TextPath` (#582)
