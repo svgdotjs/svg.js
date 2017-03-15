@@ -12,9 +12,6 @@ SVG.regex = {
   // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
 
-  // Parse matrix wrapper
-, matrix:           /matrix\(|\)/g
-
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
 

@@ -170,7 +170,7 @@ describe('Circle', function() {
   describe('translate()', function() {
     it('sets the translation of an element', function() {
       circle.transform({ x: 12, y: 12 })
-      expect(circle.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
+      expect(matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,12,12])
     })
   })
   

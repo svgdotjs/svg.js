@@ -190,44 +190,44 @@ describe('Element', function() {
     })
     it('sets the translation of and element', function() {
       rect.transform({ x: 10, y: 11 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,10,11)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
     })
     it('performs an absolute translation', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,20,21)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
     })
     it('performs a relative translation when relative is set to true', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, relative: true })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('performs a relative translation with relative flag', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,30,32)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('sets the scaleX and scaleY of an element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,2,25,-50)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,2,25,-50])
     })
     it('performs a uniform scale with scale given', function() {
       rect.transform({ scale: 3 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(3,0,0,3,-100,-100)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,3,-100,-100])
     })
     it('also works with only skaleX', function() {
       rect.transform({ scaleX: 3 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(3,0,0,1,-100,0)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,1,-100,0])
     })
     it('also works with only skaleY', function() {
       rect.transform({ scaleY: 3 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,3,0,-100)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,3,0,-100])
     })
     
     it('performs an absolute scale by default', function() {
       rect.transform({ scale: 3 }).transform({ scale: 0.5 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0,0.5,25,25)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
     })
     it('performs a relative scale with a relative flag', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1.5,0,0,8,-25,-350)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1.5,0,0,8,-25,-350])
     })
     it('sets the skewX of an element with center on the element', function() {
       ctm = rect.transform({ skewX: 10 }).ctm()
@@ -295,31 +295,31 @@ describe('Element', function() {
     })
     it('transforms element using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,0,0)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,0,0])
     })
     it('transforms relative using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 }).transform(new SVG.Matrix({ e: 20, f: 20 }), true)
-      expect(rect.node.getAttribute('transform')).toBe('matrix(0.5,0,0.5,1,20,20)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,20,20])
     })
     it('flips the element on x axis', function() {
       rect.transform({ flip: 'x' })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,1,100,0)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
     })
     it('flips the element on x axis with offset', function() {
       rect.transform({ flip: 'x', offset: 20 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,1,40,0)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
     })
     it('flips the element on y axis with offset', function() {
       rect.transform({ flip: 'y', offset: 20 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,-1,0,40)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
     })
     it('flips the element on both axis with offset', function() {
       rect.transform({ flip: 'both', offset: 20 })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,-1,40,40)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
     })
     it('flips the element on both axis', function() {
       rect.transform({ flip: 'both' })
-      expect(rect.node.getAttribute('transform')).toBe('matrix(-1,0,0,-1,0,0)')
+      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,0,0])
     })
   })
 
@@ -331,7 +331,7 @@ describe('Element', function() {
     })
 
     it('removes the transform attribute', function() {
-      expect(circle.node.getAttribute('transform')).toBe('matrix(1,0,0,1,50,100)')
+      expect(matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,50,100])
       circle.untransform()
       expect(circle.node.getAttribute('transform')).toBeNull()
     })
@@ -590,14 +590,15 @@ describe('Element', function() {
       expect(rect.rbox() instanceof SVG.RBox).toBe(true)
     })
     it('returns the correct rectangular box', function() {
-      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12)
+      // stroke has to be set in order to get the correct result when calling getBoundingClientRect in IE11
+      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12).stroke({width:0})
       var box = rect.rbox(draw)
-      expect(box.x).toBeCloseTo(2, 0)
-      expect(box.y).toBeCloseTo(12, 0)
+      expect(box.x).toBeCloseTo(2)
+      expect(box.y).toBeCloseTo(12)
       expect(box.cx).toBeCloseTo(54.5)
-      expect(box.cy).toBeCloseTo(117, 0)
-      expect(box.width).toBe(105)
-      expect(box.height).toBe(210)
+      expect(box.cy).toBeCloseTo(117)
+      expect(box.width).toBeCloseTo(105)
+      expect(box.height).toBeCloseTo(210)
     })
   })
 

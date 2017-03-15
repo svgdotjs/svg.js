@@ -103,11 +103,11 @@ describe('TBox', function() {
   })
 
   it('should map to RBox and be removed in 3.x', function() {
-    var rect = draw.rect(100, 100).move(100, 25)
+    var rect = draw.rect(100, 100).move(100, 25).stroke({width:0})
     var tbox = rect.tbox()
 
     expect(tbox.x).toBe(100)
-    expect(tbox.y).toBe(25)
+    expect(tbox.y).toBeCloseTo(25)
 
     rect.transform({ scale: 1.5 })
     tbox = rect.tbox()
@@ -129,9 +129,9 @@ describe('RBox', function() {
   })
 
   it('creates a new instance from an element', function() {
-    var rect = draw.rect(100, 100).move(100, 25)
+    var rect = draw.rect(100, 100).move(100, 25).stroke({width:0})
     var box = new SVG.RBox(rect).transform(rect.doc().screenCTM().inverse()).addOffset()
-    expect(box).toEqual(jasmine.objectContaining({
+    expect(roundBox(box)).toEqual(jasmine.objectContaining({
       x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
     }))
   })
@@ -154,7 +154,7 @@ describe('Boxes', function() {
     offset = draw.screenCTM()
     draw.viewbox(100,100, 200, 200)
     nested = draw.nested().size(200, 200).move(100,100).viewbox(0, 0, 100, 100)
-    rect = nested.rect(50, 180).move(25, 90).scale(2, 0, 0).transform({x:10, y:10}, true)
+    rect = nested.rect(50, 180).stroke({width:0}).move(25, 90).scale(2, 0, 0).transform({x:10, y:10}, true)
   })
   afterEach(function() {
     draw.clear().attr('viewBox', null)
@@ -201,16 +201,16 @@ describe('Boxes', function() {
     it('returns the elements box in absolute screen coordinates by default', function() {
       var box = rect.rbox()
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining(roundBox({
         x: 70 + offset.e, y: 200 + offset.f, width: 100, height: 360
-      }))
+      })))
 
     })
 
     it('returns the elements box in coordinates of given element (doc)', function() {
       var box = rect.rbox(draw)
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining({
         x: 240, y: 500, width: 200, height: 720
       }))
     })
@@ -218,7 +218,7 @@ describe('Boxes', function() {
     it('returns the elements box in coordinates of given element (nested)', function() {
       var box = rect.rbox(nested)
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
       }))
     })

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 14 2017 18:41:25 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Mar 15 2017 11:31:52 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -186,9 +186,6 @@ SVG.regex = {
 
   // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
-
-  // Parse matrix wrapper
-, matrix:           /matrix\(|\)/g
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
