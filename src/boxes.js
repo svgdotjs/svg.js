@@ -115,9 +115,14 @@ SVG.Box = SVG.invent({
     }
 
   , rbox: function(el) {
-      var box = new SVG.Box(this.node.getBoundingClientRect())
-      if (el) return box.transform(el.screenCTM().inverse())
-      return box.addOffset()
+      // IE11 throws an error when element not in dom
+      try{
+        var box = new SVG.Box(this.node.getBoundingClientRect())
+        if (el) return box.transform(el.screenCTM().inverse())
+        return box.addOffset()
+      } catch(e) {
+        return new SVG.Box()
+      }
     }
   }
 })

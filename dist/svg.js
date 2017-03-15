@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 14 2017 11:58:05 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Mar 15 2017 11:41:47 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -5256,9 +5256,14 @@ SVG.Box = SVG.invent({
     }
 
   , rbox: function(el) {
-      var box = new SVG.Box(this.node.getBoundingClientRect())
-      if (el) return box.transform(el.screenCTM().inverse())
-      return box.addOffset()
+      // IE11 throws an error when element not in dom
+      try{
+        var box = new SVG.Box(this.node.getBoundingClientRect())
+        if (el) return box.transform(el.screenCTM().inverse())
+        return box.addOffset()
+      } catch(e) {
+        return new SVG.Box()
+      }
     }
   }
 })
