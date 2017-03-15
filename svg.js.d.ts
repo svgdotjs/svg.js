@@ -762,11 +762,10 @@ declare namespace svgjs {
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
         rotate(d: number, cx?: number, cy?: number): this;
-        skew(x: number, y: number, cx?: number, cy?: number): this;
-        scale(x: number, y: number, cx?: number, cy?: number): this;
-        scale(scale: number): this;
+        skew(x: number, y?: number, cx?: number, cy?: number): this;
+        scale(x: number, y?: number, cx?: number, cy?: number): this;
         translate(x: number, y: number): this;
-        flip(a: any, offset?: number): this;
+        flip(a?: any, offset?: number): this;
         matrix(m: any): this;
         opacity(o: number): this;
         opacity(): number;
@@ -951,8 +950,8 @@ declare namespace svgjs {
         after(cb: () => void): Animation;
 
         rotate(degrees: number, cx?: number, cy?: number): Animation
-        skew(x: number, y: number): Animation
-        scale(scaleX: number, scaleY: number, cx?: number, cy?: number): Animation
+        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation
+        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation
         translate(x: number, y: number): Animation
 
         // TODO style, etc, bbox...
