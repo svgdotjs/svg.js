@@ -150,12 +150,6 @@ describe('Element', function() {
       expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
       expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
     })
-    it('sets multiple styles with a css string as the first argument', function() {
-      var rect = draw.rect(100,100).style('cursor: help; display: block;')
-      expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
-      expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
-      expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
-    })
     it('gets a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
       expect(rect.style('cursor')).toBe('progress')

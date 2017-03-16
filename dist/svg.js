@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Mar 16 2017 13:02:34 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 16 2017 13:34:21 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -157,7 +157,13 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden')
+  , draw: draw.style({
+      opacity:0,
+      position:'absolute',
+      left:'-100%',
+      top:'-100%',
+      overflow:'hidden'
+    })
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')
@@ -2865,15 +2871,6 @@ SVG.extend(SVG.Element, {
       if (typeof s == 'object') {
         for (v in s) this.style(v, s[v])
 
-      } else if (SVG.regex.isCss.test(s)) {
-        // parse css string
-        s = s.split(';')
-
-        // apply every definition individually
-        for (var i = 0; i < s.length; i++) {
-          v = s[i].split(':')
-          this.style(v[0].replace(/\s+/g, ''), v[1])
-        }
       } else {
         // act as a getter if the first and only argument is not an object
         return this.node.style[camelCase(s)]
@@ -2886,6 +2883,7 @@ SVG.extend(SVG.Element, {
     return this
   }
 })
+
 SVG.Parent = SVG.invent({
   // Initialize node
   create: function(element) {

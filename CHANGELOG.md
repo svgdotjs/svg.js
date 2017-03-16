@@ -22,6 +22,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed polyfills
 - removed `ungroup()` in favour of `flatten()`
 - removed `SVG.Set` -> __TODO!__
+- removed feature to set style with css string (e.g. "fill:none;display:block;")
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
