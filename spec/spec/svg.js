@@ -98,7 +98,7 @@ describe('SVG', function() {
       expect(SVG.parser.draw.node.nodeName).toBe('svg')
     })
     it('hides the parser', function() {
-      expect(SVG.parser.draw.node.getAttribute('style')).toBe('opacity: 0; position: absolute; left: -100%; top: -100%; overflow: hidden;')
+      expect(SVG.parser.draw.node.getAttribute('style')).toBe('overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;')
     })
     it('holds polyline and path', function() {
       expect(SVG.select('polyline', SVG.parser.draw.node).first().type).toBe('polyline')
