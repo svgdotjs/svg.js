@@ -53,7 +53,7 @@ SVG.extend(SVG.PointArray, {
       }
     } else { // Else, it is considered as a string
       // parse points
-      array = array.trim().split(/[\s,]+/)
+      array = array.trim().split(SVG.regex.delimiter).map(parseFloat)
     }
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
@@ -62,7 +62,7 @@ SVG.extend(SVG.PointArray, {
 
     // wrap points in two-tuples and parse points as floats
     for(var i = 0, len = array.length; i < len; i = i + 2)
-      points.push([ parseFloat(array[i]), parseFloat(array[i+1]) ])
+      points.push([ array[i], array[i+1] ])
 
     return points
   }

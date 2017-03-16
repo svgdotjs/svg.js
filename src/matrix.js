@@ -7,7 +7,7 @@ SVG.Matrix = SVG.invent({
     source = source instanceof SVG.Element ?
       source.matrixify() :
     typeof source === 'string' ?
-      stringToMatrix(source) :
+      arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat)) :
     arguments.length == 6 ?
       arrayToMatrix([].slice.call(arguments)) :
     Array.isArray(source) ?

@@ -38,7 +38,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
-## UNRELEASED 2.5.0
+## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
 
 ### Added
 - added a plot and array method to `SVG.TextPath` (#582)
@@ -115,7 +115,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## [2.3.5] - 2016-10-13
 
 ### Added
-- added automated unit tests via [Travis](https://travis-ci.org/wout/svg.js) (#527)
+- added automated unit tests via [Travis](https://travis-ci.org/svgdotjs/svg.js) (#527)
 - added `npm run build` to build a new version of SVG.js without requiring gulp to be globally installed
 
 ### Changed

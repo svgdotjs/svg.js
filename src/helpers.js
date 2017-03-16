@@ -109,22 +109,6 @@ function ensureCentre(o, target) {
   o.cy = o.cy == null ? target.bbox().cy : o.cy
 }
 
-// Convert string to matrix
-function stringToMatrix(source) {
-  // remove matrix wrapper and split to individual numbers
-  source = source
-    .replace(SVG.regex.whitespace, '')
-    .replace(SVG.regex.matrix, '')
-    .split(SVG.regex.matrixElements)
-
-  // convert string values to floats and convert to a matrix-formatted object
-  return arrayToMatrix(
-    SVG.utils.map(source, function(n) {
-      return parseFloat(n)
-    })
-  )
-}
-
 // PathArray Helpers
 function arrayToString(a) {
   for (var i = 0, il = a.length, s = ''; i < il; i++) {

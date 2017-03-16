@@ -326,6 +326,7 @@ declare namespace svgjs {
     interface Element {
         animate(duration?: number, ease?: string, delay?: number): Animation;
         animate(info: { ease?: string; duration?: number; delay?: number }): Animation;
+        stop(jumpToEnd:boolean,clearQueue:boolean): Animation;
     }
     // TODO finishs FX
 
@@ -654,8 +655,8 @@ declare namespace svgjs {
     }
     interface Library { PolyLine: PolyLine; }
     interface Container {
-        polyLine(points: string): PolyLine;
-        polyLine(points: ArrayPoint[]): PolyLine;
+        polyline(points: string): PolyLine;
+        polyline(points: ArrayPoint[]): PolyLine;
     }
     export interface Polygon extends poly {
         new (): Polygon;
@@ -705,10 +706,10 @@ declare namespace svgjs {
     // selector.js
     interface Library {
         get(id: string): Element;
-        select(query: string, parent: HTMLElement): Element;
+        select(query: string, parent: HTMLElement): Set;
     }
     interface Parent {
-        select(query: string): Element;
+        select(query: string): Set;
     }
 
     // set.js
@@ -761,11 +762,10 @@ declare namespace svgjs {
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
         rotate(d: number, cx?: number, cy?: number): this;
-        skew(x: number, y: number, cx?: number, cy?: number): this;
-        scale(x: number, y: number, cx?: number, cy?: number): this;
-        scale(scale: number): this;
+        skew(x: number, y?: number, cx?: number, cy?: number): this;
+        scale(x: number, y?: number, cx?: number, cy?: number): this;
         translate(x: number, y: number): this;
-        flip(a: any, offset?: number): this;
+        flip(a?: any, offset?: number): this;
         matrix(m: any): this;
         opacity(o: number): this;
         opacity(): number;
@@ -949,7 +949,11 @@ declare namespace svgjs {
         to(value: number): Animation;
         after(cb: () => void): Animation;
 
-        rotate(degrees: number, cx: number, cy: number): Animation
+        rotate(degrees: number, cx?: number, cy?: number): Animation
+        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation
+        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation
+        translate(x: number, y: number): Animation
+
         // TODO style, etc, bbox...
     }
 }

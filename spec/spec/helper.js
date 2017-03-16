@@ -40,3 +40,21 @@ function dispatchEvent(element, name) {
   else
     element.node.fireEvent('on' + name, e)
 }
+
+// This is needed because of IE11 which uses space as a delimiter in matrix
+function matrixStringToArray(source){
+  return source
+    .replace(/matrix\(|\)/, '')
+    .split(SVG.regex.delimiter)
+    .map(parseFloat)
+}
+
+// This is needed because of IE11 creating values like 2.99999 when calculating a transformed box
+function roundBox(box) {
+  return new SVG.Box(
+    Math.round(box.x),
+    Math.round(box.y),
+    Math.round(box.width),
+    Math.round(box.height)
+  )
+}

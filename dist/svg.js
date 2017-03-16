@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 15 2017 11:41:47 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 16 2017 13:02:34 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -187,11 +187,8 @@ SVG.regex = {
   // Parse reference id
 , reference:        /#([a-z0-9\-_]+)/i
 
-  // Parse matrix wrapper
-, matrix:           /matrix\(|\)/g
-
-  // Elements of a matrix
-, matrixElements:   /,*\s+|,/
+  // splits a transformation chain
+, transforms:       /\)\s*,?\s*/
 
   // Whitespace
 , whitespace:       /\s/g
@@ -330,7 +327,7 @@ SVG.Color = function(color) {
   if (typeof color === 'string') {
     if (SVG.regex.isRgb.test(color)) {
       // get rgb values
-      match = SVG.regex.rgb.exec(color.replace(/\s/g,''))
+      match = SVG.regex.rgb.exec(color.replace(SVG.regex.whitespace,''))
 
       // parse numeric values
       this.r = parseInt(match[1])
@@ -558,7 +555,7 @@ SVG.extend(SVG.PointArray, {
       }
     } else { // Else, it is considered as a string
       // parse points
-      array = array.trim().split(/[\s,]+/)
+      array = array.trim().split(SVG.regex.delimiter).map(parseFloat)
     }
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
@@ -567,7 +564,7 @@ SVG.extend(SVG.PointArray, {
 
     // wrap points in two-tuples and parse points as floats
     for(var i = 0, len = array.length; i < len; i = i + 2)
-      points.push([ parseFloat(array[i]), parseFloat(array[i+1]) ])
+      points.push([ array[i], array[i+1] ])
 
     return points
   }
@@ -1134,7 +1131,7 @@ SVG.Element = SVG.invent({
   , classes: function() {
       var attr = this.attr('class')
 
-      return attr == null ? [] : attr.trim().split(/\s+/)
+      return attr == null ? [] : attr.trim().split(SVG.regex.delimiter)
     }
     // Return true if class exists on the node, false otherwise
   , hasClass: function(name) {
@@ -2165,7 +2162,7 @@ SVG.Matrix = SVG.invent({
     source = source instanceof SVG.Element ?
       source.matrixify() :
     typeof source === 'string' ?
-      stringToMatrix(source) :
+      arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat)) :
     arguments.length == 6 ?
       arrayToMatrix([].slice.call(arguments)) :
     Array.isArray(source) ?
@@ -2686,12 +2683,12 @@ SVG.extend(SVG.Element, {
 
     var matrix = (this.attr('transform') || '')
       // split transformations
-      .split(/\)\s*,?\s*/).slice(0,-1).map(function(str){
+      .split(SVG.regex.transforms).slice(0,-1).map(function(str){
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(SVG.regex.matrixElements).map(function(str){ return parseFloat(str) })]
+        return [kv[0], kv[1].split(SVG.regex.delimiter).map(function(str){ return parseFloat(str) })]
       })
-      // calculate every transformation into one matrix
+      // merge every transformation into one matrix
       .reduce(function(matrix, transform){
 
         if(transform[0] == 'matrix') return matrix.multiply(arrayToMatrix(transform[1]))
@@ -5045,22 +5042,6 @@ function parseMatrix(matrix) {
 function ensureCentre(o, target) {
   o.cx = o.cx == null ? target.bbox().cx : o.cx
   o.cy = o.cy == null ? target.bbox().cy : o.cy
-}
-
-// Convert string to matrix
-function stringToMatrix(source) {
-  // remove matrix wrapper and split to individual numbers
-  source = source
-    .replace(SVG.regex.whitespace, '')
-    .replace(SVG.regex.matrix, '')
-    .split(SVG.regex.matrixElements)
-
-  // convert string values to floats and convert to a matrix-formatted object
-  return arrayToMatrix(
-    SVG.utils.map(source, function(n) {
-      return parseFloat(n)
-    })
-  )
 }
 
 // PathArray Helpers

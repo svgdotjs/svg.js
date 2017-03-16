@@ -134,7 +134,6 @@ describe('Box', function() {
         , box2 = new SVG.Box(50, -100, 300, 300)
 
       box1.morph(box2)
-
       expect(box1.destination).not.toBe(box2)
     })
   })
@@ -164,7 +163,7 @@ describe('Boxes', function() {
     offset = draw.screenCTM()
     draw.viewbox(100,100, 200, 200)
     nested = draw.nested().size(200, 200).move(100,100).viewbox(0, 0, 100, 100)
-    rect = nested.rect(50, 180).move(25, 90).scale(2, 0, 0).transform({x:10, y:10}, true)
+    rect = nested.rect(50, 180).stroke({width:0}).move(25, 90).scale(2, 0, 0).transform({x:10, y:10}, true)
   })
   afterEach(function() {
     draw.clear().attr('viewBox', null)
@@ -211,16 +210,16 @@ describe('Boxes', function() {
     it('returns the elements box in absolute screen coordinates by default', function() {
       var box = rect.rbox()
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining(roundBox({
         x: 70 + offset.e, y: 200 + offset.f, width: 100, height: 360
-      }))
+      })))
 
     })
 
     it('returns the elements box in coordinates of given element (doc)', function() {
       var box = rect.rbox(draw)
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining({
         x: 240, y: 500, width: 200, height: 720
       }))
     })
@@ -228,7 +227,7 @@ describe('Boxes', function() {
     it('returns the elements box in coordinates of given element (nested)', function() {
       var box = rect.rbox(nested)
 
-      expect(box).toEqual(jasmine.objectContaining({
+      expect(roundBox(box)).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
       }))
     })
