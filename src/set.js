@@ -72,17 +72,17 @@ SVG.Set = SVG.invent({
   , bbox: function(){
       // return an empty box of there are no members
       if (this.members.length == 0)
-        return new SVG.RBox()
+        return new SVG.Box()
 
       // get the first rbox and update the target bbox
-      var rbox = this.members[0].rbox(this.members[0].doc())
+      var box = this.members[0].rbox(this.members[0].doc())
 
       this.each(function() {
         // user rbox for correct position and visual representation
-        rbox = rbox.merge(this.rbox(this.doc()))
+        box = box.merge(this.rbox(this.doc()))
       })
 
-      return rbox
+      return box
     }
   }
   

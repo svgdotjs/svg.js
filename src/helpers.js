@@ -1,3 +1,17 @@
+function isNulledBox(box) {
+  return !box.w && !box.h && !box.x && !box.y
+}
+
+function domContains(node) {
+  return (document.documentElement.contains || function(node) {
+    // This is IE - it does not support contains() for top-level SVGs
+    while (node.parentNode){
+      node = node.parentNode;
+    }
+    return node == document
+  }).call(document.documentElement, node)
+}
+
 function pathRegReplace(a, b, c, d) {
   return c + d.replace(SVG.regex.dots, ' .')
 }

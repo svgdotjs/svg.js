@@ -1,29 +1,81 @@
 describe('Box', function() {
-  it('creates a new instance without passing anything', function() {
-    var box = new SVG.Box
+  describe('initialization', function() {
+    var box
 
-    expect(box instanceof SVG.Box).toBe(true)
-    expect(box).toEqual(jasmine.objectContaining({
-      x:0, y:0, cx:0, cy:0, width:0, height:0
-    }))
-  })
+    it('creates a new box with default values', function() {
+      box = new SVG.Box
 
-  it('creates a new instance with 4 arguments given', function() {
-    var box = new SVG.Box(10, 20, 100, 50)
+      expect(box instanceof SVG.Box).toBe(true)
+      expect(box).toEqual(jasmine.objectContaining({
+        x:0, y:0, cx:0, cy:0, width:0, height:0
+      }))
+    })
 
-    expect(box instanceof SVG.Box).toBe(true)
-    expect(box).toEqual(jasmine.objectContaining({
-      x:10, y:20, cx:60, cy:45, width:100, height:50
-    }))
-  })
+    it('creates a new box from parsed string', function() {
+      box = new SVG.Box('10. 100 200 300')
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+      expect(box.cx).toBe(110)
+      expect(box.cy).toBe(250)
+      expect(box.x2).toBe(210)
+      expect(box.y2).toBe(400)
+    })
 
-  it('creates a new instance with object given', function() {
-    var box = new SVG.Box({x:10, y:20, width: 100, height:50})
+    it('creates a new box from parsed string with comma as delimiter', function() {
+      box = new SVG.Box('10,100, 200  , 300')
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+    })
 
-    expect(box instanceof SVG.Box).toBe(true)
-    expect(box).toEqual(jasmine.objectContaining({
-      x:10, y:20, cx:60, cy:45, width:100, height:50
-    }))
+    it('creates a new box from array', function() {
+      box = new SVG.Box([10, 100, 200, 300])
+
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+    })
+
+    it('creates a new box from object', function() {
+      box = new SVG.Box({x:10, y:100, width:200, height:300})
+
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+    })
+
+    it('creates a new box from object width left and top instead of x and y', function() {
+      box = new SVG.Box({left:10, top:100, width:200, height:300})
+
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+    })
+
+    it('creates a new viewbox from 4 arguments', function() {
+      box = new SVG.Box(10, 100, 200, 300)
+
+      expect(box.x).toBe(10)
+      expect(box.y).toBe(100)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(300)
+    })
+
+    it('creates a new box from parsed string with exponential values', function() {
+      box = new SVG.Box('-1.12e1 1e-2 +2e2 +.3e+4')
+
+      expect(box.x).toBe(-11.2)
+      expect(box.y).toBe(0.01)
+      expect(box.width).toBe(200)
+      expect(box.height).toBe(3000)
+    })
+
   })
 
   describe('merge()', function() {
@@ -32,7 +84,7 @@ describe('Box', function() {
       var box2 = new SVG.Box(300, 400, 100, 100)
       var box3 = new SVG.Box(500, 100, 100, 100)
       var merged = box1.merge(box2).merge(box3)
-      
+
       expect(merged).toEqual(jasmine.objectContaining({
         x: 50, y: 50, cx: 325, cy: 275, width: 550, height: 450
       }))
@@ -43,109 +95,67 @@ describe('Box', function() {
       var merged = box1.merge(box2)
       expect(box1).not.toBe(merged)
       expect(box2).not.toBe(merged)
-      
+
       expect(merged instanceof SVG.Box).toBe(true)
     })
   })
-  
+
   describe('transform()', function() {
     it('transforms the box with given matrix', function() {
       var box1 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(1,0,0,1,20,20))
       var box2 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(2,0,0,2,0,0))
       var box3 = new SVG.Box(-200, -200, 100, 100).transform(new SVG.Matrix(1,0,0,1,-20,-20))
-      
+
       expect(box1).toEqual(jasmine.objectContaining({
         x: 70, y: 70, cx: 120, cy: 120, width: 100, height: 100
       }))
-      
+
       expect(box2).toEqual(jasmine.objectContaining({
         x: 100, y: 100, cx: 200, cy: 200, width: 200, height: 200
       }))
-      
+
       expect(box3).toEqual(jasmine.objectContaining({
         x: -220, y: -220, cx: -170, cy: -170, width: 100, height: 100
       }))
     })
   })
-})
 
-describe('BBox', function() {
+  describe('morph()', function() {
+    it('stores a given box for morphing', function() {
+      var box1 = new SVG.Box(10, 100, 200, 300)
+        , box2 = new SVG.Box(50, -100, 300, 300)
 
-  afterEach(function() {
-    draw.clear()
-  })
+      box1.morph(box2)
 
-  it('creates a new instance from an element', function() {
-    var rect = draw.rect(100, 100).move(100, 25)
-    var box = new SVG.BBox(rect)
+      expect(box1.destination).toEqual(box2)
+    })
+    it('stores a clone, not the given viewbox itself', function() {
+      var box1 = new SVG.Box(10, 100, 200, 300)
+        , box2 = new SVG.Box(50, -100, 300, 300)
 
-    expect(box).toEqual(jasmine.objectContaining({
-      x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
-    }))
-  })
-  
-  describe('merge()', function() {
-    it('returns an instance of SVG.BBox', function() {
-      var box1 = new SVG.BBox(50, 50, 100, 100)
-      var box2 = new SVG.BBox(300, 400, 100, 100)
-      var merged = box1.merge(box2)
-      
-      expect(merged instanceof SVG.BBox).toBe(true)
+      box1.morph(box2)
+
+      expect(box1.destination).not.toBe(box2)
     })
   })
 
-})
+  describe('at()', function() {
+    it('returns a morphed box at a given position', function() {
+      var box1 = new SVG.Box(10, 100, 200, 300)
+        , box2 = new SVG.Box(50, -100, 300, 300)
+        , box3 = box1.morph(box2).at(0.5)
 
-describe('TBox', function() {
-
-  afterEach(function() {
-    draw.clear()
-  })
-
-  it('should map to RBox and be removed in 3.x', function() {
-    var rect = draw.rect(100, 100).move(100, 25)
-    var tbox = rect.tbox()
-
-    expect(tbox.x).toBe(100)
-    expect(tbox.y).toBe(25)
-
-    rect.transform({ scale: 1.5 })
-    tbox = rect.tbox()
-    expect(tbox.x).toBe(75)
-    expect(tbox.y).toBe(0)
-
-    rect.transform({ skewX: 5 })
-    tbox = rect.tbox()
-    expect(tbox.x|0).toBe(68)
-    expect(tbox.y|0).toBe(0)
-  })
-
-})
-
-describe('RBox', function() {
-
-  afterEach(function() {
-    draw.clear()
-  })
-
-  it('creates a new instance from an element', function() {
-    var rect = draw.rect(100, 100).move(100, 25)
-    var box = new SVG.RBox(rect).transform(rect.doc().screenCTM().inverse()).addOffset()
-    expect(box).toEqual(jasmine.objectContaining({
-      x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
-    }))
-  })
-  
-  describe('merge()', function() {
-    it('returns an instance of SVG.RBox', function() {
-      var box1 = new SVG.RBox(50, 50, 100, 100)
-      var box2 = new SVG.RBox(300, 400, 100, 100)
-      var merged = box1.merge(box2)
-      
-      expect(merged instanceof SVG.RBox).toBe(true)
+      expect(box1.toString()).toBe('10 100 200 300')
+      expect(box2.toString()).toBe('50 -100 300 300')
+      expect(box3.toString()).toBe('30 0 250 300')
+    })
+    it('returns itself when no destination given', function() {
+      var box = new SVG.Box(10, 100, 200, 300)
+      expect(box.at(0.5)).toBe(box)
     })
   })
 })
+
 
 describe('Boxes', function() {
   var rect, nested, offset
@@ -161,8 +171,8 @@ describe('Boxes', function() {
   })
 
   describe('bbox()', function() {
-    it('returns an instance of SVG.BBox', function() {
-      expect(rect.bbox() instanceof SVG.BBox).toBeTruthy()
+    it('returns an instance of SVG.Box', function() {
+      expect(rect.bbox() instanceof SVG.Box).toBeTruthy()
     })
     it('matches the size of the target element, ignoring transformations', function() {
       var box = rect.bbox()
@@ -194,8 +204,8 @@ describe('Boxes', function() {
   })
 
   describe('rbox()', function() {
-    it('returns an instance of SVG.RBox', function() {
-      expect(rect.rbox() instanceof SVG.RBox).toBeTruthy()
+    it('returns an instance of SVG.Box', function() {
+      expect(rect.rbox() instanceof SVG.Box).toBeTruthy()
     })
 
     it('returns the elements box in absolute screen coordinates by default', function() {
@@ -221,6 +231,41 @@ describe('Boxes', function() {
       expect(box).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
       }))
+    })
+  })
+
+  describe('viewbox()', function() {
+
+    beforeEach(function() {
+      draw.attr('viewBox', null)
+    })
+
+    it('should set the viewbox when four arguments are provided', function() {
+      draw.viewbox(0,0,100,100)
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 100 100')
+    })
+    it('should set the viewbox when an object is provided as first argument', function() {
+      draw.viewbox({ x: 0, y: 0, width: 50, height: 50 })
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
+    })
+    it('should set the viewbox when a string is provided as first argument', function() {
+      draw.viewbox('0 0 50 50')
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
+    })
+    it('should set the viewbox when an array is provided as first argument', function() {
+      draw.viewbox([0, 0, 50, 50])
+      expect(draw.node.getAttribute('viewBox')).toBe('0 0 50 50')
+    })
+    it('should accept negative values', function() {
+      draw.size(100,100).viewbox(-100, -100, 50, 50)
+      expect(draw.node.getAttribute('viewBox')).toEqual('-100 -100 50 50')
+    })
+    it('should get the viewbox if no arguments are given', function() {
+      draw.viewbox(0, 0, 100, 100)
+      expect(draw.viewbox()).toEqual(new SVG.Box(0,0,100,100))
+    })
+    it('should get a nulled viewbox when no viewbox attribute is set', function() {
+      expect(draw.viewbox()).toEqual(new SVG.Box())
     })
   })
 
