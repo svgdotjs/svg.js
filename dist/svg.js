@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Mar 16 2017 13:34:21 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 16 2017 13:36:14 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1216,31 +1216,26 @@ SVG.Element = SVG.invent({
     }
     // Import raw svg
   , svg: function(svg) {
-      // create temporary holder
-      var well = document.createElement('svg')
+      var well, len
 
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
+
+        // create temporary holder
+        well = document.createElementNS(SVG.ns, 'svg')
         // dump raw svg
-        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
+        well.innerHTML = svg
 
         // transplant nodes
-        for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
-          this.node.appendChild(well.firstChild.firstChild)
+        for (len = well.childNodes.length;len--;)
+          if(well.firstChild.nodeType != 1)
+            well.removeChild(well.firstChild)
+          else
+            this.node.appendChild(well.firstChild)
 
       // otherwise act as a getter
       } else {
-        // create a wrapping svg element in case of partial content
-        well.appendChild(svg = document.createElement('svg'))
-
-        // write svgjs data to the dom
-        this.writeDataToDom()
-
-        // insert a copy of this node
-        svg.appendChild(this.node.cloneNode(true))
-
-        // return target element
-        return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
+        return this.node.outerHTML
       }
 
       return this
