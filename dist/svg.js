@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 15 2017 11:31:52 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 16 2017 13:14:11 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3050,12 +3050,14 @@ SVG.extend(SVG.Element, {
 
       } else if (SVG.regex.isCss.test(s)) {
         // parse css string
-        s = s.split(';')
+        s = s.split(/\s*;\s*/)
+          // filter out suffix ; and stuff like ;;
+          .filter(function(e) { return !!e })
+          .map(function(e){ return e.split(/\s*:\s*/) })
 
         // apply every definition individually
-        for (var i = 0; i < s.length; i++) {
-          v = s[i].split(':')
-          this.style(v[0].replace(/\s+/g, ''), v[1])
+        while (v = s.pop()) {
+          this.style(v[0], v[1])
         }
       } else {
         // act as a getter if the first and only argument is not an object
