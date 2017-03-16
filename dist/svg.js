@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Mar 16 2017 13:36:14 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Thu Mar 16 2017 17:41:29 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -80,10 +80,6 @@ SVG.extend = function() {
     if (modules[i])
       for (key in methods)
         modules[i].prototype[key] = methods[key]
-
-  // Make sure SVG.Set inherits any newly added methods
-  if (SVG.Set && SVG.Set.inherit)
-    SVG.Set.inherit()
 }
 
 // Invent new element
@@ -1244,9 +1240,8 @@ SVG.Element = SVG.invent({
   , writeDataToDom: function() {
 
       // dump variables recursively
-      if(this.each || this.lines){
-        var fn = this.each ? this : this.lines();
-        fn.each(function(){
+      if(this.is(SVG.Parent)){
+        this.each(function(){
           this.writeDataToDom()
         })
       }
@@ -2971,23 +2966,24 @@ SVG.Parent = SVG.invent({
 })
 
 SVG.extend(SVG.Parent, {
-  flatten: function(parent, depth) {
-    if(depth === 0 || this instanceof SVG.Defs) return this
+  flatten: function(parent) {
+    if(this instanceof SVG.Defs) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
-    depth = depth || Infinity
 
     this.each(function(){
       if(this instanceof SVG.Defs) return this
-      if(this instanceof SVG.Parent) return this.flatten(parent, depth-1)
+      if(this instanceof SVG.Parent) return this.flatten(parent)
       return this.toParent(parent)
     })
 
+    // we need this so that SVG.Doc does not get removed
     this.node.firstChild || this.remove()
 
     return this
   }
 })
+
 SVG.Container = SVG.invent({
   // Initialize node
   create: function(element) {
@@ -3303,14 +3299,12 @@ SVG.Mask = SVG.invent({
     // Unmask all masked elements and remove itself
     remove: function() {
       // unmask all targets
-      this.targets().each(function() {
-        this.unmask()
+      this.targets().forEach(function(el) {
+        el.unmask()
       })
 
       // remove mask from parent
-      this.parent().removeElement(this)
-
-      return this
+      return SVG.Element.prototype.remove.call(this)
     }
 
   , targets: function() {
@@ -3358,14 +3352,12 @@ SVG.ClipPath = SVG.invent({
     // Unclip all clipped elements and remove itself
     remove: function() {
       // unclip all targets
-      this.targets().each(function() {
-        this.unclip()
+      this.targets().forEach(function(el) {
+        el.unclip()
       })
 
       // remove clipPath from parent
-      this.parent().removeElement(this)
-
-      return this
+      return SVG.Element.prototype.remove.call(this)
     }
 
   , targets: function() {
@@ -4120,7 +4112,7 @@ SVG.Text = SVG.invent({
   }
 
   // Inherit from
-, inherit: SVG.Shape
+, inherit: SVG.Parent
 
   // Add class methods
 , extend: {
@@ -4205,18 +4197,6 @@ SVG.Text = SVG.invent({
 
       return this.rebuild()
     }
-    // Get all the first level lines
-  , lines: function() {
-      var node = (this.textPath && this.textPath() || this).node
-
-      // filter tspans and map them to SVG.js instances
-      var lines = SVG.utils.map(SVG.utils.filterSVGElements(node.childNodes), function(el){
-        return SVG.adopt(el)
-      })
-
-      // return an instance of SVG.set
-      return new SVG.Set(lines)
-    }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
       // store new rebuild flag if given
@@ -4229,7 +4209,7 @@ SVG.Text = SVG.invent({
           , blankLineOffset = 0
           , dy = this.dom.leading * new SVG.Number(this.attr('font-size'))
 
-        this.lines().each(function() {
+        this.each(function() {
           if (this.dom.newLined) {
             if (!self.textPath())
               this.attr('x', self.attr('x'))
@@ -4681,154 +4661,6 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
   }
 })
 
-SVG.Set = SVG.invent({
-  // Initialize
-  create: function(members) {
-    // Set initial state
-    Array.isArray(members) ? this.members = members : this.clear()
-  }
-
-  // Add class methods
-, extend: {
-    // Add element to set
-    add: function() {
-      var i, il, elements = [].slice.call(arguments)
-
-      for (i = 0, il = elements.length; i < il; i++)
-        this.members.push(elements[i])
-
-      return this
-    }
-    // Remove element from set
-  , remove: function(element) {
-      var i = this.index(element)
-
-      // remove given child
-      if (i > -1)
-        this.members.splice(i, 1)
-
-      return this
-    }
-    // Iterate over all members
-  , each: function(block) {
-      for (var i = 0, il = this.members.length; i < il; i++)
-        block.apply(this.members[i], [i, this.members])
-
-      return this
-    }
-    // Restore to defaults
-  , clear: function() {
-      // initialize store
-      this.members = []
-
-      return this
-    }
-    // Get the length of a set
-  , length: function() {
-      return this.members.length
-    }
-    // Checks if a given element is present in set
-  , has: function(element) {
-      return this.index(element) >= 0
-    }
-    // retuns index of given element in set
-  , index: function(element) {
-      return this.members.indexOf(element)
-    }
-    // Get member at given index
-  , get: function(i) {
-      return this.members[i]
-    }
-    // Get first member
-  , first: function() {
-      return this.get(0)
-    }
-    // Get last member
-  , last: function() {
-      return this.get(this.members.length - 1)
-    }
-    // Default value
-  , valueOf: function() {
-      return this.members
-    }
-    // Get the bounding box of all members included or empty box if set has no items
-  , bbox: function(){
-      // return an empty box of there are no members
-      if (this.members.length == 0)
-        return new SVG.Box()
-
-      // get the first rbox and update the target bbox
-      var box = this.members[0].rbox(this.members[0].doc())
-
-      this.each(function() {
-        // user rbox for correct position and visual representation
-        box = box.merge(this.rbox(this.doc()))
-      })
-
-      return box
-    }
-  }
-
-  // Add parent method
-, construct: {
-    // Create a new set
-    set: function(members) {
-      return new SVG.Set(members)
-    }
-  }
-})
-
-SVG.FX.Set = SVG.invent({
-  // Initialize node
-  create: function(set) {
-    // store reference to set
-    this.set = set
-  }
-
-})
-
-// Alias methods
-SVG.Set.inherit = function() {
-  var m
-    , methods = []
-
-  // gather shape methods
-  for(var m in SVG.Shape.prototype)
-    if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
-      methods.push(m)
-
-  // apply shape aliasses
-  methods.forEach(function(method) {
-    SVG.Set.prototype[method] = function() {
-      for (var i = 0, il = this.members.length; i < il; i++)
-        if (this.members[i] && typeof this.members[i][method] == 'function')
-          this.members[i][method].apply(this.members[i], arguments)
-
-      return method == 'animate' ? (this.fx || (this.fx = new SVG.FX.Set(this))) : this
-    }
-  })
-
-  // clear methods for the next round
-  methods = []
-
-  // gather fx methods
-  for(var m in SVG.FX.prototype)
-    if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.FX.Set.prototype[m] != 'function')
-      methods.push(m)
-
-  // apply fx aliasses
-  methods.forEach(function(method) {
-    SVG.FX.Set.prototype[method] = function() {
-      for (var i = 0, il = this.set.members.length; i < il; i++)
-        this.set.members[i].fx[method].apply(this.set.members[i].fx, arguments)
-
-      return this
-    }
-  })
-}
-
-
-
 
 SVG.extend(SVG.Element, {
   // Store data values on svg nodes
@@ -4902,11 +4734,9 @@ SVG.get = function(id) {
 
 // Select elements by query string
 SVG.select = function(query, parent) {
-  return new SVG.Set(
-    SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
-      return SVG.adopt(node)
-    })
-  )
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
 }
 
 SVG.$$ = function(query, parent) {

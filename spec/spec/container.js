@@ -173,11 +173,11 @@ describe('Container', function() {
     it('creates a text element', function() {
       expect(draw.text(loremIpsum).type).toBe('text')
     })
-    it('creates an instance of SVG.Rect', function() {
+    it('creates an instance of SVG.Text', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Text).toBe(true)
     })
-    it('is an instance of SVG.Shape', function() {
-      expect(draw.text(loremIpsum) instanceof SVG.Shape).toBe(true)
+    it('is an instance of SVG.Parent', function() {
+      expect(draw.text(loremIpsum) instanceof SVG.Parent).toBe(true)
     })
     it('is an instance of SVG.Element', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Element).toBe(true)
@@ -196,8 +196,8 @@ describe('Container', function() {
     it('creates an instance of SVG.Rect', function() {
       expect(draw.plain(loremIpsum) instanceof SVG.Text).toBe(true)
     })
-    it('is an instance of SVG.Shape', function() {
-      expect(draw.plain(loremIpsum) instanceof SVG.Shape).toBe(true)
+    it('is an instance of SVG.Parent', function() {
+      expect(draw.plain(loremIpsum) instanceof SVG.Parent).toBe(true)
     })
     it('is an instance of SVG.Element', function() {
       expect(draw.plain(loremIpsum) instanceof SVG.Element).toBe(true)

@@ -26,7 +26,8 @@ describe('Element', function() {
 
     afterEach(function() {
       rect.remove()
-      draw.defs().select('pattern').each(function() { this.remove() })
+      //draw.defs().select('pattern').forEach(function(el) { el.remove() })
+      draw.defs().clear()
     })
 
     it('sets one attribute when two arguments are given', function() {
@@ -99,15 +100,15 @@ describe('Element', function() {
     })
     it('creates an image in defs when image path is specified for fill', function() {
       rect.attr('fill', imageUrl)
-      expect(draw.defs().select('pattern').length()).toBe(1)
-      expect(draw.defs().select('pattern image').length()).toBe(1)
-      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
+      expect(draw.defs().select('pattern').length).toBe(1)
+      expect(draw.defs().select('pattern image').length).toBe(1)
+      expect(draw.defs().select('pattern image')[0].src).toBe(imageUrl)
     })
     it('creates pattern in defs when image object is specified for fill', function() {
       rect.attr('fill', new SVG.Image().load(imageUrl))
-      expect(draw.defs().select('pattern').length()).toBe(1)
-      expect(draw.defs().select('pattern image').length()).toBe(1)
-      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
+      expect(draw.defs().select('pattern').length).toBe(1)
+      expect(draw.defs().select('pattern image').length).toBe(1)
+      expect(draw.defs().select('pattern image')[0].src).toBe(imageUrl)
     })
     it('correctly creates SVG.Array if array given', function() {
       rect.attr('something', [2,3,4])
@@ -577,7 +578,7 @@ describe('Element', function() {
     })
     it('returns the correct rectangular box', function() {
       // stroke has to be set in order to get the correct result when calling getBoundingClientRect in IE11
-      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12).stroke({width:0})
+      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12)//.stroke({width:0})
       var box = rect.rbox(draw)
       expect(box.x).toBeCloseTo(2)
       expect(box.y).toBeCloseTo(12)
@@ -882,12 +883,6 @@ describe('Element', function() {
 
       expect(g.attr('svgjs:data')).toBe('{"foo":"bar"}')
       expect(rect.attr('svgjs:data')).toBe('{"number":"3px"}')
-    })
-    it('uses lines() instead of each() when dealing with text', function() {
-      var text = draw.text('Hello\nWorld')
-      text.writeDataToDom()
-      expect(text.attr('svgjs:data')).toBe('{"leading":"1.3"}')
-      expect(text.lines().first().attr('svgjs:data')).toBe('{"newLined":true}')
     })
   })
 

@@ -36,8 +36,8 @@ describe('Selector', function() {
     it('gets all elements with a given class name', function() {
       expect(SVG.select('rect.selectable-element').valueOf()).toEqual([e1, e3, e5])
     })
-    it('returns an instance of SVG.Set', function() {
-      expect(SVG.select('rect.selectable-element') instanceof SVG.Set).toBe(true)
+    it('returns an Array', function() {
+      expect(SVG.select('rect.selectable-element') instanceof Array).toBe(true)
     })
   })
 

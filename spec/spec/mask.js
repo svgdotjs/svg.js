@@ -28,7 +28,7 @@ describe('Mask', function() {
   })
 
   it('references the masked element in the mask target list', function() {
-    expect(rect.masker().targets().index(rect) > -1).toBe(true)
+    expect(rect.masker().targets().indexOf(rect) > -1).toBe(true)
   })
 
   it('reuses mask element when mask was given', function() {

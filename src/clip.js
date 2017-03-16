@@ -10,14 +10,12 @@ SVG.ClipPath = SVG.invent({
     // Unclip all clipped elements and remove itself
     remove: function() {
       // unclip all targets
-      this.targets().each(function() {
-        this.unclip()
+      this.targets().forEach(function(el) {
+        el.unclip()
       })
 
       // remove clipPath from parent
-      this.parent().removeElement(this)
-
-      return this
+      return SVG.Element.prototype.remove.call(this)
     }
     
   , targets: function() {

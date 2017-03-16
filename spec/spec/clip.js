@@ -28,7 +28,7 @@ describe('ClipPath', function() {
   })
 
   it('references the clipped element in the clipPath target list', function() {
-    expect(rect.clipper().targets().index(rect) > -1).toBe(true)
+    expect(rect.clipper().targets().indexOf(rect) > -1).toBe(true)
   })
   
   it('reuses clip element when clip was given', function() {

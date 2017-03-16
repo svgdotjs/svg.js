@@ -58,10 +58,6 @@ SVG.extend = function() {
     if (modules[i])
       for (key in methods)
         modules[i].prototype[key] = methods[key]
-
-  // Make sure SVG.Set inherits any newly added methods
-  if (SVG.Set && SVG.Set.inherit)
-    SVG.Set.inherit()
 }
 
 // Invent new element

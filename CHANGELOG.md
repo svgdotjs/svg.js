@@ -11,10 +11,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 3.0.0
 
 ### Added
-- added `SVG.$()` and `SVG.$$()` which will query for one/all elements
+- added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
-- added specs for `SVG.FX` -> __TODO!__
 
 ### Removed
 - removed `SVG.Array.split()` function

@@ -31,9 +31,9 @@ describe('Text', function() {
       expect(text.rebuild(true)._rebuild).toBeTruthy()
     })
     it('rebuilds the text without an argument given', function() {
-      var dy = text.lines().get(2).attr('dy')
+      var dy = text.get(2).attr('dy')
       text.leading(1.7)
-      expect(dy == text.lines().get(2).attr('dy')).toBeFalsy()
+      expect(dy == text.get(2).attr('dy')).toBeFalsy()
     })
   })
 
@@ -47,7 +47,7 @@ describe('Text', function() {
     })
     it('sets the value of all lines', function() {
       text.x(200)
-      text.lines().each(function() {
+      text.each(function() {
         expect(this.x()).toBe(200)
       })
     })
@@ -234,10 +234,10 @@ describe('Text', function() {
         l2 = add.tspan('The second.')
         l3 = add.tspan('The third.')
       })
-      expect(text.lines().length()).toBe(3)
-      expect(text.lines().get(0)).toBe(l1)
-      expect(text.lines().get(1)).toBe(l2)
-      expect(text.lines().get(2)).toBe(l3)
+      expect(text.children().length).toBe(3)
+      expect(text.get(0)).toBe(l1)
+      expect(text.get(1)).toBe(l2)
+      expect(text.get(2)).toBe(l3)
     })
   })
 
@@ -248,7 +248,7 @@ describe('Text', function() {
         add.tspan('The second.')
         add.tspan('The third.')
       })
-      expect(text.length()).toBeCloseTo(text.lines().get(0).length() + text.lines().get(1).length() + text.lines().get(2).length(), 3)
+      expect(text.length()).toBeCloseTo(text.get(0).length() + text.get(1).length() + text.get(2).length(), 3)
     })
   })
 

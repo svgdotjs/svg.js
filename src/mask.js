@@ -10,14 +10,12 @@ SVG.Mask = SVG.invent({
     // Unmask all masked elements and remove itself
     remove: function() {
       // unmask all targets
-      this.targets().each(function() {
-        this.unmask()
+      this.targets().forEach(function(el) {
+        el.unmask()
       })
 
       // remove mask from parent
-      this.parent().removeElement(this)
-
-      return this
+      return SVG.Element.prototype.remove.call(this)
     }
 
   , targets: function() {

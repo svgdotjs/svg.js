@@ -232,9 +232,8 @@ SVG.Element = SVG.invent({
   , writeDataToDom: function() {
 
       // dump variables recursively
-      if(this.each || this.lines){
-        var fn = this.each ? this : this.lines();
-        fn.each(function(){
+      if(this.is(SVG.Parent)){
+        this.each(function(){
           this.writeDataToDom()
         })
       }
