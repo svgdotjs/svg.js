@@ -34,6 +34,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
 - moved all regexes to `SVG.regex` (in color, element, pointarray, style, transform and viewbox) -> __TODO!__
+- `svg()` will now return the element without svg-wrapper
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
