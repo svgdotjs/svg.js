@@ -218,7 +218,7 @@ describe('Element', function() {
     
     it('performs an absolute scale by default', function() {
       rect.transform({ scale: 3 }).transform({ scale: 0.5 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
+      expect(round(matrixStringToArray(rect.node.getAttribute('transform')))).toEqual([0.5,0,0,0.5,25,25])
     })
     it('performs a relative scale with a relative flag', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)

@@ -75,6 +75,9 @@ SVG.extend(SVG.Element, SVG.FX, {
   // Relative move over x and y axes
 , dmove: function(x, y) {
     return this.dx(x).dy(y)
+  } 
+, is: function(obj){
+    return is(this, obj)
   }
 })
 

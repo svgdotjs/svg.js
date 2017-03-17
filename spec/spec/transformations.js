@@ -183,7 +183,7 @@ describe('Transformations:', function() {
         expect(trans.at(0.75).toString()).toEqual('matrix(1.75,0,0,1.75,-37.5,-37.5)')
       })
       it('returns the inversed matrix from a specific position when created with inverse flag', function() {
-        var morphed = (new SVG.Scale(scaled.transform(2,2,50,50), true)).at(0.25)
+        var morphed = (new SVG.Scale(scaled.transform(), true)).at(0.25)
         
         expect(morphed.a).toBeCloseTo(0.8)
         expect(morphed.d).toBeCloseTo(0.8)
@@ -256,12 +256,12 @@ describe('Transformations:', function() {
         expect(trans.at(0.75)).toEqual((new SVG.Matrix()).morph((new SVG.Matrix()).skew(30, -30, 50, 50)).at(0.75))
       })
       it('returns the inversed matrix from a specific position when created with inverse flag', function() {
-        var morphed = (new SVG.Scale(skewed.transform(20,-20,50,50), true)).at(0.25)
+        var morphed = (new SVG.Skew(skewed.transform(), true)).at(0.5)
         
-        expect(morphed.a).toBeCloseTo(0.963)
-        expect(morphed.b).toBeCloseTo(0)
-        expect(morphed.c).toBeCloseTo(0)
-        expect(morphed.d).toBeCloseTo(0.963)
+        expect(morphed.a).toBeCloseTo(1.091)
+        expect(morphed.b).toBeCloseTo(-0.315)
+        expect(morphed.c).toBeCloseTo(-0.315)
+        expect(morphed.d).toBeCloseTo(1.0901)
         expect(morphed.e).toBeCloseTo(0)
         expect(morphed.f).toBeCloseTo(0)
       })
