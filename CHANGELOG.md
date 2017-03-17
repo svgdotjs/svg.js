@@ -20,7 +20,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed workaround for browser bug with stroke-width
 - removed polyfills
 - removed `ungroup()` in favour of `flatten()`
-- removed `SVG.Set` -> __TODO!__
+- removed `SVG.Set`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
 
 ### Changed
@@ -28,11 +28,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Path.pointAt()` correctly returns an `SVG.Point` now
 - made transform-methods relative as default (breaking change)
 - changed SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
-- made `parents()` method on `SVG.Element` return an instance of SVG.Set (breaking change) -> __TODO!__
 - replaced static reference to `masker` in `SVG.Mask` with the `masker()` method
 - replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
-- moved all regexes to `SVG.regex` (in color, element, pointarray, style, transform and viewbox) -> __TODO!__
+- moved all regexes to `SVG.regex`
 - `svg()` will now return the element without svg-wrapper
 
 ### Fixed
