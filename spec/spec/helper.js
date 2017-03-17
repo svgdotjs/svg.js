@@ -58,3 +58,14 @@ function roundBox(box) {
     Math.round(box.height)
   )
 }
+
+function round(a, p) {
+  var factor = Math.pow(10, p || 1)
+
+  if(typeof a == 'string') return Math.round(a*factor)/factor
+  
+  for(var i in a) {
+    a[i] = Math.round(a[i]*factor)/factor
+  }
+  return a
+}

@@ -90,7 +90,7 @@ describe('Matrix', function() {
           expect(extract.scaleX).toBeCloseTo(2)
           expect(extract.scaleY).toBeCloseTo(3)
         })
-        it('parses rotatoin value', function() {
+        it('parses rotation value', function() {
           var extract = new SVG.Matrix(draw.rect(100, 100).rotate(-100)).extract()
           expect(extract.rotation).toBeCloseTo(-100)
         })

@@ -1,4 +1,4 @@
-SVG.extend(SVG.Element, {
+/*SVG.extend(SVG.Element, {
   // Add transformations
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
@@ -95,12 +95,12 @@ SVG.extend(SVG.Element, {
 
     return this.attr('transform', matrix)
   }
-})
+})*/
 
-SVG.extend(SVG.FX, {
+SVG.extend(SVG.Element, SVG.FX, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
-    var target = this.target()
+    var target = this.is(SVG.FX) ? this.target() : this
       , matrix
 
     // act as a getter
@@ -138,13 +138,13 @@ SVG.extend(SVG.FX, {
       matrix = new SVG.Scale(o.scaleX, o.scaleY, o.cx, o.cy)
 
     // act on skew
-    } else if (o.skewX != null || o.skewY != null) {
+    } else if (o.skew != null || o.skewX != null || o.skewY != null) {
       // ensure centre point
       ensureCentre(o, target)
 
       // ensure skew values on both axes
-      o.skewX = o.skewX != null ? o.skewX : 0
-      o.skewY = o.skewY != null ? o.skewY : 0
+      o.skewX = o.skew != null ? o.skew : o.skewX != null ? o.skewX : 0
+      o.skewY = o.skew != null ? o.skew : o.skewY != null ? o.skewY : 0
 
       matrix = new SVG.Skew(o.skewX, o.skewY, o.cx, o.cy)
 
@@ -164,6 +164,10 @@ SVG.extend(SVG.FX, {
 
     matrix.relative = relative
 
+    if(!this.is(SVG.FX)) {
+      return this._applyTransformation(matrix, relative)
+    }
+
     this.last().transforms.push(matrix)
 
     return this._callStart()
@@ -171,6 +175,23 @@ SVG.extend(SVG.FX, {
 })
 
 SVG.extend(SVG.Element, {
+  _applyTransformation: function(matrix, relative) {
+    if(matrix instanceof SVG.Matrix && !relative) {
+      return this.attr('transform', matrix)
+    }
+
+    if(matrix instanceof SVG.Transformation) {
+      if(!relative) {
+        matrix = matrix.undo(this.transform()).matrix()
+      } else {
+        matrix = matrix.matrix()
+      }
+    }
+
+    matrix = this.matrixify().multiply(matrix)
+
+    return this.attr('transform', matrix)
+  },
   // Reset all transformations
   untransform: function() {
     return this.attr('transform', null)
@@ -244,19 +265,19 @@ SVG.Transformation = SVG.invent({
   , method: ''
 
   , at: function(pos){
+      var m = new SVG.Matrix().morph(this.matrix()).at(pos)
+      return this.inversed ? m.inverse() : m
+    }
 
+  , matrix: function() {
       var params = []
+        , m = this._undo || new SVG.Matrix()
 
       for(var i = 0, len = this.arguments.length; i < len; ++i){
         params.push(this[this.arguments[i]])
       }
 
-      var m = this._undo || new SVG.Matrix()
-
-      m = new SVG.Matrix().morph(SVG.Matrix.prototype[this.method].apply(m, params)).at(pos)
-
-      return this.inversed ? m.inverse() : m
-
+      return SVG.Matrix.prototype[this.method].apply(m, params)
     }
 
   , undo: function(o){
@@ -311,8 +332,12 @@ SVG.Rotate = SVG.invent({
       var m = new SVG.Matrix().rotate(new SVG.Number().morph(this.rotation - (this._undo ? this._undo.rotation : 0)).at(pos), this.cx, this.cy)
       return this.inversed ? m.inverse() : m
     }
+  , matrix: function() {
+      return new SVG.Matrix().rotate(this.rotation - (this._undo ? this._undo.rotation : 0), this.cx, this.cy)
+    }
   , undo: function(o){
       this._undo = o
+      return this
     }
   }
 
