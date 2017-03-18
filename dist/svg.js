@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Mar 18 2017 13:11:58 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Mar 18 2017 13:17:57 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -5424,7 +5424,7 @@ function idFromReference(url) {
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
 // Add CustomEvent to IE9 and IE10
-if (typeof CustomEvent !== 'function') {
+if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
   var CustomEvent = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }

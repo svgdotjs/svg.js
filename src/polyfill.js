@@ -1,5 +1,5 @@
 // Add CustomEvent to IE9 and IE10 
-if (typeof CustomEvent !== 'function') {
+if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
   var CustomEvent = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }
