@@ -133,10 +133,10 @@ SVG.extend(SVG.Element, {
 , fire: function(event, data) {
 
     // Dispatch event
-    if(event instanceof Event){
+    if(event instanceof window.Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(event = new CustomEvent(event, {detail:data, cancelable: true}))
+        this.node.dispatchEvent(event = new window.CustomEvent(event, {detail:data, cancelable: true}))
     }
 
     this._event = event

@@ -35,7 +35,7 @@ SVG.utils = {
   }
 
 , filterSVGElements: function(nodes) {
-    return this.filter( nodes, function(el) { return el instanceof SVGElement })
+    return this.filter( nodes, function(el) { return el instanceof window.SVGElement })
   }
 
 }
