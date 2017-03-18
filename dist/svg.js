@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Mar 16 2017 13:14:11 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sat Mar 18 2017 13:11:58 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -123,7 +123,7 @@ SVG.adopt = function(node) {
 
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
-    element = node.parentNode instanceof SVGElement ? new SVG.Nested : new SVG.Doc
+    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested : new SVG.Doc
   else if (node.nodeName == 'linearGradient')
     element = new SVG.Gradient('linear')
   else if (node.nodeName == 'radialGradient')
@@ -272,7 +272,7 @@ SVG.utils = {
   }
 
 , filterSVGElements: function(nodes) {
-    return this.filter( nodes, function(el) { return el instanceof SVGElement })
+    return this.filter( nodes, function(el) { return el instanceof window.SVGElement })
   }
 
 }
@@ -1186,7 +1186,7 @@ SVG.Element = SVG.invent({
       if(!type) return parent
 
       // loop trough ancestors if type is given
-      while(parent && parent.node instanceof SVGElement){
+      while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
         parent = SVG.adopt(parent.node.parentNode)
       }
@@ -3458,10 +3458,10 @@ SVG.extend(SVG.Element, {
 , fire: function(event, data) {
 
     // Dispatch event
-    if(event instanceof Event){
+    if(event instanceof window.Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(event = new CustomEvent(event, {detail:data, cancelable: true}))
+        this.node.dispatchEvent(event = new window.CustomEvent(event, {detail:data, cancelable: true}))
     }
 
     this._event = event
@@ -5389,7 +5389,7 @@ function arrayToString(a) {
 function assignNewId(node) {
   // do the same for SVG child nodes as well
   for (var i = node.childNodes.length - 1; i >= 0; i--)
-    if (node.childNodes[i] instanceof SVGElement)
+    if (node.childNodes[i] instanceof window.SVGElement)
       assignNewId(node.childNodes[i])
 
   return SVG.adopt(node).id(SVG.eid(node.nodeName))
