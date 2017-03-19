@@ -12,7 +12,7 @@ SVG.Image = SVG.invent({
       if (!url) return this
 
       var self = this
-        , img  = document.createElement('img')
+        , img  = new window.Image()
       
       // preload image
       img.onload = function() {
