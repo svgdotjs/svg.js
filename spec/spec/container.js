@@ -147,20 +147,20 @@ describe('Container', function() {
   describe('image()', function() {
     it('should increase children by 1', function() {
       var initial = draw.children().length
-      draw.image(imageUrl, 100, 100)
+      draw.image(imageUrl)
       expect(draw.children().length).toBe(initial + 1)
     })
     it('should create a rect', function() {
-      expect(draw.image(imageUrl, 100, 100).type).toBe('image')
+      expect(draw.image(imageUrl).type).toBe('image')
     })
     it('should create an instance of SVG.Rect', function() {
-      expect(draw.image(imageUrl, 100, 100) instanceof SVG.Image).toBe(true)
+      expect(draw.image(imageUrl) instanceof SVG.Image).toBe(true)
     })
     it('should be an instance of SVG.Shape', function() {
-      expect(draw.image(imageUrl, 100, 100) instanceof SVG.Shape).toBe(true)
+      expect(draw.image(imageUrl) instanceof SVG.Shape).toBe(true)
     })
     it('should be an instance of SVG.Element', function() {
-      expect(draw.image(imageUrl, 100, 100) instanceof SVG.Element).toBe(true)
+      expect(draw.image(imageUrl) instanceof SVG.Element).toBe(true)
     })
   })
 

@@ -32,7 +32,7 @@ SVG.extend(SVG.Element, {
       // convert image fill and stroke to patterns
       if (a == 'fill' || a == 'stroke') {
         if (SVG.regex.isImage.test(v))
-          v = this.doc().defs().image(v, 0, 0)
+          v = this.doc().defs().image(v)
 
         if (v instanceof SVG.Image)
           v = this.doc().defs().pattern(0, 0, function() {

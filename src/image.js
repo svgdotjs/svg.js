@@ -8,62 +8,44 @@ SVG.Image = SVG.invent({
   // Add class methods
 , extend: {
     // (re)load image
-    load: function(url) {
+    load: function(url, callback) {
       if (!url) return this
 
-      var self = this
-        , img  = new window.Image()
-      
-      // preload image
-      img.onload = function() {
-        var p = self.parent(SVG.Pattern)
+      var img = new window.Image()
 
-        if(p === null) return
+      SVG.on(img, 'load', function(e) {
         
+        var p = this.parent()
+
         // ensure image size
-        if (self.width() == 0 && self.height() == 0)
-          self.size(img.width, img.height)
+        if (this.width() == 0 && this.height() == 0)
+          this.size(img.width, img.height)
 
-        // ensure pattern size if not set
-        if (p && p.width() == 0 && p.height() == 0)
-          p.size(self.width(), self.height())
-        
-        // callback
-        if (typeof self._loaded === 'function')
-          self._loaded.call(self, {
+        if(p instanceof SVG.Pattern) {
+          // ensure pattern size if not set
+          if (p.width() == 0 && p.height() == 0)
+            p.size(this.width(), this.height())
+        }
+
+        if(typeof callback == 'function') {
+          callback.call(this, {
             width:  img.width
           , height: img.height
           , ratio:  img.width / img.height
           , url:    url
           })
-      }
-
-      img.onerror = function(e){
-        if (typeof self._error === 'function'){
-            self._error.call(self, e)
         }
-      }
+      }, this)
 
-      return this.attr('href', (img.src = this.src = url), SVG.xlink)
-    }
-    // Add loaded callback
-  , loaded: function(loaded) {
-      this._loaded = loaded
-      return this
-    }
-
-  , error: function(error) {
-      this._error = error
-      return this
+      return this.attr('href', (img.src = url), SVG.xlink)
     }
   }
-  
+
   // Add parent method
 , construct: {
     // create image element, load image and set its size
-    image: function(source, width, height) {
-      return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
+    image: function(source, callback) {
+      return this.put(new SVG.Image).size(0, 0).load(source, callback)
     }
   }
-
 })

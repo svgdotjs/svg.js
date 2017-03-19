@@ -22,6 +22,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `ungroup()` in favour of `flatten()`
 - removed `SVG.Set`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
+- removed `loaded()` and `error()` method on `SVG.Image`
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -33,6 +34,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
 - moved all regexes to `SVG.regex`
 - `svg()` will now return the element without svg-wrapper
+- new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)`
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

@@ -102,13 +102,13 @@ describe('Element', function() {
       rect.attr('fill', imageUrl)
       expect(draw.defs().select('pattern').length).toBe(1)
       expect(draw.defs().select('pattern image').length).toBe(1)
-      expect(draw.defs().select('pattern image')[0].src).toBe(imageUrl)
+      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('creates pattern in defs when image object is specified for fill', function() {
       rect.attr('fill', new SVG.Image().load(imageUrl))
       expect(draw.defs().select('pattern').length).toBe(1)
       expect(draw.defs().select('pattern image').length).toBe(1)
-      expect(draw.defs().select('pattern image')[0].src).toBe(imageUrl)
+      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('correctly creates SVG.Array if array given', function() {
       rect.attr('something', [2,3,4])
