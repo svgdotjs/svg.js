@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 19 2017 14:04:29 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Mar 19 2017 15:48:10 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -2999,6 +2999,7 @@ SVG.Rotate = SVG.invent({
     }
   , undo: function(o){
       this._undo = o
+      return this
     }
   }
 

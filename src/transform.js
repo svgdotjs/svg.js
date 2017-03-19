@@ -313,6 +313,7 @@ SVG.Rotate = SVG.invent({
     }
   , undo: function(o){
       this._undo = o
+      return this
     }
   }
 
