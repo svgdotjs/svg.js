@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Mar 18 2017 13:17:57 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Mar 19 2017 14:04:29 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4386,7 +4386,7 @@ SVG.Image = SVG.invent({
       if (!url) return this
 
       var self = this
-        , img  = document.createElement('img')
+        , img  = new window.Image()
 
       // preload image
       img.onload = function() {
