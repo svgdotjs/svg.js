@@ -131,7 +131,7 @@ describe('RBox', function() {
   it('creates a new instance from an element', function() {
     var rect = draw.rect(100, 100).move(100, 25).stroke({width:0})
     var box = new SVG.RBox(rect).transform(rect.doc().screenCTM().inverse()).addOffset()
-    expect(roundBox(box)).toEqual(jasmine.objectContaining({
+    expect(window.roundBox(box)).toEqual(jasmine.objectContaining({
       x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
     }))
   })
@@ -201,7 +201,7 @@ describe('Boxes', function() {
     it('returns the elements box in absolute screen coordinates by default', function() {
       var box = rect.rbox()
 
-      expect(roundBox(box)).toEqual(jasmine.objectContaining(roundBox({
+      expect(window.roundBox(box)).toEqual(jasmine.objectContaining(window.roundBox({
         x: 70 + offset.e, y: 200 + offset.f, width: 100, height: 360
       })))
 
@@ -210,7 +210,7 @@ describe('Boxes', function() {
     it('returns the elements box in coordinates of given element (doc)', function() {
       var box = rect.rbox(draw)
 
-      expect(roundBox(box)).toEqual(jasmine.objectContaining({
+      expect(window.roundBox(box)).toEqual(jasmine.objectContaining({
         x: 240, y: 500, width: 200, height: 720
       }))
     })
@@ -218,7 +218,7 @@ describe('Boxes', function() {
     it('returns the elements box in coordinates of given element (nested)', function() {
       var box = rect.rbox(nested)
 
-      expect(roundBox(box)).toEqual(jasmine.objectContaining({
+      expect(window.roundBox(box)).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
       }))
     })

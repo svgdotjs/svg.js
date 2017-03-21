@@ -12,9 +12,8 @@ describe('Memory', function () {
 
   describe('remember()', function() {
     it('accepts an object with values', function() {
-      rect.remember({ bbox: rect.bbox() })
-      rect.size(200,300)
-      expect(rect.remember('bbox').width).toBe(100)
+      rect.remember({ some: {cool:'and',nested:'stuff',foo:5} })
+      expect(rect.remember('some').foo).toBe(5)
     })
     it('accepts key / value arguments', function() {
       rect.remember('fill', rect.attr('fill'))

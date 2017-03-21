@@ -72,14 +72,9 @@ describe('Element', function() {
       rect.style('cursor', 'pointer')
       expect(rect.node.style.cursor).toBe('pointer')
     })
-    it('redirects to the style() method when setting a style string', function() {
+    it('sets the style attribute correctly', function() {
       rect.attr('style', 'cursor:move;')
       expect(rect.node.style.cursor).toBe('move')
-    })
-    it('removes style attribute on node if the style is empty', function() {
-      rect.style('cursor', 'move')
-      rect.style('cursor', '')
-      expect(rect.style.cursor).toBe(undefined)
     })
     it('acts as a global getter when no arguments are given', function() {
       rect.fill('#ff0066')
@@ -142,19 +137,19 @@ describe('Element', function() {
   describe('style()', function() {
     it('sets the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
-      expect(stripped(rect.node.style.cssText)).toBe('cursor:crosshair;')
+      expect(window.stripped(rect.node.style.cssText)).toBe('cursor:crosshair')
     })
     it('sets multiple styles with an object as the first argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
-      expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
-      expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
-      expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
+      expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
     it('sets multiple styles with a css string as the first argument', function() {
       var rect = draw.rect(100,100).style('cursor: help; display: block;')
-      expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
-      expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
-      expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
+      expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
     it('gets a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
@@ -162,17 +157,17 @@ describe('Element', function() {
     })
     it('gets the full css string with no argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
-      expect(stripped(rect.style())).toMatch(/display:none;/)
-      expect(stripped(rect.style())).toMatch(/cursor:s-resize;/)
-      expect(stripped(rect.style()).length).toBe(('cursor:s-resize;display:none;').length)
+      expect(window.stripped(rect.style())).toMatch(/display:none/)
+      expect(window.stripped(rect.style())).toMatch(/cursor:s-resize/)
+      expect(window.stripped(rect.style()).length).toBe(('cursor:s-resize;display:none').length)
     })
     it('removes a style if the value is an empty string', function() {
       var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
-      expect(stripped(rect.style())).toBe('cursor:n-resize;')
+      expect(window.stripped(rect.style())).toBe('cursor:n-resize')
     })
     it('removes a style if the value explicitly set to null', function() {
       var rect = draw.rect(100,100).style('cursor', 'w-resize')
-      expect(stripped(rect.style())).toBe('cursor:w-resize;')
+      expect(window.stripped(rect.style())).toBe('cursor:w-resize')
       rect.style('cursor', null)
       expect(rect.style()).toBe('')
     })
@@ -190,44 +185,44 @@ describe('Element', function() {
     })
     it('sets the translation of and element', function() {
       rect.transform({ x: 10, y: 11 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
     })
     it('performs an absolute translation', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
     })
     it('performs a relative translation when relative is set to true', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, relative: true })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('performs a relative translation with relative flag', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('sets the scaleX and scaleY of an element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,2,25,-50])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,2,25,-50])
     })
     it('performs a uniform scale with scale given', function() {
       rect.transform({ scale: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,3,-100,-100])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,3,-100,-100])
     })
     it('also works with only skaleX', function() {
       rect.transform({ scaleX: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,1,-100,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,1,-100,0])
     })
     it('also works with only skaleY', function() {
       rect.transform({ scaleY: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,3,0,-100])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,3,0,-100])
     })
     
     it('performs an absolute scale by default', function() {
       rect.transform({ scale: 3 }).transform({ scale: 0.5 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
     })
     it('performs a relative scale with a relative flag', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1.5,0,0,8,-25,-350])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1.5,0,0,8,-25,-350])
     })
     it('sets the skewX of an element with center on the element', function() {
       ctm = rect.transform({ skewX: 10 }).ctm()
@@ -295,31 +290,31 @@ describe('Element', function() {
     })
     it('transforms element using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,0,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,0,0])
     })
     it('transforms relative using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 }).transform(new SVG.Matrix({ e: 20, f: 20 }), true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,20,20])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,20,20])
     })
     it('flips the element on x axis', function() {
       rect.transform({ flip: 'x' })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
     })
     it('flips the element on x axis with offset', function() {
       rect.transform({ flip: 'x', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
     })
     it('flips the element on y axis with offset', function() {
       rect.transform({ flip: 'y', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
     })
     it('flips the element on both axis with offset', function() {
       rect.transform({ flip: 'both', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
     })
     it('flips the element on both axis', function() {
       rect.transform({ flip: 'both' })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,0,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,0,0])
     })
   })
 
@@ -331,7 +326,7 @@ describe('Element', function() {
     })
 
     it('removes the transform attribute', function() {
-      expect(matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,50,100])
+      expect(window.matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,50,100])
       circle.untransform()
       expect(circle.node.getAttribute('transform')).toBeNull()
     })

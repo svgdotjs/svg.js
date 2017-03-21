@@ -2194,10 +2194,10 @@ describe('FX', function() {
 
       fx.start()
       // When setting a style color, it get saved as  a rgb() string even if it was passed as an hex code
-      // The style rgb string as spaces while the one returned by SVG.Color do not as show bellow
+      // The style rgb string has spaces while the one returned by SVG.Color do not as show bellow
       // CSS: rgb(255, 255, 255)                    SVG.Color: rgb(255,255,255)
       // The space in the style rbg string are removed so they can be equal
-      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(0).toRgb())
+      expect(rect.style('fill').replace(/\s+/g, '')).toBe(morph.at(0).toRgb())
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()

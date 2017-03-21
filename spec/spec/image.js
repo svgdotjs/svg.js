@@ -67,7 +67,7 @@ describe('Image', function() {
       expect(image._error).toBe(errorCb.cb)
     })
     it('executes the error callback', function() {
-      expect(errorCb.cb).toHaveBeenCalledWith(jasmine.any(Event))
+      expect(errorCb.cb).toHaveBeenCalledWith(jasmine.any(window.Event))
     })
     it('does not execute the load callback', function() {
       expect(loadCb).not.toHaveBeenCalled()

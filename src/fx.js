@@ -148,12 +148,12 @@ SVG.FX = SVG.invent({
     // starts the animationloop
   , startAnimFrame: function(){
       this.stopAnimFrame()
-      this.animationFrame = requestAnimationFrame(function(){ this.step() }.bind(this))
+      this.animationFrame = window.requestAnimationFrame(function(){ this.step() }.bind(this))
     }
 
     // cancels the animationframe
   , stopAnimFrame: function(){
-      cancelAnimationFrame(this.animationFrame)
+      window.cancelAnimationFrame(this.animationFrame)
     }
 
     // kicks off the animation - only does something when the queue is currently not active and at least one situation is set

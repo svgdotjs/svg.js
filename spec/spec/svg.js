@@ -1,11 +1,11 @@
 describe('SVG', function() {
-  
+
   describe('()', function() {
     var drawing, wrapper
     
     beforeEach(function() {
-      wrapper = document.createElement('div')
-      document.getElementsByTagName('body')[0].appendChild(wrapper)
+      wrapper = document.createElement('svg')
+      document.documentElement.appendChild(wrapper)
       drawing = SVG(wrapper)
     })
     
@@ -87,18 +87,16 @@ describe('SVG', function() {
     var drawing, wrapper, parser
   
     beforeEach(function() {
-      wrapper = document.createElement('div')
-      document.getElementsByTagName('body')[0].appendChild(wrapper)
+      wrapper = document.createElement('svg')
+      document.documentElement.appendChild(wrapper)
       drawing = SVG(wrapper)
-      
-      parser = document.getElementsByTagName('body')[0].lastChild
     })
   
     it('creates a parser element when calling SVG()', function() {
       expect(SVG.parser.draw.node.nodeName).toBe('svg')
     })
     it('hides the parser', function() {
-      expect(SVG.parser.draw.node.getAttribute('style')).toBe('overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;')
+      expect(window.stripped(SVG.parser.draw.node.getAttribute('style'))).toBe('overflow:hidden;top:-100%;left:-100%;position:absolute;opacity:0')
     })
     it('holds polyline and path', function() {
       expect(SVG.select('polyline', SVG.parser.draw.node).first().type).toBe('polyline')

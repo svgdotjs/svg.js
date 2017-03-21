@@ -134,7 +134,7 @@ describe('Point', function() {
 
   describe('native()', function() {
     it('returns native SVGPoint', function() {
-      expect(new SVG.Point().native() instanceof SVGPoint).toBeTruthy()
+      expect(new SVG.Point().native() instanceof window.SVGPoint).toBeTruthy()
     })
   })
 })

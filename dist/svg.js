@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 19 2017 15:48:10 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Tue Mar 21 2017 18:10:30 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -152,7 +152,7 @@ SVG.adopt = function(node) {
 SVG.prepare = function() {
   // Select document body and create invisible svg element
   var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) :  new SVG.Doc(document.documentElement).nested()).size(2, 0)
+    , draw = (body ? new SVG.Doc(body) :  SVG.adopt(document.documentElement).nested()).size(2, 0)
 
   // Create parser object
   SVG.parser = {
@@ -1427,12 +1427,12 @@ SVG.FX = SVG.invent({
     // starts the animationloop
   , startAnimFrame: function(){
       this.stopAnimFrame()
-      this.animationFrame = requestAnimationFrame(function(){ this.step() }.bind(this))
+      this.animationFrame = window.requestAnimationFrame(function(){ this.step() }.bind(this))
     }
 
     // cancels the animationframe
   , stopAnimFrame: function(){
-      cancelAnimationFrame(this.animationFrame)
+      window.cancelAnimationFrame(this.animationFrame)
     }
 
     // kicks off the animation - only does something when the queue is currently not active and at least one situation is set
@@ -2251,7 +2251,7 @@ SVG.BBox = SVG.invent({
       } catch(e) {
         if(element instanceof SVG.Shape){
           var clone = element.clone(SVG.parser.draw).show()
-          box = clone.bbox()
+          box = clone.node.getBBox()
           clone.remove()
         }else{
           box = {
@@ -3342,15 +3342,10 @@ SVG.ViewBox = SVG.invent({
 
   // add event to SVG.Element
   SVG.Element.prototype[event] = function(f) {
-    var self = this
-
     // bind event to element rather than element node
-    this.node['on' + event] = typeof f == 'function' ?
-      function() { return f.apply(self, arguments) } : null
-
+    SVG.on(this.node, event, f)
     return this
   }
-
 })
 
 // Initialize listeners stack
@@ -4390,7 +4385,7 @@ SVG.Image = SVG.invent({
         , img  = new window.Image()
 
       // preload image
-      img.onload = function() {
+      SVG.on(img, 'load', function() {
         var p = self.parent(SVG.Pattern)
 
         if(p === null) return
@@ -4411,13 +4406,13 @@ SVG.Image = SVG.invent({
           , ratio:  img.width / img.height
           , url:    url
           })
-      }
+      })
 
-      img.onerror = function(e){
+      SVG.on(img, 'error', function(e){
         if (typeof self._error === 'function'){
             self._error.call(self, e)
         }
-      }
+      })
 
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }

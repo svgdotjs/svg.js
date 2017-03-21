@@ -128,7 +128,7 @@ describe('Path', function() {
       var box = path.bbox()
       expect(box.width).toBeCloseTo(234)
     })
-    it('gets the width of the element aithout an agrument', function() {
+    it('gets the width of the element without an argument', function() {
       path.width(456)
       expect(path.width()).toBeCloseTo(456)
     })
@@ -140,7 +140,7 @@ describe('Path', function() {
       var box = path.bbox()
       expect(box.height).toBeCloseTo(654)
     })
-    it('gets the height of the element aithout an agrument', function() {
+    it('gets the height of the element without an argument', function() {
       path.height(321)
       expect(path.height()).toBeCloseTo(321)
     })

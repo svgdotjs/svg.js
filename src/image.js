@@ -15,7 +15,7 @@ SVG.Image = SVG.invent({
         , img  = new window.Image()
       
       // preload image
-      img.onload = function() {
+      SVG.on(img, 'load', function() {
         var p = self.parent(SVG.Pattern)
 
         if(p === null) return
@@ -36,13 +36,13 @@ SVG.Image = SVG.invent({
           , ratio:  img.width / img.height
           , url:    url
           })
-      }
+      })
 
-      img.onerror = function(e){
+      SVG.on(img, 'error', function(e){
         if (typeof self._error === 'function'){
             self._error.call(self, e)
         }
-      }
+      })
 
       return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }

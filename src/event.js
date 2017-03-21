@@ -16,15 +16,10 @@
 
   // add event to SVG.Element
   SVG.Element.prototype[event] = function(f) {
-    var self = this
-
     // bind event to element rather than element node
-    this.node['on' + event] = typeof f == 'function' ?
-      function() { return f.apply(self, arguments) } : null
-
+    SVG.on(this.node, event, f)
     return this
   }
-
 })
 
 // Initialize listeners stack
