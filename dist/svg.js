@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 24 2017 10:55:31 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Mar 24 2017 15:15:34 GMT+0100 (CET)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4268,7 +4268,12 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
 , plot: function(p) {
     return (p == null) ?
       this.array() :
-      this.attr('points', (this._array = new SVG.PointArray(p)))
+      this.clear().attr('points', typeof p == 'string' ? p : (this._array = new SVG.PointArray(p)))
+  }
+  // Clear array cache
+, clear: function() {
+    delete this._array
+    return this
   }
   // Move by left top corner
 , move: function(x, y) {
@@ -4323,11 +4328,16 @@ SVG.Path = SVG.invent({
   , array: function() {
       return this._array || (this._array = new SVG.PathArray(this.attr('d')))
     }
-    // Plot new poly points
-  , plot: function(p) {
-      return (p == null) ?
+    // Plot new path
+  , plot: function(d) {
+      return (d == null) ?
         this.array() :
-        this.attr('d', (this._array = new SVG.PathArray(p)))
+        this.clear().attr('d', typeof d == 'string' ? d : (this._array = new SVG.PathArray(d)))
+    }
+    // Clear array cache
+  , clear: function() {
+      delete this._array
+      return this
     }
     // Move by left top corner
   , move: function(x, y) {

@@ -193,9 +193,36 @@ describe('Polyline', function() {
       expect(polyline.plot(pointString)).toBe(polyline)
       expect(polyline.attr('points')).toBe(pointArray.toString())
     })
-
     it('return the point array when no arguments are passed', function () {
       expect(polyline.plot()).toBe(polyline.array())
+    })
+    it('clears the array cache when a value is passed', function() {
+      polyline = draw.polyline([100,50,75,20,200,100])
+      expect(polyline._array instanceof SVG.PointArray).toBeTruthy()
+      polyline.plot('100,50 75,20 200,100')
+      expect(polyline._array).toBeUndefined()
+    })
+    it('applies a given polyline string value as is', function() {
+      var polyString = '100,50,75,20,200,100'
+
+      polyline = draw.polyline(polyString)
+      expect(polyline.attr('points')).toBe(polyString)
+    })
+    it('does not parse and cache a given string value to SVG.PointArray', function() {
+      polyline = draw.polyline('100,50 75,20 200,100')
+      expect(polyline._array).toBeUndefined()
+    })
+    it('caches a given array value', function() {
+      polyline = draw.polyline([100,50,75,20,200,100])
+      expect(polyline._array instanceof SVG.PointArray).toBeTruthy()
+    })
+  })
+
+  describe('clear()', function() {
+    it('clears the cached SVG.PointArray instance', function() {
+      polyline = draw.polyline([100,50,75,20,200,100])
+      polyline.clear()
+      expect(polyline._array).toBeUndefined()
     })
   })
 })

@@ -16,7 +16,6 @@ describe('Path', function() {
     })
   })
 
-
   describe('array()', function() {
     it('returns an instance of SVG.PathArray', function() {
       expect(path.array() instanceof SVG.PathArray).toBeTruthy()
@@ -192,27 +191,50 @@ describe('Path', function() {
   })
 
   describe('plot()', function() {
-    it('change the d attribute of the underlying path node when a string is passed', function() {
+    it('changes the d attribute of the underlying path node when a string is passed', function() {
       var pathString = 'm 3,2 c 0,0 -0,13 8,14 L 5,4'
         , pathArray = new SVG.PathArray(pathString)
 
       expect(path.plot(pathString)).toBe(path)
-      expect(path.attr('d')).toBe(pathArray.toString())
+      expect(path.attr('d')).toBe(pathString)
     })
+    it('clears the array cache when a value is passed', function() {
+      path = draw.path([ ['M', 50, 60], ['A', 60, 60, 0, 0, 0, 50, -60], ['z'] ])
+      expect(path._array instanceof SVG.PathArray).toBeTruthy()
+      path.plot('m 3,2 c 0,0 -0,13 8,14 L 5,4')
+      expect(path._array).toBeUndefined()
+    })
+    it('applies a given path string value as is', function() {
+      var pathString = 'm 3,2 c 0,0 -0,13 8,14 L 5,4'
 
-    it('return the path array when no arguments are passed', function () {
+      path = draw.path(pathString)
+      expect(path.attr('d')).toBe(pathString)
+    })
+    it('does not parse and cache a given string value to SVG.PathArray', function() {
+      path = draw.path('m 3,2 c 0,0 -0,13 8,14 L 5,4')
+      expect(path._array).toBeUndefined()
+    })
+    it('caches a given array value', function() {
+      path = draw.path([ ['M', 50, 60], ['A', 60, 60, 0, 0, 0, 50, -60], ['H', 100], ['L', 20, 30], ['Z'] ])
+      expect(path._array instanceof SVG.PathArray).toBeTruthy()
+    })
+    it('returns the path array when no arguments are passed', function () {
       expect(path.plot()).toBe(path.array())
+    })
+  })
+
+  describe('clear()', function() {
+    it('clears the cached SVG.PathArray instance', function() {
+      path = draw.path(svgPath)
+      path.clear()
+      expect(path._array).toBeUndefined()
     })
   })
 
   describe('toString()', function() {
     it('renders path array correctly to string', function() {
-      path = path.plot('M 50 60 A 60 60 0 0 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60 ')
+      path = path.plot(['M', 50, 60, 'A', 60, 60, 0, 0, 0, 50, -60, 'H', 100, 'V', 100, 'L', 20, 30, 'C', 10, 20, 30, 40, 50, 60 ])
       expect(path.node.getAttribute('d')).toBe('M50 60A60 60 0 0 0 50 -60H100V100L20 30C10 20 30 40 50 60 ')
-    })
-    it('renders path array correctly to string', function() {
-      path = path.plot('M 50 60 A 60 60 1 1 0 50 -60 H 100 V 100 L 20 30 C 10 20 30 40 50 60 ')
-      expect(path.node.getAttribute('d')).toBe('M50 60A60 60 1 1 0 50 -60H100V100L20 30C10 20 30 40 50 60 ')
     })
   })
 

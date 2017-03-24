@@ -185,18 +185,44 @@ describe('Polygon', function() {
     })
   })
 
-
   describe('plot()', function() {
-    it('change the points attribute of the underlying polygon node when a string is passed', function() {
+    it('changes the points attribute of the underlying polygon node when a string is passed', function() {
       var pointString = '100,50 75,20 200,100'
         , pointArray = new SVG.PointArray(pointString)
 
       expect(polygon.plot(pointString)).toBe(polygon)
       expect(polygon.attr('points')).toBe(pointArray.toString())
     })
-
-    it('return the point array when no arguments are passed', function () {
+    it('returns the point array when no arguments are passed', function () {
       expect(polygon.plot()).toBe(polygon.array())
+    })
+    it('clears the array cache when a value is passed', function() {
+      polygon = draw.polygon([100,50,75,20,200,100])
+      expect(polygon._array instanceof SVG.PointArray).toBeTruthy()
+      polygon.plot('100,50 75,20 200,100')
+      expect(polygon._array).toBeUndefined()
+    })
+    it('applies a given polygon string value as is', function() {
+      var polyString = '100,50,75,20,200,100'
+
+      polygon = draw.polygon(polyString)
+      expect(polygon.attr('points')).toBe(polyString)
+    })
+    it('does not parse and cache a given string value to SVG.PointArray', function() {
+      polygon = draw.polygon('100,50 75,20 200,100')
+      expect(polygon._array).toBeUndefined()
+    })
+    it('caches a given array value', function() {
+      polygon = draw.polygon([100,50,75,20,200,100])
+      expect(polygon._array instanceof SVG.PointArray).toBeTruthy()
+    })
+  })
+
+  describe('clear()', function() {
+    it('clears the cached SVG.PointArray instance', function() {
+      polygon = draw.polygon([100,50,75,20,200,100])
+      polygon.clear()
+      expect(polygon._array).toBeUndefined()
     })
   })
 })
