@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Mar 21 2017 18:10:30 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Fri Mar 24 2017 10:55:31 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -789,7 +789,7 @@ SVG.extend(SVG.PathArray, {
 
     }else{
       array = array.reduce(function(prev, curr){
-        return [].concat.apply(prev, curr)
+        return [].concat.call(prev, curr)
       }, [])
     }
 
@@ -2236,9 +2236,9 @@ SVG.BBox = SVG.invent({
 
         if (!document.documentElement.contains){
           // This is IE - it does not support contains() for top-level SVGs
-          var topParent = element.node;
+          var topParent = element.node
           while (topParent.parentNode){
-            topParent = topParent.parentNode;
+            topParent = topParent.parentNode
           }
           if (topParent != document) throw new Exception('Element not in the dom')
         } else {

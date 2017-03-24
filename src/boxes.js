@@ -73,9 +73,9 @@ SVG.BBox = SVG.invent({
 
         if (!document.documentElement.contains){
           // This is IE - it does not support contains() for top-level SVGs
-          var topParent = element.node;
+          var topParent = element.node
           while (topParent.parentNode){
-            topParent = topParent.parentNode;
+            topParent = topParent.parentNode
           }
           if (topParent != document) throw new Exception('Element not in the dom')
         } else {      

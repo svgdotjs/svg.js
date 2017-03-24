@@ -180,7 +180,7 @@ SVG.extend(SVG.PathArray, {
 
     }else{
       array = array.reduce(function(prev, curr){
-        return [].concat.apply(prev, curr)
+        return [].concat.call(prev, curr)
       }, [])
     }
 
