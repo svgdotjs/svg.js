@@ -1,3 +1,76 @@
+var pathHandlers = {
+  M: function(c, p, p0) {
+    p.x = p0.x = c[0]
+    p.y = p0.y = c[1]
+
+    return ['M', p.x, p.y]
+  },
+  L: function(c, p) {
+    p.x = c[0]
+    p.y = c[1]
+    return ['L', c[0], c[1]]
+  },
+  H: function(c, p) {
+    p.x = c[0]
+    return ['H', c[0]]
+  },
+  V: function(c, p) {
+    p.y = c[0]
+    return ['V', c[0]]
+  },
+  C: function(c, p) {
+    p.x = c[4]
+    p.y = c[5]
+    return ['C', c[0], c[1], c[2], c[3], c[4], c[5]]
+  },
+  S: function(c, p) {
+    p.x = c[2]
+    p.y = c[3]
+    return ['S', c[0], c[1], c[2], c[3]]
+  },
+  Q: function(c, p) {
+    p.x = c[2]
+    p.y = c[3]
+    return ['Q', c[0], c[1], c[2], c[3]]
+  },
+  T: function(c, p) {
+    p.x = c[0]
+    p.y = c[1]
+    return ['T', c[0], c[1]]
+  },
+  Z: function(c, p, p0) {
+    p.x = p0.x
+    p.y = p0.y
+    return ['Z']
+  },
+  A: function(c, p) {
+    p.x = c[5]
+    p.y = c[6]
+    return ['A', c[0], c[1], c[2], c[3], c[4], c[5], c[6]]
+  }
+}
+
+var mlhvqtcsa = 'mlhvqtcsaz'.split('')
+
+for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
+  pathHandlers[mlhvqtcsa[i]] = (function(i){
+    return function(c, p, p0) {
+      if(i == 'H') c[0] = c[0] + p.x
+      else if(i == 'V') c[0] = c[0] + p.y
+      else if(i == 'A'){
+        c[5] = c[5] + p.x,
+        c[6] = c[6] + p.y
+      }
+      else
+        for(var j = 0, jl = c.length; j < jl; ++j) {
+          c[j] = c[j] + (j%2 ? p.y : p.x)
+        }
+
+      return pathHandlers[i](c, p, p0)
+    }
+  })(mlhvqtcsa[i].toUpperCase())
+}
+
 // Path points array
 SVG.PathArray = function(array, fallback) {
   SVG.Array.call(this, array, fallback || [['M', 0, 0]])
@@ -185,15 +258,17 @@ SVG.extend(SVG.PathArray, {
     }
 
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
-
     var arr = []
+      , p = new SVG.Point()
+      , p0 = new SVG.Point()
+      , index = 0
+      , len = array.length
 
     do{
-
       // Test if we have a path letter
-      if(SVG.regex.isPathLetter.test(array[0])){
-        s = array[0]
-        array.shift()
+      if(SVG.regex.isPathLetter.test(array[index])){
+        s = array[index]
+        ++index
       // If last letter was a move command and we got no new, it defaults to [L]ine
       }else if(s == 'M'){
         s = 'L'
@@ -201,80 +276,13 @@ SVG.extend(SVG.PathArray, {
         s = 'l'
       }
 
-      // add path letter as first element
-      seg = [s.toUpperCase()]
+      arr.push(pathHandlers[s].call(null,
+          array.slice(index, (index = index + paramCnt[s.toUpperCase()])).map(parseFloat),
+          p, p0
+        )
+      )
 
-      // push all necessary parameters to segment
-      for(i = 0; i < paramCnt[seg[0]]; ++i){
-        seg.push(parseFloat(array.shift()))
-      }
-
-      // upper case
-      if(s == seg[0]){
-
-        if(s == 'M' || s == 'L' || s == 'C' || s == 'Q' || s == 'S' || s == 'T'){
-          x = seg[paramCnt[seg[0]]-1]
-          y = seg[paramCnt[seg[0]]]
-        }else if(s == 'V'){
-          y = seg[1]
-        }else if(s == 'H'){
-          x = seg[1]
-        }else if(s == 'A'){
-          x = seg[6]
-          y = seg[7]
-        }
-
-      // lower case
-      }else{
-
-        // convert relative to absolute values
-        if(s == 'm' || s == 'l' || s == 'c' || s == 's' || s == 'q' || s == 't'){
-
-          seg[1] += x
-          seg[2] += y
-
-          if(seg[3] != null){
-            seg[3] += x
-            seg[4] += y
-          }
-
-          if(seg[5] != null){
-            seg[5] += x
-            seg[6] += y
-          }
-
-          // move pointer
-          x = seg[paramCnt[seg[0]]-1]
-          y = seg[paramCnt[seg[0]]]
-
-        }else if(s == 'v'){
-          seg[1] += y
-          y = seg[1]
-        }else if(s == 'h'){
-          seg[1] += x
-          x = seg[1]
-        }else if(s == 'a'){
-          seg[6] += x
-          seg[7] += y
-          x = seg[6]
-          y = seg[7]
-        }
-
-      }
-
-      if(seg[0] == 'M'){
-        x0 = x
-        y0 = y
-      }
-
-      if(seg[0] == 'Z'){
-        x = x0
-        y = y0
-      }
-
-      arr.push(seg)
-
-    }while(array.length)
+    }while(len > index)
 
     return arr
 
