@@ -224,20 +224,3 @@ describe('Image', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

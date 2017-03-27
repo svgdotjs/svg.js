@@ -2,7 +2,7 @@
 //var drawing, window = window, document = document, SVG = SVG
 
 if(typeof exports === 'object'){
-  window = require('svgdom')
+  window = require('../../../svgdom/dom.js')
   SVG = require('../../dist/svg.js')
   document = window.document
   drawing = document.documentElement

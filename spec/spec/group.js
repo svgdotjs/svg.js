@@ -113,6 +113,4 @@ describe('Group', function() {
       expect(group.node.getAttribute('transform')).toBe('matrix(1,0,0,1,130,85)')
     })
   })
-
-
 })

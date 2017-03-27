@@ -175,11 +175,3 @@ describe('Circle', function() {
   })
   
 })
-
-
-
-
-
-
-
-

@@ -155,14 +155,14 @@ describe('Path', function() {
     it('defines the width and height proportionally with only the width value given', function() {
       var box = path.bbox()
       path.size(500)
-      expect(path.width()).toBe(500)
+      expect(path.width()).toBeCloseTo(500)
       expect(path.width() / path.height()).toBe(box.width / box.height)
     })
     it('defines the width and height proportionally with only the height value given', function() {
       var box = path.bbox()
       path.size(null, 525)
       expect(path.height()).toBe(525)
-      expect(path.width() / path.height()).toBe(box.width / box.height)
+      expect(path.width() / path.height()).toBeCloseTo(box.width / box.height)
     })
   })
 
