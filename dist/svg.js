@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Mar 27 2017 19:11:54 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Wed Mar 29 2017 16:04:59 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -152,12 +152,12 @@ SVG.adopt = function(node) {
 SVG.prepare = function() {
   // Select document body and create invisible svg element
   var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) :  SVG.adopt(document.documentElement).nested()).size(2, 0)
+    , draw = (body ? new SVG.Doc(body) : SVG.adopt(document.documentElement).nested()).size(2, 0)
 
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden')
+  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden').node
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')
@@ -662,20 +662,22 @@ var pathHandlers = {
 var mlhvqtcsa = 'mlhvqtcsaz'.split('')
 
 for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
-  pathHandlers[mlhvqtcsa[i]] = (function(i){return function(c, p, p0) {
-    if(i == 'H') c[0] = c[0] + p.x
-    else if(i == 'V') c[0] = c[0] + p.y
-    else if(i == 'A'){
-      c[5] = c[5] + p.x,
-      c[6] = c[6] + p.y
-    }
-    else
-      for(var j = 0, jl = c.length; j < jl; ++j) {
-        c[j] = c[j] + (j%2 ? p.y : p.x)
+  pathHandlers[mlhvqtcsa[i]] = (function(i){
+    return function(c, p, p0) {
+      if(i == 'H') c[0] = c[0] + p.x
+      else if(i == 'V') c[0] = c[0] + p.y
+      else if(i == 'A'){
+        c[5] = c[5] + p.x,
+        c[6] = c[6] + p.y
       }
+      else
+        for(var j = 0, jl = c.length; j < jl; ++j) {
+          c[j] = c[j] + (j%2 ? p.y : p.x)
+        }
 
-    return pathHandlers[i](c, p, p0)
-  }})(mlhvqtcsa[i].toUpperCase())
+      return pathHandlers[i](c, p, p0)
+    }
+  })(mlhvqtcsa[i].toUpperCase())
 }
 
 // Path points array
@@ -2256,7 +2258,7 @@ SVG.BBox = SVG.invent({
         box = element.node.getBBox()
       } catch(e) {
         if(element instanceof SVG.Shape){
-          var clone = element.clone(SVG.parser.draw).show()
+          var clone = element.clone(SVG.parser.draw.instance).show()
           box = clone.node.getBBox()
           clone.remove()
         }else{
@@ -2597,12 +2599,7 @@ SVG.Point = SVG.invent({
   , transform: function(matrix) {
       return new SVG.Point(this.native().matrixTransform(matrix.native()))
     }
-  , reflectAt: function(p) {
-      return new SVG.Point(
-        p.x + p.x - this.x,
-        p.y + p.y - this.y
-      )
-    }
+
   }
 
 })
@@ -3177,7 +3174,7 @@ SVG.Parent = SVG.invent({
 SVG.extend(SVG.Parent, {
 
   ungroup: function(parent, depth) {
-    if(depth === 0 || this instanceof SVG.Defs) return this
+    if(depth === 0 || this instanceof SVG.Defs || this.node == SVG.parser.draw) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
     depth = depth || Infinity
@@ -3983,6 +3980,20 @@ SVG.Doc = SVG.invent({
       }
 
       return this;
+    }
+  , clear: function() {
+      // remove children
+      while(this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild)
+
+      // remove defs reference
+      delete this._defs
+
+      // add back parser
+      if(!SVG.parser.draw.parentNode)
+        this.node.appendChild(SVG.parser.draw)
+
+      return this
     }
   }
 

@@ -76,6 +76,20 @@ SVG.Doc = SVG.invent({
 
       return this;
     }
+  , clear: function() {
+      // remove children
+      while(this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild)
+
+      // remove defs reference
+      delete this._defs
+
+      // add back parser
+      if(!SVG.parser.draw.parentNode)
+        this.node.appendChild(SVG.parser.draw)
+
+      return this
+    }
   }
 
 })

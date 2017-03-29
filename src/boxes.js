@@ -87,7 +87,7 @@ SVG.BBox = SVG.invent({
         box = element.node.getBBox()
       } catch(e) {
         if(element instanceof SVG.Shape){
-          var clone = element.clone(SVG.parser.draw).show()
+          var clone = element.clone(SVG.parser.draw.instance).show()
           box = clone.node.getBBox()
           clone.remove()
         }else{

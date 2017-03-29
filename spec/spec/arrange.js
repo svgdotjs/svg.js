@@ -11,17 +11,17 @@ describe('Arrange', function() {
 
   describe('siblings()', function() {
     it('returns all siblings of targeted element', function() {
-      expect(e1.siblings().length).toBe(3)
-      expect([e1,e2,e3]).toEqual(e2.siblings())
+      expect(e1.siblings().length).toBe(3+parserInDoc)
+      expect(parser.concat([e1,e2,e3])).toEqual(e2.siblings())
     })
   })
 
   describe('position()', function() {
     it('returns the index position within it\'s parent', function() {
-      expect(e1.siblings().length).toBe(3)
-      expect(e1.position()).toBe(0)
-      expect(e2.position()).toBe(1)
-      expect(e3.position()).toBe(2)
+      expect(e1.siblings().length).toBe(3+parserInDoc)
+      expect(e1.position()).toBe(0+parserInDoc)
+      expect(e2.position()).toBe(1+parserInDoc)
+      expect(e3.position()).toBe(2+parserInDoc)
     })
   })
 
@@ -35,7 +35,7 @@ describe('Arrange', function() {
 
   describe('previous()', function() {
     it('returns the previous sibling within the parent element', function() {
-      expect(e1.previous()).toBe(undefined)
+      expect(e1.previous()).toBe(parser[0])
       expect(e2.previous()).toBe(e1)
       expect(e3.previous()).toBe(e2)
     })
@@ -47,35 +47,39 @@ describe('Arrange', function() {
     })
     it('moves the element one step forward within its parent', function() {
       e1.forward()
-      expect(e1.position()).toBe(1)
-      expect(e2.position()).toBe(0)
-      expect(e3.position()).toBe(2)
+      expect(e1.position()).toBe(1+parserInDoc)
+      expect(e2.position()).toBe(0+parserInDoc)
+      expect(e3.position()).toBe(2+parserInDoc)
     })
     it('keeps the last element at the same position', function() {
       e3.forward()
-      expect(e3.position()).toBe(2)
+      expect(e3.position()).toBe(2+parserInDoc)
     })
     it('keeps the defs on top of the stack', function() {
       draw.defs()
       e3.forward()
-      expect(draw.node.childNodes[2]).toBe(e3.node)
-      expect(draw.node.childNodes[3]).toBe(draw.defs().node)
+      expect(draw.node.childNodes[2+parserInDoc]).toBe(e3.node)
+      expect(draw.node.childNodes[3+parserInDoc]).toBe(draw.defs().node)
     })
   })
 
   describe('backward()', function() {
     it('returns the element itself', function() {
-      expect(e1.backward()).toBe(e1)
+      if(parserInDoc){
+        expect(parser[0].backward()).toBe(parser[0])
+      }else{
+        expect(e1.backward()).toBe(e1)
+      }
     })
     it('moves the element one step backwards within its parent', function() {
       e3.backward()
-      expect(e1.position()).toBe(0)
-      expect(e2.position()).toBe(2)
-      expect(e3.position()).toBe(1)
+      expect(e1.position()).toBe(0+parserInDoc)
+      expect(e2.position()).toBe(2+parserInDoc)
+      expect(e3.position()).toBe(1+parserInDoc)
     })
     it('keeps the first element at the same position', function() {
       e3.backward()
-      expect(e1.position()).toBe(0)
+      expect(e1.position()).toBe(0+parserInDoc)
     })
   })
 
@@ -85,18 +89,18 @@ describe('Arrange', function() {
     })
     it('moves the element to the top of the stack within its parent', function() {
       e1.front()
-      expect(e1.position()).toBe(2)
-      expect(e2.position()).toBe(0)
-      expect(e3.position()).toBe(1)
+      expect(e1.position()).toBe(2+parserInDoc)
+      expect(e2.position()).toBe(0+parserInDoc)
+      expect(e3.position()).toBe(1+parserInDoc)
     })
     it('keeps the last element at the same position', function() {
       e3.front()
-      expect(e3.position()).toBe(2)
+      expect(e3.position()).toBe(2+parserInDoc)
     })
     it('keeps the defs on top of the stack', function() {
       e1.front()
-      expect(draw.node.childNodes[2]).toBe(e1.node)
-      expect(draw.node.childNodes[3]).toBe(draw.defs().node)
+      expect(draw.node.childNodes[2+parserInDoc]).toBe(e1.node)
+      expect(draw.node.childNodes[3+parserInDoc]).toBe(draw.defs().node)
     })
   })
 
@@ -106,8 +110,8 @@ describe('Arrange', function() {
     })
     it('moves the element to the bottom of the stack within its parent', function() {
       e3.back()
-      expect(e1.position()).toBe(1)
-      expect(e2.position()).toBe(2)
+      expect(e1.position()).toBe(1+parserInDoc)
+      expect(e2.position()).toBe(2+parserInDoc)
       expect(e3.position()).toBe(0)
     })
     it('keeps the first element at the same position', function() {
@@ -122,9 +126,9 @@ describe('Arrange', function() {
     })
     it('inserts a given element before the targeted element', function() {
       e3.before(e1)
-      expect(e1.position()).toBe(1)
-      expect(e2.position()).toBe(0)
-      expect(e3.position()).toBe(2)
+      expect(e1.position()).toBe(1+parserInDoc)
+      expect(e2.position()).toBe(0+parserInDoc)
+      expect(e3.position()).toBe(2+parserInDoc)
     })
     it('moves elements between containers', function() {
       var group = draw.group()
@@ -133,10 +137,10 @@ describe('Arrange', function() {
         , e6 = group.rect(80,120)
 
       e2.before(e5)
-      expect(e1.position()).toBe(0)
-      expect(e2.position()).toBe(2)
-      expect(e3.position()).toBe(3)
-      expect(e5.position()).toBe(1)
+      expect(e1.position()).toBe(0+parserInDoc)
+      expect(e2.position()).toBe(2+parserInDoc)
+      expect(e3.position()).toBe(3+parserInDoc)
+      expect(e5.position()).toBe(1+parserInDoc)
     })
   })
 
@@ -146,9 +150,9 @@ describe('Arrange', function() {
     })
     it('inserts a given element after the targeted element', function() {
       e3.after(e1)
-      expect(e1.position()).toBe(2)
-      expect(e2.position()).toBe(0)
-      expect(e3.position()).toBe(1)
+      expect(e1.position()).toBe(2+parserInDoc)
+      expect(e2.position()).toBe(0+parserInDoc)
+      expect(e3.position()).toBe(1+parserInDoc)
     })
     it('moves elements between containers', function() {
       var group = draw.group()
@@ -157,10 +161,10 @@ describe('Arrange', function() {
         , e6 = group.rect(80,120)
 
       e2.after(e5)
-      expect(e1.position()).toBe(0)
-      expect(e2.position()).toBe(1)
-      expect(e3.position()).toBe(3)
-      expect(e5.position()).toBe(2)
+      expect(e1.position()).toBe(0+parserInDoc)
+      expect(e2.position()).toBe(1+parserInDoc)
+      expect(e3.position()).toBe(3+parserInDoc)
+      expect(e5.position()).toBe(2+parserInDoc)
     })
   })
 

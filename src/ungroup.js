@@ -1,7 +1,7 @@
 SVG.extend(SVG.Parent, {
 
   ungroup: function(parent, depth) {
-    if(depth === 0 || this instanceof SVG.Defs) return this
+    if(depth === 0 || this instanceof SVG.Defs || this.node == SVG.parser.draw) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
     depth = depth || Infinity

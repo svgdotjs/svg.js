@@ -22,12 +22,20 @@ describe('Bare', function() {
   describe('words()', function() {
     it('inserts plain text in a node', function() {
       var element = draw.element('title').words('These are some words.').id(null)
-      expect(element.svg()).toBe('<title>These are some words.</title>')
+      var result = element.svg()
+      expect(
+           result == '<title>These are some words.</title>'
+        || result == '<title xmlns="http://www.w3.org/2000/svg">These are some words.</title>'
+      ).toBe(true)
     })
     it('removes all nodes before adding words', function() {
       var element = draw.element('title').words('These are some words.').id(null)
       element.words('These are some words.')
-      expect(element.svg()).toBe('<title>These are some words.</title>')
+      var result = element.svg()
+      expect(
+           result == '<title>These are some words.</title>'
+        || result == '<title xmlns="http://www.w3.org/2000/svg">These are some words.</title>'
+      ).toBe(true)
     })
   })
 })
