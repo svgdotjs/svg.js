@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 29 2017 16:04:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 04 2017 22:34:58 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1298,6 +1298,28 @@ SVG.morph = function(pos){
   }
 }
 
+
+function reverseSituations(situations) {
+  var i, il, j, temp
+
+  // toogle the reversed flag of all the situations and reverse the situations array
+  for(i = 0, il = situations.length>>1; i < il; i++) {
+    j = situations.length-i-1
+    situations[i].reversed = !situations[i].reversed
+    situations[j].reversed = !situations[j].reversed
+    temp = situations[j]
+    situations[j] = situations[i]
+    situations[i] = temp
+  }
+
+  if(situations.length % 2) {
+    situations[il].reversed = !situations[il].reversed
+  }
+
+  return situations
+}
+
+
 SVG.Situation = SVG.invent({
 
   create: function(o){
@@ -1650,6 +1672,75 @@ SVG.FX = SVG.invent({
       c.loop = 0
 
       if(reverse) c.reversing = true
+      return this
+    }
+
+  , loopAll: function(loops, reversing) {
+
+      var i = this.situations.length, situations = []
+
+      // save all the situations that are before loopAll until reaching the
+      // start of the situations array or another loopAll (we are not saving
+      // the situations before the other loopAll since he already saved them)
+      while(--i >= 0) {
+        situations.unshift(this.situations[i])
+        if(this.situations[i].isLoopAll) break
+      }
+
+      // save the current situation if the start of the situations array was
+      // reached
+      if(this.situation && i===-1) {
+        situations.unshift(this.situation)
+      }
+
+      // If no situation was saved, then this loopAll is useless, no need to
+      // go further
+      if(!situations.length) return this
+
+      // Create a function that will be called by dequeue
+      function doLoopAll() {
+        var self = this.situation
+
+
+        if(self.loops === true || self.loop < self.loops) {
+          // Reverse the saved situations if one of the following is true:
+          // 1. This loopAll is part of another loopAll with reversing set to true and it's time to reverse (the loop counter of the other loopAll is above 0)
+          // 2. This loopAll as his reversing set to true and it's time to reverse (his loop counter is above 0)
+          if(self.reversed != self.isReversed || (self.reversing && self.loop)) {
+            reverseSituations(self.situations)
+            self.isReversed = self.reversed != self.isReversed ? !self.isReversed : self.isReversed
+          }
+
+          // Prepend the situations saved by this loopAll before the remaining
+          // situations of the situations array
+          this.situations = [].concat(self.situations, this.situation, this.situations)
+          self.loop++
+        } else {
+          // The loopAll is done, we reset its fields in case it is included in
+          // another loopAll
+          self.loop = 0
+
+          // check if the saved situations are reversed (we do not unreverse it
+          // at this point to not waste cpu cycle since it is uncertain if this
+          // loopAll will be used again)
+          if(self.reversing && !(self.loops % 2)) {
+            self.isReversed = !self.isReversed
+          }
+        }
+
+        this.dequeue()
+      }
+
+      doLoopAll.isLoopAll = true
+      doLoopAll.loops = loops
+      doLoopAll.loop = 1 // loop is 1 because there will be one iteration done when this function will be called
+      doLoopAll.reversing = reversing
+      doLoopAll.reversed = false
+      doLoopAll.isReversed = false
+      doLoopAll.situations = situations
+
+      this.queue(doLoopAll)
+
       return this
     }
 
