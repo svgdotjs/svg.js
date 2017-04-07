@@ -34,10 +34,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - `clear()` does not remove the parser in svg documents anymore
 
-## [2.5.1] - 2017-03-27
+## [2.5.1](https://github.com/svgdotjs/svg.js/releases/tag/2.5.1) - 2017-03-27
 
 ### Fixed
 - fixed `SVG.PathArray.parse` that did not correctly parsed flat arrays
+- prevented unnecessary parsing of point or path strings
 
 ### Changed
 - make svgjs ready to be used on the server

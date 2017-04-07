@@ -1,5 +1,5 @@
 SVG.bench.describe('Generate 10000 rects', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.1', function() {
     for (var i = 0; i < 10000; i++)
       bench.draw.rect(100,100)
   })
@@ -19,7 +19,7 @@ SVG.bench.describe('Generate 10000 rects', function(bench) {
 
 
 SVG.bench.describe('Generate 10000 rects with fill', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.1', function() {
     for (var i = 0; i < 10000; i++)
       bench.draw.rect(100,100).fill('#f06')
   })
@@ -40,7 +40,7 @@ SVG.bench.describe('Generate 10000 rects with fill', function(bench) {
 
 
 SVG.bench.describe('Generate 10000 rects with position and fill', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.1', function() {
     for (var i = 0; i < 10000; i++)
       bench.draw.rect(100,100).move(50,50).fill('#f06')
   })
@@ -63,7 +63,7 @@ SVG.bench.describe('Generate 10000 rects with position and fill', function(bench
 
 
 SVG.bench.describe('Generate 10000 rects with gradient fill', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.1', function() {
     for (var i = 0; i < 10000; i++) {
       var g = bench.draw.gradient('linear', function(stop) {
         stop.at(0, '#000')
