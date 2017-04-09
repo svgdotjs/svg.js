@@ -4,7 +4,7 @@
 parserInDoc = false
 
 if(typeof exports === 'object'){
-  window = require('../../../svgdom/dom.js')
+  window = require('svgdom')
   SVG = require('../../dist/svg.js')
   document = window.document
   drawing = document.documentElement
