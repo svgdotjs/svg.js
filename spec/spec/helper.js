@@ -104,21 +104,18 @@ if(typeof exports === 'object'){
       id: 'labelGroup'
     },[
       tag('text', {
-        id: 'pointA',
-        cx: '100',
-        cy: '350',
+        x: '100',
+        y: '350',
         dy: '-30',
       }, ['A']),
       tag('text', {
-        id: 'pointB',
-        cx: '250',
-        cy: '50',
+        x: '250',
+        y: '50',
         dy: '-10',
       }, ['B']),
       tag('text', {
-        id: 'pointC',
-        cx: '400',
-        cy: '350',
+        x: '400',
+        y: '350',
         dx: '30',
       }, ['C'])
     ]),

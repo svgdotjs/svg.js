@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Mar 29 2017 16:04:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 09 2017 16:00:39 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3976,10 +3976,10 @@ SVG.Doc = SVG.invent({
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {
-        this.parent().removeChild(this.node);
+        this.parent().removeChild(this.node)
       }
 
-      return this;
+      return this
     }
   , clear: function() {
       // remove children
