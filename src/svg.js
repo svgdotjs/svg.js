@@ -1,5 +1,7 @@
+'use strict'
+
 // The main wrapping element
-var SVG = this.SVG = function(element) {
+var SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
     

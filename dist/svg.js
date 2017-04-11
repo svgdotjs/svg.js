@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Apr 09 2017 16:00:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 11 2017 15:22:51 GMT+0200 (CEST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -20,8 +20,10 @@
   }
 }(typeof window !== "undefined" ? window : this, function(window, document) {
 
+'use strict'
+
 // The main wrapping element
-var SVG = this.SVG = function(element) {
+var SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
 
