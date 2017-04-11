@@ -37,9 +37,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 
+### Removed
+- component.json (#652)
 
 
-## [2.5.2](https://github.com/svgdotjs/svg.js/releases/tag/2.5.2) - 2017-04-11
+## [2.5.2] - 2017-04-11
 
 ### Changed
 - SVG.js is now running in strict mode
@@ -51,7 +53,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `namespace` not declared in the Event module (e89c97e)
 
 
-## [2.5.1](https://github.com/svgdotjs/svg.js/releases/tag/2.5.1) - 2017-03-27
+## [2.5.1] - 2017-03-27
 
 ### Changed
 - make svgjs ready to be used on the server
@@ -61,7 +63,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - prevented unnecessary parsing of point or path strings
 
 
-## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
+## [2.5.0] - 2017-03-10
 
 ### Added
 - added a plot and array method to `SVG.TextPath` (#582)
@@ -575,6 +577,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
+[2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
+[2.5.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.0
 [2.4.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.4.0
 
 [2.3.7]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.7
