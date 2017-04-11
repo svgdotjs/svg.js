@@ -8,11 +8,10 @@ SVG.Box = SVG.invent({
       this.y = y
       this.width = width
       this.height = height
-
     }
 
     // add center, right, bottom...
-    fullBox(this)
+    fullBox(this)    
   }
 , extend: {
     // Merge rect box with another, return a new instance
@@ -29,7 +28,7 @@ SVG.Box = SVG.invent({
     }
 
   , transform: function(m) {
-      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p, bbox
 
       var pts = [
         new SVG.Point(this.x, this.y),
@@ -78,7 +77,7 @@ SVG.BBox = SVG.invent({
             topParent = topParent.parentNode
           }
           if (topParent != document) throw new Exception('Element not in the dom')
-        } else {      
+        } else {
           // the element is NOT in the dom, throw error
           if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
         }

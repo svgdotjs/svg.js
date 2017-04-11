@@ -33,6 +33,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - `clear()` does not remove the parser in svg documents anymore
+- `len` not declared in FX module, making it a global variable
+- `bbox` not declared in SVG.Box.transform
 
 ## [2.5.1](https://github.com/svgdotjs/svg.js/releases/tag/2.5.1) - 2017-03-27
 
