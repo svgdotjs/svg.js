@@ -29,9 +29,17 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
-## UNRELEASED [2.5.2]
+## UNRELEASED [2.5.3]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+
+
+## [2.5.2](https://github.com/svgdotjs/svg.js/releases/tag/2.5.2) - 2017-04-11
 
 ### Changed
 - SVG.js is now running in strict mode
@@ -42,13 +50,16 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `bbox` not declared in SVG.Box.transform in the Box module (131df0f)
 - `namespace` not declared in the Event module (e89c97e)
 
+
 ## [2.5.1](https://github.com/svgdotjs/svg.js/releases/tag/2.5.1) - 2017-03-27
+
 ### Changed
 - make svgjs ready to be used on the server
 
 ### Fixed
 - fixed `SVG.PathArray.parse` that did not correctly parsed flat arrays
 - prevented unnecessary parsing of point or path strings
+
 
 ## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
 
