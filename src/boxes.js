@@ -11,7 +11,7 @@ SVG.Box = SVG.invent({
     }
 
     // add center, right, bottom...
-    fullBox(this)    
+    fullBox(this)
   }
 , extend: {
     // Merge rect box with another, return a new instance
