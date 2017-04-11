@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 11 2017 15:22:51 GMT+0200 (CEST)
+* BUILT: Tue Apr 11 2017 16:44:57 GMT+0200 (CEST)
 */;
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1873,7 +1873,7 @@ SVG.FX = SVG.invent({
 
     // calculates the step for every property and calls block with it
   , eachAt: function(){
-      var i, at, self = this, target = this.target(), s = this.situation
+      var i, len, at, self = this, target = this.target(), s = this.situation
 
       // apply animations which can be called trough a method
       for(i in s.animations){
@@ -2181,7 +2181,6 @@ SVG.Box = SVG.invent({
       this.y = y
       this.width = width
       this.height = height
-
     }
 
     // add center, right, bottom...
@@ -2202,7 +2201,7 @@ SVG.Box = SVG.invent({
     }
 
   , transform: function(m) {
-      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p, bbox
 
       var pts = [
         new SVG.Point(this.x, this.y),
@@ -3392,6 +3391,7 @@ SVG.off = function(node, event, listener) {
   var index = SVG.handlerMap.indexOf(node)
     , ev    = event && event.split('.')[0]
     , ns    = event && event.split('.')[1]
+    , namespace = ''
 
   if(index == -1) return
 
@@ -3477,6 +3477,7 @@ SVG.extend(SVG.Element, {
     return this._event
   }
 })
+
 
 SVG.Defs = SVG.invent({
   // Initialize node

@@ -56,6 +56,7 @@ SVG.off = function(node, event, listener) {
   var index = SVG.handlerMap.indexOf(node)
     , ev    = event && event.split('.')[0]
     , ns    = event && event.split('.')[1]
+    , namespace = ''
 
   if(index == -1) return
 

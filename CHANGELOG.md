@@ -31,19 +31,24 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ## UNRELEASED [2.5.2]
 
+### Added
+
+### Changed
+- SVG.js is now running in strict mode
+
 ### Fixed
 - `clear()` does not remove the parser in svg documents anymore
-- `len` not declared in FX module, making it a global variable
-- `bbox` not declared in SVG.Box.transform
+- `len` not declared in FX module, making it a global variable (9737e8a)
+- `bbox` not declared in SVG.Box.transform in the Box module (131df0f)
+- `namespace` not declared in the Event module (e89c97e)
 
 ## [2.5.1](https://github.com/svgdotjs/svg.js/releases/tag/2.5.1) - 2017-03-27
+### Changed
+- make svgjs ready to be used on the server
 
 ### Fixed
 - fixed `SVG.PathArray.parse` that did not correctly parsed flat arrays
 - prevented unnecessary parsing of point or path strings
-
-### Changed
-- make svgjs ready to be used on the server
 
 ## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
 

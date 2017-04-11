@@ -32,7 +32,7 @@ describe('Box', function() {
       var box2 = new SVG.Box(300, 400, 100, 100)
       var box3 = new SVG.Box(500, 100, 100, 100)
       var merged = box1.merge(box2).merge(box3)
-      
+
       expect(merged).toEqual(jasmine.objectContaining({
         x: 50, y: 50, cx: 325, cy: 275, width: 550, height: 450
       }))
@@ -43,25 +43,25 @@ describe('Box', function() {
       var merged = box1.merge(box2)
       expect(box1).not.toBe(merged)
       expect(box2).not.toBe(merged)
-      
+
       expect(merged instanceof SVG.Box).toBe(true)
     })
   })
-  
+
   describe('transform()', function() {
     it('transforms the box with given matrix', function() {
       var box1 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(1,0,0,1,20,20))
       var box2 = new SVG.Box(50, 50, 100, 100).transform(new SVG.Matrix(2,0,0,2,0,0))
       var box3 = new SVG.Box(-200, -200, 100, 100).transform(new SVG.Matrix(1,0,0,1,-20,-20))
-      
+
       expect(box1).toEqual(jasmine.objectContaining({
         x: 70, y: 70, cx: 120, cy: 120, width: 100, height: 100
       }))
-      
+
       expect(box2).toEqual(jasmine.objectContaining({
         x: 100, y: 100, cx: 200, cy: 200, width: 200, height: 200
       }))
-      
+
       expect(box3).toEqual(jasmine.objectContaining({
         x: -220, y: -220, cx: -170, cy: -170, width: 100, height: 100
       }))
@@ -83,13 +83,13 @@ describe('BBox', function() {
       x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
     }))
   })
-  
+
   describe('merge()', function() {
     it('returns an instance of SVG.BBox', function() {
       var box1 = new SVG.BBox(50, 50, 100, 100)
       var box2 = new SVG.BBox(300, 400, 100, 100)
       var merged = box1.merge(box2)
-      
+
       expect(merged instanceof SVG.BBox).toBe(true)
     })
   })
@@ -135,13 +135,13 @@ describe('RBox', function() {
       x: 100, y: 25, cx: 150, cy: 75, width: 100, height: 100
     }))
   })
-  
+
   describe('merge()', function() {
     it('returns an instance of SVG.RBox', function() {
       var box1 = new SVG.RBox(50, 50, 100, 100)
       var box2 = new SVG.RBox(300, 400, 100, 100)
       var merged = box1.merge(box2)
-      
+
       expect(merged instanceof SVG.RBox).toBe(true)
     })
   })
