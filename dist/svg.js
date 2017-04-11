@@ -6,9 +6,11 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 11 2017 18:39:19 GMT+0200 (CEST)
+* BUILT: Tue Apr 11 2017 19:58:26 GMT+0200 (CEST)
 */;
 (function(root, factory) {
+  'use strict'
+  /* istanbul ignore next */
   if (typeof define === 'function' && define.amd) {
     define(function(){
       return factory(root, root.document)
