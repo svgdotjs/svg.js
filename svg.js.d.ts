@@ -161,8 +161,6 @@ declare namespace svgjs {
     
     export interface Container extends Parent {
         new (): Container;
-        viewbox(): ViewBox;
-        viewbox(x: ViewBoxLike | number, y?: number, width?: number, height?: number,): this;
     }
     interface Library { Container: Container }
 
@@ -365,6 +363,7 @@ declare namespace svgjs {
         at(opts: StopProperties): Stop;
         update(block?: Function): this;
         fill(): string;
+        fill(...any): never;
         toString(): string;
         from(x: number, y: number): this;
         to(x: number, y: number): this;
@@ -393,6 +392,7 @@ declare namespace svgjs {
         to(): string;
         show(target: string): this;
         show(): string;
+        show(...any): never;
         target(target: string): this;
         target(): string;
     }
@@ -543,7 +543,7 @@ declare namespace svgjs {
         native(): SVGMatrix;
         toString(): string;
     }
-    interface Container {
+    interface Element {
         ctm(): Matrix;
         screenCTM(): Matrix;
     }
@@ -584,6 +584,8 @@ declare namespace svgjs {
         at(pos: number): _Number;
     }
     interface Library { Number: _Number; }
+    
+    type NumberAlias = _Number | number | string;
 
     // parent.js
     export interface Parent extends Element {
@@ -626,6 +628,7 @@ declare namespace svgjs {
         move(x: number, y: number): this;
         size(width?: number, height?: number): this;
         parse(array: PathArrayAlias): PathArrayPoint[];
+        parse(array: ArrayAlias): never;
         bbox(): BBox;
     }
     interface Library { PathArray: PathArray; }
@@ -634,6 +637,7 @@ declare namespace svgjs {
     export interface Pattern extends Container {
         new (): Pattern;
         fill(): string;
+        fill(...any): never;
         update(block: (pattern: Pattern) => void): this;
         toString(): string;
     }
@@ -676,6 +680,7 @@ declare namespace svgjs {
             y2: number;
         };
         parse(points: PointArrayAlias): ArrayPoint[];
+        parse(array: ArrayAlias): never;
         move(x: number, y: number): this;
         size(width?: number, height?: number): this;
         bbox(): BBox;
@@ -963,12 +968,15 @@ declare namespace svgjs {
         width: number;
         height: number;
         zoom?: number;
-    }
-    interface Container {
         toString(): string;
         morph(source: ViewBoxAlias): ViewBox;
         morph(x: number, y: number, width: number, height: number): ViewBox;
         at(pos:number): ViewBox;
+    }
+    interface Container {
+        viewbox(): ViewBox;
+        viewbox(x: number, y: number, width: number, height: number): this;
+        viewbox(viewbox: ViewBoxLike): this;
     }
     interface Library { ViewBox: ViewBox; }
 
