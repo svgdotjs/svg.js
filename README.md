@@ -1,5 +1,7 @@
 # SVG.js
 
+[![Join the chat at https://gitter.im/svgdotjs/svg.js](https://badges.gitter.im/svgdotjs/svg.js.svg)](https://gitter.im/svgdotjs/svg.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/svgdotjs/svg.js.svg?branch=master)](https://travis-ci.org/svgdotjs/svg.js)
 [![Coverage Status](https://coveralls.io/repos/github/svgdotjs/svg.js/badge.svg?branch=master)](https://coveralls.io/github/svgdotjs/svg.js?branch=master)
 [![CDNJS](https://img.shields.io/cdnjs/v/svg.js.svg)](https://cdnjs.com/libraries/svg.js)
