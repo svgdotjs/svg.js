@@ -33,9 +33,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Added
 
+
 ### Changed
 
+
 ### Fixed
+- fixed svg.js.d.ts (#644 #648)
 
 ### Removed
 - component.json (#652)
