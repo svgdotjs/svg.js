@@ -6,10 +6,9 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 11 2017 19:58:26 GMT+0200 (CEST)
+* BUILT: Sat Apr 15 2017 22:28:50 GMT-0400 (EDT)
 */;
 (function(root, factory) {
-  'use strict'
   /* istanbul ignore next */
   if (typeof define === 'function' && define.amd) {
     define(function(){
@@ -2459,12 +2458,11 @@ SVG.Matrix = SVG.invent({
     }
     // Flip matrix on x or y, at a given offset
   , flip: function(a, o) {
-      o = typeof a == 'number' ? a : o
       return a == 'x' ?
           this.scale(-1, 1, o, 0) :
         a == 'y' ?
           this.scale(1, -1, 0, o) :
-          this.scale(-1, -1, o, o)
+          this.scale(-1, -1, a, o != null ? o : a)
     }
     // Skew
   , skew: function(x, y, cx, cy) {
@@ -2700,7 +2698,7 @@ SVG.extend(SVG.Element, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this
-      , matrix
+      , matrix, bbox
 
     // act as a getter
     if (typeof o !== 'object') {
@@ -2773,10 +2771,19 @@ SVG.extend(SVG.Element, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = matrix.flip(
-        o.flip
-      , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      )
+      if(o.flip == 'x' || o.flip == 'y') {
+        o.offset = o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+      } else {
+        if(o.offset == null) {
+          bbox = target.bbox()
+          o.flip = bbox.cx
+          o.offset = bbox.cy
+        } else {
+          o.flip = o.offset
+        }
+      }
+
+      matrix = new SVG.Matrix().flip(o.flip, o.offset)
 
     // act on translate
     } else if (o.x != null || o.y != null) {
@@ -2798,7 +2805,7 @@ SVG.extend(SVG.FX, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this.target()
-      , matrix
+      , matrix, bbox
 
     // act as a getter
     if (typeof o !== 'object') {
@@ -2847,10 +2854,19 @@ SVG.extend(SVG.FX, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = new SVG.Matrix().flip(
-        o.flip
-      , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      )
+      if(o.flip == 'x' || o.flip == 'y') {
+        o.offset = o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+      } else {
+        if(o.offset == null) {
+          bbox = target.bbox()
+          o.flip = bbox.cx
+          o.offset = bbox.cy
+        } else {
+          o.flip = o.offset
+        }
+      }
+
+      matrix = new SVG.Matrix().flip(o.flip, o.offset)
 
     // act on translate
     } else if (o.x != null || o.y != null) {

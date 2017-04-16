@@ -3,7 +3,7 @@ SVG.extend(SVG.Element, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this
-      , matrix
+      , matrix, bbox
 
     // act as a getter
     if (typeof o !== 'object') {
@@ -76,10 +76,19 @@ SVG.extend(SVG.Element, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = matrix.flip(
-        o.flip
-      , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      )
+      if(o.flip == 'x' || o.flip == 'y') {
+        o.offset = o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+      } else {
+        if(o.offset == null) {
+          bbox = target.bbox()
+          o.flip = bbox.cx
+          o.offset = bbox.cy
+        } else {
+          o.flip = o.offset
+        }
+      }
+
+      matrix = new SVG.Matrix().flip(o.flip, o.offset)
 
     // act on translate
     } else if (o.x != null || o.y != null) {
@@ -101,7 +110,7 @@ SVG.extend(SVG.FX, {
   transform: function(o, relative) {
     // get target in case of the fx module, otherwise reference this
     var target = this.target()
-      , matrix
+      , matrix, bbox
 
     // act as a getter
     if (typeof o !== 'object') {
@@ -150,10 +159,19 @@ SVG.extend(SVG.FX, {
 
     // act on flip
     } else if (o.flip) {
-      matrix = new SVG.Matrix().flip(
-        o.flip
-      , o.offset == null ? target.bbox()['c' + o.flip] : o.offset
-      )
+      if(o.flip == 'x' || o.flip == 'y') {
+        o.offset = o.offset == null ? target.bbox()['c' + o.flip] : o.offset
+      } else {
+        if(o.offset == null) {
+          bbox = target.bbox()
+          o.flip = bbox.cx
+          o.offset = bbox.cy
+        } else {
+          o.flip = o.offset
+        }
+      }
+
+      matrix = new SVG.Matrix().flip(o.flip, o.offset)
 
     // act on translate
     } else if (o.x != null || o.y != null) {

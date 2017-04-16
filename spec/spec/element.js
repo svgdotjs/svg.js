@@ -314,7 +314,7 @@ describe('Element', function() {
     })
     it('flips the element on both axis', function() {
       rect.transform({ flip: 'both' })
-      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,0,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,100,100])
     })
   })
 

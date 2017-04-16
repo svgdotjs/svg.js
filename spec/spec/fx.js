@@ -1782,6 +1782,34 @@ describe('FX', function() {
     expect(ctm.f).toBe(0)
   })
 
+  it('animate a flip(x) transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'x', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(10)
+    expect(ctm.f).toBe(0)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(40)
+    expect(ctm.f).toBe(0)
+  })
+
   it('animate a flip(y) transform', function() {
     var ctm
 
@@ -1808,6 +1836,90 @@ describe('FX', function() {
     expect(ctm.d).toBe(-1)
     expect(ctm.e).toBe(0)
     expect(ctm.f).toBe(300)
+  })
+
+  it('animate a flip(y) transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'y', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(10)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(40)
+  })
+
+  it('animate a flip() transform', function() {
+    var ctm
+
+    fx.transform({flip: 'both'}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(75)
+    expect(ctm.f).toBe(75)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(300)
+    expect(ctm.f).toBe(300)
+  })
+
+  it('animate a flip() transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'both', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(10)
+    expect(ctm.f).toBe(10)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(40)
+    expect(ctm.f).toBe(40)
   })
 
   it('animate relative matrix transform', function(){

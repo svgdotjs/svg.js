@@ -115,12 +115,11 @@ SVG.Matrix = SVG.invent({
     }
     // Flip matrix on x or y, at a given offset
   , flip: function(a, o) {
-      o = typeof a == 'number' ? a : o
       return a == 'x' ?
           this.scale(-1, 1, o, 0) :
         a == 'y' ?
           this.scale(1, -1, 0, o) :
-          this.scale(-1, -1, o, o)
+          this.scale(-1, -1, a, o != null ? o : a)
     }
     // Skew
   , skew: function(x, y, cx, cy) {
