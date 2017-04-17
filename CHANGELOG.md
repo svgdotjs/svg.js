@@ -32,13 +32,16 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED [2.5.3]
 
 ### Added
+- added gitter badge in readme
 
 
 ### Changed
+- svg.js now runs in strict mode
 
 
 ### Fixed
 - fixed svg.js.d.ts (#644 #648)
+- fixed bug in `el.flip()` which causes an error when calling flip without any argument
 
 ### Removed
 - component.json (#652)
