@@ -5,17 +5,17 @@ SVG.bench.describe('Generate 10000 pathArrays', function(bench) {
 
   var data3 = 'M10 10-45-30.5.5 .89L2e-2.5.5.5-.5C.5.5.5.5.5.5L-3-4z'
   
-  bench.test('using SVG.js v2.5.2', function() {
+  bench.test('using SVG.js v2.5.3', function() {
     for (var i = 0; i < 10000; i++)
       new SVG.PathArray(data)
   })
   
-  bench.test('using SVG.js v2.5.2 more data', function() {
+  bench.test('using SVG.js v2.5.3 more data', function() {
     for (var i = 0; i < 10000; i++)
       new SVG.PathArray(data2)
   })
   
-  bench.test('using SVG.js v2.5.2 complicated data', function() {
+  bench.test('using SVG.js v2.5.3 complicated data', function() {
     for (var i = 0; i < 10000; i++)
       new SVG.PathArray(data3)
   })
