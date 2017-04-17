@@ -29,14 +29,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
-## UNRELEASED [2.5.3]
+## [2.5.3] - 2017-04-15
 
 ### Added
 - added gitter badge in readme
-
-
-### Changed
-- svg.js now runs in strict mode
 
 
 ### Fixed
@@ -583,6 +579,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.5.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.3
 [2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
 [2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
 [2.5.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.0
