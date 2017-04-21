@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.5.3
+* @version 2.6.0
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Apr 20 2017 15:26:16 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Apr 21 2017 12:48:06 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -21,10 +21,8 @@
   }
 }(typeof window !== "undefined" ? window : this, function(window, document) {
 
-'use strict'
-
 // The main wrapping element
-var SVG = function(element) {
+var SVG = this.SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
 

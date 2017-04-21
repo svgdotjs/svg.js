@@ -29,6 +29,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
+## [2.6.0] - 2017-04-21
+
+### Added
+- added `options` object to `SVG.on()` and `el.on()` (#661)
+
+### Changed
+- back to sloppy mode because of problems with plugins (#660)
+
+
 ## [2.5.3] - 2017-04-15
 
 ### Added
@@ -579,6 +588,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
 [2.5.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.3
 [2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
 [2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
