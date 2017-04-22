@@ -70,7 +70,7 @@ describe('Element', function() {
       expect(rect.attr('stroke-linejoin')).toBe('miter')
     })
     it('gets the "style" attribute as a string', function() {
-      rect.style('cursor', 'pointer')
+      rect.css('cursor', 'pointer')
       expect(rect.node.style.cursor).toBe('pointer')
     })
     it('sets the style attribute correctly', function() {
@@ -135,36 +135,38 @@ describe('Element', function() {
     })
   })
 
-  describe('style()', function() {
+  describe('css()', function() {
     it('sets the style with key and value arguments', function() {
-      var rect = draw.rect(100,100).style('cursor', 'crosshair')
+      var rect = draw.rect(100,100).css('cursor', 'crosshair')
       expect(window.stripped(rect.node.style.cssText)).toBe('cursor:crosshair')
     })
     it('sets multiple styles with an object as the first argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
+      var rect = draw.rect(100,100).css({ cursor: 'help', display: 'block' })
       expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
       expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
       expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
-    it('gets a style with a string key as the fists argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
-      expect(rect.style('cursor')).toBe('progress')
+    it('gets a style with a string key as the first argument', function() {
+      var rect = draw.rect(100,100).css({ cursor: 'progress', display: 'block' })
+      expect(rect.css('cursor')).toBe('progress')
     })
-    it('gets the full css string with no argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
-      expect(window.stripped(rect.style())).toMatch(/display:none/)
-      expect(window.stripped(rect.style())).toMatch(/cursor:s-resize/)
-      expect(window.stripped(rect.style()).length).toBe(('cursor:s-resize;display:none').length)
+    it('gets multiple sytyles with array as first argument', function() {
+      var rect = draw.rect(100,100).css({ cursor: 'progress', display: 'block' })
+      expect(rect.css(['cursor', 'display'])).toEqual({ cursor: 'progress', display: 'block' })
+    })
+    it('gets an object with all styles with zero arguments', function() {
+      var rect = draw.rect(100,100).css({ cursor: 's-resize', display: 'none' })
+      expect(rect.css()).toEqual({ cursor: 's-resize', display: 'none' })
     })
     it('removes a style if the value is an empty string', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
-      expect(window.stripped(rect.style())).toBe('cursor:n-resize')
+      var rect = draw.rect(100,100).css({ cursor: 'n-resize', display: '' })
+      expect(rect.css('display')).toBe('')
     })
     it('removes a style if the value explicitly set to null', function() {
-      var rect = draw.rect(100,100).style('cursor', 'w-resize')
-      expect(window.stripped(rect.style())).toBe('cursor:w-resize')
-      rect.style('cursor', null)
-      expect(rect.style()).toBe('')
+      var rect = draw.rect(100,100).css('cursor', 'w-resize')
+      expect(rect.css()).toEqual({ cursor:'w-resize' })
+      rect.css('cursor', null)
+      expect(rect.css('cursor')).toBe('')
     })
   })
 
@@ -933,13 +935,13 @@ describe('Element', function() {
   describe('show()', function() {
     it('sets display property to ""', function() {
       var rect = draw.rect(100,100).show()
-      expect(rect.style('display')).toBe('')
+      expect(rect.css('display')).toBe('')
     })
   })
   describe('hide()', function() {
     it('sets display property to none', function() {
       var rect = draw.rect(100,100).hide()
-      expect(rect.style('display')).toBe('none')
+      expect(rect.css('display')).toBe('none')
     })
   })
   describe('visible()', function() {

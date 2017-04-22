@@ -3,7 +3,7 @@ SVG.Nested = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('svg'))
     
-    this.style('overflow', 'visible')
+    this.css('overflow', 'visible')
   }
 
   // Inherit from

@@ -23,6 +23,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `SVG.Set`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
 - removed `loaded()` and `error()` method on `SVG.Image`
+- removed sub-pixel offset fix
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -35,6 +36,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - moved all regexes to `SVG.regex`
 - `svg()` will now return the element without svg-wrapper
 - new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)`
+- changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

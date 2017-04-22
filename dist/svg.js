@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Apr 22 2017 20:28:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat Apr 22 2017 22:14:55 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -154,7 +154,7 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style({
+  , draw: draw.css({
       opacity:0,
       position:'absolute',
       left:'-100%',
@@ -1124,15 +1124,15 @@ SVG.Element = SVG.invent({
     }
     // Show element
   , show: function() {
-      return this.style('display', '')
+      return this.css('display', '')
     }
     // Hide element
   , hide: function() {
-      return this.style('display', 'none')
+      return this.css('display', 'none')
     }
     // Is element visible?
   , visible: function() {
-      return this.style('display') != 'none'
+      return this.css('display') != 'none'
     }
     // Return id on string conversion
   , toString: function() {
@@ -1511,7 +1511,7 @@ SVG.FX = SVG.invent({
       }
 
       for(i in s.styles){
-        s.styles[i] = new SVG.MorphObj(this.target().style(i), s.styles[i])
+        s.styles[i] = new SVG.MorphObj(this.target().css(i), s.styles[i])
       }
 
       s.initialTransformation = this.target().matrixify()
@@ -1884,14 +1884,14 @@ SVG.FX = SVG.invent({
 
       }
 
-      // apply animation which has to be applied with style()
+      // apply animation which has to be applied with css()
       for(i in s.styles){
 
         at = [i].concat(s.styles[i]).map(function(el){
           return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
-        target.style.apply(target, at)
+        target.css.apply(target, at)
 
       }
 
@@ -2043,10 +2043,10 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Add animatable styles
-, style: function(s, v) {
+, css: function(s, v) {
     if (typeof s == 'object')
       for (var key in s)
-        this.style(key, s[key])
+        this.css(key, s[key])
 
     else
       this.add(s, v, 'styles')
@@ -2878,23 +2878,43 @@ SVG.Skew = SVG.invent({
 
 SVG.extend(SVG.Element, {
   // Dynamic style generator
-  style: function(s, v) {
+  css: function(s, v) {
+    var t, i, ret = {}
     if (arguments.length == 0) {
-      // get full style
-      return this.node.style.cssText || ''
+      // get full style as object
+      this.node.style.cssText.split(/\s*;\s*/).filter(function(el) { return !!el.length }).forEach(function(el) {
+        t = el.split(/\s*:\s*/)
+        ret[t[0]] = t[1]
+      })
+      return ret
+    }
 
-    } else if (arguments.length < 2) {
-      // apply every style individually if an object is passed
-      if (typeof s == 'object') {
-        for (v in s) this.style(v, s[v])
+    if (arguments.length < 2) {
+      // get style properties in the array
+      if(Array.isArray(s)) {
+        for(i = s.length; i--;) {
+          ret[camelCase(s[i])] = this.node.style[camelCase(s[i])]
+        }
+        return ret
+      }
 
-      } else {
-        // act as a getter if the first and only argument is not an object
+      // get style for property
+      if(typeof s == 'string') {
         return this.node.style[camelCase(s)]
       }
 
-    } else {
-      this.node.style[camelCase(s)] = v === null || SVG.regex.isBlank.test(v) ? '' : v
+      // set styles in object
+      if(typeof s == 'object') {
+        for(i in s) {
+          // set empty string if null/undefined/'' was given
+          this.node.style[camelCase(i)] = (s[i] == null || SVG.regex.isBlank.test(s[i])) ? '' : s[i]
+        }
+      }
+    }
+
+    // set style for property
+    if (arguments.length == 2) {
+      this.node.style[camelCase(s)] = (v == null || SVG.regex.isBlank.test(v)) ? '' : v
     }
 
     return this
@@ -3637,19 +3657,6 @@ SVG.Doc = SVG.invent({
   , parent: function() {
       return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
     }
-    // Fix for possible sub-pixel offset. See:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function(spof) {
-      var pos = this.node.getScreenCTM()
-
-      if (pos)
-        this
-          .style('left', (-pos.e % 1) + 'px')
-          .style('top',  (-pos.f % 1) + 'px')
-
-      return this
-    }
-
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {
@@ -4424,7 +4431,7 @@ SVG.Nested = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('svg'))
 
-    this.style('overflow', 'visible')
+    this.css('overflow', 'visible')
   }
 
   // Inherit from

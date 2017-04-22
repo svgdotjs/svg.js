@@ -131,7 +131,7 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style({
+  , draw: draw.css({
       opacity:0,
       position:'absolute',
       left:'-100%',

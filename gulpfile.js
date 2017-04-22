@@ -44,7 +44,7 @@ var parts = [
 , 'src/point.js'
 , 'src/attr.js'
 , 'src/transform.js'
-, 'src/style.js'
+, 'src/css.js'
 , 'src/parent.js'
 , 'src/flatten.js'
 , 'src/container.js'

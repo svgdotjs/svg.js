@@ -107,15 +107,15 @@ SVG.Element = SVG.invent({
     }
     // Show element
   , show: function() {
-      return this.style('display', '')
+      return this.css('display', '')
     }
     // Hide element
   , hide: function() {
-      return this.style('display', 'none')
+      return this.css('display', 'none')
     }
     // Is element visible?
   , visible: function() {
-      return this.style('display') != 'none'
+      return this.css('display') != 'none'
     }
     // Return id on string conversion
   , toString: function() {
