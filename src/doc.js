@@ -71,10 +71,24 @@ SVG.Doc = SVG.invent({
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {
-        this.parent().removeChild(this.node);
+        this.parent().removeChild(this.node)
       }
 
-      return this;
+      return this
+    }
+  , clear: function() {
+      // remove children
+      while(this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild)
+
+      // remove defs reference
+      delete this._defs
+
+      // add back parser
+      if(!SVG.parser.draw.parentNode)
+        this.node.appendChild(SVG.parser.draw)
+
+      return this
     }
   }
 

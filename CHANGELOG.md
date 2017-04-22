@@ -40,7 +40,53 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
-## [2.5.0](https://github.com/svgdotjs/svg.js/releases/tag/2.5.0) - 2017-03-10
+
+## [2.6.0] - 2017-04-21
+
+### Added
+- added `options` object to `SVG.on()` and `el.on()` (#661)
+
+### Changed
+- back to sloppy mode because of problems with plugins (#660)
+
+
+## [2.5.3] - 2017-04-15
+
+### Added
+- added gitter badge in readme
+
+
+### Fixed
+- fixed svg.js.d.ts (#644 #648)
+- fixed bug in `el.flip()` which causes an error when calling flip without any argument
+
+### Removed
+- component.json (#652)
+
+
+## [2.5.2] - 2017-04-11
+
+### Changed
+- SVG.js is now running in strict mode
+
+### Fixed
+- `clear()` does not remove the parser in svg documents anymore
+- `len` not declared in FX module, making it a global variable (9737e8a)
+- `bbox` not declared in SVG.Box.transform in the Box module (131df0f)
+- `namespace` not declared in the Event module (e89c97e)
+
+
+## [2.5.1] - 2017-03-27
+
+### Changed
+- make svgjs ready to be used on the server
+
+### Fixed
+- fixed `SVG.PathArray.parse` that did not correctly parsed flat arrays
+- prevented unnecessary parsing of point or path strings
+
+
+## [2.5.0] - 2017-03-10
 
 ### Added
 - added a plot and array method to `SVG.TextPath` (#582)
@@ -554,6 +600,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
+[2.5.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.3
+[2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
+[2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
+[2.5.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.0
 [2.4.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.4.0
 
 [2.3.7]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.7

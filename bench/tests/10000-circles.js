@@ -1,5 +1,5 @@
 SVG.bench.describe('Generate 10000 circles', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.3', function() {
     for (var i = 0; i < 10000; i++)
       bench.draw.circle(100,100)
   })
@@ -18,7 +18,7 @@ SVG.bench.describe('Generate 10000 circles', function(bench) {
 })
 
 SVG.bench.describe('Generate 10000 circles with fill', function(bench) {
-  bench.test('using SVG.js v2.4.0', function() {
+  bench.test('using SVG.js v2.5.3', function() {
     for (var i = 0; i < 10000; i++)
       bench.draw.circle(100,100).fill('#f06')
   })

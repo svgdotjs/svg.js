@@ -148,12 +148,12 @@ SVG.FX = SVG.invent({
     // starts the animationloop
   , startAnimFrame: function(){
       this.stopAnimFrame()
-      this.animationFrame = requestAnimationFrame(function(){ this.step() }.bind(this))
+      this.animationFrame = window.requestAnimationFrame(function(){ this.step() }.bind(this))
     }
 
     // cancels the animationframe
   , stopAnimFrame: function(){
-      cancelAnimationFrame(this.animationFrame)
+      window.cancelAnimationFrame(this.animationFrame)
     }
 
     // kicks off the animation - only does something when the queue is currently not active and at least one situation is set
@@ -584,7 +584,7 @@ SVG.FX = SVG.invent({
 
     // calculates the step for every property and calls block with it
   , eachAt: function(){
-      var i, at, self = this, target = this.target(), s = this.situation
+      var i, len, at, self = this, target = this.target(), s = this.situation
 
       // apply animations which can be called trough a method
       for(i in s.animations){

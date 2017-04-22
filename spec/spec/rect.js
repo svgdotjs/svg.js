@@ -15,8 +15,7 @@ describe('Rect', function() {
     })
     it('should set the value of x with the first argument', function() {
       rect.x(123)
-      var box = rect.bbox()
-      expect(box.x).toBe(123)
+      expect(rect.node.getAttribute('x')).toBe('123')
     })
   })
   
@@ -26,8 +25,7 @@ describe('Rect', function() {
     })
     it('should set the value of y with the first argument', function() {
       rect.y(345)
-      var box = rect.bbox()
-      expect(box.y).toBe(345)
+      expect(rect.node.getAttribute('y')).toBe('345')
     })
   })
   

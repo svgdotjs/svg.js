@@ -73,14 +73,9 @@ describe('Element', function() {
       rect.style('cursor', 'pointer')
       expect(rect.node.style.cursor).toBe('pointer')
     })
-    it('redirects to the style() method when setting a style string', function() {
+    it('sets the style attribute correctly', function() {
       rect.attr('style', 'cursor:move;')
       expect(rect.node.style.cursor).toBe('move')
-    })
-    it('removes style attribute on node if the style is empty', function() {
-      rect.style('cursor', 'move')
-      rect.style('cursor', '')
-      expect(rect.style.cursor).toBe(undefined)
     })
     it('acts as a global getter when no arguments are given', function() {
       rect.fill('#ff0066')
@@ -143,13 +138,13 @@ describe('Element', function() {
   describe('style()', function() {
     it('sets the style with key and value arguments', function() {
       var rect = draw.rect(100,100).style('cursor', 'crosshair')
-      expect(stripped(rect.node.style.cssText)).toBe('cursor:crosshair;')
+      expect(window.stripped(rect.node.style.cssText)).toBe('cursor:crosshair')
     })
     it('sets multiple styles with an object as the first argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
-      expect(stripped(rect.node.style.cssText)).toMatch(/cursor:help;/)
-      expect(stripped(rect.node.style.cssText)).toMatch(/display:block;/)
-      expect(stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help;').length)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
+      expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
+      expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
     it('gets a style with a string key as the fists argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
@@ -157,17 +152,17 @@ describe('Element', function() {
     })
     it('gets the full css string with no argument', function() {
       var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
-      expect(stripped(rect.style())).toMatch(/display:none;/)
-      expect(stripped(rect.style())).toMatch(/cursor:s-resize;/)
-      expect(stripped(rect.style()).length).toBe(('cursor:s-resize;display:none;').length)
+      expect(window.stripped(rect.style())).toMatch(/display:none/)
+      expect(window.stripped(rect.style())).toMatch(/cursor:s-resize/)
+      expect(window.stripped(rect.style()).length).toBe(('cursor:s-resize;display:none').length)
     })
     it('removes a style if the value is an empty string', function() {
       var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
-      expect(stripped(rect.style())).toBe('cursor:n-resize;')
+      expect(window.stripped(rect.style())).toBe('cursor:n-resize')
     })
     it('removes a style if the value explicitly set to null', function() {
       var rect = draw.rect(100,100).style('cursor', 'w-resize')
-      expect(stripped(rect.style())).toBe('cursor:w-resize;')
+      expect(window.stripped(rect.style())).toBe('cursor:w-resize')
       rect.style('cursor', null)
       expect(rect.style()).toBe('')
     })
@@ -185,44 +180,44 @@ describe('Element', function() {
     })
     it('sets the translation of and element', function() {
       rect.transform({ x: 10, y: 11 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
     })
     it('performs an absolute translation', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
     })
     it('performs a relative translation when relative is set to true', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, relative: true })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('performs a relative translation with relative flag', function() {
       rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('sets the scaleX and scaleY of an element', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,2,25,-50])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,2,25,-50])
     })
     it('performs a uniform scale with scale given', function() {
       rect.transform({ scale: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,3,-100,-100])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,3,-100,-100])
     })
     it('also works with only skaleX', function() {
       rect.transform({ scaleX: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,1,-100,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([3,0,0,1,-100,0])
     })
     it('also works with only skaleY', function() {
       rect.transform({ scaleY: 3 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,3,0,-100])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,3,0,-100])
     })
-    
+
     it('performs an absolute scale by default', function() {
       rect.transform({ scale: 3 }).transform({ scale: 0.5 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0,0.5,25,25])
     })
     it('performs a relative scale with a relative flag', function() {
       rect.transform({ scaleX: 0.5, scaleY: 2 }).transform({ scaleX: 3, scaleY: 4 }, true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1.5,0,0,8,-25,-350])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1.5,0,0,8,-25,-350])
     })
     it('sets the skewX of an element with center on the element', function() {
       ctm = rect.transform({ skewX: 10 }).ctm()
@@ -290,31 +285,31 @@ describe('Element', function() {
     })
     it('transforms element using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,0,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,0,0])
     })
     it('transforms relative using a matrix', function() {
       rect.transform({ a: 0.5, c: 0.5 }).transform(new SVG.Matrix({ e: 20, f: 20 }), true)
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,20,20])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([0.5,0,0.5,1,20,20])
     })
     it('flips the element on x axis', function() {
       rect.transform({ flip: 'x' })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
     })
     it('flips the element on x axis with offset', function() {
       rect.transform({ flip: 'x', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
     })
     it('flips the element on y axis with offset', function() {
       rect.transform({ flip: 'y', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
     })
     it('flips the element on both axis with offset', function() {
       rect.transform({ flip: 'both', offset: 20 })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
     })
     it('flips the element on both axis', function() {
       rect.transform({ flip: 'both' })
-      expect(matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,0,0])
+      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,100,100])
     })
   })
 
@@ -326,7 +321,7 @@ describe('Element', function() {
     })
 
     it('removes the transform attribute', function() {
-      expect(matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,50,100])
+      expect(window.matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,50,100])
       circle.untransform()
       expect(circle.node.getAttribute('transform')).toBeNull()
     })
@@ -460,7 +455,7 @@ describe('Element', function() {
       }))
     })
 
-    it('ungroups everything to the doc root when called on SVG.Doc / does not flatten defs', function() {
+    it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
       draw.flatten()
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
@@ -476,7 +471,7 @@ describe('Element', function() {
         a:0.5, b:0, c:0, d:0.5, e:45, f:45
       }))
 
-      expect(draw.children().length).toBe(3) // 2 * rect + defs
+      expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs
     })
   })
 
@@ -811,8 +806,15 @@ describe('Element', function() {
 
         // Test for different browsers namely Firefox and Chrome
         expect(
+            // IE
             toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="' + draw.id() + '"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
-         || toBeTested === '<svg id="' + draw.id() + '" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>').toBeTruthy()
+
+            // Firefox
+         || toBeTested === '<svg id="' + draw.id() + '" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+
+            // svgdom
+         || toBeTested === '<svg id="' + draw.id() + '" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+        ).toBeTruthy()
 
       })
       it('returns partial raw svg when called on a sub group', function() {
@@ -824,7 +826,9 @@ describe('Element', function() {
 
         expect(
             toBeTested === '<g><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></g>'
-         || toBeTested === '<g><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></g>').toBeTruthy()
+         || toBeTested === '<g><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></g>'
+         || toBeTested === '<g xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></g>'
+        ).toBeTruthy()
       })
       it('returns a single element when called on an element', function() {
         var group = draw.group().id(null)
@@ -834,31 +838,37 @@ describe('Element', function() {
 
         expect(
             toBeTested === '<circle r="50" cx="50" cy="50" fill="#ff0066"></circle>'
-         || toBeTested === '<circle fill="#ff0066" cy="50" cx="50" r="50"></circle>').toBeTruthy()
+         || toBeTested === '<circle fill="#ff0066" cy="50" cx="50" r="50"></circle>'
+         || toBeTested === '<circle xmlns="http://www.w3.org/2000/svg" r="50" cx="50" cy="50" fill="#ff0066"></circle>'
+       ).toBeTruthy()
       })
     })
     describe('with raw svg given', function() {
       it('imports a full svg document', function() {
         draw.svg('<svg id="SvgjsSvg1000" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 50 50"><rect id="SvgjsRect1183" width="100" height="100"></rect><circle id="SvgjsCircle1184" r="50" cx="25" cy="25" fill="#ff0066"></circle></svg>')
-        expect(draw.get(0).type).toBe('svg')
-        expect(draw.get(0).children().length).toBe(2)
-        expect(draw.get(0).get(0).type).toBe('rect')
-        expect(draw.get(0).get(1).type).toBe('circle')
-        expect(draw.get(0).get(1).attr('fill')).toBe('#ff0066')
+
+        expect(draw.get(0+parserInDoc).type).toBe('svg')
+        expect(draw.get(0+parserInDoc).children().length).toBe(2)
+        expect(draw.get(0+parserInDoc).get(0).type).toBe('rect')
+        expect(draw.get(0+parserInDoc).get(1).type).toBe('circle')
+        expect(draw.get(0+parserInDoc).get(1).attr('fill')).toBe('#ff0066')
       })
       it('imports partial svg content', function() {
         draw.svg('<g id="SvgjsG1185"><rect id="SvgjsRect1186" width="100" height="100"></rect><circle id="SvgjsCircle1187" r="50" cx="25" cy="25" fill="#ff0066"></circle></g>')
-        expect(draw.get(0).type).toBe('g')
-        expect(draw.get(0).get(0).type).toBe('rect')
-        expect(draw.get(0).get(1).type).toBe('circle')
-        expect(draw.get(0).get(1).attr('fill')).toBe('#ff0066')
+        expect(draw.get(0+parserInDoc).type).toBe('g')
+        expect(draw.get(0+parserInDoc).get(0).type).toBe('rect')
+        expect(draw.get(0+parserInDoc).get(1).type).toBe('circle')
+        expect(draw.get(0+parserInDoc).get(1).attr('fill')).toBe('#ff0066')
       })
       it('does not import on single elements, even with an argument it acts as a getter', function() {
         var rect   = draw.rect(100,100).id(null)
           , result = rect.svg('<circle r="300"></rect>')
+
         expect(
             result === '<rect width="100" height="100"></rect>'
-         || result === '<rect height="100" width="100"></rect>').toBeTruthy()
+         || result === '<rect height="100" width="100"></rect>'
+         || result === '<rect xmlns="http://www.w3.org/2000/svg" width="100" height="100"></rect>'
+        ).toBeTruthy()
       })
     })
   })

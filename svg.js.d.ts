@@ -6,7 +6,7 @@ declare var svgjs: svgjs.Library;
 // todo add SVG.FX
 declare namespace svgjs {
     export interface Library {
-        (selector: string): Doc;
+        (id: string): Doc;
         (domElement: HTMLElement): Doc;
         ns: string;
         xmlns: string;
@@ -43,17 +43,20 @@ declare namespace svgjs {
     }
 
     // array.js
+    type ArrayAlias = _Array | number[] | string;
+    
     interface _Array {
-        new (array?: any[], fallback?: any): _Array;
-        value: any[];
-        morph(array: any[]): this;
-        settle(): number;
-        at(pos: number): any;
+        new (array?: ArrayAlias, fallback?: number[]): _Array;
+        value: number[];
+        morph(array: number[]): this;
+        settle(): number[];
+        at(pos: NumberAlias): _Array;
         toString(): string;
-        valueOf(): any[];
-        // parse(array:any[]):any[];
-        split(string: string): any[];
+        valueOf(): number[];
+        parse(array: ArrayAlias): number[];
+        split(string: string): number[];
         reverse(): this;
+        clone(): _Array;
     }
     interface Library { Array: _Array }
 
@@ -67,32 +70,39 @@ declare namespace svgjs {
     // bare.js
     export interface Bare extends Element {
         new (element: string, inherit?: any): Bare;
-        words(text: any): this;
+        words(text: string): this;
     }
     interface Parent {
-        element(element: string, inherit?: any): Bare;
-        symbol(): Bare;
+        element(element: string, inherit?: Object): Bare;
     }
     interface Library { Bare: Bare; }
 
     // boxes.js
-    export interface BBox {
-        new (element?: Element): BBox;
+    interface Box {
         height: number;
         width: number;
         y: number;
         x: number;
         cx: number;
         cy: number;
-        merge(bbox: BBox): BBox;
+        w: number;
+        h: number;
+        x2: number;
+        y2: number;
+        merge(box: Box): Box;
+        transform(m: Matrix): Box
     }
-    export interface RBox extends BBox {
+    
+    export interface BBox extends Box {
+        new (element?: Element): BBox;
+    }
+    export interface RBox extends Box {
         new (element?: Element): RBox;
     }
-    export interface TBox extends BBox {
+    export interface TBox extends Box {
         new (element?: Element): TBox;
     }
-    interface Container {
+    interface Element {
         bbox(): BBox;
         rbox(): RBox;
         tbox(): TBox;
@@ -106,6 +116,8 @@ declare namespace svgjs {
     // clip.js
     export interface ClipPath extends Container {
         new (): ClipPath;
+        targets: Element[];
+        remove(): this;
     }
     interface Container {
         clip(): ClipPath;
@@ -116,31 +128,39 @@ declare namespace svgjs {
         unclip(): this;
     }
     interface Library { ClipPath: ClipPath; }
-
+    
     // color.js
-    export interface Color {
-        new (): Color;
-        new (color: string): Color;
-        new (color: Color): Color;
+    interface ColorLike {
         r: number;
         g: number;
         b: number;
+    }
+    
+    type ColorAlias = string | ColorLike;
+    
+    export interface Color extends ColorLike{
+        new (): Color;
+        new (color: ColorAlias): Color;
 
         toString(): string;
         toHex(): string;
         toRgb(): string;
         brightness(): number;
-        morph(color: Color): Color;
-        morph(color: string): Color;
+        morph(color: ColorAlias): Color;
         at(pos: number): Color;
     }
     interface Library { Color: Color; }
 
     // container.js
+    interface ViewBoxLike {
+        x: number;
+        y: number;
+        width: number;
+        height:number;
+    }
+    
     export interface Container extends Parent {
         new (): Container;
-        viewbox(): ViewBox;
-        viewbox(v): this;
     }
     interface Library { Container: Container }
 
@@ -190,7 +210,7 @@ declare namespace svgjs {
     // doc.js
     export interface Doc extends Container {
         new (): Doc;
-        new (selector: string): Doc;
+        new (id: string): Doc;
         new (domElement: HTMLElement): Doc;
         namespace(): this;
         defs(): Defs;
@@ -206,22 +226,24 @@ declare namespace svgjs {
         node: LinkedHTMLElement;
         type: string;
 
-        x(x: number): this;
+        x(x: NumberAlias): this;
         x(): number;
-        y(y: number): this;
+        y(y: NumberAlias): this;
         y(): number;
-        cx(x: number, anchor?: boolean): this;
+        //cx(x: number, anchor?: boolean): this;
+        cx(x: number): this;
         cx(): number;
-        cy(y: number, anchor?: boolean): this;
+        //cy(y: number, anchor?: boolean): this;
+        cy(y: number): this;
         cy(): number;
-        move(x: number, y: number): this;
+        move(x: NumberAlias, y: NumberAlias): this;
         center(x: number, y: number): this;
 
-        width(width: number): this;
+        width(width: NumberAlias): this;
         width(): number;
-        height(height: number): this;
+        height(height: NumberAlias): this;
         height(): number;
-        size(w: number, h: number, anchor?: boolean): this;
+        size(width?: NumberAlias, height?: NumberAlias): this;
 
         clone(): Element;
         remove(): this;
@@ -255,28 +277,21 @@ declare namespace svgjs {
         native(): LinkedHTMLElement;
 
         svg(svg: string): this;
+        
+        writeDataToDom(): this,
+        setData(data: object): this,
+        
         is(cls: any): boolean;
     }
     interface Library { Element: Element; }
 
     // ellipse.js
     interface CircleMethods extends Shape {
-        x(rx: any): this;
-        x(): any;
-        y(ry: any): this;
-        y(): any;
+        rx(rx: number): this;
+        rx(): this;
+        ry(ry: number): this;
+        ry(): this;
 
-        rx(rx: any): this;
-        rx(): any;
-        ry(ry: any): this;
-        ry(): any;
-
-        width(): number;
-        width(width: any): this;
-        height(): number;
-        height(height: any): this;
-
-        size(width: any, height: any): this;
         radius(x: number, y?: number): this;
     }
     export interface Circle extends CircleMethods {
@@ -286,8 +301,8 @@ declare namespace svgjs {
         new (): Ellipse;
     }
     interface Container {
-        circle(size?: any): Circle;
-        ellipse(width?: any, height?: any): Ellipse;
+        circle(size?: number): Circle;
+        ellipse(width?: number, height?: number): Ellipse;
     }
     interface Library {
         Circle: Circle;
@@ -299,6 +314,7 @@ declare namespace svgjs {
         on(event: string, cb: Function, context?: Object): this;
         off(event: string, cb: Function, context?: Object): this;
         fire(event: string, data?: any): this;
+        fire(event: Event): this;
 
         click(cb: Function): this;
         dblclick(cb: Function): this;
@@ -329,26 +345,32 @@ declare namespace svgjs {
         stop(jumpToEnd:boolean,clearQueue:boolean): Animation;
     }
     // TODO finishs FX
-
+    interface StopProperties {
+        color?: ColorAlias;
+        offset?: number;
+        opacity?: number;
+    }
+    
     // gradient.js
     export interface Stop extends Element {
         new (): Stop;
-        update(offset?: number | _Number, color?: any, opacity?: number | _Number): this;
-        update(opts: { color: string | Color, offset: number | _Number, opacity: number | _Number }): this;
+        update(offset?: number, color?: ColorAlias, opacity?: number): this;
+        update(opts: StopProperties): this;
     }
     export interface Gradient extends Container {
-        new (type?: string): Gradient;
-        at(offset?: number | _Number, color?: any, opacity?: number | _Number): Stop;
-        at(opts: { color: string | Color, offset: number | _Number, opacity: number | _Number }): Stop;
+        new (type: string): Gradient;
+        at(offset?: number, color?: ColorAlias, opacity?: number): Stop;
+        at(opts: StopProperties): Stop;
         update(block?: Function): this;
-        fill(): this;
+        fill(): string;
+        fill(...any): never;
         toString(): string;
-        from(x, y): this;
-        to(x, y): this;
+        from(x: number, y: number): this;
+        to(x: number, y: number): this;
         radius(x: number, y?: number): this;
     }
     interface Container {
-        gradient(type: string, block?: (stop: Gradient) => any): Gradient;
+        gradient(type: string, block?: (stop: Gradient) => void): Gradient;
     }
     interface Library {
         Gradient: Gradient;
@@ -366,14 +388,20 @@ declare namespace svgjs {
     // hyperlink.js
     export interface A extends Container {
         new (): A;
-        to(url: any): this;
-        show(target?: any): this;
-        target(target: any): this;
+        to(url: string): this;
+        to(): string;
+        show(target: string): this;
+        show(): string;
+        show(...any): never;
+        target(target: string): this;
+        target(): string;
     }
-    interface Container { link(url?: string): A; }
+    interface Container {
+        link(url: string): A;
+    }
     interface Element {
         linkTo(url: string): A;
-        linkTo(url: (link: A) => any): A;
+        linkTo(url: (link: A) => void): A;
     }
     interface Library { A: A; }
 
@@ -381,8 +409,8 @@ declare namespace svgjs {
     export interface Image extends Shape {
         new (): Image;
         load(url?: string): this;
-        loaded(cb: (image: Image, info: { width: number, height: number, ratio: number, url: string }) => any): this;
-        error(cb: (image: Image, info: { width: number, height: number, ratio: number, url: string }) => any): this;
+        loaded(cb: (info: { width: number, height: number, ratio: number, url: string }) => void): this;
+        error(cb: (event: Event) => void): this;
     }
     interface Container {
         image(): Image;
@@ -392,16 +420,19 @@ declare namespace svgjs {
     interface Library { Image: Image; }
 
     // line.js
+    interface ArrayPoint extends Array<number> { }
+    type PointArrayAlias = ArrayPoint | number[] | PointArray | string;
+    
     export interface Line extends Shape {
         new (): Line;
         array(): PointArray;
-        plot(points: number[][]): this;
+        plot(points: PointArrayAlias): this;
         plot(x1: number, y1: number, x2: number, y2: number): this;
         move(x: number, y: number): this;
-        size(width: number, height: number): this;
+        size(width?: number, height?: number): this;
     }
     interface Container {
-        line(points: number[][]): Line;
+        line(points: PointArrayAlias): Line;
         line(x1: number, y1: number, x2: number, y2: number): Line;
     }
     interface Library { Line: Line; }
@@ -409,30 +440,30 @@ declare namespace svgjs {
     // marker.js
     export interface Marker extends Container {
         new (): Marker;
-        ref(x, y): this;
-        update(block: (marker: Marker) => any): this;
+        ref(x: string | number, y: string | number): this;
+        update(block: (marker: Marker) => void): this;
         toString(): string;
     }
     interface Container {
-        marker(width?: number, height?: number, block?: (marker: Marker) => any): Marker
+        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
     }
     interface Defs {
-        marker(width?: number, height?: number, block?: (marker: Marker) => any): Marker
+        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
     }
     interface Line {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => any): Marker;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
     interface Polyline {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => any): Marker;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
     interface Polygon {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => any): Marker;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
     interface Path {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => any): Marker;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
     interface Library {
@@ -472,12 +503,22 @@ declare namespace svgjs {
         f: number;
         matrix: Matrix;
     }
+    
+    interface MatrixLike {
+        a: number;
+        b: number;
+        c: number;
+        d: number;
+        e: number;
+        f: number;
+    }
+    
+    type MatrixAlias = MatrixLike | number[] | Element | string;
+    
     export interface Matrix {
         new (): Matrix;
-        new (source: string): Matrix;
-        new (element: Element): Matrix;
+        new (source: MatrixAlias): Matrix;
         new (a: number, b: number, c: number, d: number, e: number, f: number): Matrix;
-        new (source: {a: number, b: number, c: number, d: number, e: number, f: number}): Matrix;
         a: number;
         b: number;
         c: number;
@@ -486,22 +527,23 @@ declare namespace svgjs {
         f: number;
         extract(): MatrixExtract;
         clone(): Matrix;
-        morph(matrix: Matrix): Matrix;
+        morph(matrix: Matrix): this;
         at(pos: number): Matrix;
         multiply(matrix: Matrix): Matrix;
         inverse(): Matrix;
         translate(x: number, y: number): Matrix;
         scale(x: number, y?: number, cx?: number, cy?: number): Matrix;
         rotate(r: number, cx?: number, cy?: number): Matrix;
-        flip(a: string, offset: number): Matrix;
-        skew(x: number, y: number, cx: number, cy: number): Matrix;
+        flip(a: string, offset?: number): Matrix;
+        flip(offset?: number): Matrix;
+        skew(x: number, y?: number, cx?: number, cy?: number): Matrix;
         skewX(x: number, cx?: number, cy?: number): Matrix;
         skewY(y: number, cx?: number, cy?: number): Matrix;
         around(cx: number, cy: number, matrix: Matrix): Matrix;
         native(): SVGMatrix;
         toString(): string;
     }
-    interface Container {
+    interface Element {
         ctm(): Matrix;
         screenCTM(): Matrix;
     }
@@ -542,6 +584,8 @@ declare namespace svgjs {
         at(pos: number): _Number;
     }
     interface Library { Number: _Number; }
+    
+    type NumberAlias = _Number | number | string;
 
     // parent.js
     export interface Parent extends Element {
@@ -554,7 +598,7 @@ declare namespace svgjs {
         get(i: number): Element;
         first(): Element;
         last(): Element;
-        each(block: Function, deep?: boolean): this;
+        each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
         removeElement(element: Element): this;
         clear(): this;
         defs(): Defs;
@@ -562,29 +606,29 @@ declare namespace svgjs {
     interface Library{ Parent: Parent }
 
     // path.js
+    interface PathArrayPoint extends Array<number | string> { }
+    type PathArrayAlias = PathArray | (string | number)[] | PathArrayPoint[] | string;
+    
     export interface Path extends Shape {
         new (): Path;
         morphArray: PathArray;
         array(): PathArray;
-        plot(d: string): this;
-        plot(pathArray: PathArray): this;
+        plot(d: PathArrayAlias): this;
     }
     interface Container {
         path(): Path;
-        path(d: string): Path;
-        plot(pathArray: PathArray): Path;
+        path(d: PathArrayAlias): Path;
     }
     interface Library{ Path: Path }
 
     // pathArray.js
-    interface PathArrayPoint extends Array<any> { }
     export interface PathArray extends _Array {
         new (): PathArray;
-        new (d: string): PathArray;
-        new (array: PathArrayPoint[]): PathArray;
+        new (d: PathArrayAlias): PathArray;
         move(x: number, y: number): this;
-        size(width: number, height: number): this;
-        parse(array: any[]): any[];
+        size(width?: number, height?: number): this;
+        parse(array: PathArrayAlias): PathArrayPoint[];
+        parse(array: ArrayAlias): never;
         bbox(): BBox;
     }
     interface Library { PathArray: PathArray; }
@@ -592,16 +636,17 @@ declare namespace svgjs {
     // pattern.js
     export interface Pattern extends Container {
         new (): Pattern;
-        update(block: (pattern: Pattern) => any): this;
+        fill(): string;
+        fill(...any): never;
+        update(block: (pattern: Pattern) => void): this;
         toString(): string;
     }
     interface Container {
-        pattern(width?: number, height?: number, block?: (pattern: Pattern) => any): Pattern
+        pattern(width?: number, height?: number, block?: (pattern: Pattern) => void): Pattern
     }
     interface Library { Pattern: Pattern }
 
     // point.js
-    interface ArrayPoint extends Array<number> { }
     export interface Point {
         new (): Point;
         new (position: ArrayPoint): Point;
@@ -610,7 +655,7 @@ declare namespace svgjs {
         new (x: number, y: number): Point;
 
         clone(): Point;
-        morph(point: Point): Point;
+        morph(point: Point): this;
         at(pos: number): Point;
         native(): SVGPoint;
         transform(matrix: Matrix): Point;
@@ -626,18 +671,18 @@ declare namespace svgjs {
     // pointArray.js
     export interface PointArray extends _Array {
         new (): PointArray;
-        new (points: string): PointArray;
-        new (points: ArrayPoint[]): PointArray;
-        toStirng(): string;
+        new (points: PointArrayAlias): PointArray;
+        toString(): string;
         toLine(): {
             x1: number;
             y1: number;
             x2: number;
             y2: number;
         };
-        parse(points: string): ArrayPoint[];
+        parse(points: PointArrayAlias): ArrayPoint[];
+        parse(array: ArrayAlias): never;
         move(x: number, y: number): this;
-        size(width: number, height: number): this;
+        size(width?: number, height?: number): this;
         bbox(): BBox;
     }
     interface Library { PointArray: PointArray }
@@ -645,8 +690,7 @@ declare namespace svgjs {
     // poly.js
     interface poly extends Shape {
         array(): PointArray;
-        plot(p: string): this;
-        plot(p: ArrayPoint[]): this;
+        plot(p: PointArrayAlias): this;
         move(x: number, y: number): this;
         size(width: number, height: number): this;
     }
@@ -655,16 +699,14 @@ declare namespace svgjs {
     }
     interface Library { PolyLine: PolyLine; }
     interface Container {
-        polyline(points: string): PolyLine;
-        polyline(points: ArrayPoint[]): PolyLine;
+        polyline(points: PointArrayAlias): PolyLine;
     }
     export interface Polygon extends poly {
         new (): Polygon;
     }
     interface Library { Polygon: Polygon; }
     interface Container {
-        polygon(points: string): Polygon;
-        polygon(points: ArrayPoint[]): Polygon;
+        polygon(points: PointArrayAlias): Polygon;
     }
 
     // rect.js
@@ -683,8 +725,7 @@ declare namespace svgjs {
             hex: RegExp;
             rgb: RegExp;
             reference: RegExp;
-            matrix: RegExp;
-            matrixElements: RegExp;
+            transforms: RegExp;
             whitespace: RegExp;
             isHex: RegExp;
             isRgb: RegExp;
@@ -693,13 +734,11 @@ declare namespace svgjs {
             isNumber: RegExp;
             isPercent: RegExp;
             isImage: RegExp;
-            negExp: RegExp;
-            comma: RegExp;
+            delimiter: RegExp;
             hyphen: RegExp;
             pathLetters: RegExp;
             isPathLetter: RegExp;
-            whitespaces: RegExp;
-            X: RegExp;
+            dots: RegExp;
         }
     }
 
@@ -717,7 +756,7 @@ declare namespace svgjs {
         new (members?: Element[]): Set;
         add(...elments: Element[]): this;
         remove(element: Element): this;
-        each(block: Function): this;
+        each(block: (index: number, members: Element[]) => void): this;
         clear(): this;
         length(): number;
         has(element: Element): this;
@@ -759,19 +798,22 @@ declare namespace svgjs {
         fill(fill: { color?: string; opacity?: number, rule?: string }): this;
         fill(color: string): this;
         fill(pattern: Element): this;
+        fill(image: Image): this;
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
         rotate(d: number, cx?: number, cy?: number): this;
         skew(x: number, y?: number, cx?: number, cy?: number): this;
         scale(x: number, y?: number, cx?: number, cy?: number): this;
         translate(x: number, y: number): this;
-        flip(a?: any, offset?: number): this;
-        matrix(m: any): this;
+        flip(a: string, offset?: number): this;
+        flip(offset?: number): this;
+        matrix(m: MatrixAlias): this;
+        matrix(a: number, b: number, c: number, d: number, e: number, f: number): this;
         opacity(o: number): this;
         opacity(): number;
-        dx(x: number): this;
-        dy(y: number): this;
-        dmove(x: number, y: number): this;
+        dx(x: NumberAlias): this;
+        dy(y: NumberAlias): this;
+        dmove(x: NumberAlias, y: NumberAlias): this;
     }
     interface Path {
         length(): number;
@@ -797,31 +839,36 @@ declare namespace svgjs {
         new (): Text;
         clone(): Text;
         text(): string;
-        text(text: any): this;
-        size(fontSize: number): this;
-        leading(fontSize: number): this;
+        text(text: string): this;
+        text(block: (text: Text) => void): this;
+        size(fontSize: NumberAlias): this;
+        leading(leading: number): this;
         lines(): number;
         rebuild(enabled: boolean): this;
         build(enabled: boolean): this;
-        plain(text: any): this;
-        tspan(text: any): Tspan;
+        plain(text: string): this;
+        tspan(text: string): Tspan;
+        tspan(block: (tspan: Tspan) => void): this;
         clear(): this;
         length(): number;
     }
     interface Container {
-        text(text: any): Text;
-        plain(text: any): Text;
+        text(text: string): Text;
+        text(block: (tspan: Tspan) => void): Text;
+        plain(text: string): Text;
     }
     interface Library { Text: Text; }
     export interface Tspan extends Shape {
         new (): Tspan;
         text(): string;
-        text(text: any): this;
-        dx(x: number): this;
-        dy(y: number): this;
+        text(text: string): Tspan;
+        text(block: (tspan: Tspan) => void): this;
+        dx(x: NumberAlias): this;
+        dy(y: NumberAlias): this;
         newLine(): this;
         plain(text: any): this;
-        tspan(text: any): Tspan;
+        tspan(text: string): Tspan;
+        tspan(block: (tspan: Tspan) => void): this;
         clear(): this;
         length(): number;
     }
@@ -832,8 +879,7 @@ declare namespace svgjs {
         new (): TextPath;
     }
     interface Text {
-        path(d: any): this;
-        plot(d: any): this;
+        path(d: PathArrayAlias): this;
         track(): Element;
         textPath(): Element;
     }
@@ -841,12 +887,12 @@ declare namespace svgjs {
 
     // transform.js
     interface Element {
-        transform(t: Transform): Element;
+        transform(t: Transform, relative?: boolean): Element;
         transform(): Transform;
         untransform(): this;
         matrixify(): Matrix;
         toParent(parent: Parent): this;
-        toDoc(doc: Parent): this;
+        toDoc(): this;
     }
     interface Transform {
         x?: number;
@@ -858,7 +904,7 @@ declare namespace svgjs {
         scaleY?: number;
         skewX?: number;
         skewY?: number;
-        matrix?: string; // 1,0,0,1,0,0
+        matrix?: Matrix; // 1,0,0,1,0,0
         a?: number; // direct digits of matrix
         b?: number;
         c?: number;
@@ -870,6 +916,7 @@ declare namespace svgjs {
         new (...Transform): Transformation;
         new (source: Transform, inversed?: boolean): Transformation;
         at(pos: number): Matrix;
+        undo(transform: Transform): this
     }
     export interface Translate extends Transformation {new (): Translate}
     export interface Rotate extends Transformation {new (): Rotate}
@@ -902,28 +949,34 @@ declare namespace svgjs {
     // utilities.js
     interface Library {
         utils: {
-            map(arrya: any[], block: Function): any;
+            map(array: any[], block: Function): any;
+            filter(array: any[], block: Function): any;
             radians(d: number): number;
             degrees(r: number): number;
+            filterSVGElements: HTMLElement[]
         }
     }
 
     // viewbox.js
+    type ViewBoxAlias = ViewBoxLike | number[] | string | Element;
+    
     interface ViewBox {
-        new (source: Element): ViewBox;
-        new (source: string): ViewBox;
-        new (source: any[]): ViewBox;
+        new (source: ViewBoxAlias): ViewBox;
+        new (x: number, y: number, width: number, height: number): ViewBox;
         x: number;
         y: number;
         width: number;
         height: number;
         zoom?: number;
+        toString(): string;
+        morph(source: ViewBoxAlias): ViewBox;
+        morph(x: number, y: number, width: number, height: number): ViewBox;
+        at(pos:number): ViewBox;
     }
     interface Container {
-        toString(): string;
-        morph(v: { x: number, y: number, width: number, height: number }): this;
-        morph(v: any[]): this;
-        // at(pos:number):ViewBox;
+        viewbox(): ViewBox;
+        viewbox(x: number, y: number, width: number, height: number): this;
+        viewbox(viewbox: ViewBoxLike): this;
     }
     interface Library { ViewBox: ViewBox; }
 

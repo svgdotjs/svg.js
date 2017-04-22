@@ -1,6 +1,6 @@
 {
   "name": "svg.js",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgdotjs.github.io/",
   "homepage": "https://svgdotjs.github.io/",
@@ -36,7 +36,7 @@
     },
     {
       "name": "Jon Ege Ronnenberg",
-      "email": "jon.ronnenberg+svgjs@gmail.com",
+      "email": "jon@svgjs.com",
       "url": "https://keybase.io/dotnetcarpenter"
     }
   ],
@@ -81,7 +81,8 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "request": "^2.78.0",
     "snazzy": "^6.0.0",
-    "standard": "^9.0.1"
+    "standard": "^9.0.1",
+    "svgdom": "latest"
   },
   "standard": {
     "ignore": [

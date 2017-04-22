@@ -10,26 +10,26 @@ describe('Event', function() {
 
   beforeEach(function() {
     rect = draw.rect(100, 100)
+    spyOn(SVG,'on').and.callThrough()
   })
 
   afterEach(function() {
     toast = context = null
   })
 
-  if (!window.isTouchDevice) {
+  if (!this.isTouchDevice) {
 
     describe('click()', function() {
       it('attaches an onclick event to the node of the element', function() {
-        expect(typeof rect.node.onclick).not.toBe('function')
         rect.click(action)
-        expect(typeof rect.node.onclick).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'click', action)
       })
       it('fires the event on click', function() {
-        dispatchEvent(rect.click(action), 'click')
+        rect.click(action).fire('click')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.click(action), 'click')
+        rect.click(action).fire('click')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -39,16 +39,15 @@ describe('Event', function() {
 
     describe('dblclick()', function() {
       it('attaches an ondblclick event to the node of the element', function() {
-        expect(typeof rect.node.ondblclick).not.toBe('function')
         rect.dblclick(action)
-        expect(typeof rect.node.ondblclick).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'dblclick', action)
       })
       it('fires the event on dblclick', function() {
-        dispatchEvent(rect.dblclick(action), 'dblclick')
+        rect.dblclick(action).fire('dblclick')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.dblclick(action), 'dblclick')
+        rect.dblclick(action).fire('dblclick')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -58,16 +57,15 @@ describe('Event', function() {
 
     describe('mousedown()', function() {
       it('attaches an onmousedown event to the node of the element', function() {
-        expect(typeof rect.node.onmousedown).not.toBe('function')
         rect.mousedown(action)
-        expect(typeof rect.node.onmousedown).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'mousedown', action)
       })
       it('fires the event on mousedown', function() {
-        dispatchEvent(rect.mousedown(action), 'mousedown')
+        rect.mousedown(action).fire('mousedown')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mousedown(action), 'mousedown')
+        rect.mousedown(action).fire('mousedown')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -77,16 +75,15 @@ describe('Event', function() {
 
     describe('mouseup()', function() {
       it('attaches an onmouseup event to the node of the element', function() {
-        expect(typeof rect.node.onmouseup).not.toBe('function')
         rect.mouseup(action)
-        expect(typeof rect.node.onmouseup).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'mouseup', action)
       })
       it('fires the event on mouseup', function() {
-        dispatchEvent(rect.mouseup(action), 'mouseup')
+        rect.mouseup(action).fire('mouseup')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mouseup(action), 'mouseup')
+        rect.mouseup(action).fire('mouseup')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -96,16 +93,15 @@ describe('Event', function() {
 
     describe('mouseover()', function() {
       it('attaches an onmouseover event to the node of the element', function() {
-        expect(typeof rect.node.onmouseover).not.toBe('function')
         rect.mouseover(action)
-        expect(typeof rect.node.onmouseover).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'mouseover', action)
       })
       it('fires the event on mouseover', function() {
-        dispatchEvent(rect.mouseover(action), 'mouseover')
+        rect.mouseover(action).fire('mouseover')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mouseover(action), 'mouseover')
+        rect.mouseover(action).fire('mouseover')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -115,16 +111,15 @@ describe('Event', function() {
 
     describe('mouseout()', function() {
       it('attaches an onmouseout event to the node of the element', function() {
-        expect(typeof rect.node.onmouseout).not.toBe('function')
         rect.mouseout(action)
-        expect(typeof rect.node.onmouseout).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'mouseout', action)
       })
       it('fires the event on mouseout', function() {
-        dispatchEvent(rect.mouseout(action), 'mouseout')
+        rect.mouseout(action).fire('mouseout')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mouseout(action), 'mouseout')
+        rect.mouseout(action).fire('mouseout')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -134,16 +129,15 @@ describe('Event', function() {
 
     describe('mousemove()', function() {
       it('attaches an onmousemove event to the node of the element', function() {
-        expect(typeof rect.node.onmousemove).not.toBe('function')
         rect.mousemove(action)
-        expect(typeof rect.node.onmousemove).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'mousemove', action)
       })
       it('fires the event on mousemove', function() {
-        dispatchEvent(rect.mousemove(action), 'mousemove')
+        rect.mousemove(action).fire('mousemove')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mousemove(action), 'mousemove')
+        rect.mousemove(action).fire('mousemove')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -158,11 +152,11 @@ describe('Event', function() {
         expect(typeof rect.node.onmouseenter).toBe('function')
       })
       it('fires the event on mouseenter', function() {
-        dispatchEvent(rect.mouseenter(action), 'mouseenter')
+        rect.mouseenter(action).fire('mouseenter')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mouseenter(action), 'mouseenter')
+        rect.mouseenter(action).fire('mouseenter')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -177,11 +171,11 @@ describe('Event', function() {
         expect(typeof rect.node.onmouseleave).toBe('function')
       })
       it('fires the event on mouseleave', function() {
-        dispatchEvent(rect.mouseleave(action), 'mouseleave')
+        rect.mouseleave(action).fire('mouseleave')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.mouseleave(action), 'mouseleave')
+        rect.mouseleave(action).fire('mouseleave')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -193,16 +187,15 @@ describe('Event', function() {
 
     describe('touchstart()', function() {
       it('attaches an ontouchstart event to the node of the element', function() {
-        expect(typeof rect.node.ontouchstart).not.toBe('function')
         rect.touchstart(action)
-        expect(typeof rect.node.ontouchstart).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'touchstart', action)
       })
       it('fires the event on touchstart', function() {
-        dispatchEvent(rect.touchstart(action), 'touchstart')
+        rect.touchstart(action).fire('touchstart')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.touchstart(action), 'touchstart')
+        rect.touchstart(action).fire('touchstart')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -212,16 +205,15 @@ describe('Event', function() {
 
     describe('touchmove()', function() {
       it('attaches an ontouchmove event to the node of the element', function() {
-        expect(typeof rect.node.ontouchmove).not.toBe('function')
         rect.touchmove(action)
-        expect(typeof rect.node.ontouchmove).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'touchmove', action)
       })
       it('fires the event on touchmove', function() {
-        dispatchEvent(rect.touchmove(action), 'touchmove')
+        rect.touchmove(action).fire('touchmove')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.touchmove(action), 'touchmove')
+        rect.touchmove(action).fire('touchmove')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -231,16 +223,15 @@ describe('Event', function() {
 
     describe('touchleave()', function() {
       it('attaches an ontouchleave event to the node of the element', function() {
-        expect(typeof rect.node.ontouchleave).not.toBe('function')
         rect.touchleave(action)
-        expect(typeof rect.node.ontouchleave).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'touchleave', action)
       })
       it('fires the event on touchleave', function() {
-        dispatchEvent(rect.touchleave(action), 'touchleave')
+        rect.touchleave(action).fire('touchleave')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.touchleave(action), 'touchleave')
+        rect.touchleave(action).fire('touchleave')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -250,16 +241,15 @@ describe('Event', function() {
 
     describe('touchend()', function() {
       it('attaches an ontouchend event to the node of the element', function() {
-        expect(typeof rect.node.ontouchend).not.toBe('function')
         rect.touchend(action)
-        expect(typeof rect.node.ontouchend).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'touchend', action)
       })
       it('fires the event on touchend', function() {
-        dispatchEvent(rect.touchend(action), 'touchend')
+        rect.touchend(action).fire('touchend')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.touchend(action), 'touchend')
+        rect.touchend(action).fire('touchend')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -269,16 +259,15 @@ describe('Event', function() {
 
     describe('touchcancel()', function() {
       it('attaches an ontouchcancel event to the node of the element', function() {
-        expect(typeof rect.node.ontouchcancel).not.toBe('function')
         rect.touchcancel(action)
-        expect(typeof rect.node.ontouchcancel).toBe('function')
+        expect(SVG.on).toHaveBeenCalledWith(rect.node, 'touchcancel', action)
       })
       it('fires the event on touchcancel', function() {
-        dispatchEvent(rect.touchcancel(action), 'touchcancel')
+        rect.touchcancel(action).fire('touchcancel')
         expect(toast).toBe('ready')
       })
       it('applies the element as context', function() {
-        dispatchEvent(rect.touchcancel(action), 'touchcancel')
+        rect.touchcancel(action).fire('touchcancel')
         expect(context).toBe(rect)
       })
       it('returns the called element', function() {
@@ -292,15 +281,15 @@ describe('Event', function() {
   describe('on()', function() {
 
     it('attaches an event to the element', function() {
-      dispatchEvent(rect.on('event', action), 'event')
+      rect.on('event', action).fire('event')
       expect(toast).toBe('ready')
     })
     it('attaches an event to a non svg element', function() {
-      var body = document.getElementsByTagName('body')[0]
-      SVG.on(body, 'event', action)
-      body.dispatchEvent(new CustomEvent('event'))
+      var el = document.createElement('div')
+      SVG.on(el, 'event', action)
+      el.dispatchEvent(new window.CustomEvent('event'))
       expect(toast).toBe('ready')
-      SVG.off(body, 'event', action)
+      SVG.off(el, 'event', action)
     })
     it('attaches multiple handlers on different element', function() {
       var listenerCnt = SVG.listeners.length
@@ -338,11 +327,11 @@ describe('Event', function() {
       expect(SVG.listeners.length).toBe(listenerCnt + 3)                                                           // added listeners on 3 different elements
     })
     it('applies the element as context', function() {
-      dispatchEvent(rect.on('event', action), 'event')
+      rect.on('event', action).fire('event')
       expect(context).toBe(rect)
     })
     it('applies given object as context', function() {
-      dispatchEvent(rect.on('event', action, this), 'event')
+      rect.on('event', action, this).fire('event')
       expect(context).toBe(this)
     })
     it('stores the listener for future reference', function() {
@@ -373,13 +362,13 @@ describe('Event', function() {
 
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*']).length).toBe(0)
 
-      dispatchEvent(rect, 'event')
+      rect.fire('event')
       expect(toast).toBeNull()
 
-      dispatchEvent(rect2, 'event')
+      rect2.fire('event')
       expect(toast).toBe('ready')
 
-      dispatchEvent(rect3, 'event')
+      rect3.fire('event')
       expect(butter).toBe('melting')
 
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['*'][action]).toBeUndefined()
@@ -396,13 +385,13 @@ describe('Event', function() {
 
       expect(Object.keys(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace']).length).toBe(0)
 
-      dispatchEvent(rect, 'event')
+      rect.fire('event')
       expect(toast).toBeNull()
 
-      dispatchEvent(rect2, 'event')
+      rect2.fire('event')
       expect(toast).toBe('ready')
 
-      dispatchEvent(rect3, 'event')
+      rect3.fire('event')
       expect(butter).toBe('melting')
 
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']['namespace'][action]).toBeUndefined()
@@ -412,7 +401,7 @@ describe('Event', function() {
       rect.on('event.namespace', function() { butter = 'melting'; })
       rect.off('.namespace')
 
-      dispatchEvent(rect, 'event')
+      rect.fire('event')
       expect(toast).toBe('ready')
       expect(butter).toBeNull()
     })
@@ -421,7 +410,7 @@ describe('Event', function() {
       rect.on('event.namespace', function() { butter = 'melting'; })
       rect.off('event')
 
-      dispatchEvent(rect, 'event')
+      rect.fire('event')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]['event']).toBeUndefined()
@@ -430,8 +419,8 @@ describe('Event', function() {
       rect.on('event', action)
       rect.on('click', function() { butter = 'melting' })
       rect.off()
-      dispatchEvent(rect, 'event')
-      dispatchEvent(rect, 'click')
+      rect.fire('event')
+      rect.fire('click')
       expect(toast).toBeNull()
       expect(butter).toBeNull()
       expect(SVG.listeners[SVG.handlerMap.indexOf(rect.node)]).toBeUndefined()
@@ -477,7 +466,7 @@ describe('Event', function() {
     })
     it('fires my own event', function() {
       toast = null
-      rect.fire(new CustomEvent('event'))
+      rect.fire(new window.CustomEvent('event'))
       expect(toast).toBe('ready')
     })
     it('makes the event cancelable', function() {
@@ -494,11 +483,11 @@ describe('Event', function() {
       expect(rect.event()).toBe(null)
     })
     it('returns the last fired event', function() {
-      var event = new CustomEvent('foo')
+      var event = new window.CustomEvent('foo')
       rect.fire(event)
       expect(rect.event()).toBe(event)
 
-      event = new CustomEvent('bar')
+      event = new window.CustomEvent('bar')
       rect.fire(event)
       expect(rect.event()).toBe(event)
     })

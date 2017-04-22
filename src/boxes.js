@@ -33,7 +33,7 @@ SVG.Box = SVG.invent({
     }
 
   , transform: function(m) {
-      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p, bbox
 
       var pts = [
         new SVG.Point(this.x, this.y),
@@ -72,7 +72,6 @@ SVG.Box = SVG.invent({
     }
 
   , at: function(pos) {
-
       if(!this.destination) return this
 
       return new SVG.Box(
@@ -103,7 +102,7 @@ SVG.Box = SVG.invent({
         }
       } catch(e) {
         try {
-          var clone = this.clone(SVG.parser.draw).show()
+          var clone = this.clone(SVG.parser.draw.instance).show()
           box = clone.node.getBBox()
           clone.remove()
         } catch(e) {

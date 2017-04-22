@@ -126,7 +126,7 @@ SVG.adopt = function(node) {
 SVG.prepare = function() {
   // Select document body and create invisible svg element
   var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) :  new SVG.Doc(document.documentElement).nested()).size(2, 0)
+    , draw = (body ? new SVG.Doc(body) : SVG.adopt(document.documentElement).nested()).size(2, 0)
 
   // Create parser object
   SVG.parser = {
@@ -137,7 +137,7 @@ SVG.prepare = function() {
       left:'-100%',
       top:'-100%',
       overflow:'hidden'
-    })
+    }).node
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')

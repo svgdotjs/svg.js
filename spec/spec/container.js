@@ -205,10 +205,10 @@ describe('Container', function() {
   })
 
   describe('clear()', function() {
-    it('removes all children', function() {
+    it('removes all children except the parser if present', function() {
       draw.rect(100,100)
       draw.clear()
-      expect(draw.children().length).toBe(0)
+      expect(draw.children().length).toBe(parserInDoc)
     })
     it('creates a new defs node', function() {
       var oldDefs = draw.defs()
@@ -234,7 +234,7 @@ describe('Container', function() {
       draw.each(function() {
         children.push(this.type)
       })
-      expect(children).toEqual(['rect', 'ellipse', 'polygon'])
+      expect(children).toEqual((parserInDoc ? [parser[0].type] : []).concat(['rect', 'ellipse', 'polygon']))
     })
     it('should only include the its own children', function() {
       var children = []
@@ -268,7 +268,7 @@ describe('Container', function() {
         children.push(this)
       }, true)
 
-      expect(children.length).toEqual(draw.children().length + group.children().length)
+      expect(children.length).toEqual(draw.children().length + group.children().length + (parserInDoc ? parser[0].children().length : 0))
     })
   })
 
@@ -278,23 +278,23 @@ describe('Container', function() {
       var rect = draw.rect(100,100)
       var circle = draw.circle(100)
       var line = draw.line(0,0,100,100)
-      expect(draw.get(0)).toBe(rect)
-      expect(draw.get(1)).toBe(circle)
-      expect(draw.get(2)).toBe(line)
-      expect(draw.get(3)).toBeNull()
+      expect(draw.get(0+parserInDoc)).toBe(rect)
+      expect(draw.get(1+parserInDoc)).toBe(circle)
+      expect(draw.get(2+parserInDoc)).toBe(line)
+      expect(draw.get(3+parserInDoc)).toBeNull()
     })
   })
-  
+
   describe('first()', function() {
     it('gets the first child', function() {
       draw.clear()
       var rect = draw.rect(100,100)
       var circle = draw.circle(100)
       var line = draw.line(0,0,100,100)
-      expect(draw.first()).toBe(rect)
+      expect(draw.first()).toBe(parserInDoc ? parser[0] : rect)
     })
   })
-  
+
   describe('last()', function() {
     it('gets the last child', function() {
       draw.clear()
@@ -325,9 +325,9 @@ describe('Container', function() {
       var circle = draw.circle(100)
       var group = draw.group()
       var line = group.line(0,0,100,100)
-      expect(draw.index(rect)).toBe(0)
-      expect(draw.index(circle)).toBe(1)
-      expect(draw.index(group)).toBe(2)
+      expect(draw.index(rect)).toBe(0+parserInDoc)
+      expect(draw.index(circle)).toBe(1+parserInDoc)
+      expect(draw.index(group)).toBe(2+parserInDoc)
       expect(draw.index(line)).toBe(-1)
       expect(group.index(line)).toBe(0)
     })

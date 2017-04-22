@@ -1782,6 +1782,34 @@ describe('FX', function() {
     expect(ctm.f).toBe(0)
   })
 
+  it('animate a flip(x) transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'x', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(10)
+    expect(ctm.f).toBe(0)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(1)
+    expect(ctm.e).toBe(40)
+    expect(ctm.f).toBe(0)
+  })
+
   it('animate a flip(y) transform', function() {
     var ctm
 
@@ -1808,6 +1836,90 @@ describe('FX', function() {
     expect(ctm.d).toBe(-1)
     expect(ctm.e).toBe(0)
     expect(ctm.f).toBe(300)
+  })
+
+  it('animate a flip(y) transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'y', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(10)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(0)
+    expect(ctm.f).toBe(40)
+  })
+
+  it('animate a flip() transform', function() {
+    var ctm
+
+    fx.transform({flip: 'both'}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(75)
+    expect(ctm.f).toBe(75)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(300)
+    expect(ctm.f).toBe(300)
+  })
+
+  it('animate a flip() transform with an offset', function() {
+    var ctm
+
+    fx.transform({flip: 'both', offset: 20}).start()
+
+    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(0.5)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(0.5)
+    expect(ctm.e).toBe(10)
+    expect(ctm.f).toBe(10)
+
+    jasmine.clock().tick(475) // Have the animation reach its end
+    fx.step()
+
+    ctm = rect.ctm()
+    expect(ctm.a).toBe(-1)
+    expect(ctm.b).toBe(0)
+    expect(ctm.c).toBe(0)
+    expect(ctm.d).toBe(-1)
+    expect(ctm.e).toBe(40)
+    expect(ctm.f).toBe(40)
   })
 
   it('animate relative matrix transform', function(){
@@ -2194,10 +2306,10 @@ describe('FX', function() {
 
       fx.start()
       // When setting a style color, it get saved as  a rgb() string even if it was passed as an hex code
-      // The style rgb string as spaces while the one returned by SVG.Color do not as show bellow
+      // The style rgb string has spaces while the one returned by SVG.Color do not as show bellow
       // CSS: rgb(255, 255, 255)                    SVG.Color: rgb(255,255,255)
       // The space in the style rbg string are removed so they can be equal
-      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(0).toRgb())
+      expect(rect.style('fill').replace(/\s+/g, '')).toBe(morph.at(0).toRgb())
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()

@@ -42,7 +42,12 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
 , plot: function(p) {
     return (p == null) ?
       this.array() :
-      this.attr('points', (this._array = new SVG.PointArray(p)))
+      this.clear().attr('points', typeof p == 'string' ? p : (this._array = new SVG.PointArray(p)))
+  }
+  // Clear array cache
+, clear: function() {
+    delete this._array
+    return this
   }
   // Move by left top corner
 , move: function(x, y) {

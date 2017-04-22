@@ -228,7 +228,7 @@ describe('PointArray', function () {
 })
 
 describe('PathArray', function () {
-  var p1, p2, p3
+  var p1, p2, p3, p4, p5, p6, p7
 
   beforeEach(function() {
     p1 = new SVG.PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')
@@ -250,6 +250,16 @@ describe('PathArray', function () {
 
   it('parses difficult syntax correctly', function() {
     expect(p5.toString()).toBe('M10 10L-45 -30.5L0.5 0.89L0.02 0.5L0.5 -0.5C0.5 0.5 0.5 0.5 0.5 0.5L-3 -4Z ')
+  })
+  
+  it('parses flat arrays correctly', function() {
+    p6 = new SVG.PathArray([ 'M', 0, 0, 'L', 100, 100, 'z' ])
+    expect(p6.toString()).toBe('M0 0L100 100Z ')
+  })  
+  
+  it('parses nested arrays correctly', function() {
+    p7 = new SVG.PathArray([ ['M', 0, 0], ['L', 100, 100], ['z'] ])
+    expect(p7.toString()).toBe('M0 0L100 100Z ')
   })
 
   // this test is designed to cover a certain line but it doesnt work because of #608

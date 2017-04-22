@@ -13,11 +13,16 @@ SVG.Path = SVG.invent({
   , array: function() {
       return this._array || (this._array = new SVG.PathArray(this.attr('d')))
     }
-    // Plot new poly points
-  , plot: function(p) {
-      return (p == null) ?
+    // Plot new path
+  , plot: function(d) {
+      return (d == null) ?
         this.array() :
-        this.attr('d', (this._array = new SVG.PathArray(p)))
+        this.clear().attr('d', typeof d == 'string' ? d : (this._array = new SVG.PathArray(d)))
+    }
+    // Clear array cache
+  , clear: function() {
+      delete this._array
+      return this
     }
     // Move by left top corner
   , move: function(x, y) {

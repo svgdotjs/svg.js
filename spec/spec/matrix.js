@@ -152,7 +152,7 @@ describe('Matrix', function() {
     })
 
   })
-  
+
   describe('clone()', function() {
     it('returns a clone of the matrix', function() {
       var matrix = new SVG.Matrix(2, 0, 0, 5, 0, 0)
@@ -333,6 +333,32 @@ describe('Matrix', function() {
         expect(matrix.f).toBe(203)
       })
     })
+    describe('with no axis given', function() {
+      it('performs a flip over the horizontal and vertical axis with no argument', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip()
+
+        expect(matrix.a).toBe(-1)
+        expect(matrix.d).toBe(-1)
+        expect(matrix.e).toBe(4)
+        expect(matrix.f).toBe(3)
+      })
+      it('performs a flip over the horizontal and vertical axis over a given point with one argument that represent both coordinates', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(100)
+
+        expect(matrix.a).toBe(-1)
+        expect(matrix.d).toBe(-1)
+        expect(matrix.e).toBe(204)
+        expect(matrix.f).toBe(203)
+      })
+      it('performs a flip over the horizontal and vertical axis over a given point with two arguments', function() {
+        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(50, 100)
+
+        expect(matrix.a).toBe(-1)
+        expect(matrix.d).toBe(-1)
+        expect(matrix.e).toBe(104)
+        expect(matrix.f).toBe(203)
+      })
+    })
   })
 
   describe('skew()', function() {
@@ -438,7 +464,7 @@ describe('Matrix', function() {
 
   describe('native()', function() {
     it('returns the node reference', function() {
-      expect(new SVG.Matrix().native() instanceof SVGMatrix).toBeTruthy()
+      expect(new SVG.Matrix().native() instanceof window.SVGMatrix).toBeTruthy()
     })
   })
 
