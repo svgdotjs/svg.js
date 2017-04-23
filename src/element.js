@@ -58,7 +58,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 
@@ -94,6 +94,12 @@ SVG.Element = SVG.invent({
     }
     // Get / set id
   , id: function(id) {
+      // generate new id if no id set
+      if(typeof id == 'undefined' && !this.node.id) {
+        this.node.id = SVG.eid(this.type)
+      }
+      
+      // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     }
     // Checks whether the given point inside the bounding box of the element
@@ -119,7 +125,7 @@ SVG.Element = SVG.invent({
     }
     // Return id on string conversion
   , toString: function() {
-      return this.attr('id')
+      return this.id()
     }
     // Return array of classes on the node
   , classes: function() {

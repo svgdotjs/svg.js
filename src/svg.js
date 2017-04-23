@@ -36,12 +36,7 @@ SVG.eid = function(name) {
 // Method for element creation
 SVG.create = function(name) {
   // create element
-  var element = document.createElementNS(this.ns, name)
-
-  // apply unique id
-  element.setAttribute('id', this.eid(name))
-
-  return element
+  return document.createElementNS(this.ns, name)
 }
 
 // Method for extending objects

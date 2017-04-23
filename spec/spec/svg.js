@@ -39,18 +39,6 @@ describe('SVG', function() {
 
       expect(element.nodeName).toBe('rect')
     })
-    it('increases the global id sequence', function() {
-      var did = SVG.did
-        , element = SVG.create('rect')
-
-      expect(did + 1).toBe(SVG.did)
-    })
-    it('adds a unique id containing the node name', function() {
-      var did = SVG.did
-        , element = SVG.create('rect')
-
-      expect(element.getAttribute('id')).toBe('SvgjsRect' + did)
-    })
   })
 
   describe('extend()', function() {

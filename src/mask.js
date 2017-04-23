@@ -19,7 +19,7 @@ SVG.Mask = SVG.invent({
     }
 
   , targets: function() {
-      return SVG.select('svg [mask*="' +this.id() +'"]')
+      return SVG.select('svg [mask*="' + this.id() + '"]')
     }
   }
 
@@ -40,7 +40,7 @@ SVG.extend(SVG.Element, {
     var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + masker.attr('id') + '")')
+    return this.attr('mask', 'url("#' + masker.id() + '")')
   }
   // Unmask element
 , unmask: function() {

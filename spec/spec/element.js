@@ -126,12 +126,29 @@ describe('Element', function() {
       rect = draw.rect(100,100)
     })
 
+    it('generates an id when getting if no id is set on the element', function() {
+      expect(rect.attr('id')).toBe(undefined)
+      expect(rect.id()).not.toBe(null)
+      expect(rect.node.id).not.toBe(null)
+    })
+    it('increases the global id sequence', function() {
+      var did = SVG.did
+      rect.id()
+    
+      expect(did + 1).toBe(SVG.did)
+    })
+    it('adds a unique id containing the node name', function() {
+      var did = SVG.did
+      rect.id()
+    
+      expect(rect.attr('id')).toBe('SvgjsRect' + did)
+    })
     it('gets the value if the id attribute without an argument', function() {
       expect(rect.id()).toBe(rect.attr('id'))
     })
     it('sets the value of the id', function() {
       rect.id('new_id')
-      expect(rect.attr('id')).toBe('new_id')
+      expect(rect.id()).toBe('new_id')
     })
   })
 
@@ -644,7 +661,7 @@ describe('Element', function() {
     })
     it('assigns a new id to the cloned element', function() {
       clone = rect.clone()
-      expect(clone.attr('id')).not.toBe(rect.attr('id'))
+      expect(clone.id()).not.toBe(rect.id())
     })
     it('copies all child nodes as well', function() {
       clone = group.clone()
@@ -652,9 +669,9 @@ describe('Element', function() {
     })
     it('assigns a new id to cloned child elements', function() {
       clone = group.clone()
-      expect(clone.attr('id')).not.toEqual(group.attr('id'))
-      expect(clone.get(0).attr('id')).not.toBe(group.get(0).attr('id'))
-      expect(clone.get(1).attr('id')).not.toBe(group.get(1).attr('id'))
+      expect(clone.id()).not.toEqual(group.id())
+      expect(clone.get(0).id()).not.toBe(group.get(0).id())
+      expect(clone.get(1).id()).not.toBe(group.get(1).id())
     })
     it('inserts the clone after the cloned element', function() {
       clone = rect.clone()
@@ -677,7 +694,7 @@ describe('Element', function() {
   describe('toString()', function() {
     it('returns the element id', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
-      expect(rect + '').toBe(rect.attr('id'))
+      expect(rect + '').toBe(rect.id())
     })
   })
 
@@ -809,13 +826,13 @@ describe('Element', function() {
         // Test for different browsers namely Firefox and Chrome
         expect(
             // IE
-            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="' + draw.id() + '"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
+            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
 
             // Firefox
-         || toBeTested === '<svg id="' + draw.id() + '" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+         || toBeTested === '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
 
             // svgdom
-         || toBeTested === '<svg id="' + draw.id() + '" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+         || toBeTested === '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
         ).toBeTruthy()
 
       })

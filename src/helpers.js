@@ -38,7 +38,7 @@ function matches(el, selector) {
 }
 
 // Convert dash-separated-string to camelCase
-function camelCase(s) { 
+function camelCase(s) {
   return s.toLowerCase().replace(/-(.)/g, function(m, g) {
     return g.toUpperCase()
   })
@@ -49,7 +49,7 @@ function capitalize(s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-// Ensure to six-based hex 
+// Ensure to six-based hex
 function fullHex(hex) {
   return hex.length == 4 ?
     [ '#',
@@ -69,13 +69,13 @@ function compToHex(comp) {
 function proportionalSize(element, width, height) {
   if (width == null || height == null) {
     var box = element.bbox()
-    
+
     if (width == null)
       width = box.width / box.height * height
     else if (height == null)
       height = box.height / box.width * width
   }
-  
+
   return {
     width:  width
   , height: height
@@ -99,7 +99,7 @@ function arrayToMatrix(a) {
 function parseMatrix(matrix) {
   if (!(matrix instanceof SVG.Matrix))
     matrix = new SVG.Matrix(matrix)
-  
+
   return matrix
 }
 
@@ -142,7 +142,7 @@ function arrayToString(a) {
       }
     }
   }
-  
+
   return s + ' '
 }
 
@@ -153,7 +153,10 @@ function assignNewId(node) {
     if (node.childNodes[i] instanceof window.SVGElement)
       assignNewId(node.childNodes[i])
 
-  return SVG.adopt(node).id(SVG.eid(node.nodeName))
+  if(node.id)
+    return SVG.adopt(node).id(SVG.eid(node.nodeName))
+
+  return SVG.adopt(node)
 }
 
 // Add more bounding box properties

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Apr 22 2017 22:14:55 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 23 2017 12:52:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -59,12 +59,7 @@ SVG.eid = function(name) {
 // Method for element creation
 SVG.create = function(name) {
   // create element
-  var element = document.createElementNS(this.ns, name)
-
-  // apply unique id
-  element.setAttribute('id', this.eid(name))
-
-  return element
+  return document.createElementNS(this.ns, name)
 }
 
 // Method for extending objects
@@ -1075,7 +1070,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 
@@ -1111,6 +1106,12 @@ SVG.Element = SVG.invent({
     }
     // Get / set id
   , id: function(id) {
+      // generate new id if no id set
+      if(typeof id == 'undefined' && !this.node.id) {
+        this.node.id = SVG.eid(this.type)
+      }
+
+      // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     }
     // Checks whether the given point inside the bounding box of the element
@@ -1136,7 +1137,7 @@ SVG.Element = SVG.invent({
     }
     // Return id on string conversion
   , toString: function() {
-      return this.attr('id')
+      return this.id()
     }
     // Return array of classes on the node
   , classes: function() {
@@ -3352,7 +3353,7 @@ SVG.Mask = SVG.invent({
     }
 
   , targets: function() {
-      return SVG.select('svg [mask*="' +this.id() +'"]')
+      return SVG.select('svg [mask*="' + this.id() + '"]')
     }
   }
 
@@ -3373,7 +3374,7 @@ SVG.extend(SVG.Element, {
     var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + masker.attr('id') + '")')
+    return this.attr('mask', 'url("#' + masker.id() + '")')
   }
   // Unmask element
 , unmask: function() {
@@ -3426,7 +3427,7 @@ SVG.extend(SVG.Element, {
     var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + clipper.attr('id') + '")')
+    return this.attr('clip-path', 'url("#' + clipper.id() + '")')
   }
   // Unclip element
 , unclip: function() {
@@ -4939,7 +4940,10 @@ function assignNewId(node) {
     if (node.childNodes[i] instanceof window.SVGElement)
       assignNewId(node.childNodes[i])
 
-  return SVG.adopt(node).id(SVG.eid(node.nodeName))
+  if(node.id)
+    return SVG.adopt(node).id(SVG.eid(node.nodeName))
+
+  return SVG.adopt(node)
 }
 
 // Add more bounding box properties

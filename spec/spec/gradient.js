@@ -29,7 +29,7 @@ describe('Gradient', function() {
 
   describe('fill()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
-      expect(gradient.fill()).toBe('url(#' + gradient.attr('id') + ')')
+      expect(gradient.fill()).toBe('url(#' + gradient.id() + ')')
     })
   })
   
@@ -67,11 +67,11 @@ describe('Gradient', function() {
 
   describe('toString()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
-      expect(gradient + '').toBe('url(#' + gradient.attr('id') + ')')
+      expect(gradient + '').toBe('url(#' + gradient.id() + ')')
     })
     it('is called when instance is passed as an attribute value', function() {
       rect.attr('fill', gradient)
-      expect(rect.attr('fill')).toBe('url(#' + gradient.attr('id') + ')')
+      expect(rect.attr('fill')).toBe('url(#' + gradient.id() + ')')
     })
   })
 
