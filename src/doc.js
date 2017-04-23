@@ -55,19 +55,6 @@ SVG.Doc = SVG.invent({
   , parent: function() {
       return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
     }
-    // Fix for possible sub-pixel offset. See:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function(spof) {
-      var pos = this.node.getScreenCTM()
-
-      if (pos)
-        this
-          .style('left', (-pos.e % 1) + 'px')
-          .style('top',  (-pos.f % 1) + 'px')
-
-      return this
-    }
-
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {

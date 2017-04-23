@@ -39,18 +39,6 @@ describe('SVG', function() {
 
       expect(element.nodeName).toBe('rect')
     })
-    it('increases the global id sequence', function() {
-      var did = SVG.did
-        , element = SVG.create('rect')
-
-      expect(did + 1).toBe(SVG.did)
-    })
-    it('adds a unique id containing the node name', function() {
-      var did = SVG.did
-        , element = SVG.create('rect')
-
-      expect(element.getAttribute('id')).toBe('SvgjsRect' + did)
-    })
   })
 
   describe('extend()', function() {
@@ -104,12 +92,11 @@ describe('SVG', function() {
       expect(SVG.parser.draw.nodeName).toBe('svg')
     })
     it('hides the parser', function() {
-      expect(window.stripped(SVG.parser.draw.getAttribute('style'))).toBe('overflow:hidden;top:-100%;left:-100%;position:absolute;opacity:0')
+      expect(window.stripped(SVG.parser.draw.getAttribute('style'))).toBe('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden')
     })
     it('holds polyline and path', function() {
-      expect(SVG.select('polyline', SVG.parser.draw).first().type).toBe('polyline')
-      expect(SVG.select('path', SVG.parser.draw).first().type).toBe('path')
+      expect(SVG.select('polyline', SVG.parser.draw.node)[0].type).toBe('polyline')
+      expect(SVG.select('path', SVG.parser.draw.node)[0].type).toBe('path')
     })
   })
-
 })

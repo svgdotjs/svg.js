@@ -82,7 +82,7 @@ SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
     var type = (this._target || this).type;
-    return type == 'radial' || type == 'circle' ?
+    return type == 'radialGradient' || type == 'radialGradient' ?
       this.attr('r', new SVG.Number(x)) :
       this.rx(x).ry(y == null ? x : y)
   }
@@ -95,7 +95,7 @@ SVG.extend(SVG.Path, {
   }
   // Get point at length
 , pointAt: function(length) {
-    return this.node.getPointAtLength(length)
+    return new SVG.Point(this.node.getPointAtLength(length))
   }
 })
 

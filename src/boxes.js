@@ -1,14 +1,20 @@
 SVG.Box = SVG.invent({
-  create: function(x, y, width, height) {
-    if (typeof x == 'object' && !(x instanceof SVG.Element)) {
-      // chromes getBoundingClientRect has no x and y property
-      return SVG.Box.call(this, x.left != null ? x.left : x.x , x.top != null ? x.top : x.y, x.width, x.height)
-    } else if (arguments.length == 4) {
-      this.x = x
-      this.y = y
-      this.width = width
-      this.height = height
-    }
+  create: function(source) {
+    var base = [0,0,0,0]
+    source = typeof source === 'string' ?
+        source.split(SVG.regex.delimiter).map(parseFloat) :
+      Array.isArray(source) ?
+        source :
+      typeof source == 'object' ?
+        [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] :
+      arguments.length == 4 ?
+        [].slice.call(arguments) :
+        base
+
+    this.x = source[0]
+    this.y = source[1]
+    this.width = source[2]
+    this.height = source[3]
 
     // add center, right, bottom...
     fullBox(this)
@@ -16,15 +22,14 @@ SVG.Box = SVG.invent({
 , extend: {
     // Merge rect box with another, return a new instance
     merge: function(box) {
-      var b = new this.constructor()
+      var x = Math.min(this.x, box.x)
+        , y = Math.min(this.y, box.y)
 
-      // merge boxes
-      b.x      = Math.min(this.x, box.x)
-      b.y      = Math.min(this.y, box.y)
-      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
-      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-
-      return fullBox(b)
+      return new SVG.Box(
+        x, y,
+        Math.max(this.x + this.width,  box.x + box.width)  - x,
+        Math.max(this.y + this.height, box.y + box.height) - y
+      )
     }
 
   , transform: function(m) {
@@ -45,124 +50,88 @@ SVG.Box = SVG.invent({
         yMax = Math.max(yMax,p.y)
       })
 
-      bbox = new this.constructor()
-      bbox.x = xMin
-      bbox.width = xMax-xMin
-      bbox.y = yMin
-      bbox.height = yMax-yMin
-
-      fullBox(bbox)
-
-      return bbox
-    }
-  }
-})
-
-SVG.BBox = SVG.invent({
-  // Initialize
-  create: function(element) {
-    SVG.Box.apply(this, [].slice.call(arguments))
-
-    // get values if element is given
-    if (element instanceof SVG.Element) {
-      var box
-
-      // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
-      try {
-
-        if (!document.documentElement.contains){
-          // This is IE - it does not support contains() for top-level SVGs
-          var topParent = element.node
-          while (topParent.parentNode){
-            topParent = topParent.parentNode
-          }
-          if (topParent != document) throw new Exception('Element not in the dom')
-        } else {
-          // the element is NOT in the dom, throw error
-          if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
-        }
-
-        // find native bbox
-        box = element.node.getBBox()
-      } catch(e) {
-        if(element instanceof SVG.Shape){
-          var clone = element.clone(SVG.parser.draw.instance).show()
-          box = clone.node.getBBox()
-          clone.remove()
-        }else{
-          box = {
-            x:      element.node.clientLeft
-          , y:      element.node.clientTop
-          , width:  element.node.clientWidth
-          , height: element.node.clientHeight
-          }
-        }
-      }
-
-      SVG.Box.call(this, box)
+      return new SVG.Box(
+        xMin, yMin,
+        xMax-xMin,
+        yMax-yMin
+      )
     }
 
+  , addOffset: function() {
+      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+      this.x += window.pageXOffset
+      this.y += window.pageYOffset
+      return this
+    }
+  , toString: function() {
+      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+    }
+  , morph: function(x, y, width, height){
+      this.destination = new SVG.Box(x, y, width, height)
+      return this
+    }
+
+  , at: function(pos) {
+      if(!this.destination) return this
+
+      return new SVG.Box(
+          this.x + (this.destination.x - this.x) * pos
+        , this.y + (this.destination.y - this.y) * pos
+        , this.width + (this.destination.width - this.width) * pos
+        , this.height + (this.destination.height - this.height) * pos
+      )
+
+    }
   }
 
-  // Define ancestor
-, inherit: SVG.Box
-
-  // Define Parent
+    // Define Parent
 , parent: SVG.Element
 
   // Constructor
 , construct: {
     // Get bounding box
     bbox: function() {
-      return new SVG.BBox(this)
+      var box
+
+      try {
+        // find native bbox
+        box = this.node.getBBox()
+
+        if(isNulledBox(box) && !domContains(this.node)) {
+          throw new Exception('Element not in the dom')
+        }
+      } catch(e) {
+        try {
+          var clone = this.clone(SVG.parser.draw.instance).show()
+          box = clone.node.getBBox()
+          clone.remove()
+        } catch(e) {
+          console.warn('Getting a bounding box of this element is not possible')
+        }
+      }
+
+      return new SVG.Box(box)
+    }
+
+  , rbox: function(el) {
+      // IE11 throws an error when element not in dom
+      try{
+        var box = new SVG.Box(this.node.getBoundingClientRect())
+        if (el) return box.transform(el.screenCTM().inverse())
+        return box.addOffset()
+      } catch(e) {
+        return new SVG.Box()
+      }
     }
   }
-
 })
 
-SVG.BBox.prototype.constructor = SVG.BBox
+SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
+  viewbox: function(x, y, width, height) {
+    // act as getter
+    if(x == null) return new SVG.Box(this.attr('viewBox'))
 
-
-SVG.extend(SVG.Element, {
-  tbox: function(){
-    console.warn('Use of TBox is deprecated and mapped to RBox. Use .rbox() instead.')
-    return this.rbox(this.doc())
+    // act as setter
+    return this.attr('viewBox', new SVG.Box(x, y, width, height))
   }
 })
-
-SVG.RBox = SVG.invent({
-  // Initialize
-  create: function(element) {
-    SVG.Box.apply(this, [].slice.call(arguments))
-
-    if (element instanceof SVG.Element) {
-      SVG.Box.call(this, element.node.getBoundingClientRect())
-    }
-  }
-
-, inherit: SVG.Box
-
-  // define Parent
-, parent: SVG.Element
-
-, extend: {
-    addOffset: function() {
-      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-      this.x += window.pageXOffset
-      this.y += window.pageYOffset
-      return this
-    }
-  }
-
-  // Constructor
-, construct: {
-    // Get rect box
-    rbox: function(el) {
-      if (el) return new SVG.RBox(this).transform(el.screenCTM().inverse())
-      return new SVG.RBox(this).addOffset()
-    }
-  }
-
-})
-
-SVG.RBox.prototype.constructor = SVG.RBox

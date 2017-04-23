@@ -1,6 +1,6 @@
 {
   "name": "svg.js",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgdotjs.github.io/",
   "homepage": "https://svgdotjs.github.io/",
@@ -57,7 +57,8 @@
     "build": "gulp",
     "build:test": "gulp unify",
     "test": "karma start .config/karma.conf.js --single-run",
-    "test:quick": "karma start .config/karma.quick.js"
+    "test:quick": "karma start .config/karma.quick.js",
+    "lint": "standard --verbose | snazzy"
   },
   "devDependencies": {
     "coveralls": "^2.11.15",
@@ -79,6 +80,17 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.2",
     "request": "^2.78.0",
+    "snazzy": "^6.0.0",
+    "standard": "^9.0.1",
     "svgdom": "latest"
+  },
+  "standard": {
+    "ignore": [
+      "/dist",
+      "/src/umd.js"
+    ],
+    "globals": [
+      "SVG"
+    ]
   }
 }

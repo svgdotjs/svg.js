@@ -1,3 +1,17 @@
+function isNulledBox(box) {
+  return !box.w && !box.h && !box.x && !box.y
+}
+
+function domContains(node) {
+  return (document.documentElement.contains || function(node) {
+    // This is IE - it does not support contains() for top-level SVGs
+    while (node.parentNode){
+      node = node.parentNode;
+    }
+    return node == document
+  }).call(document.documentElement, node)
+}
+
 function pathRegReplace(a, b, c, d) {
   return c + d.replace(SVG.regex.dots, ' .')
 }
@@ -24,7 +38,7 @@ function matches(el, selector) {
 }
 
 // Convert dash-separated-string to camelCase
-function camelCase(s) { 
+function camelCase(s) {
   return s.toLowerCase().replace(/-(.)/g, function(m, g) {
     return g.toUpperCase()
   })
@@ -35,7 +49,7 @@ function capitalize(s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-// Ensure to six-based hex 
+// Ensure to six-based hex
 function fullHex(hex) {
   return hex.length == 4 ?
     [ '#',
@@ -55,13 +69,13 @@ function compToHex(comp) {
 function proportionalSize(element, width, height) {
   if (width == null || height == null) {
     var box = element.bbox()
-    
+
     if (width == null)
       width = box.width / box.height * height
     else if (height == null)
       height = box.height / box.width * width
   }
-  
+
   return {
     width:  width
   , height: height
@@ -85,7 +99,7 @@ function arrayToMatrix(a) {
 function parseMatrix(matrix) {
   if (!(matrix instanceof SVG.Matrix))
     matrix = new SVG.Matrix(matrix)
-  
+
   return matrix
 }
 
@@ -128,7 +142,7 @@ function arrayToString(a) {
       }
     }
   }
-  
+
   return s + ' '
 }
 
@@ -139,7 +153,10 @@ function assignNewId(node) {
     if (node.childNodes[i] instanceof window.SVGElement)
       assignNewId(node.childNodes[i])
 
-  return SVG.adopt(node).id(SVG.eid(node.nodeName))
+  if(node.id)
+    return SVG.adopt(node).id(SVG.eid(node.nodeName))
+
+  return SVG.adopt(node)
 }
 
 // Add more bounding box properties
@@ -163,9 +180,40 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = url.toString().match(SVG.regex.reference)
+  var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
+}
+
+// creates an url reference out of nodes id
+function url(node) {
+  return 'url(' + window.location + '#' + node.id() + ')'
+}
+
+function removePrefixFromReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      removePrefixFromReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(match[1] == window.location) v[n].nodeValue = 'url(#' + match[2] + ')'
+    }
+  }
+}
+
+function addPrefixToReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      addPrefixToReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(!match[1]) v[n].nodeValue = 'url(' + window.location + '#' + match[2] + ')'
+    }
+  }
 }
 
 // Create matrix array for looping

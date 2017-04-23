@@ -2,8 +2,7 @@
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // make stroke value accessible dynamically
-    this._stroke = SVG.defaults.attrs.stroke
+    // last fired event on node
     this._event = null
 
     // initialize data object
@@ -13,9 +12,6 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
-
-      // store current attribute value
-      this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
 
@@ -62,7 +58,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 
@@ -98,6 +94,12 @@ SVG.Element = SVG.invent({
     }
     // Get / set id
   , id: function(id) {
+      // generate new id if no id set
+      if(typeof id == 'undefined' && !this.node.id) {
+        this.node.id = SVG.eid(this.type)
+      }
+      
+      // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     }
     // Checks whether the given point inside the bounding box of the element
@@ -111,19 +113,19 @@ SVG.Element = SVG.invent({
     }
     // Show element
   , show: function() {
-      return this.style('display', '')
+      return this.css('display', '')
     }
     // Hide element
   , hide: function() {
-      return this.style('display', 'none')
+      return this.css('display', 'none')
     }
     // Is element visible?
   , visible: function() {
-      return this.style('display') != 'none'
+      return this.css('display') != 'none'
     }
     // Return id on string conversion
   , toString: function() {
-      return this.attr('id')
+      return this.id()
     }
     // Return array of classes on the node
   , classes: function() {
@@ -208,31 +210,29 @@ SVG.Element = SVG.invent({
     }
     // Import raw svg
   , svg: function(svg) {
-      // create temporary holder
-      var well = document.createElement('svg')
+      var well, len
 
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
-        // dump raw svg
-        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
 
+        // create temporary holder
+        well = document.createElementNS(SVG.ns, 'svg')
+        // dump raw svg
+        well.innerHTML = svg
+
+        addPrefixToReferences(well)
+        
         // transplant nodes
-        for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
-          this.node.appendChild(well.firstChild.firstChild)
+        for (len = well.childNodes.length;len--;)
+          if(well.firstChild.nodeType != 1)
+            well.removeChild(well.firstChild)
+          else
+            this.node.appendChild(well.firstChild)
 
       // otherwise act as a getter
       } else {
-        // create a wrapping svg element in case of partial content
-        well.appendChild(svg = document.createElement('svg'))
-
-        // write svgjs data to the dom
-        this.writeDataToDom()
-
-        // insert a copy of this node
-        svg.appendChild(this.node.cloneNode(true))
-
-        // return target element
-        return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
+        removePrefixFromReferences(this.node)
+        return this.node.outerHTML
       }
 
       return this
@@ -241,9 +241,8 @@ SVG.Element = SVG.invent({
   , writeDataToDom: function() {
 
       // dump variables recursively
-      if(this.each || this.lines){
-        var fn = this.each ? this : this.lines();
-        fn.each(function(){
+      if(this.is(SVG.Parent)){
+        this.each(function(){
           this.writeDataToDom()
         })
       }

@@ -11,18 +11,34 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 3.0.0
 
 ### Added
-- added `'random'` option and `randomize()` method to `SVG.Color` -> __TODO!__
+- added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
+- added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
-- added specs for `SVG.FX` -> __TODO!__
+
+### Removed
+- removed `SVG.Array.split()` function
+- removed workaround for browser bug with stroke-width
+- removed polyfills
+- removed `ungroup()` in favour of `flatten()`
+- removed `SVG.Set`
+- removed feature to set style with css string (e.g. "fill:none;display:block;")
+- removed `loaded()` and `error()` method on `SVG.Image`
+- removed sub-pixel offset fix
 
 ### Changed
+- gradients now have there corresponding node as type and not only radial/linear
+- `SVG.Path.pointAt()` correctly returns an `SVG.Point` now
 - made transform-methods relative as default (breaking change)
 - changed SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
-- made `parents()` method on `SVG.Element` return an instance of SVG.Set (breaking change) -> __TODO!__
-- replaced static reference to `masker` in `SVG.Mask` with the `masker()` method (breaking change) -> __TODO!__
-- replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method (breaking change) -> __TODO!__
-- replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method (breaking change) -> __TODO!__
-- moved all regexes to `SVG.regex` (in color, element, pointarray, style, transform and viewbox) -> __TODO!__
+- replaced static reference to `masker` in `SVG.Mask` with the `masker()` method
+- replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
+- replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
+- moved all regexes to `SVG.regex`
+- `svg()` will now return the element without svg-wrapper
+- new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)`
+- changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
+- ids are not generated upon creation anymore. Instead they are generated when requested (#559)
+- prefix all `url()` references with current location so that nothing breaks when using `<base>`
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

@@ -26,7 +26,8 @@ describe('Element', function() {
 
     afterEach(function() {
       rect.remove()
-      draw.defs().select('pattern').each(function() { this.remove() })
+      //draw.defs().select('pattern').forEach(function(el) { el.remove() })
+      draw.defs().clear()
     })
 
     it('sets one attribute when two arguments are given', function() {
@@ -69,7 +70,7 @@ describe('Element', function() {
       expect(rect.attr('stroke-linejoin')).toBe('miter')
     })
     it('gets the "style" attribute as a string', function() {
-      rect.style('cursor', 'pointer')
+      rect.css('cursor', 'pointer')
       expect(rect.node.style.cursor).toBe('pointer')
     })
     it('sets the style attribute correctly', function() {
@@ -94,15 +95,15 @@ describe('Element', function() {
     })
     it('creates an image in defs when image path is specified for fill', function() {
       rect.attr('fill', imageUrl)
-      expect(draw.defs().select('pattern').length()).toBe(1)
-      expect(draw.defs().select('pattern image').length()).toBe(1)
-      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
+      expect(draw.defs().select('pattern').length).toBe(1)
+      expect(draw.defs().select('pattern image').length).toBe(1)
+      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('creates pattern in defs when image object is specified for fill', function() {
       rect.attr('fill', new SVG.Image().load(imageUrl))
-      expect(draw.defs().select('pattern').length()).toBe(1)
-      expect(draw.defs().select('pattern image').length()).toBe(1)
-      expect(draw.defs().select('pattern image').first().src).toBe(imageUrl)
+      expect(draw.defs().select('pattern').length).toBe(1)
+      expect(draw.defs().select('pattern image').length).toBe(1)
+      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('correctly creates SVG.Array if array given', function() {
       rect.attr('something', [2,3,4])
@@ -125,51 +126,64 @@ describe('Element', function() {
       rect = draw.rect(100,100)
     })
 
+    it('generates an id when getting if no id is set on the element', function() {
+      expect(rect.attr('id')).toBe(undefined)
+      expect(rect.id()).not.toBe(null)
+      expect(rect.node.id).not.toBe(null)
+    })
+    it('increases the global id sequence', function() {
+      var did = SVG.did
+      rect.id()
+    
+      expect(did + 1).toBe(SVG.did)
+    })
+    it('adds a unique id containing the node name', function() {
+      var did = SVG.did
+      rect.id()
+    
+      expect(rect.attr('id')).toBe('SvgjsRect' + did)
+    })
     it('gets the value if the id attribute without an argument', function() {
       expect(rect.id()).toBe(rect.attr('id'))
     })
     it('sets the value of the id', function() {
       rect.id('new_id')
-      expect(rect.attr('id')).toBe('new_id')
+      expect(rect.id()).toBe('new_id')
     })
   })
 
-  describe('style()', function() {
+  describe('css()', function() {
     it('sets the style with key and value arguments', function() {
-      var rect = draw.rect(100,100).style('cursor', 'crosshair')
+      var rect = draw.rect(100,100).css('cursor', 'crosshair')
       expect(window.stripped(rect.node.style.cssText)).toBe('cursor:crosshair')
     })
     it('sets multiple styles with an object as the first argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'help', display: 'block' })
+      var rect = draw.rect(100,100).css({ cursor: 'help', display: 'block' })
       expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
       expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
       expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
-    it('sets multiple styles with a css string as the first argument', function() {
-      var rect = draw.rect(100,100).style('cursor: help; display: block;')
-      expect(window.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
-      expect(window.stripped(rect.node.style.cssText)).toMatch(/display:block/)
-      expect(window.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
+    it('gets a style with a string key as the first argument', function() {
+      var rect = draw.rect(100,100).css({ cursor: 'progress', display: 'block' })
+      expect(rect.css('cursor')).toBe('progress')
     })
-    it('gets a style with a string key as the fists argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'progress', display: 'block' })
-      expect(rect.style('cursor')).toBe('progress')
+    it('gets multiple sytyles with array as first argument', function() {
+      var rect = draw.rect(100,100).css({ cursor: 'progress', display: 'block' })
+      expect(rect.css(['cursor', 'display'])).toEqual({ cursor: 'progress', display: 'block' })
     })
-    it('gets the full css string with no argument', function() {
-      var rect = draw.rect(100,100).style({ cursor: 's-resize', display: 'none' })
-      expect(window.stripped(rect.style())).toMatch(/display:none/)
-      expect(window.stripped(rect.style())).toMatch(/cursor:s-resize/)
-      expect(window.stripped(rect.style()).length).toBe(('cursor:s-resize;display:none').length)
+    it('gets an object with all styles with zero arguments', function() {
+      var rect = draw.rect(100,100).css({ cursor: 's-resize', display: 'none' })
+      expect(rect.css()).toEqual({ cursor: 's-resize', display: 'none' })
     })
     it('removes a style if the value is an empty string', function() {
-      var rect = draw.rect(100,100).style({ cursor: 'n-resize', display: '' })
-      expect(window.stripped(rect.style())).toBe('cursor:n-resize')
+      var rect = draw.rect(100,100).css({ cursor: 'n-resize', display: '' })
+      expect(rect.css('display')).toBe('')
     })
     it('removes a style if the value explicitly set to null', function() {
-      var rect = draw.rect(100,100).style('cursor', 'w-resize')
-      expect(window.stripped(rect.style())).toBe('cursor:w-resize')
-      rect.style('cursor', null)
-      expect(rect.style()).toBe('')
+      var rect = draw.rect(100,100).css('cursor', 'w-resize')
+      expect(rect.css()).toEqual({ cursor:'w-resize' })
+      rect.css('cursor', null)
+      expect(rect.css('cursor')).toBe('')
     })
   })
 
@@ -423,7 +437,7 @@ describe('Element', function() {
     })
   })
 
-  describe('ungroup()', function() {
+  describe('flatten()', function() {
     var nested, g1, g2, rect1
 
     beforeEach(function() {
@@ -440,12 +454,12 @@ describe('Element', function() {
     })
 
     it('returns itself when depths is 0 or this is SVG.Defs', function() {
-      expect(draw.defs().ungroup()).toBe(draw.defs())
-      expect(g1.ungroup(null, 0)).toBe(g1)
+      expect(draw.defs().flatten()).toBe(draw.defs())
+      expect(g1.flatten(null, 0)).toBe(g1)
     })
 
     it('breaks up all container and move the elements to the parent', function() {
-      g1.ungroup()
+      g1.flatten()
       expect(rect1.parent()).toBe(nested)
       expect(rect2.parent()).toBe(nested)
 
@@ -461,7 +475,7 @@ describe('Element', function() {
     })
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
-      draw.ungroup()
+      draw.flatten()
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
 
@@ -477,14 +491,6 @@ describe('Element', function() {
       }))
 
       expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs
-    })
-  })
-
-  describe('flatten()', function() {
-    it('redirects the call to ungroup()', function() {
-      spyOn(draw, 'ungroup')
-      draw.flatten()
-      expect(draw.ungroup).toHaveBeenCalled()
     })
   })
 
@@ -580,13 +586,13 @@ describe('Element', function() {
   })
 
   describe('rbox()', function() {
-    it('returns an instance of SVG.RBox', function() {
+    it('returns an instance of SVG.Box', function() {
       var rect = draw.rect(100,100)
-      expect(rect.rbox() instanceof SVG.RBox).toBe(true)
+      expect(rect.rbox() instanceof SVG.Box).toBe(true)
     })
     it('returns the correct rectangular box', function() {
       // stroke has to be set in order to get the correct result when calling getBoundingClientRect in IE11
-      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12).stroke({width:0})
+      var rect = draw.size(200, 150).viewbox(0, 0, 200, 150).rect(105, 210).move(2, 12)//.stroke({width:0})
       var box = rect.rbox(draw)
       expect(box.x).toBeCloseTo(2)
       expect(box.y).toBeCloseTo(12)
@@ -655,7 +661,7 @@ describe('Element', function() {
     })
     it('assigns a new id to the cloned element', function() {
       clone = rect.clone()
-      expect(clone.attr('id')).not.toBe(rect.attr('id'))
+      expect(clone.id()).not.toBe(rect.id())
     })
     it('copies all child nodes as well', function() {
       clone = group.clone()
@@ -663,9 +669,9 @@ describe('Element', function() {
     })
     it('assigns a new id to cloned child elements', function() {
       clone = group.clone()
-      expect(clone.attr('id')).not.toEqual(group.attr('id'))
-      expect(clone.get(0).attr('id')).not.toBe(group.get(0).attr('id'))
-      expect(clone.get(1).attr('id')).not.toBe(group.get(1).attr('id'))
+      expect(clone.id()).not.toEqual(group.id())
+      expect(clone.get(0).id()).not.toBe(group.get(0).id())
+      expect(clone.get(1).id()).not.toBe(group.get(1).id())
     })
     it('inserts the clone after the cloned element', function() {
       clone = rect.clone()
@@ -688,7 +694,7 @@ describe('Element', function() {
   describe('toString()', function() {
     it('returns the element id', function() {
       var rect = draw.rect(100,100).center(321,567).fill('#f06')
-      expect(rect + '').toBe(rect.attr('id'))
+      expect(rect + '').toBe(rect.id())
     })
   })
 
@@ -820,13 +826,13 @@ describe('Element', function() {
         // Test for different browsers namely Firefox and Chrome
         expect(
             // IE
-            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100" id="' + draw.id() + '"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
+            toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
 
             // Firefox
-         || toBeTested === '<svg id="' + draw.id() + '" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+         || toBeTested === '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
 
             // svgdom
-         || toBeTested === '<svg id="' + draw.id() + '" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+         || toBeTested === '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
         ).toBeTruthy()
 
       })
@@ -907,12 +913,6 @@ describe('Element', function() {
       expect(g.attr('svgjs:data')).toBe('{"foo":"bar"}')
       expect(rect.attr('svgjs:data')).toBe('{"number":"3px"}')
     })
-    it('uses lines() instead of each() when dealing with text', function() {
-      var text = draw.text('Hello\nWorld')
-      text.writeDataToDom()
-      expect(text.attr('svgjs:data')).toBe('{"leading":"1.3"}')
-      expect(text.lines().first().attr('svgjs:data')).toBe('{"newLined":true}')
-    })
   })
 
   describe('setData()', function() {
@@ -952,13 +952,13 @@ describe('Element', function() {
   describe('show()', function() {
     it('sets display property to ""', function() {
       var rect = draw.rect(100,100).show()
-      expect(rect.style('display')).toBe('')
+      expect(rect.css('display')).toBe('')
     })
   })
   describe('hide()', function() {
     it('sets display property to none', function() {
       var rect = draw.rect(100,100).hide()
-      expect(rect.style('display')).toBe('none')
+      expect(rect.css('display')).toBe('none')
     })
   })
   describe('visible()', function() {

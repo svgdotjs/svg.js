@@ -2261,38 +2261,38 @@ describe('FX', function() {
         , endValue = 5
         , morph = new SVG.Number(startValue).morph(endValue)
 
-      rect.style('stroke-width', startValue)
-      fx.style('stroke-width', endValue)
+      rect.css('stroke-width', startValue)
+      fx.css('stroke-width', endValue)
 
       fx.start()
-      expect(rect.style('stroke-width')).toBe(morph.at(0).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(0).toString())
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()
-      expect(rect.style('stroke-width')).toBe(morph.at(0.5).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(0.5).toString())
 
       jasmine.clock().tick(250) // Have the animation reach its end
       fx.step()
-      expect(rect.style('stroke-width')).toBe(morph.at(1).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(1).toString())
     })
 
     it('should be possible to animate non-numeric styles', function () {
       var startValue = 'butt'
         , endValue = 'round'
-        , line = draw.line('0,0 100,150').style('stroke-linecap', startValue)
+        , line = draw.line('0,0 100,150').css('stroke-linecap', startValue)
 
-      fx = line.animate(3000).style('stroke-linecap', endValue)
+      fx = line.animate(3000).css('stroke-linecap', endValue)
 
       fx.start()
-      expect(line.style('stroke-linecap')).toBe(startValue)
+      expect(line.css('stroke-linecap')).toBe(startValue)
 
       jasmine.clock().tick(1500) // Have the animation be half way
       fx.step()
-      expect(line.style('stroke-linecap')).toBe(startValue)
+      expect(line.css('stroke-linecap')).toBe(startValue)
 
       jasmine.clock().tick(1500) // Have the animation reach its end
       fx.step()
-      expect(line.style('stroke-linecap')).toBe(endValue)
+      expect(line.css('stroke-linecap')).toBe(endValue)
     })
 
     it('should be possible to animate color styles by using SVG.Color', function() {
@@ -2300,8 +2300,8 @@ describe('FX', function() {
         , endValue = '#B1835D'
         , morph = new SVG.Color(startValue).morph(endValue)
 
-      rect.style('fill', startValue)
-      fx.style('fill', endValue)
+      rect.css('fill', startValue)
+      fx.css('fill', endValue)
 
 
       fx.start()
@@ -2309,15 +2309,15 @@ describe('FX', function() {
       // The style rgb string has spaces while the one returned by SVG.Color do not as show bellow
       // CSS: rgb(255, 255, 255)                    SVG.Color: rgb(255,255,255)
       // The space in the style rbg string are removed so they can be equal
-      expect(rect.style('fill').replace(/\s+/g, '')).toBe(morph.at(0).toRgb())
+      expect(rect.css('fill').replace(/\s+/g, '')).toBe(morph.at(0).toRgb())
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()
-      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(0.5).toRgb())
+      expect(rect.css('fill').replace(/ /g, '')).toBe(morph.at(0.5).toRgb())
 
       jasmine.clock().tick(250) // Have the animation reach its end
       fx.step()
-      expect(rect.style('fill').replace(/ /g, '')).toBe(morph.at(1).toRgb())
+      expect(rect.css('fill').replace(/ /g, '')).toBe(morph.at(1).toRgb())
     })
 
     it('should be possible to pass percentage strings to numeric styles', function () {
@@ -2325,44 +2325,44 @@ describe('FX', function() {
         , endValue = '5%'
         , morph = new SVG.Number(startValue).morph(endValue)
 
-      rect.style('stroke-width', startValue)
-      fx.style('stroke-width', endValue)
+      rect.css('stroke-width', startValue)
+      fx.css('stroke-width', endValue)
 
       fx.start()
-      expect(rect.style('stroke-width')).toBe(morph.at(0).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(0).toString())
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()
-      expect(rect.style('stroke-width')).toBe(morph.at(0.5).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(0.5).toString())
 
       jasmine.clock().tick(250) // Have the animation reach its end
       fx.step()
-      expect(rect.style('stroke-width')).toBe(morph.at(1).toString())
+      expect(rect.css('stroke-width')).toBe(morph.at(1).toString())
     })
 
     it('should allow 0 to be specified without a unit', function () {
       var r1 = draw.rect(100,100).move(200,200)
         , r2 = draw.rect(100,100).move(400,400)
 
-      r1.style('stroke-width', '100%').animate(500).style('stroke-width', 0)
-      r2.style('stroke-width', 0).animate(500).style('stroke-width', '100%')
+      r1.css('stroke-width', '100%').animate(500).css('stroke-width', 0)
+      r2.css('stroke-width', 0).animate(500).css('stroke-width', '100%')
 
       r1.fx.start()
       r2.fx.start()
-      expect(r1.style('stroke-width')).toBe('100%')
-      expect(r2.style('stroke-width')).toBe('0%')
+      expect(r1.css('stroke-width')).toBe('100%')
+      expect(r2.css('stroke-width')).toBe('0%')
 
       jasmine.clock().tick(250) // Have the animation be half way
       r1.fx.step()
       r2.fx.step()
-      expect(r1.style('stroke-width')).toBe('50%')
-      expect(r2.style('stroke-width')).toBe('50%')
+      expect(r1.css('stroke-width')).toBe('50%')
+      expect(r2.css('stroke-width')).toBe('50%')
 
       jasmine.clock().tick(250) // Have the animation reach its end
       r1.fx.step()
       r2.fx.step()
-      expect(r1.style('stroke-width')).toBe('0%')
-      expect(r2.style('stroke-width')).toBe('100%')
+      expect(r1.css('stroke-width')).toBe('0%')
+      expect(r2.css('stroke-width')).toBe('100%')
     })
   })
 
@@ -2402,21 +2402,21 @@ describe('FX', function() {
     })
   })
 
-  describe('style()', function() {
+  describe('css()', function() {
     it('should allow an object to be passed', function() {
-      spyOn(fx, 'style').and.callThrough()
-      fx.style({
+      spyOn(fx, 'css').and.callThrough()
+      fx.css({
         x: 20,
         y: 20
       })
 
-      expect(fx.style).toHaveBeenCalledWith('x', 20)
-      expect(fx.style).toHaveBeenCalledWith('y', 20)
+      expect(fx.css).toHaveBeenCalledWith('x', 20)
+      expect(fx.css).toHaveBeenCalledWith('y', 20)
     })
 
     it('should call add() with styles as method', function() {
       spyOn(fx, 'add')
-      fx.style('x', 20)
+      fx.css('x', 20)
       expect(fx.add).toHaveBeenCalledWith('x', 20, 'styles')
     })
   })

@@ -235,7 +235,7 @@ SVG.FX = SVG.invent({
       }
 
       for(i in s.styles){
-        s.styles[i] = new SVG.MorphObj(this.target().style(i), s.styles[i])
+        s.styles[i] = new SVG.MorphObj(this.target().css(i), s.styles[i])
       }
 
       s.initialTransformation = this.target().matrixify()
@@ -608,14 +608,14 @@ SVG.FX = SVG.invent({
 
       }
 
-      // apply animation which has to be applied with style()
+      // apply animation which has to be applied with css()
       for(i in s.styles){
 
         at = [i].concat(s.styles[i]).map(function(el){
           return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
-        target.style.apply(target, at)
+        target.css.apply(target, at)
 
       }
 
@@ -767,10 +767,10 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Add animatable styles
-, style: function(s, v) {
+, css: function(s, v) {
     if (typeof s == 'object')
       for (var key in s)
-        this.style(key, s[key])
+        this.css(key, s[key])
 
     else
       this.add(s, v, 'styles')
@@ -858,7 +858,7 @@ SVG.extend(SVG.FX, {
   // Add animatable viewbox
 , viewbox: function(x, y, width, height) {
     if (this.target() instanceof SVG.Container) {
-      this.add('viewbox', new SVG.ViewBox(x, y, width, height))
+      this.add('viewbox', new SVG.Box(x, y, width, height))
     }
 
     return this

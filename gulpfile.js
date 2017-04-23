@@ -40,16 +40,14 @@ var parts = [
 , 'src/number.js'
 , 'src/element.js'
 , 'src/fx.js'
-, 'src/boxes.js'
 , 'src/matrix.js'
 , 'src/point.js'
 , 'src/attr.js'
 , 'src/transform.js'
-, 'src/style.js'
+, 'src/css.js'
 , 'src/parent.js'
-, 'src/ungroup.js'
+, 'src/flatten.js'
 , 'src/container.js'
-, 'src/viewbox.js'
 , 'src/event.js'
 , 'src/defs.js'
 , 'src/group.js'
@@ -82,6 +80,7 @@ var parts = [
 , 'src/selector.js'
 , 'src/helpers.js'
 , 'src/polyfill.js'
+, 'src/boxes.js'
 ]
 
 gulp.task('clean', function() {

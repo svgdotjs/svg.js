@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.6.0
+* @version 3.0.0
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Apr 21 2017 12:48:06 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 23 2017 15:09:13 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -59,12 +59,7 @@ SVG.eid = function(name) {
 // Method for element creation
 SVG.create = function(name) {
   // create element
-  var element = document.createElementNS(this.ns, name)
-
-  // apply unique id
-  element.setAttribute('id', this.eid(name))
-
-  return element
+  return document.createElementNS(this.ns, name)
 }
 
 // Method for extending objects
@@ -81,10 +76,6 @@ SVG.extend = function() {
     if (modules[i])
       for (key in methods)
         modules[i].prototype[key] = methods[key]
-
-  // Make sure SVG.Set inherits any newly added methods
-  if (SVG.Set && SVG.Set.inherit)
-    SVG.Set.inherit()
 }
 
 // Invent new element
@@ -158,7 +149,13 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden').node
+  , draw: draw.css({
+      opacity:0,
+      position:'absolute',
+      left:'-100%',
+      top:'-100%',
+      overflow:'hidden'
+    }).node
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')
@@ -214,6 +211,9 @@ SVG.regex = {
 
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
+
+  // Test for url reference
+, isUrl:            /url\(([-\w:/]+(?:\.\w+)?)?#([-\w]+)\)/
 
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
@@ -487,11 +487,7 @@ SVG.extend(SVG.Array, {
     // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
 
-    return this.split(array)
-  }
-  // Strip unnecessary whitespace
-, split: function(string) {
-    return string.trim().split(SVG.regex.delimiter).map(parseFloat)
+    return array.trim().split(SVG.regex.delimiter).map(parseFloat)
   }
   // Reverse array
 , reverse: function() {
@@ -1021,8 +1017,7 @@ SVG.Number = SVG.invent({
 SVG.Element = SVG.invent({
   // Initialize node
   create: function(node) {
-    // make stroke value accessible dynamically
-    this._stroke = SVG.defaults.attrs.stroke
+    // last fired event on node
     this._event = null
 
     // initialize data object
@@ -1032,9 +1027,6 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
-
-      // store current attribute value
-      this._stroke = node.getAttribute('stroke') || this._stroke
     }
   }
 
@@ -1081,7 +1073,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 
@@ -1117,6 +1109,12 @@ SVG.Element = SVG.invent({
     }
     // Get / set id
   , id: function(id) {
+      // generate new id if no id set
+      if(typeof id == 'undefined' && !this.node.id) {
+        this.node.id = SVG.eid(this.type)
+      }
+
+      // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     }
     // Checks whether the given point inside the bounding box of the element
@@ -1130,19 +1128,19 @@ SVG.Element = SVG.invent({
     }
     // Show element
   , show: function() {
-      return this.style('display', '')
+      return this.css('display', '')
     }
     // Hide element
   , hide: function() {
-      return this.style('display', 'none')
+      return this.css('display', 'none')
     }
     // Is element visible?
   , visible: function() {
-      return this.style('display') != 'none'
+      return this.css('display') != 'none'
     }
     // Return id on string conversion
   , toString: function() {
-      return this.attr('id')
+      return this.id()
     }
     // Return array of classes on the node
   , classes: function() {
@@ -1227,31 +1225,29 @@ SVG.Element = SVG.invent({
     }
     // Import raw svg
   , svg: function(svg) {
-      // create temporary holder
-      var well = document.createElement('svg')
+      var well, len
 
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
+
+        // create temporary holder
+        well = document.createElementNS(SVG.ns, 'svg')
         // dump raw svg
-        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
+        well.innerHTML = svg
+
+        addPrefixToReferences(well)
 
         // transplant nodes
-        for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
-          this.node.appendChild(well.firstChild.firstChild)
+        for (len = well.childNodes.length;len--;)
+          if(well.firstChild.nodeType != 1)
+            well.removeChild(well.firstChild)
+          else
+            this.node.appendChild(well.firstChild)
 
       // otherwise act as a getter
       } else {
-        // create a wrapping svg element in case of partial content
-        well.appendChild(svg = document.createElement('svg'))
-
-        // write svgjs data to the dom
-        this.writeDataToDom()
-
-        // insert a copy of this node
-        svg.appendChild(this.node.cloneNode(true))
-
-        // return target element
-        return well.innerHTML.replace(/^<svg>/, '').replace(/<\/svg>$/, '')
+        removePrefixFromReferences(this.node)
+        return this.node.outerHTML
       }
 
       return this
@@ -1260,9 +1256,8 @@ SVG.Element = SVG.invent({
   , writeDataToDom: function() {
 
       // dump variables recursively
-      if(this.each || this.lines){
-        var fn = this.each ? this : this.lines();
-        fn.each(function(){
+      if(this.is(SVG.Parent)){
+        this.each(function(){
           this.writeDataToDom()
         })
       }
@@ -1523,7 +1518,7 @@ SVG.FX = SVG.invent({
       }
 
       for(i in s.styles){
-        s.styles[i] = new SVG.MorphObj(this.target().style(i), s.styles[i])
+        s.styles[i] = new SVG.MorphObj(this.target().css(i), s.styles[i])
       }
 
       s.initialTransformation = this.target().matrixify()
@@ -1896,14 +1891,14 @@ SVG.FX = SVG.invent({
 
       }
 
-      // apply animation which has to be applied with style()
+      // apply animation which has to be applied with css()
       for(i in s.styles){
 
         at = [i].concat(s.styles[i]).map(function(el){
           return typeof el !== 'string' && el.at ? el.at(s.ease(self.pos), self.pos) : el
         })
 
-        target.style.apply(target, at)
+        target.css.apply(target, at)
 
       }
 
@@ -2055,10 +2050,10 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Add animatable styles
-, style: function(s, v) {
+, css: function(s, v) {
     if (typeof s == 'object')
       for (var key in s)
-        this.style(key, s[key])
+        this.css(key, s[key])
 
     else
       this.add(s, v, 'styles')
@@ -2146,7 +2141,7 @@ SVG.extend(SVG.FX, {
   // Add animatable viewbox
 , viewbox: function(x, y, width, height) {
     if (this.target() instanceof SVG.Container) {
-      this.add('viewbox', new SVG.ViewBox(x, y, width, height))
+      this.add('viewbox', new SVG.Box(x, y, width, height))
     }
 
     return this
@@ -2169,175 +2164,6 @@ SVG.extend(SVG.FX, {
     return this
   }
 })
-
-SVG.Box = SVG.invent({
-  create: function(x, y, width, height) {
-    if (typeof x == 'object' && !(x instanceof SVG.Element)) {
-      // chromes getBoundingClientRect has no x and y property
-      return SVG.Box.call(this, x.left != null ? x.left : x.x , x.top != null ? x.top : x.y, x.width, x.height)
-    } else if (arguments.length == 4) {
-      this.x = x
-      this.y = y
-      this.width = width
-      this.height = height
-    }
-
-    // add center, right, bottom...
-    fullBox(this)
-  }
-, extend: {
-    // Merge rect box with another, return a new instance
-    merge: function(box) {
-      var b = new this.constructor()
-
-      // merge boxes
-      b.x      = Math.min(this.x, box.x)
-      b.y      = Math.min(this.y, box.y)
-      b.width  = Math.max(this.x + this.width,  box.x + box.width)  - b.x
-      b.height = Math.max(this.y + this.height, box.y + box.height) - b.y
-
-      return fullBox(b)
-    }
-
-  , transform: function(m) {
-      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p, bbox
-
-      var pts = [
-        new SVG.Point(this.x, this.y),
-        new SVG.Point(this.x2, this.y),
-        new SVG.Point(this.x, this.y2),
-        new SVG.Point(this.x2, this.y2)
-      ]
-
-      pts.forEach(function(p) {
-        p = p.transform(m)
-        xMin = Math.min(xMin,p.x)
-        xMax = Math.max(xMax,p.x)
-        yMin = Math.min(yMin,p.y)
-        yMax = Math.max(yMax,p.y)
-      })
-
-      bbox = new this.constructor()
-      bbox.x = xMin
-      bbox.width = xMax-xMin
-      bbox.y = yMin
-      bbox.height = yMax-yMin
-
-      fullBox(bbox)
-
-      return bbox
-    }
-  }
-})
-
-SVG.BBox = SVG.invent({
-  // Initialize
-  create: function(element) {
-    SVG.Box.apply(this, [].slice.call(arguments))
-
-    // get values if element is given
-    if (element instanceof SVG.Element) {
-      var box
-
-      // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
-      try {
-
-        if (!document.documentElement.contains){
-          // This is IE - it does not support contains() for top-level SVGs
-          var topParent = element.node
-          while (topParent.parentNode){
-            topParent = topParent.parentNode
-          }
-          if (topParent != document) throw new Exception('Element not in the dom')
-        } else {
-          // the element is NOT in the dom, throw error
-          if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
-        }
-
-        // find native bbox
-        box = element.node.getBBox()
-      } catch(e) {
-        if(element instanceof SVG.Shape){
-          var clone = element.clone(SVG.parser.draw.instance).show()
-          box = clone.node.getBBox()
-          clone.remove()
-        }else{
-          box = {
-            x:      element.node.clientLeft
-          , y:      element.node.clientTop
-          , width:  element.node.clientWidth
-          , height: element.node.clientHeight
-          }
-        }
-      }
-
-      SVG.Box.call(this, box)
-    }
-
-  }
-
-  // Define ancestor
-, inherit: SVG.Box
-
-  // Define Parent
-, parent: SVG.Element
-
-  // Constructor
-, construct: {
-    // Get bounding box
-    bbox: function() {
-      return new SVG.BBox(this)
-    }
-  }
-
-})
-
-SVG.BBox.prototype.constructor = SVG.BBox
-
-
-SVG.extend(SVG.Element, {
-  tbox: function(){
-    console.warn('Use of TBox is deprecated and mapped to RBox. Use .rbox() instead.')
-    return this.rbox(this.doc())
-  }
-})
-
-SVG.RBox = SVG.invent({
-  // Initialize
-  create: function(element) {
-    SVG.Box.apply(this, [].slice.call(arguments))
-
-    if (element instanceof SVG.Element) {
-      SVG.Box.call(this, element.node.getBoundingClientRect())
-    }
-  }
-
-, inherit: SVG.Box
-
-  // define Parent
-, parent: SVG.Element
-
-, extend: {
-    addOffset: function() {
-      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-      this.x += window.pageXOffset
-      this.y += window.pageYOffset
-      return this
-    }
-  }
-
-  // Constructor
-, construct: {
-    // Get rect box
-    rbox: function(el) {
-      if (el) return new SVG.RBox(this).transform(el.screenCTM().inverse())
-      return new SVG.RBox(this).addOffset()
-    }
-  }
-
-})
-
-SVG.RBox.prototype.constructor = SVG.RBox
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -2642,16 +2468,11 @@ SVG.extend(SVG.Element, {
         parseFloat(v) : v
 
     } else {
-      // BUG FIX: some browsers will render a stroke if a color is given even though stroke width is 0
-      if (a == 'stroke-width')
-        this.attr('stroke', parseFloat(v) > 0 ? this._stroke : null)
-      else if (a == 'stroke')
-        this._stroke = v
 
       // convert image fill and stroke to patterns
       if (a == 'fill' || a == 'stroke') {
         if (SVG.regex.isImage.test(v))
-          v = this.doc().defs().image(v, 0, 0)
+          v = this.doc().defs().image(v)
 
         if (v instanceof SVG.Image)
           v = this.doc().defs().pattern(0, 0, function() {
@@ -3064,39 +2885,49 @@ SVG.Skew = SVG.invent({
 
 SVG.extend(SVG.Element, {
   // Dynamic style generator
-  style: function(s, v) {
+  css: function(s, v) {
+    var t, i, ret = {}
     if (arguments.length == 0) {
-      // get full style
-      return this.node.style.cssText || ''
+      // get full style as object
+      this.node.style.cssText.split(/\s*;\s*/).filter(function(el) { return !!el.length }).forEach(function(el) {
+        t = el.split(/\s*:\s*/)
+        ret[t[0]] = t[1]
+      })
+      return ret
+    }
 
-    } else if (arguments.length < 2) {
-      // apply every style individually if an object is passed
-      if (typeof s == 'object') {
-        for (v in s) this.style(v, s[v])
-
-      } else if (SVG.regex.isCss.test(s)) {
-        // parse css string
-        s = s.split(/\s*;\s*/)
-          // filter out suffix ; and stuff like ;;
-          .filter(function(e) { return !!e })
-          .map(function(e){ return e.split(/\s*:\s*/) })
-
-        // apply every definition individually
-        while (v = s.pop()) {
-          this.style(v[0], v[1])
+    if (arguments.length < 2) {
+      // get style properties in the array
+      if(Array.isArray(s)) {
+        for(i = s.length; i--;) {
+          ret[camelCase(s[i])] = this.node.style[camelCase(s[i])]
         }
-      } else {
-        // act as a getter if the first and only argument is not an object
+        return ret
+      }
+
+      // get style for property
+      if(typeof s == 'string') {
         return this.node.style[camelCase(s)]
       }
 
-    } else {
-      this.node.style[camelCase(s)] = v === null || SVG.regex.isBlank.test(v) ? '' : v
+      // set styles in object
+      if(typeof s == 'object') {
+        for(i in s) {
+          // set empty string if null/undefined/'' was given
+          this.node.style[camelCase(i)] = (s[i] == null || SVG.regex.isBlank.test(s[i])) ? '' : s[i]
+        }
+      }
+    }
+
+    // set style for property
+    if (arguments.length == 2) {
+      this.node.style[camelCase(s)] = (v == null || SVG.regex.isBlank.test(v)) ? '' : v
     }
 
     return this
   }
 })
+
 SVG.Parent = SVG.invent({
   // Initialize node
   create: function(element) {
@@ -3189,29 +3020,24 @@ SVG.Parent = SVG.invent({
 })
 
 SVG.extend(SVG.Parent, {
-
-  ungroup: function(parent, depth) {
-    if(depth === 0 || this instanceof SVG.Defs || this.node == SVG.parser.draw) return this
+  flatten: function(parent) {
+    if(this instanceof SVG.Defs) return this
 
     parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
-    depth = depth || Infinity
 
     this.each(function(){
       if(this instanceof SVG.Defs) return this
-      if(this instanceof SVG.Parent) return this.ungroup(parent, depth-1)
+      if(this instanceof SVG.Parent) return this.flatten(parent)
       return this.toParent(parent)
     })
 
+    // we need this so that SVG.Doc does not get removed
     this.node.firstChild || this.remove()
 
     return this
-  },
-
-  flatten: function(parent, depth) {
-    return this.ungroup(parent, depth)
   }
-
 })
+
 SVG.Container = SVG.invent({
   // Initialize node
   create: function(element) {
@@ -3220,133 +3046,6 @@ SVG.Container = SVG.invent({
 
   // Inherit from
 , inherit: SVG.Parent
-
-})
-
-SVG.ViewBox = SVG.invent({
-
-  create: function(source) {
-    var i, base = [0, 0, 0, 0]
-
-    var x, y, width, height, box, view, we, he
-      , wm   = 1 // width multiplier
-      , hm   = 1 // height multiplier
-      , reg  = /[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/gi
-
-    if(source instanceof SVG.Element){
-
-      we = source
-      he = source
-      view = (source.attr('viewBox') || '').match(reg)
-      box = source.bbox
-
-      // get dimensions of current node
-      width  = new SVG.Number(source.width())
-      height = new SVG.Number(source.height())
-
-      // find nearest non-percentual dimensions
-      while (width.unit == '%') {
-        wm *= width.value
-        width = new SVG.Number(we instanceof SVG.Doc ? we.parent().offsetWidth : we.parent().width())
-        we = we.parent()
-      }
-      while (height.unit == '%') {
-        hm *= height.value
-        height = new SVG.Number(he instanceof SVG.Doc ? he.parent().offsetHeight : he.parent().height())
-        he = he.parent()
-      }
-
-      // ensure defaults
-      this.x      = 0
-      this.y      = 0
-      this.width  = width  * wm
-      this.height = height * hm
-      this.zoom   = 1
-
-      if (view) {
-        // get width and height from viewbox
-        x      = parseFloat(view[0])
-        y      = parseFloat(view[1])
-        width  = parseFloat(view[2])
-        height = parseFloat(view[3])
-
-        // calculate zoom accoring to viewbox
-        this.zoom = ((this.width / this.height) > (width / height)) ?
-          this.height / height :
-          this.width  / width
-
-        // calculate real pixel dimensions on parent SVG.Doc element
-        this.x      = x
-        this.y      = y
-        this.width  = width
-        this.height = height
-
-      }
-
-    }else{
-
-      // ensure source as object
-      source = typeof source === 'string' ?
-        source.match(reg).map(function(el){ return parseFloat(el) }) :
-      Array.isArray(source) ?
-        source :
-      typeof source == 'object' ?
-        [source.x, source.y, source.width, source.height] :
-      arguments.length == 4 ?
-        [].slice.call(arguments) :
-        base
-
-      this.x = source[0]
-      this.y = source[1]
-      this.width = source[2]
-      this.height = source[3]
-    }
-
-
-  }
-
-, extend: {
-
-    toString: function() {
-      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
-    }
-  , morph: function(x, y, width, height){
-      this.destination = new SVG.ViewBox(x, y, width, height)
-      return this
-    }
-
-  , at: function(pos) {
-
-      if(!this.destination) return this
-
-      return new SVG.ViewBox([
-          this.x + (this.destination.x - this.x) * pos
-        , this.y + (this.destination.y - this.y) * pos
-        , this.width + (this.destination.width - this.width) * pos
-        , this.height + (this.destination.height - this.height) * pos
-      ])
-
-    }
-
-  }
-
-  // Define parent
-, parent: SVG.Container
-
-  // Add parent method
-, construct: {
-
-    // get/set viewbox
-    viewbox: function(x, y, width, height) {
-      if (arguments.length == 0)
-        // act as a getter if there are no arguments
-        return new SVG.ViewBox(this)
-
-      // otherwise act as a setter
-      return this.attr('viewBox', new SVG.ViewBox(x, y, width, height))
-    }
-
-  }
 
 })
 // Add events to elements
@@ -3641,12 +3340,7 @@ SVG.extend(SVG.Element, {
 })
 SVG.Mask = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('mask'))
-
-    // keep references to masked elements
-    this.targets = []
-  }
+  create: 'mask'
 
   // Inherit from
 , inherit: SVG.Container
@@ -3656,15 +3350,16 @@ SVG.Mask = SVG.invent({
     // Unmask all masked elements and remove itself
     remove: function() {
       // unmask all targets
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unmask()
-      this.targets = []
+      this.targets().forEach(function(el) {
+        el.unmask()
+      })
 
       // remove mask from parent
-      this.parent().removeElement(this)
+      return SVG.Element.prototype.remove.call(this)
+    }
 
-      return this
+  , targets: function() {
+      return SVG.select('svg [mask*="' + this.id() + '"]')
     }
   }
 
@@ -3682,30 +3377,23 @@ SVG.extend(SVG.Element, {
   // Distribute mask to svg element
   maskWith: function(element) {
     // use given mask or create a new one
-    this.masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
-
-    // store reverence on self in mask
-    this.masker.targets.push(this)
+    var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + this.masker.attr('id') + '")')
+    return this.attr('mask', url(masker))
   }
   // Unmask element
 , unmask: function() {
-    delete this.masker
     return this.attr('mask', null)
   }
-
+, masker: function() {
+    return this.reference('mask')
+  }
 })
 
 SVG.ClipPath = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('clipPath'))
-
-    // keep references to clipped elements
-    this.targets = []
-  }
+  create: 'clipPath'
 
   // Inherit from
 , inherit: SVG.Container
@@ -3715,15 +3403,16 @@ SVG.ClipPath = SVG.invent({
     // Unclip all clipped elements and remove itself
     remove: function() {
       // unclip all targets
-      for (var i = this.targets.length - 1; i >= 0; i--)
-        if (this.targets[i])
-          this.targets[i].unclip()
-      this.targets = []
+      this.targets().forEach(function(el) {
+        el.unclip()
+      })
 
       // remove clipPath from parent
-      this.parent().removeElement(this)
+      return SVG.Element.prototype.remove.call(this)
+    }
 
-      return this
+  , targets: function() {
+      return SVG.select('svg [clip-path*="' +this.id() +'"]')
     }
   }
 
@@ -3741,18 +3430,17 @@ SVG.extend(SVG.Element, {
   // Distribute clipPath to svg element
   clipWith: function(element) {
     // use given clip or create a new one
-    this.clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
-
-    // store reverence on self in mask
-    this.clipper.targets.push(this)
+    var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + this.clipper.attr('id') + '")')
+    return this.attr('clip-path', url(clipper))
   }
   // Unclip element
 , unclip: function() {
-    delete this.clipper
     return this.attr('clip-path', null)
+  }
+, clipper: function() {
+    return this.reference('clip-path')
   }
 
 })
@@ -3760,9 +3448,6 @@ SVG.Gradient = SVG.invent({
   // Initialize node
   create: function(type) {
     this.constructor.call(this, SVG.create(type + 'Gradient'))
-
-    // store type
-    this.type = type
   }
 
   // Inherit from
@@ -3787,7 +3472,7 @@ SVG.Gradient = SVG.invent({
     }
     // Return the fill id
   , fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Alias string convertion to fill
   , toString: function() {
@@ -3813,13 +3498,13 @@ SVG.Gradient = SVG.invent({
 SVG.extend(SVG.Gradient, SVG.FX, {
   // From position
   from: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
       this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
   }
   // To position
 , to: function(x, y) {
-    return (this._target || this).type == 'radial' ?
+    return (this._target || this).type == 'radialGradient' ?
       this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
       this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }
@@ -3875,7 +3560,7 @@ SVG.Pattern = SVG.invent({
 , extend: {
     // Return the fill id
     fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Update pattern by rebuilding
   , update: function(block) {
@@ -3979,19 +3664,6 @@ SVG.Doc = SVG.invent({
   , parent: function() {
       return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
     }
-    // Fix for possible sub-pixel offset. See:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function(spof) {
-      var pos = this.node.getScreenCTM()
-
-      if (pos)
-        this
-          .style('left', (-pos.e % 1) + 'px')
-          .style('top',  (-pos.f % 1) + 'px')
-
-      return this
-    }
-
       // Removes the doc from the DOM
   , remove: function() {
       if(this.parent()) {
@@ -4429,65 +4101,48 @@ SVG.Image = SVG.invent({
   // Add class methods
 , extend: {
     // (re)load image
-    load: function(url) {
+    load: function(url, callback) {
       if (!url) return this
 
-      var self = this
-        , img  = new window.Image()
+      var img = new window.Image()
 
-      // preload image
-      SVG.on(img, 'load', function() {
-        var p = self.parent(SVG.Pattern)
+      SVG.on(img, 'load', function(e) {
 
-        if(p === null) return
+        var p = this.parent()
 
         // ensure image size
-        if (self.width() == 0 && self.height() == 0)
-          self.size(img.width, img.height)
+        if (this.width() == 0 && this.height() == 0)
+          this.size(img.width, img.height)
 
-        // ensure pattern size if not set
-        if (p && p.width() == 0 && p.height() == 0)
-          p.size(self.width(), self.height())
+        if(p instanceof SVG.Pattern) {
+          // ensure pattern size if not set
+          if (p.width() == 0 && p.height() == 0)
+            p.size(this.width(), this.height())
+        }
 
-        // callback
-        if (typeof self._loaded === 'function')
-          self._loaded.call(self, {
+        if(typeof callback == 'function') {
+          callback.call(this, {
             width:  img.width
           , height: img.height
           , ratio:  img.width / img.height
           , url:    url
           })
-      })
-
-      SVG.on(img, 'error', function(e){
-        if (typeof self._error === 'function'){
-            self._error.call(self, e)
         }
-      })
+      }, this)
 
-      return this.attr('href', (img.src = this.src = url), SVG.xlink)
-    }
-    // Add loaded callback
-  , loaded: function(loaded) {
-      this._loaded = loaded
-      return this
-    }
-
-  , error: function(error) {
-      this._error = error
-      return this
+      return this.attr('href', (img.src = url), SVG.xlink)
     }
   }
 
   // Add parent method
 , construct: {
     // create image element, load image and set its size
-    image: function(source, width, height) {
-      return this.put(new SVG.Image).load(source).size(width || 0, height || width || 0)
+    image: function(source, callback) {
+      return this.put(new SVG.Image).size(0, 0).load(source, callback)
     }
   }
-
 })
+
 SVG.Text = SVG.invent({
   // Initialize node
   create: function() {
@@ -4502,7 +4157,7 @@ SVG.Text = SVG.invent({
   }
 
   // Inherit from
-, inherit: SVG.Shape
+, inherit: SVG.Parent
 
   // Add class methods
 , extend: {
@@ -4587,18 +4242,6 @@ SVG.Text = SVG.invent({
 
       return this.rebuild()
     }
-    // Get all the first level lines
-  , lines: function() {
-      var node = (this.textPath && this.textPath() || this).node
-
-      // filter tspans and map them to SVG.js instances
-      var lines = SVG.utils.map(SVG.utils.filterSVGElements(node.childNodes), function(el){
-        return SVG.adopt(el)
-      })
-
-      // return an instance of SVG.set
-      return new SVG.Set(lines)
-    }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
       // store new rebuild flag if given
@@ -4611,7 +4254,7 @@ SVG.Text = SVG.invent({
           , blankLineOffset = 0
           , dy = this.dom.leading * new SVG.Number(this.attr('font-size'))
 
-        this.lines().each(function() {
+        this.each(function() {
           if (this.dom.newLined) {
             if (!self.textPath())
               this.attr('x', self.attr('x'))
@@ -4661,7 +4304,7 @@ SVG.Tspan = SVG.invent({
   create: 'tspan'
 
   // Inherit from
-, inherit: SVG.Shape
+, inherit: SVG.Parent
 
   // Add class methods
 , extend: {
@@ -4721,16 +4364,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     node.appendChild(tspan.node)
 
     return tspan.text(text)
-  }
-  // Clear all lines
-, clear: function() {
-    var node = (this.textPath && this.textPath() || this).node
-
-    // remove existing child nodes
-    while (node.hasChildNodes())
-      node.removeChild(node.lastChild)
-
-    return this
   }
   // Get length of text element
 , length: function() {
@@ -4805,7 +4438,7 @@ SVG.Nested = SVG.invent({
   create: function() {
     this.constructor.call(this, SVG.create('svg'))
 
-    this.style('overflow', 'visible')
+    this.css('overflow', 'visible')
   }
 
   // Inherit from
@@ -4899,7 +4532,7 @@ SVG.Marker = SVG.invent({
     }
     // Return the fill id
   , toString: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
   }
 
@@ -5029,7 +4662,7 @@ SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
   // Add x and y radius
   radius: function(x, y) {
     var type = (this._target || this).type;
-    return type == 'radial' || type == 'circle' ?
+    return type == 'radialGradient' || type == 'radialGradient' ?
       this.attr('r', new SVG.Number(x)) :
       this.rx(x).ry(y == null ? x : y)
   }
@@ -5042,7 +4675,7 @@ SVG.extend(SVG.Path, {
   }
   // Get point at length
 , pointAt: function(length) {
-    return this.node.getPointAtLength(length)
+    return new SVG.Point(this.node.getPointAtLength(length))
   }
 })
 
@@ -5062,154 +4695,6 @@ SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
         this.attr(a, v)
   }
 })
-
-SVG.Set = SVG.invent({
-  // Initialize
-  create: function(members) {
-    // Set initial state
-    Array.isArray(members) ? this.members = members : this.clear()
-  }
-
-  // Add class methods
-, extend: {
-    // Add element to set
-    add: function() {
-      var i, il, elements = [].slice.call(arguments)
-
-      for (i = 0, il = elements.length; i < il; i++)
-        this.members.push(elements[i])
-
-      return this
-    }
-    // Remove element from set
-  , remove: function(element) {
-      var i = this.index(element)
-
-      // remove given child
-      if (i > -1)
-        this.members.splice(i, 1)
-
-      return this
-    }
-    // Iterate over all members
-  , each: function(block) {
-      for (var i = 0, il = this.members.length; i < il; i++)
-        block.apply(this.members[i], [i, this.members])
-
-      return this
-    }
-    // Restore to defaults
-  , clear: function() {
-      // initialize store
-      this.members = []
-
-      return this
-    }
-    // Get the length of a set
-  , length: function() {
-      return this.members.length
-    }
-    // Checks if a given element is present in set
-  , has: function(element) {
-      return this.index(element) >= 0
-    }
-    // retuns index of given element in set
-  , index: function(element) {
-      return this.members.indexOf(element)
-    }
-    // Get member at given index
-  , get: function(i) {
-      return this.members[i]
-    }
-    // Get first member
-  , first: function() {
-      return this.get(0)
-    }
-    // Get last member
-  , last: function() {
-      return this.get(this.members.length - 1)
-    }
-    // Default value
-  , valueOf: function() {
-      return this.members
-    }
-    // Get the bounding box of all members included or empty box if set has no items
-  , bbox: function(){
-      // return an empty box of there are no members
-      if (this.members.length == 0)
-        return new SVG.RBox()
-
-      // get the first rbox and update the target bbox
-      var rbox = this.members[0].rbox(this.members[0].doc())
-
-      this.each(function() {
-        // user rbox for correct position and visual representation
-        rbox = rbox.merge(this.rbox(this.doc()))
-      })
-
-      return rbox
-    }
-  }
-
-  // Add parent method
-, construct: {
-    // Create a new set
-    set: function(members) {
-      return new SVG.Set(members)
-    }
-  }
-})
-
-SVG.FX.Set = SVG.invent({
-  // Initialize node
-  create: function(set) {
-    // store reference to set
-    this.set = set
-  }
-
-})
-
-// Alias methods
-SVG.Set.inherit = function() {
-  var m
-    , methods = []
-
-  // gather shape methods
-  for(var m in SVG.Shape.prototype)
-    if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
-      methods.push(m)
-
-  // apply shape aliasses
-  methods.forEach(function(method) {
-    SVG.Set.prototype[method] = function() {
-      for (var i = 0, il = this.members.length; i < il; i++)
-        if (this.members[i] && typeof this.members[i][method] == 'function')
-          this.members[i][method].apply(this.members[i], arguments)
-
-      return method == 'animate' ? (this.fx || (this.fx = new SVG.FX.Set(this))) : this
-    }
-  })
-
-  // clear methods for the next round
-  methods = []
-
-  // gather fx methods
-  for(var m in SVG.FX.prototype)
-    if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.FX.Set.prototype[m] != 'function')
-      methods.push(m)
-
-  // apply fx aliasses
-  methods.forEach(function(method) {
-    SVG.FX.Set.prototype[method] = function() {
-      for (var i = 0, il = this.set.members.length; i < il; i++)
-        this.set.members[i].fx[method].apply(this.set.members[i].fx, arguments)
-
-      return this
-    }
-  })
-}
-
-
 
 
 SVG.extend(SVG.Element, {
@@ -5284,11 +4769,19 @@ SVG.get = function(id) {
 
 // Select elements by query string
 SVG.select = function(query, parent) {
-  return new SVG.Set(
-    SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
-      return SVG.adopt(node)
-    })
-  )
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
+}
+
+SVG.$$ = function(query, parent) {
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
+}
+
+SVG.$ = function(query, parent) {
+  return SVG.adopt((parent || document).querySelector(query))
 }
 
 SVG.extend(SVG.Parent, {
@@ -5296,8 +4789,22 @@ SVG.extend(SVG.Parent, {
   select: function(query) {
     return SVG.select(query, this.node)
   }
-
 })
+
+function isNulledBox(box) {
+  return !box.w && !box.h && !box.x && !box.y
+}
+
+function domContains(node) {
+  return (document.documentElement.contains || function(node) {
+    // This is IE - it does not support contains() for top-level SVGs
+    while (node.parentNode){
+      node = node.parentNode;
+    }
+    return node == document
+  }).call(document.documentElement, node)
+}
+
 function pathRegReplace(a, b, c, d) {
   return c + d.replace(SVG.regex.dots, ' .')
 }
@@ -5439,7 +4946,10 @@ function assignNewId(node) {
     if (node.childNodes[i] instanceof window.SVGElement)
       assignNewId(node.childNodes[i])
 
-  return SVG.adopt(node).id(SVG.eid(node.nodeName))
+  if(node.id)
+    return SVG.adopt(node).id(SVG.eid(node.nodeName))
+
+  return SVG.adopt(node)
 }
 
 // Add more bounding box properties
@@ -5463,55 +4973,183 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = url.toString().match(SVG.regex.reference)
+  var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
 }
 
-// Create matrix array for looping
-var abcdef = 'abcdef'.split('')
-// Add CustomEvent to IE9 and IE10
-if (typeof window.CustomEvent !== 'function') {
-  // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  var CustomEvent = function(event, options) {
-    options = options || { bubbles: false, cancelable: false, detail: undefined }
-    var e = document.createEvent('CustomEvent')
-    e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
-    return e
-  }
-
-  CustomEvent.prototype = window.Event.prototype
-
-  window.CustomEvent = CustomEvent
+// creates an url reference out of nodes id
+function url(node) {
+  return 'url(' + window.location + '#' + node.id() + ')'
 }
 
-// requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
-(function(w) {
-  var lastTime = 0
-  var vendors = ['moz', 'webkit']
+function removePrefixFromReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      removePrefixFromReferences(node.childNodes[i])
 
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    w.requestAnimationFrame = w[vendors[x] + 'RequestAnimationFrame']
-    w.cancelAnimationFrame  = w[vendors[x] + 'CancelAnimationFrame'] ||
-                              w[vendors[x] + 'CancelRequestAnimationFrame']
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(match[1] == window.location) v[n].nodeValue = 'url(#' + match[2] + ')'
+    }
   }
+}
 
-  w.requestAnimationFrame = w.requestAnimationFrame ||
-    function(callback) {
-      var currTime = new Date().getTime()
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime))
+function addPrefixToReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      addPrefixToReferences(node.childNodes[i])
 
-      var id = w.setTimeout(function() {
-        callback(currTime + timeToCall)
-      }, timeToCall)
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(!match[1]) v[n].nodeValue = 'url(' + window.location + '#' + match[2] + ')'
+    }
+  }
+}
 
-      lastTime = currTime + timeToCall
-      return id
+// Create matrix array for looping
+var abcdef = 'abcdef'.split('')
+
+SVG.Box = SVG.invent({
+  create: function(source) {
+    var base = [0,0,0,0]
+    source = typeof source === 'string' ?
+        source.split(SVG.regex.delimiter).map(parseFloat) :
+      Array.isArray(source) ?
+        source :
+      typeof source == 'object' ?
+        [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] :
+      arguments.length == 4 ?
+        [].slice.call(arguments) :
+        base
+
+    this.x = source[0]
+    this.y = source[1]
+    this.width = source[2]
+    this.height = source[3]
+
+    // add center, right, bottom...
+    fullBox(this)
+  }
+, extend: {
+    // Merge rect box with another, return a new instance
+    merge: function(box) {
+      var x = Math.min(this.x, box.x)
+        , y = Math.min(this.y, box.y)
+
+      return new SVG.Box(
+        x, y,
+        Math.max(this.x + this.width,  box.x + box.width)  - x,
+        Math.max(this.y + this.height, box.y + box.height) - y
+      )
     }
 
-  w.cancelAnimationFrame = w.cancelAnimationFrame || w.clearTimeout;
+  , transform: function(m) {
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, p, bbox
 
-}(window))
+      var pts = [
+        new SVG.Point(this.x, this.y),
+        new SVG.Point(this.x2, this.y),
+        new SVG.Point(this.x, this.y2),
+        new SVG.Point(this.x2, this.y2)
+      ]
+
+      pts.forEach(function(p) {
+        p = p.transform(m)
+        xMin = Math.min(xMin,p.x)
+        xMax = Math.max(xMax,p.x)
+        yMin = Math.min(yMin,p.y)
+        yMax = Math.max(yMax,p.y)
+      })
+
+      return new SVG.Box(
+        xMin, yMin,
+        xMax-xMin,
+        yMax-yMin
+      )
+    }
+
+  , addOffset: function() {
+      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+      this.x += window.pageXOffset
+      this.y += window.pageYOffset
+      return this
+    }
+  , toString: function() {
+      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+    }
+  , morph: function(x, y, width, height){
+      this.destination = new SVG.Box(x, y, width, height)
+      return this
+    }
+
+  , at: function(pos) {
+      if(!this.destination) return this
+
+      return new SVG.Box(
+          this.x + (this.destination.x - this.x) * pos
+        , this.y + (this.destination.y - this.y) * pos
+        , this.width + (this.destination.width - this.width) * pos
+        , this.height + (this.destination.height - this.height) * pos
+      )
+
+    }
+  }
+
+    // Define Parent
+, parent: SVG.Element
+
+  // Constructor
+, construct: {
+    // Get bounding box
+    bbox: function() {
+      var box
+
+      try {
+        // find native bbox
+        box = this.node.getBBox()
+
+        if(isNulledBox(box) && !domContains(this.node)) {
+          throw new Exception('Element not in the dom')
+        }
+      } catch(e) {
+        try {
+          var clone = this.clone(SVG.parser.draw.instance).show()
+          box = clone.node.getBBox()
+          clone.remove()
+        } catch(e) {
+          console.warn('Getting a bounding box of this element is not possible')
+        }
+      }
+
+      return new SVG.Box(box)
+    }
+
+  , rbox: function(el) {
+      // IE11 throws an error when element not in dom
+      try{
+        var box = new SVG.Box(this.node.getBoundingClientRect())
+        if (el) return box.transform(el.screenCTM().inverse())
+        return box.addOffset()
+      } catch(e) {
+        return new SVG.Box()
+      }
+    }
+  }
+})
+
+SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
+  viewbox: function(x, y, width, height) {
+    // act as getter
+    if(x == null) return new SVG.Box(this.attr('viewBox'))
+
+    // act as setter
+    return this.attr('viewBox', new SVG.Box(x, y, width, height))
+  }
+})
+
 
 return SVG
 

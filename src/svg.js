@@ -36,12 +36,7 @@ SVG.eid = function(name) {
 // Method for element creation
 SVG.create = function(name) {
   // create element
-  var element = document.createElementNS(this.ns, name)
-
-  // apply unique id
-  element.setAttribute('id', this.eid(name))
-
-  return element
+  return document.createElementNS(this.ns, name)
 }
 
 // Method for extending objects
@@ -58,10 +53,6 @@ SVG.extend = function() {
     if (modules[i])
       for (key in methods)
         modules[i].prototype[key] = methods[key]
-
-  // Make sure SVG.Set inherits any newly added methods
-  if (SVG.Set && SVG.Set.inherit)
-    SVG.Set.inherit()
 }
 
 // Invent new element
@@ -135,7 +126,13 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden').node
+  , draw: draw.css({
+      opacity:0,
+      position:'absolute',
+      left:'-100%',
+      top:'-100%',
+      overflow:'hidden'
+    }).node
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')

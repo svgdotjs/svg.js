@@ -12,7 +12,7 @@ SVG.Text = SVG.invent({
   }
 
   // Inherit from
-, inherit: SVG.Shape
+, inherit: SVG.Parent
 
   // Add class methods
 , extend: {
@@ -97,18 +97,6 @@ SVG.Text = SVG.invent({
 
       return this.rebuild()
     }
-    // Get all the first level lines
-  , lines: function() {
-      var node = (this.textPath && this.textPath() || this).node
-  
-      // filter tspans and map them to SVG.js instances
-      var lines = SVG.utils.map(SVG.utils.filterSVGElements(node.childNodes), function(el){
-        return SVG.adopt(el)
-      })
-
-      // return an instance of SVG.set
-      return new SVG.Set(lines)
-    }
     // Rebuild appearance type
   , rebuild: function(rebuild) {
       // store new rebuild flag if given
@@ -121,7 +109,7 @@ SVG.Text = SVG.invent({
           , blankLineOffset = 0
           , dy = this.dom.leading * new SVG.Number(this.attr('font-size'))
         
-        this.lines().each(function() {
+        this.each(function() {
           if (this.dom.newLined) {
             if (!self.textPath())
               this.attr('x', self.attr('x'))
@@ -171,7 +159,7 @@ SVG.Tspan = SVG.invent({
   create: 'tspan'
 
   // Inherit from
-, inherit: SVG.Shape
+, inherit: SVG.Parent
 
   // Add class methods
 , extend: {
@@ -231,16 +219,6 @@ SVG.extend(SVG.Text, SVG.Tspan, {
     node.appendChild(tspan.node)
 
     return tspan.text(text)
-  }
-  // Clear all lines
-, clear: function() {
-    var node = (this.textPath && this.textPath() || this).node
-
-    // remove existing child nodes
-    while (node.hasChildNodes())
-      node.removeChild(node.lastChild)
-
-    return this
   }
   // Get length of text element
 , length: function() {

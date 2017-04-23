@@ -6,11 +6,19 @@ SVG.get = function(id) {
 
 // Select elements by query string
 SVG.select = function(query, parent) {
-  return new SVG.Set(
-    SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
-      return SVG.adopt(node)
-    })
-  )
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
+}
+
+SVG.$$ = function(query, parent) {
+  return SVG.utils.map((parent || document).querySelectorAll(query), function(node) {
+    return SVG.adopt(node)
+  })
+}
+
+SVG.$ = function(query, parent) {
+  return SVG.adopt((parent || document).querySelector(query))
 }
 
 SVG.extend(SVG.Parent, {
@@ -18,5 +26,4 @@ SVG.extend(SVG.Parent, {
   select: function(query) {
     return SVG.select(query, this.node)
   }
-
 })

@@ -20,24 +20,24 @@ describe('Mask', function() {
   })
 
   it('sets the "mask" attribute on the masked element with the mask id', function() {
-    expect(rect.attr('mask')).toBe('url("#' + circle.parent().attr('id') + '")')
+    expect(rect.attr('mask')).toBe('url(' + window.location + '#' + circle.parent().id() + ')')
   })
 
   it('references the mask element in the masked element', function() {
-    expect(rect.masker).toBe(circle.parent())
+    expect(rect.masker()).toBe(circle.parent())
   })
 
   it('references the masked element in the mask target list', function() {
-    expect(rect.masker.targets.indexOf(rect) > -1).toBe(true)
+    expect(rect.masker().targets().indexOf(rect) > -1).toBe(true)
   })
 
   it('reuses mask element when mask was given', function() {
-    var mask = rect.masker
-    expect(draw.rect(100,100).maskWith(mask).masker).toBe(mask)
+    var mask = rect.masker()
+    expect(draw.rect(100,100).maskWith(mask).masker()).toBe(mask)
   })
   
   it('unmasks all masked elements when being removed', function() {
-    rect.masker.remove()
+    rect.masker().remove()
     expect(rect.attr('mask')).toBe(undefined)
   })
 
@@ -50,7 +50,7 @@ describe('Mask', function() {
 
     it('removes the reference to the masking element', function() {
       rect.unmask()
-      expect(rect.masker).toBe(undefined)
+      expect(rect.masker()).toBe(null)
     })
 
     it('returns the element itslef', function() {
