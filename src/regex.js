@@ -39,6 +39,9 @@ SVG.regex = {
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
 
+  // Test for url reference
+, isUrl:            /url\(([-\w:/]+(?:\.\w+)?)?#([-\w]+)\)/
+
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
 

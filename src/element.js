@@ -220,6 +220,8 @@ SVG.Element = SVG.invent({
         // dump raw svg
         well.innerHTML = svg
 
+        addPrefixToReferences(well)
+        
         // transplant nodes
         for (len = well.childNodes.length;len--;)
           if(well.firstChild.nodeType != 1)
@@ -229,6 +231,7 @@ SVG.Element = SVG.invent({
 
       // otherwise act as a getter
       } else {
+        removePrefixFromReferences(this.node)
         return this.node.outerHTML
       }
 

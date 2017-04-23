@@ -40,7 +40,7 @@ SVG.extend(SVG.Element, {
     var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+    return this.attr('clip-path', url(clipper))
   }
   // Unclip element
 , unclip: function() {

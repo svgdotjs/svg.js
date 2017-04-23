@@ -38,6 +38,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)`
 - changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
 - ids are not generated upon creation anymore. Instead they are generated when requested (#559)
+- prefix all `url()` references with current location so that nothing breaks when using `<base>`
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

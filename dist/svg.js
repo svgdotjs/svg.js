@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Apr 23 2017 12:52:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 23 2017 15:09:13 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -211,6 +211,9 @@ SVG.regex = {
 
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
+
+  // Test for url reference
+, isUrl:            /url\(([-\w:/]+(?:\.\w+)?)?#([-\w]+)\)/
 
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
@@ -1232,6 +1235,8 @@ SVG.Element = SVG.invent({
         // dump raw svg
         well.innerHTML = svg
 
+        addPrefixToReferences(well)
+
         // transplant nodes
         for (len = well.childNodes.length;len--;)
           if(well.firstChild.nodeType != 1)
@@ -1241,6 +1246,7 @@ SVG.Element = SVG.invent({
 
       // otherwise act as a getter
       } else {
+        removePrefixFromReferences(this.node)
         return this.node.outerHTML
       }
 
@@ -3374,7 +3380,7 @@ SVG.extend(SVG.Element, {
     var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + masker.id() + '")')
+    return this.attr('mask', url(masker))
   }
   // Unmask element
 , unmask: function() {
@@ -3427,7 +3433,7 @@ SVG.extend(SVG.Element, {
     var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+    return this.attr('clip-path', url(clipper))
   }
   // Unclip element
 , unclip: function() {
@@ -3466,7 +3472,7 @@ SVG.Gradient = SVG.invent({
     }
     // Return the fill id
   , fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Alias string convertion to fill
   , toString: function() {
@@ -3554,7 +3560,7 @@ SVG.Pattern = SVG.invent({
 , extend: {
     // Return the fill id
     fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Update pattern by rebuilding
   , update: function(block) {
@@ -4526,7 +4532,7 @@ SVG.Marker = SVG.invent({
     }
     // Return the fill id
   , toString: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
   }
 
@@ -4970,6 +4976,37 @@ function idFromReference(url) {
   var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
+}
+
+// creates an url reference out of nodes id
+function url(node) {
+  return 'url(' + window.location + '#' + node.id() + ')'
+}
+
+function removePrefixFromReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      removePrefixFromReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(match[1] == window.location) v[n].nodeValue = 'url(#' + match[2] + ')'
+    }
+  }
+}
+
+function addPrefixToReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      addPrefixToReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(!match[1]) v[n].nodeValue = 'url(' + window.location + '#' + match[2] + ')'
+    }
+  }
 }
 
 // Create matrix array for looping

@@ -185,5 +185,36 @@ function idFromReference(url) {
   if (m) return m[1]
 }
 
+// creates an url reference out of nodes id
+function url(node) {
+  return 'url(' + window.location + '#' + node.id() + ')'
+}
+
+function removePrefixFromReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      removePrefixFromReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(match[1] == window.location) v[n].nodeValue = 'url(#' + match[2] + ')'
+    }
+  }
+}
+
+function addPrefixToReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      addPrefixToReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
+      if(!match[1]) v[n].nodeValue = 'url(' + window.location + '#' + match[2] + ')'
+    }
+  }
+}
+
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
