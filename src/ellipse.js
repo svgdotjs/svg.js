@@ -14,7 +14,7 @@ SVG.Circle = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Circle, SVG.FX, {
+SVG.extend([SVG.Circle, SVG.FX], {
   // Radius x value
   rx: function(rx) {
     return this.attr('r', rx)
@@ -41,7 +41,7 @@ SVG.Ellipse = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Ellipse, SVG.Rect, SVG.FX, {
+SVG.extend([SVG.Ellipse, SVG.Rect, SVG.FX], {
   // Radius x value
   rx: function(rx) {
     return this.attr('rx', rx)
@@ -53,7 +53,7 @@ SVG.extend(SVG.Ellipse, SVG.Rect, SVG.FX, {
 })
 
 // Add common method
-SVG.extend(SVG.Circle, SVG.Ellipse, {
+SVG.extend([SVG.Circle, SVG.Ellipse], {
     // Move over x-axis
     x: function(x) {
       return x == null ? this.cx() - this.rx() : this.cx(x + this.rx())

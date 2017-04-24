@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 25 2017 12:25:22 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 25 2017 15:05:49 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -63,14 +63,10 @@ SVG.create = function(name) {
 }
 
 // Method for extending objects
-SVG.extend = function() {
-  var modules, methods, key, i
+SVG.extend = function(modules, methods) {
+  var key, i
 
-  // Get list of modules
-  modules = [].slice.call(arguments)
-
-  // Get object with extensions
-  methods = modules.pop()
+  modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--)
     if (modules[i])
@@ -3489,7 +3485,7 @@ SVG.Gradient = SVG.invent({
 })
 
 // Add animatable methods to both gradient and fx module
-SVG.extend(SVG.Gradient, SVG.FX, {
+SVG.extend([SVG.Gradient, SVG.FX], {
   // From position
   from: function(x, y) {
     return (this._target || this).type == 'radialGradient' ?
@@ -3805,7 +3801,7 @@ SVG.Circle = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Circle, SVG.FX, {
+SVG.extend([SVG.Circle, SVG.FX], {
   // Radius x value
   rx: function(rx) {
     return this.attr('r', rx)
@@ -3832,7 +3828,7 @@ SVG.Ellipse = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Ellipse, SVG.Rect, SVG.FX, {
+SVG.extend([SVG.Ellipse, SVG.Rect, SVG.FX], {
   // Radius x value
   rx: function(rx) {
     return this.attr('rx', rx)
@@ -3844,7 +3840,7 @@ SVG.extend(SVG.Ellipse, SVG.Rect, SVG.FX, {
 })
 
 // Add common method
-SVG.extend(SVG.Circle, SVG.Ellipse, {
+SVG.extend([SVG.Circle, SVG.Ellipse], {
     // Move over x-axis
     x: function(x) {
       return x == null ? this.cx() - this.rx() : this.cx(x + this.rx())
@@ -3966,7 +3962,7 @@ SVG.Polygon = SVG.invent({
 })
 
 // Add polygon-specific functions
-SVG.extend(SVG.Polyline, SVG.Polygon, {
+SVG.extend([SVG.Polyline, SVG.Polygon], {
   // Get array
   array: function() {
     return this._array || (this._array = new SVG.PointArray(this.attr('points')))
@@ -3996,7 +3992,7 @@ SVG.extend(SVG.Polyline, SVG.Polygon, {
 })
 
 // unify all point to point elements
-SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, {
+SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon], {
   // Define morphable array
   morphArray:  SVG.PointArray
   // Move by left top corner over x-axis
@@ -4333,7 +4329,7 @@ SVG.Tspan = SVG.invent({
 
 })
 
-SVG.extend(SVG.Text, SVG.Tspan, {
+SVG.extend([SVG.Text, SVG.Tspan], {
   // Create plain text node
   plain: function(text) {
     // clear if build mode is disabled
@@ -4554,7 +4550,7 @@ SVG.extend(SVG.Defs, {
 
 })
 
-SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path, {
+SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path], {
   // Create and attach markers
   marker: function(marker, width, height, block) {
     var attr = ['marker']
@@ -4600,11 +4596,11 @@ var sugar = {
     return this
   }
 
-  SVG.extend(SVG.Element, SVG.FX, extension)
+  SVG.extend([SVG.Element, SVG.FX], extension)
 
 })
 
-SVG.extend(SVG.Element, SVG.FX, {
+SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
   rotate: function(d, cx, cy) {
     return this.transform({ rotation: d, cx: cx, cy: cy })
@@ -4652,7 +4648,7 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
+SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX], {
   // Add x and y radius
   radius: function(x, y) {
     var type = (this._target || this).type;
@@ -4673,7 +4669,7 @@ SVG.extend(SVG.Path, {
   }
 })
 
-SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
+SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX], {
   // Set font
   font: function(a, v) {
     if (typeof a == 'object') {
@@ -5103,7 +5099,7 @@ SVG.Box = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
+SVG.extend([SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View], {
   viewbox: function(x, y, width, height) {
     // act as getter
     if(x == null) return new SVG.Box(this.attr('viewBox'))

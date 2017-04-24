@@ -1,5 +1,5 @@
 // unify all point to point elements
-SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, {
+SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon], {
   // Define morphable array
   morphArray:  SVG.PointArray
   // Move by left top corner over x-axis

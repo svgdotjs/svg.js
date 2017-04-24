@@ -33,7 +33,7 @@ SVG.Polygon = SVG.invent({
 })
 
 // Add polygon-specific functions
-SVG.extend(SVG.Polyline, SVG.Polygon, {
+SVG.extend([SVG.Polyline, SVG.Polygon], {
   // Get array
   array: function() {
     return this._array || (this._array = new SVG.PointArray(this.attr('points')))

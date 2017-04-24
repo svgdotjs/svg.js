@@ -126,7 +126,7 @@ SVG.Box = SVG.invent({
   }
 })
 
-SVG.extend(SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View, {
+SVG.extend([SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View], {
   viewbox: function(x, y, width, height) {
     // act as getter
     if(x == null) return new SVG.Box(this.attr('viewBox'))

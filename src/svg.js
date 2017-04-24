@@ -40,14 +40,10 @@ SVG.create = function(name) {
 }
 
 // Method for extending objects
-SVG.extend = function() {
-  var modules, methods, key, i
+SVG.extend = function(modules, methods) {
+  var key, i
 
-  // Get list of modules
-  modules = [].slice.call(arguments)
-
-  // Get object with extensions
-  methods = modules.pop()
+  modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--)
     if (modules[i])

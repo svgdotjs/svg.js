@@ -49,7 +49,7 @@ SVG.Gradient = SVG.invent({
 })
 
 // Add animatable methods to both gradient and fx module
-SVG.extend(SVG.Gradient, SVG.FX, {
+SVG.extend([SVG.Gradient, SVG.FX], {
   // From position
   from: function(x, y) {
     return (this._target || this).type == 'radialGradient' ?

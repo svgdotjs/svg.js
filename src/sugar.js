@@ -26,11 +26,11 @@ var sugar = {
     return this
   }
 
-  SVG.extend(SVG.Element, SVG.FX, extension)
+  SVG.extend([SVG.Element, SVG.FX], extension)
 
 })
 
-SVG.extend(SVG.Element, SVG.FX, {
+SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
   rotate: function(d, cx, cy) {
     return this.transform({ rotation: d, cx: cx, cy: cy })
@@ -78,7 +78,7 @@ SVG.extend(SVG.Element, SVG.FX, {
   }
 })
 
-SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX, {
+SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX], {
   // Add x and y radius
   radius: function(x, y) {
     var type = (this._target || this).type;
@@ -99,7 +99,7 @@ SVG.extend(SVG.Path, {
   }
 })
 
-SVG.extend(SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX, {
+SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX], {
   // Set font
   font: function(a, v) {
     if (typeof a == 'object') {

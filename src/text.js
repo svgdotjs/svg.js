@@ -194,7 +194,7 @@ SVG.Tspan = SVG.invent({
 
 })
 
-SVG.extend(SVG.Text, SVG.Tspan, {
+SVG.extend([SVG.Text, SVG.Tspan], {
   // Create plain text node
   plain: function(text) {
     // clear if build mode is disabled

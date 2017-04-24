@@ -60,7 +60,7 @@ SVG.extend(SVG.Defs, {
   
 })
 
-SVG.extend(SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path, {
+SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path], {
   // Create and attach markers
   marker: function(marker, width, height, block) {
     var attr = ['marker']
