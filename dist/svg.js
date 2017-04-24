@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Apr 23 2017 12:52:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Apr 24 2017 09:47:29 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -182,8 +182,8 @@ SVG.regex = {
   // Parse rgb value
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
 
-  // Parse reference id
-, reference:        /#([a-z0-9\-_]+)/i
+  // Parse reference url
+, reference:        /(url\()?([-\w:/.]+)?#([-\w]+)/
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
@@ -1232,6 +1232,8 @@ SVG.Element = SVG.invent({
         // dump raw svg
         well.innerHTML = svg
 
+        addPrefixToReferences(well)
+
         // transplant nodes
         for (len = well.childNodes.length;len--;)
           if(well.firstChild.nodeType != 1)
@@ -1241,6 +1243,7 @@ SVG.Element = SVG.invent({
 
       // otherwise act as a getter
       } else {
+        removePrefixFromReferences(this.node)
         return this.node.outerHTML
       }
 
@@ -3374,7 +3377,7 @@ SVG.extend(SVG.Element, {
     var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + masker.id() + '")')
+    return this.attr('mask', url(masker))
   }
   // Unmask element
 , unmask: function() {
@@ -3427,7 +3430,7 @@ SVG.extend(SVG.Element, {
     var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
 
     // apply mask
-    return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+    return this.attr('clip-path', url(clipper))
   }
   // Unclip element
 , unclip: function() {
@@ -3466,7 +3469,7 @@ SVG.Gradient = SVG.invent({
     }
     // Return the fill id
   , fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Alias string convertion to fill
   , toString: function() {
@@ -3554,7 +3557,7 @@ SVG.Pattern = SVG.invent({
 , extend: {
     // Return the fill id
     fill: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
     // Update pattern by rebuilding
   , update: function(block) {
@@ -4526,7 +4529,7 @@ SVG.Marker = SVG.invent({
     }
     // Return the fill id
   , toString: function() {
-      return 'url(#' + this.id() + ')'
+      return url(this)
     }
   }
 
@@ -4967,9 +4970,44 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = (url || '').toString().match(SVG.regex.reference)
+  var m = SVG.regex.reference.exec(url+'')
 
-  if (m) return m[1]
+  if (m) return m[3]
+}
+
+// creates an url reference out of nodes id
+function url(node) {
+  return 'url(' + window.location + '#' + node.id() + ')'
+}
+
+function removePrefixFromReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      removePrefixFromReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(match[2] == window.location) v[n].nodeValue = '#' + (match[3] || '')
+    }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
+      if(match[1] && match[2] == window.location) v[n].nodeValue = 'url(#' + match[3] + ')'
+    }
+  }
+}
+
+function addPrefixToReferences(node) {
+  for (var i = node.childNodes.length - 1; i >= 0; i--)
+    if (node.childNodes[i] instanceof window.SVGElement)
+      addPrefixToReferences(node.childNodes[i])
+
+  var v = node.attributes, match
+  for (n = v.length - 1; n >= 0; n--) {
+    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(!match[2]) v[n].nodeValue = window.location + '#' + (match[3] || '')
+    }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
+      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + window.location + '#' + match[3] + ')'
+    }
+  }
 }
 
 // Create matrix array for looping

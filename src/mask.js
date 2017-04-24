@@ -40,7 +40,7 @@ SVG.extend(SVG.Element, {
     var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
 
     // apply mask
-    return this.attr('mask', 'url("#' + masker.id() + '")')
+    return this.attr('mask', url(masker))
   }
   // Unmask element
 , unmask: function() {

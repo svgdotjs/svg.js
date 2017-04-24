@@ -20,7 +20,7 @@ describe('ClipPath', function() {
   })
 
   it('sets the "clip-path" attribute on the cliped element with the clip id', function() {
-    expect(rect.attr('clip-path')).toBe('url("#' + circle.parent().id() + '")')
+    expect(rect.attr('clip-path')).toBe('url(' + window.location + '#' + circle.parent().id() + ')')
   })
 
   it('references the clip element in the masked element', function() {

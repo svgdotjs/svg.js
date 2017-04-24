@@ -25,7 +25,7 @@ describe('Pattern', function() {
 
   describe('fill()', function() {
     it('returns the id of the pattern wrapped in url()', function() {
-      expect(pattern.fill()).toBe('url(#' + pattern.id() + ')')
+      expect(pattern.fill()).toBe('url(' + window.location + '#' + pattern.id() + ')')
     })
   })
 
@@ -37,15 +37,15 @@ describe('Pattern', function() {
 
   describe('toString()', function() {
     it('returns the id of the pattern wrapped in url()', function() {
-      expect(pattern + '').toBe('url(#' + pattern.id() + ')')
+      expect(pattern + '').toBe('url(' + window.location + '#' + pattern.id() + ')')
     })
     it('is called when instance is passed as an attribute value', function() {
       rect.attr('fill', pattern)
-      expect(rect.attr('fill')).toBe('url(#' + pattern.id() + ')')
+      expect(rect.attr('fill')).toBe('url(' + window.location + '#' + pattern.id() + ')')
     })
     it('is called when instance is passed in a fill() method', function() {
       rect.fill(pattern)
-      expect(rect.attr('fill')).toBe('url(#' + pattern.id() + ')')
+      expect(rect.attr('fill')).toBe('url(' + window.location + '#' + pattern.id() + ')')
     })
   })
 
