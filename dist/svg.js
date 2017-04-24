@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Apr 23 2017 15:09:13 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Apr 24 2017 09:47:29 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -182,8 +182,8 @@ SVG.regex = {
   // Parse rgb value
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
 
-  // Parse reference id
-, reference:        /#([a-z0-9\-_]+)/i
+  // Parse reference url
+, reference:        /(url\()?([-\w:/.]+)?#([-\w]+)/
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
@@ -211,9 +211,6 @@ SVG.regex = {
 
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
-
-  // Test for url reference
-, isUrl:            /url\(([-\w:/]+(?:\.\w+)?)?#([-\w]+)\)/
 
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
@@ -4973,9 +4970,9 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = (url || '').toString().match(SVG.regex.reference)
+  var m = SVG.regex.reference.exec(url+'')
 
-  if (m) return m[1]
+  if (m) return m[3]
 }
 
 // creates an url reference out of nodes id
@@ -4990,8 +4987,10 @@ function removePrefixFromReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
-      if(match[1] == window.location) v[n].nodeValue = 'url(#' + match[2] + ')'
+    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(match[2] == window.location) v[n].nodeValue = '#' + (match[3] || '')
+    }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
+      if(match[1] && match[2] == window.location) v[n].nodeValue = 'url(#' + match[3] + ')'
     }
   }
 }
@@ -5003,8 +5002,10 @@ function addPrefixToReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(match = SVG.regex.isUrl.exec(v[n].nodeValue)) {
-      if(!match[1]) v[n].nodeValue = 'url(' + window.location + '#' + match[2] + ')'
+    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(!match[2]) v[n].nodeValue = window.location + '#' + (match[3] || '')
+    }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
+      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + window.location + '#' + match[3] + ')'
     }
   }
 }

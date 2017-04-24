@@ -9,8 +9,8 @@ SVG.regex = {
   // Parse rgb value
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
 
-  // Parse reference id
-, reference:        /#([a-z0-9\-_]+)/i
+  // Parse reference url
+, reference:        /(url\()?([-\w:/.]+)?#([-\w]+)/
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
@@ -38,9 +38,6 @@ SVG.regex = {
 
   // Test for image url
 , isImage:          /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
-
-  // Test for url reference
-, isUrl:            /url\(([-\w:/]+(?:\.\w+)?)?#([-\w]+)\)/
 
   // split at whitespace and comma
 , delimiter:        /[\s,]+/
