@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Apr 23 2017 12:52:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 25 2017 12:25:22 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -843,7 +843,7 @@ SVG.extend(SVG.PathArray, {
     var i, x0, y0, s, seg, arr
       , x = 0
       , y = 0
-      , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7 }
+      , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7, 'Z':0 }
 
     if(typeof array == 'string'){
 
