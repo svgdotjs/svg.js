@@ -29,6 +29,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
+## [2.6.1] - 2017-04-25
+
+### Fixed
+- fixed a bug in path parser which made it stop parsing when hitting z command (#665)
+
 ## [2.6.0] - 2017-04-21
 
 ### Added

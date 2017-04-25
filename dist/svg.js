@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.6.0
+* @version 2.6.1
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Apr 21 2017 12:48:06 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 25 2017 11:58:09 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -850,7 +850,7 @@ SVG.extend(SVG.PathArray, {
     var i, x0, y0, s, seg, arr
       , x = 0
       , y = 0
-      , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7 }
+      , paramCnt = { 'M':2, 'L':2, 'H':1, 'V':1, 'C':6, 'S':4, 'Q':4, 'T':2, 'A':7, 'Z':0 }
 
     if(typeof array == 'string'){
 
