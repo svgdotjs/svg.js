@@ -53,7 +53,7 @@ describe('SVG', function() {
       expect(draw.rect(100,100).soft().attr('opacity')).toBe(0.2)
     })
     it('accepts and extend multiple modules at once', function() {
-      SVG.extend(SVG.Rect, SVG.Ellipse, SVG.Path, {
+      SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Path], {
         soft: function() {
           return this.opacity(0.5)
         }
@@ -67,7 +67,7 @@ describe('SVG', function() {
       expect(draw.path().soft().attr('opacity')).toBe(0.5)
     })
     it('ignores non existant objects', function() {
-      SVG.extend(SVG.Rect, SVG.Bogus, {
+      SVG.extend([SVG.Rect, SVG.Bogus], {
         soft: function() {
           return this.opacity(0.3)
         }
