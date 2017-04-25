@@ -9,7 +9,7 @@ SVG.A = SVG.invent({
 , extend: {
     // Link url
     to: function(url) {
-      return this.attr('href', url, SVG.xlink)
+      return this.attr('href', link(url), SVG.xlink)
     }
     // Link show attribute
   , show: function(target) {

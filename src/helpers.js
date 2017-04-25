@@ -182,12 +182,23 @@ function fullBox(b) {
 function idFromReference(url) {
   var m = SVG.regex.reference.exec(url+'')
 
-  if (m) return m[3]
+  if (m && m[2] == location() && m[4]) return m[4]
+}
+
+function location() {
+  return window.location.href
+    .replace(window.location.hash, '')
 }
 
 // creates an url reference out of nodes id
 function url(node) {
-  return 'url(' + window.location + '#' + node.id() + ')'
+  return 'url(' + location() + '#' + node.id() + ')'
+}
+
+function link(url) {
+  var match = SVG.regex.reference.exec(url)
+  if(!url || match[2]) return url
+  return location() + (match[3] || '')
 }
 
 function removePrefixFromReferences(node) {
@@ -197,10 +208,10 @@ function removePrefixFromReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
-      if(match[2] == window.location) v[n].nodeValue = '#' + (match[3] || '')
+    if(v[n].nodeName == 'href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(match[2] == location()) v[n].nodeValue = (match[3] || '')
     }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
-      if(match[1] && match[2] == window.location) v[n].nodeValue = 'url(#' + match[3] + ')'
+      if(match[1] && match[2] == location()) v[n].nodeValue = 'url(' + match[3] + ')'
     }
   }
 }
@@ -212,10 +223,10 @@ function addPrefixToReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
-      if(!match[2]) v[n].nodeValue = window.location + '#' + (match[3] || '')
+    if(v[n].nodeName == 'href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(!match[2]) v[n].nodeValue = location() + (match[3] || '')
     }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
-      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + window.location + '#' + match[3] + ')'
+      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + location() + match[3] + ')'
     }
   }
 }

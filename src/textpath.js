@@ -24,7 +24,7 @@ SVG.TextPath = SVG.invent({
       this.node.appendChild(path.node)
 
       // link textPath to path and add content
-      path.attr('href', '#' + track, SVG.xlink)
+      path.attr('href', link('#' + track), SVG.xlink)
 
       return this
     }

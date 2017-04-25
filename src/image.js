@@ -37,7 +37,7 @@ SVG.Image = SVG.invent({
         }
       }, this)
 
-      return this.attr('href', (img.src = url), SVG.xlink)
+      return this.attr('href', (img.src = link(url)), SVG.xlink)
     }
   }
 

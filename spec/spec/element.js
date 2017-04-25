@@ -861,6 +861,46 @@ describe('Element', function() {
          || toBeTested === '<circle xmlns="http://www.w3.org/2000/svg" r="50" cx="50" cy="50" fill="#ff0066"></circle>'
        ).toBeTruthy()
       })
+      it('correctly removes the current location from urls on export', function() {
+        var rect2, rect1 = draw.rect(100,100).clipWith(rect2 = draw.rect(100,100))
+        expect(rect1.attr('clip-path')).toBe('url(' + window.location + '#' + rect2.parent().id() + ')')
+        
+        var doc = document.createElement('svg')
+        doc.innerHTML = rect1.svg()
+        
+        expect(doc.firstChild.getAttribute('clip-path')).toBe('url(#' + rect2.parent().id() + ')')
+        
+        rect1.attr('clip-path', 'url(http://someUrl.com/with/path/and#Hash)')
+        
+        doc.innerHTML = rect1.svg()
+        expect(doc.firstChild.getAttribute('clip-path')).toBe('url(http://someUrl.com/with/path/and#Hash)')
+      })
+      it('correctly removes the current location from href on export', function() {
+        var link = draw.link('#somewhere')
+        expect(link.to()).toBe(window.location + '#somewhere')
+        
+        var doc = document.createElement('svg')
+        doc.innerHTML = link.svg()
+        expect(doc.firstChild.getAttribute('xlink:href')).toBe('#somewhere')
+        
+        link.to('http://someUrl.com/with/path/and#Hash')
+        doc.innerHTML = link.svg()
+        expect(doc.firstChild.getAttribute('xlink:href')).toBe('http://someUrl.com/with/path/and#Hash')
+      })
+      it('correctly adds the current location to urls on import', function() {      
+        draw.svg('<rect width="100" height="100" clip-path="url(#something)" id="someId">')
+        expect(SVG.get('someId').attr('clip-path')).toBe('url(' + window.location + '#something)')
+        
+        draw.clear().svg('<rect width="100" height="100" clip-path="url(http://someUrl.com/with/path/and#Hash)" id="someId">')
+        expect(SVG.get('someId').attr('clip-path')).toBe('url(http://someUrl.com/with/path/and#Hash)')
+      })
+      it('correctly adds the current location to href on import', function() {
+        draw.svg('<a href="#something" id="someId">')
+        expect(SVG.get('someId').attr('href')).toBe(window.location + '#something')
+        
+        draw.clear().svg('<a href="http://someUrl.com/with/path/and#Hash" id="someId">')
+        expect(SVG.get('someId').attr('href')).toBe('http://someUrl.com/with/path/and#Hash')
+      })
     })
     describe('with raw svg given', function() {
       it('imports a full svg document', function() {

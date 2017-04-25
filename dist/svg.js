@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Apr 24 2017 09:47:29 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Apr 25 2017 13:06:29 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -183,7 +183,7 @@ SVG.regex = {
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
 
   // Parse reference url
-, reference:        /(url\()?([-\w:/.]+)?#([-\w]+)/
+, reference:        /(url\()?([-\w:/.]+)?(#([-\w]+))?/
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
@@ -3765,7 +3765,7 @@ SVG.Use = SVG.invent({
     // Use element as a reference
     element: function(element, file) {
       // Set lined element
-      return this.attr('href', (file || '') + '#' + element, SVG.xlink)
+      return this.attr('href', link((file || '') + '#' + element), SVG.xlink)
     }
   }
 
@@ -4127,7 +4127,7 @@ SVG.Image = SVG.invent({
         }
       }, this)
 
-      return this.attr('href', (img.src = url), SVG.xlink)
+      return this.attr('href', (img.src = link(url)), SVG.xlink)
     }
   }
 
@@ -4394,7 +4394,7 @@ SVG.TextPath = SVG.invent({
       this.node.appendChild(path.node)
 
       // link textPath to path and add content
-      path.attr('href', '#' + track, SVG.xlink)
+      path.attr('href', link('#' + track), SVG.xlink)
 
       return this
     }
@@ -4460,7 +4460,7 @@ SVG.A = SVG.invent({
 , extend: {
     // Link url
     to: function(url) {
-      return this.attr('href', url, SVG.xlink)
+      return this.attr('href', link(url), SVG.xlink)
     }
     // Link show attribute
   , show: function(target) {
@@ -4972,12 +4972,23 @@ function fullBox(b) {
 function idFromReference(url) {
   var m = SVG.regex.reference.exec(url+'')
 
-  if (m) return m[3]
+  if (m && m[2] == location() && m[4]) return m[4]
+}
+
+function location() {
+  return window.location.href
+    .replace(window.location.hash, '')
 }
 
 // creates an url reference out of nodes id
 function url(node) {
-  return 'url(' + window.location + '#' + node.id() + ')'
+  return 'url(' + location() + '#' + node.id() + ')'
+}
+
+function link(url) {
+  var match = SVG.regex.reference.exec(url)
+  if(!url || match[2]) return url
+  return location() + (match[3] || '')
 }
 
 function removePrefixFromReferences(node) {
@@ -4987,10 +4998,10 @@ function removePrefixFromReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
-      if(match[2] == window.location) v[n].nodeValue = '#' + (match[3] || '')
+    if(v[n].nodeName == 'href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(match[2] == location()) v[n].nodeValue = (match[3] || '')
     }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
-      if(match[1] && match[2] == window.location) v[n].nodeValue = 'url(#' + match[3] + ')'
+      if(match[1] && match[2] == location()) v[n].nodeValue = 'url(' + match[3] + ')'
     }
   }
 }
@@ -5002,10 +5013,10 @@ function addPrefixToReferences(node) {
 
   var v = node.attributes, match
   for (n = v.length - 1; n >= 0; n--) {
-    if(v[n].nodeName == 'xlink:href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
-      if(!match[2]) v[n].nodeValue = window.location + '#' + (match[3] || '')
+    if(v[n].nodeName == 'href' && (match = SVG.regex.reference.exec(v[n].nodeValue))) {
+      if(!match[2]) v[n].nodeValue = location() + (match[3] || '')
     }else if(match = SVG.regex.reference.exec(v[n].nodeValue)) {
-      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + window.location + '#' + match[3] + ')'
+      if(match[1] && !match[2]) v[n].nodeValue = 'url(' + location() + match[3] + ')'
     }
   }
 }

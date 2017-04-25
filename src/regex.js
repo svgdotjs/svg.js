@@ -10,7 +10,7 @@ SVG.regex = {
 , rgb:              /rgb\((\d+),(\d+),(\d+)\)/
 
   // Parse reference url
-, reference:        /(url\()?([-\w:/.]+)?#([-\w]+)/
+, reference:        /(url\()?([-\w:/.]+)?(#([-\w]+))?/
 
   // splits a transformation chain
 , transforms:       /\)\s*,?\s*/
