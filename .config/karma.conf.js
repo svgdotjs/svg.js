@@ -17,12 +17,12 @@ module.exports = function(config) {
     files: [
       '.config/pretest.js',
       {
-        pattern: 'spec/fixture.css',
+        pattern: 'spec/fixtures/fixture.css',
         included: false,
         served: true
       },
       {
-        pattern: 'spec/fixture.svg',
+        pattern: 'spec/fixtures/fixture.svg',
         included: false,
         served: true
       },

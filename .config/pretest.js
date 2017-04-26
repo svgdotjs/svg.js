@@ -12,9 +12,9 @@ function get(uri) {
 function main() {
 	var style = document.createElement("style")
 	document.head.appendChild(style)
-	style.sheet.insertRule( get('/base/spec/fixture.css'), 0 )
+	style.sheet.insertRule( get('/fixtures/fixture.css'), 0 )
 
-	document.body.innerHTML = get('/base/spec/fixture.svg')
+	document.body.innerHTML = get('/fixtures/fixture.svg')
 }
 
 main()
