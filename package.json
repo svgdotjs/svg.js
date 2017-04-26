@@ -26,13 +26,12 @@
       "web": "https://svgdotjs.github.io/"
     },
     {
-      "name": "Alex Ewerlöf",
-      "email": "alex@userpixel.com",
-      "web": "http://www.ewerlof.name"
-    },
-    {
       "name": "Ulrich-Matthias Schäfer",
       "email": "ulima.ums@googlemail.com"
+    },
+    {
+      "name": "Rémi Tétreault",
+      "web": "https://github.com/RmiTtro"
     },
     {
       "name": "Jon Ege Ronnenberg",
@@ -72,7 +71,7 @@
     "gulp-trimlines": "^1.0.0",
     "gulp-uglify": "^2.0.0",
     "gulp-wrap": "^0.13.0",
-    "jasmine-core": "^2.5.2",
+    "jasmine-core": "^2.6.0",
     "karma": "^1.3.0",
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.0",

@@ -28,6 +28,17 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## [2.6.2] - UNRELEASED
+
+### Added
+
+### Changed
+- updated Jasmine from 2.5.2 to 2.6.0
+
+### Fixed
+
+### Removed
+
 
 ## [2.6.1] - 2017-04-25
 
