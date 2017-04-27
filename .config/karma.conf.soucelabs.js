@@ -47,7 +47,14 @@ const SouceLabsLaunchers = {
   }
 }
 
+
 module.exports = function(config) {
+
+  if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+    console.error("SAUCE_USERNAME and SAUCE_ACCESS_KEY must be provided as environment variables.")
+    console.warn("Aborting Sauce Labs test")
+    process.exit(1)
+  }
 
   config.set(
 
