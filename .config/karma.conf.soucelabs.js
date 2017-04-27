@@ -92,7 +92,7 @@ module.exports = function(config) {
 
       // Concurrency level
       // how many browser should be started simultaneous
-      concurrency: 5
+      concurrency: 2
     })
 
   )
