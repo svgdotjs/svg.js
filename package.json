@@ -55,8 +55,8 @@
   "scripts": {
     "build": "gulp",
     "build:test": "gulp unify",
-    "test": "karma start .config/karma.conf.js",
-    "test:saucelabs": "karma start .config/karma.conf.saucelabs.js"
+    "test": "karma start .config/karma.conf.js --single-run",
+    "test:saucelabs": "karma start .config/karma.conf.saucelabs.js --single-run"
   },
   "devDependencies": {
     "coveralls": "^2.13.0",
