@@ -55,7 +55,8 @@
   "scripts": {
     "build": "gulp",
     "build:test": "gulp unify",
-    "test": "karma start .config/karma.conf.js --single-run"
+    "test": "karma start .config/karma.conf.js",
+    "test:soucelabs": "karma start .config/karma.conf.soucelabs.js"
   },
   "devDependencies": {
     "coveralls": "^2.13.0",
@@ -75,6 +76,7 @@
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.1",
     "karma-jasmine": "^1.1.0",
+    "karma-sauce-launcher": "^1.1.0",
     "request": "^2.81.0",
     "svgdom": "latest"
   }

@@ -3,7 +3,7 @@ node_js:
     - "stable"
 script:
     - npm run build:test
-    - npm test
+    - npm run test:soucelabs
     - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 #sudo: required
 #dist: trusty
