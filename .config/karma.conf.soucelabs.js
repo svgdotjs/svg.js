@@ -21,7 +21,7 @@ const SouceLabsLaunchers = {
   sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
-    deviceName: 'Samsung Galaxy S4 Emulator',
+    deviceName: 'Android Emulator',
     deviceOrientation: 'portrait'
   },
   sl_firefox: {
@@ -43,7 +43,7 @@ const SouceLabsLaunchers = {
   sl_macos_safari: {
     base: 'SauceLabs',
     browserName: 'safari',
-    platform: 'macOS 10.12',
+    platform: 'OS X 10.11',
     version: '10.0'
   },
   sl_macos_iphone: {
