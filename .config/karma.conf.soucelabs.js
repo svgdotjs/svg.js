@@ -64,7 +64,7 @@ module.exports = function(config) {
       // web server port
       port: 9876,
 
-      reporters: ['dots', 'saucelabs'],
+      reporters: ['saucelabs'],
       customLaunchers: SouceLabsLaunchers,
 
       // start these browsers
