@@ -19,6 +19,7 @@ const SouceLabsLaunchers = {
     platformName: 'Android'
   }, */
   sl_android: {
+    base: 'SauceLabs',
     browserName: 'Android',
     deviceName: 'Samsung Galaxy S4 Emulator',
     deviceOrientation: 'portrait'
