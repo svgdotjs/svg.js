@@ -72,9 +72,9 @@ module.exports = function(config) {
       sauceLabs: {
           testName: 'SVG.js Unit Tests'
       },
-      browserDisconnectTimeout: 5 * 60 * 1000,
+      browserDisconnectTimeout: 1 * 60 * 1000,
       browserDisconnectTolerance: 1,
-      browserNoActivityTimeout: 1 * 60 * 1000,
+      browserNoActivityTimeout: 6 * 60 * 1000,
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
