@@ -4,6 +4,17 @@
 
 const karmaCommon = require('./karma.common')
 
+function createCustomLauncher({browser, version, platform, device, orientation = 'portrait'}) {
+  return {
+    base: 'SauceLabs',
+    browserName: browser,
+    version: version,
+    platform: platform,
+    deviceName: device,
+    deviceOrientation: orientation
+  }
+}
+
 const SauceLabsLaunchers = {
   /** Real mobile devices are not available
    *  Your account does not have access to Android devices.
@@ -17,7 +28,7 @@ const SauceLabsLaunchers = {
     browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
-  }, */
+  }, *//*
   sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
@@ -45,7 +56,7 @@ const SauceLabsLaunchers = {
     browserName: 'safari',
     platform: 'macOS 10.12',
     version: '10.0'
-  },
+  },*/
   sl_macos_iphone: {
     base: 'SauceLabs',
     browserName: 'Safari',
