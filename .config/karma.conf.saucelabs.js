@@ -117,9 +117,15 @@ module.exports = function(config) {
       sauceLabs: {
           testName: 'SVG.js Unit Tests'
       },
-      browserDisconnectTimeout: 5 * 60 * 1000,
+
+      // The number of disconnections tolerated.
       browserDisconnectTolerance: 1,
+      // How long does Karma wait for a browser to reconnect (in ms).
+      browserDisconnectTimeout: 5 * 60 * 1000,
+      // How long will Karma wait for a message from a browser before disconnecting from it (in ms).
       browserNoActivityTimeout: 6 * 60 * 1000,
+      // Timeout for capturing a browser (in ms).
+      captureTimeout: 2 * 60 * 1000,
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
