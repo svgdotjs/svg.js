@@ -4,7 +4,7 @@
 
 const karmaCommon = require('./karma.common')
 
-const SouceLabsLaunchers = {
+const SauceLabsLaunchers = {
   /** Real mobile devices are not available
    *  Your account does not have access to Android devices.
    *  Please contact sales@saucelabs.com to add this feature to your account.
@@ -43,7 +43,7 @@ const SouceLabsLaunchers = {
   sl_macos_safari: {
     base: 'SauceLabs',
     browserName: 'safari',
-    platform: 'OS X 10.11',
+    platform: 'macOS 10.12',
     version: '10.0'
   },
   sl_macos_iphone: {
@@ -73,11 +73,27 @@ module.exports = function(config) {
       // web server port
       port: 9876,
 
-      reporters: ['saucelabs'],
-      customLaunchers: SouceLabsLaunchers,
+      // test results reporter to use
+      // possible values: 'dots', 'progress'
+      // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+      reporters: ['spec', 'saucelabs'],
+
+      specReporter: {
+        maxLogLines: 5,             // limit number of lines logged per test
+        suppressErrorSummary: false, // do not print error summary
+        suppressFailed: false,      // do not print information about failed tests
+        suppressPassed: true,      // do not print information about passed tests
+        suppressSkipped: true,      // do not print information about skipped tests
+        showSpecTiming: true,      // print the time elapsed for each spec
+        failFast: false              // test would finish with error when a first fail occurs.
+      },
+
+      //plugins: ["karma-spec-reporter"],
+
+      customLaunchers: SauceLabsLaunchers,
 
       // start these browsers
-      browsers: Object.keys(SouceLabsLaunchers),
+      browsers: Object.keys(SauceLabsLaunchers),
       sauceLabs: {
           testName: 'SVG.js Unit Tests'
       },

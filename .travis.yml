@@ -9,7 +9,7 @@ node_js:
 - stable
 script:
 - npm run build:test
-- npm run test:soucelabs
+- npm run test:saucelabs
 - ls -al coverage
 - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 notifications:
