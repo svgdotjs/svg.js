@@ -35,7 +35,7 @@ const SauceLabsLaunchers = {
     appiumVersion: '1.5.3',
     deviceName: 'Samsung Galaxy S7 Device',
     deviceOrientation: 'portrait',
-    browserName: 'Chrome',
+    //browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
   }/*,
@@ -74,8 +74,8 @@ const SauceLabsLaunchers = {
     deviceOrientation: 'portrait',
     platformVersion: '10.2',
     platformName: 'iOS'
-  }
-}*/
+  }*/
+}
 
 
 module.exports = function(config) {
