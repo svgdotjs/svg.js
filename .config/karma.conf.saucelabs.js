@@ -81,6 +81,18 @@ module.exports = function(config) {
 
     Object.assign(karmaCommon, {
 
+      // this specifies which plugins karma should load
+      // by default all karma plugins, starting with `karma-` will load
+      // so if you are really puzzled why something isn't working, then comment
+      // out plugins: [] - it's here to make karma load faster
+      // get possible karma plugins by `ls node_modules | grep 'karma-*'`
+      plugins: [
+        'karma-coverage',
+        'karma-jasmine',
+        'karma-sauce-launcher',
+        'karma-spec-reporter'
+      ],
+
       // web server port
       port: 9876,
 
