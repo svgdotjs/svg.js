@@ -4,31 +4,41 @@
 
 const karmaCommon = require('./karma.common')
 
-function createCustomLauncher({browser, version, platform, device, orientation = 'portrait'}) {
+/*function createCustomLauncher({
+  browserName,
+  version,
+  platform,
+  deviceName,
+  deviceOrientation = 'portrait',
+  platformVersion,
+  platformName
+  }) {
   return {
     base: 'SauceLabs',
-    browserName: browser,
-    version: version,
-    platform: platform,
-    deviceName: device,
-    deviceOrientation: orientation
+    browserName,
+    version,
+    platform,
+    deviceName,
+    deviceOrientation,
+    platformVersion,
+    platformName
   }
-}
+}*/
 
 const SauceLabsLaunchers = {
   /** Real mobile devices are not available
    *  Your account does not have access to Android devices.
-   *  Please contact sales@saucelabs.com to add this feature to your account.
+   *  Please contact sales@saucelabs.com to add this feature to your account.*/
   sl_android_chrome: {
     base: 'SauceLabs',
     browserName: 'Android',
     appiumVersion: '1.5.3',
     deviceName: 'Samsung Galaxy S7 Device',
     deviceOrientation: 'portrait',
-    browserName: 'Chrome',
+    //browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
-  }, *//*
+  }/*,
   sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
@@ -56,7 +66,7 @@ const SauceLabsLaunchers = {
     browserName: 'safari',
     platform: 'macOS 10.12',
     version: '10.0'
-  },*/
+  },
   sl_macos_iphone: {
     base: 'SauceLabs',
     browserName: 'Safari',
@@ -65,7 +75,7 @@ const SauceLabsLaunchers = {
     platformVersion: '10.2',
     platformName: 'iOS'
   }
-}
+}*/
 
 
 module.exports = function(config) {
@@ -119,13 +129,13 @@ module.exports = function(config) {
       },
 
       // The number of disconnections tolerated.
-      browserDisconnectTolerance: 1,
+      browserDisconnectTolerance: 1, // well, sometimes it helps to just restart
       // How long does Karma wait for a browser to reconnect (in ms).
       browserDisconnectTimeout: 5 * 60 * 1000,
       // How long will Karma wait for a message from a browser before disconnecting from it (in ms).
       browserNoActivityTimeout: 6 * 60 * 1000,
       // Timeout for capturing a browser (in ms).
-      captureTimeout: 2 * 60 * 1000,
+      captureTimeout: 2 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
