@@ -7,7 +7,8 @@ script:
     - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 #sudo: required
 #dist: trusty
-#addons:
+addons:
+  sauce_connect: true
 #  firefox: "latest"
 before_install:
     # Start a display server where all graphical operations happens in memory
