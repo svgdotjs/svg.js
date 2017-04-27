@@ -34,7 +34,8 @@ module.exports = function(config) {
       'dist/svg.js',
       'spec/spec/**/*.js'
     ],
-    
+
+    // requests (http or link src) will be redirect from fixtures to base/spec/fixtures by the Karma server
     proxies: {
       '/fixtures/': '/base/spec/fixtures/'
     },
@@ -92,7 +93,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
+    singleRun: true,
 
     // Concurrency level
     // how many browser should be started simultaneous

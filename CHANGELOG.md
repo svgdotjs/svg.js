@@ -41,7 +41,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed `SVG.FX.step` so that the animation doesn't stop if an afterAll callback call animate (#677)
 
 ### Removed
-
+- removed PhantomJS as test browser due to [lack of support](https://groups.google.com/forum/#!topic/phantomjs/9aI5d-LDuNE)
 
 ## [2.6.1] - 2017-04-25
 
