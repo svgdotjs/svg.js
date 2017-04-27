@@ -28,6 +28,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## [2.6.3] - UNRELEASED
+
+### Added
+- start using sauce labs to run unit tests in mutiple browsers
+
+### Removed
+- removed PhantomJS as test browser due to [lack of support](https://groups.google.com/forum/#!topic/phantomjs/9aI5d-LDuNE)
+
 ## [2.6.2] - 2017-06-05
 
 ### Added
@@ -41,7 +49,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
 - fixed `SVG.FX.step` so that the animation doesn't stop if an afterAll callback call animate (#677)
-
 
 ## [2.6.1] - 2017-04-25
 
