@@ -45,6 +45,15 @@ const SouceLabsLaunchers = {
     browserName: 'safari',
     platform: 'macOS 10.12',
     version: '10.0'
+  },
+  sl_macos_iphone: {
+    base: 'SauceLabs',
+    browserName: 'Safari',
+    appiumVersion: '1.6.4',
+    deviceName: 'iPhone SE Simulator',
+    deviceOrientation: 'portrait',
+    platformVersion: '10.2',
+    platformName: 'iOS'
   }
 }
 
@@ -72,7 +81,7 @@ module.exports = function(config) {
       sauceLabs: {
           testName: 'SVG.js Unit Tests'
       },
-      browserDisconnectTimeout: 1 * 60 * 1000,
+      browserDisconnectTimeout: 5 * 60 * 1000,
       browserDisconnectTolerance: 1,
       browserNoActivityTimeout: 6 * 60 * 1000,
 
@@ -81,7 +90,7 @@ module.exports = function(config) {
 
       // level of logging
       // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-      logLevel: config.LOG_DEBUG,
+      logLevel: config.LOG_INFO,
 
       // enable / disable watching file and executing tests whenever any file changes
       autoWatch: false,
