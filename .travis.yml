@@ -1,18 +1,19 @@
 language: node_js
 node_js:
-    - "stable"
+	- "stable"
 script:
-    - npm run build:test
-    - npm run test:soucelabs
-    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
+	- npm run build:test
+	- npm run test:soucelabs
+	- ls -al coverage
+	- cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 sudo: false
 #dist: trusty
 #addons:
 #  firefox: "latest"
 before_install:
-    # Start a display server where all graphical operations happens in memory
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
+	# Start a display server where all graphical operations happens in memory
+	- export DISPLAY=:99.0
+	- sh -e /etc/init.d/xvfb start
 cache:
   directories:
-    - node_modules
+	- node_modules
