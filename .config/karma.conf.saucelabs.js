@@ -31,11 +31,10 @@ const SauceLabsLaunchers = {
    *  Please contact sales@saucelabs.com to add this feature to your account.*/
   sl_android_chrome: {
     base: 'SauceLabs',
-    browserName: 'Android',
     appiumVersion: '1.5.3',
     deviceName: 'Samsung Galaxy S7 Device',
     deviceOrientation: 'portrait',
-    //browserName: 'Chrome',
+    browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
   }/*,

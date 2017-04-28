@@ -2,6 +2,10 @@ module.exports = [{
   //  * Real mobile devices are not available
   //  *  Your account does not have access to Android devices.
   //  *  Please contact sales@saucelabs.com to add this feature to your account.
+  //  * AND
+  //  *  No app defined; we do not have enough information to run your test.
+  //  *  If you need help setting up test parameters, please
+  //  *  visit https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
   base: 'SauceLabs',
   browserName: 'Android',
   appiumVersion: '1.5.3',
