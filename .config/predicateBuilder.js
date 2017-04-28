@@ -2,36 +2,43 @@
 
 const availablePlatforms = require('./platforms')
 
-// Predicates
-const brChrome  = d => d.browserName.toLowerCase() === 'chrome'
-const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
-const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
-const brFF      = d => d.browserName.toLowerCase() === 'firefox'
-const brAndroid = d => d.browserName.toLowerCase() === 'android'
-const brSaf     = d => d.browserName.toLowerCase() === 'microsoftedge'
-const pliOS     = d => d.platformName.toLowerCase().indexOf('ios') !== -1
-const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
-const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
-
-let log, each
-({log, each} = from (Prelude))
-each(log, [1,2,3])
-
+/**
+ * Module loader that curries every exported function.
+ * @param {Object} module The module name you want to import from. E.I Prelude
+ * @return {Object} All functions in the module. It's up to you if/how, you want to assign them.
+ */
 function from(module) {
-  let each = Prelude().each
-  let exports = {}
-  let bind = f => exports[f.name] = curry(f)
+  let exports = {},
+    P = Prelude(),
+    each = P.each,
+    curry = P.curry,
+    assign = f => exports[f.name] = curry(f)
 
-  each(bind, module())
+  each(assign, module())
 
-  return  exports
+  return exports
 }
 
-
+/**
+ * The Prelude module contains all the basic functions you need.
+ * Note, that function inside the module are **not** curried.
+ */
 function Prelude() {
-  return { dot, each, filter, log, map, take }
+  return { compose, composeL, curry, dot, each, filter, log, map, take }
 
-
+  function curry(f) {
+    let n = f.length
+    return function partial(...xs) {
+      // excessive arguments are ignored
+      return n <= xs.length ? f.apply(f, xs) : partial.bind(f, ...xs)
+    }
+  }
+  function compose(...fs) {
+    return x => fs.reduceRight((x,a) => a(x), x)
+  }
+  function composeL(...fs) {
+    return x => fs.reduce((x,a) => a(x), x)
+  }
   function dot(prop, obj) {
     return obj[prop]
   }
@@ -63,14 +70,32 @@ function Prelude() {
   }
 }
 
-function spread() {
-  return [].splice.call(arguments)
-}
+
+let compose, filter, dot, log, each, map
+({compose, filter, dot, log, each, map} = from (Prelude))
+
+// Predicates
+const brChrome  = d => d.browserName.toLowerCase() === 'chrome'
+const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
+const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
+const brFF      = d => d.browserName.toLowerCase() === 'firefox'
+const brAndroid = d => d.browserName.toLowerCase() === 'android'
+const brSaf     = d => d.browserName.toLowerCase() === 'microsoftedge'
+const pliOS     = d => d.platformName.toLowerCase().indexOf('ios') !== -1
+const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
+const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
+
 
 const id = x => x
 const onlyBr = d => !!d.browserName
+
+
+// function spread() {
+//   return [].splice.call(arguments)
+// }
 //const onlyPl = d => !!d.platform
-/*const onlyPl = compose(only, dot('platform'))
+
+const onlyPl = compose(only, dot('platform'))
 
 //const platforms = filter(onlyPl)
 const macs = compose(filter(plmac), filter(onlyPl))
@@ -79,8 +104,7 @@ const below10 = compose(filter(compose(d => d < 10, dot('version'))), filter(com
 let a = below10(availablePlatforms)
 let b = macs(availablePlatforms)
 log(a)
-log(b)*/
-
+log(b)
 // let fstTwo = map(take(2))
 // console.log(fstTwo(['jim', 'kate']))
 
@@ -92,19 +116,6 @@ function not(a) {
   return !a
 }
 
-function curry(f) {
-	let n = f.length
-	return function partial(...xs) {
-    // excessive arguments are ignored
-		return n <= xs.length ? f.apply(f, xs) : partial.bind(f, ...xs)
-	}
-}
-function composeL(...fs) {
-  return x => fs.reduce((x,a) => a(x), x)
-}
-function compose(...fs) {
-  return x => fs.reduceRight((x,a) => a(x), x)
-}
 
 
 function predicate() {}
