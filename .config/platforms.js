@@ -7,7 +7,7 @@ module.exports = [{
   appiumVersion: '1.5.3',
   deviceName: 'Samsung Galaxy S7 Device',
   deviceOrientation: 'portrait',
-  browserName: 'Chrome',
+  //browserName: 'Chrome',
   platformVersion: '6.0',
   platformName: 'Android'
 }, {

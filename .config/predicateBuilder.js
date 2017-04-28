@@ -4,8 +4,8 @@ const availablePlatforms = require('./platforms')
 
 /**
  * Module loader that curries every exported function.
- * @param {Object} module The module name you want to import from. E.I Prelude
- * @return {Object} All functions in the module. It's up to you if/how, you want to assign them.
+ * @param {object} module The module name you want to import from. E.I Prelude
+ * @return {object} All functions in the module. It's up to you if/how, you want to assign them.
  */
 function from(module) {
   let exports = {},
@@ -20,10 +20,10 @@ function from(module) {
 }
 
 /**
- * The Prelude module contains all the basic functions you need.
- * Note, that function inside the module are **not** curried.
+ * The Prelude module contains all the standard functions.
  */
 function Prelude() {
+  // Note, that function inside the module are **not** curried.
   return { compose, composeL, curry, dot, each, filter, log, map, take }
 
   function curry(f) {
@@ -31,6 +31,8 @@ function Prelude() {
     return function partial(...xs) {
       // excessive arguments are ignored
       return n <= xs.length ? f.apply(f, xs) : partial.bind(f, ...xs)
+      // we could also throw a type error instead of ignoring, that might be safer and easier to debug
+      // if(n < xs.length) throw new TypeError((f.name || 'anonymous') + "does not accept ")
     }
   }
   function compose(...fs) {
@@ -44,7 +46,7 @@ function Prelude() {
   }
   function each(f, data) {
     for(let n in data)
-      f(data[n], n)
+      f(data[n]/*, n*/)
   }
   function filter(p, data) {
     let f = []
@@ -64,18 +66,18 @@ function Prelude() {
     return m
   }
   function take(n, a, accu = []) {
-    if(a.length === 0 || n === 0) return accu
+    if(a.length === 0 || n == 0) return accu
     accu.push(a[0])
     return take( n - 1, a.slice(1), accu ) // tail call
   }
 }
 
 
-let compose, filter, dot, log, each, map
-({compose, filter, dot, log, each, map} = from (Prelude))
+let compose, filter, dot, log, each, map, take
+({compose, filter, dot, log, each, map, take} = from (Prelude))
 
 // Predicates
-const brChrome  = d => d.browserName.toLowerCase() === 'chrome'
+const brChrome  = filter(compose(d => d == 'chrome', d => d.toLowerCase(), dot('browserName')))
 const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
 const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
 const brFF      = d => d.browserName.toLowerCase() === 'firefox'
@@ -85,47 +87,73 @@ const pliOS     = d => d.platformName.toLowerCase().indexOf('ios') !== -1
 const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
 const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
 
-
 const id = x => x
 const onlyBr = d => !!d.browserName
-
-
-// function spread() {
-//   return [].splice.call(arguments)
-// }
 //const onlyPl = d => !!d.platform
-
-const onlyPl = compose(only, dot('platform'))
+const onlyPl = compose(is, dot('platform'))
 
 //const platforms = filter(onlyPl)
 const macs = compose(filter(plmac), filter(onlyPl))
-const below10 = compose(filter(compose(d => d < 10, dot('version'))), filter(compose(only, dot('version'))))
+const below10 = filter(compose(d => d < 10, dot('version')))
 
+log(brChrome(availablePlatforms))
 let a = below10(availablePlatforms)
-let b = macs(availablePlatforms)
+log(a[0] === below10(availablePlatforms)[0]) // referencial transparency
 log(a)
-log(b)
-// let fstTwo = map(take(2))
-// console.log(fstTwo(['jim', 'kate']))
 
-function only(a) {
+/**
+ * Filter to select objects that contain the property,
+ * so that the next function doesn't have to deal with undefined values
+ * @param {function} property Takes a proterty name that you are intested in querying
+ * @return {function}
+ */
+function only(property) {
+  // can be replaced with a Maybe Functor
+  return filter(compose(is, dot(property)))
+}
+
+function is(a) {
   return !!a
 }
 
 function not(a) {
   return !a
 }
+/*
+let b = macs(availablePlatforms)
+log(b[0] === macs(availablePlatforms)[0]) // referencial transparency
+log(b)
+let fstTwo = map(take(2))
+console.log(fstTwo(['jim', 'kate']))
+
+let predicate = predicateBuilder()*/
+
+/**
+ * PredicateBuilder
+ * @param {*} search
+ */
+function predicateBuilder() {
+  let predicates = []
+  return {
+    and: p => {
+      predicates.push(p)
+      return this
+    }
+  }
+}
+
+// function spread() {
+//   return [].splice.call(arguments)
+// }
 
 
-
-function predicate() {}
-function list() {
+function List() {
   const keys = map(fst)
   const values = map(snd)
   function fst(a) { return a[0] }
   function snd(a) { return a[1] }
 }
-function functors() {}
+function Functors() {}
 
 // Functors
 /*function fmap(f, F) {
