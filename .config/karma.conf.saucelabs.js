@@ -29,7 +29,7 @@ const SauceLabsLaunchers = {
   /** Real mobile devices are not available
    *  Your account does not have access to Android devices.
    *  Please contact sales@saucelabs.com to add this feature to your account.*/
-  sl_android_chrome: {
+  /*sl_android_chrome: {
     base: 'SauceLabs',
     appiumVersion: '1.5.3',
     deviceName: 'Samsung Galaxy S7 Device',
@@ -37,7 +37,7 @@ const SauceLabsLaunchers = {
     browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
-  }/*,
+  },*/
   sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
@@ -73,7 +73,7 @@ const SauceLabsLaunchers = {
     deviceOrientation: 'portrait',
     platformVersion: '10.2',
     platformName: 'iOS'
-  }*/
+  }
 }
 
 
@@ -130,11 +130,11 @@ module.exports = function(config) {
       // The number of disconnections tolerated.
       browserDisconnectTolerance: 1, // well, sometimes it helps to just restart
       // How long does Karma wait for a browser to reconnect (in ms).
-      browserDisconnectTimeout: 5 * 60 * 1000,
+      browserDisconnectTimeout: 1 * 60 * 1000,
       // How long will Karma wait for a message from a browser before disconnecting from it (in ms).
-      browserNoActivityTimeout: 6 * 60 * 1000,
+      browserNoActivityTimeout: 4 * 60 * 1000,
       // Timeout for capturing a browser (in ms).
-      captureTimeout: 2 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
+      captureTimeout: 3 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
