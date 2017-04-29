@@ -1,20 +1,21 @@
-module.exports = [{
+module.exports = [
   //  * Real mobile devices are not available
+  //  * with browserName: 'Android', I get
   //  *  Your account does not have access to Android devices.
   //  *  Please contact sales@saucelabs.com to add this feature to your account.
-  //  * AND
+  //  * AND with browserName: 'Chrome', I get
   //  *  No app defined; we do not have enough information to run your test.
   //  *  If you need help setting up test parameters, please
   //  *  visit https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
-  base: 'SauceLabs',
+  /*base: 'SauceLabs',
   browserName: 'Android',
   appiumVersion: '1.5.3',
   deviceName: 'Samsung Galaxy S7 Device',
   deviceOrientation: 'portrait',
-  //browserName: 'Chrome',
+  browserName: 'Chrome',
   platformVersion: '6.0',
   platformName: 'Android'
-}, {
+},*/ {
   base: 'SauceLabs',
   browserName: 'Android',
   deviceName: 'Android Emulator',

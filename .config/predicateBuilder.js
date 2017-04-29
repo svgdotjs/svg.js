@@ -1,3 +1,5 @@
+// @flow
+
 'use strict'
 
 const availablePlatforms = require('./platforms')
@@ -72,34 +74,26 @@ function Prelude() {
   }
 }
 
+function Functors() {
+
+  return { fmap, Maybe }
+
+  function fmap(f, F) {
+    return F.map(x => f(x))
+  }
+  function Maybe(val) {
+    this.val = val
+  }
+  Maybe.prototype.map = function(f) {
+    return this.val ? Maybe(f(this.val)) : Maybe(null)
+  }
+}
 
 let compose, filter, dot, log, each, map, take
 ({compose, filter, dot, log, each, map, take} = from (Prelude))
 
-// Predicates
-const brChrome  = filter(compose(d => d == 'chrome', d => d.toLowerCase(), dot('browserName')))
-const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
-const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
-const brFF      = d => d.browserName.toLowerCase() === 'firefox'
-const brAndroid = d => d.browserName.toLowerCase() === 'android'
-const brSaf     = d => d.browserName.toLowerCase() === 'microsoftedge'
-const pliOS     = d => d.platformName.toLowerCase().indexOf('ios') !== -1
-const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
-const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
-
-const id = x => x
-const onlyBr = d => !!d.browserName
-//const onlyPl = d => !!d.platform
-const onlyPl = compose(is, dot('platform'))
-
-//const platforms = filter(onlyPl)
-const macs = compose(filter(plmac), filter(onlyPl))
-const below10 = filter(compose(d => d < 10, dot('version')))
-
-log(brChrome(availablePlatforms))
-let a = below10(availablePlatforms)
-log(a[0] === below10(availablePlatforms)[0]) // referencial transparency
-log(a)
+/*let maybe
+({maybe} = from (Functors))*/
 
 /**
  * Filter to select objects that contain the property,
@@ -111,6 +105,38 @@ function only(property) {
   // can be replaced with a Maybe Functor
   return filter(compose(is, dot(property)))
 }
+// Predicates
+const platforms = filter(d => !!d.platform) // compose(is, dot('platform'))
+const brChrome  = filter(compose(d => d == 'chrome', d => d.toLowerCase(), dot('browserName')))
+const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
+const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
+const brFF      = d => d.browserName.toLowerCase() === 'firefox'
+const brAndroid = d => d.browserName.toLowerCase() === 'android'
+const brSaf     = d => d.browserName.toLowerCase() === 'microsoftedge'
+const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
+const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
+const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
+const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
+const plmac3    = compose(filter(plmac), platforms)
+
+const onlyBr = d => !!d.browserName
+
+log(plmac2(availablePlatforms))
+log(plmac3(availablePlatforms))
+
+/*
+const below10 = filter(compose(d => d < 10, dot('version')))
+
+log(platforms(availablePlatforms))
+log(pliOS(availablePlatforms))
+log(brChrome(availablePlatforms))
+let a = below10(availablePlatforms)
+log(a[0] === below10(availablePlatforms)[0]) // referencial transparency
+log(a)
+*/
+function lowerCase(a) {
+  return a.toLowerCase()
+}
 
 function is(a) {
   return !!a
@@ -121,7 +147,11 @@ function not(a) {
 }
 /*
 let b = macs(availablePlatforms)
+log(macs)
+
 log(b[0] === macs(availablePlatforms)[0]) // referencial transparency
+log(macs)
+
 log(b)
 let fstTwo = map(take(2))
 console.log(fstTwo(['jim', 'kate']))
@@ -153,19 +183,3 @@ function List() {
   function fst(a) { return a[0] }
   function snd(a) { return a[1] }
 }
-function Functors() {}
-
-// Functors
-/*function fmap(f, F) {
-  return F.map(x => f(x))
-}
-function Maybe(val) {
-  this.val = val
-}
-Maybe.prototype.map = function(f) {
-  return this.val ? Maybe(f(this.val)) : Maybe(null)
-}
-var fmap = curry(fmap)
-
-const maybe = curry(Maybe)
-log(compose(filter(plwin), log, ))*/
