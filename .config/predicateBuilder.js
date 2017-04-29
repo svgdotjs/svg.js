@@ -59,8 +59,8 @@ function Prelude() {
     }, data)
     return f
   }
-  function log(args) {
-    console.log(args)
+  function log(...args) {
+    console.log(...args)
     return args
   }
   function map(f, data) {
@@ -108,26 +108,33 @@ function only(property) {
 }
 // Predicates
 // selectors
-const platforms = filter(d => !!d.platform) // compose(is, dot('platform'))
-const browserNames = filter(d => !!d.browserName)
+const platforms     = filter(d => !!d.platform) // filter(compose(is, dot('platform')))
+const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
+const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
 // filter helper
-const browser   = curry((name, d) => d.browserName === name)
-// filter
+const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
+const OS        = curry( (name, d) => d.platform.toLowerCase().indexOf(name) !== -1 )
+// filters
 const chrome    = browser('chrome')
-const brChrome  = filter(compose(d => d == 'chrome', d => d.toLowerCase(), dot('browserName')))
-const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
-const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
-const brFF      = d => d.browserName.toLowerCase() === 'firefox'
-const brAndroid = d => d.browserName.toLowerCase() === 'android'
-const brSaf     = d => d.browserName.toLowerCase() === 'microsoftedge'
-const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
-const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
-const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
-const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
-const plmac3    = compose(filter(plmac), platforms)
-const onlyBr = d => !!d.browserName
+const IE        = browser('internet explorer')
+const edge      = browser('microsoftedge')
+const FF        = browser('firefox')
+const android   = browser('android')
+const safari    = browser('safari')
+const opera     = browser('opera')
 
-log( compose(filter(chrome), browserNames)(availablePlatforms) )
+const WIN       = OS('windows')
+const ios       = d => d.platformName.toLowerCase().indexOf('ios') !== -1
+//const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
+const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
+// const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
+const mac       = compose(filter(plmac), platforms)
+
+//log( compose(filter(IE), browserNames)(availablePlatforms) )
+let wins  = compose(filter(WIN), platforms)(availablePlatforms)
+let ioses = compose(filter(ios), platformNames)(availablePlatforms)
+let macs  = mac(availablePlatforms)
+log( wins, ioses, macs )
 
 // log(plmac2(availablePlatforms))
 // log(plmac3(availablePlatforms))
