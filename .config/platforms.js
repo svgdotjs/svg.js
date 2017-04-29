@@ -1,3 +1,5 @@
+// @flow
+
 module.exports = [
   //  * Real mobile devices are not available
   //  * with browserName: 'Android', I get
@@ -15,7 +17,8 @@ module.exports = [
   browserName: 'Chrome',
   platformVersion: '6.0',
   platformName: 'Android'
-},*/ {
+},*/
+{
   base: 'SauceLabs',
   browserName: 'Android',
   deviceName: 'Android Emulator',

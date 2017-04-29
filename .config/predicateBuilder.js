@@ -30,6 +30,7 @@ function Prelude() {
 
   function curry(f) {
     let n = f.length
+
     return function partial(...xs) {
       // excessive arguments are ignored
       return n <= xs.length ? f.apply(f, xs) : partial.bind(f, ...xs)
@@ -89,8 +90,8 @@ function Functors() {
   }
 }
 
-let compose, filter, dot, log, each, map, take
-({compose, filter, dot, log, each, map, take} = from (Prelude))
+let compose, curry, filter, dot, log, each, map, take
+({compose, curry, filter, dot, log, each, map, take} = from (Prelude))
 
 /*let maybe
 ({maybe} = from (Functors))*/
@@ -106,7 +107,13 @@ function only(property) {
   return filter(compose(is, dot(property)))
 }
 // Predicates
+// selectors
 const platforms = filter(d => !!d.platform) // compose(is, dot('platform'))
+const browserNames = filter(d => !!d.browserName)
+// filter helper
+const browser   = curry((name, d) => d.browserName === name)
+// filter
+const chrome    = browser('chrome')
 const brChrome  = filter(compose(d => d == 'chrome', d => d.toLowerCase(), dot('browserName')))
 const brIE      = d => d.browserName.toLowerCase() === 'internet explorer'
 const brEdge    = d => d.browserName.toLowerCase() === 'microsoftedge'
@@ -118,11 +125,12 @@ const plwin     = d => d.platform.toLowerCase().indexOf('windows') !== -1
 const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
 const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
 const plmac3    = compose(filter(plmac), platforms)
-
 const onlyBr = d => !!d.browserName
 
-log(plmac2(availablePlatforms))
-log(plmac3(availablePlatforms))
+log( compose(filter(chrome), browserNames)(availablePlatforms) )
+
+// log(plmac2(availablePlatforms))
+// log(plmac3(availablePlatforms))
 
 /*
 const below10 = filter(compose(d => d < 10, dot('version')))
