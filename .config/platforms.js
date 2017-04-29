@@ -1,6 +1,6 @@
 // @flow
 
-module.exports = [
+module.exports = ([
   //  * Real mobile devices are not available
   //  * with browserName: 'Android', I get
   //  *  Your account does not have access to Android devices.
@@ -10,12 +10,11 @@ module.exports = [
   //  *  If you need help setting up test parameters, please
   //  *  visit https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
 {
-  base: 'SauceLabs',
   browserName: 'Android',
   appiumVersion: '1.5.3',
   deviceName: 'Samsung Galaxy S7 Device',
   deviceOrientation: 'portrait',
-  browserName: 'Chrome',
+  // browserName: 'Chrome',
   platformVersion: '6.0',
   platformName: 'Android'
 },
@@ -73,4 +72,7 @@ module.exports = [
   platform: 'Windows 7',
   version: '12.12',
 }
-]
+]).map(x => {
+  x.base ? x.base : x.base = 'SauceLabs'
+  return x
+})

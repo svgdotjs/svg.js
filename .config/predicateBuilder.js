@@ -49,7 +49,7 @@ function Prelude() {
   }
   function each(f, data) {
     for(let n in data)
-      f(data[n]/*, n*/)
+      f(data[n], n)
   }
   function filter(p, data) {
     let f = []
@@ -65,7 +65,7 @@ function Prelude() {
   }
   function map(f, data) {
     let m = []
-    each(d => m.push(f(d)), data)
+    each((v,k) => m.push(f(v, k)), data)
     return m
   }
   function take(n, a, accu = []) {
@@ -75,26 +75,158 @@ function Prelude() {
   }
 }
 
+/*
 function Functors() {
 
   return { fmap, Maybe }
 
-  function fmap(f, F) {
+  const identity = x => x
+
+  function fmap(F, f) {
     return F.map(x => f(x))
   }
   function Maybe(val) {
     this.val = val
   }
   Maybe.prototype.map = function(f) {
-    return this.val ? Maybe(f(this.val)) : Maybe(null)
+    return this.val == null ? Maybe(f(this.val)) : Maybe(null)
+  }
+
+  function unbox() {
+    return this.fmap(identity)
   }
 }
+let Maybe
+({Maybe} = from (Functors))*/
 
 let compose, curry, filter, dot, log, each, map, take
 ({compose, curry, filter, dot, log, each, map, take} = from (Prelude))
 
-/*let maybe
-({maybe} = from (Functors))*/
+
+// let fstTwo = map(take(2))
+// console.log(fstTwo(['jim', 'kate']))
+
+
+/*
+predicate.test = predicate.browser('opera').version('12').platform('win xp')
+predicate.test = predicate.platform('android').browser('android')
+predicate.test = predicate.platform('ios').top(1)
+predicate.test = predicate.browser('edge').version('latest')
+*/
+/**
+ * PredicateBuilder
+ * @param {*} search
+ */
+function predicateBuilder() {
+  const predicates = []
+
+  // Predicates
+  // selectors
+  const platforms     = filter(d => !!d.platform) // filter(compose(is, dot('platform')))
+  const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
+  const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
+  // filter helper
+  const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
+  const OS        = curry( (name, d) => d.platform.toLowerCase().indexOf(name) !== -1 )
+  // filter
+  const chrome    = browser('chrome')
+  const IE        = browser('internet explorer')
+  const edge      = browser('microsoftedge')
+  const FF        = browser('firefox')
+  const android   = browser('android')
+  const safari    = browser('safari')
+  const opera     = browser('opera')
+
+  const WIN       = OS('windows')
+  const ios       = d => d.platformName.toLowerCase().indexOf('ios') !== -1
+  //const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
+  const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
+  // const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
+  // log(plmac2(availablePlatforms))
+  // const below10 = filter(compose(d => d < 10, dot('version')))
+
+  const mac       = compose(filter(plmac), platforms)
+  const platformAndroid = compose(filter(d => d.platformName.toLowerCase().indexOf('android') !== -1), platformNames)(availablePlatforms)
+
+  let safariPlatforms = compose(filter(safari) , platforms)
+
+  /*log( compose(filter(android), browserNames)(availablePlatforms) )
+  let wins  = compose(filter(WIN), platforms)(availablePlatforms)
+  let ioses = compose(filter(ios), platformNames)(availablePlatforms)
+  let macs  = mac(availablePlatforms)
+  log( wins, ioses, macs, platformAndroid )
+
+  log(mac(availablePlatforms)[0] === macs[0]) // referencial transparency*/
+
+  let previousExpressions = new Set()
+
+  const API = {
+    browser(name) {
+      log("browser", name)
+      previousExpressions.add(browserNames)
+      return this
+      //return buildAPI(API.version)
+    },
+    get browsers() {
+      previousExpressions.clear()
+      return browserNames(availablePlatforms)
+    },
+    platform(name) {
+      log("platform", name)
+      previousExpressions.add()
+    },
+    get platforms() {
+      previousExpressions.clear()
+      return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
+    },
+    version(version) {
+      log("version", version)
+      return this
+    },
+    addTest(p) {
+      predicates.push(p)
+      return this
+    },
+    set test(p) {
+      predicates.push(p)
+    },
+    get test() {
+      return predicates
+    }
+  }
+
+  return API
+
+/*
+  function buildAPI(...methods) {
+    // let newAPI = shallowClone(API)
+    // // does NOT work
+    // each(v => {
+    //   if(methods.indexOf(v) === -1) delete newAPI[v]
+    // }, API)
+    // // does work
+    // delete newAPI['platform']
+    return newAPI
+  }
+
+  function shallowClone(obj) {
+    let clone = Object.create({}, Object.getPrototypeOf(obj))
+
+    let props = Object.getOwnPropertyNames(obj)
+    props.forEach(function(key) {
+      let desc = Object.getOwnPropertyDescriptor(obj, key)
+      Object.defineProperty(clone, key, desc)
+    })
+
+    return clone
+  }
+*/
+}
+
+let predicate = predicateBuilder()
+log(predicate.browsers)
+//log(predicate.browser('opera').platforms)
+log(predicate.test) // -> [{},{},{}] without duplicates
 
 /**
  * Filter to select objects that contain the property,
@@ -106,87 +238,15 @@ function only(property) {
   // can be replaced with a Maybe Functor
   return filter(compose(is, dot(property)))
 }
-// Predicates
-// selectors
-const platforms     = filter(d => !!d.platform) // filter(compose(is, dot('platform')))
-const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
-const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
-// filter helper
-const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
-const OS        = curry( (name, d) => d.platform.toLowerCase().indexOf(name) !== -1 )
-// filters
-const chrome    = browser('chrome')
-const IE        = browser('internet explorer')
-const edge      = browser('microsoftedge')
-const FF        = browser('firefox')
-const android   = browser('android')
-const safari    = browser('safari')
-const opera     = browser('opera')
-
-const WIN       = OS('windows')
-const ios       = d => d.platformName.toLowerCase().indexOf('ios') !== -1
-//const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
-const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
-// const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
-const mac       = compose(filter(plmac), platforms)
-
-//log( compose(filter(IE), browserNames)(availablePlatforms) )
-let wins  = compose(filter(WIN), platforms)(availablePlatforms)
-let ioses = compose(filter(ios), platformNames)(availablePlatforms)
-let macs  = mac(availablePlatforms)
-log( wins, ioses, macs )
-
-// log(plmac2(availablePlatforms))
-// log(plmac3(availablePlatforms))
-
-/*
-const below10 = filter(compose(d => d < 10, dot('version')))
-
-log(platforms(availablePlatforms))
-log(pliOS(availablePlatforms))
-log(brChrome(availablePlatforms))
-let a = below10(availablePlatforms)
-log(a[0] === below10(availablePlatforms)[0]) // referencial transparency
-log(a)
-*/
 function lowerCase(a) {
   return a.toLowerCase()
 }
-
 function is(a) {
   return !!a
 }
-
 function not(a) {
   return !a
 }
-/*
-let b = macs(availablePlatforms)
-log(macs)
-
-log(b[0] === macs(availablePlatforms)[0]) // referencial transparency
-log(macs)
-
-log(b)
-let fstTwo = map(take(2))
-console.log(fstTwo(['jim', 'kate']))
-
-let predicate = predicateBuilder()*/
-
-/**
- * PredicateBuilder
- * @param {*} search
- */
-function predicateBuilder() {
-  let predicates = []
-  return {
-    and: p => {
-      predicates.push(p)
-      return this
-    }
-  }
-}
-
 // function spread() {
 //   return [].splice.call(arguments)
 // }
