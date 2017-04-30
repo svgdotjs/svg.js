@@ -860,11 +860,11 @@ SVG.extend(SVG.FX, {
   }
   // Add animatable plot
 , plot: function(a, b, c, d) {
-    if(this.target() instanceof SVG.Line && arguments.length == 4) {
+    // Lines can be plotted with 4 arguments
+    if(arguments.length == 4) {
       return this.plot([a, b, c, d])
     }
 
-    // We use arguments here since SVG.Line's plot method can be passed 4 parameters
     return this.add('plot', new (this.target().morphArray)(a))
   }
   // Add leading method
