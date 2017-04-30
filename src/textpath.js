@@ -10,8 +10,9 @@ SVG.TextPath = SVG.invent({
 
   // Add parent method
 , construct: {
+    morphArray: SVG.PathArray
     // Create path for text to run on
-    path: function(d) {
+  , path: function(d) {
       // create textPath element
       var path  = new SVG.TextPath
         , track = this.doc().defs().path(d)
