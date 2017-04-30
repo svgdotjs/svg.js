@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 25 2017 11:58:09 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Apr 30 2017 15:02:32 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1948,10 +1948,10 @@ SVG.FX = SVG.invent({
 
     // adds an once-callback which is called at a specific position and never again
   , once: function(pos, fn, isEased){
+      var c = this.last()
+      if(!isEased) pos = c.ease(pos)
 
-      if(!isEased)pos = this.situation.ease(pos)
-
-      this.situation.once[pos] = fn
+      c.once[pos] = fn
 
       return this
     }
@@ -5515,4 +5515,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));

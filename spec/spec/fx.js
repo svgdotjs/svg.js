@@ -1227,6 +1227,15 @@ describe('FX', function() {
       fx.step()
       expect(called).toBe(true)
     })
+
+    it('adds the callback on the last situation', function () {
+      var callback = function () {}
+
+      fx.animate(500).animate(500).once(0.5, callback)
+      expect(fx.situation.once['0.5']).toBeUndefined()
+      expect(fx.situations[0].once['0.5']).toBeUndefined()
+      expect(fx.situations[1].once['0.5']).toBe(callback)
+    })
   })
 
 

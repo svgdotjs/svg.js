@@ -660,10 +660,10 @@ SVG.FX = SVG.invent({
 
     // adds an once-callback which is called at a specific position and never again
   , once: function(pos, fn, isEased){
+      var c = this.last()
+      if(!isEased) pos = c.ease(pos)
 
-      if(!isEased)pos = this.situation.ease(pos)
-
-      this.situation.once[pos] = fn
+      c.once[pos] = fn
 
       return this
     }

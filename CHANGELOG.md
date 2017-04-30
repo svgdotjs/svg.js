@@ -36,6 +36,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - updated Jasmine from 2.5.2 to 2.6.0
 
 ### Fixed
+- fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
 
 ### Removed
 
@@ -189,7 +190,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - add error callback on image loading (#508)
 
 ### Fixed
-- fixed bug when getting bbox of text elements which are not in the dom (#514) 
+- fixed bug when getting bbox of text elements which are not in the dom (#514)
 - fixed bug when getting bbox of element which is hidden with css (#516)
 
 
