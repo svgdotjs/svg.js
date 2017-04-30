@@ -38,7 +38,7 @@ const SauceLabsLaunchers = {
     platformVersion: '6.0',
     platformName: 'Android'
   },*/
-  sl_android: {
+  /*sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
     deviceName: 'Android Emulator',
@@ -59,13 +59,13 @@ const SauceLabsLaunchers = {
     browserName: 'MicrosoftEdge',
     version: 'latest',
     platform: 'Windows 10'
-  },
+  },*/
   sl_macos_safari: {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'macOS 10.12',
     version: '10.0'
-  },
+  }/*,
   sl_macos_iphone: {
     base: 'SauceLabs',
     browserName: 'Safari',
@@ -73,7 +73,7 @@ const SauceLabsLaunchers = {
     deviceOrientation: 'portrait',
     platformVersion: '10.2',
     platformName: 'iOS'
-  }
+  }*/
 }
 
 
@@ -133,8 +133,8 @@ module.exports = function(config) {
       browserDisconnectTimeout: 1 * 60 * 1000,
       // How long will Karma wait for a message from a browser before disconnecting from it (in ms). ~ macOS 10.12 needs more than 7 minutes
       browserNoActivityTimeout: 10 * 60 * 1000,
-      // Timeout for capturing a browser (in ms).
-      captureTimeout: 3 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
+      // Timeout for capturing a browser (in ms).  On newer versions of iOS simulator (10.0+), the start up time could be between 3 - 6 minutes.
+      captureTimeout: 6 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
