@@ -115,7 +115,6 @@ predicate.test = predicate.browser('edge').version('latest')
 */
 /**
  * PredicateBuilder
- * @param {*} search
  */
 function predicateBuilder() {
   const predicates = []

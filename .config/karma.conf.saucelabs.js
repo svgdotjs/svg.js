@@ -131,8 +131,8 @@ module.exports = function(config) {
       browserDisconnectTolerance: 1, // well, sometimes it helps to just restart
       // How long does Karma wait for a browser to reconnect (in ms).
       browserDisconnectTimeout: 1 * 60 * 1000,
-      // How long will Karma wait for a message from a browser before disconnecting from it (in ms). ~ macOS 10.12 needs more than 4 minutes
-      browserNoActivityTimeout: 7 * 60 * 1000,
+      // How long will Karma wait for a message from a browser before disconnecting from it (in ms). ~ macOS 10.12 needs more than 7 minutes
+      browserNoActivityTimeout: 10 * 60 * 1000,
       // Timeout for capturing a browser (in ms).
       captureTimeout: 3 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
