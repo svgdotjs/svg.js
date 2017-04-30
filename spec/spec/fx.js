@@ -2547,7 +2547,7 @@ describe('FX', function() {
 
       spyOn(fx, 'add')
       fx.plot('5 5 30 29 40 19 12 30')
-      expect(fx.add).toHaveBeenCalledWith('plot', '5 5 30 29 40 19 12 30')
+      expect(fx.add).toHaveBeenCalledWith('plot', new SVG.PointArray('5 5 30 29 40 19 12 30'))
     })
 
     it('also accept parameter list', function() {
@@ -2556,7 +2556,7 @@ describe('FX', function() {
 
       spyOn(fx, 'add')
       fx.plot(5, 5, 10, 10)
-      expect(fx.add).toHaveBeenCalledWith('plot', [5, 5, 10, 10])
+      expect(fx.add).toHaveBeenCalledWith('plot', new SVG.PointArray([5, 5, 10, 10]))
     })
   })
 

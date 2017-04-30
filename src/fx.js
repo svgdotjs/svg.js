@@ -214,7 +214,7 @@ SVG.FX = SVG.invent({
     // updates all animations to the current state of the element
     // this is important when one property could be changed from another property
   , initAnimations: function() {
-      var i, source
+      var i, j, source
       var s = this.situation
 
       if(s.init) return this
@@ -222,12 +222,26 @@ SVG.FX = SVG.invent({
       for(i in s.animations){
         source = this.target()[i]()
 
-        // The condition is because some methods return a normal number instead
-        // of a SVG.Number
-        if(s.animations[i] instanceof SVG.Number)
-          source = new SVG.Number(source)
+        if(!Array.isArray(source)) {
+          source = [source]
+        }
 
-        s.animations[i] = source.morph(s.animations[i])
+        if(!Array.isArray(s.animations[i])) {
+          s.animations[i] = [s.animations[i]]
+        }
+
+        //if(s.animations[i].length > source.length) {
+        //  source.concat = source.concat(s.animations[i].slice(source.length, s.animations[i].length))
+        //}
+
+        for(j = source.length; j--;) {
+          // The condition is because some methods return a normal number instead
+          // of a SVG.Number
+          if(s.animations[i][j] instanceof SVG.Number)
+            source[j] = new SVG.Number(source[j])
+
+          s.animations[i][j] = source[j].morph(s.animations[i][j])
+        }
       }
 
       for(i in s.attrs){
@@ -845,9 +859,13 @@ SVG.extend(SVG.FX, {
     return this
   }
   // Add animatable plot
-, plot: function() {
-    // We use arguments here since SVG.Line's plot method can be passed 4 parameters
-    return this.add('plot', arguments.length > 1 ? [].slice.call(arguments) : arguments[0])
+, plot: function(a, b, c, d) {
+    // Lines can be plotted with 4 arguments
+    if(arguments.length == 4) {
+      return this.plot([a, b, c, d])
+    }
+
+    return this.add('plot', new (this.target().morphArray)(a))
   }
   // Add leading method
 , leading: function(value) {
