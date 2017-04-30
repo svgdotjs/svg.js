@@ -16,7 +16,7 @@ module.exports = function(config) {
       plugins: [
         'karma-coverage',
         'karma-jasmine',
-        'karma-firefox-launcher',
+        'karma-safari-launcher',
         'karma-spec-reporter'
       ],
 
@@ -25,7 +25,7 @@ module.exports = function(config) {
 
       // start these browsers
       // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-      browsers: ['Firefox'],
+      browsers: ['safari'],
 
       // preprocess matching files before serving them to the browser
       // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
