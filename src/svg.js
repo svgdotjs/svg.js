@@ -47,6 +47,23 @@ SVG.extend = function (modules, methods) {
   }
 }
 
+var wrapFn = function(method, initializer) {
+  return function(o) {
+    if(!(initializer.prototype instanceof SVG.Element))
+      return method.apply(this, [].slice.call(arguments))
+
+    if(o instanceof initializer) {
+      return o.clone(this)
+    }
+
+    if(typeof o == 'object') {
+      return this.put(new initializer()).attr(o)
+    }
+
+    return method.apply(this, [].slice.call(arguments))
+  }
+}
+
 // Invent new element
 SVG.invent = function (config) {
   // Create element initializer
@@ -63,6 +80,10 @@ SVG.invent = function (config) {
   // Extend with methods
   if (config.extend) {
     SVG.extend(initializer, config.extend)
+  }
+
+  for(var i in config.construct) {
+    config.construct[i] = wrapFn(config.construct[i], initializer)
   }
 
   // Attach construct method to parent
