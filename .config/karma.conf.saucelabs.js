@@ -134,7 +134,7 @@ module.exports = function(config) {
       // How long will Karma wait for a message from a browser before disconnecting from it (in ms). ~ macOS 10.12 needs more than 7 minutes
       browserNoActivityTimeout: 10 * 60 * 1000,
       // Timeout for capturing a browser (in ms).  On newer versions of iOS simulator (10.0+), the start up time could be between 3 - 6 minutes.
-      captureTimeout: 6 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
+      captureTimeout: 12 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
