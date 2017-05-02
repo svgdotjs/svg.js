@@ -15,6 +15,9 @@ function main() {
 	style.sheet.insertRule( get('/fixtures/fixture.css'), 0 )
 
 	document.body.innerHTML = get('/fixtures/fixture.svg')
+
+	if(jasmine)	jasmine.DEFAULT_TIMEOUT_INTERVAL = 6 * 60 * 1000
+	else throw new Error("jasmine is not defined")
 }
 
 main()
