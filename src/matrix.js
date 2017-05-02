@@ -1,7 +1,7 @@
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function(source) {
-    var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0])
+    var i, base = arrayToMatrix([1, 0, 0, 1, 0, 0]), n
 
     // ensure source as object
     source = source instanceof SVG.Element ?
@@ -16,9 +16,12 @@ SVG.Matrix = SVG.invent({
       source : base
 
     // merge source
-    for (i = abcdef.length - 1; i >= 0; --i)
-      this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
-        source[abcdef[i]] : base[abcdef[i]]
+    for (i = abcdef.length - 1; i >= 0; --i) {
+      n = source[abcdef[i]]
+      if(n != null) n = n.valueOf()
+
+      this[abcdef[i]] = typeof n === 'number' ? n : base[abcdef[i]]
+    }
   }
 
   // Add methods
