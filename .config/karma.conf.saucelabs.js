@@ -128,11 +128,11 @@ module.exports = function(config) {
       },
 
       // The number of disconnections tolerated.
-      browserDisconnectTolerance: 1, // well, sometimes it helps to just restart
+      browserDisconnectTolerance: 0, // well, sometimes it helps to just restart
       // How long does Karma wait for a browser to reconnect (in ms).
-      browserDisconnectTimeout: 1 * 60 * 1000,
+      browserDisconnectTimeout: 10 * 60 * 1000,
       // How long will Karma wait for a message from a browser before disconnecting from it (in ms). ~ macOS 10.12 needs more than 7 minutes
-      browserNoActivityTimeout: 10 * 60 * 1000,
+      browserNoActivityTimeout: 20 * 60 * 1000,
       // Timeout for capturing a browser (in ms).  On newer versions of iOS simulator (10.0+), the start up time could be between 3 - 6 minutes.
       captureTimeout: 12 * 60 * 1000, // this is useful if saucelabs takes a long time to boot a vm
 
