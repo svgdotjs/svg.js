@@ -123,17 +123,6 @@ describe('Matrix', function() {
         expect(matrix.e).toBe(100)
         expect(matrix.f).toBe(50)
       })
-
-      it('parses the array containing SVG.Number correctly', function() {
-        var matrix = new SVG.Matrix([new SVG.Number(2), new SVG.Number(0), new SVG.Number(0), new SVG.Number(2), new SVG.Number(100), new SVG.Number(50)])
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
     })
 
     describe('with an object given', function() {
@@ -147,34 +136,11 @@ describe('Matrix', function() {
         expect(matrix.e).toBe(100)
         expect(matrix.f).toBe(50)
       })
-
-      it('parses the object containing SVG.Number correctly', function() {
-        var matrix = new SVG.Matrix({a:new SVG.Number(2), b:new SVG.Number(0), c:new SVG.Number(0), d:new SVG.Number(2), e:new SVG.Number(100), f:new SVG.Number(50)})
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
-
     })
 
     describe('with 6 arguments given', function() {
       it('parses the arguments correctly', function() {
         var matrix = new SVG.Matrix(2, 0, 0, 2, 100, 50)
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
-
-      it('parses the arguments that are SVG.Number correctly', function() {
-        var matrix = new SVG.Matrix(new SVG.Number(2), new SVG.Number(0), new SVG.Number(0), new SVG.Number(2), new SVG.Number(100), new SVG.Number(50))
 
         expect(matrix.a).toBe(2)
         expect(matrix.b).toBe(0)
@@ -231,15 +197,6 @@ describe('Matrix', function() {
       var matrix = new SVG.Matrix(2, 0, 0, 5, 0, 0)
       expect(matrix.at(0.5)).toBe(matrix)
     })
-    it('allow argument to be a SVG.Number', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1, 0, 0, 1, 4, 3)
-        , matrix3 = matrix1.morph(matrix2).at(new SVG.Number(0.5))
-
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(1,0,0,1,4,3)')
-      expect(matrix3.toString()).toBe('matrix(1.5,0,0,3,2,1.5)')
-    })
   })
 
   describe('multiply()', function() {
@@ -283,13 +240,6 @@ describe('Matrix', function() {
       expect(matrix.e).toBe(14)
       expect(matrix.f).toBe(15.5)
     })
-
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).translate(new SVG.Number(10), new SVG.Number(12.5))
-
-      expect(matrix.e).toBe(14)
-      expect(matrix.f).toBe(15.5)
-    })
   })
 
   describe('scale()', function() {
@@ -325,14 +275,6 @@ describe('Matrix', function() {
       expect(matrix.e).toBe(-296)
       expect(matrix.f).toBe(-97)
     })
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).scale(new SVG.Number(3), new SVG.Number(2), new SVG.Number(150), new SVG.Number(100))
-
-      expect(matrix.a).toBe(3)
-      expect(matrix.d).toBe(2)
-      expect(matrix.e).toBe(-296)
-      expect(matrix.f).toBe(-97)
-    })
   })
 
   describe('rotate()', function() {
@@ -346,14 +288,6 @@ describe('Matrix', function() {
     })
     it('performs a rotation on a given point with three arguments', function() {
       var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(30, 150, 100)
-
-      expect(matrix.a).toBeCloseTo(0.8660254037844387)
-      expect(matrix.d).toBeCloseTo(0.8660254037844387)
-      expect(matrix.e).toBeCloseTo(74.0961894323342)
-      expect(matrix.f).toBeCloseTo(-58.60254037844388)
-    })
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(new SVG.Number(30), new SVG.Number(150), new SVG.Number(100))
 
       expect(matrix.a).toBeCloseTo(0.8660254037844387)
       expect(matrix.d).toBeCloseTo(0.8660254037844387)
@@ -380,14 +314,6 @@ describe('Matrix', function() {
         expect(matrix.e).toBe(304)
         expect(matrix.f).toBe(3)
       })
-      it('allow arguments to be SVG.Number', function() {
-        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('x', new SVG.Number(150))
-
-        expect(matrix.a).toBe(-1)
-        expect(matrix.d).toBe(1)
-        expect(matrix.e).toBe(304)
-        expect(matrix.f).toBe(3)
-      })
     })
     describe('with y given', function() {
       it('performs a flip over the vertical axis with one argument', function() {
@@ -400,14 +326,6 @@ describe('Matrix', function() {
       })
       it('performs a flip over the vertical axis over a given point with two arguments', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y', 100)
-
-        expect(matrix.a).toBe(1)
-        expect(matrix.d).toBe(-1)
-        expect(matrix.e).toBe(4)
-        expect(matrix.f).toBe(203)
-      })
-      it('allow arguments to be SVG.Number', function() {
-        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y', new SVG.Number(100))
 
         expect(matrix.a).toBe(1)
         expect(matrix.d).toBe(-1)
@@ -434,14 +352,6 @@ describe('Matrix', function() {
       })
       it('performs a flip over the horizontal and vertical axis over a given point with two arguments', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(50, 100)
-
-        expect(matrix.a).toBe(-1)
-        expect(matrix.d).toBe(-1)
-        expect(matrix.e).toBe(104)
-        expect(matrix.f).toBe(203)
-      })
-      it('allow arguments to be SVG.Number', function() {
-        var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(new SVG.Number(50), new SVG.Number(100))
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(-1)
@@ -502,16 +412,6 @@ describe('Matrix', function() {
       expect(matrix.e).toBe(4)
       expect(matrix.f).toBe(3)
     })
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(new SVG.Number(9), new SVG.Number(7), new SVG.Number(150), new SVG.Number(100))
-
-      expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.1227845609029)
-      expect(matrix.c).toBeCloseTo(0.15838444032454)
-      expect(matrix.d).toBe(1)
-      expect(matrix.e).toBeCloseTo(-11.83844403245)
-      expect(matrix.f).toBeCloseTo(-15.417684135435)
-    })
   })
 
   describe('skewX', function(){
@@ -536,17 +436,6 @@ describe('Matrix', function() {
       expect(matrix.e).toBeCloseTo(-4.74886635259)
       expect(matrix.f).toBe(3)
     })
-
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewX(new SVG.Number(5), new SVG.Number(150), new SVG.Number(100))
-
-      expect(matrix.a).toBe(1)
-      expect(matrix.b).toBe(0)
-      expect(matrix.c).toBeCloseTo(0.087488663525924)
-      expect(matrix.d).toBe(1)
-      expect(matrix.e).toBeCloseTo(-4.74886635259)
-      expect(matrix.f).toBe(3)
-    })
   })
 
   describe('skewY', function(){
@@ -563,17 +452,6 @@ describe('Matrix', function() {
 
     it('performs a skew along the y axis at a given center point with three values', function() {
       var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(5, 150, 100)
-
-      expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.087488663525924)
-      expect(matrix.c).toBe(0)
-      expect(matrix.d).toBe(1)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBeCloseTo(-10.123299528889)
-    })
-
-    it('allow arguments to be SVG.Number', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(new SVG.Number(5), new SVG.Number(150), new SVG.Number(100))
 
       expect(matrix.a).toBe(1)
       expect(matrix.b).toBeCloseTo(0.087488663525924)

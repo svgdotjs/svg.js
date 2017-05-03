@@ -34,7 +34,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Changed
 - updated Jasmine from 2.5.2 to 2.6.0
-- allow SVG.Matrix to be passed SVG.Number
+- removed the typeof check in the initialisation of SVG.Matrix
 
 ### Fixed
 - fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
