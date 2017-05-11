@@ -858,6 +858,14 @@ SVG.extend(SVG.FX, {
 
     return this
   }
+  // Add animatable width
+, width: function(width) {
+    return this.add('width', new SVG.Number(width))
+  }
+  // Add animatable height
+, height: function(height) {
+    return this.add('height', new SVG.Number(height))
+  }
   // Add animatable plot
 , plot: function(a, b, c, d) {
     // Lines can be plotted with 4 arguments
