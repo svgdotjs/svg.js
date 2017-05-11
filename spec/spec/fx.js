@@ -2539,6 +2539,22 @@ describe('FX', function() {
       expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:60}))
     })
   })
+  
+  describe('width()', function() {
+    it('should set width with add()', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.width(20)
+      expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:20}))
+    })
+  })
+  
+  describe('height()', function() {
+    it('should set height with add()', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.height(20)
+      expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:20}))
+    })
+  })
 
   describe('plot()', function() {
     it('should call add with plot as method', function() {
