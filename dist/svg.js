@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue May 02 2017 21:48:32 GMT-0400 (EDT)
+* BUILT: Sun May 14 2017 13:10:43 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1865,8 +1865,12 @@ SVG.FX = SVG.invent({
 
         if(!this.situations.length){
           this.target().fire('allfinished')
-          this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
-          this.active = false
+
+          // Recheck the length since the user may call animate in the afterAll callback
+          if(!this.situations.length){
+            this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
+            this.active = false
+          }
         }
 
         // start next animation

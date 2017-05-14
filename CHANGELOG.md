@@ -38,6 +38,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
+- fixed `SVG.FX.step` so that the animation doesn't stop if an afterAll callback call animate (#677)
 
 ### Removed
 
