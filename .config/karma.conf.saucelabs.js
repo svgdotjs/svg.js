@@ -1,6 +1,6 @@
 // Karma configuration
 
-// TODO: better soucelab/karma setup: https://github.com/mzabriskie/axios/blob/master/karma.conf.js
+// https://wiki.saucelabs.com/display/DOCS/Platform+Configurator
 
 const karmaCommon = require('./karma.common')
 
@@ -64,7 +64,10 @@ const SauceLabsLaunchers = {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'macOS 10.12',
-    version: '10.0'
+    version: '10.0',
+    recordVideo: true,
+    recordScreenshots: true,
+    screenResolution: '1024x768'
   }/*,
   sl_macos_iphone: {
     base: 'SauceLabs',
