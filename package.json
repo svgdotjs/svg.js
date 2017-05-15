@@ -59,7 +59,7 @@
     "test:saucelabs": "karma start .config/karma.conf.saucelabs.js --single-run"
   },
   "devDependencies": {
-    "coveralls": "^2.13.0",
+    "coveralls": "^2.13.1",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-chmod": "^2.0.0",
@@ -72,11 +72,11 @@
     "gulp-uglify": "^2.1.2",
     "gulp-wrap": "^0.13.0",
     "jasmine-core": "^2.6.1",
-    "karma": "^1.6.0",
+    "karma": "^1.7.0",
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.1",
     "karma-jasmine": "^1.1.0",
-    "karma-sauce-launcher": "^1.1.0",
+    "karma-sauce-launcher": "git+https://github.com/svgdotjs/karma-sauce-launcher.git",
     "karma-spec-reporter": "0.0.31",
     "request": "^2.81.0",
     "svgdom": "latest"
