@@ -607,11 +607,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
 [2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
+
 [2.5.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.3
 [2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
 [2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
 [2.5.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.0
+
 [2.4.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.4.0
 
 [2.3.7]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.7
@@ -643,14 +646,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 [1.0.0-rc.6]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.6
 [1.0.0-rc.5]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.5
 [1.0.0-rc.4]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.4
-[v1.0rc3]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc3
-[v1.0rc2]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc2
-[v1.0rc1]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc1
+[v1.0rc3]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc3
+[v1.0rc2]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc2
+[v1.0rc1]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc1
 
-[v0.38]: https://github.com/svgdotjs/svg.js/releases/tag/v0.38
-[v0.37]: https://github.com/svgdotjs/svg.js/releases/tag/v0.37
-[v0.36]: https://github.com/svgdotjs/svg.js/releases/tag/v0.36
-[v0.35]: https://github.com/svgdotjs/svg.js/releases/tag/v0.35
-[v0.34]: https://github.com/svgdotjs/svg.js/releases/tag/v0.34
-[v0.33]: https://github.com/svgdotjs/svg.js/releases/tag/v0.33
-[v0.32]: https://github.com/svgdotjs/svg.js/releases/tag/v0.32
+[v0.38]: https://github.com/svgdotjs/svg.js/releases/tag/0.38
+[v0.37]: https://github.com/svgdotjs/svg.js/releases/tag/0.37
+[v0.36]: https://github.com/svgdotjs/svg.js/releases/tag/0.36
+[v0.35]: https://github.com/svgdotjs/svg.js/releases/tag/0.35
+[v0.34]: https://github.com/svgdotjs/svg.js/releases/tag/0.34
+[v0.33]: https://github.com/svgdotjs/svg.js/releases/tag/0.33
+[v0.32]: https://github.com/svgdotjs/svg.js/releases/tag/0.32
