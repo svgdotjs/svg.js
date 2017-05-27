@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun May 14 2017 13:10:43 GMT-0400 (EDT)
+* BUILT: Sat May 27 2017 01:11:09 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -2149,6 +2149,14 @@ SVG.extend(SVG.FX, {
     }
 
     return this
+  }
+  // Add animatable width
+, width: function(width) {
+    return this.add('width', new SVG.Number(width))
+  }
+  // Add animatable height
+, height: function(height) {
+    return this.add('height', new SVG.Number(height))
   }
   // Add animatable plot
 , plot: function(a, b, c, d) {

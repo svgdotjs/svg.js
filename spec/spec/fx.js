@@ -2556,20 +2556,46 @@ describe('FX', function() {
       expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:60}))
     })
   })
-  
+
   describe('width()', function() {
     it('should set width with add()', function() {
       spyOn(fx, 'add').and.callThrough()
       fx.width(20)
       expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:20}))
     })
+
+    it('should animate the width attribute', function() {
+      fx.width(200)
+      expect(rect.width()).toBe(100)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.width()).toBe(150)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.width()).toBe(200)
+    })
   })
-  
+
   describe('height()', function() {
     it('should set height with add()', function() {
       spyOn(fx, 'add').and.callThrough()
       fx.height(20)
       expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:20}))
+    })
+
+    it('should animate the height attribute', function() {
+      fx.height(200)
+      expect(rect.height()).toBe(100)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.height()).toBe(150)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.height()).toBe(200)
     })
   })
 
