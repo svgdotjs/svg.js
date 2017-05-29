@@ -74,6 +74,8 @@ SVG.extend(SVG.Element, {
         this.rebuild(a, v)
     }
     
+    this.fire('change')
+    
     return this
   }
 })
