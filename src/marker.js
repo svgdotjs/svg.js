@@ -34,6 +34,10 @@ SVG.Marker = SVG.invent({
   , toString: function() {
       return 'url(#' + this.id() + ')'
     }
+  
+    // Set the orient of element
+  , orient: function(orient) {
+      return this.attr('orient',orient)
   }
 
   // Add parent method
