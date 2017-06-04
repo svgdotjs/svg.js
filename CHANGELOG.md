@@ -32,6 +32,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Added
 - added `width()` and `height()` methods to `SVG.FX`
+- added the intended functionality to call animate functions with multiple parameter (#671)
 
 ### Changed
 - updated Jasmine from 2.5.2 to 2.6.0
