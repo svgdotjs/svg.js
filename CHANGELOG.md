@@ -28,7 +28,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
-## [2.6.2] - UNRELEASED
+## [2.6.2] - 2017-06-05
 
 ### Added
 - added `width()` and `height()` methods to `SVG.FX`
@@ -41,8 +41,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 - fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
 - fixed `SVG.FX.step` so that the animation doesn't stop if an afterAll callback call animate (#677)
-
-### Removed
 
 
 ## [2.6.1] - 2017-04-25
@@ -609,6 +607,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
 [2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
 [2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
 
