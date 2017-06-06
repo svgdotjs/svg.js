@@ -57,7 +57,7 @@ SVG.Doc = SVG.invent({
     }
     // Fix for possible sub-pixel offset. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function(spof) {
+  , spof: function() {
       var pos = this.node.getScreenCTM()
 
       if (pos)
