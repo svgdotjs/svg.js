@@ -216,7 +216,7 @@ declare namespace svgjs {
         namespace(): this;
         defs(): Defs;
         parent(): HTMLElement;
-        spof(spof): this;
+        spof(): this;
         remove(): this;
     }
     interface Library { Doc: Doc; }
@@ -364,7 +364,7 @@ declare namespace svgjs {
         at(opts: StopProperties): Stop;
         update(block?: Function): this;
         fill(): string;
-        fill(...any): never;
+        fill(...params: any[]): never;
         toString(): string;
         from(x: number, y: number): this;
         to(x: number, y: number): this;
@@ -393,7 +393,7 @@ declare namespace svgjs {
         to(): string;
         show(target: string): this;
         show(): string;
-        show(...any): never;
+        show(...params: any[]): never;
         target(target: string): this;
         target(): string;
     }
@@ -638,7 +638,7 @@ declare namespace svgjs {
     export interface Pattern extends Container {
         new (): Pattern;
         fill(): string;
-        fill(...any): never;
+        fill(...rest: any[]): never;
         update(block: (pattern: Pattern) => void): this;
         toString(): string;
     }
@@ -916,7 +916,7 @@ declare namespace svgjs {
         f?: number;
     }
     export interface Transformation {
-        new (...Transform): Transformation;
+        new (...transform: Transform[]): Transformation;
         new (source: Transform, inversed?: boolean): Transformation;
         at(pos: number): Matrix;
         undo(transform: Transform): this
