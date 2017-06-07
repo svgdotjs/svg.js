@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - stable
 addons:
-  hostname: 127.0.0.1
+  hostname: saucelabs.com
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
