@@ -127,7 +127,7 @@ module.exports = function(config) {
       // start these browsers
       browsers: Object.keys(SauceLabsLaunchers),
       sauceLabs: {
-          testName: 'SVG.js Unit Tests'
+          testName: 'SVG.js Unit Tests',
           connectOptions: {
             noSslBumpDomains: "all"
           }
