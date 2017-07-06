@@ -62,6 +62,7 @@ declare namespace svgjs {
 
     // attr.js
     interface Element {
+        attr(): object;
         attr(name: string): any;
         attr(obj: Object): this;
         attr(name: string, value: any, namespace?: string): this;
@@ -215,7 +216,7 @@ declare namespace svgjs {
         namespace(): this;
         defs(): Defs;
         parent(): HTMLElement;
-        spof(spof): this;
+        spof(): this;
         remove(): this;
     }
     interface Library { Doc: Doc; }
@@ -363,7 +364,7 @@ declare namespace svgjs {
         at(opts: StopProperties): Stop;
         update(block?: Function): this;
         fill(): string;
-        fill(...any): never;
+        fill(...params: any[]): never;
         toString(): string;
         from(x: number, y: number): this;
         to(x: number, y: number): this;
@@ -392,7 +393,7 @@ declare namespace svgjs {
         to(): string;
         show(target: string): this;
         show(): string;
-        show(...any): never;
+        show(...params: any[]): never;
         target(target: string): this;
         target(): string;
     }
@@ -637,7 +638,7 @@ declare namespace svgjs {
     export interface Pattern extends Container {
         new (): Pattern;
         fill(): string;
-        fill(...any): never;
+        fill(...rest: any[]): never;
         update(block: (pattern: Pattern) => void): this;
         toString(): string;
     }
@@ -712,6 +713,7 @@ declare namespace svgjs {
     // rect.js
     export interface Rect extends Shape {
         new (): Rect;
+        radius(x: number, y?: number): this;
     }
     interface Library { Rect: Rect; }
     interface Container {
@@ -821,9 +823,9 @@ declare namespace svgjs {
     }
     interface FontData {
         family?: string;
-        size?: number;
+        size?: NumberAlias;
         anchor?: string;
-        leading?: string;
+        leading?: NumberAlias;
         weight?: string;
         style?: string
     }
@@ -842,8 +844,9 @@ declare namespace svgjs {
         text(text: string): this;
         text(block: (text: Text) => void): this;
         size(fontSize: NumberAlias): this;
-        leading(leading: number): this;
-        lines(): number;
+        leading(): number;
+        leading(leading: NumberAlias): this;
+        lines(): Set;
         rebuild(enabled: boolean): this;
         build(enabled: boolean): this;
         plain(text: string): this;
@@ -913,7 +916,7 @@ declare namespace svgjs {
         f?: number;
     }
     export interface Transformation {
-        new (...Transform): Transformation;
+        new (...transform: Transform[]): Transformation;
         new (source: Transform, inversed?: boolean): Transformation;
         at(pos: number): Matrix;
         undo(transform: Transform): this
@@ -986,6 +989,7 @@ declare namespace svgjs {
         attr(name: string, value: any, namespace?: string): Animation;
         attr(obj: Object): Animation;
         attr(name: string): any;
+        attr(): object;
 
         viewbox(x: number, y: number, w: number, h: number): Animation;
 

@@ -44,6 +44,25 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## [2.6.2] - 2017-06-05
+
+### Added
+- added `width()` and `height()` methods to `SVG.FX`
+- added the intended functionality to call animate functions with multiple parameter (#671)
+
+### Changed
+- updated Jasmine from 2.5.2 to 2.6.0
+- removed the typeof check in the initialisation of SVG.Matrix
+
+### Fixed
+- fixed `SVG.FX.once` so that it add its callback on the last situation instead of the current one
+- fixed `SVG.FX.step` so that the animation doesn't stop if an afterAll callback call animate (#677)
+
+
+## [2.6.1] - 2017-04-25
+
+### Fixed
+- fixed a bug in path parser which made it stop parsing when hitting z command (#665)
 
 ## [2.6.1] - 2017-04-25
 
@@ -194,7 +213,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - add error callback on image loading (#508)
 
 ### Fixed
-- fixed bug when getting bbox of text elements which are not in the dom (#514) 
+- fixed bug when getting bbox of text elements which are not in the dom (#514)
 - fixed bug when getting bbox of element which is hidden with css (#516)
 
 
@@ -609,11 +628,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
+[2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
 [2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
+
 [2.5.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.3
 [2.5.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.2
 [2.5.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.1
 [2.5.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.5.0
+
 [2.4.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.4.0
 
 [2.3.7]: https://github.com/svgdotjs/svg.js/releases/tag/2.3.7
@@ -645,14 +668,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 [1.0.0-rc.6]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.6
 [1.0.0-rc.5]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.5
 [1.0.0-rc.4]: https://github.com/svgdotjs/svg.js/releases/tag/1.0.0-rc.4
-[v1.0rc3]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc3
-[v1.0rc2]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc2
-[v1.0rc1]: https://github.com/svgdotjs/svg.js/releases/tag/v1.0rc1
+[v1.0rc3]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc3
+[v1.0rc2]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc2
+[v1.0rc1]: https://github.com/svgdotjs/svg.js/releases/tag/1.0rc1
 
-[v0.38]: https://github.com/svgdotjs/svg.js/releases/tag/v0.38
-[v0.37]: https://github.com/svgdotjs/svg.js/releases/tag/v0.37
-[v0.36]: https://github.com/svgdotjs/svg.js/releases/tag/v0.36
-[v0.35]: https://github.com/svgdotjs/svg.js/releases/tag/v0.35
-[v0.34]: https://github.com/svgdotjs/svg.js/releases/tag/v0.34
-[v0.33]: https://github.com/svgdotjs/svg.js/releases/tag/v0.33
-[v0.32]: https://github.com/svgdotjs/svg.js/releases/tag/v0.32
+[v0.38]: https://github.com/svgdotjs/svg.js/releases/tag/0.38
+[v0.37]: https://github.com/svgdotjs/svg.js/releases/tag/0.37
+[v0.36]: https://github.com/svgdotjs/svg.js/releases/tag/0.36
+[v0.35]: https://github.com/svgdotjs/svg.js/releases/tag/0.35
+[v0.34]: https://github.com/svgdotjs/svg.js/releases/tag/0.34
+[v0.33]: https://github.com/svgdotjs/svg.js/releases/tag/0.33
+[v0.32]: https://github.com/svgdotjs/svg.js/releases/tag/0.32

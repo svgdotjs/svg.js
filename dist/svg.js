@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Apr 25 2017 15:05:49 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu Jul 06 2017 11:05:46 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1487,7 +1487,7 @@ SVG.FX = SVG.invent({
     // updates all animations to the current state of the element
     // this is important when one property could be changed from another property
   , initAnimations: function() {
-      var i, source
+      var i, j, source
       var s = this.situation
 
       if(s.init) return this
@@ -1495,12 +1495,26 @@ SVG.FX = SVG.invent({
       for(i in s.animations){
         source = this.target()[i]()
 
-        // The condition is because some methods return a normal number instead
-        // of a SVG.Number
-        if(s.animations[i] instanceof SVG.Number)
-          source = new SVG.Number(source)
+        if(!Array.isArray(source)) {
+          source = [source]
+        }
 
-        s.animations[i] = source.morph(s.animations[i])
+        if(!Array.isArray(s.animations[i])) {
+          s.animations[i] = [s.animations[i]]
+        }
+
+        //if(s.animations[i].length > source.length) {
+        //  source.concat = source.concat(s.animations[i].slice(source.length, s.animations[i].length))
+        //}
+
+        for(j = source.length; j--;) {
+          // The condition is because some methods return a normal number instead
+          // of a SVG.Number
+          if(s.animations[i][j] instanceof SVG.Number)
+            source[j] = new SVG.Number(source[j])
+
+          s.animations[i][j] = source[j].morph(s.animations[i][j])
+        }
       }
 
       for(i in s.attrs){
@@ -1836,8 +1850,12 @@ SVG.FX = SVG.invent({
 
         if(!this.situations.length){
           this.target().fire('allfinished')
-          this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
-          this.active = false
+
+          // Recheck the length since the user may call animate in the afterAll callback
+          if(!this.situations.length){
+            this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
+            this.active = false
+          }
         }
 
         // start next animation
@@ -1933,10 +1951,10 @@ SVG.FX = SVG.invent({
 
     // adds an once-callback which is called at a specific position and never again
   , once: function(pos, fn, isEased){
+      var c = this.last()
+      if(!isEased) pos = c.ease(pos)
 
-      if(!isEased)pos = this.situation.ease(pos)
-
-      this.situation.once[pos] = fn
+      c.once[pos] = fn
 
       return this
     }
@@ -2005,6 +2023,8 @@ SVG.MorphObj = SVG.invent({
   create: function(from, to){
     // prepare color for morphing
     if(SVG.Color.isColor(to)) return new SVG.Color(from).morph(to)
+    // prepare value list for morphing
+    if(SVG.regex.delimiter.test(from)) return new SVG.Array(from).morph(to)
     // prepare number for morphing
     if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
@@ -2117,10 +2137,22 @@ SVG.extend(SVG.FX, {
 
     return this
   }
+  // Add animatable width
+, width: function(width) {
+    return this.add('width', new SVG.Number(width))
+  }
+  // Add animatable height
+, height: function(height) {
+    return this.add('height', new SVG.Number(height))
+  }
   // Add animatable plot
-, plot: function() {
-    // We use arguments here since SVG.Line's plot method can be passed 4 parameters
-    return this.add('plot', arguments.length > 1 ? [].slice.call(arguments) : arguments[0])
+, plot: function(a, b, c, d) {
+    // Lines can be plotted with 4 arguments
+    if(arguments.length == 4) {
+      return this.plot([a, b, c, d])
+    }
+
+    return this.add('plot', new (this.target().morphArray)(a))
   }
   // Add leading method
 , leading: function(value) {
@@ -2174,7 +2206,7 @@ SVG.Matrix = SVG.invent({
 
     // merge source
     for (i = abcdef.length - 1; i >= 0; --i)
-      this[abcdef[i]] = source && typeof source[abcdef[i]] === 'number' ?
+      this[abcdef[i]] = source[abcdef[i]] != null ?
         source[abcdef[i]] : base[abcdef[i]]
   }
 
@@ -4373,8 +4405,9 @@ SVG.TextPath = SVG.invent({
 
   // Add parent method
 , construct: {
+    morphArray: SVG.PathArray
     // Create path for text to run on
-    path: function(d) {
+  , path: function(d) {
       // create textPath element
       var path  = new SVG.TextPath
         , track = this.doc().defs().path(d)

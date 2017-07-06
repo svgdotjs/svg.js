@@ -1227,6 +1227,15 @@ describe('FX', function() {
       fx.step()
       expect(called).toBe(true)
     })
+
+    it('adds the callback on the last situation', function () {
+      var callback = function () {}
+
+      fx.animate(500).animate(500).once(0.5, callback)
+      expect(fx.situation.once['0.5']).toBeUndefined()
+      expect(fx.situations[0].once['0.5']).toBeUndefined()
+      expect(fx.situations[1].once['0.5']).toBe(callback)
+    })
   })
 
 
@@ -1666,18 +1675,35 @@ describe('FX', function() {
         expect(fx.pos).toBe(1) // It should end not reversed, which mean the position is expected to be 1
                                // ((9-1)-6) is even, the -1 is because we do not want reversed to be toggled after the last loop
       })
+    })
 
-      it('should not throw an error when stop is called in a during callback', function () {
-        fx.move(100,100).start()
-        fx.during(function () {this.stop()})
-        expect(fx.step.bind(fx)).not.toThrow()
-      })
 
-      it('should not throw an error when finish is called in a during callback', function () {
-        fx.move(100,100).start()
-        fx.during(function () {this.finish()})
-        expect(fx.step.bind(fx)).not.toThrow()
-      })
+    it('should not throw an error when stop is called in a during callback', function () {
+      fx.move(100,100).start()
+      fx.during(function () {this.stop()})
+      expect(fx.step.bind(fx)).not.toThrow()
+    })
+
+    it('should not throw an error when finish is called in a during callback', function () {
+      fx.move(100,100).start()
+      fx.during(function () {this.finish()})
+      expect(fx.step.bind(fx)).not.toThrow()
+    })
+
+    it('should not set active to false if the afterAll callback add situations to the situations queue', function () {
+      fx.afterAll(function(){this.animate(500).move(0,0)})
+
+      jasmine.clock().tick(500)
+      fx.step()
+      expect(fx.active).toBe(true)
+      expect(fx.situation).not.toBeNull()
+      expect(fx.situations.length).toBe(0)
+
+      jasmine.clock().tick(500)
+      fx.step()
+      expect(fx.active).toBe(false)
+      expect(fx.situation).toBeNull()
+      expect(fx.situations.length).toBe(0)
     })
   })
 
@@ -2531,6 +2557,48 @@ describe('FX', function() {
     })
   })
 
+  describe('width()', function() {
+    it('should set width with add()', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.width(20)
+      expect(fx.add).toHaveBeenCalledWith('width', jasmine.objectContaining({value:20}))
+    })
+
+    it('should animate the width attribute', function() {
+      fx.width(200)
+      expect(rect.width()).toBe(100)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.width()).toBe(150)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.width()).toBe(200)
+    })
+  })
+
+  describe('height()', function() {
+    it('should set height with add()', function() {
+      spyOn(fx, 'add').and.callThrough()
+      fx.height(20)
+      expect(fx.add).toHaveBeenCalledWith('height', jasmine.objectContaining({value:20}))
+    })
+
+    it('should animate the height attribute', function() {
+      fx.height(200)
+      expect(rect.height()).toBe(100)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.height()).toBe(150)
+
+      jasmine.clock().tick(250)
+      fx.step()
+      expect(rect.height()).toBe(200)
+    })
+  })
+
   describe('plot()', function() {
     it('should call add with plot as method', function() {
       var polyline = draw.polyline('10 10 20 20 30 10 50 20')
@@ -2538,7 +2606,7 @@ describe('FX', function() {
 
       spyOn(fx, 'add')
       fx.plot('5 5 30 29 40 19 12 30')
-      expect(fx.add).toHaveBeenCalledWith('plot', '5 5 30 29 40 19 12 30')
+      expect(fx.add).toHaveBeenCalledWith('plot', new SVG.PointArray('5 5 30 29 40 19 12 30'))
     })
 
     it('also accept parameter list', function() {
@@ -2547,7 +2615,7 @@ describe('FX', function() {
 
       spyOn(fx, 'add')
       fx.plot(5, 5, 10, 10)
-      expect(fx.add).toHaveBeenCalledWith('plot', [5, 5, 10, 10])
+      expect(fx.add).toHaveBeenCalledWith('plot', new SVG.PointArray([5, 5, 10, 10]))
     })
   })
 
