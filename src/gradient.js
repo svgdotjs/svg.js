@@ -25,12 +25,12 @@ SVG.Gradient = SVG.invent({
       return this
     }
     // Return the fill id
-  , fill: function() {
+  , url: function() {
       return 'url(#' + this.id() + ')'
     }
     // Alias string convertion to fill
   , toString: function() {
-      return this.fill()
+      return this.url()
     }
     // custom attr to handle transform
   , attr: function(a, b, c) {

@@ -23,9 +23,9 @@ describe('Pattern', function() {
     expect(pattern.children().length).toBe(0)
   })
 
-  describe('fill()', function() {
+  describe('url()', function() {
     it('returns the id of the pattern wrapped in url()', function() {
-      expect(pattern.fill()).toBe('url(#' + pattern.id() + ')')
+      expect(pattern.url()).toBe('url(#' + pattern.id() + ')')
     })
   })
 

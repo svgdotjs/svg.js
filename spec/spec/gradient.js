@@ -27,9 +27,9 @@ describe('Gradient', function() {
     expect(gradient.children().length).toBe(0)
   })
 
-  describe('fill()', function() {
+  describe('url()', function() {
     it('returns the id of the gradient wrapped in url()', function() {
-      expect(gradient.fill()).toBe('url(#' + gradient.id() + ')')
+      expect(gradient.url()).toBe('url(#' + gradient.id() + ')')
     })
   })
   

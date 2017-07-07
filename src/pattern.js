@@ -8,7 +8,7 @@ SVG.Pattern = SVG.invent({
   // Add class methods
 , extend: {
     // Return the fill id
-    fill: function() {
+    url: function() {
       return 'url(#' + this.id() + ')'
     }
     // Update pattern by rebuilding
@@ -24,7 +24,7 @@ SVG.Pattern = SVG.invent({
     }
     // Alias string convertion to fill
   , toString: function() {
-      return this.fill()
+      return this.url()
     }
     // custom attr to handle transform
   , attr: function(a, b, c) {

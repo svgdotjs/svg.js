@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jul 07 2017 11:23:52 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 07 2017 13:43:21 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3493,12 +3493,12 @@ SVG.Gradient = SVG.invent({
       return this
     }
     // Return the fill id
-  , fill: function() {
+  , url: function() {
       return 'url(#' + this.id() + ')'
     }
     // Alias string convertion to fill
   , toString: function() {
-      return this.fill()
+      return this.url()
     }
     // custom attr to handle transform
   , attr: function(a, b, c) {
@@ -3581,7 +3581,7 @@ SVG.Pattern = SVG.invent({
   // Add class methods
 , extend: {
     // Return the fill id
-    fill: function() {
+    url: function() {
       return 'url(#' + this.id() + ')'
     }
     // Update pattern by rebuilding
@@ -3597,7 +3597,7 @@ SVG.Pattern = SVG.invent({
     }
     // Alias string convertion to fill
   , toString: function() {
-      return this.fill()
+      return this.url()
     }
     // custom attr to handle transform
   , attr: function(a, b, c) {
