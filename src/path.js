@@ -50,7 +50,6 @@ SVG.Path = SVG.invent({
   , height: function(height) {
       return height == null ? this.bbox().height : this.size(this.bbox().width, height)
     }
-
   }
 
   // Add parent method

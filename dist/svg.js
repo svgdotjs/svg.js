@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Jul 06 2017 11:05:46 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 07 2017 09:42:27 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4100,7 +4100,6 @@ SVG.Path = SVG.invent({
   , height: function(height) {
       return height == null ? this.bbox().height : this.size(this.bbox().width, height)
     }
-
   }
 
   // Add parent method
@@ -4216,10 +4215,16 @@ SVG.Text = SVG.invent({
       if (typeof text === 'undefined'){
         var text = ''
         var children = this.node.childNodes
+        var firstLine = 0
         for(var i = 0, len = children.length; i < len; ++i){
+          // skip textPaths - they are no lines
+          if(children[i].nodeName == 'textPath') {
+            if(i == 0) firstLine = 1
+            continue
+          }
 
           // add newline if its not the first child and newLined is set to true
-          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
+          if(i != firstLine && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
             text += '\n'
           }
 
@@ -4278,8 +4283,8 @@ SVG.Text = SVG.invent({
 
         this.each(function() {
           if (this.dom.newLined) {
-            if (!self.textPath())
-              this.attr('x', self.attr('x'))
+            this.attr('x', self.attr('x'))
+
             if(this.text() == '\n') {
               blankLineOffset += dy
             }else{
@@ -4358,7 +4363,6 @@ SVG.Tspan = SVG.invent({
       return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
-
 })
 
 SVG.extend([SVG.Text, SVG.Tspan], {
@@ -4375,18 +4379,18 @@ SVG.extend([SVG.Text, SVG.Tspan], {
   }
   // Create a tspan
 , tspan: function(text) {
-    var node  = (this.textPath && this.textPath() || this).node
-      , tspan = new SVG.Tspan
+    var tspan = new SVG.Tspan
 
     // clear if build mode is disabled
-    if (this._build === false)
+    if (!this._build)
       this.clear()
 
     // add new tspan
-    node.appendChild(tspan.node)
+    this.node.appendChild(tspan.node)
 
     return tspan.text(text)
   }
+  // FIXME: Does this also work for textpath?
   // Get length of text element
 , length: function() {
     return this.node.getComputedTextLength()
@@ -4398,32 +4402,14 @@ SVG.TextPath = SVG.invent({
   create: 'textPath'
 
   // Inherit from
-, inherit: SVG.Parent
+, inherit: SVG.Text
 
   // Define parent class
-, parent: SVG.Text
+, parent: SVG.Parent
 
   // Add parent method
-, construct: {
+, extend: {
     morphArray: SVG.PathArray
-    // Create path for text to run on
-  , path: function(d) {
-      // create textPath element
-      var path  = new SVG.TextPath
-        , track = this.doc().defs().path(d)
-
-      // move lines to textpath
-      while (this.node.hasChildNodes())
-        path.node.appendChild(this.node.firstChild)
-
-      // add textPath element as child node
-      this.node.appendChild(path.node)
-
-      // link textPath to path and add content
-      path.attr('href', '#' + track, SVG.xlink)
-
-      return this
-    }
     // return the array of the path track element
   , array: function() {
       var track = this.track()
@@ -4441,19 +4427,52 @@ SVG.TextPath = SVG.invent({
 
       return (d == null) ? pathArray : this
     }
-    // Get the path track element
+    // Get the path element
   , track: function() {
-      var path = this.textPath()
-
-      if (path)
-        return path.reference('href')
-    }
-    // Get the textPath child
-  , textPath: function() {
-      if (this.node.firstChild && this.node.firstChild.nodeName == 'textPath')
-        return SVG.adopt(this.node.firstChild)
+      return this.reference('href')
     }
   }
+, construct: {
+    textPath: function(text, path) {
+      return this.defs().path(path).text(text).addTo(this)
+    }
+  }
+})
+
+SVG.extend([SVG.Text], {
+    // Create path for text to run on
+  path: function(track) {
+    var path = new SVG.TextPath
+
+    // if d is a path, reuse it
+    if(!(track instanceof SVG.Path)) {
+      // create path element
+      track = this.doc().defs().path(track)
+    }
+
+    // link textPath to path and add content
+    path.attr('href', '#' + track, SVG.xlink)
+
+    // add textPath element as child node and return textPath
+    return this.put(path)
+  }
+  // Todo: make this plural?
+  // Get the textPath children
+  , textPath: function() {
+    return this.select('textPath')
+  }
+})
+
+SVG.extend([SVG.Path], {
+  // creates a textPath from this path
+  text: function(text) {
+    if(text instanceof SVG.Text) {
+      var txt = text.text()
+      return text.clear().path(this).text(txt)
+    }
+    return this.parent().put(new SVG.Text()).path(this).text(text)
+  }
+  // TODO: Maybe add `targets` to get all textPaths associated with this path
 })
 
 SVG.Nested = SVG.invent({

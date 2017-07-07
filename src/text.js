@@ -49,10 +49,16 @@ SVG.Text = SVG.invent({
       if (typeof text === 'undefined'){
         var text = ''
         var children = this.node.childNodes
+        var firstLine = 0
         for(var i = 0, len = children.length; i < len; ++i){
+          // skip textPaths - they are no lines
+          if(children[i].nodeName == 'textPath') {
+            if(i == 0) firstLine = 1
+            continue
+          }
 
           // add newline if its not the first child and newLined is set to true
-          if(i != 0 && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
+          if(i != firstLine && children[i].nodeType != 3 && SVG.adopt(children[i]).dom.newLined == true){
             text += '\n'
           }
 
@@ -111,8 +117,8 @@ SVG.Text = SVG.invent({
         
         this.each(function() {
           if (this.dom.newLined) {
-            if (!self.textPath())
-              this.attr('x', self.attr('x'))
+            this.attr('x', self.attr('x'))
+            
             if(this.text() == '\n') {
               blankLineOffset += dy
             }else{
@@ -191,7 +197,6 @@ SVG.Tspan = SVG.invent({
       return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
-
 })
 
 SVG.extend([SVG.Text, SVG.Tspan], {
@@ -208,18 +213,18 @@ SVG.extend([SVG.Text, SVG.Tspan], {
   }
   // Create a tspan
 , tspan: function(text) {
-    var node  = (this.textPath && this.textPath() || this).node
-      , tspan = new SVG.Tspan
+    var tspan = new SVG.Tspan
 
     // clear if build mode is disabled
-    if (this._build === false)
+    if (!this._build)
       this.clear()
 
     // add new tspan
-    node.appendChild(tspan.node)
+    this.node.appendChild(tspan.node)
 
     return tspan.text(text)
   }
+  // FIXME: Does this also work for textpath?
   // Get length of text element
 , length: function() {
     return this.node.getComputedTextLength()

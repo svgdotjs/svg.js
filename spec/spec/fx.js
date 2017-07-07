@@ -2072,23 +2072,25 @@ describe('FX', function() {
       var startValue = new SVG.PathArray('M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80')
         , endValue = new SVG.PathArray('M10 80 C 40 150, 65 150, 95 80 S 150 10, 180 80')
         , morph = new SVG.PathArray(startValue).morph(endValue)
+        , textPath
 
       var text = draw.text(function(add) {
         add.tspan("We go up and down, then we go down, then up again")
       })
 
-      fx = text.path(startValue).animate(500).plot(endValue)
+      textPath = text.path(startValue)
+      fx = textPath.animate(500).plot(endValue)
 
       fx.start()
-      expect(text.array()).toEqual(morph.at(0))
+      expect(textPath.array()).toEqual(morph.at(0))
 
       jasmine.clock().tick(250) // Have the animation be half way
       fx.step()
-      expect(text.array()).toEqual(morph.at(0.5))
+      expect(textPath.array()).toEqual(morph.at(0.5))
 
       jasmine.clock().tick(250) // Have the animation reach its end
       fx.step()
-      expect(text.array()).toEqual(morph.at(1))
+      expect(textPath.array()).toEqual(morph.at(1))
     })
 
     it('should allow plot to be called on a line', function() {
@@ -2151,21 +2153,22 @@ describe('FX', function() {
 
       var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
 
-      text.path(path).font({ size: 42.5, family: 'Verdana' })
+      var textPath = text.path(path).font({ size: 42.5, family: 'Verdana' })
+      
 
-      text.textPath().attr('startOffset', startValue)
-      fx = text.textPath().animate(1000).attr('startOffset', endValue)
+      textPath.attr('startOffset', startValue)
+      fx = textPath.animate(1000).attr('startOffset', endValue)
 
       fx.start()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(0).value)
+      expect(textPath.attr('startOffset')).toBe(morph.at(0).value)
 
       jasmine.clock().tick(500) // Have the animation be half way
       fx.step()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(0.5).value)
+      expect(textPath.attr('startOffset')).toBe(morph.at(0.5).value)
 
       jasmine.clock().tick(500) // Have the animation reach its end
       fx.step()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(1).value)
+      expect(textPath.attr('startOffset')).toBe(morph.at(1).value)
     })
 
     it('should be possible to animate non-numeric attributes', function () {
@@ -2220,21 +2223,21 @@ describe('FX', function() {
 
       var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
 
-      text.path(path).font({ size: 42.5, family: 'Verdana' })
+      var textPath = text.path(path).font({ size: 42.5, family: 'Verdana' })
 
-      text.textPath().attr('startOffset', startValue)
-      fx = text.textPath().animate(1000).attr('startOffset', endValue)
+      textPath.attr('startOffset', startValue)
+      fx = textPath.animate(1000).attr('startOffset', endValue)
 
       fx.start()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(0).toString())
+      expect(textPath.attr('startOffset')).toBe(morph.at(0).toString())
 
       jasmine.clock().tick(500) // Have the animation be half way
       fx.step()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(0.5).toString())
+      expect(textPath.attr('startOffset')).toBe(morph.at(0.5).toString())
 
       jasmine.clock().tick(500) // Have the animation reach its end
       fx.step()
-      expect(text.textPath().attr('startOffset')).toBe(morph.at(1).toString())
+      expect(textPath.attr('startOffset')).toBe(morph.at(1).toString())
     })
 
     it('should allow 0 to be specified without unit', function () {

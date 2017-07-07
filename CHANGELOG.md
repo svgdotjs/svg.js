@@ -12,6 +12,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Added
 - added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
+- added `text()` method to `SVG.Path` to create a textPath from this path (#705)
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 
@@ -39,6 +40,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
 - ids are not generated upon creation anymore. Instead they are generated when requested (#559)
 - `SVG.extend()` now expects exactly one module or an array of modules
+- `SVG.Text.path()` now returns an instance of SVG.TextPath (#705)
+- `SVG.Text.path()` does not move all contents to the textPath (#705)
+- `SVG.TextPath` now inherits from `SVG.Text` and can be manipulated the same way (#705)
+- `SVG.Text.textPath()` now returns all textPaths in the text element (#705)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
