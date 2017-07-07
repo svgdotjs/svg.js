@@ -23,7 +23,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `ungroup()` in favour of `flatten()`
 - removed `SVG.Set`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
-- removed `loaded()` and `error()` method on `SVG.Image`
+- removed `loaded()` and `error()` method on `SVG.Image` (#706)
 - removed sub-pixel offset fix
 
 ### Changed
@@ -36,7 +36,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
 - moved all regexes to `SVG.regex`
 - `svg()` will now return the element without svg-wrapper
-- new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)`
+- new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)` (#706)
 - changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
 - ids are not generated upon creation anymore. Instead they are generated when requested (#559)
 - `SVG.extend()` now expects exactly one module or an array of modules
@@ -44,6 +44,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Text.path()` does not move all contents to the textPath (#705)
 - `SVG.TextPath` now inherits from `SVG.Text` and can be manipulated the same way (#705)
 - `SVG.Text.textPath()` now returns all textPaths in the text element (#705)
+- renamed `SVG.Stop` constructor `at()` on `SVG.Gradient` to `stop()` (#707)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

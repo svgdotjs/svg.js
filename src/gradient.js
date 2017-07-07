@@ -10,7 +10,7 @@ SVG.Gradient = SVG.invent({
   // Add class methods
 , extend: {
     // Add a color stop
-    at: function(offset, color, opacity) {
+    stop: function(offset, color, opacity) {
       return this.put(new SVG.Stop).update(offset, color, opacity)
     }
     // Update gradient

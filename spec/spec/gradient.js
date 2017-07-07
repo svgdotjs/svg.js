@@ -3,13 +3,13 @@ describe('Gradient', function() {
 
   beforeEach(function() {
     rect = draw.rect(100,100)
-    gradient = draw.gradient('linear', function(stop) {
-      stop.at({ offset: 0, color: '#333', opacity: 1 })
-      stop.at({ offset: 1, color: '#fff', opacity: 1 })
+    gradient = draw.gradient('linear', function(add) {
+      add.stop({ offset: 0, color: '#333', opacity: 1 })
+      add.stop({ offset: 1, color: '#fff', opacity: 1 })
     })
-    radial = draw.gradient('radial', function(stop) {
-      stop.at({ offset: 0, color: '#333', opacity: 1 })
-      stop.at({ offset: 1, color: '#fff', opacity: 1 })
+    radial = draw.gradient('radial', function(add) {
+      add.stop({ offset: 0, color: '#333', opacity: 1 })
+      add.stop({ offset: 1, color: '#fff', opacity: 1 })
     })
   })
 
@@ -79,25 +79,25 @@ describe('Gradient', function() {
     var s1, s2
 
     it('accepts floats', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at({ offset: 0.12, color: '#333', opacity: 1 })
-        s2 = stop.at({ offset: 0.93, color: '#fff', opacity: 1 })
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop({ offset: 0.12, color: '#333', opacity: 1 })
+        s2 = add.stop({ offset: 0.93, color: '#fff', opacity: 1 })
       })
       expect(s1.attr('offset')).toBe(0.12)
       expect(s2.attr('offset')).toBe(0.93)
     })
     it('accepts string floats', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at({ offset: '0.13', color: '#333', opacity: 1 })
-        s2 = stop.at({ offset: '0.92', color: '#fff', opacity: 1 })
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop({ offset: '0.13', color: '#333', opacity: 1 })
+        s2 = add.stop({ offset: '0.92', color: '#fff', opacity: 1 })
       })
       expect(s1.attr('offset')).toBe(0.13)
       expect(s2.attr('offset')).toBe(0.92)
     })
     it('accept percentages', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at({ offset: '14%', color: '#333', opacity: 1 })
-        s2 = stop.at({ offset: '91%', color: '#fff', opacity: 1 })
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop({ offset: '14%', color: '#333', opacity: 1 })
+        s2 = add.stop({ offset: '91%', color: '#fff', opacity: 1 })
       })
       expect(s1.attr('offset')).toBe('14%')
       expect(s2.attr('offset')).toBe('91%')
@@ -107,22 +107,22 @@ describe('Gradient', function() {
   describe('update()', function() {
 
     it('removes all existing children first', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at({ offset: 0.12, color: '#333', opacity: 1 })
-        s2 = stop.at({ offset: 0.93, color: '#fff', opacity: 1 })
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop({ offset: 0.12, color: '#333', opacity: 1 })
+        s2 = add.stop({ offset: 0.93, color: '#fff', opacity: 1 })
       })
       expect(gradient.children().length).toBe(2)
-      gradient.update(function(stop) {
-        s1 = stop.at({ offset: 0.33, color: '#666', opacity: 1 })
-        s2 = stop.at({ offset: 1, color: '#000', opacity: 1 })
+      gradient.update(function(add) {
+        s1 = add.stop({ offset: 0.33, color: '#666', opacity: 1 })
+        s2 = add.stop({ offset: 1, color: '#000', opacity: 1 })
       })
       expect(gradient.children().length).toBe(2)
     })
 
     it('accepts multiple aruments on fixed positions', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at(0.11, '#333')
-        s2 = stop.at(0.94, '#fff', 0.5)
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop(0.11, '#333')
+        s2 = add.stop(0.94, '#fff', 0.5)
       })
       expect(gradient.children().length).toBe(2)
       expect(s1.attr('offset')).toBe(0.11)
@@ -137,9 +137,9 @@ describe('Gradient', function() {
   describe('get()', function() {
 
     it('returns the stop at a given index', function() {
-      gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at({ offset: 0.12, color: '#333', opacity: 1 })
-        s2 = stop.at({ offset: 0.93, color: '#fff', opacity: 1 })
+      gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop({ offset: 0.12, color: '#333', opacity: 1 })
+        s2 = add.stop({ offset: 0.93, color: '#fff', opacity: 1 })
       })
       expect(gradient.get(0)).toBe(s1)
       expect(gradient.get(1)).toBe(s2)

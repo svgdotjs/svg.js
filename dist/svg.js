@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jul 07 2017 09:42:27 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 07 2017 11:23:52 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3478,7 +3478,7 @@ SVG.Gradient = SVG.invent({
   // Add class methods
 , extend: {
     // Add a color stop
-    at: function(offset, color, opacity) {
+    stop: function(offset, color, opacity) {
       return this.put(new SVG.Stop).update(offset, color, opacity)
     }
     // Update gradient

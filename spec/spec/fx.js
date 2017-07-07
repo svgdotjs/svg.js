@@ -2243,10 +2243,10 @@ describe('FX', function() {
     it('should allow 0 to be specified without unit', function () {
       // This code snippet come from issue #552
 
-      var gradient = draw.gradient('linear', function(stop) {
-        s1 = stop.at(0, '#33235b')
-        s2 = stop.at(0.5, '#E97639')
-        s3 = stop.at(1, '#33235b')
+      var gradient = draw.gradient('linear', function(add) {
+        s1 = add.stop(0, '#33235b')
+        s2 = add.stop(0.5, '#E97639')
+        s3 = add.stop(1, '#33235b')
       })
 
       var r1, r2;
