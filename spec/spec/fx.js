@@ -2187,6 +2187,27 @@ describe('FX', function() {
       expect(line.attr('stroke-linecap')).toBe(endValue)
     })
 
+    it('should be possible to animate array attributes', function() {
+      var startValue = [10,5]
+        , endValue = [20,10]
+        , morph = new SVG.Array(startValue).morph(endValue)
+
+      rect.attr('stroke-dasharray', startValue)
+      fx.attr('stroke-dasharray', endValue)
+
+      fx.start()
+      expect(rect.attr('stroke-dasharray')).toBe(morph.at(0).toString())
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.attr('stroke-dasharray')).toBe(morph.at(0.5).toString())
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.attr('stroke-dasharray')).toBe(morph.at(1).toString())
+    })
+
+
     it('should be possible to animate color attributes by using SVG.Color', function() {
       var startValue = 'rgb(42,251,100)'
         , endValue = 'rgb(10,80,175)'
@@ -2319,6 +2340,26 @@ describe('FX', function() {
       jasmine.clock().tick(1500) // Have the animation reach its end
       fx.step()
       expect(line.style('stroke-linecap')).toBe(endValue)
+    })
+
+    it('should be possible to animate array styles', function() {
+      var startValue = [10,5]
+        , endValue = [20,10]
+        , morph = new SVG.Array(startValue).morph(endValue)
+
+      rect.style('stroke-dasharray', startValue)
+      fx.style('stroke-dasharray', endValue)
+
+      fx.start()
+      expect(rect.style('stroke-dasharray')).toBe(morph.at(0).valueOf().join(", "))
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(rect.style('stroke-dasharray')).toBe(morph.at(0.5).valueOf().join(", "))
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(rect.style('stroke-dasharray')).toBe(morph.at(1).valueOf().join(", "))
     })
 
     it('should be possible to animate color styles by using SVG.Color', function() {
@@ -2839,6 +2880,20 @@ describe('SVG.MorphObj', function() {
 
     var obj = new SVG.MorphObj(0, 10)
     expect(obj instanceof SVG.Number).toBeTruthy()
+  })
+
+  it('accepts arrays and converts them to SVG.Array', function () {
+    var obj = new SVG.MorphObj([1,2,3], [4,5,6])
+    expect(obj instanceof SVG.Array).toBeTruthy()
+
+    var obj = new SVG.MorphObj("1 2 3", "4 5 6")
+    expect(obj instanceof SVG.Array).toBeTruthy()
+
+    var obj = new SVG.MorphObj("1,2,3", "4,5,6")
+    expect(obj instanceof SVG.Array).toBeTruthy()
+
+    var obj = new SVG.MorphObj("1, 2, 3", "4, 5, 6")
+    expect(obj instanceof SVG.Array).toBeTruthy()
   })
 
   it('accepts any other values', function() {
