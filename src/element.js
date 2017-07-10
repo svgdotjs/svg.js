@@ -221,11 +221,9 @@ SVG.Element = SVG.invent({
         well.innerHTML = svg
 
         // transplant nodes
-        for (len = well.childNodes.length;len--;)
-          if(well.firstChild.nodeType != 1)
-            well.removeChild(well.firstChild)
-          else
-            this.node.appendChild(well.firstChild)
+        for (len = well.children.length;len--;) {
+          this.node.appendChild(well.firstElementChild)
+        }
 
       // otherwise act as a getter
       } else {

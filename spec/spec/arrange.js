@@ -33,11 +33,11 @@ describe('Arrange', function() {
     })
   })
 
-  describe('previous()', function() {
+  describe('prev()', function() {
     it('returns the previous sibling within the parent element', function() {
-      expect(e1.previous()).toBe(parser[0])
-      expect(e2.previous()).toBe(e1)
-      expect(e3.previous()).toBe(e2)
+      expect(e1.prev()).toBe(parser[0])
+      expect(e2.prev()).toBe(e1)
+      expect(e3.prev()).toBe(e2)
     })
   })
 

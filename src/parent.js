@@ -11,7 +11,7 @@ SVG.Parent = SVG.invent({
 , extend: {
     // Returns all child elements
     children: function() {
-      return SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(node) {
+      return SVG.utils.map(this.node.children, function(node) {
         return SVG.adopt(node)
       })
     }
@@ -19,8 +19,8 @@ SVG.Parent = SVG.invent({
   , add: function(element, i) {
       if (i == null)
         this.node.appendChild(element.node)
-      else if (element.node != this.node.childNodes[i])
-        this.node.insertBefore(element.node, this.node.childNodes[i])
+      else if (element.node != this.node.children[i])
+        this.node.insertBefore(element.node, this.node.children[i])
 
       return this
     }
@@ -35,11 +35,11 @@ SVG.Parent = SVG.invent({
     }
     // Gets index of given element
   , index: function(element) {
-      return [].slice.call(this.node.childNodes).indexOf(element.node)
+      return [].slice.call(this.node.children).indexOf(element.node)
     }
     // Get a element at the given index
   , get: function(i) {
-      return SVG.adopt(this.node.childNodes[i])
+      return SVG.adopt(this.node.children[i])
     }
     // Get first child
   , first: function() {
@@ -47,7 +47,7 @@ SVG.Parent = SVG.invent({
     }
     // Get the last child
   , last: function() {
-      return this.get(this.node.childNodes.length - 1)
+      return this.get(this.node.children.length - 1)
     }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {
@@ -58,7 +58,7 @@ SVG.Parent = SVG.invent({
         if (children[i] instanceof SVG.Element)
           block.apply(children[i], [i, children])
 
-        if (deep && (children[i] instanceof SVG.Container))
+        if (deep && (children[i] instanceof SVG.Parent))
           children[i].each(block, deep)
       }
     

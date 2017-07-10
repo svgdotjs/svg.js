@@ -11,7 +11,7 @@ SVG.extend(SVG.Parent, {
     })
     
     // we need this so that SVG.Doc does not get removed
-    this.node.firstChild || this.remove()
+    this.node.firstElementChild || this.remove()
 
     return this
   }

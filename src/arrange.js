@@ -15,7 +15,7 @@ SVG.extend(SVG.Element, {
     return this.siblings()[this.position() + 1]
   }
   // Get the next element (will return null if there is none)
-, previous: function() {
+, prev: function() {
     return this.siblings()[this.position() - 1]
   }
   // Send given element one step forward

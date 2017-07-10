@@ -46,10 +46,11 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       // act as getter
-      if (typeof text === 'undefined'){
+      if (text === undefined){
         var text = ''
-        var children = this.node.childNodes
-        var firstLine = 0
+          , children = this.node.childNodes
+          , firstLine = 0
+
         for(var i = 0, len = children.length; i < len; ++i){
           // skip textPaths - they are no lines
           if(children[i].nodeName == 'textPath') {
@@ -114,11 +115,11 @@ SVG.Text = SVG.invent({
         var self = this
           , blankLineOffset = 0
           , dy = this.dom.leading * new SVG.Number(this.attr('font-size'))
-        
+
         this.each(function() {
           if (this.dom.newLined) {
             this.attr('x', self.attr('x'))
-            
+
             if(this.text() == '\n') {
               blankLineOffset += dy
             }else{

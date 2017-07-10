@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jul 07 2017 13:43:21 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon Jul 10 2017 13:46:12 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1229,11 +1229,9 @@ SVG.Element = SVG.invent({
         well.innerHTML = svg
 
         // transplant nodes
-        for (len = well.childNodes.length;len--;)
-          if(well.firstChild.nodeType != 1)
-            well.removeChild(well.firstChild)
-          else
-            this.node.appendChild(well.firstChild)
+        for (len = well.children.length;len--;) {
+          this.node.appendChild(well.firstElementChild)
+        }
 
       // otherwise act as a getter
       } else {
@@ -2963,7 +2961,7 @@ SVG.Parent = SVG.invent({
 , extend: {
     // Returns all child elements
     children: function() {
-      return SVG.utils.map(SVG.utils.filterSVGElements(this.node.childNodes), function(node) {
+      return SVG.utils.map(this.node.children, function(node) {
         return SVG.adopt(node)
       })
     }
@@ -2971,8 +2969,8 @@ SVG.Parent = SVG.invent({
   , add: function(element, i) {
       if (i == null)
         this.node.appendChild(element.node)
-      else if (element.node != this.node.childNodes[i])
-        this.node.insertBefore(element.node, this.node.childNodes[i])
+      else if (element.node != this.node.children[i])
+        this.node.insertBefore(element.node, this.node.children[i])
 
       return this
     }
@@ -2987,11 +2985,11 @@ SVG.Parent = SVG.invent({
     }
     // Gets index of given element
   , index: function(element) {
-      return [].slice.call(this.node.childNodes).indexOf(element.node)
+      return [].slice.call(this.node.children).indexOf(element.node)
     }
     // Get a element at the given index
   , get: function(i) {
-      return SVG.adopt(this.node.childNodes[i])
+      return SVG.adopt(this.node.children[i])
     }
     // Get first child
   , first: function() {
@@ -2999,7 +2997,7 @@ SVG.Parent = SVG.invent({
     }
     // Get the last child
   , last: function() {
-      return this.get(this.node.childNodes.length - 1)
+      return this.get(this.node.children.length - 1)
     }
     // Iterates over all children and invokes a given block
   , each: function(block, deep) {
@@ -3010,7 +3008,7 @@ SVG.Parent = SVG.invent({
         if (children[i] instanceof SVG.Element)
           block.apply(children[i], [i, children])
 
-        if (deep && (children[i] instanceof SVG.Container))
+        if (deep && (children[i] instanceof SVG.Parent))
           children[i].each(block, deep)
       }
 
@@ -3054,7 +3052,7 @@ SVG.extend(SVG.Parent, {
     })
 
     // we need this so that SVG.Doc does not get removed
-    this.node.firstChild || this.remove()
+    this.node.firstElementChild || this.remove()
 
     return this
   }
@@ -3292,7 +3290,7 @@ SVG.extend(SVG.Element, {
     return this.siblings()[this.position() + 1]
   }
   // Get the next element (will return null if there is none)
-, previous: function() {
+, prev: function() {
     return this.siblings()[this.position() - 1]
   }
   // Send given element one step forward
@@ -4212,10 +4210,11 @@ SVG.Text = SVG.invent({
     // Set the text content
   , text: function(text) {
       // act as getter
-      if (typeof text === 'undefined'){
+      if (text === undefined){
         var text = ''
-        var children = this.node.childNodes
-        var firstLine = 0
+          , children = this.node.childNodes
+          , firstLine = 0
+
         for(var i = 0, len = children.length; i < len; ++i){
           // skip textPaths - they are no lines
           if(children[i].nodeName == 'textPath') {
@@ -4984,9 +4983,8 @@ function arrayToString(a) {
 // Deep new id assignment
 function assignNewId(node) {
   // do the same for SVG child nodes as well
-  for (var i = node.childNodes.length - 1; i >= 0; i--)
-    if (node.childNodes[i] instanceof window.SVGElement)
-      assignNewId(node.childNodes[i])
+  for (var i = node.children.length - 1; i >= 0; i--)
+    assignNewId(node.children[i])
 
   if(node.id)
     return SVG.adopt(node).id(SVG.eid(node.nodeName))

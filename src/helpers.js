@@ -149,9 +149,8 @@ function arrayToString(a) {
 // Deep new id assignment
 function assignNewId(node) {
   // do the same for SVG child nodes as well
-  for (var i = node.childNodes.length - 1; i >= 0; i--)
-    if (node.childNodes[i] instanceof window.SVGElement)
-      assignNewId(node.childNodes[i])
+  for (var i = node.children.length - 1; i >= 0; i--)
+    assignNewId(node.children[i])
 
   if(node.id)
     return SVG.adopt(node).id(SVG.eid(node.nodeName))

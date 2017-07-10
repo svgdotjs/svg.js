@@ -46,6 +46,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Text.textPath()` now returns all textPaths in the text element (#705)
 - renamed `SVG.Stop` constructor `at()` on `SVG.Gradient` to `stop()` (#707)
 - renamed `fill()` method on `SVG.Gradient` and `SVG.Pattern` to `url()` (#708)
+- renamed `previous()` method to `prev()`
+- changed `childNodes` to `children` (same for `firstChild`, `lastChild`, ...) (#710)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
