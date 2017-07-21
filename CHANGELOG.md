@@ -28,6 +28,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## [2.6.3] - 2017-07-21
+
+### Fixed
+- fixed error in parent method when hitting document node (#720)
+
 ## [2.6.2] - 2017-06-05
 
 ### Added
@@ -607,6 +612,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.3
 [2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
 [2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
 [2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
