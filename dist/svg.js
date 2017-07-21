@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jun 30 2017 23:15:13 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 21 2017 14:07:35 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1197,6 +1197,7 @@ SVG.Element = SVG.invent({
       // loop trough ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+        if(parent.node.parentNode.nodeName == '#document') return null // #720
         parent = SVG.adopt(parent.node.parentNode)
       }
     }
@@ -4013,7 +4014,7 @@ SVG.Doc = SVG.invent({
     }
     // Fix for possible sub-pixel offset. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function(spof) {
+  , spof: function() {
       var pos = this.node.getScreenCTM()
 
       if (pos)
