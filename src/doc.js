@@ -21,7 +21,7 @@ SVG.Doc = SVG.invent({
     }
     // Creates and returns defs element
   , defs: function() {
-      return (this.node.getElementsByTagName('defs')[0] || this.put(new SVG.Defs).node).instance
+      return SVG.adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new SVG.Defs())
     }
     // custom parent method
   , parent: function() {
