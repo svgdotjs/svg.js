@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Jul 25 2017 09:09:06 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Jul 25 2017 14:19:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -76,8 +76,8 @@ SVG.invent = function(config) {
   // Create element initializer
   var initializer = typeof config.create == 'function' ?
     config.create :
-    function() {
-      this.constructor.call(this, SVG.create(config.create))
+    function(node) {
+      this.constructor.call(this, node || SVG.create(config.create))
     }
 
   // Inherit prototype
@@ -111,24 +111,15 @@ SVG.adopt = function(node) {
 
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
-    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested : new SVG.Doc
+    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested(node) : new SVG.Doc(node)
   else if (node.nodeName == 'linearGradient')
-    element = new SVG.Gradient('linear')
+    element = new SVG.Gradient(node)
   else if (node.nodeName == 'radialGradient')
-    element = new SVG.Gradient('radial')
+    element = new SVG.Gradient(node)
   else if (SVG[capitalize(node.nodeName)])
-    element = new SVG[capitalize(node.nodeName)]
+    element = new SVG[capitalize(node.nodeName)](node)
   else
     element = new SVG.Parent(node)
-
-  // ensure references
-  element.type  = node.nodeName
-  element.node  = node
-  node.instance = element
-
-  // SVG.Class specific preparations
-  if (element instanceof SVG.Doc)
-    element.namespace().defs()
 
   // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
   element.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
@@ -2958,8 +2949,8 @@ SVG.extend(SVG.Element, {
 
 SVG.Parent = SVG.invent({
   // Initialize node
-  create: function(element) {
-    this.constructor.call(this, element)
+  create: function(node) {
+    this.constructor.call(this, node)
   }
 
   // Inherit from
@@ -3066,8 +3057,8 @@ SVG.extend(SVG.Parent, {
 
 SVG.Container = SVG.invent({
   // Initialize node
-  create: function(element) {
-    this.constructor.call(this, element)
+  create: function(node) {
+    this.constructor.call(this, node)
   }
 
   // Inherit from
@@ -3219,15 +3210,14 @@ SVG.extend(SVG.Element, {
   }
 })
 
-
 SVG.Defs = SVG.invent({
   // Initialize node
   create: 'defs'
 
   // Inherit from
 , inherit: SVG.Container
-
 })
+
 SVG.G = SVG.invent({
   // Initialize node
   create: 'g'
@@ -3473,7 +3463,7 @@ SVG.extend(SVG.Element, {
 SVG.Gradient = SVG.invent({
   // Initialize node
   create: function(type) {
-    this.constructor.call(this, SVG.create(type + 'Gradient'))
+    this.constructor.call(this, typeof type == 'object' ? type : SVG.create(type + 'Gradient'))
   }
 
   // Inherit from
@@ -3635,9 +3625,8 @@ SVG.extend(SVG.Defs, {
 })
 SVG.Doc = SVG.invent({
   // Initialize node
-  create: function(element) {
-    element = element || SVG.create('svg')
-    this.constructor.call(this, element)
+  create: function(node) {
+    this.constructor.call(this, node || SVG.create('svg'))
 
     // set svg element attributes and ensure defs node
     this.namespace().defs()
@@ -3657,7 +3646,7 @@ SVG.Doc = SVG.invent({
     }
     // Creates and returns defs element
   , defs: function() {
-      return this.put(this.node.getElementsByTagName('defs')[0] || new SVG.Defs)
+      return (this.node.getElementsByTagName('defs')[0] || this.put(new SVG.Defs).node).instance
     }
     // custom parent method
   , parent: function() {
@@ -3690,14 +3679,15 @@ SVG.Doc = SVG.invent({
 
 SVG.Shape = SVG.invent({
   // Initialize node
-  create: function(element) {
-    this.constructor.call(this, element)
+  create: function(node) {
+    this.constructor.call(this, node)
   }
 
   // Inherit from
 , inherit: SVG.Element
 
 })
+
 
 SVG.Bare = SVG.invent({
   // Initialize
@@ -3778,6 +3768,7 @@ SVG.Use = SVG.invent({
     }
   }
 })
+
 SVG.Rect = SVG.invent({
   // Initialize node
   create: 'rect'
@@ -4142,8 +4133,8 @@ SVG.Image = SVG.invent({
 
 SVG.Text = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('text'))
+  create: function(node) {
+    this.constructor.call(this, node || SVG.create('text'))
 
     this.dom.leading = new SVG.Number(1.3)    // store leading value for rebuilding
     this._rebuild = true                      // enable automatic updating of dy values
@@ -4826,12 +4817,6 @@ function createElement(element, makeNested) {
   node.innerHTML = element
 
   element = SVG.adopt(node.firstElementChild)
-
-  //if(element instanceof SVG.Nested) {
-  //  // We cant use the adopter for this because it will create an SVG.Nested
-  //  element = new SVG.Doc(element.node)
-  //  element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
-  //}
 
   return element
 }

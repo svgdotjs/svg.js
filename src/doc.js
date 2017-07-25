@@ -1,8 +1,7 @@
 SVG.Doc = SVG.invent({
   // Initialize node
-  create: function(element) {    
-    element = element || SVG.create('svg')
-    this.constructor.call(this, element)
+  create: function(node) {    
+    this.constructor.call(this, node || SVG.create('svg'))
 
     // set svg element attributes and ensure defs node
     this.namespace().defs()
@@ -22,7 +21,7 @@ SVG.Doc = SVG.invent({
     }
     // Creates and returns defs element
   , defs: function() {
-      return this.put(this.node.getElementsByTagName('defs')[0] || new SVG.Defs)
+      return (this.node.getElementsByTagName('defs')[0] || this.put(new SVG.Defs).node).instance
     }
     // custom parent method
   , parent: function() {

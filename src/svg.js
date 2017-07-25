@@ -53,8 +53,8 @@ SVG.invent = function(config) {
   // Create element initializer
   var initializer = typeof config.create == 'function' ?
     config.create :
-    function() {
-      this.constructor.call(this, SVG.create(config.create))
+    function(node) {
+      this.constructor.call(this, node || SVG.create(config.create))
     }
 
   // Inherit prototype
@@ -88,24 +88,15 @@ SVG.adopt = function(node) {
 
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
-    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested : new SVG.Doc
+    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested(node) : new SVG.Doc(node)
   else if (node.nodeName == 'linearGradient')
-    element = new SVG.Gradient('linear')
+    element = new SVG.Gradient(node)
   else if (node.nodeName == 'radialGradient')
-    element = new SVG.Gradient('radial')
+    element = new SVG.Gradient(node)
   else if (SVG[capitalize(node.nodeName)])
-    element = new SVG[capitalize(node.nodeName)]
+    element = new SVG[capitalize(node.nodeName)](node)
   else
     element = new SVG.Parent(node)
-
-  // ensure references
-  element.type  = node.nodeName
-  element.node  = node
-  node.instance = element
-
-  // SVG.Class specific preparations
-  if (element instanceof SVG.Doc)
-    element.namespace().defs()
 
   // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
   element.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})

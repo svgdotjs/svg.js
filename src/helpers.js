@@ -18,12 +18,6 @@ function createElement(element, makeNested) {
 
   element = SVG.adopt(node.firstElementChild)
 
-  //if(element instanceof SVG.Nested) {
-  //  // We cant use the adopter for this because it will create an SVG.Nested
-  //  element = new SVG.Doc(element.node)
-  //  element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
-  //}
-  
   return element
 }
 

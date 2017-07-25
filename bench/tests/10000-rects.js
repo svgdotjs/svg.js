@@ -65,10 +65,10 @@ SVG.bench.describe('Generate 10000 rects with position and fill', function(bench
 SVG.bench.describe('Generate 10000 rects with gradient fill', function(bench) {
   bench.test('using SVG.js v2.5.3', function() {
     for (var i = 0; i < 10000; i++) {
-      var g = bench.draw.gradient('linear', function(stop) {
-        stop.at(0, '#000')
-        stop.at(0.25, '#f00')
-        stop.at(1, '#fff')
+      var g = bench.draw.gradient('linear', function(add) {
+        add.stop(0, '#000')
+        add.stop(0.25, '#f00')
+        add.stop(1, '#fff')
       })
 
       bench.draw.rect(100,100).fill(g)
