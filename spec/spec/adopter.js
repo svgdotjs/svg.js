@@ -23,7 +23,7 @@ describe('Adopter', function() {
       expect(path.parent().node.getAttribute('xmlns:xlink')).toBe(SVG.xlink)
     })
     it('initializes a defs node', function() {
-      expect(path.parent()._defs).toBe(path.parent().defs())
+      expect(path.defs() instanceof SVG.Defs).toBe(true)
     })
   })
 

@@ -17,6 +17,8 @@ SVG.Parent = SVG.invent({
     }
     // Add given element at a position
   , add: function(element, i) {
+      element = createElement(element)
+
       if (i == null)
         this.node.appendChild(element.node)
       else if (element.node != this.node.children[i])
@@ -27,7 +29,7 @@ SVG.Parent = SVG.invent({
     // Basically does the same as `add()` but returns the added element instead
   , put: function(element, i) {
       this.add(element, i)
-      return element
+      return element.instance || element
     }
     // Checks if the given element is a child
   , has: function(element) {
@@ -53,7 +55,7 @@ SVG.Parent = SVG.invent({
   , each: function(block, deep) {
       var i, il
         , children = this.children()
-      
+
       for (i = 0, il = children.length; i < il; i++) {
         if (children[i] instanceof SVG.Element)
           block.apply(children[i], [i, children])
@@ -61,13 +63,13 @@ SVG.Parent = SVG.invent({
         if (deep && (children[i] instanceof SVG.Parent))
           children[i].each(block, deep)
       }
-    
+
       return this
     }
     // Remove a given child
   , removeElement: function(element) {
       this.node.removeChild(element.node)
-      
+
       return this
     }
     // Remove all elements in this container
@@ -75,16 +77,12 @@ SVG.Parent = SVG.invent({
       // remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
-      
+
       // remove defs reference
       delete this._defs
 
       return this
     }
-  , // Get defs
-    defs: function() {
-      return this.doc().defs()
-    }
   }
-  
+
 })

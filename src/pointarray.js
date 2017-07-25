@@ -95,8 +95,13 @@ SVG.extend(SVG.PointArray, {
   }
   // Get bounding box of points
 , bbox: function() {
-    SVG.parser.poly.setAttribute('points', this.toString())
-
-    return SVG.parser.poly.getBBox()
+    var maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity
+    this.value.forEach(function(el) {
+      maxX = Math.max(el[0], maxX)
+      maxY = Math.max(el[1], maxY)
+      minX = Math.min(el[0], minX)
+      minY = Math.min(el[1], minY)
+    })
+    return {x: minX, y: minY, width: maxX-minX, height: maxY-minY}
   }
 })

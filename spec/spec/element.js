@@ -829,7 +829,7 @@ describe('Element', function() {
             toBeTested === '<svg xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" height="100" width="100"><rect height="100" width="100"></rect><circle fill="#ff0066" cy="50" cx="50" r="50"></circle></svg>'
 
             // Firefox
-         || toBeTested === '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
+         || toBeTested === '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
 
             // svgdom
          || toBeTested === '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100" height="100"><svg id="SvgjsSvg1002" width="2" height="0" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0"><polyline id="SvgjsPolyline1003" points="10,10 20,10 30,10"></polyline><path id="SvgjsPath1004" d="M80 80A45 45 0 0 0 125 125L125 80Z "></path></svg><rect width="100" height="100"></rect><circle r="50" cx="50" cy="50" fill="#ff0066"></circle></svg>'
@@ -975,6 +975,13 @@ describe('Element', function() {
       expect(rect.is(SVG.Rect)).toBeTruthy()
       expect(rect.is(SVG.Element)).toBeTruthy()
       expect(rect.is(SVG.Parent)).toBeFalsy()
+    })
+  })
+  describe('defs()', function() {
+    it('returns the defs from the svg', function() {
+      var g = draw.group()
+      expect(g.defs()).toBe(draw.doc().defs())
+      expect(g.defs() instanceof SVG.Defs).toBeTruthy()
     })
   })
 })

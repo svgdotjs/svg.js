@@ -13,6 +13,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Added
 - added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
 - added `text()` method to `SVG.Path` to create a textPath from this path (#705)
+- added `SVG.HTMLNode` which is the object wrapped around html nodes to put something in them
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 
@@ -48,6 +49,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - renamed `fill()` method on `SVG.Gradient` and `SVG.Pattern` to `url()` (#708)
 - renamed `previous()` method to `prev()`
 - changed `childNodes` to `children` (same for `firstChild`, `lastChild`, ...) (#710)
+- moved `defs()` method from `SVG.Parent` to `SVG.Element`
+- `SVG()` can be called with css selector, node or svg string, now. Without an argument it creates a new `SVG.Doc()` (#646)
+- `add()`, `put()`, `addTo()`, `putIn()` now excepts all arguments accepted by `SVG()`
+- `SVG.Nested` is not `overflow:visible` by default
+- all `SVG.*` objects now can have a node as parameter when constructing
+- `SVG()` does not set a default size anymore
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

@@ -1,36 +1,83 @@
 describe('SVG', function() {
 
   describe('()', function() {
-    var drawing, wrapper
+    var drawing, wrapper, wrapperHTML, rect
 
     beforeEach(function() {
-      wrapper = document.createElement('svg')
+      wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      wrapper.id = 'testSvg'
+      wrapperHTML = document.createElement('div')
+      wrapperHTML.id = 'testDiv'
+      rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       document.documentElement.appendChild(wrapper)
-      drawing = SVG(wrapper)
+      document.documentElement.appendChild(wrapperHTML)
     })
 
     afterEach(function() {
       wrapper.parentNode.removeChild(wrapper)
+      wrapperHTML.parentNode.removeChild(wrapperHTML)
     })
 
-    it('creates a new svg drawing', function() {
-      expect(drawing.type).toBe('svg')
+    it('creates an instanceof SVG.Doc without any argument', function() {
+      expect(SVG() instanceof SVG.Doc).toBe(true)
+      expect(SVG().node.nodeName).toBe('svg')
     })
-    it('creates an instance of SVG.Doc', function() {
-      expect(drawing instanceof SVG.Doc).toBe(true)
+
+    it('creates an instanceof SVG.HtmlNode with html node', function() {
+      var el = SVG(wrapperHTML)
+      expect(el instanceof SVG.HtmlNode).toBe(true)
+      expect(el.node).toBe(wrapperHTML)
     })
     
-    if(parserInDoc){
-      it('sets no default size in svg documents', function() {
-        expect(drawing.width()).toBe(0)
-        expect(drawing.height()).toBe(0)
-      })
-    }else{
-      it('sets size to 100% in html documents', function() {
-        expect(drawing.width()).toBe('100%')
-        expect(drawing.height()).toBe('100%')
-      })
-    }
+    it('creates new SVG.HtmlNode when called with css selector pointing to html node', function() {
+      var el = SVG('#testDiv')
+      expect(el instanceof SVG.HtmlNode).toBe(true)
+      expect(el.node).toBe(wrapperHTML)
+    })
+
+    it('creates an instanceof SVG.Doc with svg node', function() {
+      var doc = SVG(wrapper)
+      expect(doc instanceof SVG.Doc).toBe(true)
+      expect(doc.node).toBe(wrapper)
+    })
+    
+    it('creates new SVG.Doc when called with css selector pointing to svg node', function() {
+      var doc = SVG('#testSvg')
+      expect(doc instanceof SVG.Doc).toBe(true)
+      expect(doc.node).toBe(wrapper)
+    })
+    
+    it('adopts any SVGElement', function() {
+      expect(SVG(rect) instanceof SVG.Rect).toBe(true)
+      expect(SVG(rect).node).toBe(rect)
+    })
+
+    it('creates an instanceof SVG.Nested when importing a whole svg', function() {
+      var doc = SVG('<svg width="200"><rect></rect></svg>')
+
+      expect(doc instanceof SVG.Nested).toBe(true)
+      expect(doc.node.nodeName).toBe('svg')
+      expect(doc.width()).toBe(200)
+      expect(doc.get(0).node.nodeName).toBe('rect')
+    })
+
+    it('creates SVG.Shape from any shape string', function() {
+      var rect = SVG('<rect width="200" height="100">')
+        , circle = SVG('<circle r="200">')
+        
+      expect(rect instanceof SVG.Rect).toBe(true)
+      expect(rect.node.nodeName).toBe('rect')
+      expect(rect.width()).toBe(200)
+      
+      expect(circle instanceof SVG.Circle).toBe(true)
+      expect(circle.node.nodeName).toBe('circle')
+      expect(circle.attr('r')).toBe(200)
+    })
+
+    it('returns the argument when called with any SVG.Element', function() {
+      drawing = SVG(wrapper)
+      expect(SVG(drawing)).toBe(drawing)
+    })
   })
 
   describe('create()', function() {
@@ -76,27 +123,6 @@ describe('SVG', function() {
       expect(typeof SVG.Rect.prototype.soft).toBe('function')
       expect(draw.rect(100,100).soft().attr('opacity')).toBe(0.3)
       expect(typeof SVG.Bogus).toBe('undefined')
-    })
-  })
-
-  describe('prepare()', function() {
-    var drawing, wrapper, parser
-
-    beforeEach(function() {
-      wrapper = document.createElement('svg')
-      document.documentElement.appendChild(wrapper)
-      drawing = SVG(wrapper)
-    })
-
-    it('creates a parser element when calling SVG()', function() {
-      expect(SVG.parser.draw.nodeName).toBe('svg')
-    })
-    it('hides the parser', function() {
-      expect(window.stripped(SVG.parser.draw.getAttribute('style'))).toBe('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden')
-    })
-    it('holds polyline and path', function() {
-      expect(SVG.select('polyline', SVG.parser.draw.node)[0].type).toBe('polyline')
-      expect(SVG.select('path', SVG.parser.draw.node)[0].type).toBe('path')
     })
   })
 })

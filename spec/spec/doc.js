@@ -2,7 +2,7 @@ describe('Doc', function() {
 
   describe('create()', function(){
     it('doenst alter size when adopting width SVG()', function() {
-      var svg = SVG('inlineSVG')
+      var svg = SVG('#inlineSVG')
       expect(svg.width()).toBe(0)
       expect(svg.height()).toBe(0)
     })
@@ -26,7 +26,7 @@ describe('Doc', function() {
 
   describe('defs()', function() {
     it('returns defs element', function(){
-      expect(draw.defs()).toBe(draw._defs)
+      expect(draw.defs()).toBe(draw.node.getElementsByTagName('defs')[0].instance)
     })
     it('references parent node', function(){
       expect(draw.defs().parent()).toBe(draw)
@@ -43,7 +43,7 @@ describe('Doc', function() {
         expect(window.document.querySelectorAll('svg').length).toBe(cnt-1)
       }
       
-      draw = SVG(drawing).size(100,100);
+      draw = SVG().addTo(drawing).size(100,100);
       expect(window.document.querySelectorAll('svg').length).toBe(cnt)
     })
   })

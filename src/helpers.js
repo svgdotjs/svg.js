@@ -1,3 +1,32 @@
+function createElement(element, makeNested) {
+  if(element instanceof SVG.Element) return element
+
+  if(typeof element == 'object') {
+    return SVG.adopt(element)
+  }
+
+  if(element == null) {
+    return new SVG.Doc()
+  }
+
+  if(typeof element == 'string' && element.charAt(0) != '<') {
+    return SVG.adopt(document.querySelector(element))
+  }
+
+  var node = SVG.create('svg')
+  node.innerHTML = element
+
+  element = SVG.adopt(node.firstElementChild)
+
+  //if(element instanceof SVG.Nested) {
+  //  // We cant use the adopter for this because it will create an SVG.Nested
+  //  element = new SVG.Doc(element.node)
+  //  element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
+  //}
+  
+  return element
+}
+
 function isNulledBox(box) {
   return !box.w && !box.h && !box.x && !box.y
 }

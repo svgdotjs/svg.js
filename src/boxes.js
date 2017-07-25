@@ -102,7 +102,7 @@ SVG.Box = SVG.invent({
         }
       } catch(e) {
         try {
-          var clone = this.clone(SVG.parser.draw.instance).show()
+          var clone = this.clone(SVG.parser().svg).show()
           box = clone.node.getBBox()
           clone.remove()
         } catch(e) {

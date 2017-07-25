@@ -340,11 +340,37 @@ describe('Container', function() {
     })
   })
 
-  describe('defs()', function() {
-    it('returns the defs from the svg', function() {
-      var g = draw.group()
-      expect(g.defs()).toBe(draw.doc().defs())
-      expect(g.defs() instanceof SVG.Defs).toBeTruthy()
+  describe('add()', function() {
+    it('adds element at the end of the parent element when no position given', function() {
+      var rect = draw.rect(100,100)
+      var line = draw.line(100,100, 50, 50)
+      var group = draw.group()
+      group.circle(10,10)
+
+      expect(group.add(rect)).toBe(group)
+      expect(rect.position()).toBe(1)
+    })
+    it('adds element at the given position', function() {
+      var rect = draw.rect(100,100)
+      var line = draw.line(100,100, 50, 50)
+      var group = draw.group()
+      group.circle(10,10)
+
+      expect(group.add(rect)).toBe(group)
+      expect(group.add(line, 1)).toBe(group)
+      expect(line.position()).toBe(1)
+    })
+  })
+
+  describe('put()', function() {
+    it('calls add() but returns added element', function() {
+      var rect = draw.rect(100,100)
+      var group = draw.group()
+
+      spyOn(group, 'add')
+
+      expect(group.put(rect, 0)).toBe(rect)
+      expect(group.add).toHaveBeenCalledWith(rect, 0)
     })
   })
 

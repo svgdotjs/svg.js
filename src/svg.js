@@ -1,11 +1,8 @@
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
-    element = new SVG.Doc(element)
-    
-    if(!SVG.parser.draw)
-      SVG.prepare()
-      
+    element = createElement(element)
+
     return element
   }
 }
@@ -83,6 +80,9 @@ SVG.adopt = function(node) {
   // make sure a node isn't already adopted
   if (node.instance) return node.instance
 
+  if(!(node instanceof window.SVGElement))
+    return new SVG.HtmlNode(node)
+  
   // initialize variables
   var element
 
@@ -96,7 +96,7 @@ SVG.adopt = function(node) {
   else if (SVG[capitalize(node.nodeName)])
     element = new SVG[capitalize(node.nodeName)]
   else
-    element = new SVG.Element(node)
+    element = new SVG.Parent(node)
 
   // ensure references
   element.type  = node.nodeName
@@ -112,34 +112,3 @@ SVG.adopt = function(node) {
 
   return element
 }
-
-// Initialize parsing element
-SVG.prepare = function() {
-  // Select document body and create invisible svg element
-  var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) : SVG.adopt(document.documentElement).nested()).size(2, 0)
-
-  // Create parser object
-  SVG.parser = {
-    body: body || document.documentElement
-  , draw: draw.css({
-      opacity:0,
-      position:'absolute',
-      left:'-100%',
-      top:'-100%',
-      overflow:'hidden'
-    }).node
-  , poly: draw.polyline().node
-  , path: draw.path().node
-  , native: SVG.create('svg')
-  }
-}
-
-SVG.parser = {
-  native: SVG.create('svg')
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  if(!SVG.parser.draw)
-    SVG.prepare()
-}, false)

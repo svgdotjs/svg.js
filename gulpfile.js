@@ -38,6 +38,7 @@ var parts = [
 , 'src/pointarray.js'
 , 'src/patharray.js'
 , 'src/number.js'
+, 'src/HtmlNode.js'
 , 'src/element.js'
 , 'src/fx.js'
 , 'src/matrix.js'
@@ -81,6 +82,7 @@ var parts = [
 , 'src/helpers.js'
 , 'src/polyfill.js'
 , 'src/boxes.js'
+, 'src/parser.js'
 ]
 
 gulp.task('clean', function() {

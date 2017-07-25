@@ -86,11 +86,11 @@ SVG.Element = SVG.invent({
     }
     // Add element to given container and return self
   , addTo: function(parent) {
-      return parent.put(this)
+      return createElement(parent).put(this)
     }
     // Add element to given container and return container
   , putIn: function(parent) {
-      return parent.add(this)
+      return createElement(parent).add(this)
     }
     // Get / set id
   , id: function(id) {
@@ -187,6 +187,10 @@ SVG.Element = SVG.invent({
   , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
+  , // Get defs
+    defs: function() {
+      return this.doc().defs()
+    }
     // return array of all ancestors of given type up to the root svg
   , parents: function(type) {
       var parents = [], parent = this
@@ -227,6 +231,9 @@ SVG.Element = SVG.invent({
 
       // otherwise act as a getter
       } else {
+        // write svgjs data to the dom
+        this.writeDataToDom()
+      
         return this.node.outerHTML
       }
 

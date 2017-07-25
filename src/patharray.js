@@ -50,10 +50,10 @@ var pathHandlers = {
   }
 }
 
-var mlhvqtcsa = 'mlhvqtcsaz'.split('')
+var mlhvqtcsaz = 'mlhvqtcsaz'.split('')
 
-for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
-  pathHandlers[mlhvqtcsa[i]] = (function(i){
+for(var i = 0, il = mlhvqtcsaz.length; i < il; ++i){
+  pathHandlers[mlhvqtcsaz[i]] = (function(i){
     return function(c, p, p0) {
       if(i == 'H') c[0] = c[0] + p.x
       else if(i == 'V') c[0] = c[0] + p.y
@@ -68,7 +68,7 @@ for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
 
       return pathHandlers[i](c, p, p0)
     }
-  })(mlhvqtcsa[i].toUpperCase())
+  })(mlhvqtcsaz[i].toUpperCase())
 }
 
 // Path points array
@@ -289,9 +289,8 @@ SVG.extend(SVG.PathArray, {
   }
   // Get bounding box of path
 , bbox: function() {
-    SVG.parser.path.setAttribute('d', this.toString())
-
-    return SVG.parser.path.getBBox()
+    SVG.parser().path.setAttribute('d', this.toString())
+    return SVG.parser.nodes.path.getBBox()
   }
 
 })

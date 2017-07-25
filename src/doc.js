@@ -1,25 +1,11 @@
 SVG.Doc = SVG.invent({
   // Initialize node
-  create: function(element) {
-    if (element) {
-      // ensure the presence of a dom element
-      element = typeof element == 'string' ?
-        document.getElementById(element) :
-        element
+  create: function(element) {    
+    element = element || SVG.create('svg')
+    this.constructor.call(this, element)
 
-      // If the target is an svg element, use that element as the main wrapper.
-      // This allows svg.js to work with svg documents as well.
-      if (element.nodeName == 'svg') {
-        this.constructor.call(this, element)
-      } else {
-        this.constructor.call(this, SVG.create('svg'))
-        element.appendChild(this.node)
-        this.size('100%', '100%')
-      }
-
-      // set svg element attributes and ensure defs node
-      this.namespace().defs()
-    }
+    // set svg element attributes and ensure defs node
+    this.namespace().defs()
   }
 
   // Inherit from
@@ -36,20 +22,7 @@ SVG.Doc = SVG.invent({
     }
     // Creates and returns defs element
   , defs: function() {
-      if (!this._defs) {
-        var defs
-
-        // Find or create a defs element in this instance
-        if (defs = this.node.getElementsByTagName('defs')[0])
-          this._defs = SVG.adopt(defs)
-        else
-          this._defs = new SVG.Defs
-
-        // Make sure the defs node is at the end of the stack
-        this.node.appendChild(this._defs.node)
-      }
-
-      return this._defs
+      return this.put(this.node.getElementsByTagName('defs')[0] || new SVG.Defs)
     }
     // custom parent method
   , parent: function() {
@@ -67,15 +40,14 @@ SVG.Doc = SVG.invent({
       // remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
-
-      // remove defs reference
-      delete this._defs
-
-      // add back parser
-      if(!SVG.parser.draw.parentNode)
-        this.node.appendChild(SVG.parser.draw)
-
       return this
+    }
+  , toNested: function() {
+      var el = SVG.create('svg')
+      this.node.instance = null
+      el.appendChild(this.node)
+
+      return SVG.adopt(this.node)
     }
   }
 

@@ -5,7 +5,7 @@
     _chain:  []
   , _before: function() {}
   , _after:  function() {}
-  , draw:    SVG('draw')
+  , draw:    SVG().addTo('#draw')
   , snap:    Snap(100, 100)
   , raw:     document.getElementById('native')
 

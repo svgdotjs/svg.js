@@ -133,7 +133,7 @@ if(typeof exports === 'object'){
 
 parserInDoc |= 0
 drawing.id = 'drawing'
-draw = SVG(drawing).size(100,100)
+draw = SVG().addTo(drawing).size(100,100)
 
 parser = parserInDoc ? [SVG.parser.draw.instance] : []
 

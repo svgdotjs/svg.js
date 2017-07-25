@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Jul 10 2017 13:46:12 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Jul 25 2017 09:09:06 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -24,10 +24,7 @@
 // The main wrapping element
 var SVG = this.SVG = function(element) {
   if (SVG.supported) {
-    element = new SVG.Doc(element)
-
-    if(!SVG.parser.draw)
-      SVG.prepare()
+    element = createElement(element)
 
     return element
   }
@@ -106,6 +103,9 @@ SVG.adopt = function(node) {
   // make sure a node isn't already adopted
   if (node.instance) return node.instance
 
+  if(!(node instanceof window.SVGElement))
+    return new SVG.HtmlNode(node)
+
   // initialize variables
   var element
 
@@ -119,7 +119,7 @@ SVG.adopt = function(node) {
   else if (SVG[capitalize(node.nodeName)])
     element = new SVG[capitalize(node.nodeName)]
   else
-    element = new SVG.Element(node)
+    element = new SVG.Parent(node)
 
   // ensure references
   element.type  = node.nodeName
@@ -135,37 +135,6 @@ SVG.adopt = function(node) {
 
   return element
 }
-
-// Initialize parsing element
-SVG.prepare = function() {
-  // Select document body and create invisible svg element
-  var body = document.getElementsByTagName('body')[0]
-    , draw = (body ? new SVG.Doc(body) : SVG.adopt(document.documentElement).nested()).size(2, 0)
-
-  // Create parser object
-  SVG.parser = {
-    body: body || document.documentElement
-  , draw: draw.css({
-      opacity:0,
-      position:'absolute',
-      left:'-100%',
-      top:'-100%',
-      overflow:'hidden'
-    }).node
-  , poly: draw.polyline().node
-  , path: draw.path().node
-  , native: SVG.create('svg')
-  }
-}
-
-SVG.parser = {
-  native: SVG.create('svg')
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  if(!SVG.parser.draw)
-    SVG.prepare()
-}, false)
 
 // Storage for regular expressions
 SVG.regex = {
@@ -591,9 +560,14 @@ SVG.extend(SVG.PointArray, {
   }
   // Get bounding box of points
 , bbox: function() {
-    SVG.parser.poly.setAttribute('points', this.toString())
-
-    return SVG.parser.poly.getBBox()
+    var maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity
+    this.value.forEach(function(el) {
+      maxX = Math.max(el[0], maxX)
+      maxY = Math.max(el[1], maxY)
+      minX = Math.min(el[0], minX)
+      minY = Math.min(el[1], minY)
+    })
+    return {x: minX, y: minY, width: maxX-minX, height: maxY-minY}
   }
 })
 
@@ -649,10 +623,10 @@ var pathHandlers = {
   }
 }
 
-var mlhvqtcsa = 'mlhvqtcsaz'.split('')
+var mlhvqtcsaz = 'mlhvqtcsaz'.split('')
 
-for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
-  pathHandlers[mlhvqtcsa[i]] = (function(i){
+for(var i = 0, il = mlhvqtcsaz.length; i < il; ++i){
+  pathHandlers[mlhvqtcsaz[i]] = (function(i){
     return function(c, p, p0) {
       if(i == 'H') c[0] = c[0] + p.x
       else if(i == 'V') c[0] = c[0] + p.y
@@ -667,7 +641,7 @@ for(var i = 0, il = mlhvqtcsa.length; i < il; ++i){
 
       return pathHandlers[i](c, p, p0)
     }
-  })(mlhvqtcsa[i].toUpperCase())
+  })(mlhvqtcsaz[i].toUpperCase())
 }
 
 // Path points array
@@ -888,9 +862,8 @@ SVG.extend(SVG.PathArray, {
   }
   // Get bounding box of path
 , bbox: function() {
-    SVG.parser.path.setAttribute('d', this.toString())
-
-    return SVG.parser.path.getBBox()
+    SVG.parser().path.setAttribute('d', this.toString())
+    return SVG.parser.nodes.path.getBBox()
   }
 
 })
@@ -1006,6 +979,34 @@ SVG.Number = SVG.invent({
   }
 })
 
+SVG.HtmlNode = SVG.invent({
+  create: function(element) {
+    this.node = element
+  }
+
+, extend: {
+    add: function(element, i) {
+      element = createElement(element)
+      if(element instanceof SVG.Nested) {
+        element = new SVG.Doc(element.node)
+        element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
+      }
+
+      if (i == null)
+        this.node.appendChild(element.node)
+      else if (element.node != this.node.children[i])
+        this.node.insertBefore(element.node, this.node.children[i])
+
+      return this
+    }
+
+  , put: function(element, i) {
+      this.add(element, i)
+      return element
+    }
+  }
+})
+
 
 SVG.Element = SVG.invent({
   // Initialize node
@@ -1094,11 +1095,11 @@ SVG.Element = SVG.invent({
     }
     // Add element to given container and return self
   , addTo: function(parent) {
-      return parent.put(this)
+      return createElement(parent).put(this)
     }
     // Add element to given container and return container
   , putIn: function(parent) {
-      return parent.add(this)
+      return createElement(parent).add(this)
     }
     // Get / set id
   , id: function(id) {
@@ -1195,6 +1196,10 @@ SVG.Element = SVG.invent({
   , doc: function() {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
     }
+  , // Get defs
+    defs: function() {
+      return this.doc().defs()
+    }
     // return array of all ancestors of given type up to the root svg
   , parents: function(type) {
       var parents = [], parent = this
@@ -1235,6 +1240,9 @@ SVG.Element = SVG.invent({
 
       // otherwise act as a getter
       } else {
+        // write svgjs data to the dom
+        this.writeDataToDom()
+
         return this.node.outerHTML
       }
 
@@ -2343,7 +2351,7 @@ SVG.Matrix = SVG.invent({
     // Convert to native SVGMatrix
   , native: function() {
       // create new matrix
-      var matrix = SVG.parser.native.createSVGMatrix()
+      var matrix = SVG.parser.nodes.svg.node.createSVGMatrix()
 
       // update with current values
       for (var i = abcdef.length - 1; i >= 0; i--)
@@ -2432,7 +2440,7 @@ SVG.Point = SVG.invent({
     // Convert to native SVGPoint
   , native: function() {
       // create new point
-      var point = SVG.parser.native.createSVGPoint()
+      var point = SVG.parser.nodes.svg.node.createSVGPoint()
 
       // update with current values
       point.x = this.x
@@ -2967,6 +2975,8 @@ SVG.Parent = SVG.invent({
     }
     // Add given element at a position
   , add: function(element, i) {
+      element = createElement(element)
+
       if (i == null)
         this.node.appendChild(element.node)
       else if (element.node != this.node.children[i])
@@ -2977,7 +2987,7 @@ SVG.Parent = SVG.invent({
     // Basically does the same as `add()` but returns the added element instead
   , put: function(element, i) {
       this.add(element, i)
-      return element
+      return element.instance || element
     }
     // Checks if the given element is a child
   , has: function(element) {
@@ -3030,10 +3040,6 @@ SVG.Parent = SVG.invent({
       delete this._defs
 
       return this
-    }
-  , // Get defs
-    defs: function() {
-      return this.doc().defs()
     }
   }
 
@@ -3630,25 +3636,11 @@ SVG.extend(SVG.Defs, {
 SVG.Doc = SVG.invent({
   // Initialize node
   create: function(element) {
-    if (element) {
-      // ensure the presence of a dom element
-      element = typeof element == 'string' ?
-        document.getElementById(element) :
-        element
+    element = element || SVG.create('svg')
+    this.constructor.call(this, element)
 
-      // If the target is an svg element, use that element as the main wrapper.
-      // This allows svg.js to work with svg documents as well.
-      if (element.nodeName == 'svg') {
-        this.constructor.call(this, element)
-      } else {
-        this.constructor.call(this, SVG.create('svg'))
-        element.appendChild(this.node)
-        this.size('100%', '100%')
-      }
-
-      // set svg element attributes and ensure defs node
-      this.namespace().defs()
-    }
+    // set svg element attributes and ensure defs node
+    this.namespace().defs()
   }
 
   // Inherit from
@@ -3665,20 +3657,7 @@ SVG.Doc = SVG.invent({
     }
     // Creates and returns defs element
   , defs: function() {
-      if (!this._defs) {
-        var defs
-
-        // Find or create a defs element in this instance
-        if (defs = this.node.getElementsByTagName('defs')[0])
-          this._defs = SVG.adopt(defs)
-        else
-          this._defs = new SVG.Defs
-
-        // Make sure the defs node is at the end of the stack
-        this.node.appendChild(this._defs.node)
-      }
-
-      return this._defs
+      return this.put(this.node.getElementsByTagName('defs')[0] || new SVG.Defs)
     }
     // custom parent method
   , parent: function() {
@@ -3696,15 +3675,14 @@ SVG.Doc = SVG.invent({
       // remove children
       while(this.node.hasChildNodes())
         this.node.removeChild(this.node.lastChild)
-
-      // remove defs reference
-      delete this._defs
-
-      // add back parser
-      if(!SVG.parser.draw.parentNode)
-        this.node.appendChild(SVG.parser.draw)
-
       return this
+    }
+  , toNested: function() {
+      var el = SVG.create('svg')
+      this.node.instance = null
+      el.appendChild(this.node)
+
+      return SVG.adopt(this.node)
     }
   }
 
@@ -4476,11 +4454,7 @@ SVG.extend([SVG.Path], {
 
 SVG.Nested = SVG.invent({
   // Initialize node
-  create: function() {
-    this.constructor.call(this, SVG.create('svg'))
-
-    this.css('overflow', 'visible')
-  }
+  create: 'svg'
 
   // Inherit from
 , inherit: SVG.Container
@@ -4493,6 +4467,7 @@ SVG.Nested = SVG.invent({
     }
   }
 })
+
 SVG.A = SVG.invent({
   // Initialize node
   create: 'a'
@@ -4832,6 +4807,35 @@ SVG.extend(SVG.Parent, {
   }
 })
 
+function createElement(element, makeNested) {
+  if(element instanceof SVG.Element) return element
+
+  if(typeof element == 'object') {
+    return SVG.adopt(element)
+  }
+
+  if(element == null) {
+    return new SVG.Doc()
+  }
+
+  if(typeof element == 'string' && element.charAt(0) != '<') {
+    return SVG.adopt(document.querySelector(element))
+  }
+
+  var node = SVG.create('svg')
+  node.innerHTML = element
+
+  element = SVG.adopt(node.firstElementChild)
+
+  //if(element instanceof SVG.Nested) {
+  //  // We cant use the adopter for this because it will create an SVG.Nested
+  //  element = new SVG.Doc(element.node)
+  //  element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
+  //}
+
+  return element
+}
+
 function isNulledBox(box) {
   return !box.w && !box.h && !box.x && !box.y
 }
@@ -5125,7 +5129,7 @@ SVG.Box = SVG.invent({
         }
       } catch(e) {
         try {
-          var clone = this.clone(SVG.parser.draw.instance).show()
+          var clone = this.clone(SVG.parser().svg).show()
           box = clone.node.getBBox()
           clone.remove()
         } catch(e) {
@@ -5158,6 +5162,29 @@ SVG.extend([SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker,
     return this.attr('viewBox', new SVG.Box(x, y, width, height))
   }
 })
+
+SVG.parser = function() {
+  var b
+
+  if(!SVG.parser.nodes.svg.node.parentNode) {
+    b = document.body || document.documentElement
+    SVG.parser.nodes.svg.addTo(b)
+  }
+
+  return SVG.parser.nodes
+}
+
+SVG.parser.nodes = {
+  svg: new SVG.Nested().size(2, 0).css({
+    opacity:0,
+    position:'absolute',
+    left:'-100%',
+    top:'-100%',
+    overflow:'hidden'
+  })
+}
+
+SVG.parser.nodes.path = SVG.parser.nodes.svg.path().node
 
 
 return SVG
