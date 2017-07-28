@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jul 28 2017 14:19:21 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 28 2017 15:06:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3084,7 +3084,7 @@ SVG.Container = SVG.invent({
   // add event to SVG.Element
   SVG.Element.prototype[event] = function(f) {
     // bind event to element rather than element node
-    SVG.on(this.node, event, f)
+    SVG.on(this, event, f)
     return this
   }
 })
@@ -3095,27 +3095,29 @@ SVG.handlerMap = []
 SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
-SVG.on = function(node, event, listener, binding, options) {
-  // create listener, get object-index
-  var l     = listener.bind(binding || node.instance || node)
-    , index = (SVG.handlerMap.indexOf(node) + 1 || SVG.handlerMap.push(node)) - 1
-    , ev    = event.split('.')[0]
-    , ns    = event.split('.')[1] || '*'
+SVG.on = function(node, events, listener, binding, options) {
+  events.split(SVG.regex.delimiter).forEach(function(event) {
+    // create listener, get object-index
+    var l     = listener.bind(binding || node)
+      , n     = node instanceof SVG.Element ? node.node : node
+      , index = (SVG.handlerMap.indexOf(n) + 1 || SVG.handlerMap.push(n)) - 1
+      , ev    = event.split('.')[0]
+      , ns    = event.split('.')[1] || '*'
 
+    // ensure valid object
+    SVG.listeners[index]         = SVG.listeners[index]         || {}
+    SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
+    SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
 
-  // ensure valid object
-  SVG.listeners[index]         = SVG.listeners[index]         || {}
-  SVG.listeners[index][ev]     = SVG.listeners[index][ev]     || {}
-  SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
+    if(!listener._svgjsListenerId)
+      listener._svgjsListenerId = ++SVG.listenerId
 
-  if(!listener._svgjsListenerId)
-    listener._svgjsListenerId = ++SVG.listenerId
+    // reference listener
+    SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
 
-  // reference listener
-  SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
-
-  // add listener
-  node.addEventListener(ev, l, options || false)
+    // add listener
+    n.addEventListener(ev, l, options || false)
+  })
 }
 
 // Add event unbinder in the SVG namespace
@@ -3182,7 +3184,7 @@ SVG.off = function(node, event, listener) {
 SVG.extend(SVG.Element, {
   // Bind given event to listener
   on: function(event, listener, binding, options) {
-    SVG.on(this.node, event, listener, binding, options)
+    SVG.on(this, event, listener, binding, options)
 
     return this
   }

@@ -57,6 +57,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG()` does not set a default size anymore
 - default constructor now has an optional `node` argument which is used to consruct the object e.g. `new SVG.Rect(rectNode)`
 - SVG.Elements constructor now tries to import svgjs:data from the node
+- `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
+- `SVG.on()` and `el.on()` now accepts multiple comma or space seperated events e.g. "mousedown, foo bar" (#727)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
