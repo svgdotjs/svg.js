@@ -12,6 +12,11 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
+
+      if(node.hasAttribute('svgjs:data')) {
+        // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
+        this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+      }
     }
   }
 
@@ -98,7 +103,7 @@ SVG.Element = SVG.invent({
       if(typeof id == 'undefined' && !this.node.id) {
         this.node.id = SVG.eid(this.type)
       }
-      
+
       // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     }
@@ -233,7 +238,7 @@ SVG.Element = SVG.invent({
       } else {
         // write svgjs data to the dom
         this.writeDataToDom()
-      
+
         return this.node.outerHTML
       }
 

@@ -56,6 +56,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - all `SVG.*` objects now can have a node as parameter when constructing
 - `SVG()` does not set a default size anymore
 - default constructor now has an optional `node` argument which is used to consruct the object e.g. `new SVG.Rect(rectNode)`
+- SVG.Elements constructor now tries to import svgjs:data from the node
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

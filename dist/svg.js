@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Jul 25 2017 14:37:43 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jul 28 2017 14:19:21 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -112,17 +112,12 @@ SVG.adopt = function(node) {
   // adopt with element-specific settings
   if (node.nodeName == 'svg')
     element = node.parentNode instanceof window.SVGElement ? new SVG.Nested(node) : new SVG.Doc(node)
-  else if (node.nodeName == 'linearGradient')
-    element = new SVG.Gradient(node)
-  else if (node.nodeName == 'radialGradient')
+  else if (node.nodeName == 'linearGradient' || node.nodeName == 'radialGradient')
     element = new SVG.Gradient(node)
   else if (SVG[capitalize(node.nodeName)])
     element = new SVG[capitalize(node.nodeName)](node)
   else
     element = new SVG.Parent(node)
-
-  // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
-  element.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
 
   return element
 }
@@ -1012,6 +1007,11 @@ SVG.Element = SVG.invent({
     if (this.node = node) {
       this.type = node.nodeName
       this.node.instance = this
+
+      if(node.hasAttribute('svgjs:data')) {
+        // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
+        this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+      }
     }
   }
 
