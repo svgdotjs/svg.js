@@ -945,7 +945,7 @@ declare namespace svgjs {
         element(element: Element, file?: string): this;
     }
     interface Container {
-        use(element: Element, file?: string): Use;
+        use(element: Element | string, file?: string): Use;
     }
     interface Library { Use: Use; }
 
