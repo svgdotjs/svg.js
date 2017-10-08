@@ -278,6 +278,7 @@ declare namespace svgjs {
         native(): LinkedHTMLElement;
 
         svg(svg: string): this;
+        svg(): string;
         
         writeDataToDom(): this,
         setData(data: object): this,
