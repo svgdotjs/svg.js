@@ -423,7 +423,8 @@ declare namespace svgjs {
 
     // line.js
     interface ArrayPoint extends Array<number> { }
-    type PointArrayAlias = ArrayPoint | number[] | PointArray | string;
+    type ArrayAsPoint = [number, number];
+    type PointArrayAlias = ArrayPoint | number[] | ArrayAsPoint[] | PointArray | string;
     
     export interface Line extends Shape {
         new (): Line;
