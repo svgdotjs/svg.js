@@ -2272,7 +2272,7 @@ SVG.BBox = SVG.invent({
     if (element instanceof SVG.Element) {
       var box
 
-      // yes this is ugly, but Firefox can be a bitch when it comes to elements that are not yet rendered
+      // yes this is ugly, but Firefox can be a pain when it comes to elements that are not yet rendered
       try {
 
         if (!document.documentElement.contains){
@@ -5549,4 +5549,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));
