@@ -22,13 +22,6 @@ describe('Hyperlink', function() {
     })
   })
 
-  describe('show()', function() {
-    it('creates xlink:show attribute', function() {
-      link.show('replace')
-      expect(link.attr('show')).toBe('replace')
-    })
-  })
-
   describe('target()', function() {
     it('creates target attribute', function() {
       link.target('_blank')
