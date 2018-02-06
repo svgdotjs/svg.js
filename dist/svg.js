@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jul 28 2017 15:06:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Feb 06 2018 23:11:02 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4473,10 +4473,6 @@ SVG.A = SVG.invent({
     // Link url
     to: function(url) {
       return this.attr('href', url, SVG.xlink)
-    }
-    // Link show attribute
-  , show: function(target) {
-      return this.attr('show', target, SVG.xlink)
     }
     // Link target attribute
   , target: function(target) {

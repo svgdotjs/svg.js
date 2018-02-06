@@ -11,10 +11,6 @@ SVG.A = SVG.invent({
     to: function(url) {
       return this.attr('href', url, SVG.xlink)
     }
-    // Link show attribute
-  , show: function(target) {
-      return this.attr('show', target, SVG.xlink)
-    }
     // Link target attribute
   , target: function(target) {
       return this.attr('target', target)
