@@ -105,8 +105,8 @@ SVG.off = function(node, event, listener) {
     for (event in SVG.listeners[index])
       SVG.off(node, event)
 
-    SVG.listeners.splice(index, 1)
-    SVG.handlerMap.splice(index, 1)
+    delete SVG.listeners[index]
+    delete SVG.handlerMap[index]
 
   }
 }

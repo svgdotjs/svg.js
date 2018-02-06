@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 06 2018 12:39:43 GMT+0100 (CET)
+* BUILT: Tue Feb 06 2018 20:52:06 GMT+0100 (CET)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3489,8 +3489,8 @@ SVG.off = function(node, event, listener) {
     for (event in SVG.listeners[index])
       SVG.off(node, event)
 
-    SVG.listeners.splice(index, 1)
-    SVG.handlerMap.splice(index, 1)
+    delete SVG.listeners[index]
+    delete SVG.handlerMap[index]
 
   }
 }
