@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 06 2018 01:34:41 GMT+0100 (CET)
+* BUILT: Tue Feb 06 2018 12:12:24 GMT+0100 (CET)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4461,56 +4461,62 @@ SVG.Image = SVG.invent({
 
   // Add class methods
 , extend: {
+    remove: function() {
+        SVG.Element.prototype.remove.call(this);
+        SVG.off(this.img);
+        return this
+    }
     // (re)load image
-    load: function(url) {
-      if (!url) return this
+    , load: function(url) {
+        if (!url) return this
 
-      var self = this
-        , img  = new window.Image()
+        var self = this;
+        this.img  = new window.Image()
 
-      // preload image
-      SVG.on(this.node, 'load', function() {
-        var p = self.parent(SVG.Pattern)
+        // preload image
+        SVG.on(this.img, 'load', function() {
+            var p = self.parent(SVG.Pattern)
 
-        if(p === null) return
+            if(p === null) return
 
-        // ensure image size
-        if (self.width() == 0 && self.height() == 0)
-          self.size(img.width, img.height)
+            // ensure image size
+            if (self.width() == 0 && self.height() == 0)
+                self.size(self.img.width, self.img.height)
 
-        // ensure pattern size if not set
-        if (p && p.width() == 0 && p.height() == 0)
-          p.size(self.width(), self.height())
+            // ensure pattern size if not set
+            if (p && p.width() == 0 && p.height() == 0)
+                p.size(self.width(), self.height())
 
-        // callback
-        if (typeof self._loaded === 'function')
-          self._loaded.call(self, {
-            width:  img.width
-          , height: img.height
-          , ratio:  img.width / img.height
-          , url:    url
-          })
-      })
+            // callback
+            if (typeof self._loaded === 'function')
+                self._loaded.call(self, {
+                    width:  self.img.width
+                    , height: self.img.height
+                    , ratio:  self.img.width / img.height
+                    , url:    url
+                })
+        })
 
-      SVG.on(this.node, 'error', function(e){
-        if (typeof self._error === 'function'){
-            self._error.call(self, e)
-        }
-      })
+        SVG.on(this.img, 'error', function(e){
+            if (typeof self._error === 'function'){
+                self._error.call(self, e)
+            }
 
-      return this.attr('href', (img.src = this.src = url), SVG.xlink)
+        })
+
+        return this.attr('href', (this.img.src = this.src = url), SVG.xlink)
     }
     // Add loaded callback
-  , loaded: function(loaded) {
-      this._loaded = loaded
-      return this
+    , loaded: function(loaded) {
+        this._loaded = loaded
+        return this
     }
 
-  , error: function(error) {
-      this._error = error
-      return this
+    , error: function(error) {
+        this._error = error
+        return this
     }
-  }
+    }
 
   // Add parent method
 , construct: {
