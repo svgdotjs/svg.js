@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 06 2018 12:12:24 GMT+0100 (CET)
+* BUILT: Tue Feb 06 2018 12:39:43 GMT+0100 (CET)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3489,8 +3489,8 @@ SVG.off = function(node, event, listener) {
     for (event in SVG.listeners[index])
       SVG.off(node, event)
 
-    delete SVG.listeners[index]
-    delete SVG.handlerMap[index]
+    SVG.listeners.splice(index, 1)
+    SVG.handlerMap.splice(index, 1)
 
   }
 }
@@ -4516,7 +4516,7 @@ SVG.Image = SVG.invent({
         this._error = error
         return this
     }
-    }
+  }
 
   // Add parent method
 , construct: {
