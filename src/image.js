@@ -14,8 +14,7 @@ SVG.Image = SVG.invent({
       var img = new window.Image()
 
       SVG.on(img, 'load', function(e) {
-        
-        var p = this.parent()
+        var p = this.parent(SVG.Pattern)
 
         // ensure image size
         if (this.width() == 0 && this.height() == 0)
@@ -36,6 +35,11 @@ SVG.Image = SVG.invent({
           })
         }
       }, this)
+
+      SVG.on(img, 'load error', function() {
+        // dont forget to unbind memory leaking events
+        SVG.off(img)
+      })
 
       return this.attr('href', (img.src = url), SVG.xlink)
     }

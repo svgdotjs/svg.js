@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 06 2018 23:11:02 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Wed Feb 07 2018 10:08:55 GMT+0100 (Mitteleuropäische Zeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4097,8 +4097,7 @@ SVG.Image = SVG.invent({
       var img = new window.Image()
 
       SVG.on(img, 'load', function(e) {
-
-        var p = this.parent()
+        var p = this.parent(SVG.Pattern)
 
         // ensure image size
         if (this.width() == 0 && this.height() == 0)
@@ -4119,6 +4118,11 @@ SVG.Image = SVG.invent({
           })
         }
       }, this)
+
+      SVG.on(img, 'load error', function() {
+        // dont forget to unbind this memory leaking events
+        SVG.off(img)
+      })
 
       return this.attr('href', (img.src = url), SVG.xlink)
     }
