@@ -16,6 +16,8 @@ SVG.Image = SVG.invent({
       
       // preload image
       SVG.on(img, 'load', function() {
+        SVG.off(img)
+
         var p = self.parent(SVG.Pattern)
 
         if(p === null) return
@@ -39,6 +41,8 @@ SVG.Image = SVG.invent({
       })
 
       SVG.on(img, 'error', function(e){
+        SVG.off(img)
+
         if (typeof self._error === 'function'){
             self._error.call(self, e)
         }
