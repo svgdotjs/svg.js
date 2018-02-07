@@ -28,6 +28,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+## [2.6.4] - 2018-02-07
+
+### Fixed
+- fixed memory leak when creating images (#805)
+
 ## [2.6.3] - 2017-07-21
 
 ### Fixed
@@ -612,6 +617,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.4
 [2.6.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.3
 [2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
 [2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
