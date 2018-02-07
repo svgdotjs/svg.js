@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 06 2018 20:52:06 GMT+0100 (CET)
+* BUILT: Wed Feb 07 2018 19:34:58 GMT+0100 (CET)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4461,60 +4461,58 @@ SVG.Image = SVG.invent({
 
   // Add class methods
 , extend: {
-    remove: function() {
-        SVG.Element.prototype.remove.call(this);
-        SVG.off(this.img);
-        return this
-    }
     // (re)load image
-    , load: function(url) {
-        if (!url) return this
+    load: function(url) {
+      if (!url) return this
 
-        var self = this;
-        this.img  = new window.Image()
+      var self = this
+        , img  = new window.Image()
 
-        // preload image
-        SVG.on(this.img, 'load', function() {
-            var p = self.parent(SVG.Pattern)
+      // preload image
+      SVG.on(img, 'load', function() {
+        SVG.off(img)
 
-            if(p === null) return
+        var p = self.parent(SVG.Pattern)
 
-            // ensure image size
-            if (self.width() == 0 && self.height() == 0)
-                self.size(self.img.width, self.img.height)
+        if(p === null) return
 
-            // ensure pattern size if not set
-            if (p && p.width() == 0 && p.height() == 0)
-                p.size(self.width(), self.height())
+        // ensure image size
+        if (self.width() == 0 && self.height() == 0)
+          self.size(img.width, img.height)
 
-            // callback
-            if (typeof self._loaded === 'function')
-                self._loaded.call(self, {
-                    width:  self.img.width
-                    , height: self.img.height
-                    , ratio:  self.img.width / img.height
-                    , url:    url
-                })
-        })
+        // ensure pattern size if not set
+        if (p && p.width() == 0 && p.height() == 0)
+          p.size(self.width(), self.height())
 
-        SVG.on(this.img, 'error', function(e){
-            if (typeof self._error === 'function'){
-                self._error.call(self, e)
-            }
+        // callback
+        if (typeof self._loaded === 'function')
+          self._loaded.call(self, {
+            width:  img.width
+          , height: img.height
+          , ratio:  img.width / img.height
+          , url:    url
+          })
+      })
 
-        })
+      SVG.on(img, 'error', function(e){
+        SVG.off(img)
 
-        return this.attr('href', (this.img.src = this.src = url), SVG.xlink)
+        if (typeof self._error === 'function'){
+            self._error.call(self, e)
+        }
+      })
+
+      return this.attr('href', (img.src = this.src = url), SVG.xlink)
     }
     // Add loaded callback
-    , loaded: function(loaded) {
-        this._loaded = loaded
-        return this
+  , loaded: function(loaded) {
+      this._loaded = loaded
+      return this
     }
 
-    , error: function(error) {
-        this._error = error
-        return this
+  , error: function(error) {
+      this._error = error
+      return this
     }
   }
 
