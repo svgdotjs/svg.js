@@ -12,22 +12,37 @@ SVG.Doc = SVG.invent({
 
   // Add class methods
   extend: {
+    isRoot: function() {
+      return !this.node.parentNode || !this.node.parentNode instanceof window.SVGElement || this.node.parentNode.nodeName == '#document'
+    },
+    doc: function() {
+      if(this.isRoot()) return this
+
+      var parent
+      while(parent = this.parent(SVG.Doc)) {
+        if(parent.isRoot()) return parent
+      }
+
+      throw new Error('This should never be reached')
+    },
     // Add namespaces
-    namespace: function () {
+    namespace: function() {
+      if(!this.isRoot()) return this.doc().namespace()
       return this
         .attr({ xmlns: SVG.ns, version: '1.1' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
         .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
     },
     // Creates and returns defs element
-    defs: function () {
+    defs: function() {
+      if(!this.isRoot()) return this.doc().defs()
       return SVG.adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new SVG.Defs())
     },
     // custom parent method
     parent: function () {
       return this.node.parentNode.nodeName === '#document' ? null : this.node.parentNode
     },
-      // Removes the doc from the DOM
+    // Removes the doc from the DOM
     remove: function () {
       if (this.parent()) {
         this.parent().removeChild(this.node)
@@ -41,14 +56,12 @@ SVG.Doc = SVG.invent({
         this.node.removeChild(this.node.lastChild)
       }
       return this
-    },
-    toNested: function () {
-      var el = SVG.create('svg')
-      this.node.instance = null
-      el.appendChild(this.node)
-
-      return SVG.adopt(this.node)
+    }
+  },
+  construct: {
+    // Create nested svg document
+    nested: function() {
+      return this.put(new SVG.Doc)
     }
   }
-
 })
