@@ -23,7 +23,9 @@ SVG.Doc = SVG.invent({
         if(parent.isRoot()) return parent
       }
 
-      throw new Error('This should never be reached')
+      // this can only happen when you have something like
+      // <g><svg>...</svg></g>
+      return null
     },
     // Add namespaces
     namespace: function() {
