@@ -554,8 +554,8 @@ declare namespace svgjs {
     // memory.js
     interface Element {
         remember(name: string, value: any): this;
-        remember(obj: Object): this;
         remember(name: string): any;
+        remember(obj: Object): this;
         forget(...keys: string[]): this;
         forget(): this;
         memory(): Object;
