@@ -272,8 +272,8 @@ declare namespace svgjs {
         toggleClass(name: string): this;
 
         reference(type: string): Element;
-
-        parent(type?: ParentTypeAlias): Parent;
+        // Add HTMLElement for Doc inheritance
+        parent(type?: ParentTypeAlias): Parent | HTMLElement;
         doc(): Parent;
         parents(): Parent[];
 
