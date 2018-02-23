@@ -317,7 +317,7 @@ declare namespace svgjs {
     // event.js
     interface Element {
         on(event: string, cb: Function, context?: Object): this;
-        off(event: string, cb: Function, context?: Object): this;
+        off(event: string, cb?: Function, context?: Object): this;
         fire(event: string, data?: any): this;
         fire(event: Event): this;
         event(): Event | CustomEvent;
