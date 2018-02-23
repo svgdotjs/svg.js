@@ -320,6 +320,7 @@ declare namespace svgjs {
         off(event: string, cb: Function, context?: Object): this;
         fire(event: string, data?: any): this;
         fire(event: Event): this;
+        event(): Event | CustomEvent;
 
         click(cb: Function): this;
         dblclick(cb: Function): this;
