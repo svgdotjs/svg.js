@@ -1010,10 +1010,10 @@ declare namespace svgjs {
         to(value: number): Animation;
         after(cb: () => void): Animation;
 
-        rotate(degrees: number, cx?: number, cy?: number): Animation
-        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation
-        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation
-        translate(x: number, y: number): Animation
+        rotate(degrees: number, cx?: number, cy?: number): Animation;
+        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation;
+        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation;
+        translate(x: number, y: number): Animation;
 
         // TODO style, etc, bbox...
     }
