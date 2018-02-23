@@ -44,7 +44,7 @@ declare namespace svgjs {
 
     // array.js
     type ArrayAlias = _Array | number[] | string;
-    
+
     interface _Array {
         new (array?: ArrayAlias, fallback?: number[]): _Array;
         value: number[];
@@ -93,7 +93,7 @@ declare namespace svgjs {
         merge(box: Box): Box;
         transform(m: Matrix): Box
     }
-    
+
     export interface BBox extends Box {
         new (element?: Element): BBox;
     }
@@ -129,16 +129,16 @@ declare namespace svgjs {
         unclip(): this;
     }
     interface Library { ClipPath: ClipPath; }
-    
+
     // color.js
     interface ColorLike {
         r: number;
         g: number;
         b: number;
     }
-    
+
     type ColorAlias = string | ColorLike;
-    
+
     export interface Color extends ColorLike{
         new (): Color;
         new (color: ColorAlias): Color;
@@ -159,7 +159,7 @@ declare namespace svgjs {
         width: number;
         height:number;
     }
-    
+
     export interface Container extends Parent {
         new (): Container;
     }
@@ -221,6 +221,7 @@ declare namespace svgjs {
     }
     interface Library { Doc: Doc; }
 
+    type ParentTypeAlias = string | Doc | Nested | G;
     // element.js
     export interface Element {
         new (): Element;
@@ -271,7 +272,9 @@ declare namespace svgjs {
         toggleClass(name: string): this;
 
         reference(type: string): Element;
-
+        // Add HTMLElement for Doc inheritance
+        parent(type?: ParentTypeAlias): Parent | HTMLElement;
+        doc(): Parent;
         parents(): Parent[];
 
         matches(selector: string): boolean;
@@ -279,10 +282,10 @@ declare namespace svgjs {
 
         svg(svg: string): this;
         svg(): string;
-        
+
         writeDataToDom(): this,
         setData(data: object): this,
-        
+
         is(cls: any): boolean;
     }
     interface Library { Element: Element; }
@@ -352,7 +355,7 @@ declare namespace svgjs {
         offset?: number;
         opacity?: number;
     }
-    
+
     // gradient.js
     export interface Stop extends Element {
         new (): Stop;
@@ -424,7 +427,7 @@ declare namespace svgjs {
     // line.js
     interface ArrayPoint extends Array<number> { }
     type PointArrayAlias = ArrayPoint[] | number[] | PointArray | string;
-    
+
     export interface Line extends Shape {
         new (): Line;
         array(): PointArray;
@@ -505,7 +508,7 @@ declare namespace svgjs {
         f: number;
         matrix: Matrix;
     }
-    
+
     interface MatrixLike {
         a: number;
         b: number;
@@ -514,9 +517,9 @@ declare namespace svgjs {
         e: number;
         f: number;
     }
-    
+
     type MatrixAlias = MatrixLike | number[] | Element | string;
-    
+
     export interface Matrix {
         new (): Matrix;
         new (source: MatrixAlias): Matrix;
@@ -586,7 +589,7 @@ declare namespace svgjs {
         at(pos: number): _Number;
     }
     interface Library { Number: _Number; }
-    
+
     type NumberAlias = _Number | number | string;
 
     // parent.js
@@ -610,7 +613,7 @@ declare namespace svgjs {
     // path.js
     interface PathArrayPoint extends Array<number | string> { }
     type PathArrayAlias = PathArray | (string | number)[] | PathArrayPoint[] | string;
-    
+
     export interface Path extends Shape {
         new (): Path;
         morphArray: PathArray;
@@ -963,7 +966,7 @@ declare namespace svgjs {
 
     // viewbox.js
     type ViewBoxAlias = ViewBoxLike | number[] | string | Element;
-    
+
     interface ViewBox {
         new (source: ViewBoxAlias): ViewBox;
         new (x: number, y: number, width: number, height: number): ViewBox;
