@@ -283,8 +283,8 @@ declare namespace svgjs {
         svg(svg: string): this;
         svg(): string;
 
-        writeDataToDom(): this,
-        setData(data: object): this,
+        writeDataToDom(): this;
+        setData(data: object): this;
 
         is(cls: any): boolean;
     }
