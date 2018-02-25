@@ -640,35 +640,37 @@ SVG.FX = SVG.invent({
       // animate initialTransformation which has to be chained
       if(s.transforms.length){
 
-        // get initial initialTransformation
-        at = s.initialTransformation
-        for(i = 0, len = s.transforms.length; i < len; i++){
+        // TODO: ANIMATE THE TRANSFORMS
 
-          // get next transformation in chain
-          var a = s.transforms[i]
-
-          // multiply matrix directly
-          if(a instanceof SVG.Matrix){
-
-            if(a.relative){
-              at = at.multiply(new SVG.Matrix().morph(a).at(s.ease(this.pos)))
-            }else{
-              at = at.morph(a).at(s.ease(this.pos))
-            }
-            continue
-          }
-
-          // when transformation is absolute we have to reset the needed transformation first
-          if(!a.relative)
-            a.undo(at.extract())
-
-          // and reapply it after
-          at = at.multiply(a.at(s.ease(this.pos)))
-
-        }
-
-        // set new matrix on element
-        target.matrix(at)
+        // // get initial initialTransformation
+        // at = s.initialTransformation
+        // for(i = 0, len = s.transforms.length; i < len; i++){
+        //
+        //   // get next transformation in chain
+        //   var a = s.transforms[i]
+        //
+        //   // multiply matrix directly
+        //   if(a instanceof SVG.Matrix){
+        //
+        //     if(a.relative){
+        //       at = at.multiply(new SVG.Matrix().morph(a).at(s.ease(this.pos)))
+        //     }else{
+        //       at = at.morph(a).at(s.ease(this.pos))
+        //     }
+        //     continue
+        //   }
+        //
+        //   // when transformation is absolute we have to reset the needed transformation first
+        //   if(!a.relative)
+        //     a.undo(at.decompose())
+        //
+        //   // and reapply it after
+        //   at = at.multiply(a.at(s.ease(this.pos)))
+        //
+        // }
+        //
+        // // set new matrix on element
+        // target.matrix(at)
       }
 
       return this

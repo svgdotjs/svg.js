@@ -4,10 +4,10 @@ SVG.utils = {
     var i
       , il = array.length
       , result = []
-    
+
     for (i = 0; i < il; i++)
       result.push(block(array[i]))
-    
+
     return result
   }
 
@@ -16,11 +16,11 @@ SVG.utils = {
     var i
       , il = array.length
       , result = []
-    
+
     for (i = 0; i < il; i++)
       if (block(array[i]))
         result.push(array[i])
-    
+
     return result
   }
 

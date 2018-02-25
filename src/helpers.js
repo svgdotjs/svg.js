@@ -105,14 +105,6 @@ function proportionalSize(element, width, height) {
   }
 }
 
-// Delta transform point
-function deltaTransformPoint(matrix, x, y) {
-  return {
-    x: x * matrix.a + y * matrix.c + 0
-  , y: x * matrix.b + y * matrix.d + 0
-  }
-}
-
 // Map matrix array to object
 function arrayToMatrix(a) {
   return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
@@ -209,3 +201,18 @@ function idFromReference(url) {
 
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
+
+// Gets the distance of a point (a, b) from the origin
+function mag (a, b) {
+  return Math.sqrt(a * a + b * b)
+}
+
+// Given a coordinate (a, b), this will calculate the sin, cosine and angle
+// of this point projected onto the unit circle directly
+function unitCircle (a, b) {
+  var len = Math.sqrt(a * a + b * b)
+    , cos = a / len
+    , sin = b / len
+    , theta = Math.atan2(b, a) * 180 / Math.PI
+  return {theta: theta, cos: cos, sin: sin}
+}

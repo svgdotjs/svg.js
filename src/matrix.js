@@ -23,33 +23,85 @@ SVG.Matrix = SVG.invent({
 
   // Add methods
 , extend: {
-    // Extract individual transformations
-    extract: function() {
-      // find delta transform points
-      var px    = deltaTransformPoint(this, 0, 1)
-        , py    = deltaTransformPoint(this, 1, 0)
-        , skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
+    // Convert an array of affine parameters into a matrix
+    compose: function (o, cx, cy) {
 
+      // Set the defaults
+      var tx = o.translateX || 0
+        , ty = o.translateY || 0
+        , theta = o.theta || 0
+        , sx = o.scaleX || 1
+        , sy = o.scaleY || 1
+        , lam = o.shear || 0
+        , cx = cx || 0
+        , cy = cy || 0
+
+      // Calculate the trigonometric values
+      var ct = Math.cos(theta * Math.PI / 180)
+        , st Math.sin(theta * Math.PI / 180)
+
+      // Calculate the matrix components directly
+      var a = sx * ct
+        , b = sx * st
+        , c = lam * sx * ct - sy * st
+        , d = lam * sx * st + sy * ct
+        , e = - sx * ct * (cx + cy * lam) + sy * st * cy + tx + cx
+        , f = - sx * st * (cx + cy * lam) - sy * ct * cy + ty + cy
+
+      // Construct a new matrix and return it
+      var matrix = new SVG.Matrix([a, b, c, d, e, f])
+      return matrix
+    }
+    // Decompose a matrix into the affine parameters needed to form it
+  ,  decompose: function (matrix, cx, cy) {
+
+      // Get the paramaters of the current matrix
+      var a = matrix.a
+        , b = matrix.b
+        , c = matrix.c
+        , d = matrix.d
+        , e = matrix.e
+        , f = matrix.f
+
+      // Project the first basis vector onto the unit circle
+      var circle = unitCircle (a, b)
+        , theta = circle.theta
+        , ct = circle.cos
+        , st = circle.sin
+
+      // Work out the transformation parameters
+      var signX = Math.sign(a * ct + b * st)
+        , sx = signX * mag (a, b)
+        , lam = (st * d + ct * c) / (ct * a + st * b)
+        , signY = Math.sign(- c * st + d * ct)
+        , sy = mag (lam * a - c, d - lam * b)
+        , tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
+        , ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
+
+      // Package and return the parameters
       return {
-        // translation
-        x:        this.e
-      , y:        this.f
-      , transformedX:(this.e * Math.cos(skewX * Math.PI / 180) + this.f * Math.sin(skewX * Math.PI / 180)) / Math.sqrt(this.a * this.a + this.b * this.b)
-      , transformedY:(this.f * Math.cos(skewX * Math.PI / 180) + this.e * Math.sin(-skewX * Math.PI / 180)) / Math.sqrt(this.c * this.c + this.d * this.d)
-        // skew
-      , skewX:    -skewX
-      , skewY:    180 / Math.PI * Math.atan2(py.y, py.x)
-        // scale
-      , scaleX:   Math.sqrt(this.a * this.a + this.b * this.b)
-      , scaleY:   Math.sqrt(this.c * this.c + this.d * this.d)
-        // rotation
-      , rotation: skewX
+
+        // Bundle the affine parameters
+        translateX: tx
+      , translateY: ty
+      , theta: theta
+      , scaleX: sx
+      , scaleY: sy
+      , shear: lam
+
+      // Bundle the matrix parameters
       , a: this.a
       , b: this.b
       , c: this.c
       , d: this.d
       , e: this.e
       , f: this.f
+
+      // Return the new origin point
+      , x: this.e
+      , y: this.f
+
+      // Store the matrix
       , matrix: new SVG.Matrix(this)
       }
     }
