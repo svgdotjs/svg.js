@@ -166,7 +166,11 @@ SVG.Matrix = SVG.invent({
     }
     // Convert matrix to string
   , toString: function() {
-      return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+      // Construct the matrix directly, avoid values that are too small
+      return 'matrix(' + float32String(this.a) + ',' + float32String(this.b)
+        + ',' + float32String(this.c) + ',' + float32String(this.d)
+        + ',' + float32String(this.e) + ',' + float32String(this.f)
+        + ')'
     }
   }
 

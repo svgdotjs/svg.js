@@ -24,7 +24,7 @@ function matches(el, selector) {
 }
 
 // Convert dash-separated-string to camelCase
-function camelCase(s) { 
+function camelCase(s) {
   return s.toLowerCase().replace(/-(.)/g, function(m, g) {
     return g.toUpperCase()
   })
@@ -35,7 +35,7 @@ function capitalize(s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-// Ensure to six-based hex 
+// Ensure to six-based hex
 function fullHex(hex) {
   return hex.length == 4 ?
     [ '#',
@@ -55,13 +55,13 @@ function compToHex(comp) {
 function proportionalSize(element, width, height) {
   if (width == null || height == null) {
     var box = element.bbox()
-    
+
     if (width == null)
       width = box.width / box.height * height
     else if (height == null)
       height = box.height / box.width * width
   }
-  
+
   return {
     width:  width
   , height: height
@@ -85,7 +85,7 @@ function arrayToMatrix(a) {
 function parseMatrix(matrix) {
   if (!(matrix instanceof SVG.Matrix))
     matrix = new SVG.Matrix(matrix)
-  
+
   return matrix
 }
 
@@ -128,7 +128,7 @@ function arrayToString(a) {
       }
     }
   }
-  
+
   return s + ' '
 }
 
@@ -166,6 +166,12 @@ function idFromReference(url) {
   var m = url.toString().match(SVG.regex.reference)
 
   if (m) return m[1]
+}
+
+// If values like 1e-88 are passed, this is not a valid 32 bit float,
+// but in those cases, we are so close to 0 that 0 works well!
+function float32String(v) {
+  return Math.abs(v) > 1e-37 ? v : 0
 }
 
 // Create matrix array for looping

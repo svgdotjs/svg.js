@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Feb 07 2018 22:59:25 GMT+0100 (Mitteleuropäische Zeit)
+* BUILT: Sun Feb 25 2018 18:32:36 GMT+1100 (AEDT)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1234,7 +1234,7 @@ SVG.Element = SVG.invent({
       // act as a setter if svg is given
       if (svg && this instanceof SVG.Parent) {
         // dump raw svg
-        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<(\w+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
+        well.innerHTML = '<svg>' + svg.replace(/\n/, '').replace(/<([\w:-]+)([^<]+?)\/>/g, '<$1$2></$1>') + '</svg>'
 
         // transplant nodes
         for (var i = 0, il = well.firstChild.childNodes.length; i < il; i++)
@@ -2540,7 +2540,11 @@ SVG.Matrix = SVG.invent({
     }
     // Convert matrix to string
   , toString: function() {
-      return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+      // Construct the matrix directly, avoid values that are too small
+      return 'matrix(' + float32String(this.a) + ',' + float32String(this.b)
+        + ',' + float32String(this.c) + ',' + float32String(this.d)
+        + ',' + float32String(this.e) + ',' + float32String(this.f)
+        + ')'
     }
   }
 
@@ -5506,8 +5510,15 @@ function idFromReference(url) {
   if (m) return m[1]
 }
 
+// If values like 1e-88 are passed, this is not a valid 32 bit float,
+// but in those cases, we are so close to 0 that 0 works well!
+function float32String(v) {
+  return Math.abs(v) > 1e-37 ? v : 0
+}
+
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
+
 // Add CustomEvent to IE9 and IE10
 if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
@@ -5553,4 +5564,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));
