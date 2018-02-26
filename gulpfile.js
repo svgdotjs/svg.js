@@ -97,6 +97,7 @@ gulp.task('unify', ['clean'], function () {
   return gulp.src(parts)
     // .pipe(standard())
     // .pipe(standard.reporter('default', {
+    //   showRuleNames: true,
     //   breakOnError: true,
     //   quiet: true
     // }))

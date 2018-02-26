@@ -1,3 +1,5 @@
+/* global createElement */
+
 SVG.HtmlNode = SVG.invent({
   create: function (element) {
     this.node = element

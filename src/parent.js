@@ -1,3 +1,5 @@
+/* global createElement */
+
 SVG.Parent = SVG.invent({
   // Initialize node
   create: function (node) {

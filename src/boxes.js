@@ -1,3 +1,5 @@
+/* globals fullBox, domContains, isNulledBox, Exception */
+
 SVG.Box = SVG.invent({
   create: function (source) {
     var base = [0, 0, 0, 0]

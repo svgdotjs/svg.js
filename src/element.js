@@ -1,3 +1,4 @@
+/* global proportionalSize, assignNewId, createElement, matches, is */
 
 SVG.Element = SVG.invent({
   // Initialize node

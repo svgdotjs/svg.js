@@ -1,3 +1,5 @@
+/* globals fullHex, compToHex */
+
 // Module for color convertions
 SVG.Color = function (color) {
   var match

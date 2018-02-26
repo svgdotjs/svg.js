@@ -1,3 +1,4 @@
+/* global ensureCentre, capitalize, arrayToMatrix */
 
 SVG.extend(SVG.Element, {
   // Add transformations
@@ -65,8 +66,8 @@ SVG.extend(SVG.Element, {
 
       if (!relative) {
         // absolute; reset skew values
-        var e = matrix.extract()
-        matrix = matrix.multiply(new SVG.Matrix().skew(e.skewX, e.skewY, o.cx, o.cy).inverse())
+        var el = matrix.extract()
+        matrix = matrix.multiply(new SVG.Matrix().skew(el.skewX, el.skewY, el.cx, el.cy).inverse())
       }
 
       matrix = matrix.skew(o.skewX, o.skewY, o.cx, o.cy)
@@ -227,15 +228,16 @@ SVG.Transformation = SVG.invent({
 
   create: function (source, inversed) {
     if (arguments.length > 1 && typeof inversed !== 'boolean') {
-      return this.constructor.call(this, [].slice.call(arguments))
+      return this.constructor.bind(this)([].slice.call(arguments))
     }
 
+    var i, len
     if (Array.isArray(source)) {
-      for (var i = 0, len = this.arguments.length; i < len; ++i) {
+      for (i = 0, len = this.arguments.length; i < len; ++i) {
         this[this.arguments[i]] = source[i]
       }
     } else if (typeof source === 'object') {
-      for (var i = 0, len = this.arguments.length; i < len; ++i) {
+      for (i = 0, len = this.arguments.length; i < len; ++i) {
         this[this.arguments[i]] = source[this.arguments[i]]
       }
     }

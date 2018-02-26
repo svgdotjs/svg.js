@@ -1,7 +1,7 @@
 // unify all point to point elements
 SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon], {
   // Define morphable array
-  morphArray: SVG.PointArray,
+  MorphArray: SVG.PointArray,
   // Move by left top corner over x-axis
   x: function (x) {
     return x == null ? this.bbox().x : this.move(x, this.bbox().y)

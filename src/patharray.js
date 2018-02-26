@@ -1,3 +1,5 @@
+/* globals arrayToString, pathRegReplace */
+
 var pathHandlers = {
   M: function (c, p, p0) {
     p.x = p0.x = c[0]
@@ -229,9 +231,7 @@ SVG.extend(SVG.PathArray, {
     if (array instanceof SVG.PathArray) return array.valueOf()
 
     // prepare for parsing
-    var i, x0, y0, s, seg, arr
-    var x = 0
-    var y = 0
+    var s
     var paramCnt = { 'M': 2, 'L': 2, 'H': 1, 'V': 1, 'C': 6, 'S': 4, 'Q': 4, 'T': 2, 'A': 7, 'Z': 0 }
 
     if (typeof array === 'string') {

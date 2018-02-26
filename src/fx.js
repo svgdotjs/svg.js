@@ -864,7 +864,7 @@ SVG.extend(SVG.FX, {
       return this.plot([a, b, c, d])
     }
 
-    return this.add('plot', new (this.target().morphArray)(a))
+    return this.add('plot', new (this.target().MorphArray)(a))
   },
   // Add leading method
   leading: function (value) {

@@ -1,3 +1,5 @@
+/* global proportionalSize */
+
 SVG.Line = SVG.invent({
   // Initialize node
   create: 'line',

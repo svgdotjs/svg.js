@@ -104,7 +104,7 @@ SVG.extend(SVG.PointArray, {
 
     return this
   },
-  
+
   // Get bounding box of points
   bbox: function () {
     var maxX = -Infinity

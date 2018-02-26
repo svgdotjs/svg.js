@@ -1,3 +1,4 @@
+
 SVG.Use = SVG.invent({
   // Initialize node
   create: 'use',

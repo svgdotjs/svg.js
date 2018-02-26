@@ -1,3 +1,5 @@
+/* global proportionalSize */
+
 SVG.Circle = SVG.invent({
   // Initialize node
   create: 'circle',

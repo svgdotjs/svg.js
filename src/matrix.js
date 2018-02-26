@@ -1,3 +1,5 @@
+/* global abcdef, arrayToMatrix, deltaTransformPoint, parseMatrix */
+
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
@@ -7,15 +9,16 @@ SVG.Matrix = SVG.invent({
     // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
-      : arguments.length == 6 ? arrayToMatrix([].slice.call(arguments))
+      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : Array.isArray(source) ? arrayToMatrix(source)
       : typeof source === 'object' ? source
       : base
 
     // merge source
     for (i = abcdef.length - 1; i >= 0; --i) {
-      this[abcdef[i]] = source[abcdef[i]] != null ?
-        source[abcdef[i]] : base[abcdef[i]]
+      this[abcdef[i]] = source[abcdef[i]] != null
+        ? source[abcdef[i]]
+        : base[abcdef[i]]
     }
   },
 
@@ -190,7 +193,5 @@ SVG.Matrix = SVG.invent({
       }
       return new SVG.Matrix(this.node.getScreenCTM())
     }
-
   }
-
 })

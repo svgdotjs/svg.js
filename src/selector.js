@@ -1,3 +1,5 @@
+/* global idFromReference */
+
 // Method for getting an element by id
 SVG.get = function (id) {
   var node = document.getElementById(idFromReference(id) || id)

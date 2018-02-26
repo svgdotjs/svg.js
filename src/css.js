@@ -1,3 +1,5 @@
+/* global camelCase */
+
 SVG.extend(SVG.Element, {
   // Dynamic style generator
   css: function (s, v) {

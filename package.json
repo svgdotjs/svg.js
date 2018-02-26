@@ -87,7 +87,8 @@
   "standard": {
     "ignore": [
       "/dist",
-      "/src/umd.js"
+      "/src/umd.js",
+      "/src/svg.js"
     ],
     "globals": [
       "SVG"

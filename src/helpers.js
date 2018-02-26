@@ -1,3 +1,5 @@
+/* eslint no-unused-vars: 0 */
+
 function createElement (element, makeNested) {
   if (element instanceof SVG.Element) return element
 

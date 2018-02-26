@@ -1,3 +1,5 @@
+/* global proportionalSize */
+
 SVG.Polyline = SVG.invent({
   // Initialize node
   create: 'polyline',

@@ -10,7 +10,7 @@ SVG.TextPath = SVG.invent({
 
   // Add parent method
   extend: {
-    morphArray: SVG.PathArray,
+    MorphArray: SVG.PathArray,
     // return the array of the path track element
     array: function () {
       var track = this.track()

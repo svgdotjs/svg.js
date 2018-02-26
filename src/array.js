@@ -1,3 +1,5 @@
+/* global arrayClone */
+
 // Module for array conversion
 SVG.Array = function (array, fallback) {
   array = (array || []).valueOf()

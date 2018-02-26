@@ -1,3 +1,5 @@
+/* global proportionalSize */
+
 SVG.Path = SVG.invent({
   // Initialize node
   create: 'path',
@@ -8,7 +10,7 @@ SVG.Path = SVG.invent({
   // Add class methods
   extend: {
     // Define morphable array
-    morphArray: SVG.PathArray,
+    MorphArray: SVG.PathArray,
     // Get array
     array: function () {
       return this._array || (this._array = new SVG.PathArray(this.attr('d')))
