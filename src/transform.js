@@ -1,26 +1,50 @@
 SVG.extend(SVG.Element, {
   // Add transformations
-  transform: function(o, relative) {
+  transform: function (o) {
+
+    /**
+     * EXTRACTING PARAMETERS
+     */
 
     // Get target in case of the fx module, otherwise reference this
     var target = this
-      , matrix, bbox
 
     // Act as a getter if no object was passed
     if (typeof o !== 'object') {
-
       matrix = new SVG.Matrix(target).extract()
       return typeof o === 'string' ? matrix[o] : matrix
+    }
 
-    // If an object was passed, then we should apply the transformations
-    } else {
+    // Get the origin location
+    var ox = o.ox
+      , oy = o.oy
+
+    // Allow the user to define the origin with a string
+    if (typeof o.origin == "string") {
 
       // Get the bounding box to use in our calculations
       var bbox = target.bbox()
+        , x = bbox.x
+        , y = bbox.y
+        , width = bbox.width
+        , height = bbox.height
 
-      // Extract the parameters for the affine transform
-      var cx = (o.origin && o.origin.length) ?
+      // Get the string to modify
+      var string = o.origin.toLowerCase().trim()
 
+      // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+      ox = string.includes("left") ? x
+          : string.includes("right") ? x + width
+          : x + width / 2
+      oy = string.includes("top") ? y
+          : string.includes("bottom") ? y + height
+          : y + height / 2
+
+    }
+
+    // Get the resulting matrix and apply it to the element
+    var result = new SVG.Matrix().form(o)
+      , matrixString = result.toString()
 
 
 
