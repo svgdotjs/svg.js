@@ -1,48 +1,49 @@
 SVG.Gradient = SVG.invent({
   // Initialize node
-  create: function(type) {
-    this.constructor.call(this, typeof type == 'object' ? type : SVG.create(type + 'Gradient'))
-  }
+  create: function (type) {
+    this.constructor.call(this, typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
+  },
 
   // Inherit from
-, inherit: SVG.Container
+  inherit: SVG.Container,
 
   // Add class methods
-, extend: {
+  extend: {
     // Add a color stop
-    stop: function(offset, color, opacity) {
-      return this.put(new SVG.Stop).update(offset, color, opacity)
-    }
+    stop: function (offset, color, opacity) {
+      return this.put(new SVG.Stop()).update(offset, color, opacity)
+    },
     // Update gradient
-  , update: function(block) {
-      // remove all stops 
+    update: function (block) {
+      // remove all stops
       this.clear()
-      
-      // invoke passed block 
-      if (typeof block == 'function')
+
+      // invoke passed block
+      if (typeof block === 'function') {
         block.call(this, this)
-      
+      }
+
       return this
-    }
+    },
     // Return the fill id
-  , url: function() {
+    url: function () {
       return 'url(#' + this.id() + ')'
-    }
+    },
     // Alias string convertion to fill
-  , toString: function() {
+    toString: function () {
       return this.url()
-    }
+    },
     // custom attr to handle transform
-  , attr: function(a, b, c) {
-      if(a == 'transform') a = 'gradientTransform'
+    attr: function (a, b, c) {
+      if (a === 'transform') a = 'gradientTransform'
       return SVG.Container.prototype.attr.call(this, a, b, c)
     }
-  }
-  
+  },
+
   // Add parent method
-, construct: {
+  construct: {
     // Create gradient element in defs
-    gradient: function(type, block) {
+    gradient: function (type, block) {
       return this.defs().gradient(type, block)
     }
   }
@@ -51,51 +52,51 @@ SVG.Gradient = SVG.invent({
 // Add animatable methods to both gradient and fx module
 SVG.extend([SVG.Gradient, SVG.FX], {
   // From position
-  from: function(x, y) {
-    return (this._target || this).type == 'radialGradient' ?
-      this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) }) :
-      this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
-  }
+  from: function (x, y) {
+    return (this._target || this).type === 'radialGradient'
+      ? this.attr({ fx: new SVG.Number(x), fy: new SVG.Number(y) })
+      : this.attr({ x1: new SVG.Number(x), y1: new SVG.Number(y) })
+  },
   // To position
-, to: function(x, y) {
-    return (this._target || this).type == 'radialGradient' ?
-      this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) }) :
-      this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
+  to: function (x, y) {
+    return (this._target || this).type === 'radialGradient'
+      ? this.attr({ cx: new SVG.Number(x), cy: new SVG.Number(y) })
+      : this.attr({ x2: new SVG.Number(x), y2: new SVG.Number(y) })
   }
 })
 
 // Base gradient generation
 SVG.extend(SVG.Defs, {
   // define gradient
-  gradient: function(type, block) {
+  gradient: function (type, block) {
     return this.put(new SVG.Gradient(type)).update(block)
   }
-  
+
 })
 
 SVG.Stop = SVG.invent({
   // Initialize node
-  create: 'stop'
+  create: 'stop',
 
   // Inherit from
-, inherit: SVG.Element
+  inherit: SVG.Element,
 
   // Add class methods
-, extend: {
+  extend: {
     // add color stops
-    update: function(o) {
-      if (typeof o == 'number' || o instanceof SVG.Number) {
+    update: function (o) {
+      if (typeof o === 'number' || o instanceof SVG.Number) {
         o = {
-          offset:  arguments[0]
-        , color:   arguments[1]
-        , opacity: arguments[2]
+          offset: arguments[0],
+          color: arguments[1],
+          opacity: arguments[2]
         }
       }
 
-      // set attributes 
+      // set attributes
       if (o.opacity != null) this.attr('stop-opacity', o.opacity)
-      if (o.color   != null) this.attr('stop-color', o.color)
-      if (o.offset  != null) this.attr('offset', new SVG.Number(o.offset))
+      if (o.color != null) this.attr('stop-color', o.color)
+      if (o.offset != null) this.attr('offset', new SVG.Number(o.offset))
 
       return this
     }

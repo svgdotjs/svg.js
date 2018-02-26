@@ -1,7 +1,7 @@
 SVG.Defs = SVG.invent({
   // Initialize node
-  create: 'defs'
+  create: 'defs',
 
   // Inherit from
-, inherit: SVG.Container
+  inherit: SVG.Container
 })
