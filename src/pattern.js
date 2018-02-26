@@ -1,43 +1,44 @@
 SVG.Pattern = SVG.invent({
   // Initialize node
-  create: 'pattern'
+  create: 'pattern',
 
   // Inherit from
-, inherit: SVG.Container
+  inherit: SVG.Container,
 
   // Add class methods
-, extend: {
+  extend: {
     // Return the fill id
-    url: function() {
+    url: function () {
       return 'url(#' + this.id() + ')'
-    }
+    },
     // Update pattern by rebuilding
-  , update: function(block) {
+    update: function (block) {
       // remove content
       this.clear()
-      
+
       // invoke passed block
-      if (typeof block == 'function')
+      if (typeof block === 'function') {
         block.call(this, this)
-      
+      }
+
       return this
-    }
+    },
     // Alias string convertion to fill
-  , toString: function() {
+    toString: function () {
       return this.url()
-    }
+    },
     // custom attr to handle transform
-  , attr: function(a, b, c) {
-      if(a == 'transform') a = 'patternTransform'
+    attr: function (a, b, c) {
+      if (a === 'transform') a = 'patternTransform'
       return SVG.Container.prototype.attr.call(this, a, b, c)
     }
 
-  }
-  
+  },
+
   // Add parent method
-, construct: {
+  construct: {
     // Create pattern element in defs
-    pattern: function(width, height, block) {
+    pattern: function (width, height, block) {
       return this.defs().pattern(width, height, block)
     }
   }
@@ -45,13 +46,13 @@ SVG.Pattern = SVG.invent({
 
 SVG.extend(SVG.Defs, {
   // Define gradient
-  pattern: function(width, height, block) {
-    return this.put(new SVG.Pattern).update(block).attr({
-      x:            0
-    , y:            0
-    , width:        width
-    , height:       height
-    , patternUnits: 'userSpaceOnUse'
+  pattern: function (width, height, block) {
+    return this.put(new SVG.Pattern()).update(block).attr({
+      x: 0,
+      y: 0,
+      width: width,
+      height: height,
+      patternUnits: 'userSpaceOnUse'
     })
   }
 

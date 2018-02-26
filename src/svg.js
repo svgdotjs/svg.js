@@ -20,7 +20,8 @@ SVG.supported = (function() {
 })()
 
 // Don't bother to continue if SVG is not supported
-if (!SVG.supported) return false
+if (!SVG.supported)
+  return false
 
 // Element id sequence
 SVG.did  = 1000
@@ -82,7 +83,7 @@ SVG.adopt = function(node) {
 
   if(!(node instanceof window.SVGElement))
     return new SVG.HtmlNode(node)
-  
+
   // initialize variables
   var element
 
