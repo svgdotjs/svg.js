@@ -95,12 +95,12 @@ gulp.task('clean', function () {
 gulp.task('unify', ['clean'], function () {
   pkg.buildDate = Date()
   return gulp.src(parts)
-    // .pipe(standard())
-    // .pipe(standard.reporter('default', {
-    //   showRuleNames: true,
-    //   breakOnError: true,
-    //   quiet: true
-    // }))
+    .pipe(standard())
+    .pipe(standard.reporter('default', {
+      showRuleNames: true,
+      breakOnError: true,
+      quiet: true
+    }))
     .pipe(concat('svg.js', { newLine: '\n' }))
     // wrap the whole thing in an immediate function call
     .pipe(wrapUmd({src: 'src/umd.js'}))

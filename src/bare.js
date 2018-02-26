@@ -3,7 +3,7 @@ SVG.Bare = SVG.invent({
   // Initialize
   create: function (element, inherit) {
     // construct element
-    this.constructor.call(this, SVG.create(element))
+    this.constructor(SVG.create(element))
 
     // inherit custom methods
     if (inherit) {

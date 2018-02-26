@@ -1,7 +1,7 @@
 SVG.Container = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor.call(this, node)
+    this.constructor(node)
   },
 
   // Inherit from

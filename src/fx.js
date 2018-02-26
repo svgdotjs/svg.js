@@ -202,7 +202,7 @@ SVG.FX = SVG.invent({
           this.start()
         } else {
           // If it is not a SVG.Situation, then it is a function, we execute it
-          this.situation.call(this)
+          this.situation(this)
         }
       }
 
