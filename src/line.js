@@ -13,7 +13,7 @@ SVG.Line = SVG.invent({
     array: function () {
       return new SVG.PointArray([
         [ this.attr('x1'), this.attr('y1') ],
-       [ this.attr('x2'), this.attr('y2') ]
+        [ this.attr('x2'), this.attr('y2') ]
       ])
     },
     // Overwrite native plot() method

@@ -1,10 +1,10 @@
-/* eslint-disable */
+/* global createElement, capitalize */
+/* eslint-disable new-cap */
 
 // The main wrapping element
 var SVG = this.SVG = function (element) {
   if (SVG.supported) {
     element = createElement(element)
-
     return element
   }
 }

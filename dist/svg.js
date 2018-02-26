@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 27 2018 02:50:00 GMT+1100 (AEDT)
+* BUILT: Tue Feb 27 2018 03:30:34 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -31,13 +31,13 @@ if (!supported)
   return {supported: false}
 
 // Otherwise, the library will be here
-/* eslint-disable */
+/* global createElement, capitalize */
+/* eslint-disable new-cap */
 
 // The main wrapping element
 var SVG = this.SVG = function (element) {
   if (SVG.supported) {
     element = createElement(element)
-
     return element
   }
 }

@@ -6,8 +6,11 @@ SVG.extend(SVG.Element, {
       // get an object of attributes
       a = {}
       v = this.node.attributes
-      for (n = v.length - 1; n >= 0; n--) { a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue) ? parseFloat(v[n].nodeValue) : v[n].nodeValue }
-
+      for (n = v.length - 1; n >= 0; n--) {
+        a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue)
+          ? parseFloat(v[n].nodeValue)
+          : v[n].nodeValue
+      }
       return a
     } else if (typeof a === 'object') {
       // apply every attribute individually if an object is passed
