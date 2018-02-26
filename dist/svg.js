@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 27 2018 03:30:34 GMT+1100 (AEDT)
+* BUILT: Tue Feb 27 2018 03:37:50 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -1003,7 +1003,9 @@ SVG.HtmlNode = SVG.invent({
         element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
       }
 
-      if (i === null) { this.node.appendChild(element.node) } else if (element.node !== this.node.children[i]) {
+      if (i === null) {
+        this.node.appendChild(element.node)
+      } else if (element.node !== this.node.children[i]) {
         this.node.insertBefore(element.node, this.node.children[i])
       }
 
@@ -1047,34 +1049,42 @@ SVG.Element = SVG.invent({
     x: function (x) {
       return this.attr('x', x)
     },
+
     // Move over y-axis
     y: function (y) {
       return this.attr('y', y)
     },
+
     // Move by center over x-axis
     cx: function (x) {
       return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
     },
+
     // Move by center over y-axis
     cy: function (y) {
       return y == null ? this.y() + this.height() / 2 : this.y(y - this.height() / 2)
     },
+
     // Move element to given x and y values
     move: function (x, y) {
       return this.x(x).y(y)
     },
+
     // Move element by its center
     center: function (x, y) {
       return this.cx(x).cy(y)
     },
+
     // Set width of element
     width: function (width) {
       return this.attr('width', width)
     },
+
     // Set height of element
     height: function (height) {
       return this.attr('height', height)
     },
+
     // Set element size to given width and height
     size: function (width, height) {
       var p = proportionalSize(this, width, height)
@@ -1083,6 +1093,7 @@ SVG.Element = SVG.invent({
         .width(new SVG.Number(p.width))
         .height(new SVG.Number(p.height))
     },
+
     // Clone element
     clone: function (parent) {
       // write dom data to the dom so the clone can pickup the data
@@ -1097,26 +1108,31 @@ SVG.Element = SVG.invent({
 
       return clone
     },
+
     // Remove element
     remove: function () {
       if (this.parent()) { this.parent().removeElement(this) }
 
       return this
     },
+
     // Replace element
     replace: function (element) {
       this.after(element).remove()
 
       return element
     },
+
     // Add element to given container and return self
     addTo: function (parent) {
       return createElement(parent).put(this)
     },
+
     // Add element to given container and return container
     putIn: function (parent) {
       return createElement(parent).add(this)
     },
+
     // Get / set id
     id: function (id) {
       // generate new id if no id set
@@ -1127,6 +1143,7 @@ SVG.Element = SVG.invent({
       // dont't set directly width this.node.id to make `null` work correctly
       return this.attr('id', id)
     },
+
     // Checks whether the given point inside the bounding box of the element
     inside: function (x, y) {
       var box = this.bbox()
@@ -1136,32 +1153,38 @@ SVG.Element = SVG.invent({
         x < box.x + box.width &&
         y < box.y + box.height
     },
+
     // Show element
     show: function () {
       return this.css('display', '')
     },
+
     // Hide element
     hide: function () {
       return this.css('display', 'none')
     },
+
     // Is element visible?
     visible: function () {
       return this.css('display') !== 'none'
     },
+
     // Return id on string conversion
     toString: function () {
       return this.id()
     },
+
     // Return array of classes on the node
     classes: function () {
       var attr = this.attr('class')
-
       return attr == null ? [] : attr.trim().split(SVG.regex.delimiter)
     },
+
     // Return true if class exists on the node, false otherwise
     hasClass: function (name) {
       return this.classes().indexOf(name) !== -1
     },
+
     // Add class to the node
     addClass: function (name) {
       if (!this.hasClass(name)) {
@@ -1172,6 +1195,7 @@ SVG.Element = SVG.invent({
 
       return this
     },
+
     // Remove class from the node
     removeClass: function (name) {
       if (this.hasClass(name)) {
@@ -1182,14 +1206,17 @@ SVG.Element = SVG.invent({
 
       return this
     },
+
     // Toggle the presence of a class on the node
     toggleClass: function (name) {
       return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
     },
+
     // Get referenced element form attribute value
     reference: function (attr) {
       return SVG.get(this.attr(attr))
     },
+
     // Returns the parent element instance
     parent: function (type) {
       var parent = this
@@ -1208,13 +1235,17 @@ SVG.Element = SVG.invent({
         parent = SVG.adopt(parent.node.parentNode)
       }
     },
+
     // Get parent document
     doc: function () {
       return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
-    },   // Get defs
+    },
+
+    // Get defs
     defs: function () {
       return this.doc().defs()
     },
+
     // return array of all ancestors of given type up to the root svg
     parents: function (type) {
       var parents = []
@@ -1229,14 +1260,17 @@ SVG.Element = SVG.invent({
 
       return parents
     },
+
     // matches the element vs a css selector
     matches: function (selector) {
       return matches(this.node, selector)
     },
+
     // Returns the svg node to call native svg methods on it
     native: function () {
       return this.node
     },
+
     // Import raw svg
     svg: function (svg) {
       var well, len
@@ -1263,7 +1297,8 @@ SVG.Element = SVG.invent({
 
       return this
     },
-  // write svgjs data to the dom
+
+    // write svgjs data to the dom
     writeDataToDom: function () {
       // dump variables recursively
       if (this.is(SVG.Parent)) {
@@ -1276,12 +1311,12 @@ SVG.Element = SVG.invent({
       this.node.removeAttribute('svgjs:data')
 
       if (Object.keys(this.dom).length) {
-        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom))
-      } // see #428
-
+        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
+      }
       return this
     },
-  // set given data to the elements data property
+
+    // set given data to the elements data property
     setData: function (o) {
       this.dom = o
       return this
@@ -2470,8 +2505,11 @@ SVG.extend(SVG.Element, {
       // get an object of attributes
       a = {}
       v = this.node.attributes
-      for (n = v.length - 1; n >= 0; n--) { a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue) ? parseFloat(v[n].nodeValue) : v[n].nodeValue }
-
+      for (n = v.length - 1; n >= 0; n--) {
+        a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue)
+          ? parseFloat(v[n].nodeValue)
+          : v[n].nodeValue
+      }
       return a
     } else if (typeof a === 'object') {
       // apply every attribute individually if an object is passed
@@ -3913,7 +3951,7 @@ SVG.Line = SVG.invent({
     array: function () {
       return new SVG.PointArray([
         [ this.attr('x1'), this.attr('y1') ],
-       [ this.attr('x2'), this.attr('y2') ]
+        [ this.attr('x2'), this.attr('y2') ]
       ])
     },
     // Overwrite native plot() method
