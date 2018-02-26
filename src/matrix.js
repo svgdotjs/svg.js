@@ -143,8 +143,8 @@ SVG.Matrix = SVG.invent({
 
     // Form the matrix parameters... aka. welcome to wonderland! (used wolfram)
     var a = ct*sx + ky*st*sy
-      , b = -st*sx+ct*ky*sy
-      , c = ct*kx*sx+st*sy + lam*(ct*sx+ky*st*sy)
+      , b = ct*ky*sy - st*sx
+      , c = ct*kx*sx + st*sy + lam*(ct*sx+ky*st*sy)
       , d = -kx*st*sx + ct*sy + lam*(-st*sx + ct*ky*sy)
       , e = px + tx + cx*(ct*sx+ky*st*sy) + cy*(ct*kx*sx+st*sy+lam*(ct*sx+ky*st*sy))
       , f = py + ty + cx*(-st*sx + ct*ky*sy) + cy*(-kx*st*sx + ct*sy + lam*(-st*sx + ct*ky*sy))
@@ -188,11 +188,13 @@ SVG.Matrix = SVG.invent({
     }
     // Translate matrix
   , translate: function(x, y) {
-      return new SVG.Matrix(this.native().translate(x || 0, y || 0))
+    var translation = new SVG.Matrix(this.native().translate(x || 0, y || 0))
+      , matrix = this.multiply(translation)
+      return matrix
     }
     // Scale matrix
   , scale: function(x, y, cx, cy) {
-      // support uniformal scale
+      // Support uniform scaling
       if (arguments.length == 1) {
         y = x
       } else if (arguments.length == 3) {
@@ -201,14 +203,23 @@ SVG.Matrix = SVG.invent({
         y = x
       }
 
-      return this.around(cx, cy, new SVG.Matrix(x, 0, 0, y, 0, 0))
+      // Rotate the current matrix
+      var scale = new SVG.Matrix(x, 0, 0, y, 0, 0)
+        , centered = this.around(cx, cy, rotation)
+        , matrix = this.multiply(centered)
+      return scale
     }
     // Rotate matrix
   , rotate: function(r, cx, cy) {
-      // convert degrees to radians
+
+      // Convert degrees to radians
       r = SVG.utils.radians(r)
 
-      return this.around(cx, cy, new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0))
+      // Construct the rotation matrix
+      var rotation = new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0)
+        , centered = this.around(cx, cy, rotation)
+        , matrix = this.multiply(centered)
+      return matrix
     }
     // Flip matrix on x or y, at a given offset
   , flip: function(a, o) {
@@ -220,7 +231,10 @@ SVG.Matrix = SVG.invent({
     }
     // Skew
   , shear: function(a, cx, cy) {
-    return this.around(cx, cy, new SVG.Matrix(1, a, 0, 1, 0, 0))
+    var shear = new SVG.Matrix(1, a, 0, 1, 0, 0)
+      , centered = this.around(cx, cy, shear)
+      , matrix = this.multiply(centered)
+    return matrix
   }
   , skew: function(x, y, cx, cy) {
       // support uniformal skew
@@ -232,11 +246,15 @@ SVG.Matrix = SVG.invent({
         y = x
       }
 
-      // convert degrees to radians
+      // Convert degrees to radians
       x = SVG.utils.radians(x)
       y = SVG.utils.radians(y)
 
-      return this.around(cx, cy, new SVG.Matrix(1, Math.tan(y), Math.tan(x), 1, 0, 0))
+      // Construct the matrix
+      var skew = new SVG.Matrix(1, Math.tan(y), Math.tan(x), 1, 0, 0)
+        , centered = this.around(cx, cy, skew)
+        , matrix = this.multiply(centered)
+      return matrix
     }
     // SkewX
   , skewX: function(x, cx, cy) {
