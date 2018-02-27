@@ -56,12 +56,16 @@ SVG.on = function (node, events, listener, binding, options) {
 // Add event unbinder in the SVG namespace
 SVG.off = function (node, events, listener, options) {
   var n = node instanceof SVG.Element ? node.node : node
+  var listenerId
+
   if (!n.instance) return
 
-  // make a precheck for a valid listener here to avoid repetition in the loop
-  if (listener) {
-    if (typeof listener === 'function') listener = listener._svgjsListenerId
-    if (!listener) return
+  // listener can be a function or a number
+  if (typeof listener === 'function') {
+    listenerId = listener._svgjsListenerId
+    if (!listenerId) return
+  } else {
+    listenerId = listener
   }
 
   var bag = n.instance.events
@@ -71,13 +75,13 @@ SVG.off = function (node, events, listener, options) {
     var ns = event && event.split('.')[1]
     var namespace
 
-    if (listener) {
+    if (listenerId) {
       // remove listener reference
       if (bag[ev] && bag[ev][ns || '*']) {
-        // remove listener
-        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+        // removeListener
+        n.removeEventListener(ev, bag[ev][ns || '*'][listenerId], options || false)
 
-        delete bag[ev][ns || '*'][listener]
+        delete bag[ev][ns || '*'][listenerId]
       }
     } else if (ev && ns) {
       // remove all listeners for a namespaced event
@@ -118,6 +122,7 @@ SVG.extend(SVG.Element, {
   // Unbind event from listener
   off: function (event, listener) {
     SVG.off(this.node, event, listener)
+    return this
   },
   dispatch: function (event, data) {
     // Dispatch event
