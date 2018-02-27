@@ -22,7 +22,7 @@
     }
   })
 
-SVG.listener = 0
+SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function (node, events, listener, binding, options) {
@@ -35,7 +35,7 @@ SVG.on = function (node, events, listener, binding, options) {
   var bag = n.instance.events
 
   // add id to listener
-  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listener }
+  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
 
   events.split(SVG.regex.delimiter).forEach(function (event) {
     var ev = event.split('.')[0]
