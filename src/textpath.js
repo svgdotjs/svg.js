@@ -1,40 +1,40 @@
 SVG.TextPath = SVG.invent({
   // Initialize node
-  create: 'textPath'
+  create: 'textPath',
 
   // Inherit from
-, inherit: SVG.Text
+  inherit: SVG.Text,
 
   // Define parent class
-, parent: SVG.Parent
+  parent: SVG.Parent,
 
   // Add parent method
-, extend: {
-    morphArray: SVG.PathArray
+  extend: {
+    MorphArray: SVG.PathArray,
     // return the array of the path track element
-  , array: function() {
+    array: function () {
       var track = this.track()
 
       return track ? track.array() : null
-    }
+    },
     // Plot path if any
-  , plot: function(d) {
+    plot: function (d) {
       var track = this.track()
-        , pathArray = null
+      var pathArray = null
 
       if (track) {
         pathArray = track.plot(d)
       }
 
       return (d == null) ? pathArray : this
-    }
+    },
     // Get the path element
-  , track: function() {
+    track: function () {
       return this.reference('href')
     }
-  }
-, construct: {
-    textPath: function(text, path) {
+  },
+  construct: {
+    textPath: function (text, path) {
       return this.defs().path(path).text(text).addTo(this)
     }
   }
@@ -42,11 +42,11 @@ SVG.TextPath = SVG.invent({
 
 SVG.extend([SVG.Text], {
     // Create path for text to run on
-  path: function(track) {
-    var path = new SVG.TextPath
+  path: function (track) {
+    var path = new SVG.TextPath()
 
     // if d is a path, reuse it
-    if(!(track instanceof SVG.Path)) {
+    if (!(track instanceof SVG.Path)) {
       // create path element
       track = this.doc().defs().path(track)
     }
@@ -56,18 +56,18 @@ SVG.extend([SVG.Text], {
 
     // add textPath element as child node and return textPath
     return this.put(path)
-  }
+  },
   // Todo: make this plural?
   // Get the textPath children
-  , textPath: function() {
+  textPath: function () {
     return this.select('textPath')
   }
 })
 
 SVG.extend([SVG.Path], {
   // creates a textPath from this path
-  text: function(text) {
-    if(text instanceof SVG.Text) {
+  text: function (text) {
+    if (text instanceof SVG.Text) {
       var txt = text.text()
       return text.clear().path(this).text(txt)
     }

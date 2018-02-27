@@ -1,15 +1,16 @@
+
 SVG.Nested = SVG.invent({
   // Initialize node
-  create: 'svg'
+  create: 'svg',
 
   // Inherit from
-, inherit: SVG.Container
-  
+  inherit: SVG.Container,
+
   // Add parent method
-, construct: {
+  construct: {
     // Create nested svg document
-    nested: function() {
-      return this.put(new SVG.Nested)
+    nested: function () {
+      return this.put(new SVG.Nested())
     }
   }
 })

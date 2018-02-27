@@ -1,14 +1,15 @@
+
 SVG.Symbol = SVG.invent({
   // Initialize node
-  create: 'symbol'
+  create: 'symbol',
 
   // Inherit from
-, inherit: SVG.Container
+  inherit: SVG.Container,
 
-, construct: {
+  construct: {
     // create symbol
-    symbol: function() {
-      return this.put(new SVG.Symbol)
+    symbol: function () {
+      return this.put(new SVG.Symbol())
     }
   }
 })
