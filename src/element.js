@@ -2,7 +2,7 @@
 
 SVG.Element = SVG.invent({
   // Initialize node
-  create: function(node) {
+  create: function (node) {
     // event listener
     this.events = {}
 

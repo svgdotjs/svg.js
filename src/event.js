@@ -26,24 +26,24 @@ SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function (node, events, listener, binding, options) {
-  var l = listener.bind(binding || node),
-    n = node instanceof SVG.Element ? node.node : node
+  var l = listener.bind(binding || node)
+  var n = node instanceof SVG.Element ? node.node : node
 
   // ensure instance object for nodes which are not adopted
   n.instance = n.instance || {events: {}}
 
   var bag = n.instance.events
 
-  // ensure valid object
-  bag[ev] = bag[ev] || {}
-  bag[ev][ns] = bag[ev][ns] || {}
-
   // add id to listener
   if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
 
   events.split(SVG.regex.delimiter).forEach(function (event) {
-    var ev = event.split('.')[0],
-      ns = event.split('.')[1] || '*'
+    var ev = event.split('.')[0]
+    var ns = event.split('.')[1] || '*'
+
+    // ensure valid object
+    bag[ev] = bag[ev] || {}
+    bag[ev][ns] = bag[ev][ns] || {}
 
     // reference listener
     bag[ev][ns][listener._svgjsListenerId] = l
@@ -67,9 +67,9 @@ SVG.off = function (node, events, listener, options) {
   var bag = n.instance.events
 
   ;(events || '').split(SVG.regex.delimiter).forEach(function (event) {
-    var ev = event && event.split('.')[0],
-      ns = event && event.split('.')[1],
-      namespace
+    var ev = event && event.split('.')[0]
+    var ns = event && event.split('.')[1]
+    var namespace
 
     if (listener) {
       // remove listener reference
