@@ -35,17 +35,17 @@ var sugar = {
 
 SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
-, rotate: function(angle, cx, cy) {
+  rotate: function (angle, cx, cy) {
     var matrix = new SVG.Matrix().rotate(angle, cx, cy)
-
-    return this.transform({ rotation: d, cx: cx, cy: cy })
+    return this.matrix(matrix, true)
   },
   // Map skew to transform
-, skew: function(x, y, cx, cy) {
-    return arguments.length == 1  || arguments.length == 3 ?
-      this.transform({ skew: x, cx: y, cy: cx }) :
-      this.transform({ skewX: x, skewY: y, cx: cx, cy: cy })
-  }
+  skew: function (x, y, cx, cy) {
+    var matrix = arguments.length === 1 || arguments.length === 3
+      ? new SVG.Matrix().skew(x, x, cx, cy)
+      : new SVG.Matrix().skew(x, y, cx, cy)
+    return this.matrix(matrix, true)
+  },
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
@@ -60,7 +60,7 @@ SVG.extend([SVG.Element, SVG.FX], {
   flip: function (a, o) {
     o = typeof a === 'number' ? a : o
     return this.transform({ flip: a || 'both', offset: o })
-  }
+  },
   // Opacity
   opacity: function (value) {
     return this.attr('opacity', value)

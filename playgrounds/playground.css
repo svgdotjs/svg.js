@@ -1,0 +1,42 @@
+
+html {
+  background-color : #f5f6f7;
+  text-align: center;
+}
+
+h1 {
+  color: #f06;
+  font-size: 6vh;
+  margin: 4vh;
+  font-family: Helvetica;
+}
+
+svg {
+  width: 70vw;
+  height: 80vh;
+  background-color: white;
+  position: fixed;
+  border-radius: 20px;
+  border: #f065 1px solid;
+  left: 15vw;
+}
+
+.pink {
+  fill: #FF0066;
+}
+
+.green {
+  fill: #00ff99;
+}
+
+.dark-pink {
+  fill: #660029;
+}
+
+.light-pink {
+  fill: #FF99C2;
+}
+
+.off-white {
+   fill: #FFCCE0;
+}

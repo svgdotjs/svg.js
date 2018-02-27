@@ -98,8 +98,8 @@ gulp.task('unify', ['clean'], function () {
     .pipe(standard())
     .pipe(standard.reporter('default', {
       showRuleNames: true,
-      breakOnError: true,
-      quiet: true
+      breakOnError: process.argv[2] !== "--dont-break",
+      quiet: true,
     }))
     .pipe(concat('svg.js', { newLine: '\n' }))
     // wrap the whole thing in an immediate function call
@@ -109,6 +109,7 @@ gulp.task('unify', ['clean'], function () {
     .pipe(chmod(0o644))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
+  return collection
 })
 
 /**

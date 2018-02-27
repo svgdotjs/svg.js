@@ -19,11 +19,11 @@ describe('Transformations:', function() {
 
   describe('SVG.Translate', function() {
     var trans
-    
+
     beforeEach(function(){
       trans = new SVG.Translate(translated.transform())
     })
-  
+
 
     it('creates an object of type SVG.Transformation', function() {
       expect(trans instanceof SVG.Transformation).toBeTruthy()
@@ -51,7 +51,7 @@ describe('Transformations:', function() {
         var extracted = (new SVG.Matrix(10,0,0,10,20,20)).extract()
         trans.undo(extracted)
         expect(trans._undo.toString()).toEqual('matrix(1,0,0,1,-2,-2)')
-        
+
         var extracted = (new SVG.Matrix(10,50,50,30,20,20)).extract()
         trans.undo(extracted)
         expect(trans._undo.e).toBeCloseTo(-extracted.transformedX)
@@ -78,14 +78,14 @@ describe('Transformations:', function() {
       })
     })
   })
-  
+
   describe('SVG.Rotate', function() {
     var trans
-    
+
     beforeEach(function(){
       trans = new SVG.Rotate(45, 50, 50)
     })
-  
+
 
     it('creates an object of type SVG.Transformation', function() {
       expect(trans instanceof SVG.Transformation).toBeTruthy()
@@ -129,15 +129,15 @@ describe('Transformations:', function() {
       })
     })
   })
-  
+
 
   describe('SVG.Scale', function() {
     var trans
-    
+
     beforeEach(function(){
       trans = new SVG.Scale(2,2,50,50)
     })
-  
+
 
     it('creates an object of type SVG.Transformation', function() {
       expect(trans instanceof SVG.Transformation).toBeTruthy()
@@ -170,7 +170,7 @@ describe('Transformations:', function() {
         expect(trans._undo.d).toBeCloseTo(1/extracted.scaleY)
         expect(trans._undo.e).toBeCloseTo(45)
         expect(trans._undo.f).toBeCloseTo(45)
-        
+
         var extracted = (new SVG.Matrix(10,50,50,30,20,20)).extract()
         trans.undo(extracted)
         expect(trans._undo.a).toBeCloseTo(1/extracted.scaleX)
@@ -184,12 +184,12 @@ describe('Transformations:', function() {
       })
       it('returns the inversed matrix from a specific position when created with inverse flag', function() {
         var morphed = (new SVG.Scale(scaled.transform(2,2,50,50), true)).at(0.25)
-        
+
         expect(morphed.a).toBeCloseTo(0.8)
         expect(morphed.d).toBeCloseTo(0.8)
       })
       it('returns the resulting transformation which has to be made to set an absolute translation', function() {
-        
+
         var morphed = trans.undo((new SVG.Matrix(10,0,0,10,0,0)).extract()).at(0.5)
 
         expect(morphed.a).toBeCloseTo(0.6)
@@ -200,15 +200,15 @@ describe('Transformations:', function() {
         expect(morphed.f).toBeCloseTo(20)
       })
     })
-  })  
+  })
 
   describe('SVG.Skew', function() {
     var trans
-    
+
     beforeEach(function(){
       trans = new SVG.Skew(30,-30,50,50)
     })
-  
+
 
     it('creates an object of type SVG.Transformation', function() {
       expect(trans instanceof SVG.Transformation).toBeTruthy()
@@ -257,7 +257,7 @@ describe('Transformations:', function() {
       })
       it('returns the inversed matrix from a specific position when created with inverse flag', function() {
         var morphed = (new SVG.Scale(skewed.transform(20,-20,50,50), true)).at(0.25)
-        
+
         expect(morphed.a).toBeCloseTo(0.963)
         expect(morphed.b).toBeCloseTo(0)
         expect(morphed.c).toBeCloseTo(0)
@@ -266,7 +266,7 @@ describe('Transformations:', function() {
         expect(morphed.f).toBeCloseTo(0)
       })
       it('returns the resulting transformation which has to be made to set an absolute translation', function() {
-        
+
         var morphed = trans.undo((new SVG.Matrix(10,0,0,10,0,0)).skew(20, 30, 20, 10).extract()).at(0.5)
 
         expect(morphed.a).toBeCloseTo(1.266)
@@ -278,5 +278,4 @@ describe('Transformations:', function() {
       })
     })
   })
-
 })

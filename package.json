@@ -56,6 +56,7 @@
   "scripts": {
     "build": "gulp",
     "build:test": "gulp unify",
+    "build:dev": "gulp --dont-break",
     "test": "karma start .config/karma.conf.js --single-run",
     "test:quick": "karma start .config/karma.quick.js",
     "lint": "standard --verbose | snazzy"
@@ -88,6 +89,7 @@
   "standard": {
     "ignore": [
       "/dist",
+      "/spec",
       "/src/umd.js"
     ],
     "globals": [
