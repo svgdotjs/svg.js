@@ -22,7 +22,7 @@
     }
   })
 
-SVG.listenerId = 0
+SVG.listener = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function (node, events, listener, binding, options) {
@@ -35,7 +35,7 @@ SVG.on = function (node, events, listener, binding, options) {
   var bag = n.instance.events
 
   // add id to listener
-  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
+  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listener }
 
   events.split(SVG.regex.delimiter).forEach(function (event) {
     var ev = event.split('.')[0]
@@ -56,16 +56,12 @@ SVG.on = function (node, events, listener, binding, options) {
 // Add event unbinder in the SVG namespace
 SVG.off = function (node, events, listener, options) {
   var n = node instanceof SVG.Element ? node.node : node
-  var listenerId
-
   if (!n.instance) return
 
   // listener can be a function or a number
   if (typeof listener === 'function') {
-    listenerId = listener._svgjsListenerId
-    if (!listenerId) return
-  } else {
-    listenerId = listener
+    listener = listener._svgjsListenerId
+    if (!listener) return
   }
 
   var bag = n.instance.events
@@ -73,20 +69,20 @@ SVG.off = function (node, events, listener, options) {
   ;(events || '').split(SVG.regex.delimiter).forEach(function (event) {
     var ev = event && event.split('.')[0]
     var ns = event && event.split('.')[1]
-    var namespace
+    var namespace, l
 
-    if (listenerId) {
+    if (listener) {
       // remove listener reference
       if (bag[ev] && bag[ev][ns || '*']) {
         // removeListener
-        n.removeEventListener(ev, bag[ev][ns || '*'][listenerId], options || false)
+        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
 
-        delete bag[ev][ns || '*'][listenerId]
+        delete bag[ev][ns || '*'][listener]
       }
     } else if (ev && ns) {
       // remove all listeners for a namespaced event
       if (bag[ev] && bag[ev][ns]) {
-        for (listener in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), listener) }
+        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
 
         delete bag[ev][ns]
       }
