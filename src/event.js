@@ -1,4 +1,5 @@
 // Add events to elements
+
 ;[ 'click',
   'dblclick',
   'mousedown',
@@ -6,14 +7,14 @@
   'mouseover',
   'mouseout',
   'mousemove',
-  // , 'mouseenter' -> not supported by IE
-  // , 'mouseleave' -> not supported by IE
+  'mouseenter',
+  'mouseleave',
   'touchstart',
   'touchmove',
   'touchleave',
   'touchend',
   'touchcancel' ].forEach(function (event) {
-  // add event to SVG.Element
+    // add event to SVG.Element
     SVG.Element.prototype[event] = function (f) {
     // bind event to element rather than element node
       SVG.on(this, event, f)
@@ -21,32 +22,31 @@
     }
   })
 
-// Initialize listeners stack
-SVG.listeners = []
-SVG.handlerMap = []
 SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function (node, events, listener, binding, options) {
+  var l = listener.bind(binding || node)
+  var n = node instanceof SVG.Element ? node.node : node
+
+  // ensure instance object for nodes which are not adopted
+  n.instance = n.instance || {events: {}}
+
+  var bag = n.instance.events
+
+  // add id to listener
+  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
+
   events.split(SVG.regex.delimiter).forEach(function (event) {
-    // create listener, get object-index
-    var l = listener.bind(binding || node)
-    var n = node instanceof SVG.Element ? node.node : node
-    var index = (SVG.handlerMap.indexOf(n) + 1 || SVG.handlerMap.push(n)) - 1
     var ev = event.split('.')[0]
     var ns = event.split('.')[1] || '*'
 
     // ensure valid object
-    SVG.listeners[index] = SVG.listeners[index] || {}
-    SVG.listeners[index][ev] = SVG.listeners[index][ev] || {}
-    SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
-
-    if (!listener._svgjsListenerId) {
-      listener._svgjsListenerId = ++SVG.listenerId
-    }
+    bag[ev] = bag[ev] || {}
+    bag[ev][ns] = bag[ev][ns] || {}
 
     // reference listener
-    SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
+    bag[ev][ns][listener._svgjsListenerId] = l
 
     // add listener
     n.addEventListener(ev, l, options || false)
@@ -54,91 +54,84 @@ SVG.on = function (node, events, listener, binding, options) {
 }
 
 // Add event unbinder in the SVG namespace
-SVG.off = function (node, event, listener) {
-  var index = SVG.handlerMap.indexOf(node)
-  var ev = event && event.split('.')[0]
-  var ns = event && event.split('.')[1]
-  var namespace = ''
+SVG.off = function (node, events, listener, options) {
+  var n = node instanceof SVG.Element ? node.node : node
+  if (!n.instance) return
 
-  if (index === -1) return
-
-  if (listener) {
-    if (typeof listener === 'function') listener = listener._svgjsListenerId
+  // listener can be a function or a number
+  if (typeof listener === 'function') {
+    listener = listener._svgjsListenerId
     if (!listener) return
+  }
 
-    // remove listener reference
-    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
-      // remove listener
-      node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
+  var bag = n.instance.events
 
-      delete SVG.listeners[index][ev][ns || '*'][listener]
-    }
-  } else if (ns && ev) {
-    // remove all listeners for a namespaced event
-    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
-      for (listener in SVG.listeners[index][ev][ns]) {
-        SVG.off(node, [ev, ns].join('.'), listener)
+  ;(events || '').split(SVG.regex.delimiter).forEach(function (event) {
+    var ev = event && event.split('.')[0]
+    var ns = event && event.split('.')[1]
+    var namespace, l
+
+    if (listener) {
+      // remove listener reference
+      if (bag[ev] && bag[ev][ns || '*']) {
+        // removeListener
+        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+
+        delete bag[ev][ns || '*'][listener]
       }
+    } else if (ev && ns) {
+      // remove all listeners for a namespaced event
+      if (bag[ev] && bag[ev][ns]) {
+        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
 
-      delete SVG.listeners[index][ev][ns]
-    }
-  } else if (ns) {
-    // remove all listeners for a specific namespace
-    for (event in SVG.listeners[index]) {
-      for (namespace in SVG.listeners[index][event]) {
-        if (ns === namespace) {
-          SVG.off(node, [event, ns].join('.'))
+        delete bag[ev][ns]
+      }
+    } else if (ns) {
+      // remove all listeners for a specific namespace
+      for (event in bag) {
+        for (namespace in bag[event]) {
+          if (ns === namespace) { SVG.off(n, [event, ns].join('.')) }
         }
       }
-    }
-  } else if (ev) {
-    // remove all listeners for the event
-    if (SVG.listeners[index][ev]) {
-      for (namespace in SVG.listeners[index][ev]) {
-        SVG.off(node, [ev, namespace].join('.'))
+    } else if (ev) {
+      // remove all listeners for the event
+      if (bag[ev]) {
+        for (namespace in bag[ev]) { SVG.off(n, [ev, namespace].join('.')) }
+
+        delete bag[ev]
       }
+    } else {
+      // remove all listeners on a given node
+      for (event in bag) { SVG.off(n, event) }
 
-      delete SVG.listeners[index][ev]
+      n.instance.events = {}
     }
-  } else {
-    // remove all listeners on a given node
-    for (event in SVG.listeners[index]) {
-      SVG.off(node, event)
-    }
-
-    delete SVG.listeners[index]
-    delete SVG.handlerMap[index]
-  }
+  })
 }
 
-//
 SVG.extend(SVG.Element, {
   // Bind given event to listener
   on: function (event, listener, binding, options) {
     SVG.on(this, event, listener, binding, options)
     return this
   },
-
   // Unbind event from listener
   off: function (event, listener) {
     SVG.off(this.node, event, listener)
     return this
   },
-
-  // Fire given event
-  fire: function (event, data) {
+  dispatch: function (event, data) {
     // Dispatch event
     if (event instanceof window.Event) {
       this.node.dispatchEvent(event)
     } else {
       this.node.dispatchEvent(event = new window.CustomEvent(event, {detail: data, cancelable: true}))
     }
-
-    this._event = event
-    return this
+    return event
   },
-
-  event: function () {
-    return this._event
+  // Fire given event
+  fire: function (event, data) {
+    this.dispatch(event, data)
+    return this
   }
 })
