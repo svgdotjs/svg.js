@@ -69,7 +69,6 @@ var parts = [
   'src/image.js',
   'src/text.js',
   'src/textpath.js',
-  'src/nested.js',
   'src/hyperlink.js',
   'src/marker.js',
   'src/sugar.js',

@@ -8,15 +8,9 @@ SVG.HtmlNode = SVG.invent({
   extend: {
     add: function (element, i) {
       element = createElement(element)
-      if (element instanceof SVG.Nested) {
-        element = new SVG.Doc(element.node)
-        element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
-      }
 
-      if (i === null) {
-        this.node.appendChild(element.node)
-      } else if (element.node !== this.node.children[i]) {
-        this.node.insertBefore(element.node, this.node.children[i])
+      if (element.node !== this.node.children[i]) {
+        this.node.insertBefore(element.node, this.node.children[i] || null)
       }
 
       return this

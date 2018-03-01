@@ -476,11 +476,12 @@ describe('Element', function() {
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
       draw.flatten()
+      
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
 
       expect(g1.node.parentNode).toBeFalsy()
-      expect(g1.node.parentNode).toBeFalsy()
+      expect(g2.node.parentNode).toBeFalsy()
       expect(nested.node.parentNode).toBeFalsy()
 
       expect(rect1.transform()).toEqual(jasmine.objectContaining({

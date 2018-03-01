@@ -21,10 +21,8 @@ SVG.Parent = SVG.invent({
     add: function (element, i) {
       element = createElement(element)
 
-      if (i == null) {
-        this.node.appendChild(element.node)
-      } else if (element.node !== this.node.children[i]) {
-        this.node.insertBefore(element.node, this.node.children[i])
+      if (element.node !== this.node.children[i]) {
+        this.node.insertBefore(element.node, this.node.children[i] || null)
       }
 
       return this

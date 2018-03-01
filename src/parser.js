@@ -11,7 +11,7 @@ SVG.parser = function () {
 }
 
 SVG.parser.nodes = {
-  svg: new SVG.Nested().size(2, 0).css({
+  svg: SVG().size(2, 0).css({
     opacity: 0,
     position: 'absolute',
     left: '-100%',

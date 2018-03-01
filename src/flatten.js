@@ -2,7 +2,7 @@ SVG.extend(SVG.Parent, {
   flatten: function (parent) {
     if (this instanceof SVG.Defs) return this
 
-    parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
+    parent = parent || (this instanceof SVG.Doc && this.isRoot() ? this : this.parent(SVG.Parent))
 
     this.each(function () {
       if (this instanceof SVG.Defs) return this

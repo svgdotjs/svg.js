@@ -88,12 +88,14 @@ SVG.adopt = function (node) {
 
   // adopt with element-specific settings
   if (node.nodeName === 'svg') {
-    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested(node) : new SVG.Doc(node)
+    element = new SVG.Doc(node)
   } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
     element = new SVG.Gradient(node)
   } else if (SVG[capitalize(node.nodeName)]) {
     element = new SVG[capitalize(node.nodeName)](node)
-  } else { element = new SVG.Parent(node) }
+  } else {
+    element = new SVG.Parent(node)
+  }
 
   return element
 }

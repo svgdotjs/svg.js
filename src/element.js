@@ -218,7 +218,8 @@ SVG.Element = SVG.invent({
 
     // Get parent document
     doc: function () {
-      return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
+      var p = this.parent(SVG.Doc)
+      return p && p.doc()
     },
 
     // Get defs
