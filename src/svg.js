@@ -87,13 +87,15 @@ SVG.adopt = function (node) {
   var element
 
   // adopt with element-specific settings
-  if (node.nodeName == 'svg')
+  if (node.nodeName === 'svg') {
     element = new SVG.Doc(node)
-  else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient')
+  } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
     element = new SVG.Gradient(node)
   } else if (SVG[capitalize(node.nodeName)]) {
     element = new SVG[capitalize(node.nodeName)](node)
-  } else { element = new SVG.Parent(node) }
+  } else {
+    element = new SVG.Parent(node)
+  }
 
   return element
 }

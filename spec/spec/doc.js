@@ -16,11 +16,11 @@ describe('Doc', function() {
     expect(draw instanceof SVG.Doc).toBe(true)
   })
 
-  it('returns itself as Doc', function() {
+  it('returns itself as Doc when root', function() {
     expect(draw.doc()).toBe(draw)
   })
 
-  it('has a defs element', function() {
+  it('has a defs element when root', function() {
     expect(draw.defs() instanceof SVG.Defs).toBe(true)
   })
 
@@ -30,6 +30,23 @@ describe('Doc', function() {
     })
     it('references parent node', function(){
       expect(draw.defs().parent()).toBe(draw)
+    })
+  })
+
+  describe('isRoot()', function() {
+    it('returns true when the doc is not attached to dom', function() {
+      expect(SVG().isRoot()).toBe(true)
+    })
+    it('returns true when its outer element is not an svg element', function () {
+      expect(SVG().addTo(document.createElement('div')).isRoot()).toBe(true)
+    })
+    it('returns true when its the root element of the dom', function () {
+      if(parserInDoc) {
+        expect(draw.isRoot()).toBe(true)
+      }
+    })
+    it('returns false when parent is svg element', function () {
+      expect(SVG().addTo(SVG()).isRoot()).toBe(false)
     })
   })
 
