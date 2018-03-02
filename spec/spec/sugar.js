@@ -56,7 +56,7 @@ describe('Sugar', function() {
 
     it('redirects to transform()', function() {
       rect.rotate(1,2,3)
-      expect(rect.transform).toHaveBeenCalledWith({ rotation: 1, cx: 2, cy: 3 })
+      expect(rect.transform).toHaveBeenCalledWith({ rotate: 1, origin: [2, 3] }, true)
     })
   })
 
@@ -75,27 +75,27 @@ describe('Sugar', function() {
 
     it('redirects to transform() with no argument', function() {
       rect.skew()
-      expect(rect.transform).toHaveBeenCalledWith({ skewX: undefined, skewY: undefined, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ skew: [undefined, undefined], origin: [undefined, undefined] }, true)
     })
 
     it('redirects to transform() with one argument', function() {
       rect.skew(5)
-      expect(rect.transform).toHaveBeenCalledWith({ skew: 5, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ skew: 5, origin: [undefined, undefined] }, true)
     })
 
     it('redirects to transform() with two argument', function() {
       rect.skew(5, 6)
-      expect(rect.transform).toHaveBeenCalledWith({ skewX: 5, skewY: 6, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ skew: [5, 6], origin: [undefined, undefined] }, true)
     })
 
     it('redirects to transform() with three arguments', function() {
       rect.skew(5, 6, 7)
-      expect(rect.transform).toHaveBeenCalledWith({ skew: 5, cx: 6, cy: 7 })
+      expect(rect.transform).toHaveBeenCalledWith({ skew: 5, origin: [6, 7] }, true)
     })
 
     it('redirects to transform() with four arguments', function() {
       rect.skew(5, 6, 7, 8)
-      expect(rect.transform).toHaveBeenCalledWith({ skewX: 5, skewY: 6, cx: 7, cy: 8 })
+      expect(rect.transform).toHaveBeenCalledWith({ skew: [5, 6], origin: [7, 8] }, true)
     })
   })
 
@@ -114,27 +114,27 @@ describe('Sugar', function() {
 
     it('redirects to transform() with no argument', function() {
       rect.scale()
-      expect(rect.transform).toHaveBeenCalledWith({ scaleX: undefined, scaleY: undefined, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ scale: [undefined, undefined], origin: [undefined, undefined] }, true)
     })
 
     it('redirects to transform() with one argument', function() {
       rect.scale(5)
-      expect(rect.transform).toHaveBeenCalledWith({ scale: 5, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ scale: 5, origin: [undefined, undefined]}, true)
     })
 
     it('redirects to transform() with two argument', function() {
       rect.scale(5, 6)
-      expect(rect.transform).toHaveBeenCalledWith({ scaleX: 5, scaleY: 6, cx: undefined, cy: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ scale: [5, 6], origin: [undefined, undefined] }, true)
     })
 
     it('redirects to transform() with three arguments', function() {
       rect.scale(5, 6, 7)
-      expect(rect.transform).toHaveBeenCalledWith({ scale: 5, cx: 6, cy: 7 })
+      expect(rect.transform).toHaveBeenCalledWith({ scale: 5, origin: [6, 7] }, true)
     })
 
     it('redirects to transform() with four arguments', function() {
       rect.scale(5, 6, 7, 8)
-      expect(rect.transform).toHaveBeenCalledWith({ scaleX: 5, scaleY: 6, cx: 7, cy: 8 })
+      expect(rect.transform).toHaveBeenCalledWith({ scale: [5, 6], origin: [7, 8] }, true)
     })
   })
 
@@ -153,7 +153,7 @@ describe('Sugar', function() {
 
     it('redirects to transform()', function() {
       rect.translate(1,2)
-      expect(rect.transform).toHaveBeenCalledWith({ x: 1, y: 2 })
+      expect(rect.transform).toHaveBeenCalledWith({ translate: [1, 2] }, true)
     })
   })
 
@@ -172,18 +172,18 @@ describe('Sugar', function() {
 
     it('redirects to transform()', function() {
       rect.flip('x',2)
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 'x', offset: 2 })
+      expect(rect.transform).toHaveBeenCalledWith({ flip: 'x', origin: [2, 0] }, true)
     })
 
     it('sets flip to "both" when calling without anything', function() {
       rect.flip()
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', offset: undefined })
+      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', origin: [0, 0]] }, true)
     })
 
     // this works because only x and y are valid flip values. Evereything else flips on both axis
     it('sets flip to number and offset to number when called with offset only', function() {
       rect.flip(5)
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 5, offset: 5 })
+      expect(rect.transform).toHaveBeenCalledWith({ flip: "both", origin: [5, 5] }, true)
     })
   })
 

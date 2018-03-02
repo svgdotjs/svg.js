@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 02 2018 20:37:16 GMT+1100 (AEDT)
+* BUILT: Fri Mar 02 2018 23:08:28 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -3385,11 +3385,11 @@ SVG.G = SVG.invent({
   extend: {
     // Move over x-axis
     x: function (x) {
-      return x == null ? this.transform('x') : this.transform({ x: x - this.x() }, true)
+      return x == null ? this.transform().e : this.translate(x - this.gbox().x, 0)
     },
     // Move over y-axis
     y: function (y) {
-      return y == null ? this.transform('y') : this.transform({ y: y - this.y() }, true)
+      return y == null ? this.transform().f : this.translate(0, y - this.gbox().y)
     },
     // Move by center over x-axis
     cx: function (x) {
@@ -3403,13 +3403,13 @@ SVG.G = SVG.invent({
       var bbox = this.bbox()
       var trans = this.transform()
 
-      bbox.x += trans.x
-      bbox.x2 += trans.x
-      bbox.cx += trans.x
+      bbox.x += trans.e
+      bbox.x2 += trans.e
+      bbox.cx += trans.e
 
-      bbox.y += trans.y
-      bbox.y2 += trans.y
-      bbox.cy += trans.y
+      bbox.y += trans.f
+      bbox.y2 += trans.f
+      bbox.cy += trans.f
 
       return bbox
     }
@@ -4821,21 +4821,21 @@ var sugar = {
 SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
-    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
+    return this.transform({rotate: angle, origin: [cx, cy]}, true)
   },
 
   // Map skew to transform
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({skew: x, ox: y, oy: cx}, true)
-      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
+      ? this.transform({skew: x, origin: [y, cx]}, true)
+      : this.transform({skew: [x, y], origin: [cx, cy]}, true)
   },
 
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
       ? this.transform({ scale: x, origin: [y, cx] }, true)
-      : this.transform({ scaleX: x, scaleY: y, origin: [cx, cy] }, true)
+      : this.transform({ scale: [x, y], origin: [cx, cy] }, true)
   },
 
   // Map translate to transform
@@ -4848,8 +4848,8 @@ SVG.extend([SVG.Element, SVG.FX], {
     var origin = (direction === "both" && isFinite(around)) ? [around, around]
       : (direction === "x") ? [around, 0]
       : (direction === "y") ? [0, around]
-      : undefined
-    this.transform({flip: direction, origin: origin})
+      : [0, 0]
+    this.transform({flip: direction || "both", origin: origin}, true)
   },
 
   // Opacity
@@ -5356,7 +5356,7 @@ SVG.Box = SVG.invent({
       // IE11 throws an error when element not in dom
       try {
         var box = new SVG.Box(this.node.getBoundingClientRect())
-        if (el) return box.lmultiply(el.screenCTM().inverse())
+        if (el) return box.transform(el.screenCTM().inverse())
         return box.addOffset()
       } catch (e) {
         return new SVG.Box()

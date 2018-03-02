@@ -23,19 +23,27 @@ draw = SVG("svg")
 
 offset = draw.screenCTM()
 draw.viewbox(100,100, 1000, 1000)
-nested = draw.nested().size(200, 200).move(100,100).viewbox(0, 0, 100, 100)
-rect = nested.rect(50, 50).stroke({width:0}).move(25, 90).scale(2, 0, 0).transform({tx:10, ty:10}, true).fill("red")
+nested = draw.nested().size(500, 500).move(100,100).viewbox(0, 0, 400, 400)
+rect = nested.rect(50, 50).stroke({width:0}).move(25, 90).scale(2, 0, 0).translate(10, 10).fill("red")
+
 
 var box = rect.rbox()
 
+console.log(box.x - offset.e, box.y - offset.f);
+
+
 div = document.createElement('div')
-div.style.position = 'absolute'
-div.style.left = box.x + 'px'
-div.style.top = box.y + 'px'
-div.style.width = box.width + 'px'
-div.style.opacity = 0.4
-div.style.height = box.height + 'px'
-div.style.background = 'blue'
+
+Object.assign(div.style, {
+  position : 'absolute',
+  left : box.x + 'px',
+  top : box.y + 'px',
+  width : box.width + 'px',
+  opacity : 0.4,
+  height : box.height + 'px',
+  background : 'blue',
+})
+
 
 document.body.appendChild(div)
 

@@ -36,21 +36,21 @@ var sugar = {
 SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
-    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
+    return this.transform({rotate: angle, origin: [cx, cy]}, true)
   },
 
   // Map skew to transform
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({skew: x, ox: y, oy: cx}, true)
-      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
+      ? this.transform({skew: x, origin: [y, cx]}, true)
+      : this.transform({skew: [x, y], origin: [cx, cy]}, true)
   },
 
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
       ? this.transform({ scale: x, origin: [y, cx] }, true)
-      : this.transform({ scaleX: x, scaleY: y, origin: [cx, cy] }, true)
+      : this.transform({ scale: [x, y], origin: [cx, cy] }, true)
   },
 
   // Map translate to transform
@@ -63,8 +63,8 @@ SVG.extend([SVG.Element, SVG.FX], {
     var origin = (direction === "both" && isFinite(around)) ? [around, around]
       : (direction === "x") ? [around, 0]
       : (direction === "y") ? [0, around]
-      : undefined
-    this.transform({flip: direction, origin: origin})
+      : [0, 0]
+    this.transform({flip: direction || "both", origin: origin}, true)
   },
 
   // Opacity
