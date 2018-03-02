@@ -22,13 +22,14 @@ SVG.Point = SVG.invent({
     clone: function () {
       return new SVG.Point(this)
     },
+
     // Morph one point into another
     morph: function (x, y) {
       // store new destination
       this.destination = new SVG.Point(x, y)
-
       return this
     },
+
     // Get morphed point at a given position
     at: function (pos) {
       // make sure a destination is defined
@@ -39,9 +40,9 @@ SVG.Point = SVG.invent({
         x: this.x + (this.destination.x - this.x) * pos,
         y: this.y + (this.destination.y - this.y) * pos
       })
-
       return point
     },
+
     // Convert to native SVGPoint
     native: function () {
       // create new point
@@ -50,9 +51,9 @@ SVG.Point = SVG.invent({
       // update with current values
       point.x = this.x
       point.y = this.y
-
       return point
     },
+
     // transform point with matrix
     transform: function (matrix) {
       return new SVG.Point(this.native().matrixTransform(matrix.native()))
@@ -66,5 +67,4 @@ SVG.extend(SVG.Element, {
   point: function (x, y) {
     return new SVG.Point(x, y).transform(this.screenCTM().inverse())
   }
-
 })

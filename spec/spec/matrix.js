@@ -18,27 +18,26 @@ describe('Matrix', function() {
         expect(matrix.f).toBe(0)
       })
 
-      describe('extract()', function() {
-        var extract
+      describe('decompose()', function() {
+        var decompose
 
         beforeEach(function() {
-          extract = matrix.extract()
+          decompose = matrix.decompose()
         })
 
         it('parses translation values', function() {
-          expect(extract.x).toBe(0)
-          expect(extract.y).toBe(0)
+          expect(decompose.translateX).toBe(0)
+          expect(decompose.translateY).toBe(0)
         })
-        it('parses skew values', function() {
-          expect(extract.skewX).toBe(0)
-          expect(extract.skewY).toBe(0)
+        it('parses shear values', function() {
+          expect(decompose.shear).toBe(0)
         })
         it('parses scale values', function() {
-          expect(extract.scaleX).toBe(1)
-          expect(extract.scaleY).toBe(1)
+          expect(decompose.scaleX).toBe(1)
+          expect(decompose.scaleY).toBe(1)
         })
         it('parses rotatoin value', function() {
-          expect(extract.rotation).toBe(0)
+          expect(decompose.rotate).toBe(0)
         })
       })
 
@@ -53,48 +52,24 @@ describe('Matrix', function() {
       var rect
 
       beforeEach(function() {
+        // Draw is defined in helpers
         rect = draw.rect(100, 100)
-          .transform({ rotation: -10 }, true)
-          .transform({ x: 40, y: 50 }, true)
-          .transform({ scale: 2 }, true)
-
+          .transform({
+            rotate: -10,
+            translate: [40, 50],
+            scale: 2,
+          })
         matrix = new SVG.Matrix(rect)
       })
 
       it('parses the current transform matrix from an element', function() {
-        expect(matrix.a).toBeCloseTo(1.9696155786514282)
-        expect(matrix.b).toBeCloseTo(-0.3472963869571686)
-        expect(matrix.c).toBeCloseTo(0.3472963869571686)
-        expect(matrix.d).toBeCloseTo(1.9696155786514282)
-        expect(matrix.e).toBeCloseTo(-17.770875930786133)
-        expect(matrix.f).toBeCloseTo(11.178505897521973)
-      })
 
-      describe('extract()', function() {
-
-        it('parses translation values', function() {
-          var extract = new SVG.Matrix(draw.rect(100, 100).translate(40, 50)).extract()
-          expect(extract.x).toBeCloseTo(40)
-          expect(extract.y).toBeCloseTo(50)
-        })
-        it('parses skewX value', function() {
-          var extract = new SVG.Matrix(draw.rect(100, 100).skew(25, 0)).extract()
-          expect(extract.skewX).toBeCloseTo(25)
-        })
-        it('parses skewY value', function() {
-          var extract = new SVG.Matrix(draw.rect(100, 100).skew(0, 20)).extract()
-          expect(extract.skewY).toBeCloseTo(20)
-        })
-        it('parses scale values', function() {
-          var extract = new SVG.Matrix(draw.rect(100, 100).scale(2, 3)).extract()
-          expect(extract.scaleX).toBeCloseTo(2)
-          expect(extract.scaleY).toBeCloseTo(3)
-        })
-        it('parses rotatoin value', function() {
-          var extract = new SVG.Matrix(draw.rect(100, 100).rotate(-100)).extract()
-          expect(extract.rotation).toBeCloseTo(-100)
-        })
-
+        expect(matrix.a).toBeCloseTo(1.969615506024416)
+        expect(matrix.b).toBeCloseTo(-0.34729635533386066)
+        expect(matrix.c).toBeCloseTo(0.34729635533386066)
+        expect(matrix.d).toBeCloseTo(1.969615506024416)
+        expect(matrix.e).toBeCloseTo(-25.84559306791384)
+        expect(matrix.f).toBeCloseTo(18.884042465472234)
       })
 
     })
@@ -201,20 +176,21 @@ describe('Matrix', function() {
 
   describe('multiply()', function() {
     it('multiplies two matices', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1, 0, 0, 1, 4, 3)
+      var matrix1 = new SVG.Matrix(1, 4, 2, 5, 3, 6)
+        , matrix2 = new SVG.Matrix(7, 8, 8, 7, 9, 6)
         , matrix3 = matrix1.multiply(matrix2)
 
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(1,0,0,1,4,3)')
-      expect(matrix3.toString()).toBe('matrix(2,0,0,5,8,15)')
+      expect(matrix1.toString()).toBe('matrix(1,4,2,5,3,6)')
+      expect(matrix2.toString()).toBe('matrix(7,8,8,7,9,6)')
+      expect(matrix3.toString()).toBe('matrix(23,68,22,67,24,72)')
     })
-    it('accepts matrices in any form', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = matrix1.multiply('1,0,0,1,4,3')
 
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(2,0,0,5,8,15)')
+    it('accepts matrices in any form', function() {
+      var matrix1 = new SVG.Matrix(1, 4, 2, 5, 3, 6)
+        , matrix2 = matrix1.multiply('7,8,8,7,9,6')
+
+      expect(matrix1.toString()).toBe('matrix(1,4,2,5,3,6)')
+      expect(matrix2.toString()).toBe('matrix(23,68,22,67,24,72)')
     })
   })
 
@@ -236,9 +212,14 @@ describe('Matrix', function() {
   describe('translate()', function() {
     it('translates matrix by given x and y values', function() {
       var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).translate(10, 12.5)
-
       expect(matrix.e).toBe(14)
       expect(matrix.f).toBe(15.5)
+    })
+
+    it('does nothing if you give it no x or y value', function() {
+      var matrix = new SVG.Matrix(1, 2, 3, 4, 5, 6).translate()
+      expect(matrix.e).toBe(5)
+      expect(matrix.f).toBe(6)
     })
   })
 
@@ -248,51 +229,59 @@ describe('Matrix', function() {
 
       expect(matrix.a).toBe(3)
       expect(matrix.d).toBe(3)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.e).toBe(4 * 3)
+      expect(matrix.f).toBe(3 * 3)
     })
     it('performs a non-uniformal scale with two values', function() {
       var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).scale(2.5, 3.5)
 
       expect(matrix.a).toBe(2.5)
       expect(matrix.d).toBe(3.5)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.e).toBe(4 * 2.5)
+      expect(matrix.f).toBe(3 * 3.5)
     })
     it('performs a uniformal scale at a given center point with three values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).scale(3, 150, 100)
+      var matrix = new SVG.Matrix(1, 3, 2, 3, 4, 3).scale(3, 2, 3)
 
       expect(matrix.a).toBe(3)
-      expect(matrix.d).toBe(3)
-      expect(matrix.e).toBe(-296)
-      expect(matrix.f).toBe(-197)
+      expect(matrix.b).toBe(9)
+      expect(matrix.c).toBe(6)
+      expect(matrix.d).toBe(9)
+      expect(matrix.e).toBe(8)
+      expect(matrix.f).toBe(3)
     })
     it('performs a non-uniformal scale at a given center point with four values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).scale(3, 2, 150, 100)
+      var matrix = new SVG.Matrix(1, 3, 2, 3, 4, 3).scale(3, 2, 2, 3)
 
       expect(matrix.a).toBe(3)
-      expect(matrix.d).toBe(2)
-      expect(matrix.e).toBe(-296)
-      expect(matrix.f).toBe(-97)
+      expect(matrix.b).toBe(6)
+      expect(matrix.c).toBe(6)
+      expect(matrix.d).toBe(6)
+      expect(matrix.e).toBe(8)
+      expect(matrix.f).toBe(3)
     })
   })
 
   describe('rotate()', function() {
     it('performs a rotation with one argument', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(30)
+      var matrix = new SVG.Matrix(1, 3, 2, 3, 4, 3).rotate(30)
 
-      expect(matrix.a).toBeCloseTo(0.8660254037844387)
-      expect(matrix.d).toBeCloseTo(0.8660254037844387)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.a).toBeCloseTo(-0.6339746)
+      expect(matrix.b).toBeCloseTo(3.09807621)
+      expect(matrix.c).toBeCloseTo(0.23205081)
+      expect(matrix.d).toBeCloseTo(3.59807621)
+      expect(matrix.e).toBeCloseTo(1.96410162)
+      expect(matrix.f).toBeCloseTo(4.59807621)
     })
-    it('performs a rotation on a given point with three arguments', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).rotate(30, 150, 100)
+    it('performs a rotation around a given point with three arguments', function() {
+      var matrix = new SVG.Matrix(1, 3, 2, 3, 4, 3).rotate(30, 2, 3)
 
-      expect(matrix.a).toBeCloseTo(0.8660254037844387)
-      expect(matrix.d).toBeCloseTo(0.8660254037844387)
-      expect(matrix.e).toBeCloseTo(74.0961894323342)
-      expect(matrix.f).toBeCloseTo(-58.60254037844388)
+      expect(matrix.a).toBeCloseTo(-0.633974596216)
+      expect(matrix.b).toBeCloseTo(3.09807621135)
+      expect(matrix.c).toBeCloseTo(0.232050807569)
+      expect(matrix.d).toBeCloseTo(3.59807621135)
+      expect(matrix.e).toBeCloseTo(3.73205080757)
+      expect(matrix.f).toBeCloseTo(4.0)
     })
   })
 
@@ -303,7 +292,7 @@ describe('Matrix', function() {
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(1)
-        expect(matrix.e).toBe(4)
+        expect(matrix.e).toBe(-4)
         expect(matrix.f).toBe(3)
       })
       it('performs a flip over the horizontal axis over a given point with two arguments', function() {
@@ -311,7 +300,7 @@ describe('Matrix', function() {
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(1)
-        expect(matrix.e).toBe(304)
+        expect(matrix.e).toBe(296)
         expect(matrix.f).toBe(3)
       })
     })
@@ -322,7 +311,7 @@ describe('Matrix', function() {
         expect(matrix.a).toBe(1)
         expect(matrix.d).toBe(-1)
         expect(matrix.e).toBe(4)
-        expect(matrix.f).toBe(3)
+        expect(matrix.f).toBe(-3)
       })
       it('performs a flip over the vertical axis over a given point with two arguments', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip('y', 100)
@@ -330,7 +319,7 @@ describe('Matrix', function() {
         expect(matrix.a).toBe(1)
         expect(matrix.d).toBe(-1)
         expect(matrix.e).toBe(4)
-        expect(matrix.f).toBe(203)
+        expect(matrix.f).toBe(197)
       })
     })
     describe('with no axis given', function() {
@@ -339,126 +328,129 @@ describe('Matrix', function() {
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(-1)
-        expect(matrix.e).toBe(4)
-        expect(matrix.f).toBe(3)
+        expect(matrix.e).toBe(-4)
+        expect(matrix.f).toBe(-3)
       })
       it('performs a flip over the horizontal and vertical axis over a given point with one argument that represent both coordinates', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(100)
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(-1)
-        expect(matrix.e).toBe(204)
-        expect(matrix.f).toBe(203)
+        expect(matrix.e).toBe(196)
+        expect(matrix.f).toBe(197)
       })
       it('performs a flip over the horizontal and vertical axis over a given point with two arguments', function() {
         var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).flip(50, 100)
 
         expect(matrix.a).toBe(-1)
         expect(matrix.d).toBe(-1)
-        expect(matrix.e).toBe(104)
-        expect(matrix.f).toBe(203)
+        expect(matrix.e).toBe(96)
+        expect(matrix.f).toBe(197)
       })
     })
   })
 
   describe('skew()', function() {
     it('performs a uniformal skew with one value', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(14)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(30)
 
       expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.24932800284318)
-      expect(matrix.c).toBeCloseTo(0.24932800284318)
+      expect(matrix.b).toBeCloseTo(0.57735026919)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
       expect(matrix.d).toBe(1)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.e).toBeCloseTo(5.73205080757)
+      expect(matrix.f).toBeCloseTo(5.30940107676)
     })
+
     it('performs a non-uniformal skew with two values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(8, 5)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(30, 20)
 
       expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.087488663525924)
-      expect(matrix.c).toBeCloseTo(0.14054083470239)
+      expect(matrix.b).toBeCloseTo(0.363970234266)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
       expect(matrix.d).toBe(1)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.e).toBeCloseTo(5.73205080757)
+      expect(matrix.f).toBeCloseTo(4.45588093706)
     })
+
     it('performs a uniformal skew at a given center point with three values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(3, 150, 100)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(30, 150, 100)
 
       expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.052407779283041)
-      expect(matrix.c).toBeCloseTo(0.052407779283041)
+      expect(matrix.b).toBeCloseTo(0.57735026919)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
       expect(matrix.d).toBe(1)
-      expect(matrix.e).toBeCloseTo(-1.2407779283)
-      expect(matrix.f).toBeCloseTo(-4.8611668924562)
+      expect(matrix.e).toBeCloseTo(-52.0029761114)
+      expect(matrix.f).toBeCloseTo(-81.2931393017)
     })
+
     it('performs a non-uniformal skew at a given center point with four values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(9, 7, 150, 100)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(30, 20, 150, 100)
 
-      expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.1227845609029)
-      expect(matrix.c).toBeCloseTo(0.15838444032454)
-      expect(matrix.d).toBe(1)
-      expect(matrix.e).toBeCloseTo(-11.83844403245)
-      expect(matrix.f).toBeCloseTo(-15.417684135435)
+      expect(matrix.a).toBe(1.0)
+      expect(matrix.b).toBeCloseTo(0.363970234266)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
+      expect(matrix.d).toBe(1.0)
+      expect(matrix.e).toBeCloseTo(-52.0029761114)
+      expect(matrix.f).toBeCloseTo(-50.1396542029)
     })
-    it('can be chained', function(){
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(9, 7).skew(20, 40)
 
-      expect(matrix.a).toBeCloseTo(1.1329003254605)
-      expect(matrix.b).toBeCloseTo(0.96188419208018)
-      expect(matrix.c).toBeCloseTo(0.52235467459074)
-      expect(matrix.d).toBeCloseTo(1.0446899253961)
-      expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+    it('can be chained', function(){
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skew(20, 30).skew(30, 20)
+      expect(matrix.a).toBeCloseTo(1.33333333333)
+      expect(matrix.b).toBeCloseTo(0.941320503456)
+      expect(matrix.c).toBeCloseTo(0.941320503456)
+      expect(matrix.d).toBeCloseTo(1.13247433143)
+      expect(matrix.e).toBeCloseTo(8.1572948437)
+      expect(matrix.f).toBeCloseTo(7.16270500812)
     })
   })
 
   describe('skewX', function(){
     it('performs a skew along the x axis with one value', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewX(12)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewX(30)
 
       expect(matrix.a).toBe(1)
       expect(matrix.b).toBe(0)
-      expect(matrix.c).toBeCloseTo(0.21255656167002)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
       expect(matrix.d).toBe(1)
-      expect(matrix.e).toBe(4)
+      expect(matrix.e).toBeCloseTo(5.73205080757)
       expect(matrix.f).toBe(3)
     })
 
     it('performs a skew along the x axis at a given center point with three values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewX(5, 150, 100)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewX(30, 150, 100)
 
       expect(matrix.a).toBe(1)
       expect(matrix.b).toBe(0)
-      expect(matrix.c).toBeCloseTo(0.087488663525924)
+      expect(matrix.c).toBeCloseTo(0.57735026919)
       expect(matrix.d).toBe(1)
-      expect(matrix.e).toBeCloseTo(-4.74886635259)
+      expect(matrix.e).toBeCloseTo(-52.0029761114)
       expect(matrix.f).toBe(3)
     })
   })
 
   describe('skewY', function(){
     it('performs a skew along the y axis with one value', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(12)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(30)
 
       expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.21255656167002)
+      expect(matrix.b).toBeCloseTo(0.57735026919)
       expect(matrix.c).toBe(0)
       expect(matrix.d).toBe(1)
       expect(matrix.e).toBe(4)
-      expect(matrix.f).toBe(3)
+      expect(matrix.f).toBeCloseTo(5.30940107676)
     })
 
     it('performs a skew along the y axis at a given center point with three values', function() {
-      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(5, 150, 100)
+      var matrix = new SVG.Matrix(1, 0, 0, 1, 4, 3).skewY(30, 150, 100)
 
       expect(matrix.a).toBe(1)
-      expect(matrix.b).toBeCloseTo(0.087488663525924)
+      expect(matrix.b).toBeCloseTo(0.57735026919)
       expect(matrix.c).toBe(0)
       expect(matrix.d).toBe(1)
       expect(matrix.e).toBe(4)
-      expect(matrix.f).toBeCloseTo(-10.123299528889)
+      expect(matrix.f).toBeCloseTo(-81.2931393017)
     })
   })
 

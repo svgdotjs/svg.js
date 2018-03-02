@@ -36,43 +36,52 @@ var sugar = {
 SVG.extend([SVG.Element, SVG.FX], {
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
-    var matrix = new SVG.Matrix().rotate(angle, cx, cy)
-    return this.matrix(matrix, true)
+    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
   },
+
   // Map skew to transform
   skew: function (x, y, cx, cy) {
-    var matrix = arguments.length === 1 || arguments.length === 3
-      ? new SVG.Matrix().skew(x, x, cx, cy)
-      : new SVG.Matrix().skew(x, y, cx, cy)
-    return this.matrix(matrix, true)
+    return arguments.length === 1 || arguments.length === 3
+      ? this.transform({skew: x, ox: y, oy: cx}, true)
+      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
   },
+
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({ scale: x, cx: y, cy: cx })
-      : this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
+      ? this.transform({ scale: x, origin: [y, cx] }, true)
+      : this.transform({ scaleX: x, scaleY: y, origin: [cx, cy] }, true)
   },
+
   // Map translate to transform
   translate: function (x, y) {
-    return this.transform({ x: x, y: y })
+    return this.transform({ translate: [x, y] }, true)
   },
+
   // Map flip to transform
-  flip: function (a, o) {
-    o = typeof a === 'number' ? a : o
-    return this.transform({ flip: a || 'both', offset: o })
+  flip: function (direction, around) {
+    var origin = (direction === "both" && isFinite(around)) ? [around, around]
+      : (direction === "x") ? [around, 0]
+      : (direction === "y") ? [0, around]
+      : undefined
+    this.transform({flip: direction, origin: origin})
   },
+
   // Opacity
   opacity: function (value) {
     return this.attr('opacity', value)
   },
+
   // Relative move over x axis
   dx: function (x) {
     return this.x(new SVG.Number(x).plus(this instanceof SVG.FX ? 0 : this.x()), true)
   },
+
   // Relative move over y axis
   dy: function (y) {
     return this.y(new SVG.Number(y).plus(this instanceof SVG.FX ? 0 : this.y()), true)
   },
+
   // Relative move over x and y axes
   dmove: function (x, y) {
     return this.dx(x).dy(y)

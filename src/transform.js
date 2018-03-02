@@ -13,11 +13,16 @@ SVG.extend(SVG.Element, {
       .split(SVG.regex.transforms).slice(0, -1).map(function (str) {
         // generate key => value pairs
         var kv = str.trim().split('(')
-        return [kv[0], kv[1].split(SVG.regex.delimiter).map(function (str) { return parseFloat(str) })]
+        return [kv[0],
+          kv[1].split(SVG.regex.delimiter)
+            .map(function (str) { return parseFloat(str) })
+        ]
       })
+      .reverse()
       // merge every transformation into one matrix
       .reduce(function (matrix, transform) {
-        if (transform[0] === 'matrix') return matrix.multiply(arrayToMatrix(transform[1]))
+        if (transform[0] === 'matrix')
+          return matrix.lmultiply(arrayToMatrix(transform[1]))
         return matrix[transform[0]].apply(matrix, transform[1])
       }, new SVG.Matrix())
 
@@ -44,22 +49,40 @@ SVG.extend(SVG.Element, {
 SVG.extend(SVG.Element, {
 
   // Add transformations
-  transform: function (o) {
+  transform: function (o, cyOrRel) {
+    // Get the bounding box of the element with no transformations applied
+    var bbox = this.bbox()
+
     // Act as a getter if no object was passed
-    if (typeof o !== 'object') {
-      var matrix = new SVG.Matrix(this).decompose()
-      return typeof o === 'string' ? matrix[o] : matrix
-    }
+    if (o == null) {
+      return new SVG.Matrix(this)
+
+    // Let the user
+    } else if (o.a != null) {
+
+      // Construct a matrix from the first parameter
+      var matrix = new SVG.Matrix(o)
+
+      // If we have a relative matrix, we just apply the old matrix
+      if (cyOrRel != null) {
+        var oldMatrix = new SVG.Matrix(this)
+        matrix = matrix.multiply(oldMatrix)
+      }
+
+      // Apply the matrix directly
+      return this.attr('transform', matrix)
 
     // Allow the user to define the origin with a string
-    if (typeof o.origin === 'string') {
+    } else if (typeof o.origin === 'string'
+      || (o.origin == null && o.ox == null && o.oy == null)) {
       // Get the bounding box and string to use in our calculations
-      var string = o.origin.toLowerCase().trim()
-      var bbox = this.bbox()
+      var string = typeof o.origin === 'string'
+        ? o.origin.toLowerCase().trim()
+        : 'center' // We want the center by default
+      var height = bbox.height
+      var width = bbox.width
       var x = bbox.x
       var y = bbox.y
-      var width = bbox.width
-      var height = bbox.height
 
       // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
       o.ox = string.includes('left') ? x
@@ -73,28 +96,13 @@ SVG.extend(SVG.Element, {
       o.origin = null
     }
 
-    // Get the resulting matrix and apply it to the element
-    var result = new SVG.Matrix().form(o)
+    // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
+    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).affine(o)
     var matrixString = result.toString()
 
-    // Apply the result
+    // Apply the result directly to this matrix
     return this.attr('transform', matrixString)
   },
-
-  // Map matrix to transform
-  matrix: function (m, relative) {
-    // Construct a matrix from the first parameter
-    var matrix = new SVG.Matrix(m)
-
-    // If we have a relative matrix, we just apply the old matrix
-    if (relative) {
-      var oldMatrix = new SVG.Matrix(this)
-      matrix = oldMatrix.multiply(matrix)
-    }
-
-    // Apply the matrix directly
-    return this.attr('transform', matrix)
-  }
 })
 
 SVG.extend(SVG.FX, {

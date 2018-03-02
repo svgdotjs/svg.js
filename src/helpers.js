@@ -217,9 +217,13 @@ function mag (a, b) {
 // Given a coordinate (a, b), this will calculate the sin, cosine and angle
 // of this point projected onto the unit circle directly
 function unitCircle (a, b) {
-  var len = Math.sqrt(a * a + b * b)
-  var cos = a / len
-  var sin = b / len
-  var theta = Math.atan2(b, a) * 180 / Math.PI
-  return {theta: theta, cos: cos, sin: sin}
+  var thetaRad = Math.atan2(b, a)
+  var thetaDeg = thetaRad * 180 / Math.PI
+  var cos = Math.cos(thetaRad)
+  var sin = Math.sin(thetaRad)
+  return {theta: thetaDeg, cos: cos, sin: sin}
+}
+
+function closeEnough (a, b, threshold) {
+  return Math.abs (b - a) < (threshold || 1e-6)
 }

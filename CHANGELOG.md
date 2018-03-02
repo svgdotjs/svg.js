@@ -16,6 +16,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `SVG.HTMLNode` which is the object wrapped around html nodes to put something in them
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
+- added a linter during the npm build process
+- added `npm build:dev` to let you develop without getting too annoyed
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -59,6 +61,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - SVG.Elements constructor now tries to import svgjs:data from the node
 - `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
 - `SVG.on()` and `el.on()` now accepts multiple comma or space seperated events e.g. "mousedown, foo bar" (#727)
+- Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
+- Transforming an element is now much simpler
+-
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

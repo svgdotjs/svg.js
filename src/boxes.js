@@ -18,6 +18,7 @@ SVG.Box = SVG.invent({
     // add center, right, bottom...
     fullBox(this)
   },
+
   extend: {
     // Merge rect box with another, return a new instance
     merge: function (box) {
@@ -52,11 +53,7 @@ SVG.Box = SVG.invent({
         yMax = Math.max(yMax, p.y)
       })
 
-      return new SVG.Box(
-        xMin, yMin,
-        xMax - xMin,
-        yMax - yMin
-      )
+      return new SVG.Box(xMin, yMin, xMax - xMin, yMax - yMin)
     },
 
     addOffset: function () {
@@ -65,9 +62,11 @@ SVG.Box = SVG.invent({
       this.y += window.pageYOffset
       return this
     },
+
     toString: function () {
       return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
     },
+
     morph: function (x, y, width, height) {
       this.destination = new SVG.Box(x, y, width, height)
       return this
@@ -77,15 +76,15 @@ SVG.Box = SVG.invent({
       if (!this.destination) return this
 
       return new SVG.Box(
-          this.x + (this.destination.x - this.x) * pos
-        , this.y + (this.destination.y - this.y) * pos
-        , this.width + (this.destination.width - this.width) * pos
-        , this.height + (this.destination.height - this.height) * pos
+        this.x + (this.destination.x - this.x) * pos,
+        this.y + (this.destination.y - this.y) * pos,
+        this.width + (this.destination.width - this.width) * pos,
+        this.height + (this.destination.height - this.height) * pos
       )
     }
   },
 
-    // Define Parent
+  // Define Parent
   parent: SVG.Element,
 
   // Constructor
