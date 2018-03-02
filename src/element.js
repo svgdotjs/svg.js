@@ -3,8 +3,8 @@
 SVG.Element = SVG.invent({
   // Initialize node
   create: function (node) {
-    // last fired event on node
-    this._event = null
+    // event listener
+    this.events = {}
 
     // initialize data object
     this.dom = {}
@@ -14,6 +14,7 @@ SVG.Element = SVG.invent({
     if (this.node) {
       this.type = node.nodeName
       this.node.instance = this
+      this.events = node.events || {}
 
       if (node.hasAttribute('svgjs:data')) {
         // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
@@ -217,7 +218,8 @@ SVG.Element = SVG.invent({
 
     // Get parent document
     doc: function () {
-      return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
+      var p = this.parent(SVG.Doc)
+      return p && p.doc()
     },
 
     // Get defs

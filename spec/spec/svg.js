@@ -52,10 +52,10 @@ describe('SVG', function() {
       expect(SVG(rect).node).toBe(rect)
     })
 
-    it('creates an instanceof SVG.Nested when importing a whole svg', function() {
+    it('creates an instanceof SVG.Doc when importing a whole svg', function() {
       var doc = SVG('<svg width="200"><rect></rect></svg>')
 
-      expect(doc instanceof SVG.Nested).toBe(true)
+      expect(doc instanceof SVG.Doc).toBe(true)
       expect(doc.node.nodeName).toBe('svg')
       expect(doc.width()).toBe(200)
       expect(doc.get(0).node.nodeName).toBe('rect')

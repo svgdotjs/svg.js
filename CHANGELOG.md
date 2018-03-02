@@ -14,6 +14,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
 - added `text()` method to `SVG.Path` to create a textPath from this path (#705)
 - added `SVG.HTMLNode` which is the object wrapped around html nodes to put something in them
+- added `dispatch()` method on `SVG.Element` which returns the dispatched event for event cancelation (#550)
+- added `isRoot()` on `SVG.Doc` (#809)
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added a linter during the npm build process
@@ -28,6 +30,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
 - removed `loaded()` and `error()` method on `SVG.Image` (#706)
 - removed sub-pixel offset fix
+- removed `SVG.Nested` (#809)
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -60,10 +63,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - default constructor now has an optional `node` argument which is used to consruct the object e.g. `new SVG.Rect(rectNode)`
 - SVG.Elements constructor now tries to import svgjs:data from the node
 - `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
-- `SVG.on()` and `el.on()` now accepts multiple comma or space seperated events e.g. "mousedown, foo bar" (#727)
+- `SVG.on()/off()` and `el.on()/off()` now accepts multiple comma or space separated events e.g. "mousedown, foo bar" (#727)
 - Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
 - Transforming an element is now much simpler
--
+- merged `SVG.Doc` and `SVG.Nested`, added `isRoot()` on `SVG.Doc()` (#809)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
