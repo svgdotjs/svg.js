@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 02 2018 13:43:54 GMT+1100 (AEDT)
+* BUILT: Fri Mar 02 2018 20:37:16 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -5356,7 +5356,7 @@ SVG.Box = SVG.invent({
       // IE11 throws an error when element not in dom
       try {
         var box = new SVG.Box(this.node.getBoundingClientRect())
-        if (el) return box.transform(el.screenCTM().inverse())
+        if (el) return box.lmultiply(el.screenCTM().inverse())
         return box.addOffset()
       } catch (e) {
         return new SVG.Box()
