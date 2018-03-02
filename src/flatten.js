@@ -1,6 +1,9 @@
 SVG.extend(SVG.Parent, {
   flatten: function (parent) {
-    if (this instanceof SVG.Defs) return this
+    // flattens is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || this instanceof SVG.Doc)) {
+      return this
+    }
 
     parent = parent || (this instanceof SVG.Doc && this.isRoot() ? this : this.parent(SVG.Parent))
 
@@ -12,6 +15,23 @@ SVG.extend(SVG.Parent, {
 
     // we need this so that SVG.Doc does not get removed
     this.node.firstElementChild || this.remove()
+
+    return this
+  },
+  ungroup: function (parent) {
+    // ungroup is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || (this instanceof SVG.Doc && !this.isRoot()))) {
+      return this
+    }
+
+    parent = parent || this.parent(SVG.Parent)
+
+    this.each(function () {
+      return this.toParent(parent)
+    })
+
+    // we need this so that SVG.Doc does not get removed
+    this.remove()
 
     return this
   }
