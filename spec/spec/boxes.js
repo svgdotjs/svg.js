@@ -269,9 +269,3 @@ describe('Boxes', function() {
   })
 
 })
-
-
-
-
-
-

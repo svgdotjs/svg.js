@@ -18,29 +18,6 @@ describe('Matrix', function() {
         expect(matrix.f).toBe(0)
       })
 
-      describe('decompose()', function() {
-        var decompose
-
-        beforeEach(function() {
-          decompose = matrix.decompose()
-        })
-
-        it('parses translation values', function() {
-          expect(decompose.translateX).toBe(0)
-          expect(decompose.translateY).toBe(0)
-        })
-        it('parses shear values', function() {
-          expect(decompose.shear).toBe(0)
-        })
-        it('parses scale values', function() {
-          expect(decompose.scaleX).toBe(1)
-          expect(decompose.scaleY).toBe(1)
-        })
-        it('parses rotatoin value', function() {
-          expect(decompose.rotate).toBe(0)
-        })
-      })
-
       describe('toString()' , function() {
         it('exports correctly to a string', function() {
           expect(matrix.toString()).toBe('matrix(1,0,0,1,0,0)')

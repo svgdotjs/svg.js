@@ -418,11 +418,11 @@ describe('Element', function() {
 
     it('moves the element to other parent while maintaining the same visal representation', function() {
       expect(rect1.toParent(nested).transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
+        a:2, b:0, c:0, d:2, e:120, f:120
       }))
       expect(rect1.parent()).toEqual(nested)
       expect(rect2.toParent(g2).transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:-95, f:-95
+        a:0.5, b:0, c:0, d:0.5, e:-120, f:-120
       }))
       expect(rect2.parent()).toEqual(g2)
     })
@@ -476,16 +476,16 @@ describe('Element', function() {
       expect(g2.node.parentNode).toBeFalsy()
 
       expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
+        a:2, b:0, c:0, d:2, e:120, f:120
       }))
       expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:45, f:45
+        a:0.5, b:0, c:0, d:0.5, e:20, f:20
       }))
     })
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
       draw.flatten()
-      
+
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
 
@@ -494,10 +494,10 @@ describe('Element', function() {
       expect(nested.node.parentNode).toBeFalsy()
 
       expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
+        a:2, b:0, c:0, d:2, e:120, f:120
       }))
       expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:45, f:45
+        a:0.5, b:0, c:0, d:0.5, e:20, f:20
       }))
 
       expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs

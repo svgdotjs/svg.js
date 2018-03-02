@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 02 2018 12:48:21 GMT+1100 (AEDT)
+* BUILT: Fri Mar 02 2018 13:43:54 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -2718,7 +2718,7 @@ SVG.extend(SVG.Element, {
     if (o == null) {
       return new SVG.Matrix(this)
 
-    // Let the user
+    // Let the user pass in a matrix as well
     } else if (o.a != null) {
 
       // Construct a matrix from the first parameter
@@ -3181,7 +3181,10 @@ SVG.Parent = SVG.invent({
 
 SVG.extend(SVG.Parent, {
   flatten: function (parent) {
-    if (this instanceof SVG.Defs) return this
+    // flattens is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || this instanceof SVG.Doc)) {
+      return this
+    }
 
     parent = parent || (this instanceof SVG.Doc && this.isRoot() ? this : this.parent(SVG.Parent))
 
@@ -3193,6 +3196,23 @@ SVG.extend(SVG.Parent, {
 
     // we need this so that SVG.Doc does not get removed
     this.node.firstElementChild || this.remove()
+
+    return this
+  },
+  ungroup: function (parent) {
+    // ungroup is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || (this instanceof SVG.Doc && !this.isRoot()))) {
+      return this
+    }
+
+    parent = parent || this.parent(SVG.Parent)
+
+    this.each(function () {
+      return this.toParent(parent)
+    })
+
+    // we need this so that SVG.Doc does not get removed
+    this.remove()
 
     return this
   }

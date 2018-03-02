@@ -57,7 +57,7 @@ SVG.extend(SVG.Element, {
     if (o == null) {
       return new SVG.Matrix(this)
 
-    // Let the user
+    // Let the user pass in a matrix as well
     } else if (o.a != null) {
 
       // Construct a matrix from the first parameter
