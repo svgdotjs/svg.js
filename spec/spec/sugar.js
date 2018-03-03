@@ -177,7 +177,7 @@ describe('Sugar', function() {
 
     it('sets flip to "both" when calling without anything', function() {
       rect.flip()
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', origin: [0, 0]] }, true)
+      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', origin: [0, 0] }, true)
     })
 
     // this works because only x and y are valid flip values. Evereything else flips on both axis

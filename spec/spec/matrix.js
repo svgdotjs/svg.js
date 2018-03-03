@@ -105,6 +105,41 @@ describe('Matrix', function() {
 
   })
 
+  describe('compose()', function() {
+    it('composes a matrix to form the correct result', function() {
+      var composed = new SVG.Matrix().compose({
+        scaleX: 3, scaleY: 20, shear: 4, rotate: 50, translateX: 23, translateY: 52,
+      })
+      var expected = new SVG.Matrix().scale(3, 20).shear(4).rotate(50).translate(23, 52)
+      expect(composed).toEqual(expected)
+    })
+  })
+
+  describe('decompose()', function () {
+    it('decomposes a matrix properly', function () {
+      var matrix = new SVG.Matrix().scale(3, 2.5).shear(4).rotate(30).translate(20, 30)
+      var decomposed = matrix.decompose()
+      expect(decomposed.scaleX).toBeCloseTo(3)
+      expect(decomposed.scaleY).toBeCloseTo(2.5)
+      expect(decomposed.shear).toBeCloseTo(4)
+      expect(decomposed.rotate).toBeCloseTo(30)
+      expect(decomposed.translateX).toBeCloseTo(20)
+      expect(decomposed.translateY).toBeCloseTo(30)
+    })
+
+    it('can be recomposed to the same matrix', function () {
+      var matrix = new SVG.Matrix().scale(3, 2.5).shear(4).rotate(30).translate(20, 30)
+      var decomposed = matrix.decompose()
+      var composed = new SVG.Matrix().compose(decomposed)
+      expect(matrix.a).toBeCloseTo(composed.a)
+      expect(matrix.b).toBeCloseTo(composed.b)
+      expect(matrix.c).toBeCloseTo(composed.c)
+      expect(matrix.d).toBeCloseTo(composed.d)
+      expect(matrix.e).toBeCloseTo(composed.e)
+      expect(matrix.f).toBeCloseTo(composed.f)
+    })
+  })
+
   describe('clone()', function() {
     it('returns a clone of the matrix', function() {
       var matrix = new SVG.Matrix(2, 0, 0, 5, 0, 0)

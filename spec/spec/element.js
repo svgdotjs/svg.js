@@ -195,7 +195,11 @@ describe('Element', function() {
     })
 
     it('gets the current transformation matrix', function() {
-      expect(rect.transform()).toEqual(new SVG.Matrix(rect))
+      expect(rect.transform()).toEqual(jasmine.objectContaining({
+        a: 1, b: 0, c: 0, d: 1, e: 0, f: 0, matrix: new SVG.Matrix(rect),
+        scaleX: 1, scaleY: 1, shear: 0, rotate: 0,
+        translateX: 0, translateY: 0,
+      }))
     })
     it('sets the translation of and element', function() {
       rect.transform({ translate: [10, 11] })
@@ -417,13 +421,9 @@ describe('Element', function() {
     })
 
     it('moves the element to other parent while maintaining the same visal representation', function() {
-      expect(rect1.toParent(nested).transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:120, f:120
-      }))
+      expect(rect1.toParent(nested).transform('matrix')).toBeCloseTo(new SVG.Matrix(2, 0, 0, 2, 120, 120))
       expect(rect1.parent()).toEqual(nested)
-      expect(rect2.toParent(g2).transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:-120, f:-120
-      }))
+      expect(rect2.toParent(g2).transform('matrix')).toBeCloseTo(new SVG.Matrix(0.5, 0, 0, 0.5, -120, -120))
       expect(rect2.parent()).toEqual(g2)
     })
   })

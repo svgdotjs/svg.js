@@ -34,6 +34,12 @@ var sugar = {
 })
 
 SVG.extend([SVG.Element, SVG.FX], {
+  // Let the user set the matrix directly
+  matrix: function (mat, b, c, d, e, f) {
+    var matrix = new SVG.Matrix(arguments.length > 1 ? [mat, b, c, d, e, f] : mat)
+    return this.attr('transform', matrix)
+  },
+
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
     return this.transform({rotate: angle, origin: [cx, cy]}, true)
@@ -69,11 +75,15 @@ SVG.extend([SVG.Element, SVG.FX], {
 
   // Map flip to transform
   flip: function (direction, around) {
+    var directionString = typeof direction == 'string' ? direction
+      : isFinite(direction) ? 'both'
+      : 'both'
     var origin = (direction === 'both' && isFinite(around)) ? [around, around]
       : (direction === 'x') ? [around, 0]
       : (direction === 'y') ? [0, around]
+      : isFinite(direction) ? [direction, direction]
       : [0, 0]
-    this.transform({flip: direction || 'both', origin: origin}, true)
+    this.transform({flip: directionString, origin: origin}, true)
   },
 
   // Opacity

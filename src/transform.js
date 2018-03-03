@@ -44,7 +44,7 @@ SVG.extend(SVG.Element, {
   // same as above with parent equals root-svg
   toDoc: function () {
     return this.toParent(this.doc())
-  }
+  },
 })
 
 SVG.extend(SVG.Element, {
@@ -55,8 +55,9 @@ SVG.extend(SVG.Element, {
     var bbox = this.bbox()
 
     // Act as a getter if no object was passed
-    if (o == null) {
-      return new SVG.Matrix(this).decompose()
+    if (o == null || typeof o === 'string') {
+      var decomposed = new SVG.Matrix(this).decompose()
+      return decomposed[o] || decomposed
 
     // Let the user pass in a matrix as well
     } else if (o.a != null) {

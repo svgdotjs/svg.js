@@ -93,12 +93,12 @@ SVG.Matrix = SVG.invent({
     // Applies a matrix defined by its affine parameters
     compose: function (o) {
       // Get the parameters
-      var sx = o.scaleX
-      var sy = o.scaleY
-      var lam = o.shear
-      var theta = o.rotate
-      var tx = o.translateX
-      var ty = o.translateY
+      var sx = o.scaleX || 1
+      var sy = o.scaleY || 1
+      var lam = o.shear || 0
+      var theta = o.rotate || 0
+      var tx = o.translateX || 0
+      var ty = o.translateY || 0
 
       // Apply the standard matrix
       var result = new SVG.Matrix()
@@ -122,7 +122,7 @@ SVG.Matrix = SVG.invent({
 
       // Figure out if the winding direction is clockwise or counterclockwise
       var determinant = a * d - b * c
-      var ccw = determinant > 0 ? -1 : 1
+      var ccw = determinant > 0 ? 1 : -1
 
       // Since we only shear in x, we can use the x basis to get the x scale
       // and the rotation of the resulting matrix
@@ -145,13 +145,13 @@ SVG.Matrix = SVG.invent({
         translateY: f,
 
         // Return the matrix parameters
-        matrix: this,
+        matrix: new SVG.Matrix(this),
         a: this.a,
         b: this.b,
         c: this.c,
         d: this.d,
         e: this.e,
-        f: this.f,
+        f: this.f
       }
     },
 

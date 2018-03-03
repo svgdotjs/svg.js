@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Mar 03 2018 22:06:07 GMT+1100 (AEDT)
+* BUILT: Sun Mar 04 2018 01:42:31 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -2327,12 +2327,12 @@ SVG.Matrix = SVG.invent({
     // Applies a matrix defined by its affine parameters
     compose: function (o) {
       // Get the parameters
-      var sx = o.scaleX
-      var sy = o.scaleY
-      var lam = o.shear
-      var theta = o.rotate
-      var tx = o.translateX
-      var ty = o.translateY
+      var sx = o.scaleX || 1
+      var sy = o.scaleY || 1
+      var lam = o.shear || 0
+      var theta = o.rotate || 0
+      var tx = o.translateX || 0
+      var ty = o.translateY || 0
 
       // Apply the standard matrix
       var result = new SVG.Matrix()
@@ -2356,7 +2356,7 @@ SVG.Matrix = SVG.invent({
 
       // Figure out if the winding direction is clockwise or counterclockwise
       var determinant = a * d - b * c
-      var ccw = determinant > 0 ? -1 : 1
+      var ccw = determinant > 0 ? 1 : -1
 
       // Since we only shear in x, we can use the x basis to get the x scale
       // and the rotation of the resulting matrix
@@ -2379,13 +2379,13 @@ SVG.Matrix = SVG.invent({
         translateY: f,
 
         // Return the matrix parameters
-        matrix: this,
+        matrix: new SVG.Matrix(this),
         a: this.a,
         b: this.b,
         c: this.c,
         d: this.d,
         e: this.e,
-        f: this.f,
+        f: this.f
       }
     },
 
@@ -2774,7 +2774,7 @@ SVG.extend(SVG.Element, {
   // same as above with parent equals root-svg
   toDoc: function () {
     return this.toParent(this.doc())
-  }
+  },
 })
 
 SVG.extend(SVG.Element, {
@@ -2785,8 +2785,9 @@ SVG.extend(SVG.Element, {
     var bbox = this.bbox()
 
     // Act as a getter if no object was passed
-    if (o == null) {
-      return new SVG.Matrix(this).decompose()
+    if (o == null || typeof o === 'string') {
+      var decomposed = new SVG.Matrix(this).decompose()
+      return decomposed[o] || decomposed
 
     // Let the user pass in a matrix as well
     } else if (o.a != null) {
@@ -4889,6 +4890,12 @@ var sugar = {
 })
 
 SVG.extend([SVG.Element, SVG.FX], {
+  // Let the user set the matrix directly
+  matrix: function (mat, b, c, d, e, f) {
+    var matrix = new SVG.Matrix(arguments.length > 1 ? [mat, b, c, d, e, f] : mat)
+    return this.attr('transform', matrix)
+  },
+
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
     return this.transform({rotate: angle, origin: [cx, cy]}, true)
@@ -4924,11 +4931,15 @@ SVG.extend([SVG.Element, SVG.FX], {
 
   // Map flip to transform
   flip: function (direction, around) {
+    var directionString = typeof direction == 'string' ? direction
+      : isFinite(direction) ? 'both'
+      : 'both'
     var origin = (direction === 'both' && isFinite(around)) ? [around, around]
       : (direction === 'x') ? [around, 0]
       : (direction === 'y') ? [0, around]
+      : isFinite(direction) ? [direction, direction]
       : [0, 0]
-    this.transform({flip: direction || 'both', origin: origin}, true)
+    this.transform({flip: directionString, origin: origin}, true)
   },
 
   // Opacity
@@ -5321,7 +5332,6 @@ SVG.Box = SVG.invent({
     // add center, right, bottom...
     fullBox(this)
   },
-
   extend: {
     // Merge rect box with another, return a new instance
     merge: function (box) {
@@ -5356,7 +5366,11 @@ SVG.Box = SVG.invent({
         yMax = Math.max(yMax, p.y)
       })
 
-      return new SVG.Box(xMin, yMin, xMax - xMin, yMax - yMin)
+      return new SVG.Box(
+        xMin, yMin,
+        xMax - xMin,
+        yMax - yMin
+      )
     },
 
     addOffset: function () {
@@ -5365,11 +5379,9 @@ SVG.Box = SVG.invent({
       this.y += window.pageYOffset
       return this
     },
-
     toString: function () {
       return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
     },
-
     morph: function (x, y, width, height) {
       this.destination = new SVG.Box(x, y, width, height)
       return this
@@ -5379,15 +5391,15 @@ SVG.Box = SVG.invent({
       if (!this.destination) return this
 
       return new SVG.Box(
-        this.x + (this.destination.x - this.x) * pos,
-        this.y + (this.destination.y - this.y) * pos,
-        this.width + (this.destination.width - this.width) * pos,
-        this.height + (this.destination.height - this.height) * pos
+          this.x + (this.destination.x - this.x) * pos
+        , this.y + (this.destination.y - this.y) * pos
+        , this.width + (this.destination.width - this.width) * pos
+        , this.height + (this.destination.height - this.height) * pos
       )
     }
   },
 
-  // Define Parent
+    // Define Parent
   parent: SVG.Element,
 
   // Constructor

@@ -55,7 +55,6 @@ SVG.extend(SVG.Element, {
 
     reactToDrag(this, (e, x, y)=> {
 
-      let matrix = this.transform
       this.transform({
         origin: [sx, sy],
         position: [x, y],
@@ -67,7 +66,7 @@ SVG.extend(SVG.Element, {
 
     }, (e, x, y)=> {
 
-      var toAbsolute = this.transform().inverse()
+      var toAbsolute = new SVG.Matrix(this).inverse()
       var p = new SVG.Point(x, y).transform(toAbsolute)
       sx = p.x
       sy = p.y
