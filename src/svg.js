@@ -55,7 +55,7 @@ var wrapFn = function (method, initializer) {
 
   return function (o) {
     // if an object is given, we assume thats an attribute list
-    if (typeof o === 'object' && !o.prototype && o.length == null) {
+    if (o && o.constructor === Object) {
       return this.put(new initializer()).attr(o)
     }
 
