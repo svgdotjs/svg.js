@@ -57,7 +57,7 @@
     "build": "gulp",
     "build:test": "gulp unify",
     "build:dev": "gulp --dont-break",
-    "test": "karma start .config/karma.conf.js --single-run",
+    "test": "karma start .config/karma.conf.js --single-run --reporters dots",
     "test:quick": "karma start .config/karma.quick.js",
     "lint": "standard --verbose | snazzy"
   },

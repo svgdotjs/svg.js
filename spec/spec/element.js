@@ -421,9 +421,11 @@ describe('Element', function() {
     })
 
     it('moves the element to other parent while maintaining the same visal representation', function() {
-      expect(rect1.toParent(nested).transform('matrix')).toBeCloseTo(new SVG.Matrix(2, 0, 0, 2, 120, 120))
+      expect(window.roundMatrix(rect1.toParent(nested).transform('matrix')))
+        .toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
       expect(rect1.parent()).toEqual(nested)
-      expect(rect2.toParent(g2).transform('matrix')).toBeCloseTo(new SVG.Matrix(0.5, 0, 0, 0.5, -120, -120))
+      expect(window.roundMatrix(rect2.toParent(g2).transform('matrix')))
+        .toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, -120, -120))
       expect(rect2.parent()).toEqual(g2)
     })
   })
@@ -475,12 +477,8 @@ describe('Element', function() {
       expect(g1.node.parentNode).toBeFalsy()
       expect(g2.node.parentNode).toBeFalsy()
 
-      expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:120, f:120
-      }))
-      expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:20, f:20
-      }))
+      expect(window.roundMatrix(rect1.transform().matrix)).toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
+      expect(window.roundMatrix(rect2.transform().matrix)).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 20, 20))
     })
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
@@ -493,12 +491,8 @@ describe('Element', function() {
       expect(g2.node.parentNode).toBeFalsy()
       expect(nested.node.parentNode).toBeFalsy()
 
-      expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:120, f:120
-      }))
-      expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:20, f:20
-      }))
+      expect(window.roundMatrix(rect1.transform().matrix)).toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
+      expect(window.roundMatrix(rect2.transform().matrix)).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 20, 20))
 
       expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs
     })

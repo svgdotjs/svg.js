@@ -163,7 +163,7 @@ describe('Boxes', function() {
     offset = draw.screenCTM()
     draw.viewbox(100,100, 200, 200)
     nested = draw.nested().size(200, 200).move(100,100).viewbox(0, 0, 100, 100)
-    rect = nested.rect(50, 180).stroke({width:0}).move(25, 90).transform({scale: 2, origin: [0, 0]}).translate(10, 10)
+    rect = nested.rect(50, 180).stroke({width:0}).move(25, 90).transform({scale: 2, origin: [0, 0]}).relative(10, 10)
   })
   afterEach(function() {
     draw.clear().attr('viewBox', null)

@@ -10,7 +10,7 @@ if(typeof exports === 'object'){
   drawing = document.documentElement
   imageUrl = 'spec/fixtures/pixel.png'
   parserInDoc = true
-  
+
   function tag(name, attrs, children) {
     var el = document.createElement(name)
     for(var i in attrs){
@@ -173,5 +173,17 @@ window.roundBox = function(box) {
     Math.round(box.y),
     Math.round(box.width),
     Math.round(box.height)
+  )
+}
+
+// Same thing here with matrices
+window.roundMatrix = function (mat) {
+  return new SVG.Matrix(
+    +(mat.a.toFixed(5)),
+    +(mat.b.toFixed(5)),
+    +(mat.c.toFixed(5)),
+    +(mat.d.toFixed(5)),
+    +(mat.e.toFixed(5)),
+    +(mat.f.toFixed(5)),
   )
 }
