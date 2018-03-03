@@ -75,7 +75,7 @@ SVG.extend([SVG.Element, SVG.FX], {
 
   // Map flip to transform
   flip: function (direction, around) {
-    var directionString = typeof direction == 'string' ? direction
+    var directionString = typeof direction === 'string' ? direction
       : isFinite(direction) ? 'both'
       : 'both'
     var origin = (direction === 'both' && isFinite(around)) ? [around, around]

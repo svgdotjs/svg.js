@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 04 2018 01:42:31 GMT+1100 (AEDT)
+* BUILT: Sun Mar 04 2018 08:55:46 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -2774,7 +2774,7 @@ SVG.extend(SVG.Element, {
   // same as above with parent equals root-svg
   toDoc: function () {
     return this.toParent(this.doc())
-  },
+  }
 })
 
 SVG.extend(SVG.Element, {
@@ -4931,7 +4931,7 @@ SVG.extend([SVG.Element, SVG.FX], {
 
   // Map flip to transform
   flip: function (direction, around) {
-    var directionString = typeof direction == 'string' ? direction
+    var directionString = typeof direction === 'string' ? direction
       : isFinite(direction) ? 'both'
       : 'both'
     var origin = (direction === 'both' && isFinite(around)) ? [around, around]

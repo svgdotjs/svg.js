@@ -44,7 +44,7 @@ SVG.extend(SVG.Element, {
   // same as above with parent equals root-svg
   toDoc: function () {
     return this.toParent(this.doc())
-  },
+  }
 })
 
 SVG.extend(SVG.Element, {
