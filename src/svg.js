@@ -47,19 +47,19 @@ SVG.extend = function (modules, methods) {
   }
 }
 
-var wrapFn = function(method, initializer) {
-  return function(o) {
-    if(!(initializer.prototype instanceof SVG.Element))
-      return method.apply(this, [].slice.call(arguments))
+var wrapFn = function (method, initializer) {
+  // not a constructor we want to change
+  if (!(SVG.Shape && initializer.prototype instanceof SVG.Shape)) {
+    return method
+  }
 
-    if(o instanceof initializer) {
-      return o.clone(this)
-    }
-
-    if(typeof o == 'object') {
+  return function (o) {
+    // if an object is given, we assume thats an attribute list
+    if (typeof o === 'object' && !o.prototype && o.length == null) {
       return this.put(new initializer()).attr(o)
     }
 
+    // in every other case we call the normal constructor
     return method.apply(this, [].slice.call(arguments))
   }
 }
@@ -82,7 +82,7 @@ SVG.invent = function (config) {
     SVG.extend(initializer, config.extend)
   }
 
-  for(var i in config.construct) {
+  for (var i in config.construct) {
     config.construct[i] = wrapFn(config.construct[i], initializer)
   }
 
