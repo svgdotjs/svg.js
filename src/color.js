@@ -68,7 +68,7 @@ SVG.extend(SVG.Color, {
   // Get morphed color at given position
   at: function (pos) {
     // make sure a destination is defined
-    if (!this.destination) return this
+    if (!this.destination) throw new Error('No destination set')
 
     // normalise pos
     pos = pos < 0 ? 0 : pos > 1 ? 1 : pos

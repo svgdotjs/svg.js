@@ -195,7 +195,7 @@ SVG.extend(SVG.PathArray, {
   // Get morphed path array at given position
   at: function (pos) {
     // make sure a destination is defined
-    if (!this.destination) return this
+    if (!this.destination) throw new Error('No destination set')
 
     var sourceArray = this.value
     var destinationArray = this.destination.value
