@@ -29,6 +29,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `loaded()` and `error()` method on `SVG.Image` (#706)
 - removed sub-pixel offset fix
 - removed `SVG.Nested` (#809)
+- removed `show()` from `SVG.A` to avoid name clash (#802)
+- removed `size()` from `SVG.Text` to avoid name clash (#799)
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear

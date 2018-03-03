@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Feb 27 2018 03:37:50 GMT+1100 (AEDT)
+* BUILT: Sat Mar 03 2018 11:57:42 GMT+0100 (Mitteleuropäische Zeit)
 */;
 
 (function(root, factory) {
@@ -110,7 +110,7 @@ SVG.adopt = function (node) {
   if (!node) return null
 
   // make sure a node isn't already adopted
-  if (node.instance) return node.instance
+  if (node.instance instanceof SVG.Element) return node.instance
 
   if (!(node instanceof window.SVGElement)) {
     return new SVG.HtmlNode(node)
@@ -121,12 +121,14 @@ SVG.adopt = function (node) {
 
   // adopt with element-specific settings
   if (node.nodeName === 'svg') {
-    element = node.parentNode instanceof window.SVGElement ? new SVG.Nested(node) : new SVG.Doc(node)
+    element = new SVG.Doc(node)
   } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
     element = new SVG.Gradient(node)
   } else if (SVG[capitalize(node.nodeName)]) {
     element = new SVG[capitalize(node.nodeName)](node)
-  } else { element = new SVG.Parent(node) }
+  } else {
+    element = new SVG.Parent(node)
+  }
 
   return element
 }
@@ -998,15 +1000,9 @@ SVG.HtmlNode = SVG.invent({
   extend: {
     add: function (element, i) {
       element = createElement(element)
-      if (element instanceof SVG.Nested) {
-        element = new SVG.Doc(element.node)
-        element.setData(JSON.parse(element.node.getAttribute('svgjs:data')) || {})
-      }
 
-      if (i === null) {
-        this.node.appendChild(element.node)
-      } else if (element.node !== this.node.children[i]) {
-        this.node.insertBefore(element.node, this.node.children[i])
+      if (element.node !== this.node.children[i]) {
+        this.node.insertBefore(element.node, this.node.children[i] || null)
       }
 
       return this
@@ -1024,8 +1020,8 @@ SVG.HtmlNode = SVG.invent({
 SVG.Element = SVG.invent({
   // Initialize node
   create: function (node) {
-    // last fired event on node
-    this._event = null
+    // event listener
+    this.events = {}
 
     // initialize data object
     this.dom = {}
@@ -1035,6 +1031,7 @@ SVG.Element = SVG.invent({
     if (this.node) {
       this.type = node.nodeName
       this.node.instance = this
+      this.events = node.events || {}
 
       if (node.hasAttribute('svgjs:data')) {
         // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
@@ -1238,7 +1235,8 @@ SVG.Element = SVG.invent({
 
     // Get parent document
     doc: function () {
-      return this instanceof SVG.Doc ? this : this.parent(SVG.Doc)
+      var p = this.parent(SVG.Doc)
+      return p && p.doc()
     },
 
     // Get defs
@@ -2415,7 +2413,7 @@ SVG.Matrix = SVG.invent({
          This is needed because FF does not return the transformation matrix
          for the inner coordinate system when getScreenCTM() is called on nested svgs.
          However all other Browsers do that */
-      if (this instanceof SVG.Nested) {
+      if (this instanceof SVG.Doc && !this.isRoot()) {
         var rect = this.rect(1, 1)
         var m = rect.node.getScreenCTM()
         rect.remove()
@@ -3001,10 +2999,8 @@ SVG.Parent = SVG.invent({
     add: function (element, i) {
       element = createElement(element)
 
-      if (i == null) {
-        this.node.appendChild(element.node)
-      } else if (element.node !== this.node.children[i]) {
-        this.node.insertBefore(element.node, this.node.children[i])
+      if (element.node !== this.node.children[i]) {
+        this.node.insertBefore(element.node, this.node.children[i] || null)
       }
 
       return this
@@ -3075,9 +3071,12 @@ SVG.Parent = SVG.invent({
 
 SVG.extend(SVG.Parent, {
   flatten: function (parent) {
-    if (this instanceof SVG.Defs) return this
+    // flattens is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || this instanceof SVG.Doc)) {
+      return this
+    }
 
-    parent = parent || (this instanceof SVG.Doc ? this : this.parent(SVG.Parent))
+    parent = parent || (this instanceof SVG.Doc && this.isRoot() ? this : this.parent(SVG.Parent))
 
     this.each(function () {
       if (this instanceof SVG.Defs) return this
@@ -3087,6 +3086,23 @@ SVG.extend(SVG.Parent, {
 
     // we need this so that SVG.Doc does not get removed
     this.node.firstElementChild || this.remove()
+
+    return this
+  },
+  ungroup: function (parent) {
+    // ungroup is only possible for nested svgs and groups
+    if (!(this instanceof SVG.G || (this instanceof SVG.Doc && !this.isRoot()))) {
+      return this
+    }
+
+    parent = parent || this.parent(SVG.Parent)
+
+    this.each(function () {
+      return this.toParent(parent)
+    })
+
+    // we need this so that SVG.Doc does not get removed
+    this.remove()
 
     return this
   }
@@ -3103,6 +3119,7 @@ SVG.Container = SVG.invent({
 })
 
 // Add events to elements
+
 ;[ 'click',
   'dblclick',
   'mousedown',
@@ -3110,14 +3127,14 @@ SVG.Container = SVG.invent({
   'mouseover',
   'mouseout',
   'mousemove',
-  // , 'mouseenter' -> not supported by IE
-  // , 'mouseleave' -> not supported by IE
+  'mouseenter',
+  'mouseleave',
   'touchstart',
   'touchmove',
   'touchleave',
   'touchend',
   'touchcancel' ].forEach(function (event) {
-  // add event to SVG.Element
+    // add event to SVG.Element
     SVG.Element.prototype[event] = function (f) {
     // bind event to element rather than element node
       SVG.on(this, event, f)
@@ -3125,32 +3142,31 @@ SVG.Container = SVG.invent({
     }
   })
 
-// Initialize listeners stack
-SVG.listeners = []
-SVG.handlerMap = []
 SVG.listenerId = 0
 
 // Add event binder in the SVG namespace
 SVG.on = function (node, events, listener, binding, options) {
+  var l = listener.bind(binding || node)
+  var n = node instanceof SVG.Element ? node.node : node
+
+  // ensure instance object for nodes which are not adopted
+  n.instance = n.instance || {events: {}}
+
+  var bag = n.instance.events
+
+  // add id to listener
+  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
+
   events.split(SVG.regex.delimiter).forEach(function (event) {
-    // create listener, get object-index
-    var l = listener.bind(binding || node)
-    var n = node instanceof SVG.Element ? node.node : node
-    var index = (SVG.handlerMap.indexOf(n) + 1 || SVG.handlerMap.push(n)) - 1
     var ev = event.split('.')[0]
     var ns = event.split('.')[1] || '*'
 
     // ensure valid object
-    SVG.listeners[index] = SVG.listeners[index] || {}
-    SVG.listeners[index][ev] = SVG.listeners[index][ev] || {}
-    SVG.listeners[index][ev][ns] = SVG.listeners[index][ev][ns] || {}
-
-    if (!listener._svgjsListenerId) {
-      listener._svgjsListenerId = ++SVG.listenerId
-    }
+    bag[ev] = bag[ev] || {}
+    bag[ev][ns] = bag[ev][ns] || {}
 
     // reference listener
-    SVG.listeners[index][ev][ns][listener._svgjsListenerId] = l
+    bag[ev][ns][listener._svgjsListenerId] = l
 
     // add listener
     n.addEventListener(ev, l, options || false)
@@ -3158,92 +3174,85 @@ SVG.on = function (node, events, listener, binding, options) {
 }
 
 // Add event unbinder in the SVG namespace
-SVG.off = function (node, event, listener) {
-  var index = SVG.handlerMap.indexOf(node)
-  var ev = event && event.split('.')[0]
-  var ns = event && event.split('.')[1]
-  var namespace = ''
+SVG.off = function (node, events, listener, options) {
+  var n = node instanceof SVG.Element ? node.node : node
+  if (!n.instance) return
 
-  if (index === -1) return
-
-  if (listener) {
-    if (typeof listener === 'function') listener = listener._svgjsListenerId
+  // listener can be a function or a number
+  if (typeof listener === 'function') {
+    listener = listener._svgjsListenerId
     if (!listener) return
+  }
 
-    // remove listener reference
-    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns || '*']) {
-      // remove listener
-      node.removeEventListener(ev, SVG.listeners[index][ev][ns || '*'][listener], false)
+  var bag = n.instance.events
 
-      delete SVG.listeners[index][ev][ns || '*'][listener]
-    }
-  } else if (ns && ev) {
-    // remove all listeners for a namespaced event
-    if (SVG.listeners[index][ev] && SVG.listeners[index][ev][ns]) {
-      for (listener in SVG.listeners[index][ev][ns]) {
-        SVG.off(node, [ev, ns].join('.'), listener)
+  ;(events || '').split(SVG.regex.delimiter).forEach(function (event) {
+    var ev = event && event.split('.')[0]
+    var ns = event && event.split('.')[1]
+    var namespace, l
+
+    if (listener) {
+      // remove listener reference
+      if (bag[ev] && bag[ev][ns || '*']) {
+        // removeListener
+        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+
+        delete bag[ev][ns || '*'][listener]
       }
+    } else if (ev && ns) {
+      // remove all listeners for a namespaced event
+      if (bag[ev] && bag[ev][ns]) {
+        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
 
-      delete SVG.listeners[index][ev][ns]
-    }
-  } else if (ns) {
-    // remove all listeners for a specific namespace
-    for (event in SVG.listeners[index]) {
-      for (namespace in SVG.listeners[index][event]) {
-        if (ns === namespace) {
-          SVG.off(node, [event, ns].join('.'))
+        delete bag[ev][ns]
+      }
+    } else if (ns) {
+      // remove all listeners for a specific namespace
+      for (event in bag) {
+        for (namespace in bag[event]) {
+          if (ns === namespace) { SVG.off(n, [event, ns].join('.')) }
         }
       }
-    }
-  } else if (ev) {
-    // remove all listeners for the event
-    if (SVG.listeners[index][ev]) {
-      for (namespace in SVG.listeners[index][ev]) {
-        SVG.off(node, [ev, namespace].join('.'))
+    } else if (ev) {
+      // remove all listeners for the event
+      if (bag[ev]) {
+        for (namespace in bag[ev]) { SVG.off(n, [ev, namespace].join('.')) }
+
+        delete bag[ev]
       }
+    } else {
+      // remove all listeners on a given node
+      for (event in bag) { SVG.off(n, event) }
 
-      delete SVG.listeners[index][ev]
+      n.instance.events = {}
     }
-  } else {
-    // remove all listeners on a given node
-    for (event in SVG.listeners[index]) {
-      SVG.off(node, event)
-    }
-
-    delete SVG.listeners[index]
-    delete SVG.handlerMap[index]
-  }
+  })
 }
 
-//
 SVG.extend(SVG.Element, {
   // Bind given event to listener
   on: function (event, listener, binding, options) {
     SVG.on(this, event, listener, binding, options)
     return this
   },
-
   // Unbind event from listener
   off: function (event, listener) {
     SVG.off(this.node, event, listener)
     return this
   },
-
-  // Fire given event
-  fire: function (event, data) {
+  dispatch: function (event, data) {
     // Dispatch event
     if (event instanceof window.Event) {
       this.node.dispatchEvent(event)
     } else {
       this.node.dispatchEvent(event = new window.CustomEvent(event, {detail: data, cancelable: true}))
     }
-
-    this._event = event
-    return this
+    return event
   },
-
-  event: function () {
-    return this._event
+  // Fire given event
+  fire: function (event, data) {
+    this.dispatch(event, data)
+    return this
   }
 })
 
@@ -3681,7 +3690,7 @@ SVG.Doc = SVG.invent({
     this.constructor(node || SVG.create('svg'))
 
     // set svg element attributes and ensure defs node
-    this.namespace().defs()
+    this.namespace()
   },
 
   // Inherit from
@@ -3689,8 +3698,17 @@ SVG.Doc = SVG.invent({
 
   // Add class methods
   extend: {
+    isRoot: function () {
+      return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document'
+    },
+    // Check if this is a root svg. If not, call docs from this element
+    doc: function () {
+      if (this.isRoot()) return this
+      return SVG.Element.prototype.doc.call(this)
+    },
     // Add namespaces
     namespace: function () {
+      if (!this.isRoot()) return this.doc().namespace()
       return this
         .attr({ xmlns: SVG.ns, version: '1.1' })
         .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
@@ -3698,14 +3716,23 @@ SVG.Doc = SVG.invent({
     },
     // Creates and returns defs element
     defs: function () {
+      if (!this.isRoot()) return this.doc().defs()
       return SVG.adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new SVG.Defs())
     },
     // custom parent method
-    parent: function () {
-      return this.node.parentNode.nodeName === '#document' ? null : this.node.parentNode
+    parent: function (type) {
+      if (this.isRoot()) {
+        return this.node.parentNode.nodeName === '#document' ? null : this.node.parentNode
+      }
+
+      return SVG.Element.prototype.parent.call(this, type)
     },
-      // Removes the doc from the DOM
+    // Removes the doc from the DOM
     remove: function () {
+      if (!this.isRoot()) {
+        return SVG.Element.prototype.remove.call(this)
+      }
+
       if (this.parent()) {
         this.parent().removeChild(this.node)
       }
@@ -3718,16 +3745,14 @@ SVG.Doc = SVG.invent({
         this.node.removeChild(this.node.lastChild)
       }
       return this
-    },
-    toNested: function () {
-      var el = SVG.create('svg')
-      this.node.instance = null
-      el.appendChild(this.node)
-
-      return SVG.adopt(this.node)
+    }
+  },
+  construct: {
+    // Create nested svg document
+    nested: function () {
+      return this.put(new SVG.Doc())
     }
   }
-
 })
 
 
@@ -4299,10 +4324,6 @@ SVG.Text = SVG.invent({
       // disable build mode and rebuild lines
       return this.build(false).rebuild()
     },
-    // Set font size
-    size: function (size) {
-      return this.attr('font-size', size).rebuild()
-    },
     // Set / get leading
     leading: function (value) {
       // act as getter
@@ -4406,7 +4427,7 @@ SVG.Tspan = SVG.invent({
       // mark new line
       this.dom.newLined = true
 
-      // apply new hy¡n
+      // apply new position
       return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
@@ -4522,23 +4543,6 @@ SVG.extend([SVG.Path], {
     return this.parent().put(new SVG.Text()).path(this).text(text)
   }
   // TODO: Maybe add `targets` to get all textPaths associated with this path
-})
-
-
-SVG.Nested = SVG.invent({
-  // Initialize node
-  create: 'svg',
-
-  // Inherit from
-  inherit: SVG.Container,
-
-  // Add parent method
-  construct: {
-    // Create nested svg document
-    nested: function () {
-      return this.put(new SVG.Nested())
-    }
-  }
 })
 
 SVG.A = SVG.invent({
@@ -5227,7 +5231,7 @@ SVG.Box = SVG.invent({
   }
 })
 
-SVG.extend([SVG.Doc, SVG.Nested, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View], {
+SVG.extend([SVG.Doc, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View], {
   viewbox: function (x, y, width, height) {
     // act as getter
     if (x == null) return new SVG.Box(this.attr('viewBox'))
@@ -5250,7 +5254,7 @@ SVG.parser = function () {
 }
 
 SVG.parser.nodes = {
-  svg: new SVG.Nested().size(2, 0).css({
+  svg: SVG().size(2, 0).css({
     opacity: 0,
     position: 'absolute',
     left: '-100%',
@@ -5264,4 +5268,4 @@ SVG.parser.nodes.path = SVG.parser.nodes.svg.path().node
 
 return SVG
 
-}));
+}));
