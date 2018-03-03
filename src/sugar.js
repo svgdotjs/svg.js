@@ -46,6 +46,10 @@ SVG.extend([SVG.Element, SVG.FX], {
       : this.transform({skew: [x, y], origin: [cx, cy]}, true)
   },
 
+  shear: function (lam, cx, cy) {
+    return this.transform({shear: lam, origin: [cx, cy]}, true)
+  },
+
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
@@ -58,13 +62,18 @@ SVG.extend([SVG.Element, SVG.FX], {
     return this.transform({ translate: [x, y] }, true)
   },
 
+  // Map relative translations to transform
+  relative: function (x, y) {
+    return this.transform({ relative: [x, y] }, true)
+  },
+
   // Map flip to transform
   flip: function (direction, around) {
-    var origin = (direction === "both" && isFinite(around)) ? [around, around]
-      : (direction === "x") ? [around, 0]
-      : (direction === "y") ? [0, around]
+    var origin = (direction === 'both' && isFinite(around)) ? [around, around]
+      : (direction === 'x') ? [around, 0]
+      : (direction === 'y') ? [0, around]
       : [0, 0]
-    this.transform({flip: direction || "both", origin: origin}, true)
+    this.transform({flip: direction || 'both', origin: origin}, true)
   },
 
   // Opacity

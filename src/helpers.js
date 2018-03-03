@@ -209,21 +209,6 @@ function idFromReference (url) {
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
 
-// Gets the distance of a point (a, b) from the origin
-function mag (a, b) {
-  return Math.sqrt(a * a + b * b)
-}
-
-// Given a coordinate (a, b), this will calculate the sin, cosine and angle
-// of this point projected onto the unit circle directly
-function unitCircle (a, b) {
-  var thetaRad = Math.atan2(b, a)
-  var thetaDeg = thetaRad * 180 / Math.PI
-  var cos = Math.cos(thetaRad)
-  var sin = Math.sin(thetaRad)
-  return {theta: thetaDeg, cos: cos, sin: sin}
-}
-
 function closeEnough (a, b, threshold) {
-  return Math.abs (b - a) < (threshold || 1e-6)
+  return Math.abs(b - a) < (threshold || 1e-6)
 }

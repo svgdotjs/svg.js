@@ -21,8 +21,9 @@ SVG.extend(SVG.Element, {
       .reverse()
       // merge every transformation into one matrix
       .reduce(function (matrix, transform) {
-        if (transform[0] === 'matrix')
+        if (transform[0] === 'matrix') {
           return matrix.lmultiply(arrayToMatrix(transform[1]))
+        }
         return matrix[transform[0]].apply(matrix, transform[1])
       }, new SVG.Matrix())
 
@@ -55,11 +56,10 @@ SVG.extend(SVG.Element, {
 
     // Act as a getter if no object was passed
     if (o == null) {
-      return new SVG.Matrix(this)
+      return new SVG.Matrix(this).decompose()
 
     // Let the user pass in a matrix as well
     } else if (o.a != null) {
-
       // Construct a matrix from the first parameter
       var matrix = new SVG.Matrix(o)
 
@@ -73,8 +73,9 @@ SVG.extend(SVG.Element, {
       return this.attr('transform', matrix)
 
     // Allow the user to define the origin with a string
-    } else if (typeof o.origin === 'string'
-      || (o.origin == null && o.ox == null && o.oy == null)) {
+    } else if (typeof o.origin === 'string' ||
+      (o.origin == null && o.ox == null && o.oy == null)
+    ) {
       // Get the bounding box and string to use in our calculations
       var string = typeof o.origin === 'string'
         ? o.origin.toLowerCase().trim()
@@ -97,12 +98,12 @@ SVG.extend(SVG.Element, {
     }
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
-    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).affine(o)
+    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).transform(o)
     var matrixString = result.toString()
 
     // Apply the result directly to this matrix
     return this.attr('transform', matrixString)
-  },
+  }
 })
 
 SVG.extend(SVG.FX, {

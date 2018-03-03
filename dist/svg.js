@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Mar 02 2018 23:08:28 GMT+1100 (AEDT)
+* BUILT: Sat Mar 03 2018 22:06:07 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -2232,7 +2232,7 @@ SVG.extend(SVG.FX, {
   }
 })
 
-/* global abcdef, arrayToMatrix, parseMatrix, unitCircle, mag */
+/* global abcdef, arrayToMatrix, parseMatrix, closeEnough */
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -2259,12 +2259,13 @@ SVG.Matrix = SVG.invent({
   // Add methods
   extend: {
 
+    // Clones this matrix
     clone: function () {
       return new SVG.Matrix(this)
     },
 
-    // Clone matrix
-    affine: function (o) {
+    // Transform a matrix into another matrix by manipulating the space
+    transform: function (o) {
       // Get all of the parameters required to form the matrix
       var flipX = o.flip && (o.flip === 'x' || o.flip === 'both') ? -1 : 1
       var flipY = o.flip && (o.flip === 'y' || o.flip === 'both') ? -1 : 1
@@ -2292,6 +2293,9 @@ SVG.Matrix = SVG.invent({
       var py = o.position && o.position.length ? o.position[1] : o.py
       var tx = o.translate && o.translate.length ? o.translate[0] : o.tx || 0
       var ty = o.translate && o.translate.length ? o.translate[1] : o.ty || 0
+      var rx = o.relative && o.relative.length ? o.relative[0] : o.rx || 0
+      var ry = o.relative && o.relative.length ? o.relative[1] : o.ry || 0
+      var currentTransform = new SVG.Matrix(this)
 
       // Construct the resulting matrix
       var transformer = new SVG.Matrix()
@@ -2301,35 +2305,103 @@ SVG.Matrix = SVG.invent({
         .shear(shear)
         .rotate(theta)
         .translate(ox, oy)
-        .translate(tx, ty)
-        .lmultiply(new SVG.Matrix(this))
+        .translate(rx, ry)
+        .lmultiply(currentTransform)
 
       // If we want the origin at a particular place, we force it there
       if (isFinite(px) && isFinite(py)) {
         // Figure out where the origin went and the delta to get there
-        var p = new SVG.Point(ox - tx, oy - ty).transform(transformer)
+        var p = new SVG.Point(ox - rx, oy - ry).transform(transformer)
         var dx = px - p.x
         var dy = py - p.y
 
         // Apply another translation
         transformer = transformer.translate(dx, dy)
       }
+
+      // We can apply translations after everything else
+      transformer = transformer.translate(tx, ty)
       return transformer
+    },
+
+    // Applies a matrix defined by its affine parameters
+    compose: function (o) {
+      // Get the parameters
+      var sx = o.scaleX
+      var sy = o.scaleY
+      var lam = o.shear
+      var theta = o.rotate
+      var tx = o.translateX
+      var ty = o.translateY
+
+      // Apply the standard matrix
+      var result = new SVG.Matrix()
+        .scale(sx, sy)
+        .shear(lam)
+        .rotate(theta)
+        .translate(tx, ty)
+        .lmultiply(this)
+      return result
+    },
+
+    // Decomposes this matrix into its affine parameters
+    decompose: function () {
+      // Get the parameters from the matrix
+      var a = this.a
+      var b = this.b
+      var c = this.c
+      var d = this.d
+      var e = this.e
+      var f = this.f
+
+      // Figure out if the winding direction is clockwise or counterclockwise
+      var determinant = a * d - b * c
+      var ccw = determinant > 0 ? -1 : 1
+
+      // Since we only shear in x, we can use the x basis to get the x scale
+      // and the rotation of the resulting matrix
+      var sx = ccw * Math.sqrt(a * a + b * b)
+      var theta = 180 / Math.PI * Math.atan2(ccw * b, ccw * a)
+
+      // We can then solve the y basis vector simultaneously to get the other
+      // two affine parameters directly from these parameters
+      var lam = (a * c + b * d) / determinant
+      var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
+
+      // Construct the decomposition and return it
+      return {
+        // Return the affine parameters
+        scaleX: sx,
+        scaleY: sy,
+        shear: lam,
+        rotate: theta,
+        translateX: e,
+        translateY: f,
+
+        // Return the matrix parameters
+        matrix: this,
+        a: this.a,
+        b: this.b,
+        c: this.c,
+        d: this.d,
+        e: this.e,
+        f: this.f,
+      }
     },
 
     // Morph one matrix into another
     morph: function (matrix) {
-      // store new destination
+      // Store new destination
       this.destination = new SVG.Matrix(matrix)
       return this
     },
 
     // Get morphed matrix at a given position
     at: function (pos) {
-      // make sure a destination is defined
+      // Make sure a destination is defined
       if (!this.destination) return this
 
-      // calculate morphed matrix at a given position
+      // Calculate morphed matrix at a given position
       var matrix = new SVG.Matrix({
         a: this.a + (this.destination.a - this.a) * pos,
         b: this.b + (this.destination.b - this.b) * pos,
@@ -2416,7 +2488,7 @@ SVG.Matrix = SVG.invent({
 
     // Shear matrix
     shear: function (a, cx, cy) {
-      var shear = new SVG.Matrix(1, a, 0, 1, 0, 0)
+      var shear = new SVG.Matrix(1, 0, a, 1, 0, 0)
       var matrix = this.around(cx, cy, shear)
       return matrix
     },
@@ -2475,12 +2547,9 @@ SVG.Matrix = SVG.invent({
     // Check if two matrices are equal
     equals: function (other) {
       var comp = parseMatrix(other)
-      return closeEnough(this.a, comp.a)
-        && closeEnough(this.b, comp.b)
-        && closeEnough(this.c, comp.c)
-        && closeEnough(this.d, comp.d)
-        && closeEnough(this.e, comp.e)
-        && closeEnough(this.f, comp.f)
+      return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) &&
+        closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) &&
+        closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
     },
 
     // Convert matrix to string
@@ -2682,8 +2751,9 @@ SVG.extend(SVG.Element, {
       .reverse()
       // merge every transformation into one matrix
       .reduce(function (matrix, transform) {
-        if (transform[0] === 'matrix')
+        if (transform[0] === 'matrix') {
           return matrix.lmultiply(arrayToMatrix(transform[1]))
+        }
         return matrix[transform[0]].apply(matrix, transform[1])
       }, new SVG.Matrix())
 
@@ -2716,11 +2786,10 @@ SVG.extend(SVG.Element, {
 
     // Act as a getter if no object was passed
     if (o == null) {
-      return new SVG.Matrix(this)
+      return new SVG.Matrix(this).decompose()
 
     // Let the user pass in a matrix as well
     } else if (o.a != null) {
-
       // Construct a matrix from the first parameter
       var matrix = new SVG.Matrix(o)
 
@@ -2734,8 +2803,9 @@ SVG.extend(SVG.Element, {
       return this.attr('transform', matrix)
 
     // Allow the user to define the origin with a string
-    } else if (typeof o.origin === 'string'
-      || (o.origin == null && o.ox == null && o.oy == null)) {
+    } else if (typeof o.origin === 'string' ||
+      (o.origin == null && o.ox == null && o.oy == null)
+    ) {
       // Get the bounding box and string to use in our calculations
       var string = typeof o.origin === 'string'
         ? o.origin.toLowerCase().trim()
@@ -2758,12 +2828,12 @@ SVG.extend(SVG.Element, {
     }
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
-    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).affine(o)
+    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).transform(o)
     var matrixString = result.toString()
 
     // Apply the result directly to this matrix
     return this.attr('transform', matrixString)
-  },
+  }
 })
 
 SVG.extend(SVG.FX, {
@@ -4831,6 +4901,10 @@ SVG.extend([SVG.Element, SVG.FX], {
       : this.transform({skew: [x, y], origin: [cx, cy]}, true)
   },
 
+  shear: function (lam, cx, cy) {
+    return this.transform({shear: lam, origin: [cx, cy]}, true)
+  },
+
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
@@ -4843,13 +4917,18 @@ SVG.extend([SVG.Element, SVG.FX], {
     return this.transform({ translate: [x, y] }, true)
   },
 
+  // Map relative translations to transform
+  relative: function (x, y) {
+    return this.transform({ relative: [x, y] }, true)
+  },
+
   // Map flip to transform
   flip: function (direction, around) {
-    var origin = (direction === "both" && isFinite(around)) ? [around, around]
-      : (direction === "x") ? [around, 0]
-      : (direction === "y") ? [0, around]
+    var origin = (direction === 'both' && isFinite(around)) ? [around, around]
+      : (direction === 'x') ? [around, 0]
+      : (direction === 'y') ? [0, around]
       : [0, 0]
-    this.transform({flip: direction || "both", origin: origin}, true)
+    this.transform({flip: direction || 'both', origin: origin}, true)
   },
 
   // Opacity
@@ -5218,23 +5297,8 @@ function idFromReference (url) {
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
 
-// Gets the distance of a point (a, b) from the origin
-function mag (a, b) {
-  return Math.sqrt(a * a + b * b)
-}
-
-// Given a coordinate (a, b), this will calculate the sin, cosine and angle
-// of this point projected onto the unit circle directly
-function unitCircle (a, b) {
-  var thetaRad = Math.atan2(b, a)
-  var thetaDeg = thetaRad * 180 / Math.PI
-  var cos = Math.cos(thetaRad)
-  var sin = Math.sin(thetaRad)
-  return {theta: thetaDeg, cos: cos, sin: sin}
-}
-
 function closeEnough (a, b, threshold) {
-  return Math.abs (b - a) < (threshold || 1e-6)
+  return Math.abs(b - a) < (threshold || 1e-6)
 }
 
 /* globals fullBox, domContains, isNulledBox, Exception */
