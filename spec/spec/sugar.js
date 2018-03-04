@@ -172,18 +172,18 @@ describe('Sugar', function() {
 
     it('redirects to transform()', function() {
       rect.flip('x', 2)
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 'x', ox: 2, oy: 0 }, true)
+      expect(rect.transform).toHaveBeenCalledWith({ flip: 'x', origin: [2, 0] }, true)
     })
 
     it('sets flip to "both" when calling without anything', function() {
       rect.flip()
-      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', ox: 0, oy: 0 }, true)
+      expect(rect.transform).toHaveBeenCalledWith({ flip: 'both', origin: [0, 0] }, true)
     })
 
     // this works because only x and y are valid flip values. Evereything else flips on both axis
     it('sets flip to number and offset to number when called with offset only', function() {
       rect.flip(5)
-      expect(rect.transform).toHaveBeenCalledWith({ flip: "both", ox: 5, oy: 5 }, true)
+      expect(rect.transform).toHaveBeenCalledWith({ flip: "both", origin: [5, 5] }, true)
     })
   })
 

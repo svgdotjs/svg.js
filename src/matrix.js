@@ -6,7 +6,7 @@ SVG.Matrix = SVG.invent({
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
     var i
 
-    // ensure source as object// ens
+    // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)

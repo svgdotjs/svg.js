@@ -88,7 +88,7 @@ SVG.extend([SVG.Element, SVG.FX], {
       : (direction === 'y') ? [0, around]
       : isFinite(direction) ? [direction, direction]
       : [0, 0]
-    this.transform({flip: directionString, ox: origin[0], oy: origin[1]}, true)
+    this.transform({flip: directionString, origin: origin}, true)
   },
 
   // Opacity

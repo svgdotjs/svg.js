@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Mar 05 2018 02:20:12 GMT+1100 (AEDT)
+* BUILT: Mon Mar 05 2018 02:39:10 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -2240,7 +2240,7 @@ SVG.Matrix = SVG.invent({
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
     var i
 
-    // ensure source as object// ens
+    // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)
@@ -3454,20 +3454,6 @@ SVG.G = SVG.invent({
 
   // Add class methods
   extend: {
-    gbox: function () {
-      var bbox = this.bbox()
-      var trans = this.transform()
-
-      bbox.x += trans.e
-      bbox.x2 += trans.e
-      bbox.cx += trans.e
-
-      bbox.y += trans.f
-      bbox.y2 += trans.f
-      bbox.cy += trans.f
-
-      return bbox
-    }
   },
 
   // Add parent method
@@ -4924,7 +4910,7 @@ SVG.extend([SVG.Element, SVG.FX], {
       : (direction === 'y') ? [0, around]
       : isFinite(direction) ? [direction, direction]
       : [0, 0]
-    this.transform({flip: directionString, ox: origin[0], oy: origin[1]}, true)
+    this.transform({flip: directionString, origin: origin}, true)
   },
 
   // Opacity
