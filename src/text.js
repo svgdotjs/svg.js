@@ -90,10 +90,6 @@ SVG.Text = SVG.invent({
       // disable build mode and rebuild lines
       return this.build(false).rebuild()
     },
-    // Set font size
-    size: function (size) {
-      return this.attr('font-size', size).rebuild()
-    },
     // Set / get leading
     leading: function (value) {
       // act as getter
@@ -197,7 +193,7 @@ SVG.Tspan = SVG.invent({
       // mark new line
       this.dom.newLined = true
 
-      // apply new hy¡n
+      // apply new position
       return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }

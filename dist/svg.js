@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Mar 04 2018 08:55:46 GMT+1100 (AEDT)
+* BUILT: Sun Mar 04 2018 20:57:30 GMT+1100 (AEDT)
 */;
 
 (function(root, factory) {
@@ -4508,10 +4508,6 @@ SVG.Text = SVG.invent({
       // disable build mode and rebuild lines
       return this.build(false).rebuild()
     },
-    // Set font size
-    size: function (size) {
-      return this.attr('font-size', size).rebuild()
-    },
     // Set / get leading
     leading: function (value) {
       // act as getter
@@ -4615,7 +4611,7 @@ SVG.Tspan = SVG.invent({
       // mark new line
       this.dom.newLined = true
 
-      // apply new hy¡n
+      // apply new position
       return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
     }
   }
