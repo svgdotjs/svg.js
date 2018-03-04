@@ -1,19 +1,18 @@
 
 SVG.Point = SVG.invent({
   // Initialize
-  create: function (x, y) {
-    var base = {x: 0, y: 0}
+  create: function (x, y, base) {
     var source
+    base = base || {x: 0, y: 0}
 
     // ensure source as object
     source = Array.isArray(x) ? {x: x[0], y: x[1]}
       : typeof x === 'object' ? {x: x.x, y: x.y}
-      : x != null ? {x: x, y: (y != null ? y : x)}
-      : base // If y has no value, then x is used has its value
+      : {x: x, y: y}
 
     // merge source
-    this.x = source.x
-    this.y = source.y
+    this.x = source.x == null ? base.x : source.x
+    this.y = source.y == null ? base.y : source.y
   },
 
   // Add methods

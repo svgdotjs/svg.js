@@ -114,15 +114,6 @@ function arrayToMatrix (a) {
   return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
 }
 
-// Parse matrix if required
-function parseMatrix (matrix) {
-  if (!(matrix instanceof SVG.Matrix)) {
-    matrix = new SVG.Matrix(matrix)
-  }
-
-  return matrix
-}
-
 // Add centre point to transform object
 function ensureCentre (o, target) {
   o.cx = o.cx == null ? target.bbox().cx : o.cx

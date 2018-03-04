@@ -33,6 +33,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `SVG.Nested` (#809)
 - removed `show()` from `SVG.A` to avoid name clash (#802)
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
+- removed `move(), dmove()` etc for groups to avoid inconsistencies, we will expect users to use transforms to move around groups as they should (especially since they are much simpler now).
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -67,7 +68,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
 - `SVG.on()/off()` and `el.on()/off()` now accepts multiple comma or space separated events e.g. "mousedown, foo bar" (#727)
 - Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
-- Transforming an element is now much simpler
+- The way `transform()` works is now completely different. See the docs for more as soon as they are updated.
 - merged `SVG.Doc` and `SVG.Nested`, added `isRoot()` on `SVG.Doc()` (#809)
 
 ### Fixed

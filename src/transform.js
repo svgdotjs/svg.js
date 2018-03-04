@@ -100,10 +100,7 @@ SVG.extend(SVG.Element, {
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).transform(o)
-    var matrixString = result.toString()
-
-    // Apply the result directly to this matrix
-    return this.attr('transform', matrixString)
+    return this.attr('transform', result)
   }
 })
 

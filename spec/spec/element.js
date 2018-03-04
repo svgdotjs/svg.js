@@ -196,7 +196,7 @@ describe('Element', function() {
 
     it('gets the current transformation matrix', function() {
       expect(rect.transform()).toEqual(jasmine.objectContaining({
-        a: 1, b: 0, c: 0, d: 1, e: 0, f: 0, matrix: new SVG.Matrix(rect),
+        a: 1, b: 0, c: 0, d: 1, e: 0, f: 0,
         scaleX: 1, scaleY: 1, shear: 0, rotate: 0,
         translateX: 0, translateY: 0,
       }))
@@ -421,11 +421,11 @@ describe('Element', function() {
     })
 
     it('moves the element to other parent while maintaining the same visal representation', function() {
-      expect(window.roundMatrix(rect1.toParent(nested).transform('matrix')))
-        .toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
+      expect(window.roundMatrix(rect1.toParent(nested).matrix()))
+        .toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
       expect(rect1.parent()).toEqual(nested)
-      expect(window.roundMatrix(rect2.toParent(g2).transform('matrix')))
-        .toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, -120, -120))
+      expect(window.roundMatrix(rect2.toParent(g2).matrix()))
+        .toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, -95, -95))
       expect(rect2.parent()).toEqual(g2)
     })
   })
@@ -477,8 +477,8 @@ describe('Element', function() {
       expect(g1.node.parentNode).toBeFalsy()
       expect(g2.node.parentNode).toBeFalsy()
 
-      expect(window.roundMatrix(rect1.transform().matrix)).toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
-      expect(window.roundMatrix(rect2.transform().matrix)).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 20, 20))
+      expect(window.roundMatrix(rect1.matrix())).toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
+      expect(window.roundMatrix(rect2.matrix())).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 45, 45))
     })
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
@@ -491,8 +491,8 @@ describe('Element', function() {
       expect(g2.node.parentNode).toBeFalsy()
       expect(nested.node.parentNode).toBeFalsy()
 
-      expect(window.roundMatrix(rect1.transform().matrix)).toEqual(new SVG.Matrix(2, 0, 0, 2, 120, 120))
-      expect(window.roundMatrix(rect2.transform().matrix)).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 20, 20))
+      expect(window.roundMatrix(rect1.matrix())).toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
+      expect(window.roundMatrix(rect2.matrix())).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 45, 45))
 
       expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs
     })

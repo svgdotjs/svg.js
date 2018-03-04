@@ -86,13 +86,7 @@ gulp.task('clean', function () {
   return del([ 'dist/*' ])
 })
 
-/**
- * Compile everything in /src to one unified file in the order defined in the MODULES constant
- * wrap the whole thing in a UMD wrapper (@see https://github.com/umdjs/umd)
- * add the license information to the header plus the build time stamp‏
- */
-gulp.task('unify', ['clean'], function () {
-  pkg.buildDate = Date()
+gulp.task('lint', function () {
   return gulp.src(parts)
     .pipe(standard())
     .pipe(standard.reporter('default', {
@@ -100,6 +94,16 @@ gulp.task('unify', ['clean'], function () {
       breakOnError: process.argv[2] !== "--dont-break",
       quiet: true,
     }))
+})
+
+/**
+ * Compile everything in /src to one unified file in the order defined in the MODULES constant
+ * wrap the whole thing in a UMD wrapper (@see https://github.com/umdjs/umd)
+ * add the license information to the header plus the build time stamp‏
+ */
+gulp.task('unify', ['clean', 'lint'], function () {
+  pkg.buildDate = Date()
+  return gulp.src(parts)
     .pipe(concat('svg.js', { newLine: '\n' }))
     // wrap the whole thing in an immediate function call
     .pipe(wrapUmd({src: 'src/umd.js'}))
@@ -108,7 +112,6 @@ gulp.task('unify', ['clean'], function () {
     .pipe(chmod(0o644))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
-  return collection
 })
 
 /**

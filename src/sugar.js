@@ -36,31 +36,36 @@ var sugar = {
 SVG.extend([SVG.Element, SVG.FX], {
   // Let the user set the matrix directly
   matrix: function (mat, b, c, d, e, f) {
-    var matrix = new SVG.Matrix(arguments.length > 1 ? [mat, b, c, d, e, f] : mat)
-    return this.attr('transform', matrix)
+    // Act as a getter
+    if (mat == null) {
+      return new SVG.Matrix(this)
+    }
+
+    // Act as a setter, the user can pass a matrix or a set of numbers
+    return this.attr('transform', new SVG.Matrix(mat, b, c, d, e, f))
   },
 
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
-    return this.transform({rotate: angle, origin: [cx, cy]}, true)
+    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
   },
 
   // Map skew to transform
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({skew: x, origin: [y, cx]}, true)
-      : this.transform({skew: [x, y], origin: [cx, cy]}, true)
+      ? this.transform({skew: x, ox: y, oy: cx}, true)
+      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
   },
 
   shear: function (lam, cx, cy) {
-    return this.transform({shear: lam, origin: [cx, cy]}, true)
+    return this.transform({shear: lam, ox: cx, oy: cy}, true)
   },
 
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({ scale: x, origin: [y, cx] }, true)
-      : this.transform({ scale: [x, y], origin: [cx, cy] }, true)
+      ? this.transform({ scale: x, ox: y, oy: cx }, true)
+      : this.transform({ scale: [x, y], ox: cx, oy: cy }, true)
   },
 
   // Map translate to transform
@@ -83,7 +88,7 @@ SVG.extend([SVG.Element, SVG.FX], {
       : (direction === 'y') ? [0, around]
       : isFinite(direction) ? [direction, direction]
       : [0, 0]
-    this.transform({flip: directionString, origin: origin}, true)
+    this.transform({flip: directionString, ox: origin[0], oy: origin[1]}, true)
   },
 
   // Opacity

@@ -4,8 +4,7 @@
 }
 
 html {
-  background-color : #f5f6f7;
-  /* text-align: center; */
+  background-color : #fefefe;
 }
 
 body {
@@ -45,7 +44,7 @@ svg {
   width: 100%;
   grid-row: 3;
   grid-column: 2/4;
-  background-color: white;
+  background-color: #f5f6f7;
   border-radius: 20px;
   border: #f065 1px solid;
 }

@@ -1,4 +1,4 @@
-/* global abcdef, arrayToMatrix, parseMatrix, closeEnough */
+/* global abcdef, arrayToMatrix, closeEnough */
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -6,12 +6,12 @@ SVG.Matrix = SVG.invent({
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
     var i
 
-    // ensure source as object
+    // ensure source as object// ens
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
-      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : Array.isArray(source) ? arrayToMatrix(source)
       : typeof source === 'object' ? source
+      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : base
 
     // merge source
@@ -53,14 +53,19 @@ SVG.Matrix = SVG.invent({
         : flipY
       var shear = o.shear || 0
       var theta = o.rotate || 0
-      var ox = o.origin && o.origin.length ? o.origin[0] : o.ox || 0
-      var oy = o.origin && o.origin.length ? o.origin[1] : o.oy || 0
-      var px = o.position && o.position.length ? o.position[0] : o.px
-      var py = o.position && o.position.length ? o.position[1] : o.py
-      var tx = o.translate && o.translate.length ? o.translate[0] : o.tx || 0
-      var ty = o.translate && o.translate.length ? o.translate[1] : o.ty || 0
-      var rx = o.relative && o.relative.length ? o.relative[0] : o.rx || 0
-      var ry = o.relative && o.relative.length ? o.relative[1] : o.ry || 0
+      var origin = new SVG.Point(o.ox == null ? o.origin : o.ox, o.oy)
+      var ox = origin.x
+      var oy = origin.y
+      var position = new SVG.Point(o.px == null
+        ? o.position : o.px, o.py, {x: null, y: null})
+      var px = position.x
+      var py = position.y
+      var translate = new SVG.Point(o.tx == null ? o.translate : o.tx, o.ty)
+      var tx = translate.x
+      var ty = translate.y
+      var relative = new SVG.Point(o.rx == null ? o.relative : o.rx, o.ry)
+      var rx = relative.x
+      var ry = relative.y
       var currentTransform = new SVG.Matrix(this)
 
       // Construct the resulting matrix
@@ -75,11 +80,11 @@ SVG.Matrix = SVG.invent({
         .lmultiply(currentTransform)
 
       // If we want the origin at a particular place, we force it there
-      if (isFinite(px) && isFinite(py)) {
+      if (isFinite(px) || isFinite(py)) {
         // Figure out where the origin went and the delta to get there
-        var p = new SVG.Point(ox - rx, oy - ry).transform(transformer)
-        var dx = px - p.x
-        var dy = py - p.y
+        var current = new SVG.Point(ox - rx, oy - ry).transform(transformer)
+        var dx = px ? px - current.x : 0
+        var dy = py ? py - current.y : 0
 
         // Apply another translation
         transformer = transformer.translate(dx, dy)
@@ -145,7 +150,6 @@ SVG.Matrix = SVG.invent({
         translateY: f,
 
         // Return the matrix parameters
-        matrix: new SVG.Matrix(this),
         a: this.a,
         b: this.b,
         c: this.c,
@@ -184,7 +188,7 @@ SVG.Matrix = SVG.invent({
     multiply: function (matrix) {
       // Get the matrices
       var l = this
-      var r = parseMatrix(matrix)
+      var r = new SVG.Matrix(matrix)
 
       // Work out the product directly
       var a = l.a * r.a + l.c * r.b
@@ -200,8 +204,8 @@ SVG.Matrix = SVG.invent({
     },
 
     lmultiply: function (matrix) {
-      var l = parseMatrix(matrix)
-      return l.multiply(this)
+      var result = new SVG.Matrix(matrix).multiply(this)
+      return result
     },
 
     // Inverses matrix
@@ -228,7 +232,7 @@ SVG.Matrix = SVG.invent({
         y = x
       }
 
-      // Rotate the current matrix
+      // Scale the current matrix
       var scale = new SVG.Matrix(x, 0, 0, y, 0, 0)
       var matrix = this.around(cx, cy, scale)
       return matrix
@@ -312,7 +316,7 @@ SVG.Matrix = SVG.invent({
 
     // Check if two matrices are equal
     equals: function (other) {
-      var comp = parseMatrix(other)
+      var comp = new SVG.Matrix(other)
       return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) &&
         closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) &&
         closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
