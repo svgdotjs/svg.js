@@ -193,9 +193,9 @@ describe('Matrix', function() {
       expect(matrix2.toString()).toBe('matrix(1,0,0,1,4,3)')
       expect(matrix3.toString()).toBe('matrix(1.5,0,0,3,2,1.5)')
     })
-    it('returns itself when no destination specified', function() {
+    it('throws when no destination specified', function() {
       var matrix = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-      expect(matrix.at(0.5)).toBe(matrix)
+      expect(matrix.at).toThrow()
     })
   })
 

@@ -117,9 +117,9 @@ describe('Point', function() {
 
       expect(point3).toEqual(new SVG.Point(1.5, 1.5))
     })
-    it('returns itself when no destination specified', function() {
+    it('throws when no destination specified', function() {
       var point = new SVG.Point(1,1)
-      expect(point.at(0.4)).toBe(point)
+      expect(point.at).toThrow()
     })
   })
 

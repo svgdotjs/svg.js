@@ -74,7 +74,7 @@ SVG.Box = SVG.invent({
     },
 
     at: function (pos) {
-      if (!this.destination) return this
+      if (!this.destination) throw new Error('No destination set')
 
       return new SVG.Box(
           this.x + (this.destination.x - this.x) * pos
