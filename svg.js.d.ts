@@ -754,7 +754,7 @@ declare namespace svgjs {
     // selector.js
     interface Library {
         get(id: string): Element;
-        select(query: string, parent: HTMLElement): Set;
+        select(query: string, parent?: HTMLElement): Set;
     }
     interface Parent {
         select(query: string): Set;
@@ -775,6 +775,7 @@ declare namespace svgjs {
         last(): Element;
         valueOf(): Element[];
         bbox(): BBox;
+        click(cb: Function): Set;
     }
     interface Container { set(members?: Element[]): Set; }
     interface Library { Set: Set; }
