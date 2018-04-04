@@ -44,9 +44,13 @@ SVG.extend(SVG.Array, {
     if (!this.destination) return this
 
     // generate morphed array
-    for (var i = 0, il = this.value.length, array = []; i < il; i++)
-      array.push(this.value[i] + (this.destination[i] - this.value[i]) * pos)
-
+    for (var i = 0, il = this.value.length, array = []; i < il; i++){
+      if( typeof this.value[i] == 'string' ) {
+          array.push(this.value[i]) // push character
+        } else {
+          array.push(this.value[i] + (this.destination[i] - this.value[i]) * pos) // push interpolated value
+        }
+      }
     return new SVG.Array(array)
   }
   // Convert array to string
@@ -57,12 +61,29 @@ SVG.extend(SVG.Array, {
 , valueOf: function() {
     return this.value
   }
+  // Parse whitespace seperated string containing a mix of Floats and Characters
+  , parseListElement: function(element) {
+    var floatValue = parseFloat(element)
+    if (isNaN(floatValue)) {
+      // assume its a character
+      return element;
+    } else {
+      return floatValue;
+    }
+}
+  // Split whitespace seperated string containing a mix of Floats and Characters
+, splitPathArray: function(string) {
+  return string.trim().split(SVG.regex.delimiter).map(this.parseListElement)
+}
   // Parse whitespace separated string
 , parse: function(array) {
     array = array.valueOf()
 
     // if already is an array, no need to parse it
     if (Array.isArray(array)) return array
+
+    // split of path define array
+    if( typeof array[0] == 'string' ) return this.splitPathArray(array)
 
     return this.split(array)
   }
