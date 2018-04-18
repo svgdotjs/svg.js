@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Mar 05 2018 02:39:10 GMT+1100 (AEDT)
+* BUILT: Tue Apr 17 2018 21:58:30 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -279,6 +279,171 @@ SVG.defaults = {
     'font-size': 16,
     'font-family': 'Helvetica, Arial, sans-serif',
     'text-anchor': 'start'
+  }
+}
+
+SVG.Queue = SVG.invent({
+  create: function () {
+    this._first = null
+    this._last = null
+    this.length = 0
+    this.id = 0
+  },
+
+  extend: {
+    push: function (value) {
+
+      // An item stores an id and the provided value
+      var item = { id: this.id++, value: value }
+
+      // Deal with the queue being empty or populated
+      if (this._last) {
+        this._last = this._last.next = item
+      } else {
+        this._last = this._first = item
+      }
+
+      this.length++
+    },
+
+    shift: function () {
+      if (this.length == 0) {
+        return
+      }
+
+      var remove = this._first
+      this._first = remove.next
+      this._last = --this.length ? this._last : null
+      return remove.value
+    },
+
+    // Shows us the first item in the list
+    first: function () {
+      return this._first && this._first.value
+    },
+
+    // Shows us the last item in the list
+    last: function () {
+      return this._last && this._last.value
+    },
+
+    // Removes the first item from the front where matcher returns true
+    remove: function (matcher) {
+      // Find the first match
+      var previous = null
+      var current = this._first
+      while (current) {
+
+        // If we have a match, we are done
+        if (matcher(current)) break
+
+        // Otherwise, advance both of the pointers
+        previous = current
+        current = current.next
+      }
+
+      // If we got the first item, adjust the first pointer
+      if (current && current === this._first)
+        this._first = this._first.next
+
+      // If we got the last item, adjust the last pointer
+      if (current && current === this._last)
+        this._last = previous
+
+      // If we got an item, fix the list and return the item
+      if (current) {
+        --this.length
+
+        if (previous) {
+          previous.next = current.next
+        }
+
+        return current.item
+      }
+    }
+  }
+})
+
+
+SVG.Draw = {
+  nextDraw: null,
+  frames: new SVG.Queue(),
+  timeouts: new SVG.Queue(),
+  frameCount: 0,
+  timeoutCount: 0,
+  timer: window.performance || window.Date,
+
+  frame: function (fn) {
+    SVG.Draw.frames.push({
+      id: SVG.Draw.frameCount,
+      run: fn
+    })
+
+    if (SVG.Draw.nextDraw === null) {
+      SVG.Draw.nextDraw = requestAnimationFrame(SVG.Draw._draw)
+    }
+
+    return ++SVG.Draw.frameCount
+  },
+
+  timeout: function (fn, delay) {
+    delay = delay || 0
+
+    // Work out when the event should fire
+    var time = SVG.Draw.timer.now() + delay
+
+    // Add the timeout to the end of the queue
+    var thisId = SVG.Draw.timeoutCount++
+    SVG.Draw.timeouts.push({
+      id: thisId,
+      run: fn,
+      time: time
+    })
+
+    // Request another animation frame if we need one
+    if (SVG.Draw.nextDraw === null) {
+      SVG.Draw.nextDraw = requestAnimationFrame(SVG.Draw._draw)
+    }
+
+    return thisId
+  },
+
+  cancelTimeout: function (id) {
+    // Find the index of the timeout to cancel and remove it
+    var index = SVG.Draw.timeouts.remove(function (t) { return t.id == id })
+    return index
+  },
+
+  _draw: function (now) {
+    // Run all the timeouts we can run, if they are not ready yet, add them
+    // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
+    var tracking = true
+    var nextTimeout = null
+    var lastTimeout = SVG.Draw.timeouts.last()
+    while ((nextTimeout = SVG.Draw.timeouts.shift())) {
+        // Run the timeout if its time, or push it to the end
+      if (now > nextTimeout.time) {
+        nextTimeout.run()
+      } else {
+        SVG.Draw.timeouts.push(nextTimeout)
+      }
+
+        // If we hit the last item, we should stop shifting out more items
+      if (nextTimeout === lastTimeout) break
+    }
+
+    // Run all of the frames available up until this point
+    var lastFrame = SVG.Draw.frames.last()
+    var lastFrameId = SVG.Draw.frameCount
+    while (SVG.Draw.frames.first() && SVG.Draw.frames.first().id < lastFrameId) {
+      var nextFrame = SVG.Draw.frames.shift()
+      nextFrame.run(now)
+    }
+
+    // If we have remaining timeouts or frames, draw until we don't anymore
+    SVG.Draw.nextDraw = SVG.Draw.timeouts.length > 0 || SVG.Draw.frames.length > 0
+        ? requestAnimationFrame(SVG.Draw._draw)
+        : null
   }
 }
 
@@ -1386,7 +1551,7 @@ SVG.Situation = SVG.invent({
 
 })
 
-SVG.FX = SVG.invent({
+SVG.Timeline = SVG.invent({
 
   create: function (element) {
     this._target = element
@@ -2018,10 +2183,10 @@ SVG.FX = SVG.invent({
   construct: {
     // Get fx module or create a new one, then animate with given duration and ease
     animate: function (o, ease, delay) {
-      return (this.fx || (this.fx = new SVG.FX(this))).animate(o, ease, delay)
+      return (this.fx || (this.fx = new SVG.Timeline(this))).animate(o, ease, delay)
     },
     delay: function (delay) {
-      return (this.fx || (this.fx = new SVG.FX(this))).delay(delay)
+      return (this.fx || (this.fx = new SVG.Timeline(this))).delay(delay)
     },
     stop: function (jumpToEnd, clearQueue) {
       if (this.fx) {
@@ -2091,7 +2256,7 @@ SVG.MorphObj = SVG.invent({
 
 })
 
-SVG.extend(SVG.FX, {
+SVG.extend(SVG.Timeline, {
   // Add animatable attributes
   attr: function (a, v, relative) {
     // apply attributes individually
@@ -2266,6 +2431,13 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
+      // Check if o is a matrix and then left multiply it directly
+      if (o.a != null) {
+        var matrix = new SVG.Matrix(o)
+        var newMatrix = this.lmultiply(matrix)
+        return newMatrix
+      }
+
       // Get all of the parameters required to form the matrix
       var flipX = o.flip && (o.flip === 'x' || o.flip === 'both') ? -1 : 1
       var flipY = o.flip && (o.flip === 'y' || o.flip === 'both') ? -1 : 1
@@ -2783,7 +2955,8 @@ SVG.extend(SVG.Element, {
 SVG.extend(SVG.Element, {
 
   // Add transformations
-  transform: function (o, cyOrRel) {
+  transform: function (o, relative) {
+
     // Get the bounding box of the element with no transformations applied
     var bbox = this.bbox()
 
@@ -2791,20 +2964,6 @@ SVG.extend(SVG.Element, {
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
       return decomposed[o] || decomposed
-
-    // Let the user pass in a matrix as well
-    } else if (o.a != null) {
-      // Construct a matrix from the first parameter
-      var matrix = new SVG.Matrix(o)
-
-      // If we have a relative matrix, we just apply the old matrix
-      if (cyOrRel != null) {
-        var oldMatrix = new SVG.Matrix(this)
-        matrix = matrix.multiply(oldMatrix)
-      }
-
-      // Apply the matrix directly
-      return this.attr('transform', matrix)
 
     // Allow the user to define the origin with a string
     } else if (typeof o.origin === 'string' ||
@@ -2832,13 +2991,14 @@ SVG.extend(SVG.Element, {
     }
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
-    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).transform(o)
+    var cleanRelative = relative === true ? this : (relative || false)
+    var result = new SVG.Matrix(cleanRelative).transform(o)
     return this.attr('transform', result)
   }
 })
 
-SVG.extend(SVG.FX, {
-  transform: function (o, relative) {
+SVG.extend(SVG.Timeline, {
+  transform: function (o, relative, affine) {
 
   //   // get target in case of the fx module, otherwise reference this
   //   var target = this.target()
@@ -2965,149 +3125,6 @@ SVG.extend(SVG.FX, {
   //   return this._callStart()
   }
 })
-
-// TODO: DESTROY
-//       =======
-//
-//
-// SVG.Transformation = SVG.invent({
-//
-//   create: function(source, inversed){
-//
-//     if(arguments.length > 1 && typeof inversed != 'boolean'){
-//       return this.constructor.call(this, [].slice.call(arguments))
-//     }
-//
-//     if(Array.isArray(source)){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         this[this.arguments[i]] = source[i]
-//       }
-//     } else if(typeof source == 'object'){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         this[this.arguments[i]] = source[this.arguments[i]]
-//       }
-//     }
-//
-//     this.inversed = false
-//
-//     if(inversed === true){
-//       this.inversed = true
-//     }
-//
-//   }
-//
-// , extend: {
-//
-//     arguments: []
-//   , method: ''
-//
-//   , at: function(pos){
-//
-//       var params = []
-//
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         params.push(this[this.arguments[i]])
-//       }
-//
-//       var m = this._undo || new SVG.Matrix()
-//
-//       m = new SVG.Matrix().morph(SVG.Matrix.prototype[this.method].apply(m, params)).at(pos)
-//
-//       return this.inversed ? m.inverse() : m
-//
-//     }
-//
-//   , undo: function(o){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
-//       }
-//
-//       // The method SVG.Matrix.extract which was used before calling this
-//       // method to obtain a value for the parameter o doesn't return a cx and
-//       // a cy so we use the ones that were provided to this object at its creation
-//       o.cx = this.cx
-//       o.cy = this.cy
-//
-//       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
-//
-//       return this
-//     }
-//
-//   }
-//
-// })
-//
-// SVG.Translate = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['transformedX', 'transformedY']
-//   , method: 'translate'
-//   }
-//
-// })
-//
-// SVG.Rotate = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['rotation', 'cx', 'cy']
-//   , method: 'rotate'
-//   , at: function(pos){
-//       var m = new SVG.Matrix().rotate(new SVG.Number().morph(this.rotation - (this._undo ? this._undo.rotation : 0)).at(pos), this.cx, this.cy)
-//       return this.inversed ? m.inverse() : m
-//     }
-//   , undo: function(o){
-//       this._undo = o
-//       return this
-//     }
-//   }
-//
-// })
-//
-// SVG.Scale = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['scaleX', 'scaleY', 'cx', 'cy']
-//   , method: 'scale'
-//   }
-//
-// })
-//
-// SVG.Skew = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['skewX', 'skewY', 'cx', 'cy']
-//   , method: 'skew'
-//   }
-//
-// })
 
 /* global camelCase */
 
@@ -3721,7 +3738,7 @@ SVG.Gradient = SVG.invent({
 })
 
 // Add animatable methods to both gradient and fx module
-SVG.extend([SVG.Gradient, SVG.FX], {
+SVG.extend([SVG.Gradient, SVG.Timeline], {
   // From position
   from: function (x, y) {
     return (this._target || this).type === 'radialGradient'
@@ -3772,7 +3789,6 @@ SVG.Stop = SVG.invent({
       return this
     }
   }
-
 })
 
 SVG.Pattern = SVG.invent({
@@ -4038,7 +4054,7 @@ SVG.Circle = SVG.invent({
   }
 })
 
-SVG.extend([SVG.Circle, SVG.FX], {
+SVG.extend([SVG.Circle, SVG.Timeline], {
   // Radius x value
   rx: function (rx) {
     return this.attr('r', rx)
@@ -4065,7 +4081,7 @@ SVG.Ellipse = SVG.invent({
   }
 })
 
-SVG.extend([SVG.Ellipse, SVG.Rect, SVG.FX], {
+SVG.extend([SVG.Ellipse, SVG.Rect, SVG.Timeline], {
   // Radius x value
   rx: function (rx) {
     return this.attr('rx', rx)
@@ -4820,157 +4836,157 @@ SVG.extend([SVG.Line, SVG.Polyline, SVG.Polygon, SVG.Path], {
   }
 })
 
-// Define list of available attributes for stroke and fill
-var sugar = {
-  stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
-  fill: ['color', 'opacity', 'rule'],
-  prefix: function (t, a) {
-    return a === 'color' ? t : t + '-' + a
-  }
-}
-
-// Add sugar for fill and stroke
-;['fill', 'stroke'].forEach(function (m) {
-  var extension = {}
-  var i
-
-  extension[m] = function (o) {
-    if (typeof o === 'undefined') {
-      return this
-    }
-    if (typeof o === 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function')) {
-      this.attr(m, o)
-    } else {
-      // set all attributes from sugar.fill and sugar.stroke list
-      for (i = sugar[m].length - 1; i >= 0; i--) {
-        if (o[sugar[m][i]] != null) {
-          this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
-        }
-      }
-    }
-
-    return this
-  }
-
-  SVG.extend([SVG.Element, SVG.FX], extension)
-})
-
-SVG.extend([SVG.Element, SVG.FX], {
-  // Let the user set the matrix directly
-  matrix: function (mat, b, c, d, e, f) {
-    // Act as a getter
-    if (mat == null) {
-      return new SVG.Matrix(this)
-    }
-
-    // Act as a setter, the user can pass a matrix or a set of numbers
-    return this.attr('transform', new SVG.Matrix(mat, b, c, d, e, f))
-  },
-
-  // Map rotation to transform
-  rotate: function (angle, cx, cy) {
-    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
-  },
-
-  // Map skew to transform
-  skew: function (x, y, cx, cy) {
-    return arguments.length === 1 || arguments.length === 3
-      ? this.transform({skew: x, ox: y, oy: cx}, true)
-      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
-  },
-
-  shear: function (lam, cx, cy) {
-    return this.transform({shear: lam, ox: cx, oy: cy}, true)
-  },
-
-  // Map scale to transform
-  scale: function (x, y, cx, cy) {
-    return arguments.length === 1 || arguments.length === 3
-      ? this.transform({ scale: x, ox: y, oy: cx }, true)
-      : this.transform({ scale: [x, y], ox: cx, oy: cy }, true)
-  },
-
-  // Map translate to transform
-  translate: function (x, y) {
-    return this.transform({ translate: [x, y] }, true)
-  },
-
-  // Map relative translations to transform
-  relative: function (x, y) {
-    return this.transform({ relative: [x, y] }, true)
-  },
-
-  // Map flip to transform
-  flip: function (direction, around) {
-    var directionString = typeof direction === 'string' ? direction
-      : isFinite(direction) ? 'both'
-      : 'both'
-    var origin = (direction === 'both' && isFinite(around)) ? [around, around]
-      : (direction === 'x') ? [around, 0]
-      : (direction === 'y') ? [0, around]
-      : isFinite(direction) ? [direction, direction]
-      : [0, 0]
-    this.transform({flip: directionString, origin: origin}, true)
-  },
-
-  // Opacity
-  opacity: function (value) {
-    return this.attr('opacity', value)
-  },
-
-  // Relative move over x axis
-  dx: function (x) {
-    return this.x(new SVG.Number(x).plus(this instanceof SVG.FX ? 0 : this.x()), true)
-  },
-
-  // Relative move over y axis
-  dy: function (y) {
-    return this.y(new SVG.Number(y).plus(this instanceof SVG.FX ? 0 : this.y()), true)
-  },
-
-  // Relative move over x and y axes
-  dmove: function (x, y) {
-    return this.dx(x).dy(y)
-  }
-})
-
-SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX], {
-  // Add x and y radius
-  radius: function (x, y) {
-    var type = (this._target || this).type
-    return type === 'radialGradient' || type === 'radialGradient'
-      ? this.attr('r', new SVG.Number(x))
-      : this.rx(x).ry(y == null ? x : y)
-  }
-})
-
-SVG.extend(SVG.Path, {
-  // Get path length
-  length: function () {
-    return this.node.getTotalLength()
-  },
-  // Get point at length
-  pointAt: function (length) {
-    return new SVG.Point(this.node.getPointAtLength(length))
-  }
-})
-
-SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX], {
-  // Set font
-  font: function (a, v) {
-    if (typeof a === 'object') {
-      for (v in a) this.font(v, a[v])
-    }
-
-    return a === 'leading'
-        ? this.leading(v)
-      : a === 'anchor'
-        ? this.attr('text-anchor', v)
-      : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style'
-        ? this.attr('font-' + a, v)
-      : this.attr(a, v)
-  }
-})
+// // Define list of available attributes for stroke and fill
+// var sugar = {
+//   stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
+//   fill: ['color', 'opacity', 'rule'],
+//   prefix: function (t, a) {
+//     return a === 'color' ? t : t + '-' + a
+//   }
+// }
+//
+// // Add sugar for fill and stroke
+// ;['fill', 'stroke'].forEach(function (m) {
+//   var extension = {}
+//   var i
+//
+//   extension[m] = function (o) {
+//     if (typeof o === 'undefined') {
+//       return this
+//     }
+//     if (typeof o === 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function')) {
+//       this.attr(m, o)
+//     } else {
+//       // set all attributes from sugar.fill and sugar.stroke list
+//       for (i = sugar[m].length - 1; i >= 0; i--) {
+//         if (o[sugar[m][i]] != null) {
+//           this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]])
+//         }
+//       }
+//     }
+//
+//     return this
+//   }
+//
+//   SVG.extend([SVG.Element, SVG.Timeline], extension)
+// })
+//
+// SVG.extend([SVG.Element, SVG.Timeline], {
+//   // Let the user set the matrix directly
+//   matrix: function (mat, b, c, d, e, f) {
+//     // Act as a getter
+//     if (mat == null) {
+//       return new SVG.Matrix(this)
+//     }
+//
+//     // Act as a setter, the user can pass a matrix or a set of numbers
+//     return this.attr('transform', new SVG.Matrix(mat, b, c, d, e, f))
+//   },
+//
+//   // Map rotation to transform
+//   rotate: function (angle, cx, cy) {
+//     return this.transform({rotate: angle, ox: cx, oy: cy}, true)
+//   },
+//
+//   // Map skew to transform
+//   skew: function (x, y, cx, cy) {
+//     return arguments.length === 1 || arguments.length === 3
+//       ? this.transform({skew: x, ox: y, oy: cx}, true)
+//       : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
+//   },
+//
+//   shear: function (lam, cx, cy) {
+//     return this.transform({shear: lam, ox: cx, oy: cy}, true)
+//   },
+//
+//   // Map scale to transform
+//   scale: function (x, y, cx, cy) {
+//     return arguments.length === 1 || arguments.length === 3
+//       ? this.transform({ scale: x, ox: y, oy: cx }, true)
+//       : this.transform({ scale: [x, y], ox: cx, oy: cy }, true)
+//   },
+//
+//   // Map translate to transform
+//   translate: function (x, y) {
+//     return this.transform({ translate: [x, y] }, true)
+//   },
+//
+//   // Map relative translations to transform
+//   relative: function (x, y) {
+//     return this.transform({ relative: [x, y] }, true)
+//   },
+//
+//   // Map flip to transform
+//   flip: function (direction, around) {
+//     var directionString = typeof direction === 'string' ? direction
+//       : isFinite(direction) ? 'both'
+//       : 'both'
+//     var origin = (direction === 'both' && isFinite(around)) ? [around, around]
+//       : (direction === 'x') ? [around, 0]
+//       : (direction === 'y') ? [0, around]
+//       : isFinite(direction) ? [direction, direction]
+//       : [0, 0]
+//     this.transform({flip: directionString, origin: origin}, true)
+//   },
+//
+//   // Opacity
+//   opacity: function (value) {
+//     return this.attr('opacity', value)
+//   },
+//
+//   // Relative move over x axis
+//   dx: function (x) {
+//     return this.x(new SVG.Number(x).plus(this instanceof SVG.Timeline ? 0 : this.x()), true)
+//   },
+//
+//   // Relative move over y axis
+//   dy: function (y) {
+//     return this.y(new SVG.Number(y).plus(this instanceof SVG.Timeline ? 0 : this.y()), true)
+//   },
+//
+//   // Relative move over x and y axes
+//   dmove: function (x, y) {
+//     return this.dx(x).dy(y)
+//   }
+// })
+//
+// SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.Timeline], {
+//   // Add x and y radius
+//   radius: function (x, y) {
+//     var type = (this._target || this).type
+//     return type === 'radialGradient' || type === 'radialGradient'
+//       ? this.attr('r', new SVG.Number(x))
+//       : this.rx(x).ry(y == null ? x : y)
+//   }
+// })
+//
+// SVG.extend(SVG.Path, {
+//   // Get path length
+//   length: function () {
+//     return this.node.getTotalLength()
+//   },
+//   // Get point at length
+//   pointAt: function (length) {
+//     return new SVG.Point(this.node.getPointAtLength(length))
+//   }
+// })
+//
+// SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.Timeline], {
+//   // Set font
+//   font: function (a, v) {
+//     if (typeof a === 'object') {
+//       for (v in a) this.font(v, a[v])
+//     }
+//
+//     return a === 'leading'
+//         ? this.leading(v)
+//       : a === 'anchor'
+//         ? this.attr('text-anchor', v)
+//       : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style'
+//         ? this.attr('font-' + a, v)
+//       : this.attr(a, v)
+//   }
+// })
 
 
 SVG.extend(SVG.Element, {

@@ -31,6 +31,8 @@ var parts = [
   'src/regex.js',
   'src/utilities.js',
   'src/default.js',
+  'src/queue.js',
+  'src/drawLoop.js',
   'src/color.js',
   'src/array.js',
   'src/pointarray.js',

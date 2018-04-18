@@ -32,6 +32,13 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
+      // Check if o is a matrix and then left multiply it directly
+      if (o.a != null) {
+        var matrix = new SVG.Matrix(o)
+        var newMatrix = this.lmultiply(matrix)
+        return newMatrix
+      }
+
       // Get all of the parameters required to form the matrix
       var flipX = o.flip && (o.flip === 'x' || o.flip === 'both') ? -1 : 1
       var flipY = o.flip && (o.flip === 'y' || o.flip === 'both') ? -1 : 1

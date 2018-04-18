@@ -50,7 +50,8 @@ SVG.extend(SVG.Element, {
 SVG.extend(SVG.Element, {
 
   // Add transformations
-  transform: function (o, cyOrRel) {
+  transform: function (o, relative) {
+
     // Get the bounding box of the element with no transformations applied
     var bbox = this.bbox()
 
@@ -58,20 +59,6 @@ SVG.extend(SVG.Element, {
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
       return decomposed[o] || decomposed
-
-    // Let the user pass in a matrix as well
-    } else if (o.a != null) {
-      // Construct a matrix from the first parameter
-      var matrix = new SVG.Matrix(o)
-
-      // If we have a relative matrix, we just apply the old matrix
-      if (cyOrRel != null) {
-        var oldMatrix = new SVG.Matrix(this)
-        matrix = matrix.multiply(oldMatrix)
-      }
-
-      // Apply the matrix directly
-      return this.attr('transform', matrix)
 
     // Allow the user to define the origin with a string
     } else if (typeof o.origin === 'string' ||
@@ -99,13 +86,14 @@ SVG.extend(SVG.Element, {
     }
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
-    var result = new SVG.Matrix(cyOrRel === true ? this : cyOrRel).transform(o)
+    var cleanRelative = relative === true ? this : (relative || false)
+    var result = new SVG.Matrix(cleanRelative).transform(o)
     return this.attr('transform', result)
   }
 })
 
-SVG.extend(SVG.FX, {
-  transform: function (o, relative) {
+SVG.extend(SVG.Timeline, {
+  transform: function (o, relative, affine) {
 
   //   // get target in case of the fx module, otherwise reference this
   //   var target = this.target()
@@ -232,146 +220,3 @@ SVG.extend(SVG.FX, {
   //   return this._callStart()
   }
 })
-
-// TODO: DESTROY
-//       =======
-//
-//
-// SVG.Transformation = SVG.invent({
-//
-//   create: function(source, inversed){
-//
-//     if(arguments.length > 1 && typeof inversed != 'boolean'){
-//       return this.constructor.call(this, [].slice.call(arguments))
-//     }
-//
-//     if(Array.isArray(source)){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         this[this.arguments[i]] = source[i]
-//       }
-//     } else if(typeof source == 'object'){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         this[this.arguments[i]] = source[this.arguments[i]]
-//       }
-//     }
-//
-//     this.inversed = false
-//
-//     if(inversed === true){
-//       this.inversed = true
-//     }
-//
-//   }
-//
-// , extend: {
-//
-//     arguments: []
-//   , method: ''
-//
-//   , at: function(pos){
-//
-//       var params = []
-//
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         params.push(this[this.arguments[i]])
-//       }
-//
-//       var m = this._undo || new SVG.Matrix()
-//
-//       m = new SVG.Matrix().morph(SVG.Matrix.prototype[this.method].apply(m, params)).at(pos)
-//
-//       return this.inversed ? m.inverse() : m
-//
-//     }
-//
-//   , undo: function(o){
-//       for(var i = 0, len = this.arguments.length; i < len; ++i){
-//         o[this.arguments[i]] = typeof this[this.arguments[i]] == 'undefined' ? 0 : o[this.arguments[i]]
-//       }
-//
-//       // The method SVG.Matrix.extract which was used before calling this
-//       // method to obtain a value for the parameter o doesn't return a cx and
-//       // a cy so we use the ones that were provided to this object at its creation
-//       o.cx = this.cx
-//       o.cy = this.cy
-//
-//       this._undo = new SVG[capitalize(this.method)](o, true).at(1)
-//
-//       return this
-//     }
-//
-//   }
-//
-// })
-//
-// SVG.Translate = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['transformedX', 'transformedY']
-//   , method: 'translate'
-//   }
-//
-// })
-//
-// SVG.Rotate = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['rotation', 'cx', 'cy']
-//   , method: 'rotate'
-//   , at: function(pos){
-//       var m = new SVG.Matrix().rotate(new SVG.Number().morph(this.rotation - (this._undo ? this._undo.rotation : 0)).at(pos), this.cx, this.cy)
-//       return this.inversed ? m.inverse() : m
-//     }
-//   , undo: function(o){
-//       this._undo = o
-//       return this
-//     }
-//   }
-//
-// })
-//
-// SVG.Scale = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['scaleX', 'scaleY', 'cx', 'cy']
-//   , method: 'scale'
-//   }
-//
-// })
-//
-// SVG.Skew = SVG.invent({
-//
-//   parent: SVG.Matrix
-// , inherit: SVG.Transformation
-//
-// , create: function(source, inversed){
-//     this.constructor.apply(this, [].slice.call(arguments))
-//   }
-//
-// , extend: {
-//     arguments: ['skewX', 'skewY', 'cx', 'cy']
-//   , method: 'skew'
-//   }
-//
-// })

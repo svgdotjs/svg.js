@@ -1,3 +1,4 @@
+
 describe('Circle', function() {
   var circle
 
@@ -173,5 +174,4 @@ describe('Circle', function() {
       expect(window.matrixStringToArray(circle.node.getAttribute('transform'))).toEqual([1,0,0,1,12,12])
     })
   })
-
 })

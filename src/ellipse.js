@@ -16,7 +16,7 @@ SVG.Circle = SVG.invent({
   }
 })
 
-SVG.extend([SVG.Circle, SVG.FX], {
+SVG.extend([SVG.Circle, SVG.Timeline], {
   // Radius x value
   rx: function (rx) {
     return this.attr('r', rx)
@@ -43,7 +43,7 @@ SVG.Ellipse = SVG.invent({
   }
 })
 
-SVG.extend([SVG.Ellipse, SVG.Rect, SVG.FX], {
+SVG.extend([SVG.Ellipse, SVG.Rect, SVG.Timeline], {
   // Radius x value
   rx: function (rx) {
     return this.attr('rx', rx)
