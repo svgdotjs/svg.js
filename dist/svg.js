@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Feb 25 2018 18:32:36 GMT+1100 (AEDT)
+* BUILT: Sat Apr 21 2018 16:30:04 GMT-0400 (EDT)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -2039,8 +2039,13 @@ SVG.MorphObj = SVG.invent({
   create: function(from, to){
     // prepare color for morphing
     if(SVG.Color.isColor(to)) return new SVG.Color(from).morph(to)
-    // prepare value list for morphing
-    if(SVG.regex.delimiter.test(from)) return new SVG.Array(from).morph(to)
+    // check if we have a list of values
+    if(SVG.regex.delimiter.test(from)) {
+      // prepare path for morphing
+      if(SVG.regex.pathLetters.test(from)) return new SVG.PathArray(from).morph(to)
+      // prepare value list for morphing
+      else return new SVG.Array(from).morph(to)
+    }
     // prepare number for morphing
     if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
