@@ -142,12 +142,30 @@ Controlable ()
 new Controller(target, controller)
 
 
+
+
+Number
+Array
+PathArray
+ViewBox
+PointArray
+Color
+
+
+
+
+
+
+
+
+
+
 SVG.Timeline = {
   styleAttr (type, name, val) {
-    let morpher = new Morph(this.controller).to(val)
+    let morpher = new Morph(val).controller(this.controller)
     queue (
       ()=> {
-        morpher = morpher.from(element[type]('name'))
+        morpher = morpher.morph(element[type]('name'))
       },
       morpher.at
     )
@@ -159,7 +177,7 @@ SVG.Timeline = {
   let morpher = declarative ? new Controller(target) : new Morph().to(val)
   queue (
     ()=> {
-      morpher = morpher.from(element[type]('name'))
+      morpher = morpher.from(element[type](name))
     },
     () => {
       this.element[type](name, morpher.at(pos))
@@ -338,7 +356,6 @@ x (x) {
 this.queue(fn, morpher)
 
 new Morph(x(), xGiven)
-
 
       x: function (x, relative) {
         if (this.target() instanceof SVG.G) {

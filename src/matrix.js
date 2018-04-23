@@ -10,7 +10,11 @@ SVG.Matrix = SVG.invent({
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)
-      : typeof source === 'object' ? source
+      : (typeof source === 'object' && (
+          source.a != null || source.b != null || source.c != null
+          || source.d != null || source.e != null || source.f != null
+        )) ? source
+      : (typeof source === 'object') ? new SVG.Matrix().transform(source)
       : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : base
 

@@ -100,5 +100,11 @@ SVG.Number = SVG.invent({
           .plus(this)
     }
 
+
+
+new SVG.Color('#2a4e5a').morph('#3b4f2a').at(0.4)
+
+new Morph().from('#2a4e5a').to('#3b4f2a').at(0.3)
+
   }
 })
