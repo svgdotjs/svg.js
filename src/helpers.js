@@ -203,3 +203,61 @@ var abcdef = 'abcdef'.split('')
 function closeEnough (a, b, threshold) {
   return Math.abs(b - a) < (threshold || 1e-6)
 }
+
+// TODO: Refactor this to a static function of matrix.js
+function formatTransforms (o) {
+
+  // Get all of the parameters required to form the matrix
+  var flipBoth = o.flip === 'both' || o.flip === true
+  var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
+  var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
+  var skewX = o.skew && o.skew.length ? o.skew[0]
+    : isFinite(o.skew) ? o.skew
+    : isFinite(o.skewX) ? o.skewX
+    : 0
+  var skewY = o.skew && o.skew.length ? o.skew[1]
+    : isFinite(o.skew) ? o.skew
+    : isFinite(o.skewY) ? o.skewY
+    : 0
+  var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
+    : isFinite(o.scale) ? o.scale * flipX
+    : isFinite(o.scaleX) ? o.scaleX * flipX
+    : flipX
+  var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
+    : isFinite(o.scale) ? o.scale * flipY
+    : isFinite(o.scaleY) ? o.scaleY * flipY
+    : flipY
+  var shear = o.shear || 0
+  var theta = o.rotate || 0
+  var origin = new SVG.Point(o.ox == null ? o.origin : o.ox, o.oy)
+  var ox = origin.x
+  var oy = origin.y
+  var position = new SVG.Point(o.px == null
+    ? o.position : o.px, o.py, {x: null, y: null})
+  var px = position.x
+  var py = position.y
+  var translate = new SVG.Point(o.tx == null ? o.translate : o.tx, o.ty)
+  var tx = translate.x
+  var ty = translate.y
+  var relative = new SVG.Point(o.rx == null ? o.relative : o.rx, o.ry)
+  var rx = relative.x
+  var ry = relative.y
+
+  // Populate all of the values
+  return {
+    scaleX: scaleX,
+    scaleY: scaleY,
+    skewX: skewX,
+    skewY: skewY,
+    shear: shear,
+    theta: theta,
+    rx: rx,
+    ry: ry,
+    tx: tx,
+    ty: ty,
+    ox: ox,
+    oy: oy,
+    px: px,
+    py: py,
+  }
+}

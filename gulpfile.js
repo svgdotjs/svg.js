@@ -40,7 +40,6 @@ var parts = [
   'src/number.js',
   'src/HtmlNode.js',
   'src/element.js',
-  'src/fx.js',
   'src/matrix.js',
   'src/point.js',
   'src/attr.js',
@@ -81,7 +80,8 @@ var parts = [
   'src/helpers.js',
   'src/polyfill.js',
   'src/boxes.js',
-  'src/parser.js'
+  'src/parser.js',
+  'src/animator.js',
 ]
 
 gulp.task('clean', function () {

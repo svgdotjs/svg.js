@@ -1,3 +1,4 @@
+/* global requestAnimationFrame */
 
 SVG.Animator = {
   nextDraw: null,
@@ -44,18 +45,24 @@ SVG.Animator = {
 
   cancelTimeout: function (id) {
     // Find the index of the timeout to cancel and remove it
-    var index = SVG.Animator.timeouts.remove(function (t) { return t.id == id })
+    var index = SVG.Animator.timeouts.remove(
+      function (t) {
+        return t.id === id
+      }
+    )
     return index
   },
 
   _draw: function (now) {
+
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
     var tracking = true
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
     while ((nextTimeout = SVG.Animator.timeouts.shift())) {
-        // Run the timeout if its time, or push it to the end
+
+      // Run the timeout if its time, or push it to the end
       if (now > nextTimeout.time) {
         nextTimeout.run()
       } else {

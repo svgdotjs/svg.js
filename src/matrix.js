@@ -43,59 +43,28 @@ SVG.Matrix = SVG.invent({
         return newMatrix
       }
 
-      // Get all of the parameters required to form the matrix
-      var flipX = o.flip && (o.flip === 'x' || o.flip === 'both') ? -1 : 1
-      var flipY = o.flip && (o.flip === 'y' || o.flip === 'both') ? -1 : 1
-      var skewX = o.skew && o.skew.length ? o.skew[0]
-        : isFinite(o.skew) ? o.skew
-        : isFinite(o.skewX) ? o.skewX
-        : 0
-      var skewY = o.skew && o.skew.length ? o.skew[1]
-        : isFinite(o.skew) ? o.skew
-        : isFinite(o.skewY) ? o.skewY
-        : 0
-      var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
-        : isFinite(o.scale) ? o.scale * flipX
-        : isFinite(o.scaleX) ? o.scaleX * flipX
-        : flipX
-      var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
-        : isFinite(o.scale) ? o.scale * flipY
-        : isFinite(o.scaleY) ? o.scaleY * flipY
-        : flipY
-      var shear = o.shear || 0
-      var theta = o.rotate || 0
-      var origin = new SVG.Point(o.ox == null ? o.origin : o.ox, o.oy)
-      var ox = origin.x
-      var oy = origin.y
-      var position = new SVG.Point(o.px == null
-        ? o.position : o.px, o.py, {x: null, y: null})
-      var px = position.x
-      var py = position.y
-      var translate = new SVG.Point(o.tx == null ? o.translate : o.tx, o.ty)
-      var tx = translate.x
-      var ty = translate.y
-      var relative = new SVG.Point(o.rx == null ? o.relative : o.rx, o.ry)
-      var rx = relative.x
-      var ry = relative.y
+      // Get the proposed transformations and the current transformations
+      var t = formatTransforms(o)
       var currentTransform = new SVG.Matrix(this)
 
       // Construct the resulting matrix
       var transformer = new SVG.Matrix()
-        .translate(-ox, -oy)
-        .scale(scaleX, scaleY)
-        .skew(skewX, skewY)
-        .shear(shear)
-        .rotate(theta)
-        .translate(ox, oy)
-        .translate(rx, ry)
+        .translate(-t.ox, -t.oy)
+        .scale(t.scaleX, t.scaleY)
+        .skew(t.skewX, t.skewY)
+        .shear(t.shear)
+        .rotate(t.theta)
+        .translate(t.ox, t.oy)
+        .translate(t.rx, t.ry)
         .lmultiply(currentTransform)
 
       // If we want the origin at a particular place, we force it there
-      if (isFinite(px) || isFinite(py)) {
+      if (isFinite(t.px) || isFinite(t.py)) {
+
         // Figure out where the origin went and the delta to get there
-        var current = new SVG.Point(ox - rx, oy - ry).transform(transformer)
-        var dx = px ? px - current.x : 0
-        var dy = py ? py - current.y : 0
+        var current = new SVG.Point(t.ox - t.rx, t.oy - t.ry).transform(transformer)
+        var dx = t.px ? t.px - current.x : 0
+        var dy = t.py ? t.py - current.y : 0
 
         // Apply another translation
         transformer = transformer.translate(dx, dy)
@@ -221,7 +190,31 @@ SVG.Matrix = SVG.invent({
 
     // Inverses matrix
     inverse: function () {
-      return new SVG.Matrix(this.native().inverse())
+
+      // Get the current parameters out of the matrix
+      var a = this.a
+      var b = this.b
+      var c = this.c
+      var d = this.d
+      var e = this.e
+      var f = this.f
+
+      // Invert the 2x2 matrix in the top left
+      var det = a * d - b * c
+      if (!det) throw new Error("Cannot invert " + this)
+
+      // Calculate the top 2x2 matrix
+      var na = d / det
+      var nb = -b / det
+      var nc = -c / det
+      var nd = a / det
+
+      // Apply the inverted matrix to the top right
+      var ne = - ( na * e + nc * f )
+      var nf = - ( nb * e + nd * f )
+
+      // Construct the inverted matrix
+      return new SVG.Matrix(na, nb, nc, nd, ne, nf)
     },
 
     // Translate matrix

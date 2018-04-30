@@ -59,11 +59,13 @@ SVG.Morphable = SVG.invent{
 
       var _this = this
 
+      modifier = this.modifier || function(el) { return el }
+
       // for(var i = 0, len = this._from.length; i < len; ++i) {
       //   arr.push(this.controller(this._from[i], this._to[i]))
       // }
 
-      return this.type.fromArray(this.modifier(this._from.map(function (i, index) {
+      return this.type.fromArray(modifier(this._from.map(function (i, index) {
         return _this.controller(i, _this._to[i], pos)
       })))
     },
@@ -129,6 +131,38 @@ SVG.Morphable.TransformBag = SVG.invent({
   }
 })
 
+
+SVG.Morphable.ObjectBag = SVG.invent({
+  create: function (obj) {
+    this.values = []
+    this.keys = []
+
+    for(var i in obj) {
+      this.values.push(obj[i])
+      this.keys.push(i)
+    }
+  },
+
+  extend: {
+    valueOf: function () {
+      return this.values
+    },
+
+    toArray: function (){
+      return this.values
+    }
+
+    fromArray: function (arr) {
+      var obj = {}
+
+      for(var i = 0, len = arr.length; i < len; ++i) {
+        obj[this.keys[i]] = arr[i]
+      }
+
+      return obj
+    }
+})
+
 SVG.MorphableTypes = [SVG.Number, SVG.Color, SVG.Box, SVG.Matrix, SVG.Morphable.NonMorphable, SVG.Morphable.TransformBag]
 SVG.extend(SVG.MorphableTypes, {
   to: (item, args) => {
@@ -176,6 +210,24 @@ SVG.extend(SVG.MorphableTypes, {
 // 4. Now you get the delta matrix as a result: D = I * inv(M)
 
 
+value = null
+init ( ) {
+  if(!morpher.hasFrom()) {
+    morpher.from(el.whatever())
+  }
+
+   value = value == null ?  get the value : value
+   return value
+  else
+}
+
+// C R x = D C x = A x
+//
+//     (C R inv(C)) C x
+//
+//
+// C R = D C
+// D = C R inv(C)
 
 
 el.animate().trasform({rotate: 720, scale: 2}, true)
@@ -193,23 +245,80 @@ relative -> start at 0 always - {random stuff}
  |> modifier
  |> fromArray
 
-function transform(transforms, relative, affine) {
-  affine = transforms.affine || affine
-  relative = transforms.relative || relative
+function transform(o, relative, affine) {
+  affine = transforms.affine || affine || !!transform.a
+  relative = transforms.relative || relative || false
 
-  // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-  var morpher = new SVG.Morphable.TransformBag().to(transforms)
-
-  // make sure you have an identity matrix defined as default for relative transforms
-  var morpher.from()
+  var morpher
   var el = this.target()
 
-  var initFn = relative ? function() {} : function() {
-    // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-    morpher.from(el.transform())
+  /**
+    The default of relative is false
+    affine defaults to true if transformations are used and to false when a matrix is given
+
+    We end up with 4 possibilities:
+    false, false: absolute direct matrix morph with SVG.Matrix
+    true, false: relative direct matrix morph with SVG.Marix or relative whatever was passed transformation with ObjectBag
+
+    false, true: absolute affine transformation with SVG.TransformBag
+    true, true: relative whatever was passed transformation with ObjectBag
+  **/
+
+
+  // if we have a relative transformation and its not a matrix
+  // we morph all parameters directly with the ObjectBag
+  // the following cases are covered here:
+  // - true, false with ObjectBag
+  // - true, true with ObjectBag
+  if(relative && transforms.a == null) {
+    morpher = SVG.Morphable.ObjectBag(formatTransforms({})).to(formatTransforms(transforms))
+
+    return this.queue(function() {}, function (pos) {
+      el.pushRightTransform(new Matrix(morpher.at(pos)))
+    })
   }
 
-  this.queue(initFn, function (pos) {
+  // when we have a matrix and its non affine we transform directly
+  // the following cases are covered here:
+  // - true, false with SVG.Matrix
+  // - false, false with SVG.Matrix
+  /*
+  // this is covered below now
+  if(transforms.a != null && !affine) {
+    var morpher = new SVG.Matrix().to(transforms)
+
+    this.queue(function () {}, function (pos) {
+      if(!relative) {
+        var curr = el.currentTransform()
+        morpher.from(curr)
+        el.pushLeftTransform(morpher.at(pos).multiply(curr.inverse()))
+      } else {
+        el.pushRightTransform(morpher.at(pos))
+      }
+    })
+  }*/
+
+  // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
+  // the following cases are covered here:
+  // - false, true with SVG.Matrix
+  // - false, true with SVG.TransformBag
+  // - true, false with SVG.Matrix
+  // - false, false with SVG.Matrix
+
+  // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
+  var morpher = (transforms.a && !affine)
+    ? new SVG.Matrix().to(transforms)
+    : new SVG.Morphable.TransformBag().to(transforms)
+
+  // create identity Matrix for relative not affine Matrix transformation
+  morpher.from()
+
+  this.queue(function() {}, function (pos) {
+
+    // 2. on every frame: pull the current state of all previous transforms (M - m can change)
+    var curr = el.currentTransform()
+    if(!relative) morpher.from(curr)
+
     // 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
     //   - Note I(0) = M
     //   - Note I(1) = T
@@ -217,12 +326,89 @@ function transform(transforms, relative, affine) {
 
     if(!relative) {
       // 4. Now you get the delta matrix as a result: D = I * inv(M)
-      matrix = matrix.multiply(el.transform().inverse())
+      var delta = matrix.multiply(curr.inverse())
+      el.pushLeftTransform(delta)
+    } else {
+      el.pushRightTransform(matrix)
     }
-
-    el.pushTransform(matrix)
   })
 }
+
+
+
+/**
+    INIT
+     - save the current transformation
+
+    ELEMENT TIMELINE (one timeline per el)
+    - Reads the current transform and save it to the transformation stack
+    - Runs all available runners, runners will:
+      - Modify their transformation on the stack
+      - Mark their transformation as complete
+      - After each runner, we group the matrix (not for now)
+    - After running the runners, we bundle all contiguous transformations into
+      a single transformation
+
+
+    - transformtionstack is like this: [RunnerB, Matrix, RunnerC]
+      - skip merging for now (premature blabla)
+
+
+el.loop({times: 5, swing: true, wait: [20, 50]})
+
+el.opacity(0)
+  .animate(300).opacity(1)
+  .animate(300, true).scale(5).reverse()
+
+
+for(var i = 0; i < 7; ++i)
+  circle.clone()
+    .scale(3).rotate(0)
+    .loop({swing: false, wait: 500})
+    .scale(1)
+    .rotate(360)
+    .delay(1000)
+    .animate(500, 'swingOut')
+    .scale(3)
+}
+
+fn () => {
+  el.animate().stroke('dashoffset', 213).scale(1)
+    .delay(1)
+    .animate().scale(2)
+    .after(fn)
+}
+
+
+
+When you start an element has a base matrix B - which starts as the identity
+
+  If you modify the matrix, then we have:
+
+    T U V W X B x
+      . .   .
+
+    runner.step()
+
+    for all runners in stack:
+      if(runner is done) repalce with matrix
+
+    if(2 matrix next to eachother are done) {
+
+    }
+
+What if
+
+/// RunnerA
+el.animate()
+  .transform({rotate: 30, scale: 2})
+  .transform({rotate: 500}, true)
+
+f| -----A-----
+s|   --------B---------
+t|           ---------C-------
+
+**/
 
 
 SVG.Morphable.TransformList = Object
