@@ -1,4 +1,4 @@
-SVG.Morphable = SVG.invent{
+SVG.Morphable = SVG.invent({
   create: function (controller) {
     // FIXME: the default controller does not know about easing
     this.controller = controller || function (from, to, pos) {
@@ -11,13 +11,13 @@ SVG.Morphable = SVG.invent{
     from: function (val) {
       this._from = this._set(val)
       return this
-    }
+    },
 
     to: function (val, modifier) {
       this._to = this._set(val)
       this.modifier = modifier
       return this
-    }
+    },
 
     type: function (type) {
       this._type = type
@@ -29,7 +29,7 @@ SVG.Morphable = SVG.invent{
         }
       }
       return this
-    }
+    },
 
     _set: function (value) {
 
@@ -55,11 +55,11 @@ SVG.Morphable = SVG.invent{
       }
 
       return (new this._type(value)).toArray()
-    }
+    },
 
     controller: function (controller) {
       this._controller = controller
-    }
+    },
 
     at: function (pos) {
 
@@ -80,7 +80,7 @@ SVG.Morphable = SVG.invent{
       return this._value
     }
   }
-}
+})
 
 SVG.Morphable.NonMorphable = SVG.invent({
   create: function (val) {
@@ -123,7 +123,7 @@ SVG.Morphable.TransformBag = SVG.invent({
         v.translateX,
         v.translateY
       ]
-    }
+    },
 
     fromArray: function (arr) {
       return new SVG.Morphable.TransformBag({
@@ -134,6 +134,7 @@ SVG.Morphable.TransformBag = SVG.invent({
         translateX: arr[4],
         translateY: arr[5]
       })
+    }
   }
 })
 
@@ -156,7 +157,7 @@ SVG.Morphable.ObjectBag = SVG.invent({
 
     toArray: function (){
       return this.values
-    }
+    },
 
     fromArray: function (arr) {
       var obj = {}
@@ -167,6 +168,7 @@ SVG.Morphable.ObjectBag = SVG.invent({
 
       return obj
     }
+  }
 })
 
 SVG.MorphableTypes = [
@@ -174,6 +176,9 @@ SVG.MorphableTypes = [
   SVG.Color,
   SVG.Box,
   SVG.Matrix,
+  SVG.Array,
+  SVG.PointArray,
+  SVG.PathArray,
   SVG.Morphable.NonMorphable,
   SVG.Morphable.TransformBag,
   SVG.Morphable.ObjectBag,
@@ -233,19 +238,6 @@ SVG.extend(SVG.MorphableTypes, {
 
 
 
-/**
- ** absolute transformations
- **/
-
-// M v -----|-----(D M v = I v)------|----->  T v
-//
-// 1. define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-// 2. on every frame: pull the current state of all previous transforms (M - m can change)
-//   and then write this as m = [tx0, ty0, the0, lam0, sy0, sx0]
-// 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
-//   - Note I(0) = M
-//   - Note I(1) = T
-// 4. Now you get the delta matrix as a result: D = I * inv(M)
 
 
 // C R x = D C x = A x
@@ -262,80 +254,7 @@ absolute -> start at current - {affine params}
 relative -> start at 0 always - {random stuff}
 */
 
-function transform(o, relative, affine) {
-  affine = transforms.affine || affine || !!transform.a
-  relative = transforms.relative || relative || false
 
-  var morpher
-  var el = this.target()
-
-  /**
-    The default of relative is false
-    affine defaults to true if transformations are used and to false when a matrix is given
-
-    We end up with 4 possibilities:
-    false, false: absolute direct matrix morph with SVG.Matrix
-    true, false: relative direct matrix morph with SVG.Marix or relative whatever was passed transformation with ObjectBag
-
-    false, true: absolute affine transformation with SVG.TransformBag
-    true, true: relative whatever was passed transformation with ObjectBag
-  **/
-
-
-  // if we have a relative transformation and its not a matrix
-  // we morph all parameters directly with the ObjectBag
-  // the following cases are covered here:
-  // - true, false with ObjectBag
-  // - true, true with ObjectBag
-  if(relative && transforms.a == null) {
-    morpher = SVG.Morphable.ObjectBag(formatTransforms({}))
-      .to(formatTransforms(transforms))
-      .controller(this.controller)
-
-    return this.queue(function() {}, function (pos) {
-      el.pushRightTransform(new Matrix(morpher.at(pos)))
-    })
-  }
-
-
-  // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
-  // also non affine direct and relative morhing with SVG.Matrix
-  // the following cases are covered here:
-  // - false, true with SVG.Matrix
-  // - false, true with SVG.TransformBag
-  // - true, false with SVG.Matrix
-  // - false, false with SVG.Matrix
-
-  // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-  var morpher = (transforms.a && !affine)
-    ? new SVG.Matrix().to(transforms)
-    : new SVG.Morphable.TransformBag().to(transforms)
-
-  morpher.controller(this.controller)
-
-  // create identity Matrix for relative not affine Matrix transformation
-  morpher.from()
-
-  this.queue(function() {}, function (pos) {
-
-    // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-    var curr = el.currentTransform()
-    if(!relative) morpher.from(curr)
-
-    // 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
-    //   - Note I(0) = M
-    //   - Note I(1) = T
-    var matrix = morpher.at(pos)
-
-    if(!relative) {
-      // 4. Now you get the delta matrix as a result: D = I * inv(M)
-      var delta = matrix.multiply(curr.inverse())
-      el.pushLeftTransform(delta)
-    } else {
-      el.pushRightTransform(matrix)
-    }
-  })
-}
 
 
 
@@ -412,35 +331,3 @@ s|   --------B---------
 t|           ---------C-------
 
 **/
-
-
-
-
-// el.animate().fill('#000', 'hsb')
-function fill(val, colorspace) {
-  var modifier = Morpher.modifiers[colorspace || 'rgb'] || colorspace
-  var morpher = new Morphable().to(val, modifier)
-
-  this.queue(function () => {
-    morpher.from()
-  }, (pos)=> {
-    var color = morpher.at(pos)
-    el.fill(color)
-  })
-}
-
-
-
-// el.animate().zoom(level, {x:100, y:100})
-function zoom(level, point) {
-  var  morpher = SVG.Number().to(level).controller(this.controller)
-  var el = this.target()
-
-  this.queue(function() {
-    morpher = morpher.from(element.zoom())
-  }, function (pos) {
-    el.zoom(morpher.at(pos), point)
-  })
-
-  return this
-}
