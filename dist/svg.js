@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue May 01 2018 21:08:17 GMT+1000 (AEST)
+* BUILT: Tue May 01 2018 19:45:50 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -85,12 +85,13 @@ SVG.invent = function (config) {
   // Create element initializer
   var initializer = typeof config.create === 'function' ? config.create
     : function (node) {
-      this.constructor(node || SVG.create(config.create))
+      SVG.Element.call(this, node || SVG.create(config.create))
     }
 
   // Inherit prototype
   if (config.inherit) {
     initializer.prototype = new config.inherit()
+    initializer.prototype.constructor = initializer
   }
 
   // Extend with methods
@@ -444,6 +445,12 @@ SVG.extend(SVG.Color, {
   toString: function () {
     return this.toHex()
   },
+  toArray: function () {
+    return [this.r, this.g, this.b]
+  },
+  fromArray: function (a) {
+    return new SVG.Color(a[0], a[1], a[2])
+  },
   // Build hex value
   toHex: function () {
     return '#' +
@@ -615,6 +622,16 @@ SVG.extend(SVG.PointArray, {
     }
 
     return array.join(' ')
+  },
+
+  toArray: function () {
+    return this.value.reduce(function (prev, curr) {
+      return [].concat.call(prev, curr)
+    }, [])
+  },
+
+  fromArray: function (a) {
+    return new SVG.PointArray(a)
   },
 
   // Convert array to line object
@@ -807,6 +824,14 @@ SVG.extend(SVG.PathArray, {
   // Convert array to string
   toString: function () {
     return arrayToString(this.value)
+  },
+  toArray: function () {
+    return this.value.reduce(function (prev, curr) {
+      return [].concat.call(prev, curr)
+    }, [])
+  },
+  fromArray: function (a) {
+    return new SVG.PathArray(a)
   },
   // Move path string
   move: function (x, y) {
@@ -1051,6 +1076,12 @@ SVG.Number = SVG.invent({
     toJSON: function () {
       return this.toString()
     },   // Convert to primitive
+    toArray: function () {
+      return [this.value]
+    },
+    fromArray: function (val) {
+      return new SVG.Number(val[0])
+    },
     valueOf: function () {
       return this.value
     },
@@ -1443,7 +1474,7 @@ SVG.Element = SVG.invent({
   }
 })
 
-/* global abcdef, arrayToMatrix, closeEnough */
+/* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -1774,6 +1805,14 @@ SVG.Matrix = SVG.invent({
     // Convert matrix to string
     toString: function () {
       return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+    },
+
+    toArray: function () {
+      return [this.a, this.b, this.c, this.d, this.e, this.f]
+    },
+
+    fromArray: function (a) {
+      return new SVG.Matrix(a)
     }
   },
 
@@ -2222,7 +2261,7 @@ SVG.extend(SVG.Element, {
 SVG.Parent = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node)
+    SVG.Element.call(this, node)
   },
 
   // Inherit from
@@ -2352,7 +2391,7 @@ SVG.extend(SVG.Parent, {
 SVG.Container = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node)
+    SVG.Element.call(this, node)
   },
 
   // Inherit from
@@ -2732,7 +2771,7 @@ SVG.extend(SVG.Element, {
 SVG.Gradient = SVG.invent({
   // Initialize node
   create: function (type) {
-    this.constructor(typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
+    SVG.Element.call(this, typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
   },
 
   // Inherit from
@@ -2897,7 +2936,7 @@ SVG.extend(SVG.Defs, {
 SVG.Doc = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node || SVG.create('svg'))
+    SVG.Element.call(this, node || SVG.create('svg'))
 
     // set svg element attributes and ensure defs node
     this.namespace()
@@ -2969,7 +3008,7 @@ SVG.Doc = SVG.invent({
 SVG.Shape = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node)
+    SVG.Element.call(this, node)
   },
 
   // Inherit from
@@ -2981,7 +3020,7 @@ SVG.Bare = SVG.invent({
   // Initialize
   create: function (element, inherit) {
     // construct element
-    this.constructor(SVG.create(element))
+    SVG.Element.call(this, SVG.create(element))
 
     // inherit custom methods
     if (inherit) {
@@ -3448,7 +3487,7 @@ SVG.Image = SVG.invent({
 SVG.Text = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node || SVG.create('text'))
+    SVG.Element.call(this, node || SVG.create('text'))
     this.dom.leading = new SVG.Number(1.3)    // store leading value for rebuilding
     this._rebuild = true                      // enable automatic updating of dy values
     this._build = false                     // disable build mode for adding multiple lines
@@ -4647,4 +4686,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

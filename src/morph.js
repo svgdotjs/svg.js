@@ -1,7 +1,7 @@
 SVG.Morphable = SVG.invent({
   create: function (controller) {
     // FIXME: the default controller does not know about easing
-    this.controller = controller || function (from, to, pos) {
+    this._controller = controller || function (from, to, pos) {
       return from + (to - from) * pos
     }
   },
@@ -15,7 +15,7 @@ SVG.Morphable = SVG.invent({
 
     to: function (val, modifier) {
       this._to = this._set(val)
-      this.modifier = modifier
+      this.modifier = modifier || function(arr) { return arr }
       return this
     },
 
@@ -34,16 +34,19 @@ SVG.Morphable = SVG.invent({
     _set: function (value) {
 
       if(!this._type)  {
-        if (SVG.Color.isColor(val)) {
+        if (typeof value == 'number') {
+          this.type(SVG.Number)
+
+        } else if (SVG.Color.isColor(value)) {
           this.type(SVG.Color)
 
-        } else if (SVG.regex.delimiter.test(val)) {
-          this.type(SVG.regex.pathLetters.test(val)
+        } else if (SVG.regex.delimiter.test(value)) {
+          this.type(SVG.regex.pathLetters.test(value)
             ? SVG.PathArray
             : SVG.Array
           )
 
-        } else if (SVG.regex.numberAndUnit.test(val)) {
+        } else if (SVG.regex.numberAndUnit.test(value)) {
           this.type(SVG.Number)
 
         } else if (value in SVG.MorphableTypes) {
@@ -71,8 +74,8 @@ SVG.Morphable = SVG.invent({
       //   arr.push(this.controller(this._from[i], this._to[i]))
       // }
 
-      return this.type.fromArray(modifier(this._from.map(function (i, index) {
-        return _this._controller(i, _this._to[i], pos)
+      return this._type.prototype.fromArray(modifier(this._from.map(function (i, index) {
+        return _this._controller(i, _this._to[index], pos)
       })))
     },
 
@@ -185,8 +188,8 @@ SVG.MorphableTypes = [
 ]
 
 SVG.extend(SVG.MorphableTypes, {
-  to: (item, args) => {
-    let a = new SVG.Morphable().type(this.constructor).to(item, args)
+  to: function (val, args) {
+    return new SVG.Morphable().type(this.constructor).to(val, args)
   },
 })
 

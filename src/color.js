@@ -71,6 +71,12 @@ SVG.extend(SVG.Color, {
   toString: function () {
     return this.toHex()
   },
+  toArray: function () {
+    return [this.r, this.g, this.b]
+  },
+  fromArray: function (a) {
+    return new SVG.Color(a[0], a[1], a[2])
+  },
   // Build hex value
   toHex: function () {
     return '#' +

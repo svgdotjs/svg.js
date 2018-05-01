@@ -52,12 +52,13 @@ SVG.invent = function (config) {
   // Create element initializer
   var initializer = typeof config.create === 'function' ? config.create
     : function (node) {
-      this.constructor(node || SVG.create(config.create))
+      SVG.Element.call(this, node || SVG.create(config.create))
     }
 
   // Inherit prototype
   if (config.inherit) {
     initializer.prototype = new config.inherit()
+    initializer.prototype.constructor = initializer
   }
 
   // Extend with methods

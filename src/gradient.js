@@ -1,7 +1,7 @@
 SVG.Gradient = SVG.invent({
   // Initialize node
   create: function (type) {
-    this.constructor(typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
+    SVG.Element.call(this, typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
   },
 
   // Inherit from

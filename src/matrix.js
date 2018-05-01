@@ -1,4 +1,4 @@
-/* global abcdef, arrayToMatrix, closeEnough */
+/* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -329,6 +329,14 @@ SVG.Matrix = SVG.invent({
     // Convert matrix to string
     toString: function () {
       return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+    },
+
+    toArray: function () {
+      return [this.a, this.b, this.c, this.d, this.e, this.f]
+    },
+
+    fromArray: function (a) {
+      return new SVG.Matrix(a)
     }
   },
 

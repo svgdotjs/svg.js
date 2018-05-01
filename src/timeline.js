@@ -17,7 +17,7 @@ function Runner (timeline) {
 
   // We copy the current values from the timeline because they can change
   this._timeline = timeline
-  this._start = timeline._startTime
+  this._startTime = timeline._startTime
   this._duration = timeline._duration
   this._last = 0
   this._active = false
@@ -30,6 +30,7 @@ Runner.prototype = {
 
   add: function (initFn, runFn, alwaysInitialise) {
     this.functions.push({
+      initialised: false,
       alwaysInitialise: alwaysInitialise || false,
       initialiser: initFn,
       runner: runFn,
@@ -39,31 +40,40 @@ Runner.prototype = {
   step: function (time) {
 
     // If it is time to do something, act now.
-    var end = this._start + this._duration
-    var timeInside = this._start < time && time < end
-    var running = timeInside || !this._duration
-    var allDone = running
+    var end = this._startTime + this._duration
+    var running = (this._startTime < time && time < end) || !this._duration
 
-    // If we don't have a duration, we are in declarative mode
+    // If its time run the animation, we do so
+    var allDone = time > end
+    if (running && !this._timeline._paused) {
 
-    // If the time is inside the bounds, run all of the
-    if (timeInside) {
+      // Get the current position for the current animation
+      // TODO: Deal with looping
+      var position = (time - this._startTime) / this._duration
 
-      // Work out if we need to do the first initialisation
-      var rising = this._last < this._start
-      if (rising) {
+      // We run all of the functions
+      for (var i = 0, len = this.functions.length; i < len ; ++i) {
 
-      }
+        // Get the current queued item
+        var current = this.functions[i]
 
-    } else {
+        // Work out if we need to initialise, and do so if we do
+        var initialise = current.alwaysInitialise || !current.initialised
+        if (initialise) {
+          current.initialiser.call(this._timeline, position)
+          current.initialised = true
+        }
 
-      // Work out if we just finished
-      var justFinished = this._start < this._last && this._last < end
-      if (justFinished) {
-
+        // Run the function required
+        // TODO: Figure out what declarative needs that it doesn't have
+        var stillRunning = current.runner.call(this._timeline, position)
+        if (stillRunning) {
+          allDone = false
+        }
       }
     }
 
+    // Tell the caller whether this animation is finished
     return allDone
   },
 
@@ -318,7 +328,7 @@ SVG.extend(SVG.Timeline, {
       }
     }
 
-    var morpher = new Morphable(this.controller).to(val)
+    var morpher = new Morphable(this._controller).to(val)
 
     this.queue(
       function () {
@@ -333,7 +343,7 @@ SVG.extend(SVG.Timeline, {
   },
 
   zoom: function (level, point) {
-   var  morpher = SVG.Number().to(level).controller(this.controller)
+   var  morpher = new Morphable(this._controller).to(new SVG.Number(level))
    var el = this.target()
 
    this.queue(function() {
@@ -438,7 +448,8 @@ SVG.extend(SVG.Timeline, {
 
   // Animatable x-axis
   x: function (x, relative) {
-    var morpher = new SVG.Number().to(x)
+    var morpher = new SVG.Morphable(this._controller)
+      .to(new SVG.Number(x))
 
     /*
     if (this.target() instanceof SVG.G) {
@@ -460,7 +471,8 @@ SVG.extend(SVG.Timeline, {
 
   // Animatable y-axis
   y: function (y, relative) {
-    var morpher = new SVG.Number().to(y)
+    var morpher = new SVG.Morphable(this._controller)
+      .to(new SVG.Number(y))
 
     /*
     if (this.target() instanceof SVG.G) {
@@ -481,11 +493,11 @@ SVG.extend(SVG.Timeline, {
   },
 
   _queueObject: function (method, to) {
-    var morpher = new SVG.Morphable(this.controller).to(to)
+    var morpher = new SVG.Morphable(this._controller).to(to)
 
     this.queue(function () {
       morpher.from(this._element[method]())
-    }, function () {
+    }, function (pos) {
       this._element[method](morpher.at(pos))
     })
 
@@ -493,7 +505,7 @@ SVG.extend(SVG.Timeline, {
   },
 
   _queueNumber: function (method, value) {
-    return this._queueObject(method, new Number(value))
+    return this._queueObject(method, new SVG.Number(value))
   },
 
   // Animatable center x-axis

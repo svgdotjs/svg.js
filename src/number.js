@@ -45,6 +45,12 @@ SVG.Number = SVG.invent({
     toJSON: function () {
       return this.toString()
     },   // Convert to primitive
+    toArray: function () {
+      return [this.value]
+    },
+    fromArray: function (val) {
+      return new SVG.Number(val[0])
+    },
     valueOf: function () {
       return this.value
     },
