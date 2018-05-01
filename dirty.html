@@ -5,11 +5,12 @@
   <meta charset="utf-8">
   <title></title>
   <script type="text/javascript" src="dist/svg.js"></script>
+  <script type="text/javascript" src="src/timeline.js"></script>
 </head>
 <body>
 
 <!-- Making the svg -->
-<svg>
+<svg width=1000px height=1000px>
   <rect x=50 y=100 width=200 height=100 fill=blue />
 </svg>
 
@@ -18,8 +19,25 @@
 
 
 let rect = SVG('rect')
+let {sin, PI: pi, round, sqrt} = Math
 
+rect.animate(2000)
+  .queue(
+    () => {},
+    t => rect.transform({scale: sqrt(t), rotate: 720 * t})
+  )
+  .animate(2000, 1000, true)
+  .queue(()=> {},
+    t => {
+      let a = round(125 * sin(2 * pi * t / 0.5 + 0.01) + 125)
+      let b = round(125 * sin(2 * pi * t / 0.5 + 2.3) + 125)
+      let c = round(125 * sin(2 * pi * t / 0.5 + 4.6) + 125)
+      let color = new SVG.Color(`rgb(${a}, ${b}, ${c})`).toString()
+      rect.attr('fill', color)
+    })
 
+// setTimeout(()=> { rect.animate().pause() }, 500)
+// setTimeout(()=> { rect.animate().play() }, 2000)
 
 </script>
 

@@ -71,7 +71,7 @@ SVG.Matrix = SVG.invent({
       }
 
       // We can apply translations after everything else
-      transformer = transformer.translate(tx, ty)
+      transformer = transformer.translate(t.tx, t.ty)
       return transformer
     },
 

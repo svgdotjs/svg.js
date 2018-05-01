@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Apr 30 2018 18:47:43 GMT+1000 (AEST)
+* BUILT: Tue May 01 2018 21:08:17 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -372,6 +372,35 @@ SVG.Queue = SVG.invent({
 })
 
 /* globals fullHex, compToHex */
+
+/*
+
+Color {
+  constructor (a, b, c, space) {
+    space: 'hsl'
+    a: 30
+    b: 20
+    c: 10
+  },
+
+  toRgb () { return new Color in rgb space }
+  toHsl () { return new Color in hsl space }
+  toLab () { return new Color in lab space }
+
+  toArray () { [space, a, b, c] }
+  fromArray () { convert it back }
+}
+
+// Conversions aren't always exact because of monitor profiles etc...
+new Color(h, s, l, 'hsl') !== new Color(r, g, b).hsl()
+new Color(100, 100, 100, [space])
+new Color('hsl(30, 20, 10)')
+
+// Sugar
+SVG.rgb(30, 20, 50).lab()
+SVG.hsl()
+SVG.lab('rgb(100, 100, 100)')
+*/
 
 // Module for color convertions
 SVG.Color = function (color) {
@@ -1487,7 +1516,7 @@ SVG.Matrix = SVG.invent({
       }
 
       // We can apply translations after everything else
-      transformer = transformer.translate(tx, ty)
+      transformer = transformer.translate(t.tx, t.ty)
       return transformer
     },
 

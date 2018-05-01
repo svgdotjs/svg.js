@@ -1,7 +1,8 @@
 SVG.Morphable = SVG.invent{
   create: function (controller) {
+    // FIXME: the default controller does not know about easing
     this.controller = controller || function (from, to, pos) {
-      return pos < 1 ? from : to
+      return from + (to - from) * pos
     }
   },
 
@@ -20,6 +21,13 @@ SVG.Morphable = SVG.invent{
 
     type: function (type) {
       this._type = type
+
+      // non standard morphing
+      if(type instanceof SVG.Morphable.NonMorphable) {
+        this._controller = function (from, to, pos) {
+          return pos < 1 ? from : to
+        }
+      }
       return this
     }
 
@@ -27,24 +35,22 @@ SVG.Morphable = SVG.invent{
 
       if(!this._type)  {
         if (SVG.Color.isColor(val)) {
-          this._type = SVG.Color
+          this.type(SVG.Color)
 
         } else if (SVG.regex.delimiter.test(val)) {
-
-          this._type = SVG.regex.pathLetters.test(val)
+          this.type(SVG.regex.pathLetters.test(val)
             ? SVG.PathArray
             : SVG.Array
+          )
 
         } else if (SVG.regex.numberAndUnit.test(val)) {
-          this._type = SVG.Number
+          this.type(SVG.Number)
 
         } else if (value in SVG.MorphableTypes) {
-          this._type = value.constructor
+          this.type(value.constructor)
 
-        // } else if (typeof value == 'object') {
-        //   this._type = SVG.Morphable.TransformBag
         } else {
-          this._type = SVG.Morphable.NonMorphable
+          this.type(SVG.Morphable.NonMorphable)
         }
       }
 
@@ -66,7 +72,7 @@ SVG.Morphable = SVG.invent{
       // }
 
       return this.type.fromArray(modifier(this._from.map(function (i, index) {
-        return _this.controller(i, _this._to[i], pos)
+        return _this._controller(i, _this._to[i], pos)
       })))
     },
 
@@ -163,12 +169,44 @@ SVG.Morphable.ObjectBag = SVG.invent({
     }
 })
 
-SVG.MorphableTypes = [SVG.Number, SVG.Color, SVG.Box, SVG.Matrix, SVG.Morphable.NonMorphable, SVG.Morphable.TransformBag]
+SVG.MorphableTypes = [
+  SVG.Number,
+  SVG.Color,
+  SVG.Box,
+  SVG.Matrix,
+  SVG.Morphable.NonMorphable,
+  SVG.Morphable.TransformBag,
+  SVG.Morphable.ObjectBag,
+]
+
 SVG.extend(SVG.MorphableTypes, {
   to: (item, args) => {
     let a = new SVG.Morphable().type(this.constructor).to(item, args)
   },
 })
+
+
+// animate().ease(function(pos) { return pos})
+// function Ease (func) {
+//   return function eased (fromOrCurr, to, pos) {
+//     return fromOrCurr + func(pos) * (to - fromOrCurr) // normal easing
+//   }
+// }
+
+
+///
+/// el.animate()
+///   .fill('#00f')
+///   ---->> timeline.fill
+///     val = new Morphable().to('#0ff').controller(controller)
+///     func init() {
+///       val.from(el.fill())
+///     }
+///     func run (pos) {
+///       curr = val.at(pos)
+///       el.fill(curr)
+///     }
+///     this.queue(init, run)
 
 
 
@@ -210,17 +248,6 @@ SVG.extend(SVG.MorphableTypes, {
 // 4. Now you get the delta matrix as a result: D = I * inv(M)
 
 
-value = null
-init ( ) {
-  if(!morpher.hasFrom()) {
-    morpher.from(el.whatever())
-  }
-
-   value = value == null ?  get the value : value
-   return value
-  else
-}
-
 // C R x = D C x = A x
 //
 //     (C R inv(C)) C x
@@ -230,20 +257,10 @@ init ( ) {
 // D = C R inv(C)
 
 
-el.animate().trasform({rotate: 720, scale: 2}, true)
-
-el.animate().scale(2).rotate(720)
-
-el.animate().transform({origin: traslate, })
-
+/*
 absolute -> start at current - {affine params}
 relative -> start at 0 always - {random stuff}
-
-
- |> object.toArray()
- |> (_) => _.map(() => {})
- |> modifier
- |> fromArray
+*/
 
 function transform(o, relative, affine) {
   affine = transforms.affine || affine || !!transform.a
@@ -271,34 +288,18 @@ function transform(o, relative, affine) {
   // - true, false with ObjectBag
   // - true, true with ObjectBag
   if(relative && transforms.a == null) {
-    morpher = SVG.Morphable.ObjectBag(formatTransforms({})).to(formatTransforms(transforms))
+    morpher = SVG.Morphable.ObjectBag(formatTransforms({}))
+      .to(formatTransforms(transforms))
+      .controller(this.controller)
 
     return this.queue(function() {}, function (pos) {
       el.pushRightTransform(new Matrix(morpher.at(pos)))
     })
   }
 
-  // when we have a matrix and its non affine we transform directly
-  // the following cases are covered here:
-  // - true, false with SVG.Matrix
-  // - false, false with SVG.Matrix
-  /*
-  // this is covered below now
-  if(transforms.a != null && !affine) {
-    var morpher = new SVG.Matrix().to(transforms)
-
-    this.queue(function () {}, function (pos) {
-      if(!relative) {
-        var curr = el.currentTransform()
-        morpher.from(curr)
-        el.pushLeftTransform(morpher.at(pos).multiply(curr.inverse()))
-      } else {
-        el.pushRightTransform(morpher.at(pos))
-      }
-    })
-  }*/
 
   // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
+  // also non affine direct and relative morhing with SVG.Matrix
   // the following cases are covered here:
   // - false, true with SVG.Matrix
   // - false, true with SVG.TransformBag
@@ -309,6 +310,8 @@ function transform(o, relative, affine) {
   var morpher = (transforms.a && !affine)
     ? new SVG.Matrix().to(transforms)
     : new SVG.Morphable.TransformBag().to(transforms)
+
+  morpher.controller(this.controller)
 
   // create identity Matrix for relative not affine Matrix transformation
   morpher.from()
@@ -411,170 +414,33 @@ t|           ---------C-------
 **/
 
 
-SVG.Morphable.TransformList = Object
-
-  if(affine) {
-    var morpher = new Matrix().to(transforms)
-  }
-
-  if(input is typeof plain object) {
-    // deal with a ttransformList
-    this.type = SVG.Morphable.TransformList
-  }
-
-  var morpher = new Morphable(modifier).to(transforms)
-
-  this.queue(() => {
-    morpher.from(this.transform())
-  }, (pos) => {
-    var matrix = morpher.at(pos)
-    el.transform(matrix)
-  })
-
-el.transform({rotate: 720, sclae: 2, })
-
-el.scale(2)
-  .rotate(720)
-
-from -> 300
-to -> [295, 305]
-
-from -> 358
-to -> 1
 
 
-
-from -> 300
-to -> 30
-
-function transform(transforms, affine) {
-
-  if(relative) {
-
-    var morpher = new Morphable().to(transforms, affine)
-    this.queue(() => {}, (pos) => {
-      var matrix = morpher.at(pos)
-      el.transform(matrix)
-    })
-
-  } else {
-
-    this.queue(() => {
-      morpher
-    }, (pos) => {
-      var matrix = morpher.at(pos)
-      el.transform(matrix)
-    })
-
-  }
-}
-
-
-
-// el.animate().rotate(480)
-function rotate(val) { // Relative
-  var morpher = new Morphable().from(0).to(val)
-  this.queue(() => {}, (pos)=> {
-    var rotation = morpher.at(pos)
-    el.rotate(rotation)
-  })
-}
-// morph = new Morphable(0).to(50, [0, 360]) -> in timeline
-//
-//
-//
-// on each frame
-// el.rotate(morph.at(pos))
-
-
-Morph.modifiers = {
-
-  hsb:
-
-
-}
-
-
-new Color(#fff).to('#000', 'hsb')
-
-at returns a matrix anyway
-
-new Number()
-
-
-el.animate().fill('#000', 'hsb')
+// el.animate().fill('#000', 'hsb')
 function fill(val, colorspace) {
-  var morpher = new Morphable().to(val, colorspace || 'rgb')
+  var modifier = Morpher.modifiers[colorspace || 'rgb'] || colorspace
+  var morpher = new Morphable().to(val, modifier)
 
-  this.queue((val) => {
-    morpher.from(val)
+  this.queue(function () => {
+    morpher.from()
   }, (pos)=> {
     var color = morpher.at(pos)
     el.fill(color)
   })
 }
 
-//
-// Number.toArray() -> [3]
-// Color.toArray() -> [red, green, blue]
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
+// el.animate().zoom(level, {x:100, y:100})
+function zoom(level, point) {
+  var  morpher = SVG.Number().to(level).controller(this.controller)
+  var el = this.target()
 
+  this.queue(function() {
+    morpher = morpher.from(element.zoom())
+  }, function (pos) {
+    el.zoom(morpher.at(pos), point)
+  })
 
-
-
-
-
-
-new Color(30, 50, 40).toArray()
-
-
-
-
-new PathArray([['M', 0, 3], ['L', 4, 5]]).morph(5, 3, 2, 8, 5)
-
-controller = (s, e, p)=> {return s + (e-s) * p}
-
-[['M', 0, 3], ['L', 4, 5], ['A', 120, 120, 1, 0]]
-
-
-['1', '2', '3'] => parseFloat()
-
-
-rect.anim()
-  .color('blue')
-  .anim()
-  .color(new Color('red'))
-
-
-
-a = new SVG.Color('#3f2').to('#5f4').at(0.3)
-
-
-new Morphable('#3f2').to('#5f4').at(0.4)
-
-
-
-
-
-
-
-/*
-zoom(level, point) {
-  let morpher = SVG.Number(level).controller(this.controller)
-  this.queue(
-    () => {morpher = morpher.from(element.zoom())},
-    (pos) => {element.zoom(morpher.at(pos), point)}
-  )
   return this
 }
-*/
