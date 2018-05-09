@@ -105,7 +105,7 @@ declare namespace svgjs {
     }
     interface Element {
         bbox(): BBox;
-        rbox(): RBox;
+        rbox(container?: Container): RBox;
         tbox(): TBox;
     }
     interface Library {
