@@ -752,7 +752,7 @@ declare namespace svgjs {
     // selector.js
     interface Library {
         get(id: string): Element;
-        select(query: string, parent: HTMLElement): Set;
+        select(query: string, parent?: HTMLElement): Set;
     }
     interface Parent {
         select(query: string): Set;
