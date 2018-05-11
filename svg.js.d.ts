@@ -105,7 +105,7 @@ declare namespace svgjs {
     }
     interface Element {
         bbox(): BBox;
-        rbox(): RBox;
+        rbox(element?: Element): RBox;
         tbox(): TBox;
     }
     interface Library {
@@ -283,8 +283,8 @@ declare namespace svgjs {
         svg(svg: string): this;
         svg(): string;
 
-        writeDataToDom(): this,
-        setData(data: object): this,
+        writeDataToDom(): this;
+        setData(data: object): this;
 
         is(cls: any): boolean;
     }
@@ -317,9 +317,10 @@ declare namespace svgjs {
     // event.js
     interface Element {
         on(event: string, cb: Function, context?: Object): this;
-        off(event: string, cb: Function, context?: Object): this;
+        off(event: string, cb?: Function, context?: Object): this;
         fire(event: string, data?: any): this;
         fire(event: Event): this;
+        event(): Event | CustomEvent;
 
         click(cb: Function): this;
         dblclick(cb: Function): this;
@@ -1014,10 +1015,10 @@ declare namespace svgjs {
         to(value: number): Animation;
         after(cb: () => void): Animation;
 
-        rotate(degrees: number, cx?: number, cy?: number): Animation
-        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation
-        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation
-        translate(x: number, y: number): Animation
+        rotate(degrees: number, cx?: number, cy?: number): Animation;
+        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation;
+        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation;
+        translate(x: number, y: number): Animation;
 
         // TODO style, etc, bbox...
     }
