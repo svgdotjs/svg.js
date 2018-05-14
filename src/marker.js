@@ -32,7 +32,7 @@ SVG.Marker = SVG.invent({
     }
     // Return the fill id
   , toString: function() {
-      return 'url(#' + this.id() + ')'
+      return 'url("' + document.URL + '#' + this.id() + '")'
     }
   }
 
