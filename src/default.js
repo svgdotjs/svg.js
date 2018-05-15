@@ -1,4 +1,6 @@
 
+SVG.void = function () {}
+
 SVG.defaults = {
 
   // Default animation values

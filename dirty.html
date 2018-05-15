@@ -6,20 +6,20 @@
   <title></title>
   <script type="text/javascript" src="dist/svg.js"></script>
   <script type="text/javascript" src="src/morph.js"></script>
+  <script type="text/javascript" src="src/runner.js"></script>
   <script type="text/javascript" src="src/timeline.js"></script>
 </head>
 <body style="background-color: #c7c7ff">
 
 <!-- Making the svg -->
 <svg width=1000px height=1000px >
-  <rect x=50 y=100 width=200 height=100 stroke=white stroke-width=2 />
+  <rect x=50 y=100 width=200 height=100 stroke=none stroke-width=2 />
 </svg>
 
 <!-- Modifying the svg -->
 <script>
 
-
-let rect = SVG('rect')
+let rect = SVG('rect').hide()
 let {sin, PI: pi, round, sqrt} = Math
 
 function getColor(t) {
@@ -30,17 +30,39 @@ function getColor(t) {
   return color
 }
 
-rect.animate(2000)
-  .queue(
-    () => {rect.attr('fill', getColor(0))},
-    t => rect.transform({scale: sqrt(t), rotate: 720 * t})
-  )
-  .animate(1500, 500, true)
-  .queue(()=> {}, t => rect.attr('fill', getColor(t)))
-  .animate(1000).move(200, 200).size(300, 300)
+// rect.animate(4000)
+//     .during(t => rect.transform({scale: sqrt(1 + t), rotate: 720 * t}))
+//   .after(500, ()=> {rect.attr('stroke', 'white')})
+//     .queue(() => rect.attr('fill', getColor(0)))
+//   .animate(1500, 500, true)
+//     .queue(()=> {}, t => rect.attr('fill', getColor(t)))
+//   .animate(1000, true)
+//     .move(200, 200)
+//     .size(300, 300)
 
-// setTimeout(()=> { rect.animate().pause() }, 500)
-// setTimeout(()=> { rect.animate().play() }, 2000)
+// SVG.Animator.timeout(()=> { rect.animate().pause() }, 1000 - 10)
+// SVG.Animator.timeout(()=> { rect.animate().play() }, 2000 - 10)
+
+for (let i = 0 ; i < 15; i++) {
+  for (let j = 0 ; j < 10; j++) {
+
+    // Make the rect
+    let o = i + j
+    let rect = SVG('rect').clone().show()
+      .width(40).height(40)
+      .x(50 * i).y(50 * j)
+      .attr('fill', getColor(o * 0.1))
+
+    // Move the rect
+    let {cx, cy} = rect.bbox()
+
+    // Animate the rect
+    rect.animate(3000, Math.random() * 2000)
+      .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
+      .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
+  }
+}
+
 
 </script>
 

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue May 01 2018 19:45:50 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Mon May 14 2018 23:48:13 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -240,6 +240,8 @@ SVG.utils = {
 
 }
 
+
+SVG.void = function () {}
 
 SVG.defaults = {
 
@@ -572,6 +574,12 @@ SVG.extend(SVG.Array, {
     }
 
     return new SVG.Array(array)
+  },
+  toArray: function () {
+    return this.value
+  },
+  fromArray: function (a) {
+    return new SVG.Array(a)
   },
   // Convert array to string
   toString: function () {
@@ -2039,9 +2047,6 @@ SVG.extend(SVG.Element, {
   // Add transformations
   transform: function (o, relative) {
 
-    // Get the bounding box of the element with no transformations applied
-    var bbox = this.bbox()
-
     // Act as a getter if no object was passed
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
@@ -2051,6 +2056,10 @@ SVG.extend(SVG.Element, {
     } else if (typeof o.origin === 'string' ||
       (o.origin == null && o.ox == null && o.oy == null)
     ) {
+
+      // Get the bounding box of the element with no transformations applied
+      var bbox = this.bbox()
+
       // Get the bounding box and string to use in our calculations
       var string = typeof o.origin === 'string'
         ? o.origin.toLowerCase().trim()
@@ -4686,4 +4695,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

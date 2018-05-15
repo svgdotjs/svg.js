@@ -82,6 +82,13 @@ var parts = [
   'src/boxes.js',
   'src/parser.js',
   'src/animator.js',
+  //
+  //
+  //
+  // TODO: ADD THESE
+  //
+  // 'src/runner.js'
+  // 'src/timeline.js'
 ]
 
 gulp.task('clean', function () {

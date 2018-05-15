@@ -7,104 +7,7 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
-
-function Runner (timeline) {
-
-  // We store a reference to the function to run and the timeline to use
-  this.transforms = []
-  this.functions = []
-  this.done = false
-
-  // We copy the current values from the timeline because they can change
-  this._timeline = timeline
-  this._startTime = timeline._startTime
-  this._duration = timeline._duration
-  this._last = 0
-  this._active = false
-
-  // TODO: Think about looping and how to use the runner
-}
-
-// The runner gets the time from the timeline
-Runner.prototype = {
-
-  add: function (initFn, runFn, alwaysInitialise) {
-    this.functions.push({
-      initialised: false,
-      alwaysInitialise: alwaysInitialise || false,
-      initialiser: initFn,
-      runner: runFn,
-    })
-  },
-
-  step: function (time) {
-
-    // If it is time to do something, act now.
-    var end = this._startTime + this._duration
-    var running = (this._startTime < time && time < end) || !this._duration
-
-    // If its time run the animation, we do so
-    var allDone = time > end
-    if (running && !this._timeline._paused) {
-
-      // Get the current position for the current animation
-      // TODO: Deal with looping
-      var position = (time - this._startTime) / this._duration
-
-      // We run all of the functions
-      for (var i = 0, len = this.functions.length; i < len ; ++i) {
-
-        // Get the current queued item
-        var current = this.functions[i]
-
-        // Work out if we need to initialise, and do so if we do
-        var initialise = current.alwaysInitialise || !current.initialised
-        if (initialise) {
-          current.initialiser.call(this._timeline, position)
-          current.initialised = true
-        }
-
-        // Run the function required
-        // TODO: Figure out what declarative needs that it doesn't have
-        var stillRunning = current.runner.call(this._timeline, position)
-        if (stillRunning) {
-          allDone = false
-        }
-      }
-    }
-
-    // Tell the caller whether this animation is finished
-    return allDone
-  },
-
-  initialise: function (time) {
-
-  },
-
-  run: function (type, time) {
-
-    // We run all of the functions
-    var stillGoing = false
-    for (var i = 0, len = this.functions.length; i < len ; ++i) {
-
-      // Get the current queued item
-      var current = this.functions[i][type]
-
-      // Work out if we need to initialise, and do so if we do
-      var initialise = current.alwaysInitialise
-      if (initialise) {
-        current.initialiser(position)
-      }
-
-      // Run the functions
-
-    }
-  },
-}
-
-
 var time = window.performance || window.Date
-
 
 SVG.Timeline = SVG.invent({
 
@@ -115,8 +18,10 @@ SVG.Timeline = SVG.invent({
     this._element = element
 
     // Store the timing variables
-    this._startTime = time.now()
-    this._duration = SVG.defaults.timeline.duration
+    this._startTime = 0
+    this._lastPaused = null
+    this._timeAbsoluteOffset = 0
+    this._duration = 0
     this._ease = SVG.defaults.timeline.ease
     this._speed = 1.0
 
@@ -138,7 +43,7 @@ SVG.Timeline = SVG.invent({
 
   extend: {
 
-    animate (duration, delay, now) {
+    animate (duration, delay, nowOrAbsolute) {
 
       // Clear the controller and the looping parameters
       this._controller = duration instanceof Function ? duration : null
@@ -148,18 +53,25 @@ SVG.Timeline = SVG.invent({
 
       // If we have an object we are declaring imperative animations
       if (typeof duration === 'object') {
-        delay = duration.delay
-        now = duration.now
         duration = duration.duration
+        delay = duration.delay
+        nowOrAbsolute = duration.absolute || duration.now
       }
 
-      // We start the next animation after the old one is complete
-      this._startTime = ( now ? time.now() : this._startTime ) + (delay || 0)
+      // The start time for the next animation can either be given explicitly,
+      // derived from the current timeline time or it can be relative to the
+      // last start time to chain animations direclty
+      var absoluteStartTime = typeof nowOrAbsolute === 'number' ? nowOrAbsolute
+        : nowOrAbsolute ? this._time
+        : this._startTime + this._duration
+
+      // We start the next animation after the delay required
+      this._startTime = absoluteStartTime + (delay || 0)
       this._duration = duration instanceof Function ? null
         : (duration || SVG.defaults.timeline.duration)
 
       // Make a new runner to queue all of the animations onto
-      this._runner = new Runner(this)
+      this._runner = new Runner(this).time(this._time - this._startTime)
       this._runners.push(this._runner)
 
       // Step the animation
@@ -178,29 +90,44 @@ SVG.Timeline = SVG.invent({
     },
 
     ease (fn) {
-      this._ease = SVG.easing[fn || SVG.defaults.timeline.ease] || fn
+      var ease = VG.easing[fn || SVG.defaults.timeline.ease] || fn
+      this._controller = function (from, to, pos) {
+        return from + (to - from) * ease(pos)
+      }
       return this
     },
 
-    play () {
+    tag (name) {
+      this._runner.tag(name)
+    },
+
+    play (tags) {
+
+      // If we were paused, shift the time by the time that we were paused
+      if (this._paused) {
+        this._timeAbsoluteOffset -= (time.now() - this._lastPaused)
+      }
+
+      // Now make sure we are not paused and continue the animation
       this._paused = false
       this._continue()
       return this
     },
 
-    pause () {
+    pause (tags) {
+      this._lastPaused = time.now()
+      this._nextFrame = null
       this._paused = true
       return this
     },
 
-    stop () {
-      this.pause()
-
+    stop (tags) {
       // Cancel the next animation frame for this object
+      this._nextFrame = null
 
     },
 
-    finish (all=true) {
+    finish (tags) {
 
     },
 
@@ -209,7 +136,7 @@ SVG.Timeline = SVG.invent({
     },
 
     seek (dt) {
-
+      this._timeAbsoluteOffset += dt
     },
 
     persist (dtOrForever) {
@@ -225,16 +152,40 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
+    // Queue a function to run after some time
+    after (time, fn) {
+
+      // If the user passes no time, just queue it
+      if (fn == null) {
+        return this.queue(time)
+      }
+
+      // Otherwise make a runner to run this one time later
+      var runner = new Runner(this, 0).time(-time).add(fn)
+      this._runners.push(runner)
+      return this
+    },
+
+    during (fn) {
+      return this.queue(null, fn)
+    },
+
+    // Map an absolute time to a timeline time
+    timelineTime (time) {
+      return time + this._timeAbsoluteOffset
+    },
+
     _step (time) {
 
       // If we are paused, just exit
       if (this._paused) return
 
-      // Get the time delta from the last time
+      // Get the time delta from the last time and update the time
       // TODO: Deal with window.blur window.focus to pause animations
       // HACK: We keep the time below 16ms to avoid driving declarative crazy
-      var dt = this._speed * ((time - this._time) || 16)
+      var dt = this._speed * ((time - this._lastTime) || 16)
       dt = dt < 100 ? dt : 16 // If we missed alot of time, ignore
+      this._lastTime = time
       this._time += dt
 
       // Run all of the runners directly
@@ -243,15 +194,19 @@ SVG.Timeline = SVG.invent({
 
         // Get and run the current runner and figure out if its done running
         var runner = this._runners[i]
-        var finished = runner.step(this._time)
+        var finished = runner.step(dt)
 
         // If this runner is still going, signal that we need another animation
         // frame, otherwise, remove the completed runner
         if (!finished) {
           runnersLeft = true
-        } else {
-          this._runners.splice(i--, 1)
         }
+
+        // TODO: Check if a runner is still healthy, and if it is, run it.
+        // Once a runner is complete it expires. If it has been expired for
+        // more than the persist amount of time, splice it out; by default
+        // this expiry date is zero
+        // this._runners.splice(i--, 1)
       }
 
       // Get the next animation frame to keep the simulation going
@@ -369,12 +324,11 @@ SVG.extend(SVG.Timeline, {
   //   - Note I(1) = T
   // 4. Now you get the delta matrix as a result: D = I * inv(M)
 
-  transform: function (o, relative, affine) {
+  transform: function (transforms, relative, affine) {
     affine = transforms.affine || affine || !!transform.a
     relative = transforms.relative || relative || false
 
     var morpher
-    var el = this.target()
 
     /**
       The default of relative is false
@@ -400,7 +354,7 @@ SVG.extend(SVG.Timeline, {
         .controller(this.controller)
 
       return this.queue(function() {}, function (pos) {
-        el.pushRightTransform(new Matrix(morpher.at(pos)))
+        this.pushRightTransform(new Matrix(morpher.at(pos)))
       })
     }
 
@@ -426,7 +380,7 @@ SVG.extend(SVG.Timeline, {
     this.queue(function() {}, function (pos) {
 
       // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-      var curr = el.currentTransform()
+      var curr = this.currentTransform()
       if(!relative) morpher.from(curr)
 
       // 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
@@ -437,9 +391,9 @@ SVG.extend(SVG.Timeline, {
       if(!relative) {
         // 4. Now you get the delta matrix as a result: D = I * inv(M)
         var delta = matrix.multiply(curr.inverse())
-        el.pushLeftTransform(delta)
+        this.pushLeftTransform(delta)
       } else {
-        el.pushRightTransform(matrix)
+        this.pushRightTransform(matrix)
       }
     })
 

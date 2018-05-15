@@ -1,3 +1,4 @@
+
 SVG.Morphable = SVG.invent({
   create: function (controller) {
     // FIXME: the default controller does not know about easing
