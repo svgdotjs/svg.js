@@ -68,6 +68,12 @@ SVG.Box = SVG.invent({
     toString: function () {
       return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
     },
+    toArray: function () {
+      return [this.x, this.y, this.width, this.height]
+    },
+    fromArray: function (a) {
+      return new SVG.Box(a)
+    },
     morph: function (x, y, width, height) {
       this.destination = new SVG.Box(x, y, width, height)
       return this

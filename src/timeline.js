@@ -90,8 +90,12 @@ SVG.Timeline = SVG.invent({
     },
 
     ease (fn) {
-      var ease = VG.easing[fn || SVG.defaults.timeline.ease] || fn
+      var ease = SVG.easing[fn || SVG.defaults.timeline.ease] || fn
       this._controller = function (from, to, pos) {
+        // FIXME: This is needed for at lest ObjectBag but could slow down stuff
+        if(typeof from !== 'number') {
+          return pos < 1 ? from : to
+        }
         return from + (to - from) * ease(pos)
       }
       return this

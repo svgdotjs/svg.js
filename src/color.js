@@ -30,7 +30,7 @@ SVG.lab('rgb(100, 100, 100)')
 */
 
 // Module for color convertions
-SVG.Color = function (color) {
+SVG.Color = function (color, g, b) {
   var match
 
   // initialize defaults
@@ -59,10 +59,18 @@ SVG.Color = function (color) {
       this.g = parseInt(match[2], 16)
       this.b = parseInt(match[3], 16)
     }
+  } else if (Array.isArray(color)) {
+    this.r = color[0]
+    this.g = color[1]
+    this.b = color[2]
   } else if (typeof color === 'object') {
     this.r = color.r
     this.g = color.g
     this.b = color.b
+  } else if(arguments.length == 3) {
+    this.r = color
+    this.g = g
+    this.b = b
   }
 }
 
@@ -75,14 +83,14 @@ SVG.extend(SVG.Color, {
     return [this.r, this.g, this.b]
   },
   fromArray: function (a) {
-    return new SVG.Color(a[0], a[1], a[2])
+    return new SVG.Color(a)
   },
   // Build hex value
   toHex: function () {
     return '#' +
-      compToHex(this.r) +
-      compToHex(this.g) +
-      compToHex(this.b)
+      compToHex(Math.round(this.r)) +
+      compToHex(Math.round(this.g)) +
+      compToHex(Math.round(this.b))
   },
   // Build rgb value
   toRgb: function () {

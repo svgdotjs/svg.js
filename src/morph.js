@@ -3,8 +3,15 @@ SVG.Morphable = SVG.invent({
   create: function (controller) {
     // FIXME: the default controller does not know about easing
     this._controller = controller || function (from, to, pos) {
+      if(typeof from !== 'number') {
+        return pos < 1 ? from : to
+      }
       return from + (to - from) * pos
     }
+
+    this._from = null
+    this._to = null
+    this.modifier = function(arr) { return arr }
   },
 
   extend: {
@@ -16,26 +23,31 @@ SVG.Morphable = SVG.invent({
 
     to: function (val, modifier) {
       this._to = this._set(val)
-      this.modifier = modifier || function(arr) { return arr }
+      this.modifier = modifier || this.modifier
       return this
     },
 
     type: function (type) {
+      // getter
+      if (type == null) return this._type
+
+      // setter
       this._type = type
 
       // non standard morphing
-      if(type instanceof SVG.Morphable.NonMorphable) {
+      /*if(type instanceof SVG.Morphable.NonMorphable) {
         this._controller = function (from, to, pos) {
           return pos < 1 ? from : to
         }
-      }
+      }*/
+
       return this
     },
 
     _set: function (value) {
 
       if(!this._type)  {
-        if (typeof value == 'number') {
+        if (typeof value === 'number') {
           this.type(SVG.Number)
 
         } else if (SVG.Color.isColor(value)) {
@@ -53,6 +65,12 @@ SVG.Morphable = SVG.invent({
         } else if (value in SVG.MorphableTypes) {
           this.type(value.constructor)
 
+        } else if (Array.isArray(value)) {
+          this.type(SVG.Array)
+
+        } else of (typeof value === 'object') {
+          this.type(SVG.ObjectBag)
+
         } else {
           this.type(SVG.Morphable.NonMorphable)
         }
@@ -69,13 +87,11 @@ SVG.Morphable = SVG.invent({
 
       var _this = this
 
-      modifier = this.modifier || function(el) { return el }
-
       // for(var i = 0, len = this._from.length; i < len; ++i) {
       //   arr.push(this.controller(this._from[i], this._to[i]))
       // }
 
-      return this._type.prototype.fromArray(modifier(this._from.map(function (i, index) {
+      return this._type.prototype.fromArray(this.modifier(this._from.map(function (i, index) {
         return _this._controller(i, _this._to[index], pos)
       })))
     },
@@ -107,8 +123,8 @@ SVG.Morphable.NonMorphable = SVG.invent({
 })
 
 SVG.Morphable.TransformBag = SVG.invent({
-  create: function (val) {
-    this.value = new Matrix(val).decompose()
+  create: function (obj) {
+    this.value = new SVG.Matrix(obj)
   },
 
   extend: {
@@ -117,7 +133,7 @@ SVG.Morphable.TransformBag = SVG.invent({
     },
 
     toArray: function (){
-      var v = this.value
+      var v = this.value.decompose()
 
       return [
         v.scaleX,
@@ -144,19 +160,38 @@ SVG.Morphable.TransformBag = SVG.invent({
 
 
 SVG.Morphable.ObjectBag = SVG.invent({
-  create: function (obj) {
+  create: function (objOrArr) {
     this.values = []
-    this.keys = []
 
-    for(var i in obj) {
-      this.values.push(obj[i])
-      this.keys.push(i)
+    if(Array.isArray(objOrArr)) {
+      this.values = objOrArr
+      return
     }
+
+    var keys = []
+
+    for(var i in objOrArr) {
+      keys.push(i)
+    }
+
+    for(var i = 0, len = keys.length; i < len; ++i) {
+      this.values.push(keys[i])
+      this.values.push(objOrArr[keys[i]])
+    }
+
+    console.log(this.values)
   },
 
   extend: {
     valueOf: function () {
-      return this.values
+      var obj = {}
+      var arr = this.values
+
+      for(var i = 0, len = arr.length; i < len; i+=2) {
+        obj[arr[i]] = arr[i+1]
+      }
+
+      return obj
     },
 
     toArray: function (){
@@ -164,13 +199,7 @@ SVG.Morphable.ObjectBag = SVG.invent({
     },
 
     fromArray: function (arr) {
-      var obj = {}
-
-      for(var i = 0, len = arr.length; i < len; ++i) {
-        obj[this.keys[i]] = arr[i]
-      }
-
-      return obj
+      return new SVG.Morphable.ObjectBag(arr)
     }
   }
 })
@@ -190,7 +219,10 @@ SVG.MorphableTypes = [
 
 SVG.extend(SVG.MorphableTypes, {
   to: function (val, args) {
-    return new SVG.Morphable().type(this.constructor).to(val, args)
+    return new SVG.Morphable()
+      .type(this.constructor)
+      .from(this.valueOf())
+      .to(val, args)
   },
 })
 

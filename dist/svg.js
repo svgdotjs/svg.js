@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon May 14 2018 23:48:13 GMT+1000 (AEST)
+* BUILT: Tue May 15 2018 10:55:17 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -406,7 +406,7 @@ SVG.lab('rgb(100, 100, 100)')
 */
 
 // Module for color convertions
-SVG.Color = function (color) {
+SVG.Color = function (color, g, b) {
   var match
 
   // initialize defaults
@@ -435,10 +435,18 @@ SVG.Color = function (color) {
       this.g = parseInt(match[2], 16)
       this.b = parseInt(match[3], 16)
     }
+  } else if (Array.isArray(color)) {
+    this.r = color[0]
+    this.g = color[1]
+    this.b = color[2]
   } else if (typeof color === 'object') {
     this.r = color.r
     this.g = color.g
     this.b = color.b
+  } else if(arguments.length == 3) {
+    this.r = color
+    this.g = g
+    this.b = b
   }
 }
 
@@ -451,14 +459,14 @@ SVG.extend(SVG.Color, {
     return [this.r, this.g, this.b]
   },
   fromArray: function (a) {
-    return new SVG.Color(a[0], a[1], a[2])
+    return new SVG.Color(a)
   },
   // Build hex value
   toHex: function () {
     return '#' +
-      compToHex(this.r) +
-      compToHex(this.g) +
-      compToHex(this.b)
+      compToHex(Math.round(this.r)) +
+      compToHex(Math.round(this.g)) +
+      compToHex(Math.round(this.b))
   },
   // Build rgb value
   toRgb: function () {
@@ -4509,6 +4517,12 @@ SVG.Box = SVG.invent({
     toString: function () {
       return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
     },
+    toArray: function () {
+      return [this.x, this.y, this.width, this.height]
+    },
+    fromArray: function (a) {
+      return new SVG.Box(a)
+    },
     morph: function (x, y, width, height) {
       this.destination = new SVG.Box(x, y, width, height)
       return this
@@ -4695,4 +4709,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));
