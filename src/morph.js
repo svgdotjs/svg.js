@@ -68,7 +68,7 @@ SVG.Morphable = SVG.invent({
         } else if (Array.isArray(value)) {
           this.type(SVG.Array)
 
-        } else of (typeof value === 'object') {
+        } else if (typeof value === 'object') {
           this.type(SVG.ObjectBag)
 
         } else {
