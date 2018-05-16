@@ -29,15 +29,21 @@ SVG.on = function (node, events, listener, binding, options) {
   var l = listener.bind(binding || node)
   var n = node instanceof SVG.Element ? node.node : node
 
+  // events can be an array of events or a string of events
+  events = Array.isArray(events) ? events : events.split(SVG.regex.delimiter)
+
   // ensure instance object for nodes which are not adopted
   n.instance = n.instance || {events: {}}
 
+  // pull event handlers from the element
   var bag = n.instance.events
 
   // add id to listener
-  if (!listener._svgjsListenerId) { listener._svgjsListenerId = ++SVG.listenerId }
+  if (!listener._svgjsListenerId) {
+    listener._svgjsListenerId = ++SVG.listenerId
+  }
 
-  events.split(SVG.regex.delimiter).forEach(function (event) {
+  events.forEach(function (event) {
     var ev = event.split('.')[0]
     var ns = event.split('.')[1] || '*'
 
@@ -64,9 +70,13 @@ SVG.off = function (node, events, listener, options) {
     if (!listener) return
   }
 
+  // pull event handlers from the element
   var bag = n.instance.events
 
-  ;(events || '').split(SVG.regex.delimiter).forEach(function (event) {
+  // events can be an array of events or a string or undefined
+  events = Array.isArray(events) ? events : (events || '').split(SVG.regex.delimiter)
+
+  events.forEach(function (event) {
     var ev = event && event.split('.')[0]
     var ns = event && event.split('.')[1]
     var namespace, l
