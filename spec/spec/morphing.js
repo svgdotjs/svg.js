@@ -79,9 +79,6 @@ describe('Morphing', function () {
     it(`Creates a morphable out of an SVG.Morphable.TransformBag`, function () {
       var morpher = new SVG.Morphable.TransformBag({}).to({rotate: 50, translateX: 20})
 
-      // FIXME: SVG.Matrix does now allow translateX to be passed but decompose returns it!!!!!
-      console.log(new SVG.Morphable.TransformBag({rotate: 50, tx: 20}).valueOf().decompose())
-
       expect(morpher instanceof SVG.Morphable).toBe(true)
       expect(morpher.type()).toBe(SVG.Morphable.TransformBag)
       expect(morpher.at(0.5) instanceof SVG.Morphable.TransformBag).toBe(true)

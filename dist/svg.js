@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed May 16 2018 09:48:22 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Wed May 16 2018 17:25:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -4675,7 +4675,7 @@ SVG.Animator = {
     // Find the index of the timeout to cancel and remove it
     var index = SVG.Animator.timeouts.remove(
       function (t) {
-        return t.id === id
+        return t.value.id === id
       }
     )
     return index
@@ -4691,7 +4691,7 @@ SVG.Animator = {
     while ((nextTimeout = SVG.Animator.timeouts.shift())) {
 
       // Run the timeout if its time, or push it to the end
-      if (now > nextTimeout.time) {
+      if (now >= nextTimeout.time) {
         nextTimeout.run()
       } else {
         SVG.Animator.timeouts.push(nextTimeout)
