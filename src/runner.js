@@ -13,7 +13,7 @@ function Runner (timeline, duration) {
 
   // Store the state of the runner
   this._active = true
-  this._tag = null
+  this.tag = null
   this._time = 0
 }
 
@@ -31,7 +31,7 @@ Runner.prototype = {
   },
 
   tag: function (name) {
-    this._tag = name
+    this.tag = name
     return this
   },
 
@@ -65,14 +65,14 @@ Runner.prototype = {
     this._time += dt
 
     // Work out if we are in range to run the function
-    var timeInside = 0 < time && time < duration
+    var timeInside = 0 <= time && time <= duration
     var position = time / duration
-    var finished = time > duration
+    var finished = time >= duration
 
     // If we are on the rising edge, initialise everything, otherwise,
     // initialise only what needs to be initialised on the rising edge
-    var justStarted = this._last < 0 && time > 0
-    var justFinished = this._last < duration && finished
+    var justStarted = this._last <= 0 && time >= 0
+    var justFinished = this._last <= duration && finished
     this._initialise(position, justStarted)
     this._last = time
 
@@ -86,9 +86,14 @@ Runner.prototype = {
     return finished
   },
 
+  // Initialise the runner when we are ready
   _initialise: function (position, all) {
     for (var i = 0, len = this.functions.length; i < len ; ++i) {
+
+      // Get the current initialiser
       var current = this.functions[i]
+
+      // Determine whether we need to initialise
       var always = current.alwaysInitialise
       var running = !current.finished
       if ((always || all) && running) {

@@ -54,8 +54,14 @@ SVG.Point = SVG.invent({
     },
 
     // transform point with matrix
-    transform: function (matrix) {
-      return new SVG.Point(this.native().matrixTransform(matrix.native()))
+    transform: function (m) {
+
+      // Perform the matrix multiplication
+      var x = m.a * this.x + m.c * this.y + m.e
+      var y = m.b * this.x + m.d * this.y + m.f
+
+      // Return the required point
+      return new SVG.Point(x, y)
     }
   }
 })

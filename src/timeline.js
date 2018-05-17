@@ -20,7 +20,6 @@ SVG.Timeline = SVG.invent({
     // Store the timing variables
     this._startTime = 0
     this._lastPaused = null
-    this._timeAbsoluteOffset = 0
     this._duration = 0
     this._ease = SVG.defaults.timeline.ease
     this._speed = 1.0
@@ -105,12 +104,33 @@ SVG.Timeline = SVG.invent({
       this._runner.tag(name)
     },
 
+    _activateTags (tags, active) {
+
+      // If no tags were provided, just toggle
+      if (tags == null) active = !active
+
+      // Force tags to be in an array
+      tags = tags instanceof Array ? tags
+        : tags instanceof string ? [tags]
+        : []
+
+      // Activate all of the runners if their tag is specified
+      for (var i = 0, l = this._runners.length) {
+
+        // Get the runner and its tag
+        var runner = this._runners[i]
+        var runnerTag = runner.tag
+
+        // Work out if this runner is active or not
+        var activate = tags.indexOf(runnerTag) >= 0
+        runner.active(activate : active : !active)
+      }
+    }
+
     play (tags) {
 
-      // If we were paused, shift the time by the time that we were paused
-      if (this._paused) {
-        this._timeAbsoluteOffset -= (time.now() - this._lastPaused)
-      }
+      // Activate all of the tags given
+      this._activateTags(tags, true)
 
       // Now make sure we are not paused and continue the animation
       this._paused = false
@@ -119,6 +139,11 @@ SVG.Timeline = SVG.invent({
     },
 
     pause (tags) {
+
+      // Deactivate the tags given
+
+
+      //
       this._lastPaused = time.now()
       this._nextFrame = null
       this._paused = true
@@ -128,7 +153,6 @@ SVG.Timeline = SVG.invent({
     stop (tags) {
       // Cancel the next animation frame for this object
       this._nextFrame = null
-
     },
 
     finish (tags) {
@@ -140,8 +164,12 @@ SVG.Timeline = SVG.invent({
     },
 
     seek (dt) {
-      this._timeAbsoluteOffset += dt
+      this._time += dt
     },
+
+    time (t) {
+      this._time = t
+    }
 
     persist (dtOrForever) {
       // 0 by default
@@ -174,11 +202,6 @@ SVG.Timeline = SVG.invent({
       return this.queue(null, fn)
     },
 
-    // Map an absolute time to a timeline time
-    timelineTime (time) {
-      return time + this._timeAbsoluteOffset
-    },
-
     _step (time) {
 
       // If we are paused, just exit
@@ -186,9 +209,9 @@ SVG.Timeline = SVG.invent({
 
       // Get the time delta from the last time and update the time
       // TODO: Deal with window.blur window.focus to pause animations
-      // HACK: We keep the time below 16ms to avoid driving declarative crazy
+      // HACK: We keep the time below 50ms to avoid driving animations crazy
       var dt = this._speed * ((time - this._lastTime) || 16)
-      dt = dt < 100 ? dt : 16 // If we missed alot of time, ignore
+      dt = dt < 50 ? dt : 16 // If we missed alot of time, ignore
       this._lastTime = time
       this._time += dt
 
@@ -260,6 +283,19 @@ SVG.Timeline = SVG.invent({
        this.timeline._loops = o.times || Infinity
        this.timeline._swing = o.swing || false
        return this.timeline
+    }
+
+    /*
+
+     */
+    timeline: function() {
+      return {
+        play: ()=> {}
+        pause: ()=> {}
+        persist: ()=> {}
+        seek: ()=> {}
+        stop: ()=> {}
+      }
     }
   }
 })
@@ -417,6 +453,7 @@ SVG.extend(SVG.Timeline, {
     */
 
     this.queue(function () {
+
       var from = this._element.x()
       morpher.from(from)
       if(relative) morpher.to(from + x)

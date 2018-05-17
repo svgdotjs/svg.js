@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed May 16 2018 09:48:22 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Wed May 16 2018 21:44:17 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -1492,6 +1492,15 @@ SVG.Element = SVG.invent({
 
 /* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
+function translate () {
+
+}
+
+function functionName() {
+
+}
+
+
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
@@ -1510,12 +1519,13 @@ SVG.Matrix = SVG.invent({
       : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : base
 
-    // merge source
-    for (i = abcdef.length - 1; i >= 0; --i) {
-      this[abcdef[i]] = source[abcdef[i]] != null
-        ? source[abcdef[i]]
-        : base[abcdef[i]]
-    }
+    // Merge the source matrix with the base matrix
+    this.a = source.a != null ? source.a : base.a
+    this.b = source.b != null ? source.b : base.b
+    this.c = source.c != null ? source.c : base.c
+    this.d = source.d != null ? source.d : base.d
+    this.e = source.e != null ? source.e : base.e
+    this.f = source.f != null ? source.f : base.f
   },
 
   // Add methods
@@ -1528,6 +1538,7 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
+
       // Check if o is a matrix and then left multiply it directly
       if (o.a != null) {
         var matrix = new SVG.Matrix(o)
@@ -1914,8 +1925,14 @@ SVG.Point = SVG.invent({
     },
 
     // transform point with matrix
-    transform: function (matrix) {
-      return new SVG.Point(this.native().matrixTransform(matrix.native()))
+    transform: function (m) {
+
+      // Perform the matrix multiplication
+      var x = m.a * this.x + m.c * this.y + m.e
+      var y = m.b * this.x + m.d * this.y + m.f
+
+      // Return the required point
+      return new SVG.Point(x, y)
     }
   }
 })
@@ -4424,17 +4441,16 @@ function formatTransforms (o) {
     : flipY
   var shear = o.shear || 0
   var theta = o.rotate || 0
-  var origin = new SVG.Point(o.ox == null ? o.origin : o.ox, o.oy)
+  var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y
-  var position = new SVG.Point(o.px == null
-    ? o.position : o.px, o.py, {x: null, y: null})
+  var position = new SVG.Point(o.origin || o.px || o.positionX, o.py || o.positionY)
   var px = position.x
   var py = position.y
-  var translate = new SVG.Point(o.tx == null ? o.translate : o.tx, o.ty)
+  var translate = new SVG.Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
   var tx = translate.x
   var ty = translate.y
-  var relative = new SVG.Point(o.rx == null ? o.relative : o.rx, o.ry)
+  var relative = new SVG.Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
   var rx = relative.x
   var ry = relative.y
 
@@ -4719,4 +4735,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

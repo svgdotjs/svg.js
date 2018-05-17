@@ -1,5 +1,14 @@
 /* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
+function translate () {
+
+}
+
+function functionName() {
+
+}
+
+
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
@@ -18,12 +27,13 @@ SVG.Matrix = SVG.invent({
       : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : base
 
-    // merge source
-    for (i = abcdef.length - 1; i >= 0; --i) {
-      this[abcdef[i]] = source[abcdef[i]] != null
-        ? source[abcdef[i]]
-        : base[abcdef[i]]
-    }
+    // Merge the source matrix with the base matrix
+    this.a = source.a != null ? source.a : base.a
+    this.b = source.b != null ? source.b : base.b
+    this.c = source.c != null ? source.c : base.c
+    this.d = source.d != null ? source.d : base.d
+    this.e = source.e != null ? source.e : base.e
+    this.f = source.f != null ? source.f : base.f
   },
 
   // Add methods
@@ -36,6 +46,7 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
+
       // Check if o is a matrix and then left multiply it directly
       if (o.a != null) {
         var matrix = new SVG.Matrix(o)

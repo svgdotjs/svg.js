@@ -63,7 +63,7 @@ SVG.Animator = {
     while ((nextTimeout = SVG.Animator.timeouts.shift())) {
 
       // Run the timeout if its time, or push it to the end
-      if (now > nextTimeout.time) {
+      if (now >= nextTimeout.time) {
         nextTimeout.run()
       } else {
         SVG.Animator.timeouts.push(nextTimeout)

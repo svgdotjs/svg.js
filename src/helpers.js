@@ -229,17 +229,16 @@ function formatTransforms (o) {
     : flipY
   var shear = o.shear || 0
   var theta = o.rotate || 0
-  var origin = new SVG.Point(o.ox == null ? o.origin : o.ox, o.oy)
+  var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y
-  var position = new SVG.Point(o.px == null
-    ? o.position : o.px, o.py, {x: null, y: null})
+  var position = new SVG.Point(o.origin || o.px || o.positionX, o.py || o.positionY)
   var px = position.x
   var py = position.y
-  var translate = new SVG.Point(o.tx == null ? o.translate : o.tx, o.ty)
+  var translate = new SVG.Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
   var tx = translate.x
   var ty = translate.y
-  var relative = new SVG.Point(o.rx == null ? o.relative : o.rx, o.ry)
+  var relative = new SVG.Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
   var rx = relative.x
   var ry = relative.y
 

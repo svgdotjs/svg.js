@@ -26,7 +26,7 @@ function getColor(t) {
   let a = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
   let b = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
   let c = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
-  let color = new SVG.Color(`rgb(${a}, ${b}, ${c})`).toString()
+  let color = `rgb(${a}, ${b}, ${c})`
   return color
 }
 
@@ -43,25 +43,36 @@ function getColor(t) {
 // SVG.Animator.timeout(()=> { rect.animate().pause() }, 1000 - 10)
 // SVG.Animator.timeout(()=> { rect.animate().play() }, 2000 - 10)
 
-for (let i = 0 ; i < 15; i++) {
-  for (let j = 0 ; j < 10; j++) {
 
-    // Make the rect
-    let o = i + j
-    let rect = SVG('rect').clone().show()
-      .width(40).height(40)
-      .x(50 * i).y(50 * j)
-      .attr('fill', getColor(o * 0.1))
 
-    // Move the rect
-    let {cx, cy} = rect.bbox()
+SVG('rect')
+  .clone().show()
+  .animate()
+  .move(200, 200)
 
-    // Animate the rect
-    rect.animate(3000, Math.random() * 2000)
-      .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
-      .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
-  }
-}
+
+
+
+
+// for (let i = 0 ; i < 15; i++) {
+//   for (let j = 0 ; j < 10; j++) {
+//
+//     // Make the rect
+//     let o = i + j
+//     let rect = SVG('rect').clone().show()
+//       .width(40).height(40)
+//       .x(50 * i).y(50 * j)
+//       .attr('fill', getColor(o * 0.1))
+//
+//     // Move the rect
+//     let {cx, cy} = rect.bbox()
+//
+//     // Animate the rect
+//     rect.animate(3000, Math.random() * 2000)
+//       .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
+//       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
+//   }
+// }
 
 
 </script>
