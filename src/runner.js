@@ -1,5 +1,7 @@
 
-function Runner (timeline, duration) {
+// TODO: Remove the timeline from the runner
+// TODO: Pass in the starting time as a parameter
+function Runner (start, duration) {
 
   // We store a reference to the function to run and the timeline to use
   this.transforms = []
@@ -7,14 +9,14 @@ function Runner (timeline, duration) {
   this.done = false
 
   // We copy the current values from the timeline because they can change
-  this._duration = duration || timeline._duration
+  this._duration = duration || null // if null, declarative methods used
   this._timeline = timeline
   this._last = 0
 
   // Store the state of the runner
-  this._active = true
-  this.tag = null
-  this._time = 0
+  this._time = -start || 0
+  this._enabled = true
+  this.tags = {}
 }
 
 // The runner gets the time from the timeline
@@ -23,20 +25,27 @@ Runner.prototype = {
   add: function (initFn, runFn, alwaysInitialise) {
     this.functions.push({
       alwaysInitialise: alwaysInitialise || false,
-      initialiser: (initFn || SVG.void).bind(this._timeline),
-      runner: (runFn || SVG.void).bind(this._timeline),
+      initialiser: initFn || SVG.void,
+      runner: runFn || SVG.void,
       finished: false,
     })
     return this
   },
 
   tag: function (name) {
-    this.tag = name
+    if (name == null) return Object.keys(this.tags)
+
+    name = Array.isArray(name) ? name : [name]
+
+    for(var i = name.length; i--;) {
+      this.tags[name[i]] = true
+    }
+
     return this
   },
 
-  active: function (activated) {
-    this._active = activated
+  enable: function (activated) {
+    this._enabled = activated
     return this
   },
 
@@ -48,21 +57,10 @@ Runner.prototype = {
 
   step: function (dt) {
 
-    /**
-     * If we don't have a duration, we are in declarative mode
-     */
-     if (this._duration == null) {
-       // TODO: Deal with declarative runs
-     }
-
-    /**
-     * If we have a duration, we just run if we are in range
-     */
-
     // Increment the time and read out the parameters
     var duration = this._duration
     var time = this._time
-    this._time += dt
+    this._time += dt || 16
 
     // Work out if we are in range to run the function
     var timeInside = 0 <= time && time <= duration
@@ -73,21 +71,25 @@ Runner.prototype = {
     // initialise only what needs to be initialised on the rising edge
     var justStarted = this._last <= 0 && time >= 0
     var justFinished = this._last <= duration && finished
-    this._initialise(position, justStarted)
+    this._initialise(justStarted)
     this._last = time
 
     // If we haven't started yet or we are over the time, just exit
     if(!timeInside && !justFinished) return finished
 
     // Run the runner and store the last time it was run
-    this._run(finished ? 1 : position)
+    this._run(
+      duration === null ? dt  // No duration, declarative
+      : finished ? 1          // If completed, provide 1
+      : position              // If running,
+    )
 
     // Work out if we are finished
     return finished
   },
 
   // Initialise the runner when we are ready
-  _initialise: function (position, all) {
+  _initialise: function (all) {
     for (var i = 0, len = this.functions.length; i < len ; ++i) {
 
       // Get the current initialiser
@@ -97,7 +99,7 @@ Runner.prototype = {
       var always = current.alwaysInitialise
       var running = !current.finished
       if ((always || all) && running) {
-        current.initialiser(position)
+        current.initialiser()
       }
     }
   },
@@ -113,7 +115,8 @@ Runner.prototype = {
 
       // Run the function if its not finished, we keep track of the finished
       // flag for the sake of declarative functions
-      current.finished = current.finished || (current.runner(position) === true)
+      current.finished = current.finished
+        || (current.runner(position) === true)
       allfinished = allfinished && current.finished
     }
 

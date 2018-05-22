@@ -1,0 +1,49 @@
+describe('SVG.Animator', function () {
+
+  beforeEach(function () {
+    jasmine.RequestAnimationFrame.install()
+    SVG.Animator.timer = jasmine.RequestAnimationFrame.mockPerf
+  })
+
+  afterEach(function () {
+    jasmine.RequestAnimationFrame.uninstall()
+    SVG.Animator.timer = jasmine.RequestAnimationFrame.realPerf
+  })
+
+  describe('timeout()', function () {
+    it('calls a function after a specific time', function () {
+
+      var spy = jasmine.createSpy('tester')
+      var id = SVG.Animator.timeout(spy, 100)
+
+      jasmine.RequestAnimationFrame.tick(99)
+      expect(spy).not.toHaveBeenCalled()
+      jasmine.RequestAnimationFrame.tick()
+      expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  describe('cancelTimeout()', function () {
+    it('cancels a timeout which was created with timeout()', function () {
+      var spy = jasmine.createSpy('tester')
+      var id = SVG.Animator.timeout(spy, 100)
+      SVG.Animator.cancelTimeout(id)
+
+      expect(spy).not.toHaveBeenCalled()
+      jasmine.RequestAnimationFrame.tick(100)
+      expect(spy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('frame()', function () {
+    it('calls a function at the next animationFrame', function () {
+      var spy = jasmine.createSpy('tester')
+
+      SVG.Animator.frame(spy)
+      expect(spy).not.toHaveBeenCalled()
+      jasmine.RequestAnimationFrame.tick()
+      expect(spy).toHaveBeenCalled()
+    })
+  })
+
+})

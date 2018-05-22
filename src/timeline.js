@@ -42,6 +42,10 @@ SVG.Timeline = SVG.invent({
 
   extend: {
 
+    /**
+     * Runner Constructors
+     */
+
     animate (duration, delay, nowOrAbsolute) {
 
       // Clear the controller and the looping parameters
@@ -70,7 +74,7 @@ SVG.Timeline = SVG.invent({
         : (duration || SVG.defaults.timeline.duration)
 
       // Make a new runner to queue all of the animations onto
-      this._runner = new Runner(this).time(this._time - this._startTime)
+      this._runner = new Runner(this._time - this._startTime, this.duration)
       this._runners.push(this._runner)
 
       // Step the animation
@@ -80,12 +84,16 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    duration (time) {
-      return this.animate(time, 0, false)
-    },
-
     delay (by, now) {
       return this.animate(0, by, now)
+    },
+
+    /**
+     * Runner Behaviours
+     */
+
+    loop (swing, times, wait) {
+
     },
 
     ease (fn) {
@@ -100,37 +108,27 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
+    reverse () {
+
+    },
+
+    /**
+     *
+     */
+
     tag (name) {
       this._runner.tag(name)
     },
 
-    _activateTags (tags, active) {
-
-      // If no tags were provided, just toggle
-      if (tags == null) active = !active
-
-      // Force tags to be in an array
-      tags = tags instanceof Array ? tags
-        : tags instanceof string ? [tags]
-        : []
-
-      // Activate all of the runners if their tag is specified
-      for (var i = 0, l = this._runners.length) {
-
-        // Get the runner and its tag
-        var runner = this._runners[i]
-        var runnerTag = runner.tag
-
-        // Work out if this runner is active or not
-        var activate = tags.indexOf(runnerTag) >= 0
-        runner.active(activate : active : !active)
+    runner (tag) {
+      if (tag) {
+        return this._runners.find(function (runTag) {return runTag === tag})
+      } else {
+        return this._runner
       }
     }
 
-    play (tags) {
-
-      // Activate all of the tags given
-      this._activateTags(tags, true)
+    play () {
 
       // Now make sure we are not paused and continue the animation
       this._paused = false
@@ -138,10 +136,7 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    pause (tags) {
-
-      // Deactivate the tags given
-
+    pause () {
 
       //
       this._lastPaused = time.now()
@@ -150,12 +145,12 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    stop (tags) {
+    stop () {
       // Cancel the next animation frame for this object
       this._nextFrame = null
     },
 
-    finish (tags) {
+    finish () {
 
     },
 
@@ -175,12 +170,14 @@ SVG.Timeline = SVG.invent({
       // 0 by default
     },
 
-    reverse () {
+    queue (initFn, runFn) {
 
-    },
+      // Make sure there is a function available
+      initFn = (initFn || SVG.void).bind(this)
+      runFn = (runFn || SVG.void).bind(this)
 
-    queue (initialise, during) {
-      this._runner.add(initialise, during)
+      // Add the functions to the active runner
+      this._runner.add(initFn, runFn)
       return this
     },
 
@@ -193,7 +190,7 @@ SVG.Timeline = SVG.invent({
       }
 
       // Otherwise make a runner to run this one time later
-      var runner = new Runner(this, 0).time(-time).add(fn)
+      var runner = new Runner(-time, 0).add(fn)
       this._runners.push(runner)
       return this
     },
@@ -322,7 +319,7 @@ SVG.extend(SVG.Timeline, {
         this.styleAttr(type, key, val[key])
       }
     }
-
+2
     var morpher = new Morphable(this._controller).to(val)
 
     this.queue(
@@ -453,12 +450,13 @@ SVG.extend(SVG.Timeline, {
     */
 
     this.queue(function () {
-
       var from = this._element.x()
       morpher.from(from)
       if(relative) morpher.to(from + x)
     }, function (pos) {
       this._element.x(morpher.at(pos))
+    }, function (newTarget) {
+      morpher.to(newTarget)
     })
 
     return this

@@ -47,7 +47,7 @@ SVG.Animator = {
     // Find the index of the timeout to cancel and remove it
     var index = SVG.Animator.timeouts.remove(
       function (t) {
-        return t.id === id
+        return t.value.id === id
       }
     )
     return index

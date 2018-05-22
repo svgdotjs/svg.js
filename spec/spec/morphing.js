@@ -3,6 +3,34 @@ describe('Morphing', function () {
 
   describe('constructors', function () {
 
+    it('SVG.Morphable with Number', function () {
+      var morpher = new SVG.Morphable().from(10).to(5)
+
+      expect(morpher instanceof SVG.Morphable).toBe(true)
+      expect(morpher.type()).toBe(SVG.Number)
+      expect(morpher.at(0.5) instanceof SVG.Number).toBe(true)
+      expect(morpher.at(0.5).valueOf()).toBe(7.5)
+    })
+
+    it('SVG.Morphable with String', function () {
+      var morpher = new SVG.Morphable().from('foo').to('bar')
+
+      expect(morpher instanceof SVG.Morphable).toBe(true)
+      expect(morpher.type()).toBe(SVG.Morphable.NonMorphable)
+      expect(morpher.at(0.5) instanceof SVG.Morphable.NonMorphable).toBe(true)
+      expect(morpher.at(0.5).valueOf()).toBe('foo')
+      expect(morpher.at(1).valueOf()).toBe('bar')
+    })
+
+    it('SVG.Morphable with Object', function () {
+      var morpher = new SVG.Morphable().from({a:5, b: 10}).to({a: 10, b: 20})
+
+      expect(morpher instanceof SVG.Morphable).toBe(true)
+      expect(morpher.type()).toBe(SVG.Morphable.ObjectBag)
+      expect(morpher.at(0.5) instanceof Object).toBe(true)
+      expect(morpher.at(0.5).valueOf()).toEqual(jasmine.objectContaining({a: 7.5, b: 15}))
+    })
+
     it(`Creates a morphable out of an SVG.Number`, function () {
       var morpher = new SVG.Number(5).to(10)
 
@@ -79,9 +107,6 @@ describe('Morphing', function () {
     it(`Creates a morphable out of an SVG.Morphable.TransformBag`, function () {
       var morpher = new SVG.Morphable.TransformBag({}).to({rotate: 50, translateX: 20})
 
-      // FIXME: SVG.Matrix does now allow translateX to be passed but decompose returns it!!!!!
-      console.log(new SVG.Morphable.TransformBag({rotate: 50, translateX: 20}).valueOf().decompose())
-
       expect(morpher instanceof SVG.Morphable).toBe(true)
       expect(morpher.type()).toBe(SVG.Morphable.TransformBag)
       expect(morpher.at(0.5) instanceof SVG.Morphable.TransformBag).toBe(true)
@@ -97,6 +122,42 @@ describe('Morphing', function () {
       expect(morpher.type()).toBe(SVG.Morphable.ObjectBag)
       expect(morpher.at(0.5) instanceof Object).toBe(true)
       expect(morpher.at(0.5).valueOf()).toEqual(jasmine.objectContaining({a: 7.5, b: 15}))
+    })
+  })
+
+  describe('from()', function () {
+    it('sets the type of the runner', function () {
+      var morpher = new SVG.Morphable().from(5)
+      expect(this.type()).toBe(SVG.Number)
+    })
+
+    it('sets the from attribute to an array representation of the morphable type', function () {
+      var morpher = new SVG.Morphable().from(5)
+      expect(this.from()).toEqual(jasmine.arrayContaining([5]))
+    })
+  })
+
+  describe('type()', function () {
+    it('sets the type of the runner', function () {
+      var morpher = new SVG.Morphable().type(SVG.Number)
+      expect(this._type).toBe(SVG.Number)
+    })
+
+    it('gets the type of the runner', function () {
+      var morpher = new SVG.Morphable().type(SVG.Number)
+      expect(this.type()).toBe(SVG.Number)
+    })
+  })
+
+  describe('to()', function () {
+    it('sets the type of the runner', function () {
+      var morpher = new SVG.Morphable().to(5)
+      expect(this.type()).toBe(SVG.Number)
+    })
+
+    it('sets the from attribute to an array representation of the morphable type', function () {
+      var morpher = new SVG.Morphable().to(5)
+      expect(this.to()).toEqual(jasmine.arrayContaining([5]))
     })
   })
 })

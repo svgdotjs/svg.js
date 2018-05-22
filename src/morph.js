@@ -11,17 +11,24 @@ SVG.Morphable = SVG.invent({
 
     this._from = null
     this._to = null
+    this._context = null
     this.modifier = function(arr) { return arr }
   },
 
   extend: {
 
     from: function (val) {
+      if(val == null)
+        return this._from
+
       this._from = this._set(val)
       return this
     },
 
     to: function (val, modifier) {
+      if(val == null)
+        return this._from
+
       this._to = this._set(val)
       this.modifier = modifier || this.modifier
       return this
@@ -29,7 +36,8 @@ SVG.Morphable = SVG.invent({
 
     type: function (type) {
       // getter
-      if (type == null) return this._type
+      if (type == null)
+        return this._type
 
       // setter
       this._type = type
@@ -76,7 +84,10 @@ SVG.Morphable = SVG.invent({
         }
       }
 
-      return (new this._type(value)).toArray()
+      var result = (new this._type(value)).toArray()
+      this._context = this._context
+        || Array.apply(null, Array(result.length)).map(Object)
+      return result
     },
 
     controller: function (controller) {
@@ -84,17 +95,20 @@ SVG.Morphable = SVG.invent({
     },
 
     at: function (pos) {
-
       var _this = this
 
       // for(var i = 0, len = this._from.length; i < len; ++i) {
       //   arr.push(this.controller(this._from[i], this._to[i]))
       // }
 
-      return this._type.prototype.fromArray(this.modifier(this._from.map(function (i, index) {
-        return _this._controller(i, _this._to[index], pos)
-      })))
-    },
+      return this._type.prototype.fromArray(
+        this.modifier(
+          this._from.map(function (i, index) {
+            return _this._controller(i, _this._to[index], pos, _this.context[i])
+          })
+        )
+      )
+    }
 
     valueOf: function () {
       return this._value

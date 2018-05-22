@@ -42,3 +42,127 @@ This block of code would:
 - Spend the first 1000ms moving the element
 - At this time, it will snap the scale to 1.5 (halfway to 2)
 - After this time, the scale and the move should go together
+
+
+# Rotating While Scaling
+
+The user may want to run multiple animations concurrently and have
+control over each animation that they define.
+
+```js
+
+let animationA = element.loop(300, ">").rotate(360).runner()
+let animationB = element
+    .loop(200, "><")
+    .scale(2)
+    .runner(tag)
+
+// After some time, they might want to end the first animation abruptly
+animationB.enable(false).end()
+
+// Maybe they want to pause a runner
+animationB.enable(false)
+
+// Maybe they want to remove an animation matching a tag
+animationB.tag('B')
+element.timeline().remove('B')
+
+// They can move around a runner as well
+element.timeline()
+    .schedule('B', 300) // Moves a runner to start at 300
+        // time(currentAbsolute - newAbsolute)
+    .shift('B', 300)    // Shifts the runner start time by 300
+        // seek(shiftTime)
+
+```
+
+
+# A Sequenced Animation
+
+The user might want to be able to run a long sequenced animation that they have
+predesigned as they please.
+
+```js
+
+let timeline = element.loop(300, "><").scale(2)
+    .animate(300).rotate(30)
+    .animate(300, 200).fill(blue)
+
+// They might want to move forwards or backwards
+timeline.seek(-300)
+
+// They might want to set a specific time
+timeline.time(200)
+
+// Or a specific position
+timeline.position(0.3)
+
+// Maybe they want to clear the timeline
+timeline.reset()
+
+```
+
+
+# User wants to Loop Something
+
+If the user wants to loop something, they should be able to call the loop
+method at any time, and it will just change the behaviour of the current
+runner. If we are running declaratively, we will throw an error.
+
+## Correct Usages
+
+They can invoke this from the timeline
+
+```js
+element.loop(duration, times, swing)
+```
+
+If they want to work with absolute times, they should animate first
+
+```js
+element.animate(300, 200, true)
+    .loop(Infinity, true)
+```
+
+Or alternatively, they could equivalently do this:
+
+```js
+element.loop({
+    now: true,
+    times: Infinity,
+    delay: 200,
+    duration: 300,
+    swing: true,
+    wait: [200, 300]
+})
+```
+
+## Error Case
+
+
+
+# Declarative Animations
+
+The user might want to have something chase their mouse around. This would
+require a declarative animation.
+
+```js
+
+el.animate((curr, target, dt, ctx) => {
+
+    // Find the error and the value
+    let error = target - current
+    ctx.speed = (ctx.error - error) / dt
+    ctx.error = error
+    return newPos
+
+})
+
+SVG.on(document, 'mousemove', (ev) => {
+
+  el.timeline(controller)
+    .move(ev.pageX, ev.pageY)
+
+})
+
+```
