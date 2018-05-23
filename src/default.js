@@ -5,7 +5,7 @@ SVG.defaults = {
 
   // Default animation values
   timeline: {
-    duration: 600,
+    duration: 400,
     ease: '>',
     delay: 0,
   },

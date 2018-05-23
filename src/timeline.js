@@ -19,7 +19,6 @@ SVG.Timeline = SVG.invent({
 
     // Store the timing variables
     this._startTime = 0
-    this._lastPaused = null
     this._duration = 0
     this._ease = SVG.defaults.timeline.ease
     this._speed = 1.0
@@ -35,7 +34,6 @@ SVG.Timeline = SVG.invent({
     this._baseTransform = null
     this._nextFrame = null
     this._paused = false
-    this._runner = null
     this._runners = []
     this._time = 0
   },
@@ -128,6 +126,20 @@ SVG.Timeline = SVG.invent({
       }
     }
 
+    schedule () {
+      // Work out when to start the animation
+      if ( when == null || when === 'last' || when === 'relative' ) {
+        // Take the last time and increment
+
+      } else if (when === 'absolute' || when === 'start' ) {
+
+      } else if (when === '' ) {
+
+      } else {
+        // TODO: Throw error
+      }
+    }
+
     play () {
 
       // Now make sure we are not paused and continue the animation
@@ -139,7 +151,6 @@ SVG.Timeline = SVG.invent({
     pause () {
 
       //
-      this._lastPaused = time.now()
       this._nextFrame = null
       this._paused = true
       return this
@@ -233,6 +244,12 @@ SVG.Timeline = SVG.invent({
         // this._runners.splice(i--, 1)
       }
 
+      // TODO: Collapse transformations in transformationBag into one
+      // transformation directly
+      //
+      // Timeline has
+      // timeline.transformationBag
+
       // Get the next animation frame to keep the simulation going
       if (runnersLeft)
         this._nextFrame = SVG.Animator.frame(this._step.bind(this))
@@ -254,6 +271,12 @@ SVG.Timeline = SVG.invent({
 
   // These methods will be added to all SVG.Element objects
   construct: {
+
+    timeline: function () {
+      this.timeline = (this.timeline || new SVG.Timeline(this))
+      return this.timeline
+    },
+
     animate: function(o, delay, now) {
 
       // Get the current timeline or construct a new one
@@ -281,338 +304,5 @@ SVG.Timeline = SVG.invent({
        this.timeline._swing = o.swing || false
        return this.timeline
     }
-
-    /*
-
-     */
-    timeline: function() {
-      return {
-        play: ()=> {}
-        pause: ()=> {}
-        persist: ()=> {}
-        seek: ()=> {}
-        stop: ()=> {}
-      }
-    }
-  }
-})
-
-
-// Extend the attribute methods separately to avoid cluttering the main
-// Timeline class above
-SVG.extend(SVG.Timeline, {
-
-
-  attr: function (a, v) {
-    return this.styleAttr('attr', a, v)
-  },
-
-  // Add animatable styles
-  css: function (s, v) {
-    return this.styleAttr('css', s, v)
-  },
-
-  styleAttr (type, name, val) {
-    // apply attributes individually
-    if (typeof name === 'object') {
-      for (var key in val) {
-        this.styleAttr(type, key, val[key])
-      }
-    }
-2
-    var morpher = new Morphable(this._controller).to(val)
-
-    this.queue(
-      function () {
-        morpher = morpher.from(element[type](name))
-      },
-      function () {
-        this.element[type](name, morpher.at(pos))
-      }
-    )
-
-    return this
-  },
-
-  zoom: function (level, point) {
-   var  morpher = new Morphable(this._controller).to(new SVG.Number(level))
-   var el = this.target()
-
-   this.queue(function() {
-     morpher = morpher.from(element.zoom())
-   }, function (pos) {
-     el.zoom(morpher.at(pos), point)
-   })
-
-   return this
- },
-
-  /**
-   ** absolute transformations
-   **/
-
-  // M v -----|-----(D M v = I v)------|----->  T v
-  //
-  // 1. define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-  // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-  //   and then write this as m = [tx0, ty0, the0, lam0, sy0, sx0]
-  // 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
-  //   - Note I(0) = M
-  //   - Note I(1) = T
-  // 4. Now you get the delta matrix as a result: D = I * inv(M)
-
-  transform: function (transforms, relative, affine) {
-    affine = transforms.affine || affine || !!transform.a
-    relative = transforms.relative || relative || false
-
-    var morpher
-
-    /**
-      The default of relative is false
-      affine defaults to true if transformations are used and to false when a matrix is given
-
-      We end up with 4 possibilities:
-      false, false: absolute direct matrix morph with SVG.Matrix
-      true, false: relative direct matrix morph with SVG.Marix or relative whatever was passed transformation with ObjectBag
-
-      false, true: absolute affine transformation with SVG.TransformBag
-      true, true: relative whatever was passed transformation with ObjectBag
-    **/
-
-
-    // if we have a relative transformation and its not a matrix
-    // we morph all parameters directly with the ObjectBag
-    // the following cases are covered here:
-    // - true, false with ObjectBag
-    // - true, true with ObjectBag
-    if(relative && transforms.a == null) {
-      morpher = SVG.Morphable.ObjectBag(formatTransforms({}))
-        .to(formatTransforms(transforms))
-        .controller(this.controller)
-
-      return this.queue(function() {}, function (pos) {
-        this.pushRightTransform(new Matrix(morpher.at(pos)))
-      })
-    }
-
-
-    // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
-    // also non affine direct and relative morhing with SVG.Matrix
-    // the following cases are covered here:
-    // - false, true with SVG.Matrix
-    // - false, true with SVG.TransformBag
-    // - true, false with SVG.Matrix
-    // - false, false with SVG.Matrix
-
-    // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-    var morpher = (transforms.a && !affine)
-      ? new SVG.Matrix().to(transforms)
-      : new SVG.Morphable.TransformBag().to(transforms)
-
-    morpher.controller(this.controller)
-
-    // create identity Matrix for relative not affine Matrix transformation
-    morpher.from()
-
-    this.queue(function() {}, function (pos) {
-
-      // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-      var curr = this.currentTransform()
-      if(!relative) morpher.from(curr)
-
-      // 3. Find the interpolated matrix I(pos) = m + pos * (t - m)
-      //   - Note I(0) = M
-      //   - Note I(1) = T
-      var matrix = morpher.at(pos)
-
-      if(!relative) {
-        // 4. Now you get the delta matrix as a result: D = I * inv(M)
-        var delta = matrix.multiply(curr.inverse())
-        this.pushLeftTransform(delta)
-      } else {
-        this.pushRightTransform(matrix)
-      }
-    })
-
-    return this
-  },
-
-  // Animatable x-axis
-  x: function (x, relative) {
-    var morpher = new SVG.Morphable(this._controller)
-      .to(new SVG.Number(x))
-
-    /*
-    if (this.target() instanceof SVG.G) {
-      this.transform({x: x}, relative)
-      return this
-    }
-    */
-
-    this.queue(function () {
-      var from = this._element.x()
-      morpher.from(from)
-      if(relative) morpher.to(from + x)
-    }, function (pos) {
-      this._element.x(morpher.at(pos))
-    }, function (newTarget) {
-      morpher.to(newTarget)
-    })
-
-    return this
-  },
-
-  // Animatable y-axis
-  y: function (y, relative) {
-    var morpher = new SVG.Morphable(this._controller)
-      .to(new SVG.Number(y))
-
-    /*
-    if (this.target() instanceof SVG.G) {
-      this.transform({y: y}, relative)
-      return this
-    }
-    */
-
-    this.queue(function () {
-      var from = this._element.y()
-      morpher.from(from)
-      if(relative) morpher.to(from + y)
-    }, function (pos) {
-      this._element.y(morpher.at(pos))
-    })
-
-    return this
-  },
-
-  _queueObject: function (method, to) {
-    var morpher = new SVG.Morphable(this._controller).to(to)
-
-    this.queue(function () {
-      morpher.from(this._element[method]())
-    }, function (pos) {
-      this._element[method](morpher.at(pos))
-    })
-
-    return this
-  },
-
-  _queueNumber: function (method, value) {
-    return this._queueObject(method, new SVG.Number(value))
-  },
-
-  // Animatable center x-axis
-  cx: function (x) {
-    return this._queueNumber('cx', x)
-  },
-
-  // Animatable center y-axis
-  cy: function (y) {
-    return this._queueNumber('cy', x)
-  },
-
-  // Add animatable move
-  move: function (x, y) {
-    return this.x(x).y(y)
-  },
-
-  // Add animatable center
-  center: function (x, y) {
-    return this.cx(x).cy(y)
-  },
-
-  // Add animatable size
-  size: function (width, height) {
-    // animate bbox based size for all other elements
-    var box
-
-    if (!width || !height) {
-      box = this._element().bbox()
-    }
-
-    if (!width) {
-      width = box.width / box.height * height
-    }
-
-    if (!height) {
-      height = box.height / box.width * width
-    }
-
-    return this
-      .width(width)
-      .height(height)
-  },
-
-  // Add animatable width
-  width: function (width) {
-    return this._queueNumber('width', width)
-  },
-
-  // Add animatable height
-  height: function (height) {
-    return this._queueNumber('height', height)
-  },
-
-  // Add animatable plot
-  plot: function (a, b, c, d) {
-    // Lines can be plotted with 4 arguments
-    if (arguments.length === 4) {
-      return this.plot([a, b, c, d])
-    }
-
-    return this._queueObject('plot', new this._element.morphArray(a))
-
-    /*var morpher = this._element.morphArray().to(a)
-
-    this.queue(function () {
-      morpher.from(this._element.array())
-    }, function (pos) {
-      this._element.plot(morpher.at(pos))
-    })
-
-    return this*/
-  },
-
-  // Add leading method
-  leading: function (value) {
-    return this._element.leading
-      ? this._queueNumber('leading', value)
-      : this
-  },
-
-  // Add animatable viewbox
-  viewbox: function (x, y, width, height) {
-    if (this._element instanceof SVG.Container) {
-      this._queueObject('viewbox', new SVG.Box(x, y, width, height))
-
-      /*var morpher = new SVG.Box().to(x, y, width, height)
-
-      this.queue(function () {
-        morpher.from(this._element.viewbox())
-      }, function (pos) {
-        this._element.viewbox(morpher.at(pos))
-      })
-
-      return this*/
-    }
-
-    return this
-  },
-  update: function (o) {
-    if (this._element instanceof SVG.Stop) {
-      if (typeof o !== 'object') {
-        return this.update({
-          offset: arguments[0],
-          color: arguments[1],
-          opacity: arguments[2]
-        })
-      }
-
-      if (o.opacity != null) this.attr('stop-opacity', o.opacity)
-      if (o.color != null) this.attr('stop-color', o.color)
-      if (o.offset != null) this.attr('offset', o.offset)
-    }
-
-    return this
   }
 })

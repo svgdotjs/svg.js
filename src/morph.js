@@ -1,8 +1,8 @@
 
 SVG.Morphable = SVG.invent({
-  create: function (controller) {
-    // FIXME: the default controller does not know about easing
-    this._controller = controller || function (from, to, pos) {
+  create: function (stepper) {
+    // FIXME: the default stepper does not know about easing
+    this._stepper = stepper || function (from, to, pos) {
       if(typeof from !== 'number') {
         return pos < 1 ? from : to
       }
@@ -44,7 +44,7 @@ SVG.Morphable = SVG.invent({
 
       // non standard morphing
       /*if(type instanceof SVG.Morphable.NonMorphable) {
-        this._controller = function (from, to, pos) {
+        this._stepper = function (from, to, pos) {
           return pos < 1 ? from : to
         }
       }*/
@@ -90,21 +90,22 @@ SVG.Morphable = SVG.invent({
       return result
     },
 
-    controller: function (controller) {
-      this._controller = controller
+    stepper: function (stepper) {
+      this._stepper = stepper
     },
+
 
     at: function (pos) {
       var _this = this
 
       // for(var i = 0, len = this._from.length; i < len; ++i) {
-      //   arr.push(this.controller(this._from[i], this._to[i]))
+      //   arr.push(this.stepper(this._from[i], this._to[i]))
       // }
 
       return this._type.prototype.fromArray(
         this.modifier(
           this._from.map(function (i, index) {
-            return _this._controller(i, _this._to[index], pos, _this.context[i])
+            return _this._stepper.step(i, _this._to[index], pos, _this.context[i])
           })
         )
       )
@@ -253,7 +254,7 @@ SVG.extend(SVG.MorphableTypes, {
 /// el.animate()
 ///   .fill('#00f')
 ///   ---->> timeline.fill
-///     val = new Morphable().to('#0ff').controller(controller)
+///     val = new Morphable().to('#0ff').stepper(stepper)
 ///     func init() {
 ///       val.from(el.fill())
 ///     }

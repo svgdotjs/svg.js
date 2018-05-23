@@ -166,3 +166,86 @@ SVG.on(document, 'mousemove', (ev) => {
 })
 
 ```
+
+
+## Springy Mouse Chaser
+
+Pretend we gave the user a springy controller that basically springs to a
+target in 300ms for example. They might be constantly changing the target with:
+
+```js
+
+el.animate(Spring(500), 200)
+    .tag('declarative')
+    .persist()
+    .move(10, 10)
+
+el.animate('declarative')
+    .move(300, 200)
+
+
+
+SVG.on(document, 'mousemove', function (ev) {
+
+  el.animate(springy, 200)
+      .tag('declarative')
+      .move(ev.pageX, ev.pageY)
+
+})
+
+```
+
+
+# Repeated Animations
+
+The user might want to duplicate an animation and have it rerun a few times
+
+```js
+
+// User makes two copies of an animation
+let animA = el.animate(300, 300, 'now')...(animation)...
+let animB = animA.clone() // Deep copy
+
+// Now let the user attach and reschedule their animations
+el.timeline()
+    .schedule(animA, 500, 'absolute')
+    .schedule(animB, 2000, 'absolute')
+
+```
+
+Then the user can loop the timeline, by changing its play mode
+
+```js
+el.timeline()
+    .loop(times, swing, waits)
+```
+
+
+# Advanced Animations
+
+The user can create their own runners and then attach it to the timeline
+themselves if they like.
+
+```js
+
+// They declare their animation
+let rotation = () => new SVG.Runner().rotate(500)
+
+// They attach an element, and schedule the runner
+let leftAnimation = rotation().element(leftSquare).reverse()
+
+// They might want to animate another
+let rightAnimation = rotation().element(rightSquare)
+
+// They can schedule these two runners to a master element
+timelineElement.timeline()
+    .schedule(leftAnimation, 300, 'absolute')
+    .schedule(rightAnimation, 500, 'now')
+    .schedule(rightAnimation, 300, 'end')
+
+// Or they can schedule it to a timeline as well
+let timeline = new SVG.Timeline()
+    .schedule(leftAnimation, 300, 'absolute')
+    .schedule(rightAnimation, 500, 'now')
+
+```
