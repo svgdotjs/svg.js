@@ -81,16 +81,21 @@ SVG.Controller =  SVG.invent ({
 
   create: function (fn) {
     SVG.Stepper.call(this, fn)
+    this.stepper = fn
   },
 
   extend: {
 
     step: function (current, target, dt, c) {
-
+      return this.stepper(current, target, dt, c)
     },
 
     isComplete: function (dt, c) {
-
+      var result = false
+      for(var i = c.length; i--;) {
+        result = result || (Math.abs(c[i].error) < 0.01)
+      }
+      return result
     },
   },
 })
@@ -127,5 +132,31 @@ SVG.Spring = function spring(duration, overshoot) {
       var newPosition = current + control
       c.error = error
       return newPosition
+  })
+}
+
+SVG.PID = function (P, I, D, antiwindup) {
+  P = P == null ? 0.1 : P
+  I = I == null ? 0.01 : I
+  D = D == null ? 0 : D
+  antiwindup = antiwindup == null ? 1000 : antiwindup
+
+  // Return the acceleration required
+  return new SVG.Controller(
+    function (current, target, dt, c) {
+
+      if(dt == Infinity) return target
+
+      var p = target - current
+      var i = (c.integral || 0) + p * dt
+      var d = (p - (c.error || 0)) / dt
+
+      // antiwindup
+      i = Math.max(-antiwindup, Math.min(i, antiwindup))
+
+      c.error = p
+      c.integral = i
+
+      return current + (P * p + I * i + D * d)
   })
 }

@@ -72,10 +72,9 @@ SVG.Morphable = SVG.invent({
 
           } else {
             this.type(SVG.Morphable.NonMorphable)
-
           }
 
-        } else if (value in SVG.MorphableTypes) {
+        } else if (SVG.MorphableTypes.indexOf(value.constructor) > -1) {
           this.type(value.constructor)
 
         } else if (Array.isArray(value)) {
@@ -102,7 +101,7 @@ SVG.Morphable = SVG.invent({
     // FIXME: we can call this._stepper.isComplete directly
     // no need for this wrapper here
     isComplete: function () {
-      return this._stepper && this._stepper.isComplete()
+      return this._stepper && this._stepper.isComplete(null, this._context)
     },
 
     at: function (pos) {
@@ -115,7 +114,7 @@ SVG.Morphable = SVG.invent({
       return this._type.prototype.fromArray(
         this.modifier(
           this._from.map(function (i, index) {
-            return _this._stepper.step(i, _this._to[index], pos, _this._context[i])
+            return _this._stepper.step(i, _this._to[index], pos, _this._context[index])
           })
         )
       )

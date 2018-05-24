@@ -132,6 +132,7 @@ SVG.Timeline = SVG.invent({
       // derived from the current timeline time or it can be relative to the
       // last start time to chain animations direclty
       var absoluteStartTime
+      delay = delay || 0
 
       // Work out when to start the animation
       if ( when == null || when === 'last' || when === 'relative' ) {
@@ -153,43 +154,6 @@ SVG.Timeline = SVG.invent({
 
       this._step()
 
-      return this
-
-
-
-      // Clear the controller and the looping parameters
-      this._controller = duration instanceof Function ? duration : null
-      this._backwards = false
-      this._swing = false
-      this._loops = 0
-
-      // If we have an object we are declaring imperative animations
-      if (typeof duration === 'object') {
-        duration = duration.duration
-        delay = duration.delay
-        nowOrAbsolute = duration.absolute || duration.now
-      }
-
-      // The start time for the next animation can either be given explicitly,
-      // derived from the current timeline time or it can be relative to the
-      // last start time to chain animations direclty
-      var absoluteStartTime = typeof nowOrAbsolute === 'number' ? nowOrAbsolute
-        : nowOrAbsolute ? this._time
-        : this._startTime + this._duration
-
-      // We start the next animation after the delay required
-      this._startTime = absoluteStartTime + (delay || 0)
-      this._duration = duration instanceof Function ? null
-        : (duration || SVG.defaults.timeline.duration)
-
-      // Make a new runner to queue all of the animations onto
-      this._runner = new Runner(this._time - this._startTime, this.duration)
-      this._runners.push(this._runner)
-
-      // Step the animation
-      this._step()
-
-      // Allow for chaining
       return this
     },
 
@@ -286,6 +250,7 @@ SVG.Timeline = SVG.invent({
 
         // Get and run the current runner and figure out if its done running
         var runner = this._runners[i]
+
         var finished = runner.step(dt)
 
         // If this runner is still going, signal that we need another animation

@@ -85,7 +85,6 @@ describe('SVG.Runner', function () {
   })
 
   describe('tag()', function () {
-
     it('acts as a getter', function () {
       var runner = new SVG.Runner()
 
@@ -107,6 +106,25 @@ describe('SVG.Runner', function () {
       expect(runner.tags).toEqual(jasmine.objectContaining({foo: true, bar: true, baz: true}))
     })
   })
+
+  describe('untag()', function () {
+    it('untags with a string given', function () {
+      var runner = new SVG.Runner()
+
+      runner.tag('foo')
+      runner.untag('foo')
+      expect(runner.tags).toEqual(jasmine.objectContaining({}))
+    })
+
+    it('untags multiple tags with an array given', function () {
+      var runner = new SVG.Runner()
+
+      runner.tag(['foo', 'bar', 'baz'])
+      runner.untag(['bar', 'baz'])
+      expect(runner.tags).toEqual(jasmine.objectContaining({foo: true}))
+    })
+  })
+
 
   describe('step()', function () {
 

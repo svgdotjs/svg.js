@@ -27,14 +27,14 @@ SVG.Runner = SVG.invent({
 
     // Work out the stepper and the duration
     this._duration = typeof options === 'number' && options
-    this._isDeclaritive = options instanceof SVG.Controller
-    this._stepper = this._isDeclaritive ? options : new SVG.Ease()
+    this._isDeclarative = options instanceof SVG.Controller
+    this._stepper = this._isDeclarative ? options : new SVG.Ease()
 
     // We copy the current values from the timeline because they can change
     this._morphers = {}
 
     // Store the state of the runner
-    this._enabled = true
+    this.enabled = true
     this._time = 0
     this._last = 0
     this.tags = {}
@@ -50,7 +50,7 @@ SVG.Runner = SVG.invent({
       var waits = []
 
       // If we have an object, unpack the values
-      if (typeof duration == 'object') {
+      if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
         delay = duration.delay || 0
         when = duration.when || 'now'
         duration = duration.duration || 1000
@@ -169,19 +169,25 @@ SVG.Runner = SVG.invent({
 
     step: function (dt) {
 
+      // FIXME: It makes more sense to have this in the timeline
+      // because the user should still ne able to step a runner
+      // even if disabled
+      // Don't bother running when not enabled
+      if(!this.enabled) return false
+
       // If there is no duration, we are in declarative mode and dt has to be
       // positive always, so if its negative, we ignore it.
-      if ( this._isDeclarative && dt < 0 ) return false
+      if (this._isDeclarative && dt < 0) return false
 
       // Increment the time and read out the parameters
       var duration = this._duration
-      this._time += dt || 16
+      this._time += dt || 16 // FIXME: step(0) is valid but will get changed to 16 here
       var time = this._time
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
       var position = time / duration
-      var finished = time >= duration
+      var finished = !this._isDeclarative && time >= duration // TODO: clean this up. finished returns true even for declarative if we do not check for it explicitly
 
       // If we are on the rising edge, initialise everything, otherwise,
       // initialise only what needs to be initialised on the rising edge
@@ -192,16 +198,16 @@ SVG.Runner = SVG.invent({
       this._last = time
 
       // If we haven't started yet or we are over the time, just exit
-      if(!timeInside && !justFinished) return finished
+      if(!this._isDeclarative && !timeInside && !justFinished) return finished // TODO: same as above
 
       // Run the runner and store the last time it was run
       finished = this._run(
-        duration === null ? dt  // No duration, declarative
+        this._isDeclarative ? dt  // No duration, declarative
         : finished ? 1          // If completed, provide 1
         : position              // If running,
       ) || finished
 
-      // FIXME: for the sake of unifirmity this method should return This
+      // FIXME: for the sake of conformity this method should return this
       // we can then add a functon isFinished to see if a runner is finished
       // Work out if we are finished
       return finished
@@ -225,8 +231,8 @@ SVG.Runner = SVG.invent({
     },
 
     active: function (enabled) {
-      if(enabled == null) return this._enabled
-      this._enabled = enabled
+      if(enabled == null) return this.enabled
+      this.enabled = enabled
       return this
     },
 
@@ -249,7 +255,12 @@ SVG.Runner = SVG.invent({
     },
 
     untag: function (name) {
+      name = Array.isArray(name) ? name : [name]
+      for(var i = name.length; i--;) {
+        delete this.tags[name[i]]
+      }
 
+      return this
     },
 
     /*
@@ -288,6 +299,10 @@ SVG.Runner = SVG.invent({
     // Run each run function for the position given
     _run: function (position) {
 
+      // TODO: review this one
+      // Make sure to keep runner running when no functions where added yet
+      if(!this._functions.length) return false
+
       // Run all of the _functions directly
       var allfinished = false
       for (var i = 0, len = this._functions.length; i < len ; ++i) {
@@ -312,7 +327,6 @@ SVG.Runner = SVG.invent({
 // Extend the attribute methods separately to avoid cluttering the main
 // Timeline class above
 SVG.extend(SVG.Runner, {
-
 
   attr: function (a, v) {
     return this.styleAttr('attr', a, v)
@@ -497,8 +511,10 @@ SVG.extend(SVG.Runner, {
     // Make a morpher and queue the animation
     var morpher = new SVG.Morphable(this._stepper).to(to)
     this.queue(function () {
+      console.log('init')
       morpher.from(this[method]())
     }, function (pos) {
+      console.log('run', pos)
       this[method](morpher.at(pos))
       return morpher.isComplete()
     }, this._isDeclarative)
