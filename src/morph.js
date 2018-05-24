@@ -2,15 +2,11 @@
 SVG.Morphable = SVG.invent({
   create: function (stepper) {
     // FIXME: the default stepper does not know about easing
-    this._stepper = stepper || function (from, to, pos) {
-      if(typeof from !== 'number') {
-        return pos < 1 ? from : to
-      }
-      return from + (to - from) * pos
-    }
+    this._stepper = stepper || new SVG.Ease('-')
 
     this._from = null
     this._to = null
+    this._type = null
     this._context = null
     this.modifier = function(arr) { return arr }
   },
@@ -27,7 +23,7 @@ SVG.Morphable = SVG.invent({
 
     to: function (val, modifier) {
       if(val == null)
-        return this._from
+        return this._to
 
       this._to = this._set(val)
       this.modifier = modifier || this.modifier
@@ -55,20 +51,29 @@ SVG.Morphable = SVG.invent({
     _set: function (value) {
 
       if(!this._type)  {
-        if (typeof value === 'number') {
+        var type = typeof value
+
+        if (type === 'number') {
           this.type(SVG.Number)
 
-        } else if (SVG.Color.isColor(value)) {
-          this.type(SVG.Color)
+        } else if (type === 'string') {
 
-        } else if (SVG.regex.delimiter.test(value)) {
-          this.type(SVG.regex.pathLetters.test(value)
-            ? SVG.PathArray
-            : SVG.Array
-          )
+          if (SVG.Color.isColor(value)) {
+            this.type(SVG.Color)
 
-        } else if (SVG.regex.numberAndUnit.test(value)) {
-          this.type(SVG.Number)
+          } else if (SVG.regex.delimiter.test(value)) {
+            this.type(SVG.regex.pathLetters.test(value)
+              ? SVG.PathArray
+              : SVG.Array
+            )
+
+          } else if (SVG.regex.numberAndUnit.test(value)) {
+            this.type(SVG.Number)
+
+          } else {
+            this.type(SVG.Morphable.NonMorphable)
+
+          }
 
         } else if (value in SVG.MorphableTypes) {
           this.type(value.constructor)
@@ -76,8 +81,8 @@ SVG.Morphable = SVG.invent({
         } else if (Array.isArray(value)) {
           this.type(SVG.Array)
 
-        } else if (typeof value === 'object') {
-          this.type(SVG.ObjectBag)
+        } else if (type === 'object') {
+          this.type(SVG.Morphable.ObjectBag)
 
         } else {
           this.type(SVG.Morphable.NonMorphable)
@@ -198,8 +203,6 @@ SVG.Morphable.ObjectBag = SVG.invent({
       this.values.push(keys[i])
       this.values.push(objOrArr[keys[i]])
     }
-
-    console.log(this.values)
   },
 
   extend: {

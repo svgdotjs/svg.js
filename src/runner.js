@@ -12,7 +12,13 @@ SVG.Runner = SVG.invent({
 
   create: function (options) {
 
+    // ensure a default value
     options = options || SVG.defaults.timeline.duration
+
+    // ensure that we get a controller
+    options = typeof options === 'function'
+      ? new SVG.Controller(options) :
+      options
 
     // Declare all of the variables
     this._element = null
@@ -95,6 +101,7 @@ SVG.Runner = SVG.invent({
     */
 
     element: function (element) {
+      if(element == null) return this._element
       this._element = element
       return this
     },
@@ -153,6 +160,8 @@ SVG.Runner = SVG.invent({
     */
 
     time: function (time) {
+      if (time == null) return this._time
+
       let dt = time - this._time
       this.step(dt)
       return this
@@ -166,8 +175,8 @@ SVG.Runner = SVG.invent({
 
       // Increment the time and read out the parameters
       var duration = this._duration
-      var time = this._time
       this._time += dt || 16
+      var time = this._time
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
@@ -178,6 +187,7 @@ SVG.Runner = SVG.invent({
       // initialise only what needs to be initialised on the rising edge
       var justStarted = this._last <= 0 && time >= 0
       var justFinished = this._last <= duration && finished
+
       this._initialise(justStarted)
       this._last = time
 
@@ -191,27 +201,31 @@ SVG.Runner = SVG.invent({
         : position              // If running,
       ) || finished
 
+      // FIXME: for the sake of unifirmity this method should return This
+      // we can then add a functon isFinished to see if a runner is finished
       // Work out if we are finished
       return finished
     },
 
     finish: function () {
+      // FIXME: this is wrong as long as step returns a boolean
       return this.step(Infinity)
     },
 
+    // TODO
     // Sets the time to the end time and makes the time advance backwards
     reverse: function () {
-
+      return this
     },
 
     // Changes the animation easing function
     ease: function (fn) {
-      this._stepper = SVG.Ease(fn)
+      this._stepper = new SVG.Ease(fn)
       return this
     },
 
     active: function (enabled) {
-      if(active == null) return this._enabled
+      if(enabled == null) return this._enabled
       this._enabled = enabled
       return this
     },
