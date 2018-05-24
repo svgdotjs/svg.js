@@ -162,7 +162,7 @@ SVG.Runner = SVG.invent({
 
       // If there is no duration, we are in declarative mode and dt has to be
       // positive always, so if its negative, we ignore it.
-      if ( this._stepper && dt < 0 ) return false
+      if ( this._isDeclarative && dt < 0 ) return false
 
       // Increment the time and read out the parameters
       var duration = this._duration

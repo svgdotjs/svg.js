@@ -147,7 +147,7 @@ SVG.Timeline = SVG.invent({
         // TODO: Throw error
       }
 
-      runner.time(absoluteStartTime)
+      runner.time(-absoluteStartTime)
       this._startTime = absoluteStartTime + runner._duration
       this._runners.push(runner)
 
