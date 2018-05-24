@@ -6,11 +6,13 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
-SVG.Runner = SVG.Invent({
+SVG.Runner = SVG.invent({
 
   parent: SVG.Element,
 
   create: function (options) {
+
+    options = options || SVG.defaults.timeline.duration
 
     // Declare all of the variables
     this._element = null
@@ -18,11 +20,11 @@ SVG.Runner = SVG.Invent({
     this.done = false
 
     // Work out the stepper and the duration
-    this._stepper = typeof options === 'function' && (options)
     this._duration = typeof options === 'number' && options
+    this._isDeclaritive = options instanceof SVG.Controller
+    this._stepper = this._isDeclaritive ? options : new SVG.Ease()
 
     // We copy the current values from the timeline because they can change
-    this._ease = SVG.defaults.timeline.ease
     this._morphers = {}
 
     // Store the state of the runner
@@ -51,9 +53,11 @@ SVG.Runner = SVG.Invent({
         waits = duration.waits || []
       }
 
+      // FIXME: take care of looping here because loop is a constructor
+      // alternatively disallow loop as constructor
       // Construct a new runner and setup its looping behaviour
       var runner = new SVG.Runner(duration)
-        .loop(times, swing, waits)
+        //.loop(times, swing, waits)
         .element(this)
 
       // Attach this animation to a timeline
@@ -95,6 +99,12 @@ SVG.Runner = SVG.Invent({
       return this
     },
 
+    timeline: function () {
+      return this._element.timeline()
+    },
+
+    // FIXME: It makes totally sense to call this, when the runner is attached to a timeline.
+    // So maybe we should attach runners to timelines and timelines to elements instead of the other way round
     animate: function () {
       if(this._element) {
         return this._element.animate.apply(this._element, arguments)
@@ -196,10 +206,12 @@ SVG.Runner = SVG.Invent({
 
     // Changes the animation easing function
     ease: function (fn) {
-
+      this._stepper = SVG.Ease(fn)
+      return this
     },
 
-    enable: function (enabled) {
+    active: function (enabled) {
+      if(active == null) return this._enabled
       this._enabled = enabled
       return this
     },
@@ -307,15 +319,12 @@ SVG.extend(SVG.Runner, {
 
     var morpher = new Morphable(this._stepper).to(val)
 
-    this.queue(
-      function () {
-        morpher = morpher.from(this[type](name))
-      },
-      function () {
-        this[type](name, morpher.at(pos))
-        return morpher.isComplete()
-      }
-    )
+    this.queue(function () {
+      morpher = morpher.from(this[type](name))
+    }, function () {
+      this[type](name, morpher.at(pos))
+      return morpher.isComplete()
+    }, this._isDeclarative)
 
     return this
   },
@@ -328,7 +337,7 @@ SVG.extend(SVG.Runner, {
    }, function (pos) {
      this.zoom(morpher.at(pos), point)
      return morpher.isComplete()
-   })
+   }, this._isDeclarative)
 
    return this
  },
@@ -378,7 +387,8 @@ SVG.extend(SVG.Runner, {
 
       return this.queue(function() {}, function (pos) {
         this.pushRightTransform(new Matrix(morpher.at(pos)))
-      })
+        return morpher.isComplete()
+      }, this._isDeclarative)
     }
 
 
@@ -420,7 +430,7 @@ SVG.extend(SVG.Runner, {
       }
 
       return morpher.isComplete()
-    })
+    }, this._isDeclarative)
 
     return this
   },
@@ -458,7 +468,7 @@ SVG.extend(SVG.Runner, {
       }, function (pos) {
         this[method](morpher.at(pos))
         return morpher.isComplete()
-      }, this._declarative)
+      }, this._isDeclarative)
 
       // Register the morpher so that if it is changed again, we can retarget it
       this._saveMorpher(method, morpher)
@@ -477,7 +487,7 @@ SVG.extend(SVG.Runner, {
     }, function (pos) {
       this[method](morpher.at(pos))
       return morpher.isComplete()
-    }, this._declarative)
+    }, this._isDeclarative)
 
     // Register the morpher so that if it is changed again, we can retarget it
     this._saveMorpher(method, morpher)

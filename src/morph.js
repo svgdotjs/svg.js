@@ -94,6 +94,11 @@ SVG.Morphable = SVG.invent({
       this._stepper = stepper
     },
 
+    // FIXME: we can call this._stepper.isComplete directly
+    // no need for this wrapper here
+    isComplete: function () {
+      return this._stepper && this._stepper.isComplete()
+    },
 
     at: function (pos) {
       var _this = this
@@ -105,11 +110,11 @@ SVG.Morphable = SVG.invent({
       return this._type.prototype.fromArray(
         this.modifier(
           this._from.map(function (i, index) {
-            return _this._stepper.step(i, _this._to[index], pos, _this.context[i])
+            return _this._stepper.step(i, _this._to[index], pos, _this._context[i])
           })
         )
       )
-    }
+    },
 
     valueOf: function () {
       return this._value

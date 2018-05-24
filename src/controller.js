@@ -9,7 +9,7 @@ Base Class
 The base stepper class that will be
 ***/
 
-SVG.Stepper = SVG.Invent ({
+SVG.Stepper = SVG.invent ({
 
   create: function (fn) {
 
@@ -32,22 +32,27 @@ Easing Functions
 ================
 ***/
 
-SVG.Ease = SVG.Invent ({
+SVG.Ease = SVG.invent ({
 
   inherit: SVG.Stepper,
 
   create: function (fn) {
     SVG.Stepper.call(this, fn)
+
+    this.ease = SVG.easing[fn || SVG.defaults.timeline.ease] || fn
   },
 
   extend: {
 
-    step: function (current, target, dt, c) {
-
+    step: function (from, to, pos) {
+      if(typeof from !== 'number') {
+        return pos < 1 ? from : to
+      }
+      return from + (to - from) * this.ease(pos)
     },
 
     isComplete: function (dt, c) {
-
+      return false
     },
   },
 })
@@ -70,7 +75,7 @@ Controller Types
 ================
 ***/
 
-SVG.Controller =  SVG.Invent ({
+SVG.Controller =  SVG.invent ({
 
   inherit: SVG.Stepper,
 
@@ -107,7 +112,7 @@ SVG.Spring = function spring(duration, overshoot) {
   var K = wn * wn
 
   // Return the acceleration required
-  return SVG.Controller(
+  return new SVG.Controller(
     function (current, target, dt, c) {
 
       if(dt == Infinity) return target

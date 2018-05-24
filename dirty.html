@@ -46,34 +46,34 @@ function getColor(t) {
 
 
 
-SVG('rect')
-  .clone().show()
-  .animate()
-  .move(200, 200)
+// SVG('rect')
+//   .clone().show()
+//   .animate()
+//   .move(200, 200)
 
 
 
 
 
-// for (let i = 0 ; i < 15; i++) {
-//   for (let j = 0 ; j < 10; j++) {
-//
-//     // Make the rect
-//     let o = i + j
-//     let rect = SVG('rect').clone().show()
-//       .width(40).height(40)
-//       .x(50 * i).y(50 * j)
-//       .attr('fill', getColor(o * 0.1))
-//
-//     // Move the rect
-//     let {cx, cy} = rect.bbox()
-//
-//     // Animate the rect
-//     rect.animate(3000, Math.random() * 2000)
-//       .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
-//       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
-//   }
-// }
+for (let i = 0 ; i < 15; i++) {
+  for (let j = 0 ; j < 10; j++) {
+
+    // Make the rect
+    let o = i + j
+    let rect = SVG('rect').clone().show()
+      .width(40).height(40)
+      .x(50 * i).y(50 * j)
+      .attr('fill', getColor(o * 0.1))
+
+    // Move the rect
+    let {cx, cy} = rect.bbox()
+
+    // Animate the rect
+    rect.animate(3000, Math.random() * 2000)
+      .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
+      .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
+  }
+}
 
 
 </script>
