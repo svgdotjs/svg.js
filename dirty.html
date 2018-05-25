@@ -75,12 +75,37 @@ function getColor(t) {
 //   }
 // }
 
-var mover = SVG('rect').clone().show()
-mover.animate(SVG.PID()).move(500, 500)
+var randPoint = (x = 50, y = 50) => [
+  Math.random() * 100 - 50 + x,
+  Math.random() * 100 - 50 + y
+]
 
-// SVG.on(document, 'click', function (e) {
-//   console.log(mover.animate(SVG.Spring(300, 30)).move(e.pageX, e.pageY))
-// })
+var poly = SVG('<polygon>').plot([
+  randPoint(),
+  randPoint(),
+  randPoint(),
+  randPoint(),
+  randPoint()
+]).attr({fill: 'none', stroke: 'black'}).addTo('svg')
+var polyAni = poly.animate(SVG.PID(null, 0))
+
+SVG.on(document, 'click', function (e) {
+  polyAni.plot([
+    randPoint(e.pageX-50, e.pageY-50),
+    randPoint(e.pageX+50, e.pageY-50),
+    randPoint(e.pageX+50, e.pageY),
+    randPoint(e.pageX+50, e.pageY+50),
+    randPoint(e.pageX-50, e.pageY+50)
+  ])
+})
+/*
+var mover = SVG('rect').clone().show()
+var anim = mover.animate(SVG.PID()).move(500, 500)
+
+SVG.on(document, 'mousemove', function (e) {
+  //mover.animate(SVG.PID()).move(e.pageX, e.pageY)
+  anim.move(e.pageX, e.pageY)
+})*/
 
 </script>
 

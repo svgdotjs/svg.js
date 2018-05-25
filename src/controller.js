@@ -91,6 +91,7 @@ SVG.Controller =  SVG.invent ({
     },
 
     isComplete: function (dt, c) {
+      return false
       var result = false
       for(var i = c.length; i--;) {
         result = result || (Math.abs(c[i].error) < 0.01)

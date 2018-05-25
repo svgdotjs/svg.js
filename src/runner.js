@@ -283,7 +283,6 @@ SVG.Runner = SVG.invent({
     // Run each initialise function in the runner if required
     _initialise: function (all) {
       for (var i = 0, len = this._functions.length; i < len ; ++i) {
-
         // Get the current initialiser
         var current = this._functions[i]
 
@@ -511,10 +510,8 @@ SVG.extend(SVG.Runner, {
     // Make a morpher and queue the animation
     var morpher = new SVG.Morphable(this._stepper).to(to)
     this.queue(function () {
-      console.log('init')
       morpher.from(this[method]())
     }, function (pos) {
-      console.log('run', pos)
       this[method](morpher.at(pos))
       return morpher.isComplete()
     }, this._isDeclarative)
@@ -587,7 +584,7 @@ SVG.extend(SVG.Runner, {
       return this.plot([a, b, c, d])
     }
 
-    return this._queueObject('plot', new this._element.morphArray(a))
+    return this._queueObject('plot', new this._element.MorphArray(a))
 
     /*var morpher = this._element.morphArray().to(a)
 
