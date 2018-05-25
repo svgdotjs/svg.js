@@ -13,16 +13,18 @@ SVG.Runner = SVG.invent({
   create: function (options) {
 
     // ensure a default value
-    options = options || SVG.defaults.timeline.duration
+    options = options == null
+      ? SVG.defaults.timeline.duration
+      : options
 
     // ensure that we get a controller
     options = typeof options === 'function'
-      ? new SVG.Controller(options) :
-      options
+      ? new SVG.Controller(options)
+      : options
 
     // Declare all of the variables
     this._element = null
-    this._functions = []
+    this._queue = []
     this.done = false
 
     // Work out the stepper and the duration
@@ -31,7 +33,7 @@ SVG.Runner = SVG.invent({
     this._stepper = this._isDeclarative ? options : new SVG.Ease()
 
     // We copy the current values from the timeline because they can change
-    this._morphers = {}
+    this._history = {}
 
     // Store the state of the runner
     this.enabled = true
@@ -140,12 +142,14 @@ SVG.Runner = SVG.invent({
     */
 
     queue: function (initFn, runFn, alwaysInitialise) {
-      this._functions.push({
+      this._queue.push({
         alwaysInitialise: alwaysInitialise || false,
         initialiser: initFn || SVG.void,
         runner: runFn || SVG.void,
         finished: false,
       })
+      this.timeline()._continue()
+      this._element.timeline()._continue()
       return this
     },
 
@@ -169,52 +173,45 @@ SVG.Runner = SVG.invent({
 
     step: function (dt) {
 
-      // FIXME: It makes more sense to have this in the timeline
-      // because the user should still ne able to step a runner
-      // even if disabled
-      // Don't bother running when not enabled
-      if(!this.enabled) return false
-
       // If there is no duration, we are in declarative mode and dt has to be
       // positive always, so if its negative, we ignore it.
       if (this._isDeclarative && dt < 0) return false
 
       // Increment the time and read out the parameters
-      var duration = this._duration
-      this._time += dt || 16 // FIXME: step(0) is valid but will get changed to 16 here
+      var duration = this._duration || Infinity
+      this._time += isFinite(dt) ? dt : 16
       var time = this._time
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
       var position = time / duration
-      var finished = !this._isDeclarative && time >= duration // TODO: clean this up. finished returns true even for declarative if we do not check for it explicitly
+      var finished = time >= duration
 
       // If we are on the rising edge, initialise everything, otherwise,
       // initialise only what needs to be initialised on the rising edge
       var justStarted = this._last <= 0 && time >= 0
       var justFinished = this._last <= duration && finished
-
       this._initialise(justStarted)
       this._last = time
 
       // If we haven't started yet or we are over the time, just exit
-      if(!this._isDeclarative && !timeInside && !justFinished) return finished // TODO: same as above
+      if(!timeInside && !justFinished) return finished
 
       // Run the runner and store the last time it was run
-      finished = this._run(
-        this._isDeclarative ? dt  // No duration, declarative
-        : finished ? 1          // If completed, provide 1
-        : position              // If running,
-      ) || finished
+      var runnersFinished = this._run(
+        this._isDeclarative ? dt
+        : finished ? 1
+        : position
+      )
+      finished = (this._isDeclarative && runnersFinished)
+        || (!this._isDeclarative && finished)
 
-      // FIXME: for the sake of conformity this method should return this
-      // we can then add a functon isFinished to see if a runner is finished
-      // Work out if we are finished
-      return finished
+      // Set whether this runner is complete or not
+      this.done = finished
+      return this
     },
 
     finish: function () {
-      // FIXME: this is wrong as long as step returns a boolean
       return this.step(Infinity)
     },
 
@@ -270,21 +267,30 @@ SVG.Runner = SVG.invent({
     */
 
     // Save a morpher to the morpher list so that we can retarget it later
-    _saveMorpher: function (method, morpher) {
-      this._morphers[method] = morpher
+    _remember: function (method, morpher) {
+      this._history[method] = {
+        morpher: morpher,
+        caller: this._queue[this._queue.length - 1],
+      }
     },
 
     // Try to set the target for a morpher if the morpher exists, otherwise
     // do nothing and return false
     _tryRetarget: function (method, target) {
-      return this._morphers[method] && this._morphers[method].to(target)
+      if(this._history[method]) {
+        this._history[method].morpher.to(target)
+        this._history[method].caller.finished = false
+        this.timeline()._continue()
+        return true
+      }
+      return false
     },
 
     // Run each initialise function in the runner if required
     _initialise: function (all) {
-      for (var i = 0, len = this._functions.length; i < len ; ++i) {
+      for (var i = 0, len = this._queue.length; i < len ; ++i) {
         // Get the current initialiser
-        var current = this._functions[i]
+        var current = this._queue[i]
 
         // Determine whether we need to initialise
         var always = current.alwaysInitialise
@@ -298,22 +304,17 @@ SVG.Runner = SVG.invent({
     // Run each run function for the position given
     _run: function (position) {
 
-      // TODO: review this one
-      // Make sure to keep runner running when no functions where added yet
-      if(!this._functions.length) return false
-
-      // Run all of the _functions directly
-      var allfinished = false
-      for (var i = 0, len = this._functions.length; i < len ; ++i) {
+      // Run all of the _queue directly
+      var allfinished = true
+      for (var i = 0, len = this._queue.length; i < len ; ++i) {
 
         // Get the current function to run
-        var current = this._functions[i]
+        var current = this._queue[i]
 
         // Run the function if its not finished, we keep track of the finished
-        // flag for the sake of declarative _functions
+        // flag for the sake of declarative _queue
         current.finished = current.finished
           || (current.runner.call(this._element, position) === true)
-
         allfinished = allfinished && current.finished
       }
 
@@ -350,20 +351,20 @@ SVG.extend(SVG.Runner, {
       morpher = morpher.from(this[type](name))
     }, function () {
       this[type](name, morpher.at(pos))
-      return morpher.isComplete()
+      return morpher.done()
     }, this._isDeclarative)
 
     return this
   },
 
   zoom: function (level, point) {
-   var  morpher = new Morphable(this._stepper).to(new SVG.Number(level))
+   var morpher = new Morphable(this._stepper).to(new SVG.Number(level))
 
    this.queue(function() {
      morpher = morpher.from(this.zoom())
    }, function (pos) {
      this.zoom(morpher.at(pos), point)
-     return morpher.isComplete()
+     return morpher.done()
    }, this._isDeclarative)
 
    return this
@@ -414,7 +415,7 @@ SVG.extend(SVG.Runner, {
 
       return this.queue(function() {}, function (pos) {
         this.pushRightTransform(new Matrix(morpher.at(pos)))
-        return morpher.isComplete()
+        return morpher.done()
       }, this._isDeclarative)
     }
 
@@ -456,7 +457,7 @@ SVG.extend(SVG.Runner, {
         this.pushRightTransform(matrix)
       }
 
-      return morpher.isComplete()
+      return morpher.done()
     }, this._isDeclarative)
 
     return this
@@ -494,11 +495,11 @@ SVG.extend(SVG.Runner, {
         morpher.to(from + x)
       }, function (pos) {
         this[method](morpher.at(pos))
-        return morpher.isComplete()
+        return morpher.done()
       }, this._isDeclarative)
 
       // Register the morpher so that if it is changed again, we can retarget it
-      this._saveMorpher(method, morpher)
+      this._remember(method, morpher)
       return this
   },
 
@@ -513,11 +514,11 @@ SVG.extend(SVG.Runner, {
       morpher.from(this[method]())
     }, function (pos) {
       this[method](morpher.at(pos))
-      return morpher.isComplete()
+      return morpher.done()
     }, this._isDeclarative)
 
     // Register the morpher so that if it is changed again, we can retarget it
-    this._saveMorpher(method, morpher)
+    this._remember(method, morpher)
     return this
   },
 
@@ -532,7 +533,7 @@ SVG.extend(SVG.Runner, {
 
   // Animatable center y-axis
   cy: function (y) {
-    return this._queueNumber('cy', x)
+    return this._queueNumber('cy', y)
   },
 
   // Add animatable move

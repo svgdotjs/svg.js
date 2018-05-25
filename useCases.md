@@ -249,3 +249,50 @@ let timeline = new SVG.Timeline()
     .schedule(rightAnimation, 500, 'now')
 
 ```
+
+
+# Modifying Controller Parameters
+
+Some user might want to change the speed of a controller, or how the controller
+works in the middle of an animation. For example, they might do:
+
+```js
+
+var pid = PID(30, 20, 40)
+let animation = el.animate(pid).move(.., ..)
+
+
+// Some time later, the user slides a slider, and they can do:
+slider1.onSlide( v => pid.p(v) )
+
+```
+
+
+# Bidirectional Scheduling **(TODO)**
+
+We would like to schedule a runner to a timeline, or to do the opposite
+
+```js
+
+// If we have a runner and a timeline
+let timeline = new Timeline()...
+let runner = new Runner()...
+
+// Since the user can schedule a runner onto a timeline
+timeline.schedule(runner, ...rest)
+
+// It should be possible to do the opposite
+runner.schedule(timeline, ...rest)
+
+// It could be Implemented like this
+runner.schedule = (t, duration, delay, now) {
+  this._timeline.remove(this) // Should work even if its not scheduled
+  t.schedule(this, duration, delay, now)
+  return this
+}
+
+// The benefit would be that they could call animate afterwards: eg:
+runner.schedule(timeline, ...rest)
+    .animate()...
+
+```

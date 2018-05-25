@@ -37,14 +37,6 @@ SVG.Morphable = SVG.invent({
 
       // setter
       this._type = type
-
-      // non standard morphing
-      /*if(type instanceof SVG.Morphable.NonMorphable) {
-        this._stepper = function (from, to, pos) {
-          return pos < 1 ? from : to
-        }
-      }*/
-
       return this
     },
 
@@ -98,10 +90,13 @@ SVG.Morphable = SVG.invent({
       this._stepper = stepper
     },
 
-    // FIXME: we can call this._stepper.isComplete directly
-    // no need for this wrapper here
-    isComplete: function () {
-      return this._stepper && this._stepper.isComplete(null, this._context)
+    done: function () {
+      var complete = this._context
+        .map(this._stepper.done)
+        .reduce(function (last, curr) {
+          return last && curr
+        }, true)
+      return complete
     },
 
     at: function (pos) {
@@ -114,7 +109,7 @@ SVG.Morphable = SVG.invent({
       return this._type.prototype.fromArray(
         this.modifier(
           this._from.map(function (i, index) {
-            return _this._stepper.step(i, _this._to[index], pos, _this._context[index])
+            return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
           })
         )
       )

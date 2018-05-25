@@ -9,22 +9,16 @@ Base Class
 The base stepper class that will be
 ***/
 
+function makeSetterGetter (k) {
+  return function (v) {
+    if (v == null) return this[v]
+    this[k] = v
+    return this
+  }
+}
+
 SVG.Stepper = SVG.invent ({
-
-  create: function (fn) {
-
-  },
-
-  extend: {
-
-    step: function (current, target, dt, c) {
-
-    },
-
-    isComplete: function (dt, c) {
-
-    },
-  },
+  create: function () {},
 })
 
 /***
@@ -51,7 +45,7 @@ SVG.Ease = SVG.invent ({
       return from + (to - from) * this.ease(pos)
     },
 
-    isComplete: function (dt, c) {
+    done: function (dt, c) {
       return false
     },
   },
@@ -90,13 +84,8 @@ SVG.Controller =  SVG.invent ({
       return this.stepper(current, target, dt, c)
     },
 
-    isComplete: function (dt, c) {
-      return false
-      var result = false
-      for(var i = c.length; i--;) {
-        result = result || (Math.abs(c[i].error) < 0.01)
-      }
-      return result
+    done: function (c) {
+      return c.done
     },
   },
 })
@@ -136,6 +125,53 @@ SVG.Spring = function spring(duration, overshoot) {
   })
 }
 
+SVG.PID = SVG.invent ({
+  inherit: SVG.Controller,
+
+  create: function (p, i, d, windup) {
+    if(!(this instanceof SVG.PID))
+      return new SVG.PID(p, i, d, windup)
+    SVG.Controller.call(this)
+
+    p = p == null ? 0.1 : p
+    i = i == null ? 0.01 : i
+    d = d == null ? 0 : d
+    windup = windup == null ? 1000 : windup
+    this.p(p).i(i).d(d).windup(windup)
+  },
+
+  extend: {
+    step: function (current, target, dt, c) {
+
+      c.done = dt == Infinity
+
+      if(dt == Infinity) return target
+      if(dt == 0) return current
+
+      var p = target - current
+      var i = (c.integral || 0) + p * dt
+      var d = (p - (c.error || 0)) / dt
+      var windup = this.windup
+
+      // antiwindup
+      if(windup !== false)
+        i = Math.max(-windup, Math.min(i, windup))
+
+      c.error = p
+      c.integral = i
+
+      c.done = Math.abs(p) < 0.001
+
+      return current + (this.P * p + this.I * i + this.D * d)
+    },
+
+    windup: makeSetterGetter('windup'),
+    p: makeSetterGetter('P'),
+    i: makeSetterGetter('I'),
+    d: makeSetterGetter('D'),
+  }
+})
+/*
 SVG.PID = function (P, I, D, antiwindup) {
   P = P == null ? 0.1 : P
   I = I == null ? 0.01 : I
@@ -147,6 +183,7 @@ SVG.PID = function (P, I, D, antiwindup) {
     function (current, target, dt, c) {
 
       if(dt == Infinity) return target
+      if(dt == 0) return current
 
       var p = target - current
       var i = (c.integral || 0) + p * dt
@@ -160,4 +197,4 @@ SVG.PID = function (P, I, D, antiwindup) {
 
       return current + (P * p + I * i + D * d)
   })
-}
+}*/

@@ -248,13 +248,13 @@ SVG.Timeline = SVG.invent({
       var runnersLeft = false
       for (var i = 0; i < this._runners.length ; i++) {
 
-        // Get and run the current runner and figure out if its done running
+        // Get and run the current runner and ignore it if its inactive
         var runner = this._runners[i]
-
-        var finished = runner.step(dt)
+        if(!runner.active()) continue
 
         // If this runner is still going, signal that we need another animation
         // frame, otherwise, remove the completed runner
+        var finished = runner.step(dt).done
         if (!finished) {
           runnersLeft = true
         }
@@ -287,7 +287,6 @@ SVG.Timeline = SVG.invent({
       return this
     },
   },
-
 
   // These methods will be added to all SVG.Element objects
   parent: SVG.Element,

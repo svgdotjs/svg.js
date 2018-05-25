@@ -1,51 +1,43 @@
+function reactToDrag(element, onDrag, beforeDrag) {
 
-function reactToDrag (element, onDrag, beforeDrag) {
+  let xStart, yStart
+  let startDrag = event => {
 
-    let xStart, yStart
+    // Avoid the default events
+    event.preventDefault()
 
-    let startDrag = event=> {
+    // Store the position where the drag started
+    xStart = event.pageX
+    yStart = event.pageY
 
-        // Avoid the default events
-        event.preventDefault()
-
-        // Store the position where the drag started
-        xStart = event.pageX
-        yStart = event.pageY
-
-        // Fire the start drag event
-        if (beforeDrag) {
-          var {x, y} = parent.point(event.pageX, event.pageY)
-          beforeDrag(event, x, y)
-        }
-
-        // Register events to react to dragging
-        SVG.on(window, 'mousemove.drag', reactDrag)
-        SVG.on(window, 'touchmove.drag', reactDrag)
-
-        // Register the events required to finish dragging
-        SVG.on(window, 'mouseup.drag', stopDrag)
-        SVG.on(window, 'touchend.drag', stopDrag)
+    // Fire the start drag event
+    if (beforeDrag) {
+      var { x, y } = parent.point(event.pageX, event.pageY)
+      beforeDrag(event, x, y)
     }
 
-    let reactDrag = event=> {
+    // Register events to react to dragging and drag ends
+    SVG.on(window, ['mousemove.drag', 'touchmove.drag'], reactDrag)
+    SVG.on(window, ['mouseup.drag', 'touchend.drag'], stopDrag)
+  }
 
-        // Convert screen coordinates to svg coordinates and use them
-        var {x, y} = parent.point(event.pageX, event.pageY)
-        if (onDrag)
-          onDrag(event, x, y)
-    }
+  let reactDrag = event => {
 
-    let stopDrag = event=> {
-        SVG.off(window, 'mousemove.drag')
-        SVG.off(window, 'touchmove.drag')
-        SVG.off(window, 'mouseup.drag')
-        SVG.off(window, 'touchend.drag')
-    }
+    // Convert screen coordinates to svg coordinates and use them
+    var { x, y } = parent.point(event.pageX, event.pageY)
+    if (onDrag)
+      onDrag(event, x, y)
+  }
 
-    // Bind the drag tracker to this element directly
-    let parent = element.doc()
-    let point = new SVG.Point()
-    element.mousedown(startDrag).touchstart(startDrag)
+  let stopDrag = event => {
+    SVG.off(window, ['mousemove.drag', 'touchmove.drag'])
+    SVG.off(window, ['mouseup.drag', 'touchend.drag'])
+  }
+
+  // Bind the drag tracker to this element directly
+  let parent = element.doc()
+  let point = new SVG.Point()
+  element.mousedown(startDrag).touchstart(startDrag)
 }
 
 SVG.extend(SVG.Element, {
@@ -53,7 +45,7 @@ SVG.extend(SVG.Element, {
 
     let sx, sy
 
-    reactToDrag(this, (e, x, y)=> {
+    reactToDrag(this, (e, x, y) => {
 
       this.transform({
         origin: [sx, sy],
@@ -64,15 +56,13 @@ SVG.extend(SVG.Element, {
         after(this, x, y)
       }
 
-    }, (e, x, y)=> {
+    }, (e, x, y) => {
 
       var toAbsolute = new SVG.Matrix(this).inverse()
       var p = new SVG.Point(x, y).transform(toAbsolute)
       sx = p.x
       sy = p.y
-
     })
-
     return this
   },
 })

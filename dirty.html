@@ -75,37 +75,38 @@ function getColor(t) {
 //   }
 // }
 
-var randPoint = (x = 50, y = 50) => [
-  Math.random() * 100 - 50 + x,
-  Math.random() * 100 - 50 + y
-]
+// var randPoint = (x = 50, y = 50) => [
+//   Math.random() * 100 - 50 + x,
+//   Math.random() * 100 - 50 + y
+// ]
+//
+// var poly = SVG('<polygon>').plot([
+//   randPoint(),
+//   randPoint(),
+//   randPoint(),
+//   randPoint(),
+//   randPoint()
+// ]).attr({fill: 'none', stroke: 'black'}).addTo('svg')
+// var polyAni = poly.animate(new SVG.PID(null, 0))
+//
+// SVG.on(document, 'click', function (e) {
+//   polyAni.plot([
+//     randPoint(e.pageX-50, e.pageY-50),
+//     randPoint(e.pageX+50, e.pageY-50),
+//     randPoint(e.pageX+50, e.pageY),
+//     randPoint(e.pageX+50, e.pageY+50),
+//     randPoint(e.pageX-50, e.pageY+50)
+//   ])
+// })
 
-var poly = SVG('<polygon>').plot([
-  randPoint(),
-  randPoint(),
-  randPoint(),
-  randPoint(),
-  randPoint()
-]).attr({fill: 'none', stroke: 'black'}).addTo('svg')
-var polyAni = poly.animate(SVG.PID(null, 0))
-
-SVG.on(document, 'click', function (e) {
-  polyAni.plot([
-    randPoint(e.pageX-50, e.pageY-50),
-    randPoint(e.pageX+50, e.pageY-50),
-    randPoint(e.pageX+50, e.pageY),
-    randPoint(e.pageX+50, e.pageY+50),
-    randPoint(e.pageX-50, e.pageY+50)
-  ])
-})
-/*
-var mover = SVG('rect').clone().show()
-var anim = mover.animate(SVG.PID()).move(500, 500)
+var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
+var anim = mover.animate(SVG.PID(null, null, null, false)).move(500, 500)
 
 SVG.on(document, 'mousemove', function (e) {
   //mover.animate(SVG.PID()).move(e.pageX, e.pageY)
-  anim.move(e.pageX, e.pageY)
-})*/
+  var p = mover.point(e.pageX, e.pageY)
+  anim.center(p.x, p.y)
+})
 
 </script>
 
