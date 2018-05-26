@@ -807,6 +807,12 @@ describe('Element', function() {
       expect(use.reference('href')).toBe(rect)
       expect(path.reference('marker-end')).toBe(mark)
     })
+
+    it('returns null if reference not found', function() {
+      var rect = draw.rect(100, 100)
+
+      expect(rect.reference('href')).toBe(null)
+    })
   })
 
   describe('svg()', function() {
