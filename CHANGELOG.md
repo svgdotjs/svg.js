@@ -28,6 +28,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+
+## [2.6.5]
+
+### Fixed
+- fixed problems with CustomEvent polyfill in IE11 (#852)
+
 ## [2.6.4] - 2018-02-07
 
 ### Fixed
@@ -37,6 +43,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed error in parent method when hitting document node (#720)
+
 
 ## [2.6.2] - 2017-06-05
 
