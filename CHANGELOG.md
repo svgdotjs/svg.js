@@ -33,6 +33,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed `element.parent()` which sometimes failed when used on detached documents (#759)
+- fixed `SVG.Text.y()` which didnt work correctly with `SVG.Number` (#778)
 - fixed `SVG.Doc.clone()` which throwed an error (#782)
 - fixed `SVG.Mask.clone()` which throwed an error (#782)
 - fixed `SVG.PointArray` having a reference to outside array in some cases (#803)

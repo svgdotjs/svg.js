@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat May 26 2018 20:55:36 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat May 26 2018 21:16:53 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -4593,7 +4593,7 @@ SVG.Text = SVG.invent({
       if (y == null)
         return typeof oy === 'number' ? oy - o : oy
 
-      return this.attr('y', typeof y === 'number' ? y + o : y)
+      return this.attr('y', typeof y.valueOf() === 'number' ? y + o : y)
     }
     // Move center over x-axis
   , cx: function(x) {

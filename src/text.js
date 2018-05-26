@@ -33,7 +33,7 @@ SVG.Text = SVG.invent({
       if (y == null)
         return typeof oy === 'number' ? oy - o : oy
 
-      return this.attr('y', typeof y === 'number' ? y + o : y)
+      return this.attr('y', typeof y.valueOf() === 'number' ? y + o : y)
     }
     // Move center over x-axis
   , cx: function(x) {
