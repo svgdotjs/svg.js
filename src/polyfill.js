@@ -1,16 +1,18 @@
 // Add CustomEvent to IE9 and IE10 
 if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  var CustomEvent = function(event, options) {
+  var CustomEventPoly = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }
     var e = document.createEvent('CustomEvent')
     e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
     return e
   }
 
-  CustomEvent.prototype = window.Event.prototype
+  CustomEventPoly.prototype = window.Event.prototype
 
-  window.CustomEvent = CustomEvent
+  SVG.CustomEvent = CustomEventPoly
+} else {
+  SVG.CustomEvent = window.CustomEvent
 }
 
 // requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish

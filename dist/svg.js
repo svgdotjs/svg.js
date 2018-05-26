@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Apr 21 2018 16:30:04 GMT-0400 (EDT)
+* BUILT: Sat May 26 2018 11:25:22 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3525,7 +3525,7 @@ SVG.extend(SVG.Element, {
     if(event instanceof window.Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(event = new window.CustomEvent(event, {detail:data, cancelable: true}))
+        this.node.dispatchEvent(event = new SVG.CustomEvent(event, {detail:data, cancelable: true}))
     }
 
     this._event = event
@@ -5527,16 +5527,18 @@ var abcdef = 'abcdef'.split('')
 // Add CustomEvent to IE9 and IE10
 if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  var CustomEvent = function(event, options) {
+  var CustomEventPoly = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }
     var e = document.createEvent('CustomEvent')
     e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
     return e
   }
 
-  CustomEvent.prototype = window.Event.prototype
+  CustomEventPoly.prototype = window.Event.prototype
 
-  window.CustomEvent = CustomEvent
+  SVG.CustomEvent = CustomEventPoly
+} else {
+  SVG.CustomEvent = window.CustomEvent
 }
 
 // requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
@@ -5569,4 +5571,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));
