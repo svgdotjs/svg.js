@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat May 26 2018 12:31:51 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sat May 26 2018 12:53:51 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1201,7 +1201,7 @@ SVG.Element = SVG.invent({
       // loop trough ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-        if(parent.node.parentNode.nodeName == '#document') return null // #720
+        if(!parent.node.parentNode || parent.node.parentNode.nodeName == '#document') return null // #759, #720
         parent = SVG.adopt(parent.node.parentNode)
       }
     }

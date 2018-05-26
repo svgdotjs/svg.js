@@ -625,6 +625,16 @@ describe('Element', function() {
         , rect = group2.rect(100,100)
       expect(rect.parent('.test')).toBe(group1)
     })
+    it('returns null if element is detached', function() {
+      expect(new SVG.Rect().parent()).toBe(null)
+    })
+    it('returns null if elements parents are detached', function() {
+      expect(new SVG.Rect().addTo(new SVG.G()).parent('svg')).toBe(null)
+    })
+    it('works on detachd documents', function() {
+      var g = new SVG.G()
+      expect(new SVG.Rect().addTo(g).parent()).toBe(g)
+    })
   })
 
   describe('parents()', function() {

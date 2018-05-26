@@ -178,7 +178,7 @@ SVG.Element = SVG.invent({
       // loop trough ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-        if(parent.node.parentNode.nodeName == '#document') return null // #720
+        if(!parent.node.parentNode || parent.node.parentNode.nodeName == '#document') return null // #759, #720
         parent = SVG.adopt(parent.node.parentNode)
       }
     }
