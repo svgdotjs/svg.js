@@ -32,6 +32,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## [2.6.5]
 
 ### Fixed
+- fixed `animate().attr()` method which doenst work for d attribute of paths (#847)
 - fixed problems with CustomEvent polyfill in IE11 (#852)
 
 ## [2.6.4] - 2018-02-07
