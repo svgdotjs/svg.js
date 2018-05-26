@@ -29,7 +29,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
-## [2.6.5]
+## [2.6.5] - 2018-05-26
 
 ### Fixed
 - fixed `element.parent()` which sometimes failed when used on detached documents (#759)
@@ -634,6 +634,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.5
 [2.6.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.4
 [2.6.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.3
 [2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
