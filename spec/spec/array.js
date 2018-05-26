@@ -136,6 +136,22 @@ describe('PointArray', function () {
 
     expect(array.value).toEqual([[1,4], [5,68], [12,24]])
   })
+  it('parses an array of arrays correctly', function () {
+    var array = new SVG.PointArray([[1,4], [5,68], [12,24]])
+
+    expect(array.value).toEqual([[1,4], [5,68], [12,24]])
+  })
+  it('copies array if necessary', function () {
+    var arr = [[1,4], [5,68], [12,24]]
+    var array = new SVG.PointArray(arr)
+
+    expect(array.valueOf()).not.toBe(arr)
+  })
+  it('parses an array of point objects correctly', function () {
+    var array = new SVG.PointArray([{x:1,y:4}, {x:5,y:68}, {x:12,y:24}])
+
+    expect(array.value).toEqual([[1,4], [5,68], [12,24]])
+  })
   it('parses points with space delimitered x/y coordinates', function() {
     var array = new SVG.PointArray('221.08 191.79 0.46 191.79 0.46 63.92 63.8 0.46 284.46 0.46 284.46 128.37 221.08 191.79')
 

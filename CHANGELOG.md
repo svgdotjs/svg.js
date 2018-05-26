@@ -35,6 +35,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed `reference()` which failed when trying to use a reference which does not exist in the attribuets (#840)
 - fixed `animate().attr()` method which doenst work for d attribute of paths (#847)
 - fixed problems with CustomEvent polyfill in IE11 (#852)
+- fixed SVG.PointArray having a reference to outside array in some cases (#803)
+
+### Added
+- added possibility to pass an array of point objects to SVG.PointArray (#803)
 
 ## [2.6.4] - 2018-02-07
 

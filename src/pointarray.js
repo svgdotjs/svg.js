@@ -49,7 +49,11 @@ SVG.extend(SVG.PointArray, {
     if (Array.isArray(array)) {
       // and it is not flat, there is no need to parse it
       if(Array.isArray(array[0])) {
-        return array
+        // make sure to use a clone
+        return array.map(function (el) { return el.slice() })
+      } else if (array[0].x != null){
+        // allow point objects to be passed
+        return array.map(function (el) { return [el.x, el.y] })
       }
     } else { // Else, it is considered as a string
       // parse points
