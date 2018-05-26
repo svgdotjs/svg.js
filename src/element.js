@@ -62,7 +62,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 

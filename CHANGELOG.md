@@ -33,6 +33,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed `element.parent()` which sometimes failed when used on detached documents (#759)
+- fixed `SVG.Doc.clone()` which throwed an error (#782)
+- fixed `SVG.Mask.clone()` which throwed an error (#782)
 - fixed `SVG.PointArray` having a reference to outside array in some cases (#803)
 - fixed `reference()` which failed when trying to use a reference which does not exist in the attribuets (#840)
 - fixed `animate().attr()` method which doenst work for `d` attribute of paths (#847)
