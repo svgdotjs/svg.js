@@ -8,7 +8,6 @@ SVG.Queue = SVG.invent({
 
   extend: {
     push: function (value) {
-
       // An item stores an id and the provided value
       var item = { id: this.id++, value: value }
 
@@ -23,8 +22,8 @@ SVG.Queue = SVG.invent({
     },
 
     shift: function () {
-      if (this.length == 0) {
-        return
+      if (!this.length) {
+        return null
       }
 
       var remove = this._first
@@ -48,8 +47,8 @@ SVG.Queue = SVG.invent({
       // Find the first match
       var previous = null
       var current = this._first
-      while (current) {
 
+      while (current) {
         // If we have a match, we are done
         if (matcher(current)) break
 
@@ -59,12 +58,14 @@ SVG.Queue = SVG.invent({
       }
 
       // If we got the first item, adjust the first pointer
-      if (current && current === this._first)
+      if (current && current === this._first) {
         this._first = this._first.next
+      }
 
       // If we got the last item, adjust the last pointer
-      if (current && current === this._last)
+      if (current && current === this._last) {
         this._last = previous
+      }
 
       // If we got an item, fix the list and return the item
       if (current) {

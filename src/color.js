@@ -67,7 +67,7 @@ SVG.Color = function (color, g, b) {
     this.r = color.r
     this.g = color.g
     this.b = color.b
-  } else if(arguments.length == 3) {
+  } else if (arguments.length === 3) {
     this.r = color
     this.g = g
     this.b = b

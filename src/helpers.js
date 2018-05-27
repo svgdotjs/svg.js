@@ -206,7 +206,6 @@ function closeEnough (a, b, threshold) {
 
 // TODO: Refactor this to a static function of matrix.js
 function formatTransforms (o) {
-
   // Get all of the parameters required to form the matrix
   var flipBoth = o.flip === 'both' || o.flip === true
   var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
@@ -257,6 +256,6 @@ function formatTransforms (o) {
     ox: ox,
     oy: oy,
     px: px,
-    py: py,
+    py: py
   }
 }

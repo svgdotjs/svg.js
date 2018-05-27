@@ -1,27 +1,17 @@
 /* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
-function translate () {
-
-}
-
-function functionName() {
-
-}
-
-
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
-    var i
 
     // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)
       : (typeof source === 'object' && (
-          source.a != null || source.b != null || source.c != null
-          || source.d != null || source.e != null || source.f != null
+          source.a != null || source.b != null || source.c != null ||
+          source.d != null || source.e != null || source.f != null
         )) ? source
       : (typeof source === 'object') ? new SVG.Matrix().transform(source)
       : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
@@ -46,7 +36,6 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
-
       // Check if o is a matrix and then left multiply it directly
       if (o.a != null) {
         var matrix = new SVG.Matrix(o)
@@ -71,7 +60,6 @@ SVG.Matrix = SVG.invent({
 
       // If we want the origin at a particular place, we force it there
       if (isFinite(t.px) || isFinite(t.py)) {
-
         // Figure out where the origin went and the delta to get there
         var current = new SVG.Point(t.ox - t.rx, t.oy - t.ry).transform(transformer)
         var dx = t.px ? t.px - current.x : 0
@@ -201,7 +189,6 @@ SVG.Matrix = SVG.invent({
 
     // Inverses matrix
     inverse: function () {
-
       // Get the current parameters out of the matrix
       var a = this.a
       var b = this.b
@@ -212,7 +199,7 @@ SVG.Matrix = SVG.invent({
 
       // Invert the 2x2 matrix in the top left
       var det = a * d - b * c
-      if (!det) throw new Error("Cannot invert " + this)
+      if (!det) throw new Error('Cannot invert ' + this)
 
       // Calculate the top 2x2 matrix
       var na = d / det
@@ -221,8 +208,8 @@ SVG.Matrix = SVG.invent({
       var nd = a / det
 
       // Apply the inverted matrix to the top right
-      var ne = - ( na * e + nc * f )
-      var nf = - ( nb * e + nd * f )
+      var ne = -(na * e + nc * f)
+      var nf = -(nb * e + nd * f)
 
       // Construct the inverted matrix
       return new SVG.Matrix(na, nb, nc, nd, ne, nf)

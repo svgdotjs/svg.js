@@ -54,14 +54,12 @@ SVG.Animator = {
   },
 
   _draw: function (now) {
-
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-    var tracking = true
+    // var tracking = true // FIXME: Not used
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
     while ((nextTimeout = SVG.Animator.timeouts.shift())) {
-
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
         nextTimeout.run()
@@ -74,7 +72,7 @@ SVG.Animator = {
     }
 
     // Run all of the frames available up until this point
-    var lastFrame = SVG.Animator.frames.last()
+    // var lastFrame = SVG.Animator.frames.last() // FIXME: Not used
     var lastFrameId = SVG.Animator.frameCount
     while (SVG.Animator.frames.first() && SVG.Animator.frames.first().id < lastFrameId) {
       var nextFrame = SVG.Animator.frames.shift()
