@@ -159,9 +159,15 @@ SVG.Element = SVG.invent({
   , toggleClass: function(name) {
       return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
     }
-    // Get referenced element form attribute value
+    // Get referenced element from attribute value
   , reference: function(attr) {
-      return SVG.get(this.attr(attr))
+      try{
+        return SVG.get(this.attr(attr))
+      }
+      catch(e){
+        return null // TODO: Need to decide if return null or undefined 
+      }
+      
     }
     // Returns the parent element instance
   , parent: function(type) {
