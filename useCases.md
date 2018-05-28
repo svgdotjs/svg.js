@@ -15,10 +15,10 @@ var animation = element
     .tag('second')
     .scale(3)
 
-animation.finish('first')
-animation.pause('first')
-animation.stop('first')
-animation.play('first')
+element.timeline.finish()
+element.timeline.pause()
+element.timeline.stop()
+element.timeline.play()
 
 ```
 
@@ -30,11 +30,16 @@ The user can specify their time which is relative to the timelines time.
 
 ```js
 
-var animation = element
-  .animate(2000).move(200, 200)
+var animation = element.animate(2000).move(200, 200)
 
 // after 1000 ms
-animation.animate(1000, 0, 500).scale(2)
+animation.animate(1000, 500, 'absolute').scale(2)
+
+
+var runner = elemenet.move(0, 0).animate(1000)
+
+// after 500ms
+runner.move(200, 200)
 
 ```
 
@@ -51,17 +56,11 @@ control over each animation that they define.
 
 ```js
 
-let animationA = element.loop(300, ">").rotate(360).runner()
-let animationB = element
-    .loop(200, "><")
-    .scale(2)
-    .runner(tag)
+let animationA = element.loop(300, ">").rotate(360)
+let animationB = element.loop(200, "><").scale(2)
 
-// After some time, they might want to end the first animation abruptly
-animationB.enable(false).end()
-
-// Maybe they want to pause a runner
-animationB.enable(false)
+// Maybe they want to disable a runner - which acts like pausing
+animationB.active(false)
 
 // Maybe they want to remove an animation matching a tag
 animationB.tag('B')
@@ -69,12 +68,35 @@ element.timeline().remove('B')
 
 // They can move around a runner as well
 element.timeline()
-    .schedule('B', 300) // Moves a runner to start at 300
+    .schedule('B', 300, 'absolute') // Moves a runner to start at 300
         // time(currentAbsolute - newAbsolute)
     .shift('B', 300)    // Shifts the runner start time by 300
+    // which is sugar to
+    .schedule('B', 300, 'relative')
         // seek(shiftTime)
 
 ```
+
+Lets demonstrate the difference between the schedule and shift
+
+```
+Given this:
+
+    --------
+        --------------
+                    ----------------
+
+Schedule:
+                --------
+                --------------
+                ----------------
+
+Shift:
+            --------
+                --------------
+                            ----------------
+```
+
 
 
 # A Sequenced Animation
@@ -296,3 +318,14 @@ runner.schedule(timeline, ...rest)
     .animate()...
 
 ```
+
+# Binding Events
+
+The user might want to react to some events that the runner might emit. We will
+emit the following events from the runner:
+- start - when a runner first initialises
+- finish - when a runner finishes
+- during - on every step
+- done - when a function completes
+
+Maybe they also want to react to timeline events as well

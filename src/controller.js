@@ -91,18 +91,18 @@ SVG.Controller =  SVG.invent ({
   },
 })
 
-
 function recalculate () {
 
   // Apply the default parameters
-  this._duration = this._duration || 500
-  this._overshoot = this._overshoot || 0
+  var duration = (this._duration || 500) / 1000
+  var overshoot = this._overshoot || 0
 
   // Calculate the PID natural response
   var eps = 1e-10
-  var os = this._overshoot / 100 + eps
-  var zeta = -Math.log(os) / Math.sqrt(Math.PI ** 2 + Math.log(os) ** 2)
-  var wn = 4 / (zeta * this._duration / 1000)
+  var pi = Math.PI
+  var os = Math.log(overshoot / 100 + eps)
+  var zeta = - os / Math.sqrt(pi * pi + os * os)
+  var wn = 3.9 / ( zeta * duration )
 
   // Calculate the Spring values
   this.d = 2 * zeta * wn
@@ -125,18 +125,21 @@ SVG.Spring = SVG.invent ({
       if(dt == 0) return current
       dt /= 1000
 
-      // Get the parameters
-      var error = target - current
-      var lastError = c.error || 0
-      var velocity = (error - lastError) / dt
+      // Get the previous velocity
+      var velocity = c.velocity || 0
 
       // Apply the control to get the new position and store it
-      var control = this.d * velocity + this.k * error
-      var newPosition = current + 2 * control * dt * dt / 2
+      var acceleration = - this.d * velocity - this.k * (current - target)
+      var newPosition = current
+        + velocity * dt
+        + acceleration * dt * dt / 2
 
-      c.error = error
-      c.done = false //Math.abs(error) < 0.001
-      return newPosition
+      // Store the velocity
+      c.velocity = velocity + acceleration * dt
+
+      // Figure out if we have converged, and if so, pass the value
+      c.done = Math.abs(target - newPosition) + Math.abs(velocity) < 0.002
+      return c.done ? target : newPosition
     },
 
     duration: makeSetterGetter('_duration', recalculate),
@@ -181,7 +184,7 @@ SVG.PID = SVG.invent ({
 
       c.done = Math.abs(p) < 0.001
 
-      return current + (this.P * p + this.I * i + this.D * d)
+      return c.done ? target : current + (this.P * p + this.I * i + this.D * d)
     },
 
     windup: makeSetterGetter('windup'),

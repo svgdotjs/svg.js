@@ -23,9 +23,10 @@ SVG.Runner = SVG.invent({
       : options
 
     // Declare all of the variables
+    this._dispacher = document.createElement('div')
     this._element = null
-    this._queue = []
     this.done = false
+    this._queue = []
 
     // Work out the stepper and the duration
     this._duration = typeof options === 'number' && options
@@ -146,16 +147,30 @@ SVG.Runner = SVG.invent({
         alwaysInitialise: alwaysInitialise || false,
         initialiser: initFn || SVG.void,
         runner: runFn || SVG.void,
+        initialised: false,
         finished: false,
       })
       this.timeline()._continue()
-      this._element.timeline()._continue()
       return this
     },
 
     during: function (runFn) {
       return this.queue(null, runFn, false)
     },
+
+    on (eventName, fn) {
+      SVG.on(this._dispacher, eventName, fn, this)
+      return this
+    },
+
+    // Queue a function to run after this runner
+    after (time, fn) {
+      return this.on('finish', fn)
+    },
+
+    fire: function (name) {
+
+    }
 
     /*
     Runner animation methods
@@ -189,9 +204,9 @@ SVG.Runner = SVG.invent({
 
       // If we are on the rising edge, initialise everything, otherwise,
       // initialise only what needs to be initialised on the rising edge
-      var justStarted = this._last <= 0 && time >= 0
+      // var justStarted = this._last <= 0 && time >= 0
       var justFinished = this._last <= duration && finished
-      this._initialise(justStarted)
+      this._initialise()
       this._last = time
 
       // If we haven't started yet or we are over the time, just exit
@@ -208,6 +223,14 @@ SVG.Runner = SVG.invent({
 
       // Set whether this runner is complete or not
       this.done = finished
+      if (this.done) {
+        this._afterEvents.forEach(function (event) { event(this) })
+
+        if (this._element) this._element.fire(`runner.${id}.finish`, {runner: this})
+
+        el.animate().after()
+        el.on()
+      }
       return this
     },
 
@@ -287,16 +310,18 @@ SVG.Runner = SVG.invent({
     },
 
     // Run each initialise function in the runner if required
-    _initialise: function (all) {
+    _initialise: function () {
       for (var i = 0, len = this._queue.length; i < len ; ++i) {
         // Get the current initialiser
         var current = this._queue[i]
 
         // Determine whether we need to initialise
-        var always = current.alwaysInitialise
+        var needsInit = current.alwaysInitialise || !current.initialised
         var running = !current.finished
-        if ((always || all) && running) {
+
+        if (needsInit && running) {
           current.initialiser.call(this._element)
+          current.initialised = true
         }
       }
     },

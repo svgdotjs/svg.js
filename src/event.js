@@ -127,7 +127,7 @@ SVG.extend(SVG.Element, {
   },
   // Unbind event from listener
   off: function (event, listener) {
-    SVG.off(this.node, event, listener)
+    SVG.off(this, event, listener)
     return this
   },
   dispatch: function (event, data) {
