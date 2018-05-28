@@ -79,6 +79,11 @@ describe('Text', function() {
       var box = text.bbox()
       expect(box.y).toBe(345)
     })
+    it('sets the value of y with SVG.Number as first argument', function() {
+      text.y(new SVG.Number(345))
+      var box = text.bbox()
+      expect(box.y).toBe(345)
+    })
     it('sets the value of y with a percent value', function() {
       text.y('40%')
       expect(text.node.getAttribute('y')).toBe('40%')

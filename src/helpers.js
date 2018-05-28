@@ -163,7 +163,7 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = url.toString().match(SVG.regex.reference)
+  var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
 }

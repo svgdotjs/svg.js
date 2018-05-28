@@ -132,7 +132,7 @@ SVG.extend(SVG.Element, {
     if(event instanceof window.Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(event = new window.CustomEvent(event, {detail:data, cancelable: true}))
+        this.node.dispatchEvent(event = new SVG.CustomEvent(event, {detail:data, cancelable: true}))
     }
 
     this._event = event

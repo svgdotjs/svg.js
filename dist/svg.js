@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.6.4
+* @version 2.6.5
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Feb 25 2018 18:32:36 GMT+1100 (AEDT)
+* BUILT: Sat May 26 2018 22:47:07 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -556,7 +556,11 @@ SVG.extend(SVG.PointArray, {
     if (Array.isArray(array)) {
       // and it is not flat, there is no need to parse it
       if(Array.isArray(array[0])) {
-        return array
+        // make sure to use a clone
+        return array.map(function (el) { return el.slice() })
+      } else if (array[0].x != null){
+        // allow point objects to be passed
+        return array.map(function (el) { return [el.x, el.y] })
       }
     } else { // Else, it is considered as a string
       // parse points
@@ -1081,7 +1085,7 @@ SVG.Element = SVG.invent({
         .height(new SVG.Number(p.height))
     }
     // Clone element
-  , clone: function(parent, withData) {
+  , clone: function(parent) {
       // write dom data to the dom so the clone can pickup the data
       this.writeDataToDom()
 
@@ -1197,7 +1201,7 @@ SVG.Element = SVG.invent({
       // loop trough ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-        if(parent.node.parentNode.nodeName == '#document') return null // #720
+        if(!parent.node.parentNode || parent.node.parentNode.nodeName == '#document') return null // #759, #720
         parent = SVG.adopt(parent.node.parentNode)
       }
     }
@@ -2039,8 +2043,13 @@ SVG.MorphObj = SVG.invent({
   create: function(from, to){
     // prepare color for morphing
     if(SVG.Color.isColor(to)) return new SVG.Color(from).morph(to)
-    // prepare value list for morphing
-    if(SVG.regex.delimiter.test(from)) return new SVG.Array(from).morph(to)
+    // check if we have a list of values
+    if(SVG.regex.delimiter.test(from)) {
+      // prepare path for morphing
+      if(SVG.regex.pathLetters.test(from)) return new SVG.PathArray(from).morph(to)
+      // prepare value list for morphing
+      else return new SVG.Array(from).morph(to)
+    }
     // prepare number for morphing
     if(SVG.regex.numberAndUnit.test(to)) return new SVG.Number(from).morph(to)
 
@@ -3520,7 +3529,7 @@ SVG.extend(SVG.Element, {
     if(event instanceof window.Event){
         this.node.dispatchEvent(event)
     }else{
-        this.node.dispatchEvent(event = new window.CustomEvent(event, {detail:data, cancelable: true}))
+        this.node.dispatchEvent(event = new SVG.CustomEvent(event, {detail:data, cancelable: true}))
     }
 
     this._event = event
@@ -3589,6 +3598,122 @@ SVG.G = SVG.invent({
       return this.put(new SVG.G)
     }
   }
+})
+
+SVG.Doc = SVG.invent({
+  // Initialize node
+  create: function(element) {
+    if (element) {
+      // ensure the presence of a dom element
+      element = typeof element == 'string' ?
+        document.getElementById(element) :
+        element
+
+      // If the target is an svg element, use that element as the main wrapper.
+      // This allows svg.js to work with svg documents as well.
+      if (element.nodeName == 'svg') {
+        this.constructor.call(this, element)
+      } else {
+        this.constructor.call(this, SVG.create('svg'))
+        element.appendChild(this.node)
+        this.size('100%', '100%')
+      }
+
+      // set svg element attributes and ensure defs node
+      this.namespace().defs()
+    }
+  }
+
+  // Inherit from
+, inherit: SVG.Container
+
+  // Add class methods
+, extend: {
+    // Add namespaces
+    namespace: function() {
+      return this
+        .attr({ xmlns: SVG.ns, version: '1.1' })
+        .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
+        .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
+    }
+    // Creates and returns defs element
+  , defs: function() {
+      if (!this._defs) {
+        var defs
+
+        // Find or create a defs element in this instance
+        if (defs = this.node.getElementsByTagName('defs')[0])
+          this._defs = SVG.adopt(defs)
+        else
+          this._defs = new SVG.Defs
+
+        // Make sure the defs node is at the end of the stack
+        this.node.appendChild(this._defs.node)
+      }
+
+      return this._defs
+    }
+    // custom parent method
+  , parent: function() {
+      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document') return null
+      return this.node.parentNode
+    }
+    // Fix for possible sub-pixel offset. See:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
+  , spof: function() {
+      var pos = this.node.getScreenCTM()
+
+      if (pos)
+        this
+          .style('left', (-pos.e % 1) + 'px')
+          .style('top',  (-pos.f % 1) + 'px')
+
+      return this
+    }
+
+      // Removes the doc from the DOM
+  , remove: function() {
+      if(this.parent()) {
+        this.parent().removeChild(this.node)
+      }
+
+      return this
+    }
+  , clear: function() {
+      // remove children
+      while(this.node.hasChildNodes())
+        this.node.removeChild(this.node.lastChild)
+
+      // remove defs reference
+      delete this._defs
+
+      // add back parser
+      if(!SVG.parser.draw.parentNode)
+        this.node.appendChild(SVG.parser.draw)
+
+      return this
+    }
+  , clone: function (parent) {
+      // write dom data to the dom so the clone can pickup the data
+      this.writeDataToDom()
+
+      // get reference to node
+      var node = this.node
+
+      // clone element and assign new id
+      var clone = assignNewId(node.cloneNode(true))
+
+      // insert the clone in the given parent or after myself
+      if(parent) {
+        (parent.node || parent).appendChild(clone.node)
+      } else {
+        node.parentNode.insertBefore(clone.node, node.nextSibling)
+      }
+
+      return clone
+    }
+  }
+
 })
 
 // ### This module adds backward / forward functionality to elements.
@@ -3699,7 +3824,7 @@ SVG.Mask = SVG.invent({
       this.targets = []
 
       // remove mask from parent
-      this.parent().removeElement(this)
+      SVG.Element.prototype.remove.call(this)
 
       return this
     }
@@ -3959,102 +4084,6 @@ SVG.extend(SVG.Defs, {
   }
 
 })
-SVG.Doc = SVG.invent({
-  // Initialize node
-  create: function(element) {
-    if (element) {
-      // ensure the presence of a dom element
-      element = typeof element == 'string' ?
-        document.getElementById(element) :
-        element
-
-      // If the target is an svg element, use that element as the main wrapper.
-      // This allows svg.js to work with svg documents as well.
-      if (element.nodeName == 'svg') {
-        this.constructor.call(this, element)
-      } else {
-        this.constructor.call(this, SVG.create('svg'))
-        element.appendChild(this.node)
-        this.size('100%', '100%')
-      }
-
-      // set svg element attributes and ensure defs node
-      this.namespace().defs()
-    }
-  }
-
-  // Inherit from
-, inherit: SVG.Container
-
-  // Add class methods
-, extend: {
-    // Add namespaces
-    namespace: function() {
-      return this
-        .attr({ xmlns: SVG.ns, version: '1.1' })
-        .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
-        .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
-    }
-    // Creates and returns defs element
-  , defs: function() {
-      if (!this._defs) {
-        var defs
-
-        // Find or create a defs element in this instance
-        if (defs = this.node.getElementsByTagName('defs')[0])
-          this._defs = SVG.adopt(defs)
-        else
-          this._defs = new SVG.Defs
-
-        // Make sure the defs node is at the end of the stack
-        this.node.appendChild(this._defs.node)
-      }
-
-      return this._defs
-    }
-    // custom parent method
-  , parent: function() {
-      return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
-    }
-    // Fix for possible sub-pixel offset. See:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
-  , spof: function() {
-      var pos = this.node.getScreenCTM()
-
-      if (pos)
-        this
-          .style('left', (-pos.e % 1) + 'px')
-          .style('top',  (-pos.f % 1) + 'px')
-
-      return this
-    }
-
-      // Removes the doc from the DOM
-  , remove: function() {
-      if(this.parent()) {
-        this.parent().removeChild(this.node)
-      }
-
-      return this
-    }
-  , clear: function() {
-      // remove children
-      while(this.node.hasChildNodes())
-        this.node.removeChild(this.node.lastChild)
-
-      // remove defs reference
-      delete this._defs
-
-      // add back parser
-      if(!SVG.parser.draw.parentNode)
-        this.node.appendChild(SVG.parser.draw)
-
-      return this
-    }
-  }
-
-})
-
 SVG.Shape = SVG.invent({
   // Initialize node
   create: function(element) {
@@ -4564,7 +4593,7 @@ SVG.Text = SVG.invent({
       if (y == null)
         return typeof oy === 'number' ? oy - o : oy
 
-      return this.attr('y', typeof y === 'number' ? y + o : y)
+      return this.attr('y', typeof y.valueOf() === 'number' ? y + o : y)
     }
     // Move center over x-axis
   , cx: function(x) {
@@ -5505,7 +5534,7 @@ function fullBox(b) {
 
 // Get id from reference string
 function idFromReference(url) {
-  var m = url.toString().match(SVG.regex.reference)
+  var m = (url || '').toString().match(SVG.regex.reference)
 
   if (m) return m[1]
 }
@@ -5522,16 +5551,18 @@ var abcdef = 'abcdef'.split('')
 // Add CustomEvent to IE9 and IE10
 if (typeof window.CustomEvent !== 'function') {
   // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
-  var CustomEvent = function(event, options) {
+  var CustomEventPoly = function(event, options) {
     options = options || { bubbles: false, cancelable: false, detail: undefined }
     var e = document.createEvent('CustomEvent')
     e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail)
     return e
   }
 
-  CustomEvent.prototype = window.Event.prototype
+  CustomEventPoly.prototype = window.Event.prototype
 
-  window.CustomEvent = CustomEvent
+  SVG.CustomEvent = CustomEventPoly
+} else {
+  SVG.CustomEvent = window.CustomEvent
 }
 
 // requestAnimationFrame / cancelAnimationFrame Polyfill with fallback based on Paul Irish
@@ -5564,4 +5595,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));

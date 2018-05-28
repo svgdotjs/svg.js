@@ -105,7 +105,7 @@ declare namespace svgjs {
     }
     interface Element {
         bbox(): BBox;
-        rbox(): RBox;
+        rbox(element?: Element): RBox;
         tbox(): TBox;
     }
     interface Library {
@@ -283,8 +283,8 @@ declare namespace svgjs {
         svg(svg: string): this;
         svg(): string;
 
-        writeDataToDom(): this,
-        setData(data: object): this,
+        writeDataToDom(): this;
+        setData(data: object): this;
 
         is(cls: any): boolean;
     }
@@ -317,9 +317,10 @@ declare namespace svgjs {
     // event.js
     interface Element {
         on(event: string, cb: Function, context?: Object): this;
-        off(event: string, cb: Function, context?: Object): this;
+        off(event: string, cb?: Function, context?: Object): this;
         fire(event: string, data?: any): this;
         fire(event: Event): this;
+        event(): Event | CustomEvent;
 
         click(cb: Function): this;
         dblclick(cb: Function): this;
@@ -658,6 +659,9 @@ declare namespace svgjs {
         new (point: Point): Point;
         new (position: { x: number, y: number }): Point;
         new (x: number, y: number): Point;
+        
+        x: number;
+        y: number;
 
         clone(): Point;
         morph(point: Point): this;
@@ -751,7 +755,7 @@ declare namespace svgjs {
     // selector.js
     interface Library {
         get(id: string): Element;
-        select(query: string, parent: HTMLElement): Set;
+        select(query: string, parent?: HTMLElement): Set;
     }
     interface Parent {
         select(query: string): Set;
@@ -772,6 +776,7 @@ declare namespace svgjs {
         last(): Element;
         valueOf(): Element[];
         bbox(): BBox;
+        click(cb: Function): Set;
     }
     interface Container { set(members?: Element[]): Set; }
     interface Library { Set: Set; }
@@ -1010,10 +1015,10 @@ declare namespace svgjs {
         to(value: number): Animation;
         after(cb: () => void): Animation;
 
-        rotate(degrees: number, cx?: number, cy?: number): Animation
-        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation
-        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation
-        translate(x: number, y: number): Animation
+        rotate(degrees: number, cx?: number, cy?: number): Animation;
+        skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation;
+        scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation;
+        translate(x: number, y: number): Animation;
 
         // TODO style, etc, bbox...
     }

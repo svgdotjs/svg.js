@@ -28,6 +28,22 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
+
+## [2.6.5] - 2018-05-26
+
+### Fixed
+- fixed `element.parent()` which sometimes failed when used on detached documents (#759)
+- fixed `SVG.Text.y()` which didnt work correctly with `SVG.Number` (#778)
+- fixed `SVG.Doc.clone()` which throwed an error (#782)
+- fixed `SVG.Mask.clone()` which throwed an error (#782)
+- fixed `SVG.PointArray` having a reference to outside array in some cases (#803)
+- fixed `reference()` which failed when trying to use a reference which does not exist in the attribuets (#840)
+- fixed `animate().attr()` method which doenst work for `d` attribute of paths (#847)
+- fixed problems with `CustomEvent` polyfill in IE11 (#852)
+
+### Added
+- added possibility to pass an array of point objects to SVG.PointArray (#803)
+
 ## [2.6.4] - 2018-02-07
 
 ### Fixed
@@ -37,6 +53,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ### Fixed
 - fixed error in parent method when hitting document node (#720)
+
 
 ## [2.6.2] - 2017-06-05
 
@@ -617,6 +634,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.6.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.5
 [2.6.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.4
 [2.6.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.3
 [2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2

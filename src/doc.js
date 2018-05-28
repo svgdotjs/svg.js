@@ -53,7 +53,8 @@ SVG.Doc = SVG.invent({
     }
     // custom parent method
   , parent: function() {
-      return this.node.parentNode.nodeName == '#document' ? null : this.node.parentNode
+      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document') return null
+      return this.node.parentNode
     }
     // Fix for possible sub-pixel offset. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=608812
@@ -89,6 +90,25 @@ SVG.Doc = SVG.invent({
         this.node.appendChild(SVG.parser.draw)
 
       return this
+    }
+  , clone: function (parent) {
+      // write dom data to the dom so the clone can pickup the data
+      this.writeDataToDom()
+
+      // get reference to node
+      var node = this.node
+      
+      // clone element and assign new id
+      var clone = assignNewId(node.cloneNode(true))
+
+      // insert the clone in the given parent or after myself
+      if(parent) {
+        (parent.node || parent).appendChild(clone.node)
+      } else {
+        node.parentNode.insertBefore(clone.node, node.nextSibling)
+      }
+
+      return clone
     }
   }
 

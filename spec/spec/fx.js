@@ -2208,6 +2208,30 @@ describe('FX', function() {
     })
 
 
+    it('should be possible to animate path attribute', function() {
+      // use values from issue #847
+      var startValue = 'M 832 512 L 192 896 L 192 128 L 832 512 Z M 832 512'
+        , endValue = 'M 832 800 L 192 896 L 192 128 L 832 800 Z M 832 800'
+        , morph = new SVG.PathArray(startValue).morph(endValue)
+        , path = draw.path(startValue)
+
+      fx = path.animate(500).attr('d', endValue)
+
+      // I have to use clear() in the tests below since animating the 
+      // d attribute directly does not clear the cache
+
+      fx.start()
+      expect(path.clear().array()).toEqual(morph.at(0))
+
+      jasmine.clock().tick(250) // Have the animation be half way
+      fx.step()
+      expect(path.clear().array()).toEqual(morph.at(0.5))
+
+      jasmine.clock().tick(250) // Have the animation reach its end
+      fx.step()
+      expect(path.clear().array()).toEqual(morph.at(1))
+    })
+
     it('should be possible to animate color attributes by using SVG.Color', function() {
       var startValue = 'rgb(42,251,100)'
         , endValue = 'rgb(10,80,175)'
@@ -2894,6 +2918,15 @@ describe('SVG.MorphObj', function() {
 
     var obj = new SVG.MorphObj("1, 2, 3", "4, 5, 6")
     expect(obj instanceof SVG.Array).toBeTruthy()
+  })
+
+  it('accepts path strings and convert them to SVG.PathArray', function() {
+    // use values from issue #847
+    var startValue = 'M 832 512 L 192 896 L 192 128 L 832 512 Z M 832 512'
+      , endValue = 'M 832 800 L 192 896 L 192 128 L 832 800 Z M 832 800'
+      , obj = new SVG.MorphObj(startValue, endValue)
+
+    expect(obj instanceof SVG.PathArray).toBeTruthy()
   })
 
   it('accepts any other values', function() {

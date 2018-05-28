@@ -42,9 +42,24 @@ describe('Doc', function() {
       }else{
         expect(window.document.querySelectorAll('svg').length).toBe(cnt-1)
       }
-      
+
       draw = SVG(drawing).size(100,100);
       expect(window.document.querySelectorAll('svg').length).toBe(cnt)
+    })
+  })
+
+  describe('clone()', function () {
+    it('clones the doc and inserts the clone after the doc', function () {
+      var clone = draw.clone()
+
+      expect(draw.node.nextSibling).toBe(clone.node)
+      clone.remove()
+    })
+    it('clones the doc and inserts the clone in the provided parent', function () {
+      var el = document.createElement('div')
+      var clone = draw.clone(el)
+
+      expect(clone.node.parentNode).toBe(el)
     })
   })
 

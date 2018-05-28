@@ -20,8 +20,8 @@ SVG.Mask = SVG.invent({
           this.targets[i].unmask()
       this.targets = []
 
-      // remove mask from parent 
-      this.parent().removeElement(this)
+      // remove mask from parent
+      SVG.Element.prototype.remove.call(this)
       
       return this
     }
