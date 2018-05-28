@@ -6,7 +6,7 @@ about: 🐞 Report a bug that you found
 
 # Bug report
 
-> **Note: for support questions, please use [stackoverflow](https://stackoverflow.com/questions/tagged/svg.js) with the tag svg.js or head to our chat over at [gitter](https://gitter.im/svgdotjs/svg.js)**.
+> **For support questions, please use [stackoverflow](https://stackoverflow.com/questions/tagged/svg.js) with the tag svg.js or head to our chat over at [gitter](https://gitter.im/svgdotjs/svg.js)**.
 
 ## Fiddle
 
