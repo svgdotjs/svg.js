@@ -7,7 +7,7 @@ about: 🎂 Ask nicely for something you reaaaaaaaally want
 
 # Feature request
 
-> **Note: for support questions, please use [stackoverflow](https://stackoverflow.com/questions/tagged/svg.js) with the tag svg.js or head to our chat over at [gitter](https://gitter.im/svgdotjs/svg.js)**.
+> **For support questions, please use [stackoverflow](https://stackoverflow.com/questions/tagged/svg.js) with the tag svg.js or head to our chat over at [gitter](https://gitter.im/svgdotjs/svg.js)**.
 
 If you want to make a feature request, here are some guidelines to make a good one:
 - Add example code and usage for feature requests to see how a user would use it
