@@ -9,10 +9,11 @@ Base Class
 The base stepper class that will be
 ***/
 
-function makeSetterGetter (k) {
+function makeSetterGetter (k, f) {
   return function (v) {
     if (v == null) return this[v]
     this[k] = v
+    if (f) f.call(this)
     return this
   }
 }
@@ -90,40 +91,58 @@ SVG.Controller =  SVG.invent ({
   },
 })
 
-SVG.Spring = function spring(duration, overshoot) {
+
+function recalculate () {
 
   // Apply the default parameters
-  duration = duration || 500
-  overshoot = overshoot || 15
+  this._duration = this._duration || 500
+  this._overshoot = this._overshoot || 0
 
   // Calculate the PID natural response
   var eps = 1e-10
-  var os = overshoot / 100 + eps
+  var os = this._overshoot / 100 + eps
   var zeta = -Math.log(os) / Math.sqrt(Math.PI ** 2 + Math.log(os) ** 2)
-  var wn = 4 / (zeta * duration / 1000)
+  var wn = 4 / (zeta * this._duration / 1000)
 
   // Calculate the Spring values
-  var D = 2 * zeta * wn
-  var K = wn * wn
+  this.d = 2 * zeta * wn
+  this.k = wn * wn
+}
 
-  // Return the acceleration required
-  return new SVG.Controller(
-    function (current, target, dt, c) {
+SVG.Spring = SVG.invent ({
+  inherit: SVG.Controller,
 
+  create: function (duration, overshoot) {
+    this.duration(duration || 500)
+      .overshoot(overshoot || 0)
+  },
+
+  extend: {
+    step: function (current, target, dt, c) {
+
+      c.done = dt == Infinity
       if(dt == Infinity) return target
+      if(dt == 0) return current
+      dt /= 1000
 
       // Get the parameters
       var error = target - current
       var lastError = c.error || 0
-      var velocity = (error - c.error) / dt
+      var velocity = (error - lastError) / dt
 
       // Apply the control to get the new position and store it
-      var control = -D * velocity - K * error
-      var newPosition = current + control
+      var control = this.d * velocity + this.k * error
+      var newPosition = current + 2 * control * dt * dt / 2
+
       c.error = error
+      c.done = false //Math.abs(error) < 0.001
       return newPosition
-  })
-}
+    },
+
+    duration: makeSetterGetter('_duration', recalculate),
+    overshoot: makeSetterGetter('_overshoot', recalculate),
+  }
+})
 
 SVG.PID = SVG.invent ({
   inherit: SVG.Controller,
@@ -171,30 +190,3 @@ SVG.PID = SVG.invent ({
     d: makeSetterGetter('D'),
   }
 })
-/*
-SVG.PID = function (P, I, D, antiwindup) {
-  P = P == null ? 0.1 : P
-  I = I == null ? 0.01 : I
-  D = D == null ? 0 : D
-  antiwindup = antiwindup == null ? 1000 : antiwindup
-
-  // Return the acceleration required
-  return new SVG.Controller(
-    function (current, target, dt, c) {
-
-      if(dt == Infinity) return target
-      if(dt == 0) return current
-
-      var p = target - current
-      var i = (c.integral || 0) + p * dt
-      var d = (p - (c.error || 0)) / dt
-
-      // antiwindup
-      i = Math.max(-antiwindup, Math.min(i, antiwindup))
-
-      c.error = p
-      c.integral = i
-
-      return current + (P * p + I * i + D * d)
-  })
-}*/
