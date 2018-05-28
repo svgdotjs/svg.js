@@ -7,7 +7,7 @@ SVG.defaults = {
   timeline: {
     duration: 400,
     ease: '>',
-    delay: 0,
+    delay: 0
   },
 
   // Default attribute values

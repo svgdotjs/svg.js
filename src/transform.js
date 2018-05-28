@@ -51,7 +51,6 @@ SVG.extend(SVG.Element, {
 
   // Add transformations
   transform: function (o, relative) {
-
     // Act as a getter if no object was passed
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
@@ -61,7 +60,6 @@ SVG.extend(SVG.Element, {
     } else if (typeof o.origin === 'string' ||
       (o.origin == null && o.ox == null && o.oy == null)
     ) {
-
       // Get the bounding box of the element with no transformations applied
       var bbox = this.bbox()
 
