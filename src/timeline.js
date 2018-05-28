@@ -13,20 +13,15 @@ SVG.Timeline = SVG.invent({
   create: function (element) {
 
     // Store a reference to the element to call its parent methods
-    this._element = element
+    this._element = element || null
 
     // Store the timing variables
     this._startTime = 0
-    this._duration = 0
-    this._ease = SVG.defaults.timeline.ease
     this._speed = 1.0
 
     // Play control variables control how the animation proceeds
-    this._controller = null
     this._reverse = false
-    this._loops = null
-    this._waits = null
-    this._swing = null
+    this._persist = 0
 
     // Keep track of the running animations and their starting parameters
     this._baseTransform = null
@@ -34,97 +29,32 @@ SVG.Timeline = SVG.invent({
     this._paused = false
     this._runners = []
     this._time = 0
+    this._lastTime = 0
   },
 
   extend: {
 
-    // /**
-    //  * Runner Constructors
-    //  */
-    //
-    // animate (duration, delay, nowOrAbsolute) {
-    //
-    //   // Clear the controller and the looping parameters
-    //   this._controller = duration instanceof Function ? duration : null
-    //   this._backwards = false
-    //   this._swing = false
-    //   this._loops = 0
-    //
-    //   // If we have an object we are declaring imperative animations
-    //   if (typeof duration === 'object') {
-    //     duration = duration.duration
-    //     delay = duration.delay
-    //     nowOrAbsolute = duration.absolute || duration.now
-    //   }
-    //
-    //   // The start time for the next animation can either be given explicitly,
-    //   // derived from the current timeline time or it can be relative to the
-    //   // last start time to chain animations direclty
-    //   var absoluteStartTime = typeof nowOrAbsolute === 'number' ? nowOrAbsolute
-    //     : nowOrAbsolute ? this._time
-    //     : this._startTime + this._duration
-    //
-    //   // We start the next animation after the delay required
-    //   this._startTime = absoluteStartTime + (delay || 0)
-    //   this._duration = duration instanceof Function ? null
-    //     : (duration || SVG.defaults.timeline.duration)
-    //
-    //   // Make a new runner to queue all of the animations onto
-    //   this._runner = new Runner(this._time - this._startTime, this.duration)
-    //   this._runners.push(this._runner)
-    //
-    //   // Step the animation
-    //   this._continue()
-    //
-    //   // Allow for chaining
-    //   return this
-    // },
-    //
-    // delay (by, now) {
-    //   return this.animate(0, by, now)
-    // },
-    //
-    // /**
-    //  * Runner Behaviours
-    //  */
-    //
-    // loop (swing, times, wait) {
-    //
-    // },
-    //
-    // ease (fn) {
-    //   var ease = SVG.easing[fn || SVG.defaults.timeline.ease] || fn
-    //   this._controller = function (from, to, pos) {
-    //     // FIXME: This is needed for at lest ObjectBag but could slow down stuff
-    //     if(typeof from !== 'number') {
-    //       return pos < 1 ? from : to
-    //     }
-    //     return from + (to - from) * ease(pos)
-    //   }
-    //   return this
-    // },
-
-    reverse () {
-
+    element (element) {
+      if(element == null) return this._element
+      this._element = element
     },
 
     /**
      *
      */
 
-    // tag (name) {
-    //   this._runner.tag(name)
-    // },
-    //
-    // runner (tag) {
-    //   if (tag) {
-    //     return this._runners.find(function (runTag) {return runTag === tag})
-    //   } else {
-    //     return this._runner
-    //   }
-    // },
+    // remove the runner from this timeline
+    unschedule (runner) {
+      var index = this._runners.indexOf(runner)
+      if(index > -1) {
+        this._runners.splice(index, 1)
+      }
+      return this
+    },
 
     schedule (runner, delay, when) {
+
+      runner.unschedule()
 
       // The start time for the next animation can either be given explicitly,
       // derived from the current timeline time or it can be relative to the
@@ -167,89 +97,91 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    pause () {
-
-      //
+    // FIXME: this does not work. Setting the nextFrame to null alone is not working
+    // We need to remove our frames from the animator somehow
+    cancel () {
+      // SVG.Animator.cancel(this._nextFrame)
       this._nextFrame = null
-      this._paused = true
       return this
+    },
+
+    pause () {
+      // Cancel the next animation frame and pause
+      this._paused = true
+      return this.cancel()
     },
 
     stop () {
-      // Cancel the next animation frame for this object
-      this._nextFrame = null
-      return this
+      // Cancel the next animation frame and go to start
+      this.seek(-this._time)
+      return this.cancel()
     },
 
     finish () {
+      this.seek(Infinity)
+      return this.cancel()
+    },
+
+    speed (speed) {
+      if(speed == null) return this._speed
+      this._speed = speed
       return this
     },
 
-    speed (newSpeed) {
-      this._speed = newSpeed
+    // FIXME: rewrite this to use the speed method
+    reverse (yes) {
+      this._speed = Math.abs(this._speed) * yes ? -1 : 1
       return this
     },
 
     seek (dt) {
-      this._time += dt
+      // what to do here?
+      // we cannot just set a new time
+      // also calling step does not result in anything
+      // because step is getting called with the current real time which
+      // will reset it to the old flow
+
+      // only way is to change lastTime to the current time + what we want
+      this._lastTime -= dt
       return this
     },
 
     time (t) {
+      if(t == null) return this._time
       this._time = t
       return this
     },
 
     persist (dtOrForever) {
-      // 0 by default
-    },
+      if(tdOrForever == null) return this._persist
 
-    // queue (initFn, runFn) {
-    //
-    //   // Make sure there is a function available
-    //   initFn = (initFn || SVG.void).bind(this)
-    //   runFn = (runFn || SVG.void).bind(this)
-    //
-    //   // Add the functions to the active runner
-    //   this._runner.add(initFn, runFn)
-    //   return this
-    // },
-
-    // Queue a function to run after some time
-    after (time, fn) {
-
-      // If the user passes no time, just queue it
-      if (fn == null) {
-        return this.queue(time)
-      }
-
-      // Otherwise make a runner to run this one time later
-      var runner = new Runner(-time, 0).add(fn)
-      this._runners.push(runner)
+      this._persist = dtOrForever
       return this
     },
 
-    during (fn) {
-      return this.queue(null, fn)
-    },
-
     _step (time) {
-
+      // FIXME: User should be able to step manually
+      // move this check to the very bottom
+      // or mixup the continue, step logic
       // If we are paused, just exit
       if (this._paused) return
 
       // Get the time delta from the last time and update the time
       // TODO: Deal with window.blur window.focus to pause animations
       // HACK: We keep the time below 50ms to avoid driving animations crazy
+      // FIXME: We cannot seek to -time because speed fucks this up
       var dt = this._speed * ((time - this._lastTime) || 16)
+
+      // we cannot do that. Doesnt work when user wants to manually step (or seek)
       dt = dt < 50 ? dt : 16 // If we missed alot of time, ignore
       this._lastTime = time
+
+      // FIXME: this is not used
       this._time += dt
 
       // Run all of the runners directly
       var runnersLeft = false
-      for (var i = 0; i < this._runners.length ; i++) {
-
+      for (var i = 0, len = this._runners.length; i < len; i++) {
         // Get and run the current runner and ignore it if its inactive
         var runner = this._runners[i]
         if(!runner.active()) continue
@@ -259,6 +191,17 @@ SVG.Timeline = SVG.invent({
         var finished = runner.step(dt).done
         if (!finished) {
           runnersLeft = true
+        } else if(this._persist !== true){
+          // runner is finished. And runner might get removed
+
+          // TODO: Figure out end time of runner
+          var endTime = Infinity
+
+          if(endTime + this._persist < this._time) {
+            // delete runner and correct index
+            this._runners.splice(i--, 1) && --len
+          }
+
         }
 
         // TODO: Check if a runner is still healthy, and if it is, run it.
@@ -283,9 +226,9 @@ SVG.Timeline = SVG.invent({
 
     // Checks if we are running and continues the animation
     _continue () {
-      if (this._paused) return
+      if (this._paused) return this
       if (!this._nextFrame)
-          this._step()
+          this._step(this._lastTime) // FIXME: we have to past an absolute time here
       return this
     },
   },
@@ -293,38 +236,9 @@ SVG.Timeline = SVG.invent({
   // These methods will be added to all SVG.Element objects
   parent: SVG.Element,
   construct: {
-
     timeline: function () {
       this._timeline = (this._timeline || new SVG.Timeline(this))
       return this._timeline
     },
-
-    // animate: function(o, delay, now) {
-    //
-    //   // Get the current timeline or construct a new one
-    //   this.timeline = (this.timeline || new SVG.Timeline(this))
-    //     .animate(o, delay, now)
-    //   this.timeline._loops = null
-    //   return this.timeline
-    // },
-    //
-    // loop: function(o) {
-    //
-    //   /*
-    //   {
-    //     swing: wether or not the animation should repeat when its done
-    //     times: the number of times to loop the animation
-    //     wait: [array] a buffer of times to wait between successive animations
-    //     delay: defaults.timeline to wait
-    //   }
-    //    */
-    //    this.timeline = (this.timeline || new SVG.Timeline(this))
-    //
-    //    // REFACTOR this into an init function
-    //    this.timeline._waits = [].concat(o.wait || o.delay || 0)
-    //    this.timeline._loops = o.times || Infinity
-    //    this.timeline._swing = o.swing || false
-    //    return this.timeline
-    // }
   }
 })

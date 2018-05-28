@@ -10,7 +10,7 @@ SVG.Animator = {
 
   frame: function (fn) {
     SVG.Animator.frames.push({
-      id: SVG.Animator.frameCount,
+      id: SVG.Animator.frameCount++,
       run: fn
     })
 
@@ -18,7 +18,7 @@ SVG.Animator = {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return ++SVG.Animator.frameCount
+    return SVG.Animator.frameCount
   },
 
   timeout: function (fn, delay) {

@@ -25,6 +25,7 @@ SVG.Runner = SVG.invent({
     // Declare all of the variables
     this._dispacher = document.createElement('div')
     this._element = null
+    this._timeline = null
     this.done = false
     this._queue = []
 
@@ -41,52 +42,65 @@ SVG.Runner = SVG.invent({
     this._time = 0
     this._last = 0
     this.tags = {}
+
+    // save the transformation we are starting with
+    this._baseTransform = null
   },
 
   construct: {
 
     animate: function (duration, delay, when) {
 
-      // Initialise the default parameters
-      var times = 0
-      var swing = false
-      var waits = []
-
-      // If we have an object, unpack the values
-      if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
-        delay = duration.delay || 0
-        when = duration.when || 'now'
-        duration = duration.duration || 1000
-        swing = duration.swing || false
-        times = duration.times || 0
-        waits = duration.waits || []
-      }
-
-      // FIXME: take care of looping here because loop is a constructor
-      // alternatively disallow loop as constructor
-      // Construct a new runner and setup its looping behaviour
-      var runner = new SVG.Runner(duration)
-        //.loop(times, swing, waits)
+      return new SVG.Runner(duration && duration.duration || duration)
         .element(this)
+        .timeline(this.timeline())
+        .init(duration, delay, when)
 
-      // Attach this animation to a timeline
-      this.timeline().schedule(runner, delay, when)
-      return runner
+      // // Initialise the default parameters
+      // var times = 0
+      // var swing = false
+      // var waits = []
+      //
+      // // If we have an object, unpack the values
+      // if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
+      //   delay = duration.delay || 0
+      //   when = duration.when || 'now'
+      //   duration = duration.duration || 1000
+      //   swing = duration.swing || false
+      //   times = duration.times || 0
+      //   waits = duration.waits || []
+      // }
+      //
+      // // FIXME: take care of looping here because loop is a constructor
+      // // alternatively disallow loop as constructor
+      // // Construct a new runner and setup its looping behaviour
+      // var runner = new SVG.Runner(duration)
+      //   //.loop(times, swing, waits)
+      //   .element(this)
+      //
+      // // Attach this animation to a timeline
+      // this.timeline().schedule(runner, delay, when)
+      // return runner
     },
 
     loop: function (duration, times, swing) {
 
-      // If we have an object, unpack the values
-      if (typeof duration == 'object') {
-        duration.times = duration.times || Infinity
-      } else {
-        duration = {
-          duration: duration,
-          times: times || Infinity,
-          swing: swing
-        }
-      }
-      return this.animate(duration)
+      return new SVG.Runner(duration.duration || duration)
+        .element(this)
+        .timeline(this.timeline())
+        .initLoop(duration, times, swing)
+
+      // // If we have an object, unpack the values
+      // if (typeof duration == 'object') {
+      //   duration.times = duration.times || Infinity
+      // } else {
+      //   duration = {
+      //     duration: duration,
+      //     times: times || Infinity,
+      //     swing: swing
+      //   }
+      // }
+      // return this.animate(duration)
     },
 
     delay: function (by, when) {
@@ -109,24 +123,83 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    timeline: function () {
-      return this._element.timeline()
+    timeline: function (timeline) {
+      if(timeline == null) return this._timeline
+      this._timeline = timeline
+      return this
     },
 
-    // FIXME: It makes totally sense to call this, when the runner is attached to a timeline.
-    // So maybe we should attach runners to timelines and timelines to elements instead of the other way round
-    animate: function () {
-      if(this._element) {
-        return this._element.animate.apply(this._element, arguments)
-      }
-      // TODO: throw an error if there is no element
+    animate: function(duration, delay, when) {
+      var runner = new SVG.Runner(duration.duration || duration)
+      if(this._timeline) runner.element(this._timeline)
+      if(this._element) runner.element(this._element)
+      return runner.init(duration, delay, when)
     },
 
-    loop: function () {
-      if(this._element) {
-        return this._element.loop.apply(this._element, arguments)
+    unschedule: function () {
+      var timeline = this.timeline()
+      timeline && timeline.unschedule(this)
+      return this
+    },
+
+    schedule: function (timeline, delay, when) {
+      if(!timeline) {
+        throw Error('Runner cannot be scheduled without timeline')
       }
-      // TODO: throw an error
+
+      // FIXME: timeline is already set when used in normal ways
+      // but for manual runners we need that here anyway
+      // so just have doubled code?
+      timeline.schedule(this, delay, when)
+      this.timeline(timeline)
+      return this
+    },
+
+    // schedule a runner
+    init: function (duration, delay, when) {
+      // Initialise the default parameters
+      var times = 0
+      var swing = false
+      var waits = []
+
+      // If we have an object, unpack the values
+      if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
+        delay = duration.delay || 0
+        when = duration.when || 'now'
+        duration = duration.duration || 1000
+        swing = duration.swing || false
+        times = duration.times || 0
+        waits = duration.waits || []
+      }
+
+      // TODO: take care of looping here because there is no loop function we can use
+      // e.g. this._times = times
+
+      // Attach this animation to a timeline
+      //this.timeline().schedule(this, delay, when)
+      return this.schedule(this.timeline(), delay, when)
+    },
+
+    initLoop: function (duration, times, swing) {
+      // If we have an object, unpack the values
+      if (typeof duration == 'object') {
+        duration.times = duration.times || Infinity
+      } else {
+        duration = {
+          duration: duration,
+          times: times || Infinity,
+          swing: swing
+        }
+      }
+
+      return this.init(duration)
+    },
+
+    loop: function (duration, times, swing) {
+      var runner = new SVG.Runner(duration.duration || duration)
+      if(this._timeline) runner.element(this._timeline)
+      if(this._element) runner.element(this._element)
+      return runner.initLoop(duration, times, swing)
     },
 
     delay: function () {
@@ -150,27 +223,29 @@ SVG.Runner = SVG.invent({
         initialised: false,
         finished: false,
       })
-      this.timeline()._continue()
+      var timeline = this.timeline()
+      timeline && this.timeline()._continue()
       return this
     },
 
-    during: function (runFn) {
-      return this.queue(null, runFn, false)
+    during: function () {
+      return this.on('during', fn, this)
     },
 
-    on (eventName, fn) {
-      SVG.on(this._dispacher, eventName, fn, this)
+    on (eventName, fn, binding) {
+      SVG.on(this._dispacher, eventName, fn, binding)
       return this
     },
 
     // Queue a function to run after this runner
-    after (time, fn) {
-      return this.on('finish', fn)
+    after (fn) {
+      return this.on('finish', fn, this)
     },
 
-    fire: function (name) {
-
-    }
+    fire: function (name, detail) {
+      SVG.Element.prototype.dispatch.call({node: this._dispacher}, name, detail)
+      return this
+    },
 
     /*
     Runner animation methods
@@ -223,14 +298,9 @@ SVG.Runner = SVG.invent({
 
       // Set whether this runner is complete or not
       this.done = finished
-      if (this.done) {
-        this._afterEvents.forEach(function (event) { event(this) })
 
-        if (this._element) this._element.fire(`runner.${id}.finish`, {runner: this})
-
-        el.animate().after()
-        el.on()
-      }
+      // Fire finished event if finished
+      this.done && this.fire('finish', {runner: this})
       return this
     },
 
@@ -320,7 +390,7 @@ SVG.Runner = SVG.invent({
         var running = !current.finished
 
         if (needsInit && running) {
-          current.initialiser.call(this._element)
+          current.initialiser.call(this)
           current.initialised = true
         }
       }
@@ -339,7 +409,7 @@ SVG.Runner = SVG.invent({
         // Run the function if its not finished, we keep track of the finished
         // flag for the sake of declarative _queue
         current.finished = current.finished
-          || (current.runner.call(this._element, position) === true)
+          || (current.runner.call(this, position) === true)
         allfinished = allfinished && current.finished
       }
 
@@ -373,9 +443,9 @@ SVG.extend(SVG.Runner, {
     var morpher = new Morphable(this._stepper).to(val)
 
     this.queue(function () {
-      morpher = morpher.from(this[type](name))
+      morpher = morpher.from(this.element()[type](name))
     }, function () {
-      this[type](name, morpher.at(pos))
+      this.element()[type](name, morpher.at(pos))
       return morpher.done()
     }, this._isDeclarative)
 
@@ -388,7 +458,7 @@ SVG.extend(SVG.Runner, {
    this.queue(function() {
      morpher = morpher.from(this.zoom())
    }, function (pos) {
-     this.zoom(morpher.at(pos), point)
+     this.element().zoom(morpher.at(pos), point)
      return morpher.done()
    }, this._isDeclarative)
 
@@ -515,11 +585,11 @@ SVG.extend(SVG.Runner, {
       // Make a morpher and queue the animation
       var morpher = new SVG.Morphable(this._stepper).to(to)
       this.queue(function () {
-        var from = this[method]()
+        var from = this.element()[method]()
         morpher.from(from)
         morpher.to(from + x)
       }, function (pos) {
-        this[method](morpher.at(pos))
+        this.element()[method](morpher.at(pos))
         return morpher.done()
       }, this._isDeclarative)
 
@@ -536,9 +606,9 @@ SVG.extend(SVG.Runner, {
     // Make a morpher and queue the animation
     var morpher = new SVG.Morphable(this._stepper).to(to)
     this.queue(function () {
-      morpher.from(this[method]())
+      morpher.from(this.element()[method]())
     }, function (pos) {
-      this[method](morpher.at(pos))
+      this.element()[method](morpher.at(pos))
       return morpher.done()
     }, this._isDeclarative)
 
