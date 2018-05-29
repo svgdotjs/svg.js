@@ -17,6 +17,10 @@ SVG.Runner = SVG.invent({
       ? SVG.defaults.timeline.duration
       : options
 
+    options = typeof options !== 'object' || options instanceof SVG.Stepper
+      ? options
+      : options.duration
+
     // ensure that we get a controller
     options = typeof options === 'function'
       ? new SVG.Controller(options)
@@ -51,7 +55,7 @@ SVG.Runner = SVG.invent({
 
     animate: function (duration, delay, when) {
 
-      return new SVG.Runner(duration && duration.duration || duration)
+      return new SVG.Runner(duration)
         .element(this)
         .timeline(this.timeline())
         .init(duration, delay, when)
@@ -85,7 +89,7 @@ SVG.Runner = SVG.invent({
 
     loop: function (duration, times, swing) {
 
-      return new SVG.Runner(duration.duration || duration)
+      return new SVG.Runner(duration)
         .element(this)
         .timeline(this.timeline())
         .initLoop(duration, times, swing)
@@ -130,7 +134,7 @@ SVG.Runner = SVG.invent({
     },
 
     animate: function(duration, delay, when) {
-      var runner = new SVG.Runner(duration.duration || duration)
+      var runner = new SVG.Runner(duration)
       if(this._timeline) runner.element(this._timeline)
       if(this._element) runner.element(this._element)
       return runner.init(duration, delay, when)
@@ -203,7 +207,7 @@ SVG.Runner = SVG.invent({
     // FIXME: This definitely shouldn't make a new runner, this should just change
     // the looping behaviour of the current runner.
     loop: function (duration, times, swing) {
-      var runner = new SVG.Runner(duration.duration || duration)
+      var runner = new SVG.Runner(duration)
       if(this._timeline) runner.element(this._timeline)
       if(this._element) runner.element(this._element)
       return runner.initLoop(duration, times, swing)
