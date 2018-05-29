@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu May 17 2018 17:53:43 GMT+1000 (AEST)
+* BUILT: Tue May 29 2018 20:23:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -85,7 +85,7 @@ SVG.invent = function (config) {
   // Create element initializer
   var initializer = typeof config.create === 'function' ? config.create
     : function (node) {
-      SVG.Element.call(this, node || SVG.create(config.create))
+      config.inherit.call(this, node || SVG.create(config.create))
     }
 
   // Inherit prototype
@@ -247,9 +247,9 @@ SVG.defaults = {
 
   // Default animation values
   timeline: {
-    duration: 600,
+    duration: 400,
     ease: '>',
-    delay: 0,
+    delay: 0
   },
 
   // Default attribute values
@@ -302,7 +302,6 @@ SVG.Queue = SVG.invent({
 
   extend: {
     push: function (value) {
-
       // An item stores an id and the provided value
       var item = { id: this.id++, value: value }
 
@@ -317,8 +316,8 @@ SVG.Queue = SVG.invent({
     },
 
     shift: function () {
-      if (this.length == 0) {
-        return
+      if (!this.length) {
+        return null
       }
 
       var remove = this._first
@@ -342,8 +341,8 @@ SVG.Queue = SVG.invent({
       // Find the first match
       var previous = null
       var current = this._first
-      while (current) {
 
+      while (current) {
         // If we have a match, we are done
         if (matcher(current)) break
 
@@ -353,12 +352,14 @@ SVG.Queue = SVG.invent({
       }
 
       // If we got the first item, adjust the first pointer
-      if (current && current === this._first)
+      if (current && current === this._first) {
         this._first = this._first.next
+      }
 
       // If we got the last item, adjust the last pointer
-      if (current && current === this._last)
+      if (current && current === this._last) {
         this._last = previous
+      }
 
       // If we got an item, fix the list and return the item
       if (current) {
@@ -443,7 +444,7 @@ SVG.Color = function (color, g, b) {
     this.r = color.r
     this.g = color.g
     this.b = color.b
-  } else if(arguments.length == 3) {
+  } else if (arguments.length === 3) {
     this.r = color
     this.g = g
     this.b = b
@@ -1155,9 +1156,169 @@ SVG.Number = SVG.invent({
   }
 })
 
+// Add events to elements
+/*
+;[ 'click',
+  'dblclick',
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'mousemove',
+  'mouseenter',
+  'mouseleave',
+  'touchstart',
+  'touchmove',
+  'touchleave',
+  'touchend',
+  'touchcancel' ].forEach(function (event) {
+    // add event to SVG.Element
+    SVG.Element.prototype[event] = function (f) {
+    // bind event to element rather than element node
+      SVG.on(this, event, f)
+      return this
+    }
+  })
+*/
+
+SVG.listenerId = 0
+
+// Add event binder in the SVG namespace
+SVG.on = function (node, events, listener, binding, options) {
+  var l = listener.bind(binding || node)
+  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+
+  // events can be an array of events or a string of events
+  events = Array.isArray(events) ? events : events.split(SVG.regex.delimiter)
+
+  // ensure instance object for nodes which are not adopted
+  n.instance = n.instance || {events: {}}
+
+  // pull event handlers from the element
+  var bag = n.instance.events
+
+  // add id to listener
+  if (!listener._svgjsListenerId) {
+    listener._svgjsListenerId = ++SVG.listenerId
+  }
+
+  events.forEach(function (event) {
+    var ev = event.split('.')[0]
+    var ns = event.split('.')[1] || '*'
+
+    // ensure valid object
+    bag[ev] = bag[ev] || {}
+    bag[ev][ns] = bag[ev][ns] || {}
+
+    // reference listener
+    bag[ev][ns][listener._svgjsListenerId] = l
+
+    // add listener
+    n.addEventListener(ev, l, options || false)
+  })
+}
+
+// Add event unbinder in the SVG namespace
+SVG.off = function (node, events, listener, options) {
+  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+  if (!n.instance) return
+
+  // listener can be a function or a number
+  if (typeof listener === 'function') {
+    listener = listener._svgjsListenerId
+    if (!listener) return
+  }
+
+  // pull event handlers from the element
+  var bag = n.instance.events
+
+  // events can be an array of events or a string or undefined
+  events = Array.isArray(events) ? events : (events || '').split(SVG.regex.delimiter)
+
+  events.forEach(function (event) {
+    var ev = event && event.split('.')[0]
+    var ns = event && event.split('.')[1]
+    var namespace, l
+
+    if (listener) {
+      // remove listener reference
+      if (bag[ev] && bag[ev][ns || '*']) {
+        // removeListener
+        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+
+        delete bag[ev][ns || '*'][listener]
+      }
+    } else if (ev && ns) {
+      // remove all listeners for a namespaced event
+      if (bag[ev] && bag[ev][ns]) {
+        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
+
+        delete bag[ev][ns]
+      }
+    } else if (ns) {
+      // remove all listeners for a specific namespace
+      for (event in bag) {
+        for (namespace in bag[event]) {
+          if (ns === namespace) { SVG.off(n, [event, ns].join('.')) }
+        }
+      }
+    } else if (ev) {
+      // remove all listeners for the event
+      if (bag[ev]) {
+        for (namespace in bag[ev]) { SVG.off(n, [ev, namespace].join('.')) }
+
+        delete bag[ev]
+      }
+    } else {
+      // remove all listeners on a given node
+      for (event in bag) { SVG.off(n, event) }
+
+      n.instance.events = {}
+    }
+  })
+}
+
+SVG.dispatch = function (node, event, data) {
+  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+
+  // Dispatch event
+  if (event instanceof window.Event) {
+    n.dispatchEvent(event)
+  } else {
+    event = new window.CustomEvent(event, {detail: data, cancelable: true})
+    n.dispatchEvent(event)
+  }
+  return event
+}
+
+SVG.EventTarget = SVG.invent({
+  create: function () {},
+  extend: {
+    // Bind given event to listener
+    on: function (event, listener, binding, options) {
+      SVG.on(this, event, listener, binding, options)
+      return this
+    },
+    // Unbind event from listener
+    off: function (event, listener) {
+      SVG.off(this, event, listener)
+      return this
+    },
+    dispatch: function (event, data) {
+      return SVG.dispatch(this, event, data)
+    },
+    // Fire given event
+    fire: function (event, data) {
+      this.dispatch(event, data)
+      return this
+    }
+  }
+})
+
 /* global createElement */
 
 SVG.HtmlNode = SVG.invent({
+  inherit: SVG.EventTarget,
   create: function (element) {
     this.node = element
   },
@@ -1176,6 +1337,10 @@ SVG.HtmlNode = SVG.invent({
     put: function (element, i) {
       this.add(element, i)
       return element
+    },
+
+    getEventTarget: function () {
+      return this.node
     }
   }
 })
@@ -1183,6 +1348,8 @@ SVG.HtmlNode = SVG.invent({
 /* global proportionalSize, assignNewId, createElement, matches, is */
 
 SVG.Element = SVG.invent({
+  inherit: SVG.EventTarget,
+
   // Initialize node
   create: function (node) {
     // event listener
@@ -1486,34 +1653,27 @@ SVG.Element = SVG.invent({
     },
     is: function (obj) {
       return is(this, obj)
+    },
+    getEventTarget: function () {
+      return this.node
     }
   }
 })
 
 /* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
 
-function translate () {
-
-}
-
-function functionName() {
-
-}
-
-
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
-    var i
 
     // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)
       : (typeof source === 'object' && (
-          source.a != null || source.b != null || source.c != null
-          || source.d != null || source.e != null || source.f != null
+          source.a != null || source.b != null || source.c != null ||
+          source.d != null || source.e != null || source.f != null
         )) ? source
       : (typeof source === 'object') ? new SVG.Matrix().transform(source)
       : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
@@ -1538,7 +1698,6 @@ SVG.Matrix = SVG.invent({
 
     // Transform a matrix into another matrix by manipulating the space
     transform: function (o) {
-
       // Check if o is a matrix and then left multiply it directly
       if (o.a != null) {
         var matrix = new SVG.Matrix(o)
@@ -1563,7 +1722,6 @@ SVG.Matrix = SVG.invent({
 
       // If we want the origin at a particular place, we force it there
       if (isFinite(t.px) || isFinite(t.py)) {
-
         // Figure out where the origin went and the delta to get there
         var current = new SVG.Point(t.ox - t.rx, t.oy - t.ry).transform(transformer)
         var dx = t.px ? t.px - current.x : 0
@@ -1693,7 +1851,6 @@ SVG.Matrix = SVG.invent({
 
     // Inverses matrix
     inverse: function () {
-
       // Get the current parameters out of the matrix
       var a = this.a
       var b = this.b
@@ -1704,7 +1861,7 @@ SVG.Matrix = SVG.invent({
 
       // Invert the 2x2 matrix in the top left
       var det = a * d - b * c
-      if (!det) throw new Error("Cannot invert " + this)
+      if (!det) throw new Error('Cannot invert ' + this)
 
       // Calculate the top 2x2 matrix
       var na = d / det
@@ -1713,8 +1870,8 @@ SVG.Matrix = SVG.invent({
       var nd = a / det
 
       // Apply the inverted matrix to the top right
-      var ne = - ( na * e + nc * f )
-      var nf = - ( nb * e + nd * f )
+      var ne = -(na * e + nc * f)
+      var nf = -(nb * e + nd * f)
 
       // Construct the inverted matrix
       return new SVG.Matrix(na, nb, nc, nd, ne, nf)
@@ -1926,7 +2083,6 @@ SVG.Point = SVG.invent({
 
     // transform point with matrix
     transform: function (m) {
-
       // Perform the matrix multiplication
       var x = m.a * this.x + m.c * this.y + m.e
       var y = m.b * this.x + m.d * this.y + m.f
@@ -2071,7 +2227,6 @@ SVG.extend(SVG.Element, {
 
   // Add transformations
   transform: function (o, relative) {
-
     // Act as a getter if no object was passed
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
@@ -2081,7 +2236,6 @@ SVG.extend(SVG.Element, {
     } else if (typeof o.origin === 'string' ||
       (o.origin == null && o.ox == null && o.oy == null)
     ) {
-
       // Get the bounding box of the element with no transformations applied
       var bbox = this.bbox()
 
@@ -2430,154 +2584,6 @@ SVG.Container = SVG.invent({
 
   // Inherit from
   inherit: SVG.Parent
-})
-
-// Add events to elements
-
-;[ 'click',
-  'dblclick',
-  'mousedown',
-  'mouseup',
-  'mouseover',
-  'mouseout',
-  'mousemove',
-  'mouseenter',
-  'mouseleave',
-  'touchstart',
-  'touchmove',
-  'touchleave',
-  'touchend',
-  'touchcancel' ].forEach(function (event) {
-    // add event to SVG.Element
-    SVG.Element.prototype[event] = function (f) {
-    // bind event to element rather than element node
-      SVG.on(this, event, f)
-      return this
-    }
-  })
-
-SVG.listenerId = 0
-
-// Add event binder in the SVG namespace
-SVG.on = function (node, events, listener, binding, options) {
-  var l = listener.bind(binding || node)
-  var n = node instanceof SVG.Element ? node.node : node
-
-  // events can be an array of events or a string of events
-  events = Array.isArray(events) ? events : events.split(SVG.regex.delimiter)
-
-  // ensure instance object for nodes which are not adopted
-  n.instance = n.instance || {events: {}}
-
-  // pull event handlers from the element
-  var bag = n.instance.events
-
-  // add id to listener
-  if (!listener._svgjsListenerId) {
-    listener._svgjsListenerId = ++SVG.listenerId
-  }
-
-  events.forEach(function (event) {
-    var ev = event.split('.')[0]
-    var ns = event.split('.')[1] || '*'
-
-    // ensure valid object
-    bag[ev] = bag[ev] || {}
-    bag[ev][ns] = bag[ev][ns] || {}
-
-    // reference listener
-    bag[ev][ns][listener._svgjsListenerId] = l
-
-    // add listener
-    n.addEventListener(ev, l, options || false)
-  })
-}
-
-// Add event unbinder in the SVG namespace
-SVG.off = function (node, events, listener, options) {
-  var n = node instanceof SVG.Element ? node.node : node
-  if (!n.instance) return
-
-  // listener can be a function or a number
-  if (typeof listener === 'function') {
-    listener = listener._svgjsListenerId
-    if (!listener) return
-  }
-
-  // pull event handlers from the element
-  var bag = n.instance.events
-
-  // events can be an array of events or a string or undefined
-  events = Array.isArray(events) ? events : (events || '').split(SVG.regex.delimiter)
-
-  events.forEach(function (event) {
-    var ev = event && event.split('.')[0]
-    var ns = event && event.split('.')[1]
-    var namespace, l
-
-    if (listener) {
-      // remove listener reference
-      if (bag[ev] && bag[ev][ns || '*']) {
-        // removeListener
-        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
-
-        delete bag[ev][ns || '*'][listener]
-      }
-    } else if (ev && ns) {
-      // remove all listeners for a namespaced event
-      if (bag[ev] && bag[ev][ns]) {
-        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
-
-        delete bag[ev][ns]
-      }
-    } else if (ns) {
-      // remove all listeners for a specific namespace
-      for (event in bag) {
-        for (namespace in bag[event]) {
-          if (ns === namespace) { SVG.off(n, [event, ns].join('.')) }
-        }
-      }
-    } else if (ev) {
-      // remove all listeners for the event
-      if (bag[ev]) {
-        for (namespace in bag[ev]) { SVG.off(n, [ev, namespace].join('.')) }
-
-        delete bag[ev]
-      }
-    } else {
-      // remove all listeners on a given node
-      for (event in bag) { SVG.off(n, event) }
-
-      n.instance.events = {}
-    }
-  })
-}
-
-SVG.extend(SVG.Element, {
-  // Bind given event to listener
-  on: function (event, listener, binding, options) {
-    SVG.on(this, event, listener, binding, options)
-    return this
-  },
-  // Unbind event from listener
-  off: function (event, listener) {
-    SVG.off(this.node, event, listener)
-    return this
-  },
-  dispatch: function (event, data) {
-    // Dispatch event
-    if (event instanceof window.Event) {
-      this.node.dispatchEvent(event)
-    } else {
-      this.node.dispatchEvent(event = new window.CustomEvent(event, {detail: data, cancelable: true}))
-    }
-    return event
-  },
-  // Fire given event
-  fire: function (event, data) {
-    this.dispatch(event, data)
-    return this
-  }
 })
 
 SVG.Defs = SVG.invent({
@@ -4418,7 +4424,6 @@ function closeEnough (a, b, threshold) {
 
 // TODO: Refactor this to a static function of matrix.js
 function formatTransforms (o) {
-
   // Get all of the parameters required to form the matrix
   var flipBoth = o.flip === 'both' || o.flip === true
   var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
@@ -4469,7 +4474,7 @@ function formatTransforms (o) {
     ox: ox,
     oy: oy,
     px: px,
-    py: py,
+    py: py
   }
 }
 
@@ -4654,7 +4659,7 @@ SVG.Animator = {
 
   frame: function (fn) {
     SVG.Animator.frames.push({
-      id: SVG.Animator.frameCount,
+      id: SVG.Animator.frameCount++,
       run: fn
     })
 
@@ -4662,7 +4667,7 @@ SVG.Animator = {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return ++SVG.Animator.frameCount
+    return SVG.Animator.frameCount
   },
 
   timeout: function (fn, delay) {
@@ -4698,14 +4703,12 @@ SVG.Animator = {
   },
 
   _draw: function (now) {
-
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-    var tracking = true
+    // var tracking = true // FIXME: Not used
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
     while ((nextTimeout = SVG.Animator.timeouts.shift())) {
-
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
         nextTimeout.run()
@@ -4718,7 +4721,7 @@ SVG.Animator = {
     }
 
     // Run all of the frames available up until this point
-    var lastFrame = SVG.Animator.frames.last()
+    // var lastFrame = SVG.Animator.frames.last() // FIXME: Not used
     var lastFrameId = SVG.Animator.frameCount
     while (SVG.Animator.frames.first() && SVG.Animator.frames.first().id < lastFrameId) {
       var nextFrame = SVG.Animator.frames.shift()
@@ -4735,4 +4738,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

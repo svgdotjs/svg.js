@@ -1,6 +1,8 @@
 /* global proportionalSize, assignNewId, createElement, matches, is */
 
 SVG.Element = SVG.invent({
+  inherit: SVG.EventTarget,
+
   // Initialize node
   create: function (node) {
     // event listener
@@ -304,6 +306,9 @@ SVG.Element = SVG.invent({
     },
     is: function (obj) {
       return is(this, obj)
+    },
+    getEventTarget: function () {
+      return this.node
     }
   }
 })

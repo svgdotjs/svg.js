@@ -11,6 +11,7 @@ SVG.easing = {
 
 SVG.Runner = SVG.invent({
 
+  inherit: SVG.EventTarget,
   parent: SVG.Element,
 
   create: function (options) {
@@ -26,7 +27,7 @@ SVG.Runner = SVG.invent({
       : options
 
     // Declare all of the variables
-    this._dispacher = document.createElement('div')
+    this._dispatcher = document.createElement('div')
     this._element = null
     this._timeline = null
     this.done = false
@@ -167,22 +168,12 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    during: function () {
+    during: function (fn) {
       return this.on('during', fn, this)
-    },
-
-    on (eventName, fn, binding) {
-      SVG.on(this._dispacher, eventName, fn, binding)
-      return this
     },
 
     after (fn) {
       return this.on('finish', fn, this)
-    },
-
-    fire: function (name, detail) {
-      SVG.Element.prototype.dispatch.call({node: this._dispacher}, name, detail)
-      return this
     },
 
     /*
@@ -202,7 +193,7 @@ SVG.Runner = SVG.invent({
 
       // If there is no duration, we are in declarative mode and dt has to be
       // positive always, so if its negative, we ignore it.
-      if (this._isDeclarative && dt < 0) return false
+      if (this._isDeclarative && dt < 0) return this
 
       // If the user gives us a huge dt, figure out how many full loops
       // have passed during this time. A full loop is the time required to
@@ -211,6 +202,9 @@ SVG.Runner = SVG.invent({
       var nPeriods = Math.floor(absolute / period)
       this._loopsDone += nPeriods
       this._time = ((absolute % period) + period) % period - this._wait
+
+      // FIXME: Without that it loops forever even without trying to loop
+      if(this._loopsDone >= this._times) this._time = Infinity
 
       // Make sure we reverse the code if we had an odd number of loops
       this.reversed = (nPeriods % 2 === 0) ? this.reversed : !this.reversed
@@ -258,7 +252,7 @@ SVG.Runner = SVG.invent({
 
       // Fire finished event if finished
       if (this.done) {
-        this.fire('finish', {runner: this})
+        this.fire('finish', this)
       }
       return this
     },
@@ -310,6 +304,10 @@ SVG.Runner = SVG.invent({
         delete this.tags[name[i]]
       }
       return this
+    },
+
+    getEventTarget: function () {
+      return this._dispatcher
     },
 
     /*

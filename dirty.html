@@ -130,12 +130,10 @@ function getColor(t) {
 //   .ease('<>')
 //   .center(500, 200)
 
-var r = new SVG.Runner(1000).loop(10, false, 100)
+var r = new SVG.Runner(200)//.loop(3, false, 100)
 r.queue(null, console.log)
 
-r.step(1200) // should be 0.1s
-r.step(-300) // should be 0.9s
-
+new SVG.Timeline().schedule(r)
 
 // r.step(300) // should be 0.1
 // r.step(2 * 1100) // should be 0
