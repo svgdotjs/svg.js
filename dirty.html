@@ -123,10 +123,25 @@ function getColor(t) {
 //timeline.finish()
 
 
-var circle = SVG('<circle>').addTo('svg').size(100, 100).center(200, 200)
-circle.loop(500, 6, true, [500, 1000, 1500])
-  .move(500, 500)
 
+// var circle = SVG('<circle>').addTo('svg').size(100, 100).center(200, 200)
+// var runner = circle.animate(2000)
+//   .loop(Infinity, true, 2000)
+//   .ease('<>')
+//   .center(500, 200)
+
+var r = new SVG.Runner(1000).loop(10, false, 100)
+r.queue(null, console.log)
+
+r.step(1200) // should be 0.1s
+r.step(-300) // should be 0.9s
+
+
+// r.step(300) // should be 0.1
+// r.step(2 * 1100) // should be 0
+// r.step(-50) // 0.05
+// r.step(-100)
+// r.step(-100) // 0.95
 
 </script>
 

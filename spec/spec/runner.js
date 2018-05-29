@@ -167,6 +167,37 @@ describe('SVG.Runner', function () {
 
       expect(runner.step(SVG.defaults.timeline.duration)).toBe(true)
     })
+
+    // step in time
+    it('steps forward a certain time', function () {
+      var spy = jasmine.createSpy('stepper')
+      var r = new SVG.Runner(1000).loop(10, false, 100)
+      r.queue(null, spy)
+
+      r.step(300) // should be 0.3s
+      expect(spy).toHaveBeenCalledWith(0.3)
+      expect(r._loopsDone).toBe(0)
+
+      r.step(300) // should be 0.6s
+      expect(spy).toHaveBeenCalledWith(0.6)
+      expect(r._loopsDone).toBe(0)
+
+      r.step(600) // should be 0.1s
+      expect(spy).toHaveBeenCalledWith(0.1)
+      expect(r._loopsDone).toBe(1)
+
+      r.step(-300) // should be 0.9s
+      expect(spy).toHaveBeenCalledWith(0.9)
+      expect(r._loopsDone).toBe(0)
+
+      r.step(2000) // should be 0.7s
+      expect(spy).toHaveBeenCalledWith(0.7)
+      expect(r._loopsDone).toBe(2)
+
+      r.step(-2000) // should be 0.9s
+      expect(spy).toHaveBeenCalledWith(0.9)
+      expect(r._loopsDone).toBe(0)
+    })
   })
 
   describe('active()', function () {

@@ -47,11 +47,12 @@ SVG.Runner = SVG.invent({
     this.tags = {}
 
     // Looping variables
+    this._haveReversed = false
     this._reversing = false
     this._loopsDone = 0
     this._swing = false
+    this._wait = 0
     this._times = 1
-    this._waits = [0]
 
     // save the transformation we are starting with
     this._baseTransform = null
@@ -67,16 +68,6 @@ SVG.Runner = SVG.invent({
         .element(this)
         .timeline(timeline)
         .schedule(delay, when)
-    },
-
-    loop: function (duration, times, swing, waits) {
-      duration = typeof duration === 'object' ? duration : {
-        duration: duration,
-        times: times,
-        swing: swing,
-        waits: waits,
-      }
-      return this.animate(duration)
     },
 
     delay: function (by, when) {
@@ -138,18 +129,18 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    loop: function (times, swing, waits) {
+    loop: function (times, swing, wait) {
       // Deal with the user passing in an object
       if (typeof times === 'object') {
         swing = times.swing
-        waits = times.waits
+        wait = times.wait
         times = times.times
       }
 
       // Sanitise the values and store them
       this._times = times || Infinity
       this._swing = swing || false
-      this._waits = Array.isArray(waits) ? waits : [waits || 0]
+      this._wait = wait || 0
       return this
     },
 
@@ -213,10 +204,21 @@ SVG.Runner = SVG.invent({
       // positive always, so if its negative, we ignore it.
       if (this._isDeclarative && dt < 0) return false
 
+      // If the user gives us a huge dt, figure out how many full loops
+      // have passed during this time. A full loop is the time required to
+      var absolute = this._time + dt + this._wait
+      var period = this._duration + this._wait
+      var nPeriods = Math.floor(absolute / period)
+      this._loopsDone += nPeriods
+      this._time = ((absolute % period) + period) % period - this._wait
+
+      // Make sure we reverse the code if we had an odd number of loops
+      this.reversed = (nPeriods % 2 === 0) ? this.reversed : !this.reversed
+
       // Increment the time and read out the parameters
+      // this._time += dt
       var duration = this._duration || Infinity
-      this._time += isFinite(dt) ? dt : 16
-      var time = this._time + dt
+      var time = this._time
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
@@ -244,19 +246,13 @@ SVG.Runner = SVG.invent({
       this.done = finished
 
       // Deal with looping if we just finished an animation
-      if (this.done && ++this._loopsDone < this._times) {
-
-        // Move the next wait to the end
-        let nextWait = this._waits.shift() || 0
-        this._waits.push(nextWait)
+      if (this.done && ++this._loopsDone < this._times && !this._isDeclarative) {
 
         // If swinging, toggle the reversing flag
-        if(this._swing) {
-          this._reversing = !this._reversing
-        }
+        this._reversing = this._swing ? !this._reversing : this._reversing
 
         // Set the time to the wait time, and mark that we are not done yet
-        this._time = -nextWait
+        this._time = - this._wait
         this.done = false
       }
 
@@ -271,10 +267,12 @@ SVG.Runner = SVG.invent({
       return this.step(Infinity)
     },
 
-    reverse: function (reversing) {
-      this._reversing = reversing == null
-        ? !this._reversing
-        : reversing
+    reverse: function (reverse) {
+      if (reverse === this._haveReversed) return this
+      this._reversing = reverse == null ? !this._reversing : reverse
+      this._waitReverse = reverse == null ? !this._waitReverse : reverse
+      this._haveReversed = reverse == null ? this._haveReversed : null
+      return this
     },
 
     ease: function (fn) {
@@ -385,7 +383,7 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   // Initialise the default parameters
   var times = 1
   var swing = false
-  var waits = []
+  var wait = 0
 
   // If we have an object, unpack the values
   if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
@@ -393,7 +391,7 @@ SVG.Runner.sanitise = function (duration, delay, when) {
     when = duration.when || 'now'
     swing = duration.swing || false
     times = duration.times || 1
-    waits = duration.waits || []
+    wait = duration.wait || 0
     duration = duration.duration || 1000
   }
 
@@ -402,7 +400,7 @@ SVG.Runner.sanitise = function (duration, delay, when) {
     delay: delay,
     swing: swing,
     times: times,
-    waits: waits,
+    wait: wait,
     when: when
   }
 }
