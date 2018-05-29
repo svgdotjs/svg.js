@@ -74,8 +74,8 @@ function getColor(t) {
 //   }
 // }
 
-var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
-bla.animate().size(220, 200).queue(null, console.log)
+// var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
+// bla.animate().size(220, 200).queue(null, console.log)
 
 // var randPoint = (x = 50, y = 50) => [
 //   Math.random() * 100 - 50 + x,
@@ -101,14 +101,13 @@ bla.animate().size(220, 200).queue(null, console.log)
 //   ])
 // })
 
-// var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
-// var anim = mover.animate(new SVG.Spring(500, 10)).move(500, 500)
-//
-// SVG.on(document, 'mousemove', function (e) {
-//   //mover.animate(SVG.PID()).move(e.pageX, e.pageY)
-//   var p = mover.point(e.pageX, e.pageY)
-//   anim.center(p.x, p.y)
-// })
+var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
+var anim = mover.animate(new SVG.Spring(500, 10)).move(500, 500)
+
+SVG.on(document, 'mousemove', function (e) {
+  var p = mover.point(e.pageX, e.pageY)
+  anim.center(p.x, p.y)
+})
 
 // var timeline = new SVG.Timeline().pause()
 // var runner = new SVG.Runner(100000)

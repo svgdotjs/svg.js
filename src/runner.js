@@ -150,12 +150,16 @@ SVG.Runner = SVG.invent({
       // FIXME: timeline is already set when used in normal ways
       // but for manual runners we need that here anyway
       // so just have doubled code?
+      // TODO: Nope, thats not good - lets talk about this :P
       timeline.schedule(this, delay, when)
       this.timeline(timeline)
       return this
     },
 
-    // schedule a runner
+    // FIXME: These functions shouldn't exist, and if they haaaaaaave to,
+    // then they should be private at the very least
+    // Why do we need them? Cant you just integrate it into loop then call
+    // loop from the constructor directly?
     init: function (duration, delay, when) {
       // Initialise the default parameters
       var times = 0
@@ -180,6 +184,7 @@ SVG.Runner = SVG.invent({
       return this.schedule(this.timeline(), delay, when)
     },
 
+    // FIXME: See above
     initLoop: function (duration, times, swing) {
       // If we have an object, unpack the values
       if (typeof duration == 'object') {
@@ -195,6 +200,8 @@ SVG.Runner = SVG.invent({
       return this.init(duration)
     },
 
+    // FIXME: This definitely shouldn't make a new runner, this should just change
+    // the looping behaviour of the current runner.
     loop: function (duration, times, swing) {
       var runner = new SVG.Runner(duration.duration || duration)
       if(this._timeline) runner.element(this._timeline)
@@ -237,7 +244,6 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    // Queue a function to run after this runner
     after (fn) {
       return this.on('finish', fn, this)
     },
@@ -250,12 +256,11 @@ SVG.Runner = SVG.invent({
     /*
     Runner animation methods
     ========================
-    Controls how the animation plays
+    Control how the animation plays
     */
 
     time: function (time) {
       if (time == null) return this._time
-
       let dt = time - this._time
       this.step(dt)
       return this
@@ -274,12 +279,11 @@ SVG.Runner = SVG.invent({
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
-      var position = time / duration
       var finished = time >= duration
+      var position = finished ? 1 : time / duration
 
       // If we are on the rising edge, initialise everything, otherwise,
       // initialise only what needs to be initialised on the rising edge
-      // var justStarted = this._last <= 0 && time >= 0
       var justFinished = this._last <= duration && finished
       this._initialise()
       this._last = time
@@ -288,11 +292,7 @@ SVG.Runner = SVG.invent({
       if(!timeInside && !justFinished) return finished
 
       // Run the runner and store the last time it was run
-      var runnersFinished = this._run(
-        this._isDeclarative ? dt
-        : finished ? 1
-        : position
-      )
+      var runnersFinished = this._run(this._isDeclarative ? dt : position)
       finished = (this._isDeclarative && runnersFinished)
         || (!this._isDeclarative && finished)
 
@@ -349,7 +349,6 @@ SVG.Runner = SVG.invent({
       for(var i = name.length; i--;) {
         delete this.tags[name[i]]
       }
-
       return this
     },
 
@@ -396,8 +395,8 @@ SVG.Runner = SVG.invent({
       }
     },
 
-    // Run each run function for the position given
-    _run: function (position) {
+    // Run each run function for the position or dt given
+    _run: function (positionOrDt) {
 
       // Run all of the _queue directly
       var allfinished = true
@@ -409,7 +408,7 @@ SVG.Runner = SVG.invent({
         // Run the function if its not finished, we keep track of the finished
         // flag for the sake of declarative _queue
         current.finished = current.finished
-          || (current.runner.call(this, position) === true)
+          || (current.runner.call(this, positionOrDt) === true)
         allfinished = allfinished && current.finished
       }
 

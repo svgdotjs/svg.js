@@ -7,6 +7,8 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
+var time = performance || Date
+
 SVG.Timeline = SVG.invent({
 
   // Construct a new timeline on the given element
@@ -14,6 +16,9 @@ SVG.Timeline = SVG.invent({
 
     // Store a reference to the element to call its parent methods
     this._element = element || null
+    this._timeSource = function () {
+      return time.now()
+    }
 
     // Store the timing variables
     this._startTime = 0
@@ -29,7 +34,8 @@ SVG.Timeline = SVG.invent({
     this._paused = false
     this._runners = []
     this._time = 0
-    this._lastTime = 0
+    this._lastSourceTime = 0
+    this._lastStepTime = 0
   },
 
   extend: {
@@ -53,6 +59,10 @@ SVG.Timeline = SVG.invent({
     },
 
     schedule (runner, delay, when) {
+
+      // TODO: If no runner is provided, get the whole schedule
+      // TODO: If a runner is provided with no delay or when, get its
+      // starting time and delay
 
       runner.unschedule()
 
@@ -97,8 +107,10 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    // FIXME: this does not work. Setting the nextFrame to null alone is not working
-    // We need to remove our frames from the animator somehow
+    // FIXME: this does not work. Setting the nextFrame to null alone is not
+    // working we need to remove our frames from the animator somehow
+    // TODO: This method shouldn't exist... it isn't required. Setting pause
+    // to true is suffcient. The user shouldn't controll the animation frames
     cancel () {
       // SVG.Animator.cancel(this._nextFrame)
       this._nextFrame = null
@@ -128,56 +140,55 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    // FIXME: rewrite this to use the speed method
     reverse (yes) {
-      this._speed = Math.abs(this._speed) * yes ? -1 : 1
+      var currentSpeed = this.speed()
+      this.speed(-currentSpeed)
       return this
     },
 
     seek (dt) {
-      // what to do here?
-      // we cannot just set a new time
-      // also calling step does not result in anything
-      // because step is getting called with the current real time which
-      // will reset it to the old flow
-
-      // only way is to change lastTime to the current time + what we want
-      this._lastTime -= dt
+      this._time += dt
       return this
     },
 
-    time (t) {
-      if(t == null) return this._time
-      this._time = t
+    time (newTime) {
+      if(newTime == null) return this._time
+      this._time = newTime
       return this
     },
 
     persist (dtOrForever) {
-      if(tdOrForever == null) return this._persist
-
+      if (tdOrForever == null) return this._persist
       this._persist = dtOrForever
       return this
     },
 
+    source (fn) {
+      if (fn == null) return this._timeSource
+      this._timeSource = fn
+      return this
+    },
+
     _step (time) {
+
       // FIXME: User should be able to step manually
-      // move this check to the very bottom
-      // or mixup the continue, step logic
-      // If we are paused, just exit
+      // FIXME: No they shouldn't. _step is a hidden function and should
+      // remain hidden because it is intended to be called by
+      // requestAnimationFrame only. If they want to manually step,
+      // they can just call seek a bunch of times with a _timeSource that
+      // always returns 0.
       if (this._paused) return
 
       // Get the time delta from the last time and update the time
       // TODO: Deal with window.blur window.focus to pause animations
-      // HACK: We keep the time below 50ms to avoid driving animations crazy
-      // FIXME: We cannot seek to -time because speed fucks this up
-      var dt = this._speed * ((time - this._lastTime) || 16)
+      var time = this._timeSource()
+      this._lastSourceTime = time
+      var dtSource = ((time - this._lastSourceTime) || 16)
+      var dtTime = this._speed * dtSource + (this._time - this._lastStepTime)
 
-      // we cannot do that. Doesnt work when user wants to manually step (or seek)
-      dt = dt < 50 ? dt : 16 // If we missed alot of time, ignore
-      this._lastTime = time
-
-      // FIXME: this is not used
-      this._time += dt
+      // Update the time
+      this._time += dtTime
+      this._lastStepTime = this._time
 
       // Run all of the runners directly
       var runnersLeft = false
@@ -188,7 +199,7 @@ SVG.Timeline = SVG.invent({
 
         // If this runner is still going, signal that we need another animation
         // frame, otherwise, remove the completed runner
-        var finished = runner.step(dt).done
+        var finished = runner.step(dtTime).done
         if (!finished) {
           runnersLeft = true
         } else if(this._persist !== true){
@@ -227,8 +238,7 @@ SVG.Timeline = SVG.invent({
     // Checks if we are running and continues the animation
     _continue () {
       if (this._paused) return this
-      if (!this._nextFrame)
-          this._step(this._lastTime) // FIXME: we have to past an absolute time here
+      if (!this._nextFrame) this._step()
       return this
     },
   },
