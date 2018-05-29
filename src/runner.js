@@ -6,6 +6,9 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
+// function sanitise
+
+
 SVG.Runner = SVG.invent({
 
   parent: SVG.Element,
@@ -16,10 +19,6 @@ SVG.Runner = SVG.invent({
     options = options == null
       ? SVG.defaults.timeline.duration
       : options
-
-    options = typeof options !== 'object' || options instanceof SVG.Stepper
-      ? options
-      : options.duration
 
     // ensure that we get a controller
     options = typeof options === 'function'
@@ -47,6 +46,13 @@ SVG.Runner = SVG.invent({
     this._last = 0
     this.tags = {}
 
+    // Looping variables
+    this._reversing = false
+    this._loopsDone = 0
+    this._swing = false
+    this._times = 1
+    this._waits = [0]
+
     // save the transformation we are starting with
     this._baseTransform = null
   },
@@ -54,57 +60,23 @@ SVG.Runner = SVG.invent({
   construct: {
 
     animate: function (duration, delay, when) {
-
-      return new SVG.Runner(duration)
+      var o = SVG.Runner.sanitise(duration, delay, when)
+      var timeline = this.timeline()
+      return new SVG.Runner(o.duration)
+        .loop(o)
         .element(this)
-        .timeline(this.timeline())
-        .init(duration, delay, when)
-
-      // // Initialise the default parameters
-      // var times = 0
-      // var swing = false
-      // var waits = []
-      //
-      // // If we have an object, unpack the values
-      // if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
-      //   delay = duration.delay || 0
-      //   when = duration.when || 'now'
-      //   duration = duration.duration || 1000
-      //   swing = duration.swing || false
-      //   times = duration.times || 0
-      //   waits = duration.waits || []
-      // }
-      //
-      // // FIXME: take care of looping here because loop is a constructor
-      // // alternatively disallow loop as constructor
-      // // Construct a new runner and setup its looping behaviour
-      // var runner = new SVG.Runner(duration)
-      //   //.loop(times, swing, waits)
-      //   .element(this)
-      //
-      // // Attach this animation to a timeline
-      // this.timeline().schedule(runner, delay, when)
-      // return runner
+        .timeline(timeline)
+        .schedule(delay, when)
     },
 
-    loop: function (duration, times, swing) {
-
-      return new SVG.Runner(duration)
-        .element(this)
-        .timeline(this.timeline())
-        .initLoop(duration, times, swing)
-
-      // // If we have an object, unpack the values
-      // if (typeof duration == 'object') {
-      //   duration.times = duration.times || Infinity
-      // } else {
-      //   duration = {
-      //     duration: duration,
-      //     times: times || Infinity,
-      //     swing: swing
-      //   }
-      // }
-      // return this.animate(duration)
+    loop: function (duration, times, swing, waits) {
+      duration = typeof duration === 'object' ? duration : {
+        duration: duration,
+        times: times,
+        swing: swing,
+        waits: waits,
+      }
+      return this.animate(duration)
     },
 
     delay: function (by, when) {
@@ -134,10 +106,30 @@ SVG.Runner = SVG.invent({
     },
 
     animate: function(duration, delay, when) {
-      var runner = new SVG.Runner(duration)
-      if(this._timeline) runner.element(this._timeline)
+      var o = SVG.Runner.sanitise(duration, delay, when)
+      var runner = new SVG.Runner(o.duration)
+      if(this._timeline) runner.timeline(this._timeline)
       if(this._element) runner.element(this._element)
-      return runner.init(duration, delay, when)
+      return runner.loop(o).schedule(delay, when)
+    },
+
+    schedule: function (timeline, delay, when) {
+      // The user doesn't need to pass a timeline if we already have one
+      if(!(timeline instanceof SVG.Timeline)) {
+        when = delay
+        delay = timeline
+        timeline = this.timeline()
+      }
+
+      // If there is no timeline, yell at the user...
+      if(!timeline) {
+        throw Error('Runner cannot be scheduled without timeline')
+      }
+
+      // Schedule the runner on the timeline provided
+      timeline.schedule(this, delay, when)
+      this.timeline(timeline)
+      return this
     },
 
     unschedule: function () {
@@ -146,78 +138,23 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    schedule: function (timeline, delay, when) {
-      if(!timeline) {
-        throw Error('Runner cannot be scheduled without timeline')
+    loop: function (times, swing, waits) {
+      // Deal with the user passing in an object
+      if (typeof times === 'object') {
+        swing = times.swing
+        waits = times.waits
+        times = times.times
       }
 
-      // FIXME: timeline is already set when used in normal ways
-      // but for manual runners we need that here anyway
-      // so just have doubled code?
-      // TODO: Nope, thats not good - lets talk about this :P
-      timeline.schedule(this, delay, when)
-      this.timeline(timeline)
+      // Sanitise the values and store them
+      this._times = times || Infinity
+      this._swing = swing || false
+      this._waits = Array.isArray(waits) ? waits : [waits || 0]
       return this
     },
 
-    // FIXME: These functions shouldn't exist, and if they haaaaaaave to,
-    // then they should be private at the very least
-    // Why do we need them? Cant you just integrate it into loop then call
-    // loop from the constructor directly?
-    init: function (duration, delay, when) {
-      // Initialise the default parameters
-      var times = 0
-      var swing = false
-      var waits = []
-
-      // If we have an object, unpack the values
-      if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
-        delay = duration.delay || 0
-        when = duration.when || 'now'
-        duration = duration.duration || 1000
-        swing = duration.swing || false
-        times = duration.times || 0
-        waits = duration.waits || []
-      }
-
-      // TODO: take care of looping here because there is no loop function we can use
-      // e.g. this._times = times
-
-      // Attach this animation to a timeline
-      //this.timeline().schedule(this, delay, when)
-      return this.schedule(this.timeline(), delay, when)
-    },
-
-    // FIXME: See above
-    initLoop: function (duration, times, swing) {
-      // If we have an object, unpack the values
-      if (typeof duration == 'object') {
-        duration.times = duration.times || Infinity
-      } else {
-        duration = {
-          duration: duration,
-          times: times || Infinity,
-          swing: swing
-        }
-      }
-
-      return this.init(duration)
-    },
-
-    // FIXME: This definitely shouldn't make a new runner, this should just change
-    // the looping behaviour of the current runner.
-    loop: function (duration, times, swing) {
-      var runner = new SVG.Runner(duration)
-      if(this._timeline) runner.element(this._timeline)
-      if(this._element) runner.element(this._element)
-      return runner.initLoop(duration, times, swing)
-    },
-
-    delay: function () {
-      if(this._element) {
-        return this._element.delay.apply(this._element, arguments)
-      }
-      // TODO: throw an error
+    delay: function (delay) {
+      return this.animate(0, delay)
     },
 
     /*
@@ -279,12 +216,15 @@ SVG.Runner = SVG.invent({
       // Increment the time and read out the parameters
       var duration = this._duration || Infinity
       this._time += isFinite(dt) ? dt : 16
-      var time = this._time
+      var time = this._time + dt
 
       // Work out if we are in range to run the function
       var timeInside = 0 <= time && time <= duration
       var finished = time >= duration
       var position = finished ? 1 : time / duration
+
+      // Deal with reversing
+      position = this._reversing ? 1 - position : position
 
       // If we are on the rising edge, initialise everything, otherwise,
       // initialise only what needs to be initialised on the rising edge
@@ -303,8 +243,27 @@ SVG.Runner = SVG.invent({
       // Set whether this runner is complete or not
       this.done = finished
 
+      // Deal with looping if we just finished an animation
+      if (this.done && ++this._loopsDone < this._times) {
+
+        // Move the next wait to the end
+        let nextWait = this._waits.shift() || 0
+        this._waits.push(nextWait)
+
+        // If swinging, toggle the reversing flag
+        if(this._swing) {
+          this._reversing = !this._reversing
+        }
+
+        // Set the time to the wait time, and mark that we are not done yet
+        this._time = -nextWait
+        this.done = false
+      }
+
       // Fire finished event if finished
-      this.done && this.fire('finish', {runner: this})
+      if (this.done) {
+        this.fire('finish', {runner: this})
+      }
       return this
     },
 
@@ -312,13 +271,12 @@ SVG.Runner = SVG.invent({
       return this.step(Infinity)
     },
 
-    // TODO
-    // Sets the time to the end time and makes the time advance backwards
-    reverse: function () {
-      return this
+    reverse: function (reversing) {
+      this._reversing = reversing == null
+        ? !this._reversing
+        : reversing
     },
 
-    // Changes the animation easing function
     ease: function (fn) {
       this._stepper = new SVG.Ease(fn)
       return this
@@ -363,7 +321,7 @@ SVG.Runner = SVG.invent({
     */
 
     // Save a morpher to the morpher list so that we can retarget it later
-    _remember: function (method, morpher) {
+    _rememberMorpher: function (method, morpher) {
       this._history[method] = {
         morpher: morpher,
         caller: this._queue[this._queue.length - 1],
@@ -421,6 +379,33 @@ SVG.Runner = SVG.invent({
     },
   },
 })
+
+SVG.Runner.sanitise = function (duration, delay, when) {
+
+  // Initialise the default parameters
+  var times = 1
+  var swing = false
+  var waits = []
+
+  // If we have an object, unpack the values
+  if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
+    delay = duration.delay || 0
+    when = duration.when || 'now'
+    swing = duration.swing || false
+    times = duration.times || 1
+    waits = duration.waits || []
+    duration = duration.duration || 1000
+  }
+
+  return {
+    duration: duration,
+    delay: delay,
+    swing: swing,
+    times: times,
+    waits: waits,
+    when: when
+  }
+}
 
 // Extend the attribute methods separately to avoid cluttering the main
 // Timeline class above
@@ -597,7 +582,7 @@ SVG.extend(SVG.Runner, {
       }, this._isDeclarative)
 
       // Register the morpher so that if it is changed again, we can retarget it
-      this._remember(method, morpher)
+      this._rememberMorpher(method, morpher)
       return this
   },
 
@@ -616,7 +601,7 @@ SVG.extend(SVG.Runner, {
     }, this._isDeclarative)
 
     // Register the morpher so that if it is changed again, we can retarget it
-    this._remember(method, morpher)
+    this._rememberMorpher(method, morpher)
     return this
   },
 

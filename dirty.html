@@ -101,13 +101,13 @@ function getColor(t) {
 //   ])
 // })
 
-var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
-var anim = mover.animate(new SVG.Spring(500, 10)).move(500, 500)
-
-SVG.on(document, 'mousemove', function (e) {
-  var p = mover.point(e.pageX, e.pageY)
-  anim.center(p.x, p.y)
-})
+// var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
+// var anim = mover.animate(new SVG.Spring(500, 10)).move(500, 500)
+//
+// SVG.on(document, 'mousemove', function (e) {
+//   var p = mover.point(e.pageX, e.pageY)
+//   anim.center(p.x, p.y)
+// })
 
 // var timeline = new SVG.Timeline().pause()
 // var runner = new SVG.Runner(100000)
@@ -121,6 +121,12 @@ SVG.on(document, 'mousemove', function (e) {
 
 //timeline.play()
 //timeline.finish()
+
+
+var circle = SVG('<circle>').addTo('svg').size(100, 100).center(200, 200)
+circle.loop(500, 6, true, [500, 1000, 1500])
+  .move(500, 500)
+
 
 </script>
 

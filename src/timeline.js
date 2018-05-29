@@ -49,15 +49,6 @@ SVG.Timeline = SVG.invent({
      *
      */
 
-    // remove the runner from this timeline
-    unschedule (runner) {
-      var index = this._runners.indexOf(runner)
-      if(index > -1) {
-        this._runners.splice(index, 1)
-      }
-      return this
-    },
-
     schedule (runner, delay, when) {
 
       // TODO: If no runner is provided, get the whole schedule
@@ -99,6 +90,15 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
+    // remove the runner from this timeline
+    unschedule (runner) {
+      var index = this._runners.indexOf(runner)
+      if(index > -1) {
+        this._runners.splice(index, 1)
+      }
+      return this
+    },
+
     play () {
 
       // Now make sure we are not paused and continue the animation
@@ -107,31 +107,22 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    // FIXME: this does not work. Setting the nextFrame to null alone is not
-    // working we need to remove our frames from the animator somehow
-    // TODO: This method shouldn't exist... it isn't required. Setting pause
-    // to true is suffcient. The user shouldn't controll the animation frames
-    cancel () {
-      // SVG.Animator.cancel(this._nextFrame)
-      this._nextFrame = null
-      return this
-    },
-
     pause () {
       // Cancel the next animation frame and pause
+      this._nextFrame = null
       this._paused = true
-      return this.cancel()
+      return this
     },
 
     stop () {
       // Cancel the next animation frame and go to start
       this.seek(-this._time)
-      return this.cancel()
+      return this.pause()
     },
 
     finish () {
       this.seek(Infinity)
-      return this.cancel()
+      return this.pause()
     },
 
     speed (speed) {
@@ -169,14 +160,9 @@ SVG.Timeline = SVG.invent({
       return this
     },
 
-    _step (time) {
+    _step () {
 
-      // FIXME: User should be able to step manually
-      // FIXME: No they shouldn't. _step is a hidden function and should
-      // remain hidden because it is intended to be called by
-      // requestAnimationFrame only. If they want to manually step,
-      // they can just call seek a bunch of times with a _timeSource that
-      // always returns 0.
+      // If the timeline is paused, just do nothing
       if (this._paused) return
 
       // Get the time delta from the last time and update the time
@@ -202,7 +188,9 @@ SVG.Timeline = SVG.invent({
         var finished = runner.step(dtTime).done
         if (!finished) {
           runnersLeft = true
+
         } else if(this._persist !== true){
+
           // runner is finished. And runner might get removed
 
           // TODO: Figure out end time of runner
@@ -240,7 +228,7 @@ SVG.Timeline = SVG.invent({
       if (this._paused) return this
       if (!this._nextFrame) this._step()
       return this
-    },
+    }
   },
 
   // These methods will be added to all SVG.Element objects
