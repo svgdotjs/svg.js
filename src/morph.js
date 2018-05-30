@@ -9,6 +9,7 @@ SVG.Morphable = SVG.invent({
     this._type = null
     this._context = null
     this.modifier = function(arr) { return arr }
+    this._morphObj = null
   },
 
   extend: {
@@ -81,6 +82,7 @@ SVG.Morphable = SVG.invent({
       }
 
       var result = (new this._type(value)).toArray()
+      this._morphObj = this._morphObj || new this._type()
       this._context = this._context
         || Array.apply(null, Array(result.length)).map(Object)
       return result
@@ -106,7 +108,7 @@ SVG.Morphable = SVG.invent({
       //   arr.push(this.stepper(this._from[i], this._to[i]))
       // }
 
-      return this._type.prototype.fromArray(
+      return this._morphObj.fromArray(
         this.modifier(
           this._from.map(function (i, index) {
             return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
@@ -123,6 +125,7 @@ SVG.Morphable = SVG.invent({
 
 SVG.Morphable.NonMorphable = SVG.invent({
   create: function (val) {
+    val = Array.isArray(val) ? val[0] : val
     this.value = val
   },
 
@@ -133,22 +136,28 @@ SVG.Morphable.NonMorphable = SVG.invent({
 
     toArray: function () {
       return [this.value]
-    },
-
-    fromArray: function (arr) {
-      return new SVG.Morphable.NonMorphable(arr[0])
     }
   }
 })
 
 SVG.Morphable.TransformBag = SVG.invent({
   create: function (obj) {
+    if(Array.isArray(obj)) {
+      obj = {
+        scaleX: arr[0],
+        scaleY: arr[1],
+        shear: arr[2],
+        rotate: arr[3],
+        translateX: arr[4],
+        translateY: arr[5]
+      }
+    }
     this.value = new SVG.Matrix(obj)
   },
 
   extend: {
     valueOf: function () {
-      return this.value
+      return this.valueW
     },
 
     toArray: function (){
@@ -162,17 +171,6 @@ SVG.Morphable.TransformBag = SVG.invent({
         v.translateX,
         v.translateY
       ]
-    },
-
-    fromArray: function (arr) {
-      return new SVG.Morphable.TransformBag({
-        scaleX: arr[0],
-        scaleY: arr[1],
-        shear: arr[2],
-        rotate: arr[3],
-        translateX: arr[4],
-        translateY: arr[5]
-      })
     }
   }
 })
@@ -213,10 +211,6 @@ SVG.Morphable.ObjectBag = SVG.invent({
 
     toArray: function (){
       return this.values
-    },
-
-    fromArray: function (arr) {
-      return new SVG.Morphable.ObjectBag(arr)
     }
   }
 })
@@ -241,6 +235,10 @@ SVG.extend(SVG.MorphableTypes, {
       .from(this.valueOf())
       .to(val, args)
   },
+  fromArray: function () {
+    this.constructor.apply(this, arguments)
+    return this
+  }
 })
 
 

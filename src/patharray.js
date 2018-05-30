@@ -92,9 +92,6 @@ SVG.extend(SVG.PathArray, {
       return [].concat.call(prev, curr)
     }, [])
   },
-  fromArray: function (a) {
-    return new SVG.PathArray(a)
-  },
   // Move path string
   move: function (x, y) {
     // get bounding box of current situation

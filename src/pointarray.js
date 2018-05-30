@@ -25,10 +25,6 @@ SVG.extend(SVG.PointArray, {
     }, [])
   },
 
-  fromArray: function (a) {
-    return new SVG.PointArray(a)
-  },
-
   // Convert array to line object
   toLine: function () {
     return {

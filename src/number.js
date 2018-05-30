@@ -3,6 +3,8 @@
 SVG.Number = SVG.invent({
   // Initialize
   create: function (value, unit) {
+    value = Array.isArray(value) ? value[0] : value
+
     // initialize defaults
     this.value = 0
     this.unit = unit || ''
@@ -47,9 +49,6 @@ SVG.Number = SVG.invent({
     },   // Convert to primitive
     toArray: function () {
       return [this.value]
-    },
-    fromArray: function (val) {
-      return new SVG.Number(val[0])
     },
     valueOf: function () {
       return this.value

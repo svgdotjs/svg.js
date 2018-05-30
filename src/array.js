@@ -61,9 +61,6 @@ SVG.extend(SVG.Array, {
   toArray: function () {
     return this.value
   },
-  fromArray: function (a) {
-    return new SVG.Array(a)
-  },
   // Convert array to string
   toString: function () {
     return this.value.join(' ')

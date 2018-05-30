@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue May 29 2018 20:23:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Wed May 30 2018 08:30:35 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -587,9 +587,6 @@ SVG.extend(SVG.Array, {
   toArray: function () {
     return this.value
   },
-  fromArray: function (a) {
-    return new SVG.Array(a)
-  },
   // Convert array to string
   toString: function () {
     return this.value.join(' ')
@@ -645,10 +642,6 @@ SVG.extend(SVG.PointArray, {
     return this.value.reduce(function (prev, curr) {
       return [].concat.call(prev, curr)
     }, [])
-  },
-
-  fromArray: function (a) {
-    return new SVG.PointArray(a)
   },
 
   // Convert array to line object
@@ -846,9 +839,6 @@ SVG.extend(SVG.PathArray, {
     return this.value.reduce(function (prev, curr) {
       return [].concat.call(prev, curr)
     }, [])
-  },
-  fromArray: function (a) {
-    return new SVG.PathArray(a)
   },
   // Move path string
   move: function (x, y) {
@@ -1051,6 +1041,8 @@ SVG.extend(SVG.PathArray, {
 SVG.Number = SVG.invent({
   // Initialize
   create: function (value, unit) {
+    value = Array.isArray(value) ? value[0] : value
+
     // initialize defaults
     this.value = 0
     this.unit = unit || ''
@@ -1095,9 +1087,6 @@ SVG.Number = SVG.invent({
     },   // Convert to primitive
     toArray: function () {
       return [this.value]
-    },
-    fromArray: function (val) {
-      return new SVG.Number(val[0])
     },
     valueOf: function () {
       return this.value
@@ -1993,10 +1982,6 @@ SVG.Matrix = SVG.invent({
 
     toArray: function () {
       return [this.a, this.b, this.c, this.d, this.e, this.f]
-    },
-
-    fromArray: function (a) {
-      return new SVG.Matrix(a)
     }
   },
 
@@ -4550,9 +4535,6 @@ SVG.Box = SVG.invent({
     },
     toArray: function () {
       return [this.x, this.y, this.width, this.height]
-    },
-    fromArray: function (a) {
-      return new SVG.Box(a)
     },
     morph: function (x, y, width, height) {
       this.destination = new SVG.Box(x, y, width, height)

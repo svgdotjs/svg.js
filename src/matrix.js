@@ -331,10 +331,6 @@ SVG.Matrix = SVG.invent({
 
     toArray: function () {
       return [this.a, this.b, this.c, this.d, this.e, this.f]
-    },
-
-    fromArray: function (a) {
-      return new SVG.Matrix(a)
     }
   },
 

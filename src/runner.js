@@ -168,6 +168,7 @@ SVG.Runner = SVG.invent({
       return this
     },
 
+    // FIXME: When not using queue the example is not working anymore
     during: function (fn) {
       return this.on('during', fn, this)
     },
@@ -195,19 +196,23 @@ SVG.Runner = SVG.invent({
       // positive always, so if its negative, we ignore it.
       if (this._isDeclarative && dt < 0) return this
 
-      // If the user gives us a huge dt, figure out how many full loops
-      // have passed during this time. A full loop is the time required to
-      var absolute = this._time + dt + this._wait
-      var period = this._duration + this._wait
-      var nPeriods = Math.floor(absolute / period)
-      this._loopsDone += nPeriods
-      this._time = ((absolute % period) + period) % period - this._wait
+      // When no duration is set, all numbers including this._time end up NaN
+      // and that makes step returning at the first check
+      if(!this._isDeclarative) {
+        // If the user gives us a huge dt, figure out how many full loops
+        // have passed during this time. A full loop is the time required to
+        var absolute = this._time + dt + this._wait
+        var period = this._duration + this._wait
+        var nPeriods = Math.floor(absolute / period)
+        this._loopsDone += nPeriods
+        this._time = ((absolute % period) + period) % period - this._wait
 
-      // FIXME: Without that it loops forever even without trying to loop
-      if(this._loopsDone >= this._times) this._time = Infinity
+        // FIXME: Without that it loops forever even without trying to loop
+        if(this._loopsDone >= this._times) this._time = Infinity
 
-      // Make sure we reverse the code if we had an odd number of loops
-      this.reversed = (nPeriods % 2 === 0) ? this.reversed : !this.reversed
+        // Make sure we reverse the code if we had an odd number of loops
+        this.reversed = (nPeriods % 2 === 0) ? this.reversed : !this.reversed
+      }
 
       // Increment the time and read out the parameters
       // this._time += dt
