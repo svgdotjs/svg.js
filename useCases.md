@@ -325,7 +325,6 @@ The user might want to react to some events that the runner might emit. We will
 emit the following events from the runner:
 - start - when a runner first initialises
 - finish - when a runner finishes
-- during - on every step
-- done - when a function completes
+- step - on every step
 
 Maybe they also want to react to timeline events as well

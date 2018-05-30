@@ -139,6 +139,7 @@ SVG.Timeline = SVG.invent({
 
     seek (dt) {
       this._time += dt
+      this._continue()
       return this
     },
 

@@ -12,6 +12,9 @@
 </head>
 <body style="background-color: #c7c7ff">
 
+<div id="absolute"><label>Absolute: <input type="range" min="0" max="1" step="0.01"></slider></label><span></span></div>
+<div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
+
 <!-- Making the svg -->
 <svg width=1000px height=1000px >
   <rect x=50 y=100 width=200 height=100 stroke=none stroke-width=2 />
@@ -30,6 +33,25 @@ function getColor(t) {
   let color = `rgb(${a}, ${b}, ${c})`
   return color
 }
+
+var rect1 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 100)
+var rect2 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 200)
+
+var anim1 = new SVG.Runner(1000).element(rect1).loop(5, true, 1000).move(200, 100)
+var anim2 = new SVG.Runner(1000).element(rect2).loop(5, true, 1000).move(200, 200)
+
+SVG('#absolute').on('input slide', function (e) {
+  var val = e.target.value
+  document.querySelector('#absolute span').textContent = val
+  anim1.absolute(val)
+})
+
+SVG('#position').on('input slide', function (e) {
+  var val = e.target.value
+  document.querySelector('#position span').textContent = val
+  anim2.position(val)
+})
+
 
 // rect.animate(4000)
 //     .during(t => rect.transform({scale: sqrt(1 + t), rotate: 720 * t}))
@@ -52,27 +74,25 @@ function getColor(t) {
 //   .move(200, 200)
 
 
+for (let i = 0 ; i < 15; i++) {
+  for (let j = 0 ; j < 10; j++) {
 
+    // Make the rect
+    let o = i + j
+    let rect = SVG('rect').clone().show()
+      .width(40).height(40)
+      .x(50 * i).y(50 * j)
+      .attr('fill', getColor(o * 0.1))
 
-// for (let i = 0 ; i < 15; i++) {
-//   for (let j = 0 ; j < 10; j++) {
-//
-//     // Make the rect
-//     let o = i + j
-//     let rect = SVG('rect').clone().show()
-//       .width(40).height(40)
-//       .x(50 * i).y(50 * j)
-//       .attr('fill', getColor(o * 0.1))
-//
-//     // Move the rect
-//     let {cx, cy} = rect.bbox()
-//
-//     // Animate the rect
-//     rect.animate(3000, Math.random() * 2000)
-//       .during(t => rect.transform({rotate: 720 * t, origin: [cx, cy]}))
-//       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
-//   }
-// }
+    // Move the rect
+    let {cx, cy} = rect.bbox()
+
+    // Animate the rect
+    rect.animate(3000, Math.random() * 2000)
+      .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
+      .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
+  }
+}
 
 // var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
 // bla.animate().size(220, 200).queue(null, console.log)
@@ -124,16 +144,36 @@ function getColor(t) {
 
 
 
-// var circle = SVG('<circle>').addTo('svg').size(100, 100).center(200, 200)
-// var runner = circle.animate(2000)
-//   .loop(Infinity, true, 2000)
+// var circle = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
+// var runner = circle.animate(1000)
+//   .loop(3, true, 500)
+//   .reverse()
 //   .ease('<>')
 //   .center(500, 200)
+//   .during(t => circle.transform({rotate: 720 * t, origin: [200, 200]}))
 
-var r = new SVG.Runner(200)//.loop(3, false, 100)
-r.queue(null, console.log)
+// var r = new SVG.Runner(1000).loop(10, false, 100)
+// r.queue(null, console.log)
+//
+// r.step(1200) // should be 0.1s
+// r.step(-300) // should be 0.9s
 
-new SVG.Timeline().schedule(r)
+
+// let recy = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
+// var runner = recy
+//   .animate(2000)
+//     .transform({rotate: 300}, true)
+//     .transform({translate: [200, 100]}, true)
+//   .animate(2000, 1000, 'absolute')
+//     .transform({scale: 2})
+//   .animate(2000, 2000, 'absolute')
+//     .transform({rotate: -300}, true)
+
+// transform(SVG.Matrix()) // should be affine
+// transform(SVG.Matrix(), true) // should be relative
+// transform(SVG.Matrix(), true, false) // should relative and nonaffine
+// transform({...}) and transform({...}, true) // should animate parameters absolute or relative
+// transform({...}, ..., false)
 
 // r.step(300) // should be 0.1
 // r.step(2 * 1100) // should be 0

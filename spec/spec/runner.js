@@ -48,18 +48,6 @@ describe('SVG.Runner', function () {
       })
     })
 
-    describe('loop()', function () {
-      it('calls animate with correct parameters', function () {
-        var element = SVG('<rect>')
-
-        spyOn(element, 'animate')
-        element.loop()
-        expect(element.animate).toHaveBeenCalledWith(jasmine.objectContaining({
-          times: Infinity
-        }));
-      })
-    })
-
     describe('delay()', function () {
       it('calls animate with correct parameters', function () {
         var element = SVG('<rect>')
@@ -76,9 +64,10 @@ describe('SVG.Runner', function () {
       var runner = new SVG.Runner()
       runner.queue(initFn, runFn, true)
 
-      expect(runner._functions[0]).toEqual(jasmine.objectContaining({
+      expect(runner._queue[0]).toEqual(jasmine.objectContaining({
         alwaysInitialise: true,
         initialiser: initFn,
+        initialised: false,
         runner: runFn
       }))
     })
@@ -128,6 +117,11 @@ describe('SVG.Runner', function () {
 
   describe('step()', function () {
 
+    it('returns itself', function () {
+      var runner = new SVG.Runner()
+      expect(runner.step()).toBe(runner)
+    })
+
     it('calls initFn once and runFn at every step when alwaysInitialise is false', function() {
       var runner = new SVG.Runner()
       runner.queue(initFn, runFn, false)
@@ -154,19 +148,11 @@ describe('SVG.Runner', function () {
       expect(runFn.calls.count()).toBe(2)
     })
 
-    it('returns false if not finished', function () {
-      var runner = new SVG.Runner()
-      runner.queue(initFn, runFn, false)
-
-      expect(runner.step()).toBe(false)
-    })
-
-    it('returns true if finished', function () {
-      var runner = new SVG.Runner()
-      runner.queue(initFn, runFn, false)
-
-      expect(runner.step(SVG.defaults.timeline.duration)).toBe(true)
-    })
+    function getLoop(r) {
+      var loopDuration = r._duration + r._wait
+      var loopsDone = Math.floor(r._time / loopDuration)
+      return loopsDone
+    }
 
     // step in time
     it('steps forward a certain time', function () {
@@ -176,27 +162,36 @@ describe('SVG.Runner', function () {
 
       r.step(300) // should be 0.3s
       expect(spy).toHaveBeenCalledWith(0.3)
-      expect(r._loopsDone).toBe(0)
+      expect(getLoop(r)).toBe(0)
 
       r.step(300) // should be 0.6s
       expect(spy).toHaveBeenCalledWith(0.6)
-      expect(r._loopsDone).toBe(0)
+      expect(getLoop(r)).toBe(0)
 
       r.step(600) // should be 0.1s
       expect(spy).toHaveBeenCalledWith(0.1)
-      expect(r._loopsDone).toBe(1)
+      expect(getLoop(r)).toBe(1)
 
       r.step(-300) // should be 0.9s
       expect(spy).toHaveBeenCalledWith(0.9)
-      expect(r._loopsDone).toBe(0)
+      expect(getLoop(r)).toBe(0)
 
       r.step(2000) // should be 0.7s
       expect(spy).toHaveBeenCalledWith(0.7)
-      expect(r._loopsDone).toBe(2)
+      expect(getLoop(r)).toBe(2)
 
       r.step(-2000) // should be 0.9s
       expect(spy).toHaveBeenCalledWith(0.9)
-      expect(r._loopsDone).toBe(0)
+      expect(getLoop(r)).toBe(0)
+    })
+
+    it('handles dts which are bigger than the animation time', function () {
+      var runner = new SVG.Runner(1000)
+      runner.queue(initFn, runFn, true)
+
+      runner.step(1100)
+      expect(initFn).toHaveBeenCalled()
+      expect(runFn).toHaveBeenCalledWith(1)
     })
   })
 
@@ -206,7 +201,7 @@ describe('SVG.Runner', function () {
       expect(runner.active()).toBe(true)
     })
 
-    it('disabled the runner when false is passed', function () {
+    it('disables the runner when false is passed', function () {
       var runner = new SVG.Runner()
       expect(runner.active(false)).toBe(runner)
       expect(runner.active()).toBe(false)
@@ -247,6 +242,40 @@ describe('SVG.Runner', function () {
     })
   })
 
+  describe('position()', function () {
+    it('get the position of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      runner.step(300)
+      expect(spy).toHaveBeenCalledWith(0.3)
+
+      expect(runner.position()).toBe(0.3)
+    })
+    it('sets the position of the runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      expect(runner.position(0.5).position()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(0.5)
+
+      expect(runner.position(0.1).position()).toBe(0.1)
+      expect(spy).toHaveBeenCalledWith(0.1)
+
+      expect(runner.position(1.5).position()).toBe(1)
+      expect(spy).toHaveBeenCalledWith(1)
+    })
+    it('sets the position of the runner in a loop', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).loop(5, true, 500).queue(null, spy)
+
+      expect(runner.position(1.3).position()).toBe(1.3)
+      expect(spy).toHaveBeenCalledWith(0.7)
+
+      expect(runner.position(0.3).position()).toBe(0.3)
+    })
+  })
+
   describe('element()', function () {
     it('returns the element bound to this runner if any', function () {
       var runner1 = new SVG.Runner()
@@ -271,12 +300,12 @@ describe('SVG.Runner', function () {
       expect(runner.during(runFn)).toBe(runner)
     })
 
-    it('calls queue giving only a function to call on every step', function () {
+    it('calls queue passing only a function to call on every step', function () {
       var runner = new SVG.Runner()
       spyOn(runner, 'queue')
       runner.during(runFn)
 
-      expect(runner.queue).toHaveBeenCalledWith(null, runFn, false)
+      expect(runner.queue).toHaveBeenCalledWith(null, runFn)
     })
   })
 
@@ -286,7 +315,7 @@ describe('SVG.Runner', function () {
       expect(runner.finish()).toBe(runner)
     })
 
-    it('calls step with Infinity as arument', function () {
+    it('calls step with Infinity as argument', function () {
       var runner = new SVG.Runner()
       spyOn(runner, 'step')
       runner.finish()
@@ -301,12 +330,11 @@ describe('SVG.Runner', function () {
       expect(runner.reverse()).toBe(runner)
     })
 
-    it('reverses the runner by setting the time to the end and going backwards', function () {
-      var runner = new SVG.Runner()
-      spyOn(runner, 'time')
-      runner.reverse()
-
-      expect(runner.time).toHaveBeenCalledWith(SVG.defaults.timeline.duration)
+    it('reverses the runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).reverse().queue(null, spy)
+      runner.step(750)
+      expect(spy).toHaveBeenCalledWith(0.25)
     })
   })
 

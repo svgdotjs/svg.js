@@ -235,8 +235,8 @@ SVG.extend(SVG.MorphableTypes, {
       .from(this.valueOf())
       .to(val, args)
   },
-  fromArray: function () {
-    this.constructor.apply(this, arguments)
+  fromArray: function (arr) {
+    this.constructor.call(this, arr)
     return this
   }
 })
@@ -351,8 +351,6 @@ fn () => {
     .animate().scale(2)
     .after(fn)
 }
-
-
 
 When you start an element has a base matrix B - which starts as the identity
 

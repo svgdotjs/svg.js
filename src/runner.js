@@ -6,9 +6,6 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
-// function sanitise
-
-
 SVG.Runner = SVG.invent({
 
   inherit: SVG.EventTarget,
@@ -168,13 +165,12 @@ SVG.Runner = SVG.invent({
       return this
     },
 
-    // FIXME: When not using queue the example is not working anymore
     during: function (fn) {
-      return this.on('during', fn, this)
+      return this.queue(null, fn)
     },
 
     after (fn) {
-      return this.on('finish', fn, this)
+      return this.on('finish', fn)
     },
 
     /*
@@ -184,78 +180,89 @@ SVG.Runner = SVG.invent({
     */
 
     time: function (time) {
-      if (time == null) return this._time
+      if (time == null) {
+        return this._time
+      }
       let dt = time - this._time
       this.step(dt)
       return this
     },
 
+    duration: function () {
+      return this._times * (this._wait + this._duration) - this._wait
+    },
+
+    position: function (p) {
+      var loopDuration = this._duration + this._wait
+      if (p == null) {
+        var loopsDone = Math.floor(this._time / loopDuration)
+        var relativeTime = (this._time - loopsDone * loopDuration)
+        var position = relativeTime / this._duration
+        return Math.min(loopsDone + position, this._times)
+      }
+      var whole = Math.floor(p)
+      var partial = p % 1
+      var time = loopDuration * whole + this._duration * partial
+      return this.time(time)
+    },
+
+    absolute: function (p) {
+      if (p == null) {
+        return Math.min(1, this._time / this.duration())
+      }
+      return this.time(p * this.duration())
+    },
+
     step: function (dt) {
 
-      // If there is no duration, we are in declarative mode and dt has to be
-      // positive always, so if its negative, we ignore it.
-      if (this._isDeclarative && dt < 0) return this
+      // Update the time
+      dt = dt == null ? 16 : dt
+      this._time += dt
 
-      // When no duration is set, all numbers including this._time end up NaN
-      // and that makes step returning at the first check
-      if(!this._isDeclarative) {
-        // If the user gives us a huge dt, figure out how many full loops
-        // have passed during this time. A full loop is the time required to
-        var absolute = this._time + dt + this._wait
-        var period = this._duration + this._wait
-        var nPeriods = Math.floor(absolute / period)
-        this._loopsDone += nPeriods
-        this._time = ((absolute % period) + period) % period - this._wait
+      // If we exceed the duration, just set the time to the duration
+      var duration = this.duration()
+      this._time = Math.min(duration, this._time)
 
-        // FIXME: Without that it loops forever even without trying to loop
-        if(this._loopsDone >= this._times) this._time = Infinity
+      // Deal with non-declarative animations directly
+      // Explanation: https://www.desmos.com/calculator/wrnybkho4f
+      // Figure out how many loops we've done
+      var loopDuration = this._duration + this._wait
+      var loopsDone = Math.floor(this._time / loopDuration)
 
-        // Make sure we reverse the code if we had an odd number of loops
-        this.reversed = (nPeriods % 2 === 0) ? this.reversed : !this.reversed
+      // Figure out if we need to run the animation backwards
+      var swinging = this._swing && (loopsDone % 2 === 1)
+      var reversing = (swinging && !this._reversing)
+        || (!swinging && this._reversing)
+
+      // Figure out the position
+      var position = this._time < duration
+        ? (this._time % loopDuration) / this._duration
+        : 1
+      var clipPosition = Math.min(1, position)
+      var stepperPosition = reversing ? 1 - clipPosition : clipPosition
+
+      // Figure out if we need to run
+      var runNow = this._lastPosition !== stepperPosition && this._time >= 0
+      this._lastPosition = stepperPosition
+
+      // Figure out if we just started
+      var justStarted = this._lastTime < 0 && this._time > 0
+      var justFinished = this._lastTime < this._time && this.time > duration
+      this._lastTime = this._time
+      if (justStarted) {
+        this.fire('start', this)
       }
 
-      // Increment the time and read out the parameters
-      // this._time += dt
-      var duration = this._duration || Infinity
-      var time = this._time
-
-      // Work out if we are in range to run the function
-      var timeInside = 0 <= time && time <= duration
-      var finished = time >= duration
-      var position = finished ? 1 : time / duration
-
-      // Deal with reversing
-      position = this._reversing ? 1 - position : position
-
-      // If we are on the rising edge, initialise everything, otherwise,
-      // initialise only what needs to be initialised on the rising edge
-      var justFinished = this._last <= duration && finished
+      // Call initialise and the run function
       this._initialise()
-      this._last = time
-
-      // If we haven't started yet or we are over the time, just exit
-      if(!timeInside && !justFinished) return finished
-
-      // Run the runner and store the last time it was run
-      var runnersFinished = this._run(this._isDeclarative ? dt : position)
-      finished = (this._isDeclarative && runnersFinished)
-        || (!this._isDeclarative && finished)
-
-      // Set whether this runner is complete or not
-      this.done = finished
-
-      // Deal with looping if we just finished an animation
-      if (this.done && ++this._loopsDone < this._times && !this._isDeclarative) {
-
-        // If swinging, toggle the reversing flag
-        this._reversing = this._swing ? !this._reversing : this._reversing
-
-        // Set the time to the wait time, and mark that we are not done yet
-        this._time = - this._wait
-        this.done = false
+      if ( runNow || this._isDeclarative ) {
+        var converged = this._run(this._isDeclarative ? dt : stepperPosition)
+        this.fire('step', this)
       }
 
-      // Fire finished event if finished
+      // Work out if we are done and return this
+      this.done = (converged && this._isDeclarative)
+        || (this._time >= duration && !justFinished && !this._isDeclarative)
       if (this.done) {
         this.fire('finish', this)
       }
@@ -267,10 +274,7 @@ SVG.Runner = SVG.invent({
     },
 
     reverse: function (reverse) {
-      if (reverse === this._haveReversed) return this
       this._reversing = reverse == null ? !this._reversing : reverse
-      this._waitReverse = reverse == null ? !this._waitReverse : reverse
-      this._haveReversed = reverse == null ? this._haveReversed : null
       return this
     },
 
@@ -335,7 +339,8 @@ SVG.Runner = SVG.invent({
       if(this._history[method]) {
         this._history[method].morpher.to(target)
         this._history[method].caller.finished = false
-        this.timeline()._continue()
+        var timeline = this.timeline()
+        timeline && timeline._continue()
         return true
       }
       return false
