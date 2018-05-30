@@ -8,6 +8,66 @@ describe('SVG.Runner', function () {
     runFn.calls.reset()
   })
 
+  describe('sanitise()', function () {
+    it('can handle all form of input', function () {
+      var fn = SVG.Runner.sanitise
+
+      expect(fn(200, 200, 'now')).toEqual(jasmine.objectContaining({
+        duration: 200,
+        delay: 200,
+        when: 'now',
+        times: 1,
+        wait: 0,
+        swing: false
+      }))
+
+      expect(fn(200, 200)).toEqual(jasmine.objectContaining({
+        duration: 200,
+        delay: 200,
+        when: 'last',
+        times: 1,
+        wait: 0,
+        swing: false
+      }))
+
+      expect(fn(200)).toEqual(jasmine.objectContaining({
+        duration: 200,
+        delay: SVG.defaults.timeline.delay,
+        when: 'last',
+        times: 1,
+        wait: 0,
+        swing: false
+      }))
+
+      expect(fn(runFn)).toEqual(jasmine.objectContaining({
+        duration: runFn,
+        delay: SVG.defaults.timeline.delay,
+        when: 'last',
+        times: 1,
+        wait: 0,
+        swing: false
+      }))
+
+      expect(fn({delay: 200})).toEqual(jasmine.objectContaining({
+        duration: SVG.defaults.timeline.duration,
+        delay: 200,
+        when: 'last',
+        times: 1,
+        wait: 0,
+        swing: false
+      }))
+
+      expect(fn({times: 3, delay: 200, when: 'now', swing: true, wait: 200})).toEqual(jasmine.objectContaining({
+        duration: SVG.defaults.timeline.duration,
+        delay: 200,
+        when: 'now',
+        times: 3,
+        wait: 200,
+        swing: true
+      }))
+    })
+  })
+
   describe('())', function () {
     it('creates a runner with defaults', function () {
       var runner = new SVG.Runner()
@@ -44,7 +104,7 @@ describe('SVG.Runner', function () {
         expect(SVG.Runner).toHaveBeenCalled();
         expect(runner instanceof SVG.Runner)
         expect(runner.element()).toBe(element)
-        expect(element.timeline()._runners.length).toBe(1)
+        expect(runner.timeline()).toBe(element.timeline())
       })
     })
 
@@ -215,6 +275,20 @@ describe('SVG.Runner', function () {
     })
   })
 
+  describe('duration()', function () {
+    it('return the full duration of the runner including all loops and waits', function () {
+      var runner = new SVG.Runner(800).loop(10, true, 200)
+      expect(runner.duration()).toBe(9800)
+    })
+  })
+
+  describe('loop()', function () {
+    it('makes this runner looping', function () {
+      var runner = new SVG.Runner(1000).loop(5)
+      expect(runner.duration()).toBe(5000)
+    })
+  })
+
   describe('time()', function () {
     it('returns itself', function () {
       var runner = new SVG.Runner()
@@ -276,6 +350,63 @@ describe('SVG.Runner', function () {
     })
   })
 
+  describe('absolute()', function () {
+    it('gets the absolute position of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      runner.step(300)
+      expect(spy).toHaveBeenCalledWith(0.3)
+
+      expect(runner.absolute()).toBe(0.3)
+    })
+
+    it('gets the absolute position of a runner when looping', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200) // duration should be 9800
+
+      // middle of animation, in the middle of wait time
+      runner.step(4900)
+      expect(runner.absolute()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(1)
+
+      // start of next loop
+      runner.step(100)
+      expect(spy).toHaveBeenCalledWith(0)
+
+      // move 400 into current loop which is 0.5 in position
+      // the absolute value is 5400 / 9800
+      runner.step(400)
+      expect(spy).toHaveBeenCalledWith(0.5)
+      expect(runner.absolute()).toBe(5400 / 9800)
+    })
+
+    it('sets the absolute position of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      expect(runner.absolute(0.5).absolute()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(0.5)
+    })
+
+    it('sets the absolute position of a runner when looping', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200)
+
+      // absolute 0.5 somewhere in the middle of wait time
+      expect(runner.absolute(0.5).absolute()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(1)
+
+      // start of next loop
+      runner.step(100)
+      expect(spy).toHaveBeenCalledWith(0)
+
+      // should move 0.4 into the next loop
+      expect(runner.absolute(5400 / 9800).absolute()).toBe(5400 / 9800)
+      expect(spy.calls.mostRecent().args[0]).toBeCloseTo(0.5)
+    })
+  })
+
   describe('element()', function () {
     it('returns the element bound to this runner if any', function () {
       var runner1 = new SVG.Runner()
@@ -289,8 +420,88 @@ describe('SVG.Runner', function () {
     it('sets an element to be bound to the runner', function () {
       var runner = new SVG.Runner()
       var element = SVG('<rect>')
-      runner.element(element)
+      expect(runner.element(element)).toBe(runner)
       expect(runner.element()).toBe(element)
+    })
+  })
+
+  describe('timeline()', function () {
+    it('returns the timeline bound to this runner if any', function () {
+      var runner1 = new SVG.Runner()
+      expect(runner1.element()).toBe(null)
+
+      var element = SVG('<rect>')
+      var runner2 = element.animate()
+      expect(runner2.timeline()).toBe(element.timeline())
+    })
+
+    it('sets a timeline to be bound to the runner', function () {
+      var runner = new SVG.Runner()
+      var timeline = new SVG.Timeline()
+      expect(runner.timeline(timeline)).toBe(runner)
+      expect(runner.timeline()).toBe(timeline)
+    })
+  })
+
+  describe('schedule()', function () {
+    it('schedules the runner on a timeline', function () {
+      var runner = new SVG.Runner()
+      var timeline = new SVG.Timeline()
+      var spy = spyOn(timeline, 'schedule').and.callThrough()
+
+      expect(runner.schedule(timeline, 200, 'now')).toBe(runner)
+      expect(runner.timeline()).toBe(timeline)
+      expect(spy).toHaveBeenCalledWith(runner, 200, 'now')
+    })
+
+    it('schedules the runner on its own timeline', function () {
+      var runner = new SVG.Runner()
+      var timeline = new SVG.Timeline()
+      var spy = spyOn(timeline, 'schedule')
+      runner.timeline(timeline)
+
+      expect(runner.schedule(200, 'now')).toBe(runner)
+      expect(runner.timeline()).toBe(timeline)
+      expect(spy).toHaveBeenCalledWith(runner, 200, 'now')
+    })
+  })
+
+  describe('unschedule()', function () {
+    it('unschedules this runner from its timeline', function () {
+      var runner = new SVG.Runner()
+      var timeline = new SVG.Timeline()
+      var spy = spyOn(timeline, 'unschedule').and.callThrough()
+
+      expect(runner.schedule(timeline, 200, 'now')).toBe(runner)
+      expect(runner.unschedule()).toBe(runner)
+      expect(spy).toHaveBeenCalledWith(runner)
+      expect(runner.timeline()).toBe(null)
+    })
+  })
+
+
+  describe('animate()', function () {
+    it('creates a new runner scheduled after the first', function () {
+      var runner = new SVG.Runner(1000)
+      var timeline = new SVG.Timeline()
+
+      // FIXME: schedulung a runner on a timeline does not set the timeline for the runner!
+      runner.schedule(timeline)
+
+      var runner2 = runner.animate(1000)
+
+      expect(runner2.timeline()).toBe(timeline)
+      expect(runner2.time()).toBe(-1000)
+    })
+  })
+
+  describe('delay()', function () {
+    it('calls animate with delay parameters', function () {
+      var runner = new SVG.Runner(1000)
+      spyOn(runner, 'animate')
+
+      runner.delay(500)
+      expect(runner.animate).toHaveBeenCalledWith(0, 500)
     })
   })
 
@@ -306,6 +517,21 @@ describe('SVG.Runner', function () {
       runner.during(runFn)
 
       expect(runner.queue).toHaveBeenCalledWith(null, runFn)
+    })
+  })
+
+  describe('after()', function () {
+    it('returns itself', function () {
+      var runner = new SVG.Runner()
+      expect(runner.after(runFn)).toBe(runner)
+    })
+
+    it('binds a function to the after event', function () {
+      var runner = new SVG.Runner()
+      spyOn(runner, 'on')
+      runner.after(runFn)
+
+      expect(runner.on).toHaveBeenCalledWith('finish', runFn)
     })
   })
 

@@ -34,23 +34,23 @@ function getColor(t) {
   return color
 }
 
-var rect1 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 100)
-var rect2 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 200)
-
-var anim1 = new SVG.Runner(1000).element(rect1).loop(5, true, 1000).move(200, 100)
-var anim2 = new SVG.Runner(1000).element(rect2).loop(5, true, 1000).move(200, 200)
-
-SVG('#absolute').on('input slide', function (e) {
-  var val = e.target.value
-  document.querySelector('#absolute span').textContent = val
-  anim1.absolute(val)
-})
-
-SVG('#position').on('input slide', function (e) {
-  var val = e.target.value
-  document.querySelector('#position span').textContent = val
-  anim2.position(val)
-})
+// var rect1 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 100)
+// var rect2 = SVG('<rect>').addTo('svg').size(50, 50).move(100, 200)
+//
+// var anim1 = new SVG.Runner(1000).element(rect1).loop(5, true, 1000).move(200, 100)
+// var anim2 = new SVG.Runner(1000).element(rect2).loop(5, true, 1000).move(200, 200)
+//
+// SVG('#absolute').on('input slide', function (e) {
+//   var val = e.target.value
+//   document.querySelector('#absolute span').textContent = val
+//   anim1.absolute(val)
+// })
+//
+// SVG('#position').on('input slide', function (e) {
+//   var val = e.target.value
+//   document.querySelector('#position span').textContent = val
+//   anim2.position(val)
+// })
 
 
 // rect.animate(4000)
@@ -73,26 +73,60 @@ SVG('#position').on('input slide', function (e) {
 //   .animate()
 //   .move(200, 200)
 
+//
+// for (let i = 0 ; i < 15; i++) {
+//   for (let j = 0 ; j < 10; j++) {
+//
+//     // Make the rect
+//     let o = i + j
+//     let rect = SVG('rect').clone().show()
+//       .width(40).height(40)
+//       .x(50 * i).y(50 * j)
+//       .attr('fill', getColor(o * 0.1))
+//
+//     // Move the rect
+//     let {cx, cy} = rect.bbox()
+//
+//     // Animate the rect
+//     rect.animate(3000, Math.random() * 2000)
+//       .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
+//       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
+//   }
+// }
 
-for (let i = 0 ; i < 15; i++) {
-  for (let j = 0 ; j < 10; j++) {
+SVG.defaults.timeline.ease = '-'
 
-    // Make the rect
-    let o = i + j
-    let rect = SVG('rect').clone().show()
-      .width(40).height(40)
-      .x(50 * i).y(50 * j)
-      .attr('fill', getColor(o * 0.1))
+var r = new SVG.Runner(1000)
+var t = new SVG.Timeline().pause()
+r.schedule(t, 200)
+  .animate(500).loop(5, true, 100)
+  .animate(600, 200, 'absolute')
+  .animate(600, 300)
+  .animate(600, 300, 'now')
+  .animate(1000, 0, 'absolute').loop(6, true)
 
-    // Move the rect
-    let {cx, cy} = rect.bbox()
+var canvas = SVG('svg')
+var schedule = t.schedule()
 
-    // Animate the rect
-    rect.animate(3000, Math.random() * 2000)
-      .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
-      .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
-  }
-}
+schedule.forEach((s, i) => {
+  var rect = canvas.rect(s.duration / 10, 25)
+    .move(100 + s.start/10, 100 + i*30)
+    .attr('fill', '#777')
+
+  s.runner.element(rect)
+    .attr('fill', getColor(i*0.1))
+    .during(console.log)
+})
+
+var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
+canvas.line(100, 300, 800, 300).attr('stroke', 'black')
+
+t.on('time', function (e) {
+  mover.x(100 + e.detail/10)
+})
+
+t.play()
+console.log(schedule)
 
 // var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
 // bla.animate().size(220, 200).queue(null, console.log)

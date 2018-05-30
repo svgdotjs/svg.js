@@ -9,7 +9,17 @@ SVG.easing = {
 
 var time = performance || Date
 
+var makeSchedule = function (time) {
+  return function (runner) {
+    var start = time - runner.time()
+    var duration = runner.duration()
+    var end = start + duration
+    return {start: start, duration: duration, end: end, runner: runner}
+  }
+}
+
 SVG.Timeline = SVG.invent({
+  inherit: SVG.EventTarget,
 
   // Construct a new timeline on the given element
   create: function (element) {
@@ -19,6 +29,8 @@ SVG.Timeline = SVG.invent({
     this._timeSource = function () {
       return time.now()
     }
+
+    this._dispatcher = document.createElement('div')
 
     // Store the timing variables
     this._startTime = 0
@@ -40,6 +52,11 @@ SVG.Timeline = SVG.invent({
 
   extend: {
 
+    getEventTarget () {
+      return this._dispatcher
+    },
+
+    // FIXME: there is no need anymore to save the element on the timeline
     element (element) {
       if(element == null) return this._element
       this._element = element
@@ -54,8 +71,14 @@ SVG.Timeline = SVG.invent({
       // TODO: If no runner is provided, get the whole schedule
       // TODO: If a runner is provided with no delay or when, get its
       // starting time and delay
+      if(runner == null) {
+        return this._runners.map(makeSchedule(this._time)).sort(function (a, b) {
+          return (a.start - b.start) ||  (a.duration - b.duration)
+        })
+      }
 
       runner.unschedule()
+      runner.timeline(this)
 
       // The start time for the next animation can either be given explicitly,
       // derived from the current timeline time or it can be relative to the
@@ -64,7 +87,7 @@ SVG.Timeline = SVG.invent({
       delay = delay || 0
 
       // Work out when to start the animation
-      if ( when == null || when === 'last' || when === 'after' ) {
+      if (when == null || when === 'last' || when === 'after') {
         // Take the last time and increment
         absoluteStartTime = this._startTime + delay
 
@@ -75,7 +98,10 @@ SVG.Timeline = SVG.invent({
         absoluteStartTime = this._time + delay
 
       } else if ( when === 'relative' ) {
+        absoluteStartTime = delay
 
+        // This one feels dirty
+        // FIXME: For this to work we need an absolute start time on the runner
         // TODO: If the runner already exists, shift it by the delay, otherwise
         // this is relative to the start time ie: 0
 
@@ -84,7 +110,7 @@ SVG.Timeline = SVG.invent({
       }
 
       runner.time(-absoluteStartTime)
-      this._startTime = absoluteStartTime + runner._duration
+      this._startTime = absoluteStartTime + runner.duration()
       this._runners.push(runner)
       this._continue()
       return this
@@ -96,6 +122,7 @@ SVG.Timeline = SVG.invent({
       if(index > -1) {
         this._runners.splice(index, 1)
       }
+      runner.timeline(null)
       return this
     },
 
@@ -103,8 +130,7 @@ SVG.Timeline = SVG.invent({
 
       // Now make sure we are not paused and continue the animation
       this._paused = false
-      this._continue()
-      return this
+      return this._continue()
     },
 
     pause () {
@@ -133,19 +159,20 @@ SVG.Timeline = SVG.invent({
 
     reverse (yes) {
       var currentSpeed = this.speed()
-      this.speed(-currentSpeed)
-      return this
+      if(yes == null) return this.speed(-currentSpeed)
+
+      var positive = Math.abs(currentSpeed)
+      return this.speed(yes ? positive : -positive)
     },
 
     seek (dt) {
       this._time += dt
-      this._continue()
-      return this
+      return this._continue()
     },
 
-    time (newTime) {
-      if(newTime == null) return this._time
-      this._time = newTime
+    time (time) {
+      if(time == null) return this._time
+      this._time = time
       return this
     },
 
@@ -169,13 +196,16 @@ SVG.Timeline = SVG.invent({
       // Get the time delta from the last time and update the time
       // TODO: Deal with window.blur window.focus to pause animations
       var time = this._timeSource()
-      this._lastSourceTime = time
-      var dtSource = ((time - this._lastSourceTime) || 16)
+      var dtSource = time - this._lastSourceTime
       var dtTime = this._speed * dtSource + (this._time - this._lastStepTime)
+
+      this._lastSourceTime = time
 
       // Update the time
       this._time += dtTime
       this._lastStepTime = this._time
+
+      this.fire('time', this._time)
 
       // Run all of the runners directly
       var runnersLeft = false
@@ -195,20 +225,20 @@ SVG.Timeline = SVG.invent({
           // runner is finished. And runner might get removed
 
           // TODO: Figure out end time of runner
-          var endTime = Infinity
+          var endTime = runner.duration() - runner.time() + this._time
 
           if(endTime + this._persist < this._time) {
+            // FIXME: which one is better?
+            // runner.unschedule()
+            // --i
+            // --len
+
             // delete runner and correct index
             this._runners.splice(i--, 1) && --len
+            runner.timeline(null)
           }
 
         }
-
-        // TODO: Check if a runner is still healthy, and if it is, run it.
-        // Once a runner is complete it expires. If it has been expired for
-        // more than the persist amount of time, splice it out; by default
-        // this expiry date is zero
-        // this._runners.splice(i--, 1)
       }
 
       // TODO: Collapse transformations in transformationBag into one

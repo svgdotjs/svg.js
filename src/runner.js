@@ -89,7 +89,8 @@ SVG.Runner = SVG.invent({
     },
 
     timeline: function (timeline) {
-      if(timeline == null) return this._timeline
+      // check explicitly for undefined so we can set the timeline to null
+      if(typeof timeline === 'undefined') return this._timeline
       this._timeline = timeline
       return this
     },
@@ -117,7 +118,6 @@ SVG.Runner = SVG.invent({
 
       // Schedule the runner on the timeline provided
       timeline.schedule(this, delay, when)
-      this.timeline(timeline)
       return this
     },
 
@@ -234,6 +234,9 @@ SVG.Runner = SVG.invent({
       var reversing = (swinging && !this._reversing)
         || (!swinging && this._reversing)
 
+
+      //FIXME: reversing is wrong for the same edgecase which leads to wrong reersed position for very last run
+      // which in turn caues animation to snap back at the end
       // Figure out the position
       var position = this._time < duration
         ? (this._time % loopDuration) / this._duration
@@ -392,15 +395,18 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   var times = 1
   var swing = false
   var wait = 0
+  var duration = duration || SVG.defaults.timeline.duration
+  var delay = delay || SVG.defaults.timeline.delay
+  var when = when || 'last'
 
   // If we have an object, unpack the values
   if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
-    delay = duration.delay || 0
-    when = duration.when || 'now'
-    swing = duration.swing || false
-    times = duration.times || 1
-    wait = duration.wait || 0
-    duration = duration.duration || 1000
+    delay = duration.delay || delay
+    when = duration.when || when
+    swing = duration.swing || swing
+    times = duration.times || times
+    wait = duration.wait || wait
+    duration = duration.duration || SVG.defaults.timeline.duration
   }
 
   return {
@@ -434,11 +440,11 @@ SVG.extend(SVG.Runner, {
       }
     }
 
-    var morpher = new Morphable(this._stepper).to(val)
+    var morpher = new SVG.Morphable(this._stepper).to(val)
 
     this.queue(function () {
       morpher = morpher.from(this.element()[type](name))
-    }, function () {
+    }, function (pos) {
       this.element()[type](name, morpher.at(pos))
       return morpher.done()
     }, this._isDeclarative)
@@ -447,7 +453,7 @@ SVG.extend(SVG.Runner, {
   },
 
   zoom: function (level, point) {
-   var morpher = new Morphable(this._stepper).to(new SVG.Number(level))
+   var morpher = new SVG.Morphable(this._stepper).to(new SVG.Number(level))
 
    this.queue(function() {
      morpher = morpher.from(this.zoom())
