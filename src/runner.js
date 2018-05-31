@@ -222,7 +222,6 @@ SVG.Runner = SVG.invent({
       // If we exceed the duration, just set the time to the duration
       var duration = this.duration()
       this._time = Math.min(duration, this._time)
-
       // Deal with non-declarative animations directly
       // Explanation: https://www.desmos.com/calculator/wrnybkho4f
       // Figure out how many loops we've done
@@ -234,17 +233,19 @@ SVG.Runner = SVG.invent({
       var reversing = (swinging && !this._reversing)
         || (!swinging && this._reversing)
 
-
-      //FIXME: reversing is wrong for the same edgecase which leads to wrong reersed position for very last run
-      // which in turn caues animation to snap back at the end
-      // Figure out the position
-      var position = this._time < duration
-        ? (this._time % loopDuration) / this._duration
-        : 1
+      // Figure out the position in the animation
+      var endingValue = Number(!this._swing
+        || (!this._reversing && this._times % 2 == 1)
+        || (this._reversing && this._times % 2 == 0)
+      )
+      var startingValue = Number(this._reversing)
+      var position = (this._time % loopDuration) / this._duration
       var clipPosition = Math.min(1, position)
-      var stepperPosition = reversing ? 1 - clipPosition : clipPosition
+      var stepperPosition = this._time <= 0 ? startingValue
+        : this._time >= duration ? endingValue
+        : (reversing ? 1 - clipPosition : clipPosition)
 
-      // Figure out if we need to run
+      // Figure out if we need to run the stepper in this frame
       var runNow = this._lastPosition !== stepperPosition && this._time >= 0
       this._lastPosition = stepperPosition
 

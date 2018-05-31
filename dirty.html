@@ -115,7 +115,9 @@ schedule.forEach((s, i) => {
 
   s.runner.element(rect)
     .attr('fill', getColor(i*0.1))
-    .during(console.log)
+
+  if (i===0)
+    s.runner.during(console.log)
 })
 
 var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
