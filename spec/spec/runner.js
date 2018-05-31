@@ -253,6 +253,18 @@ describe('SVG.Runner', function () {
       expect(initFn).toHaveBeenCalled()
       expect(runFn).toHaveBeenCalledWith(1)
     })
+
+    it('does behave correctly at the end of reversed loop', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).loop(6, true)
+      runner.queue(null, spy)
+
+      // the 6th loop is reversed
+      runner.step(5750)
+      expect(spy).toHaveBeenCalledWith(0.25)
+      runner.step(250)
+      expect(spy).toHaveBeenCalledWith(0)
+    })
   })
 
   describe('active()', function () {
