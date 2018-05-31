@@ -254,18 +254,249 @@ describe('SVG.Runner', function () {
       expect(runFn).toHaveBeenCalledWith(1)
     })
 
-    it('does behave correctly at the end of reversed loop', function () {
-      var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(1000).loop(6, true)
-      runner.queue(null, spy)
 
-      // the 6th loop is reversed
-      runner.step(5750)
-      expect(spy).toHaveBeenCalledWith(0.25)
-      runner.step(250)
-      expect(spy).toHaveBeenCalledWith(0)
+    describe('looping', function () {
+      describe('without wait', function () {
+        describe('unreversed', function () {
+          describe('nonswinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, false)
+              runner.queue(null, spy)
+
+              runner.step(5750)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, false)
+              runner.queue(null, spy)
+
+              runner.step(4750)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+          })
+
+          describe('swinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, true)
+              runner.queue(null, spy)
+
+              runner.step(5750)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, true)
+              runner.queue(null, spy)
+
+              runner.step(4750)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+          })
+        })
+
+        describe('reversed', function () {
+          describe('nonswinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, false).reverse()
+              runner.queue(null, spy)
+
+              runner.step(5750)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, false).reverse()
+              runner.queue(null, spy)
+
+              runner.step(4750)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+          })
+
+          describe('swinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, true).reverse()
+              runner.queue(null, spy)
+
+              runner.step(5750)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, true).reverse()
+              runner.queue(null, spy)
+
+              runner.step(4750)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+          })
+        })
+      })
+
+
+      describe('with wait', function () {
+        describe('unreversed', function () {
+          describe('nonswinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, false, 100)
+              runner.queue(null, spy)
+
+              runner.step(5450)
+              expect(spy).toHaveBeenCalledWith(1)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, false, 100)
+              runner.queue(null, spy)
+
+              runner.step(4350)
+              expect(spy).toHaveBeenCalledWith(1)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+          })
+
+          describe('swinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, true, 100)
+              runner.queue(null, spy)
+
+              runner.step(5450)
+              expect(spy).toHaveBeenCalledWith(1)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, true, 100)
+              runner.queue(null, spy)
+
+              runner.step(4350)
+              expect(spy).toHaveBeenCalledWith(0)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+          })
+        })
+
+        describe('reversed', function () {
+          describe('nonswinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, false, 100).reverse()
+              runner.queue(null, spy)
+
+              runner.step(5450)
+              expect(spy).toHaveBeenCalledWith(0)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, false, 100).reverse()
+              runner.queue(null, spy)
+
+              runner.step(4350)
+              expect(spy).toHaveBeenCalledWith(0)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+          })
+
+          describe('swinging', function () {
+            it('does behave correctly at the end of an even loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(6, true, 100).reverse()
+              runner.queue(null, spy)
+
+              runner.step(5450)
+              expect(spy).toHaveBeenCalledWith(0)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.75)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(1)
+            })
+
+            it('does behave correctly at the end of an uneven loop', function () {
+              var spy = jasmine.createSpy('stepper')
+              var runner = new SVG.Runner(1000).loop(5, true, 100).reverse()
+              runner.queue(null, spy)
+
+              runner.step(4350)
+              expect(spy).toHaveBeenCalledWith(1)
+              spy.calls.reset()
+
+              runner.step(800)
+              expect(spy).toHaveBeenCalledWith(0.25)
+              runner.step(250)
+              expect(spy).toHaveBeenCalledWith(0)
+            })
+          })
+        })
+      })
     })
+
+
   })
+
 
   describe('active()', function () {
     it('acts as a getter without parameters', function () {

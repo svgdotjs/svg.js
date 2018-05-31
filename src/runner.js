@@ -233,14 +233,40 @@ SVG.Runner = SVG.invent({
       var reversing = (swinging && !this._reversing)
         || (!swinging && this._reversing)
 
-      // Figure out the position in the animation
-      var endingValue = Number(!this._swing
-        || (!this._reversing && this._times % 2 == 1)
-        || (this._reversing && this._times % 2 == 0)
+      // var endingValue = Number(!this._swing
+      //   || (this._swing && !this._reversing && this._times % 2 == 1)
+      //   || (this._swing && this._reversing && this._times % 2 == 0)
+      // )
+
+      /***************************************************
+      Karnaugh for endposition
+
+      r = reversed
+      s = swing
+      o = odd
+
+            | r |!r
+      -------------
+      !s !o | 1 | 0
+      !s  o | 1 | 0
+       s  o | 1 | 0
+       s !0 | 0 | 1
+
+      result = !r && !s || !r && o || r && s && !o
+      **************************************************/
+
+
+      var endingValue = Number(
+        (!this._reversing && !this._swing) ||
+        (!this._reversing && this._times % 2) ||
+        (this._reversing && this._swing && this._times % 2 == 0)
       )
+
       var startingValue = Number(this._reversing)
       var position = (this._time % loopDuration) / this._duration
       var clipPosition = Math.min(1, position)
+
+      // Figure out the position in the animation
       var stepperPosition = this._time <= 0 ? startingValue
         : this._time >= duration ? endingValue
         : (reversing ? 1 - clipPosition : clipPosition)
