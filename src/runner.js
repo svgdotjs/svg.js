@@ -221,9 +221,10 @@ SVG.Runner = SVG.invent({
 
       // If we exceed the duration, just set the time to the duration
       var duration = this.duration()
+
       this._time = Math.min(duration, this._time)
       // Deal with non-declarative animations directly
-      // Explanation: https://www.desmos.com/calculator/wrnybkho4f
+      // Explanation: https://www.desmos.com/calculator/etjvlocvvy
       // Figure out how many loops we've done
       var loopDuration = this._duration + this._wait
       var loopsDone = Math.floor(this._time / loopDuration)

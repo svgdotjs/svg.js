@@ -11,6 +11,8 @@ var time = performance || Date
 
 var makeSchedule = function (time) {
   return function (runner) {
+    // FIXME: This returns a wrong value when the runner is finished
+    // or it will break, because the runner clips his tim to duration
     var start = time - runner.time()
     var duration = runner.duration()
     var end = start + duration
@@ -44,7 +46,7 @@ SVG.Timeline = SVG.invent({
     this._baseTransform = null
     this._nextFrame = null
     this._paused = false
-    this._runners = []
+    this._runners = new Set()
     this._time = 0
     this._lastSourceTime = 0
     this._lastStepTime = 0
@@ -66,19 +68,24 @@ SVG.Timeline = SVG.invent({
      *
      */
 
+    // schedules a runner on the timeline
     schedule (runner, delay, when) {
 
-      // TODO: If no runner is provided, get the whole schedule
-      // TODO: If a runner is provided with no delay or when, get its
-      // starting time and delay
+      // FIXME: Sets do not support map which makes this super ugly
       if(runner == null) {
-        return this._runners.map(makeSchedule(this._time)).sort(function (a, b) {
+        var ret = []
+        var fn = makeSchedule(this._time)
+
+        this._runners.forEach(function (runner) {
+          ret.push(fn(runner))
+        })
+
+        ret.sort(function (a, b) {
           return (a.start - b.start) ||  (a.duration - b.duration)
         })
-      }
 
-      runner.unschedule()
-      runner.timeline(this)
+        return ret
+      }
 
       // The start time for the next animation can either be given explicitly,
       // derived from the current timeline time or it can be relative to the
@@ -100,28 +107,27 @@ SVG.Timeline = SVG.invent({
       } else if ( when === 'relative' ) {
         absoluteStartTime = delay
 
-        // This one feels dirty
-        // FIXME: For this to work we need an absolute start time on the runner
-        // TODO: If the runner already exists, shift it by the delay, otherwise
-        // this is relative to the start time ie: 0
+        if(this._runners.has(runner)) {
+          absoluteStartTime += this._time - runner.time()
+        }
 
       } else {
         // TODO: Throw error
       }
 
+      runner.unschedule()
+      runner.timeline(this)
       runner.time(-absoluteStartTime)
+
       this._startTime = absoluteStartTime + runner.duration()
-      this._runners.push(runner)
+      this._runners.add(runner)
       this._continue()
       return this
     },
 
     // remove the runner from this timeline
     unschedule (runner) {
-      var index = this._runners.indexOf(runner)
-      if(index > -1) {
-        this._runners.splice(index, 1)
-      }
+      this._runners.delete(runner)
       runner.timeline(null)
       return this
     },
@@ -209,43 +215,33 @@ SVG.Timeline = SVG.invent({
 
       // Run all of the runners directly
       var runnersLeft = false
-      for (var i = 0, len = this._runners.length; i < len; i++) {
-        // Get and run the current runner and ignore it if its inactive
-        var runner = this._runners[i]
-        if(!runner.active()) continue
 
-        // If this runner is still going, signal that we need another animation
-        // frame, otherwise, remove the completed runner
+      var eachFn = function (runner) {
+        if(!runner.active) return
+
+        // FIXME: runner is always called even when done
+        // run the runner with delta time
         var finished = runner.step(dtTime).done
+
+        // when finished set flag and return
         if (!finished) {
           runnersLeft = true
+          return
+        }
 
-        } else if(this._persist !== true){
-
-          // runner is finished. And runner might get removed
-
-          // TODO: Figure out end time of runner
+        // Runner is finished and might get removed
+        if(this._persist !== true) {
+          // Figure out end time of the runner
           var endTime = runner.duration() - runner.time() + this._time
 
+          // Remove runner if too old
           if(endTime + this._persist < this._time) {
-            // FIXME: which one is better?
-            // runner.unschedule()
-            // --i
-            // --len
-
-            // delete runner and correct index
-            this._runners.splice(i--, 1) && --len
-            runner.timeline(null)
+            runner.unschedule()
           }
-
         }
-      }
+      }.bind(this)
 
-      // TODO: Collapse transformations in transformationBag into one
-      // transformation directly
-      //
-      // Timeline has
-      // timeline.transformationBag
+      this._runners.forEach(eachFn)
 
       // Get the next animation frame to keep the simulation going
       if (runnersLeft)
