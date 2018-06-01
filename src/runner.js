@@ -13,6 +13,9 @@ SVG.Runner = SVG.invent({
 
   create: function (options) {
 
+    // Store a unique id on the runner, so that we can identify it
+    this.id = SVG.Runner.id++
+
     // ensure a default value
     options = options == null
       ? SVG.defaults.timeline.duration
@@ -207,6 +210,15 @@ SVG.Runner = SVG.invent({
     },
 
     position: function (p) {
+
+      // Get all of the variables we need
+      var x = this._time
+      var d = this._duration
+      var w = this._wait
+      var t = this._times
+      var s = this._swing
+      var r = this._reverse
+
       if (p == null) {
 
         /*
@@ -215,14 +227,6 @@ SVG.Runner = SVG.invent({
           https://www.desmos.com/calculator/u4fbavgche
         The logic is slightly simplified here because we can use booleans
         */
-
-        // Get all of the variables we need
-        var x = this._time
-        var d = this._duration
-        var w = this._wait
-        var t = this._times
-        var s = this._swing
-        var r = this._reverse
 
         // Figure out the value without thinking about the start or end time
         function f (x) {
@@ -242,9 +246,10 @@ SVG.Runner = SVG.invent({
       }
 
       // Work out the loops done and add the position to the loops done
-      var loopDuration = this._duration + this._wait
-      var loopsDone = Math.floor(this._time / loopDuration)
-      var position = loopsDone + p
+      var loopsDone = Math.floor(this.loops())
+      var swingForward = s && (loopsDone % 2 == 0)
+      var forwards = (swingForward && !r) || (r && swingForward)
+      var position = loopsDone + (forwards ? p : 1 - p)
       return this.loops(position)
     },
 
@@ -408,6 +413,8 @@ SVG.Runner = SVG.invent({
     },
   },
 })
+
+SVG.Runner.id = 0
 
 SVG.Runner.sanitise = function (duration, delay, when) {
 
@@ -733,7 +740,6 @@ SVG.extend(SVG.Runner, {
     if (o.opacity != null) this.attr('stop-opacity', o.opacity)
     if (o.color != null) this.attr('stop-color', o.color)
     if (o.offset != null) this.attr('offset', o.offset)
-
 
     return this
   }

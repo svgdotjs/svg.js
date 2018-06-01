@@ -97,7 +97,7 @@ function getColor(t) {
 SVG.defaults.timeline.ease = '-'
 
 var r = new SVG.Runner(1000)
-var t = new SVG.Timeline().pause()
+var t = new SVG.Timeline()
 r.schedule(t, 200)
   .animate(500).loop(5, true, 100)
   .animate(600, 200, 'absolute')
@@ -116,8 +116,8 @@ schedule.forEach((s, i) => {
   s.runner.element(rect)
     .attr('fill', getColor(i*0.1))
 
-  if (i===0)
-    s.runner.during(console.log)
+  // if (i===0)
+  //   s.runner.during(console.log)
 })
 
 var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
@@ -127,7 +127,7 @@ t.on('time', function (e) {
   mover.x(100 + e.detail/10)
 })
 
-t.play()
+
 console.log(schedule)
 
 // var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')

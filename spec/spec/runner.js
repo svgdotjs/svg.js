@@ -420,6 +420,7 @@ describe('SVG.Runner', function () {
 
               runner.step(800)
               expect(spy).toHaveBeenCalledWith(0.75)
+
               runner.step(250)
               expect(spy).toHaveBeenCalledWith(1)
             })
@@ -651,6 +652,7 @@ describe('SVG.Runner', function () {
   })
 
   describe('position()', function () {
+
     it('gets the position of a runner', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).queue(null, spy)
@@ -660,6 +662,7 @@ describe('SVG.Runner', function () {
 
       expect(runner.position()).toBe(0.3)
     })
+
     it('gets the position of a runner when looping', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).loop(5, true, 100).queue(null, spy)
@@ -669,6 +672,7 @@ describe('SVG.Runner', function () {
 
       expect(runner.position()).toBe(0.9)
     })
+
     it('sets the position of a runner', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).queue(null, spy)
@@ -676,14 +680,20 @@ describe('SVG.Runner', function () {
       expect(runner.position(0.5).position()).toBe(0.5)
       expect(spy).toHaveBeenCalledWith(0.5)
     })
-    it('sets the position of a runner', function () {
+
+    it('sets the position of a runner in a loop', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).loop(5, true, 100).queue(null, spy)
 
       runner.step(1200)
-
       expect(runner.position(0.4).position()).toBe(0.4)
-      expect(spy).toHaveBeenCalledWith(0.6)
+      expect(spy).toHaveBeenCalledWith(0.4)
+
+      expect(runner.position(0).position()).toBe(0)
+      expect(spy).toHaveBeenCalledWith(0)
+
+      expect(runner.position(1).position()).toBe(1)
+      expect(spy).toHaveBeenCalledWith(1)
     })
   })
 

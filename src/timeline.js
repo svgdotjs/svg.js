@@ -211,6 +211,7 @@ SVG.Timeline = SVG.invent({
       this._time += dtTime
       this._lastStepTime = this._time
 
+console.log("hi", this._time);
       this.fire('time', this._time)
 
       // Run all of the runners directly
@@ -228,6 +229,9 @@ SVG.Timeline = SVG.invent({
           runnersLeft = true
           return
         }
+
+        // Remove the runner from the set
+        // this._runner.
 
         // Runner is finished and might get removed
         if(this._persist !== true) {
@@ -253,7 +257,8 @@ SVG.Timeline = SVG.invent({
     // Checks if we are running and continues the animation
     _continue () {
       if (this._paused) return this
-      if (!this._nextFrame) this._step()
+      if (!this._nextFrame)
+        this._nextFrame = SVG.Animator.frame(this._step.bind(this))
       return this
     }
   },
