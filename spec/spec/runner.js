@@ -559,8 +559,99 @@ describe('SVG.Runner', function () {
     })
   })
 
+  describe('loops()', function () {
+    it('get the loops of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      runner.step(300)
+      expect(spy).toHaveBeenCalledWith(0.3)
+
+      expect(runner.loops()).toBe(0.3)
+    })
+    it('sets the loops of the runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      expect(runner.loops(0.5).loops()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(0.5)
+
+      expect(runner.loops(0.1).loops()).toBe(0.1)
+      expect(spy).toHaveBeenCalledWith(0.1)
+
+      expect(runner.loops(1.5).loops()).toBe(1)
+      expect(spy).toHaveBeenCalledWith(1)
+    })
+    it('sets the loops of the runner in a loop', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).loop(5, true, 500).queue(null, spy)
+
+      expect(runner.loops(1.3).loops()).toBe(1.3)
+      expect(spy).toHaveBeenCalledWith(0.7)
+
+      expect(runner.loops(0.3).loops()).toBe(0.3)
+    })
+  })
+
+  describe('progress()', function () {
+    it('gets the progress of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      runner.step(300)
+      expect(spy).toHaveBeenCalledWith(0.3)
+
+      expect(runner.progress()).toBe(0.3)
+    })
+
+    it('gets the progress of a runner when looping', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200) // duration should be 9800
+
+      // middle of animation, in the middle of wait time
+      runner.step(4900)
+      expect(runner.progress()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(1)
+
+      // start of next loop
+      runner.step(100)
+      expect(spy).toHaveBeenCalledWith(0)
+
+      // move 400 into current loop which is 0.5 progress
+      // the progress value is 5400 / 9800
+      runner.step(400)
+      expect(spy).toHaveBeenCalledWith(0.5)
+      expect(runner.progress()).toBe(5400 / 9800)
+    })
+
+    it('sets the progress of a runner', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).queue(null, spy)
+
+      expect(runner.progress(0.5).progress()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(0.5)
+    })
+
+    it('sets the progress of a runner when looping', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200)
+
+      // progress 0.5 somewhere in the middle of wait time
+      expect(runner.progress(0.5).progress()).toBe(0.5)
+      expect(spy).toHaveBeenCalledWith(1)
+
+      // start of next loop
+      runner.step(100)
+      expect(spy).toHaveBeenCalledWith(0)
+
+      // should move 0.5 into the next loop
+      expect(runner.progress(5400 / 9800).progress()).toBe(5400 / 9800)
+      expect(spy.calls.mostRecent().args[0]).toBeCloseTo(0.5)
+    })
+  })
+
   describe('position()', function () {
-    it('get the position of a runner', function () {
+    it('gets the position of a runner', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).queue(null, spy)
 
@@ -569,84 +660,30 @@ describe('SVG.Runner', function () {
 
       expect(runner.position()).toBe(0.3)
     })
-    it('sets the position of the runner', function () {
+    it('gets the position of a runner when looping', function () {
+      var spy = jasmine.createSpy('stepper')
+      var runner = new SVG.Runner(1000).loop(5, true, 100).queue(null, spy)
+
+      runner.step(1200)
+      expect(spy).toHaveBeenCalledWith(0.9)
+
+      expect(runner.position()).toBe(0.9)
+    })
+    it('sets the position of a runner', function () {
       var spy = jasmine.createSpy('stepper')
       var runner = new SVG.Runner(1000).queue(null, spy)
 
       expect(runner.position(0.5).position()).toBe(0.5)
       expect(spy).toHaveBeenCalledWith(0.5)
-
-      expect(runner.position(0.1).position()).toBe(0.1)
-      expect(spy).toHaveBeenCalledWith(0.1)
-
-      expect(runner.position(1.5).position()).toBe(1)
-      expect(spy).toHaveBeenCalledWith(1)
     })
-    it('sets the position of the runner in a loop', function () {
+    it('sets the position of a runner', function () {
       var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(1000).loop(5, true, 500).queue(null, spy)
+      var runner = new SVG.Runner(1000).loop(5, true, 100).queue(null, spy)
 
-      expect(runner.position(1.3).position()).toBe(1.3)
-      expect(spy).toHaveBeenCalledWith(0.7)
+      runner.step(1200)
 
-      expect(runner.position(0.3).position()).toBe(0.3)
-    })
-  })
-
-  describe('absolute()', function () {
-    it('gets the absolute position of a runner', function () {
-      var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(1000).queue(null, spy)
-
-      runner.step(300)
-      expect(spy).toHaveBeenCalledWith(0.3)
-
-      expect(runner.absolute()).toBe(0.3)
-    })
-
-    it('gets the absolute position of a runner when looping', function () {
-      var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200) // duration should be 9800
-
-      // middle of animation, in the middle of wait time
-      runner.step(4900)
-      expect(runner.absolute()).toBe(0.5)
-      expect(spy).toHaveBeenCalledWith(1)
-
-      // start of next loop
-      runner.step(100)
-      expect(spy).toHaveBeenCalledWith(0)
-
-      // move 400 into current loop which is 0.5 in position
-      // the absolute value is 5400 / 9800
-      runner.step(400)
-      expect(spy).toHaveBeenCalledWith(0.5)
-      expect(runner.absolute()).toBe(5400 / 9800)
-    })
-
-    it('sets the absolute position of a runner', function () {
-      var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(1000).queue(null, spy)
-
-      expect(runner.absolute(0.5).absolute()).toBe(0.5)
-      expect(spy).toHaveBeenCalledWith(0.5)
-    })
-
-    it('sets the absolute position of a runner when looping', function () {
-      var spy = jasmine.createSpy('stepper')
-      var runner = new SVG.Runner(800).queue(null, spy).loop(10, false, 200)
-
-      // absolute 0.5 somewhere in the middle of wait time
-      expect(runner.absolute(0.5).absolute()).toBe(0.5)
-      expect(spy).toHaveBeenCalledWith(1)
-
-      // start of next loop
-      runner.step(100)
-      expect(spy).toHaveBeenCalledWith(0)
-
-      // should move 0.4 into the next loop
-      expect(runner.absolute(5400 / 9800).absolute()).toBe(5400 / 9800)
-      expect(spy.calls.mostRecent().args[0]).toBeCloseTo(0.5)
+      expect(runner.position(0.4).position()).toBe(0.4)
+      expect(spy).toHaveBeenCalledWith(0.6)
     })
   })
 

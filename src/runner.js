@@ -192,8 +192,7 @@ SVG.Runner = SVG.invent({
       return this._times * (this._wait + this._duration) - this._wait
     },
 
-    // FIXME: Proposal - this should be called loops
-    position: function (p) {
+    loops: function (p) {
       var loopDuration = this._duration + this._wait
       if (p == null) {
         var loopsDone = Math.floor(this._time / loopDuration)
@@ -207,10 +206,9 @@ SVG.Runner = SVG.invent({
       return this.time(time)
     },
 
-    // FIXME: Proposal - this should be called position
-    local: function (p) {
+    position: function (p) {
       if (p == null) {
-        
+
         /*
         This function converts a time to a position in the range [0, 1]
         The full explanation can be found in this desmos demonstration
@@ -244,13 +242,13 @@ SVG.Runner = SVG.invent({
       }
 
       // Work out the loops done and add the position to the loops done
+      var loopDuration = this._duration + this._wait
       var loopsDone = Math.floor(this._time / loopDuration)
       var position = loopsDone + p
-      return this.position(position)
+      return this.loops(position)
     },
 
-    // FIXME - Proposal - this should be called progress
-    absolute: function (p) {
+    progress: function (p) {
       if (p == null) {
         return Math.min(1, this._time / this.duration())
       }
@@ -262,7 +260,7 @@ SVG.Runner = SVG.invent({
       // Update the time and get the new position
       dt = dt == null ? 16 : dt
       this._time += dt
-      var position = this.local()
+      var position = this.position()
 
       // Figure out if we need to run the stepper in this frame
       var runNow = this._lastPosition !== position && this._time >= 0
