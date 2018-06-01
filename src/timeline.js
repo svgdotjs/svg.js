@@ -204,15 +204,12 @@ SVG.Timeline = SVG.invent({
       var time = this._timeSource()
       var dtSource = time - this._lastSourceTime
       var dtTime = this._speed * dtSource + (this._time - this._lastStepTime)
-
       this._lastSourceTime = time
 
       // Update the time
       this._time += dtTime
       this._lastStepTime = this._time
-
-console.log("hi", this._time);
-      this.fire('time', this._time)
+      // this.fire('time', this._time)
 
       // Run all of the runners directly
       var runnersLeft = false

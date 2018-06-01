@@ -6,6 +6,7 @@
   <title></title>
   <script type="text/javascript" src="dist/svg.js"></script>
   <script type="text/javascript" src="src/morph.js"></script>
+  <script type="text/javascript" src="src/helpers.js"></script>
   <script type="text/javascript" src="src/runner.js"></script>
   <script type="text/javascript" src="src/timeline.js"></script>
   <script type="text/javascript" src="src/controller.js"></script>
@@ -71,9 +72,9 @@ function getColor(t) {
 // SVG('rect')
 //   .clone().show()
 //   .animate()
-//   .move(200, 200)
+//   .move(300, 200)
 
-//
+
 // for (let i = 0 ; i < 15; i++) {
 //   for (let j = 0 ; j < 10; j++) {
 //
@@ -90,45 +91,46 @@ function getColor(t) {
 //     // Animate the rect
 //     rect.animate(3000, Math.random() * 2000)
 //       .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
+//       // .during(t => rect.attr('transform', `rotate(${700 * t})`))
 //       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
 //   }
 // }
 
-SVG.defaults.timeline.ease = '-'
-
-var r = new SVG.Runner(1000)
-var t = new SVG.Timeline()
-r.schedule(t, 200)
-  .animate(500).loop(5, true, 100)
-  .animate(600, 200, 'absolute')
-  .animate(600, 300)
-  .animate(600, 300, 'now')
-  .animate(1000, 0, 'absolute').loop(6, true)
-
-var canvas = SVG('svg')
-var schedule = t.schedule()
-
-schedule.forEach((s, i) => {
-  var rect = canvas.rect(s.duration / 10, 25)
-    .move(100 + s.start/10, 100 + i*30)
-    .attr('fill', '#777')
-
-  s.runner.element(rect)
-    .attr('fill', getColor(i*0.1))
-
-  // if (i===0)
-  //   s.runner.during(console.log)
-})
-
-var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
-canvas.line(100, 300, 800, 300).attr('stroke', 'black')
-
-t.on('time', function (e) {
-  mover.x(100 + e.detail/10)
-})
-
-
-console.log(schedule)
+// SVG.defaults.timeline.ease = '-'
+//
+// var r = new SVG.Runner(1000)
+// var t = new SVG.Timeline()
+// r.schedule(t, 200)
+//   .animate(500).loop(5, true, 100)
+//   .animate(600, 200, 'absolute')
+//   .animate(600, 300)
+//   .animate(600, 300, 'now')
+//   .animate(1000, 0, 'absolute').loop(6, true)
+//
+// var canvas = SVG('svg')
+// var schedule = t.schedule()
+//
+// schedule.forEach((s, i) => {
+//   var rect = canvas.rect(s.duration / 10, 25)
+//     .move(100 + s.start/10, 100 + i*30)
+//     .attr('fill', '#777')
+//
+//   s.runner.element(rect)
+//     .attr('fill', getColor(i*0.1))
+//
+//   // if (i===0)
+//   //   s.runner.during(console.log)
+// })
+//
+// var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
+// canvas.line(100, 300, 800, 300).attr('stroke', 'black')
+//
+// t.on('time', function (e) {
+//   mover.x(100 + e.detail/10)
+// })
+//
+//
+// console.log(schedule)
 
 // var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
 // bla.animate().size(220, 200).queue(null, console.log)
@@ -195,15 +197,15 @@ console.log(schedule)
 // r.step(-300) // should be 0.9s
 
 
-// let recy = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
-// var runner = recy
-//   .animate(2000)
-//     .transform({rotate: 300}, true)
-//     .transform({translate: [200, 100]}, true)
-//   .animate(2000, 1000, 'absolute')
-//     .transform({scale: 2})
-//   .animate(2000, 2000, 'absolute')
-//     .transform({rotate: -300}, true)
+let recy = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
+var runner = recy
+  .animate(2000)
+    .transform({rotate: 300}, true)
+    .transform({translate: [200, 100]}, true)
+  .animate(2000, 1000, 'absolute')
+    .transform({scale: 2})
+  .animate(2000, 2000, 'absolute')
+    .transform({rotate: -300}, true)
 
 // transform(SVG.Matrix()) // should be affine
 // transform(SVG.Matrix(), true) // should be relative

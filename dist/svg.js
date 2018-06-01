@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed May 30 2018 17:17:51 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Fri Jun 01 2018 23:53:20 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -296,33 +296,38 @@ SVG.Queue = SVG.invent({
   create: function () {
     this._first = null
     this._last = null
-    this.length = 0
-    this.id = 0
   },
 
   extend: {
     push: function (value) {
+
       // An item stores an id and the provided value
-      var item = { id: this.id++, value: value }
+      var item = value.next ? value : { value: value, next: null, prev: null }
 
       // Deal with the queue being empty or populated
       if (this._last) {
-        this._last = this._last.next = item
+        item.prev = this._last
+        this._last.next = item
+        this._last = item
       } else {
-        this._last = this._first = item
+        this._last = item
+        this._first = item
       }
 
-      this.length++
+      // Update the length and return the current item
+      return item
     },
 
     shift: function () {
-      if (!this.length) {
-        return null
-      }
 
+      // Check if we have a value
       var remove = this._first
+      if (!remove) return null
+
+      // If we do, remove it and relink things
       this._first = remove.next
-      this._last = --this.length ? this._last : null
+      if (this._first) this._first.prev = null
+      this._last = this._first ? this._last : null
       return remove.value
     },
 
@@ -336,41 +341,18 @@ SVG.Queue = SVG.invent({
       return this._last && this._last.value
     },
 
-    // Removes the first item from the front where matcher returns true
-    remove: function (matcher) {
-      // Find the first match
-      var previous = null
-      var current = this._first
+    // Removes the item that was returned from the push
+    remove: function (item) {
 
-      while (current) {
-        // If we have a match, we are done
-        if (matcher(current)) break
+      // Relink the previous item
+      if (item.prev) item.prev.next = item.next
+      if (item.next) item.next.prev = item.prev
+      if (item === this._last) this._last = item.prev
+      if (item === this._first) this._first = item.next
 
-        // Otherwise, advance both of the pointers
-        previous = current
-        current = current.next
-      }
-
-      // If we got the first item, adjust the first pointer
-      if (current && current === this._first) {
-        this._first = this._first.next
-      }
-
-      // If we got the last item, adjust the last pointer
-      if (current && current === this._last) {
-        this._last = previous
-      }
-
-      // If we got an item, fix the list and return the item
-      if (current) {
-        --this.length
-
-        if (previous) {
-          previous.next = current.next
-        }
-
-        return current.item
-      }
+      // Invalidate item
+      item.prev = null
+      item.next = null
     }
   }
 })
@@ -1275,7 +1257,7 @@ SVG.dispatch = function (node, event, data) {
   if (event instanceof window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new window.CustomEvent(event, {detail: data, cancelable: true})
+    event = new window.CustomEvent(event, {detail: data, cancelable: false})
     n.dispatchEvent(event)
   }
   return event
@@ -4636,21 +4618,20 @@ SVG.Animator = {
   nextDraw: null,
   frames: new SVG.Queue(),
   timeouts: new SVG.Queue(),
-  frameCount: 0,
-  timeoutCount: 0,
   timer: window.performance || window.Date,
 
   frame: function (fn) {
-    SVG.Animator.frames.push({
-      id: SVG.Animator.frameCount++,
-      run: fn
-    })
 
+    // Store the node
+    var node = SVG.Animator.frames.push({ run: fn })
+
+    // Request an animation frame if we don't have one
     if (SVG.Animator.nextDraw === null) {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return SVG.Animator.frameCount
+    // Return the node so we can remove it easily
+    return node
   },
 
   timeout: function (fn, delay) {
@@ -4660,38 +4641,32 @@ SVG.Animator = {
     var time = SVG.Animator.timer.now() + delay
 
     // Add the timeout to the end of the queue
-    var thisId = SVG.Animator.timeoutCount++
-    SVG.Animator.timeouts.push({
-      id: thisId,
-      run: fn,
-      time: time
-    })
+    var node = SVG.Animator.timeouts.push({ run: fn, time: time })
 
     // Request another animation frame if we need one
     if (SVG.Animator.nextDraw === null) {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return thisId
+    return node
   },
 
-  cancelTimeout: function (id) {
-    // Find the index of the timeout to cancel and remove it
-    var index = SVG.Animator.timeouts.remove(
-      function (t) {
-        return t.value.id === id
-      }
-    )
-    return index
+  cancelFrame: function (node) {
+    SVG.Animator.frames.remove(node)
+  },
+
+  clearTimeout: function (node) {
+    SVG.Animator.timeouts.remove(node)
   },
 
   _draw: function (now) {
+
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-    // var tracking = true // FIXME: Not used
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
-    while ((nextTimeout = SVG.Animator.timeouts.shift())) {
+    while (nextTimeout = SVG.Animator.timeouts.shift()) {
+
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
         nextTimeout.run()
@@ -4699,20 +4674,19 @@ SVG.Animator = {
         SVG.Animator.timeouts.push(nextTimeout)
       }
 
-        // If we hit the last item, we should stop shifting out more items
+      // If we hit the last item, we should stop shifting out more items
       if (nextTimeout === lastTimeout) break
     }
 
-    // Run all of the frames available up until this point
-    // var lastFrame = SVG.Animator.frames.last() // FIXME: Not used
-    var lastFrameId = SVG.Animator.frameCount
-    while (SVG.Animator.frames.first() && SVG.Animator.frames.first().id < lastFrameId) {
-      var nextFrame = SVG.Animator.frames.shift()
-      nextFrame.run(now)
+    // Run all of the animation frames
+    var nextFrame = null
+    var lastFrame = SVG.Animator.frames.last()
+    while ((nextFrame !== lastFrame) && (nextFrame = SVG.Animator.frames.shift())) {
+      nextFrame.run()
     }
 
     // If we have remaining timeouts or frames, draw until we don't anymore
-    SVG.Animator.nextDraw = SVG.Animator.timeouts.length > 0 || SVG.Animator.frames.length > 0
+    SVG.Animator.nextDraw = SVG.Animator.timeouts.first() || SVG.Animator.frames.first()
         ? requestAnimationFrame(SVG.Animator._draw)
         : null
   }
@@ -4721,4 +4695,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

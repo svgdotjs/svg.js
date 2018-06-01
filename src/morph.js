@@ -89,7 +89,9 @@ SVG.Morphable = SVG.invent({
     },
 
     stepper: function (stepper) {
+      if(stepper == null) return this._stepper
       this._stepper = stepper
+      return this
     },
 
     done: function () {
@@ -144,12 +146,12 @@ SVG.Morphable.TransformBag = SVG.invent({
   create: function (obj) {
     if(Array.isArray(obj)) {
       obj = {
-        scaleX: arr[0],
-        scaleY: arr[1],
-        shear: arr[2],
-        rotate: arr[3],
-        translateX: arr[4],
-        translateY: arr[5]
+        scaleX: obj[0],
+        scaleY: obj[1],
+        shear: obj[2],
+        rotate: obj[3],
+        translateX: obj[4],
+        translateY: obj[5]
       }
     }
     this.value = new SVG.Matrix(obj)
@@ -157,7 +159,7 @@ SVG.Morphable.TransformBag = SVG.invent({
 
   extend: {
     valueOf: function () {
-      return this.valueW
+      return this.value
     },
 
     toArray: function (){

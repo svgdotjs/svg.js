@@ -2,33 +2,38 @@ SVG.Queue = SVG.invent({
   create: function () {
     this._first = null
     this._last = null
-    this.length = 0
-    this.id = 0
   },
 
   extend: {
     push: function (value) {
+
       // An item stores an id and the provided value
-      var item = { id: this.id++, value: value }
+      var item = value.next ? value : { value: value, next: null, prev: null }
 
       // Deal with the queue being empty or populated
       if (this._last) {
-        this._last = this._last.next = item
+        item.prev = this._last
+        this._last.next = item
+        this._last = item
       } else {
-        this._last = this._first = item
+        this._last = item
+        this._first = item
       }
 
-      this.length++
+      // Update the length and return the current item
+      return item
     },
 
     shift: function () {
-      if (!this.length) {
-        return null
-      }
 
+      // Check if we have a value
       var remove = this._first
+      if (!remove) return null
+
+      // If we do, remove it and relink things
       this._first = remove.next
-      this._last = --this.length ? this._last : null
+      if (this._first) this._first.prev = null
+      this._last = this._first ? this._last : null
       return remove.value
     },
 
@@ -42,41 +47,18 @@ SVG.Queue = SVG.invent({
       return this._last && this._last.value
     },
 
-    // Removes the first item from the front where matcher returns true
-    remove: function (matcher) {
-      // Find the first match
-      var previous = null
-      var current = this._first
+    // Removes the item that was returned from the push
+    remove: function (item) {
 
-      while (current) {
-        // If we have a match, we are done
-        if (matcher(current)) break
+      // Relink the previous item
+      if (item.prev) item.prev.next = item.next
+      if (item.next) item.next.prev = item.prev
+      if (item === this._last) this._last = item.prev
+      if (item === this._first) this._first = item.next
 
-        // Otherwise, advance both of the pointers
-        previous = current
-        current = current.next
-      }
-
-      // If we got the first item, adjust the first pointer
-      if (current && current === this._first) {
-        this._first = this._first.next
-      }
-
-      // If we got the last item, adjust the last pointer
-      if (current && current === this._last) {
-        this._last = previous
-      }
-
-      // If we got an item, fix the list and return the item
-      if (current) {
-        --this.length
-
-        if (previous) {
-          previous.next = current.next
-        }
-
-        return current.item
-      }
+      // Invalidate item
+      item.prev = null
+      item.next = null
     }
   }
 })

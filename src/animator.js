@@ -4,21 +4,20 @@ SVG.Animator = {
   nextDraw: null,
   frames: new SVG.Queue(),
   timeouts: new SVG.Queue(),
-  frameCount: 0,
-  timeoutCount: 0,
   timer: window.performance || window.Date,
 
   frame: function (fn) {
-    SVG.Animator.frames.push({
-      id: SVG.Animator.frameCount++,
-      run: fn
-    })
 
+    // Store the node
+    var node = SVG.Animator.frames.push({ run: fn })
+
+    // Request an animation frame if we don't have one
     if (SVG.Animator.nextDraw === null) {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return SVG.Animator.frameCount
+    // Return the node so we can remove it easily
+    return node
   },
 
   timeout: function (fn, delay) {
@@ -28,38 +27,32 @@ SVG.Animator = {
     var time = SVG.Animator.timer.now() + delay
 
     // Add the timeout to the end of the queue
-    var thisId = SVG.Animator.timeoutCount++
-    SVG.Animator.timeouts.push({
-      id: thisId,
-      run: fn,
-      time: time
-    })
+    var node = SVG.Animator.timeouts.push({ run: fn, time: time })
 
     // Request another animation frame if we need one
     if (SVG.Animator.nextDraw === null) {
       SVG.Animator.nextDraw = requestAnimationFrame(SVG.Animator._draw)
     }
 
-    return thisId
+    return node
   },
 
-  cancelTimeout: function (id) {
-    // Find the index of the timeout to cancel and remove it
-    var index = SVG.Animator.timeouts.remove(
-      function (t) {
-        return t.value.id === id
-      }
-    )
-    return index
+  cancelFrame: function (node) {
+    SVG.Animator.frames.remove(node)
+  },
+
+  clearTimeout: function (node) {
+    SVG.Animator.timeouts.remove(node)
   },
 
   _draw: function (now) {
+
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-    // var tracking = true // FIXME: Not used
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
-    while ((nextTimeout = SVG.Animator.timeouts.shift())) {
+    while (nextTimeout = SVG.Animator.timeouts.shift()) {
+
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
         nextTimeout.run()
@@ -67,20 +60,19 @@ SVG.Animator = {
         SVG.Animator.timeouts.push(nextTimeout)
       }
 
-        // If we hit the last item, we should stop shifting out more items
+      // If we hit the last item, we should stop shifting out more items
       if (nextTimeout === lastTimeout) break
     }
 
-    // Run all of the frames available up until this point
-    // var lastFrame = SVG.Animator.frames.last() // FIXME: Not used
-    var lastFrameId = SVG.Animator.frameCount
-    while (SVG.Animator.frames.first() && SVG.Animator.frames.first().id < lastFrameId) {
-      var nextFrame = SVG.Animator.frames.shift()
-      nextFrame.run(now)
+    // Run all of the animation frames
+    var nextFrame = null
+    var lastFrame = SVG.Animator.frames.last()
+    while ((nextFrame !== lastFrame) && (nextFrame = SVG.Animator.frames.shift())) {
+      nextFrame.run()
     }
-
+    
     // If we have remaining timeouts or frames, draw until we don't anymore
-    SVG.Animator.nextDraw = SVG.Animator.timeouts.length > 0 || SVG.Animator.frames.length > 0
+    SVG.Animator.nextDraw = SVG.Animator.timeouts.first() || SVG.Animator.frames.first()
         ? requestAnimationFrame(SVG.Animator._draw)
         : null
   }
