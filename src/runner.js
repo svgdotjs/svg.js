@@ -46,7 +46,7 @@ SVG.Runner = SVG.invent({
 
     // Looping variables
     this._haveReversed = false
-    this._reversing = false
+    this._reverse = false
     this._loopsDone = 0
     this._swing = false
     this._wait = 0
@@ -192,6 +192,7 @@ SVG.Runner = SVG.invent({
       return this._times * (this._wait + this._duration) - this._wait
     },
 
+    // FIXME: Proposal - this should be called loops
     position: function (p) {
       var loopDuration = this._duration + this._wait
       if (p == null) {
@@ -206,6 +207,49 @@ SVG.Runner = SVG.invent({
       return this.time(time)
     },
 
+    // FIXME: Proposal - this should be called position
+    local: function (p) {
+      if (p == null) {
+        
+        /*
+        This function converts a time to a position in the range [0, 1]
+        The full explanation can be found in this desmos demonstration
+          https://www.desmos.com/calculator/u4fbavgche
+        The logic is slightly simplified here because we can use booleans
+        */
+
+        // Get all of the variables we need
+        var x = this._time
+        var d = this._duration
+        var w = this._wait
+        var t = this._times
+        var s = this._swing
+        var r = this._reverse
+
+        // Figure out the value without thinking about the start or end time
+        function f (x) {
+          var swinging = s * Math.floor(x % (2 * (w + d)) / (w + d))
+          var backwards = (swinging && !r) || (!swinging && r)
+          var uncliped = Math.pow(-1, backwards) * (x % (w + d)) / d + backwards
+          var clipped = Math.max(Math.min(uncliped, 1), 0)
+          return clipped
+        }
+
+        // Figure out the value by incorporating the start time
+        var endTime = t * (w + d) - w
+        var position = x <= 0 ? Math.round(f(1e-5))
+          : x < endTime ? f(x)
+          : Math.round(f(endTime - 1e-5))
+        return position
+      }
+
+      // Work out the loops done and add the position to the loops done
+      var loopsDone = Math.floor(this._time / loopDuration)
+      var position = loopsDone + p
+      return this.position(position)
+    },
+
+    // FIXME - Proposal - this should be called progress
     absolute: function (p) {
       if (p == null) {
         return Math.min(1, this._time / this.duration())
@@ -215,68 +259,17 @@ SVG.Runner = SVG.invent({
 
     step: function (dt) {
 
-      // Update the time
+      // Update the time and get the new position
       dt = dt == null ? 16 : dt
       this._time += dt
-
-      // If we exceed the duration, just set the time to the duration
-      var duration = this.duration()
-
-      this._time = Math.min(duration, this._time)
-      // Deal with non-declarative animations directly
-      // Explanation: https://www.desmos.com/calculator/etjvlocvvy
-      // Figure out how many loops we've done
-      var loopDuration = this._duration + this._wait
-      var loopsDone = Math.floor(this._time / loopDuration)
-
-      // Figure out if we need to run the animation backwards
-      var swinging = this._swing && (loopsDone % 2 === 1)
-      var reversing = (swinging && !this._reversing)
-        || (!swinging && this._reversing)
-
-      // var endingValue = Number(!this._swing
-      //   || (this._swing && !this._reversing && this._times % 2 == 1)
-      //   || (this._swing && this._reversing && this._times % 2 == 0)
-      // )
-
-      /***************************************************
-      Karnaugh for endposition
-
-      r = reversed
-      s = swing
-      o = odd
-
-            | r |!r
-      -------------
-      !s !o | 1 | 0
-      !s  o | 1 | 0
-       s  o | 1 | 0
-       s !0 | 0 | 1
-
-      result = !r && !s || !r && o || r && s && !o
-      **************************************************/
-
-
-      var endingValue = Number(
-        (!this._reversing && !this._swing) ||
-        (!this._reversing && this._times % 2) ||
-        (this._reversing && this._swing && this._times % 2 == 0)
-      )
-
-      var startingValue = Number(this._reversing)
-      var position = (this._time % loopDuration) / this._duration
-      var clipPosition = Math.min(1, position)
-
-      // Figure out the position in the animation
-      var stepperPosition = this._time <= 0 ? startingValue
-        : this._time >= duration ? endingValue
-        : (reversing ? 1 - clipPosition : clipPosition)
+      var position = this.local()
 
       // Figure out if we need to run the stepper in this frame
-      var runNow = this._lastPosition !== stepperPosition && this._time >= 0
-      this._lastPosition = stepperPosition
+      var runNow = this._lastPosition !== position && this._time >= 0
+      this._lastPosition = position
 
       // Figure out if we just started
+      var duration = this.duration()
       var justStarted = this._lastTime < 0 && this._time > 0
       var justFinished = this._lastTime < this._time && this.time > duration
       this._lastTime = this._time
@@ -286,14 +279,15 @@ SVG.Runner = SVG.invent({
 
       // Call initialise and the run function
       this._initialise()
-      if ( runNow || this._isDeclarative ) {
-        var converged = this._run(this._isDeclarative ? dt : stepperPosition)
+      var declarative = this._isDeclarative
+      if ( runNow || declarative ) {
+        var converged = this._run(declarative ? dt : position)
         this.fire('step', this)
       }
 
       // Work out if we are done and return this
-      this.done = (converged && this._isDeclarative)
-        || (this._time >= duration && !justFinished && !this._isDeclarative)
+      this.done = (converged && declarative)
+        || (this._time >= duration && !justFinished && !declarative)
       if (this.done) {
         this.fire('finish', this)
       }
@@ -305,7 +299,7 @@ SVG.Runner = SVG.invent({
     },
 
     reverse: function (reverse) {
-      this._reversing = reverse == null ? !this._reversing : reverse
+      this._reverse = reverse == null ? !this._reverse : reverse
       return this
     },
 
@@ -447,8 +441,6 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
-// Extend the attribute methods separately to avoid cluttering the main
-// Timeline class above
 SVG.extend(SVG.Runner, {
 
   attr: function (a, v) {
