@@ -47,6 +47,10 @@ SVG.Runner = SVG.invent({
     this._last = 0
     this.tags = {}
 
+    // save transforms applied to this runner
+    // this.transforms = []
+    this.count = 0
+
     // Looping variables
     this._haveReversed = false
     this._reverse = false
@@ -289,6 +293,8 @@ SVG.Runner = SVG.invent({
         // this.fire('step', this)
       }
 
+      this.count = 0
+
       // Work out if we are done and return this
       this.done = (converged && declarative)
         || (this._time >= duration && !justFinished && !declarative)
@@ -413,6 +419,17 @@ SVG.Runner = SVG.invent({
       return allfinished
     },
 
+    _pushLeft: function (transform) {
+      // this.transforms.push(transform)
+      // this.element().addRunner(this)
+      this.element()._queueTransform(transform, false, this.id, this.count++)
+      return this
+    },
+
+    _currentTransform: function () {
+      return this.element()._currentTransform(this.id, this.count)
+    }
+
   },
 })
 
@@ -448,6 +465,12 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
+recudeTransform = function (arr, base) {
+  return arr.reduceRight(function (last, curr) {
+    if(Array.isArray(curr)) return recudeTransform(curr, last)
+    return last.lmultiply(curr)
+  }, base)
+}
 
 SVG.extend(SVG.Element, {
 
@@ -460,35 +483,57 @@ SVG.extend(SVG.Element, {
   },
 
   // Make a function that allows us to add transformations, and cry 😭
-  _queueTransform: function (transform, right) {
+  _queueTransform: function (transform, right, id, count) {
 
     // Add the transformation to the correct place
-    this._transformationChain[right ? 'push' : 'unshift'](transform)
+    //this._transformationChain[right ? 'push' : 'unshift'](transform)
+
+    var runner = this._transformationChain.filter((el) => el.id === id)[0]
+
+    if(!runner) {
+      runner = {id: id, transforms: []}
+      this._transformationChain.push(runner)
+    }
+
+    runner.transforms[count] = transform
 
     var _this = this
 
     // This function will merge all of the transforms on the chain, but it
     // should only be called at most, once per animation frame
     function mergeTransforms () {
-      var net = _this._currentTransform()
+      var net = recudeTransform(_this._transformationChain.map(el => el.transforms), _this._baseTransform)
       _this.transform(net)
       _this._mergeTransforms = null
+      //_this._transformationChain = []
     }
 
     // Make sure we only apply the transformation merge once, at the end of
     // the animation frame, and not any more than that
-    var transformFrame = this._mergeTransforms
-    if (this._mergeTransforms) {
-      SVG.Animator.cancelFrame(this._mergeTransforms)
-    }
-    this._mergeTransforms = SVG.Animator.frame(mergeTransforms)
+    // var transformFrame = this._mergeTransforms
+    // if (this._mergeTransforms) {
+    //   SVG.Animator.cancelFrame(this._mergeTransforms)
+    // }
+
+    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms)
   },
 
-  _currentTransform: function () {
-    return this._transformationChain.reduce(function (last, curr) {
-      return last.lmultiply(curr)
-    }, this._baseTransform)
-  },
+  _currentTransform: function (id, count) {
+    var runners = []
+    var chain = this._transformationChain
+
+    for(var i = 0, len = chain.length; i < len; ++i) {
+      if(chain[i].id == id) {
+        var a = {id: id, transforms: chain[i].transforms.slice(0, count+1)}
+        runners.push(a)
+        break
+      }
+
+      runners.push(chain[i])
+    }
+
+    return recudeTransform(runners.map(el => el.transforms), this._baseTransform)
+  }
 })
 
 SVG.extend(SVG.Runner, {
@@ -578,9 +623,9 @@ SVG.extend(SVG.Runner, {
       morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
         .to(formatTransforms(transforms))
         .stepper(this._stepper)
-
+// debugger
       return this.queue(function() {}, function (pos) {
-        this.element()._queueTransform(new SVG.Matrix(morpher.at(pos)), false)
+        this._pushLeft(new SVG.Matrix(morpher.at(pos).valueOf()))
         return morpher.done()
       }, this._isDeclarative)
       return this
@@ -608,7 +653,7 @@ SVG.extend(SVG.Runner, {
     this.queue(function() {}, function (pos) {
 
       // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-      var curr = this.element()._currentTransform()
+      var curr = this._currentTransform()
       if(!relative) morpher.from(curr)
 
       // 3. Find the interpolated matrix F(pos) = m + pos * (t - m)
@@ -619,9 +664,9 @@ SVG.extend(SVG.Runner, {
       if(!relative) {
         // 4. Now you get the delta matrix as a result: D = F * inv(M)
         var delta = matrix.multiply(curr.inverse())
-        this.element()._queueTransform(delta, false)
+        this._pushLeft(delta)
       } else {
-        this.element()._queueTransform(matrix, false)
+        this._pushLeft(matrix)
       }
 
       return morpher.done()

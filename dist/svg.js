@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jun 01 2018 23:53:20 GMT+1000 (AEST)
+* BUILT: Fri Jun 01 2018 23:04:03 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -1257,7 +1257,7 @@ SVG.dispatch = function (node, event, data) {
   if (event instanceof window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new window.CustomEvent(event, {detail: data, cancelable: false})
+    event = new window.CustomEvent(event, {detail: data, cancelable: true})
     n.dispatchEvent(event)
   }
   return event
@@ -1965,6 +1965,17 @@ SVG.Matrix = SVG.invent({
 
     toArray: function () {
       return [this.a, this.b, this.c, this.d, this.e, this.f]
+    },
+
+    valueOf: function () {
+      return {
+        a: this.a,
+        b: this.b,
+        c: this.c,
+        d: this.d,
+        e: this.e,
+        f: this.f
+      }
     }
   },
 
@@ -4413,7 +4424,7 @@ function formatTransforms (o) {
     : isFinite(o.scaleY) ? o.scaleY * flipY
     : flipY
   var shear = o.shear || 0
-  var theta = o.rotate || 0
+  var theta = o.rotate || o.theta || 0
   var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y
@@ -4634,6 +4645,10 @@ SVG.Animator = {
     return node
   },
 
+  transform_frame: function (fn) {
+    SVG.Animator.transform = fn
+  },
+
   timeout: function (fn, delay) {
     delay = delay || 0
 
@@ -4685,6 +4700,9 @@ SVG.Animator = {
       nextFrame.run()
     }
 
+    SVG.Animator.transform && SVG.Animator.transform()
+    SVG.Animator.transform = null
+
     // If we have remaining timeouts or frames, draw until we don't anymore
     SVG.Animator.nextDraw = SVG.Animator.timeouts.first() || SVG.Animator.frames.first()
         ? requestAnimationFrame(SVG.Animator._draw)
@@ -4695,4 +4713,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

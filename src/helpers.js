@@ -227,7 +227,7 @@ function formatTransforms (o) {
     : isFinite(o.scaleY) ? o.scaleY * flipY
     : flipY
   var shear = o.shear || 0
-  var theta = o.rotate || 0
+  var theta = o.rotate || o.theta || 0
   var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y

@@ -143,6 +143,7 @@ SVG.Morphable.NonMorphable = SVG.invent({
 })
 
 SVG.Morphable.TransformBag = SVG.invent({
+  inherit: SVG.Matrix,
   create: function (obj) {
     if(Array.isArray(obj)) {
       obj = {
@@ -154,16 +155,14 @@ SVG.Morphable.TransformBag = SVG.invent({
         translateY: obj[5]
       }
     }
-    this.value = new SVG.Matrix(obj)
+
+    SVG.Matrix.call(this, obj)
+    //this.value = new SVG.Matrix(obj)
   },
 
   extend: {
-    valueOf: function () {
-      return this.value
-    },
-
     toArray: function (){
-      var v = this.value.decompose()
+      var v = this.decompose()
 
       return [
         v.scaleX,

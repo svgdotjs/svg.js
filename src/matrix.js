@@ -331,6 +331,17 @@ SVG.Matrix = SVG.invent({
 
     toArray: function () {
       return [this.a, this.b, this.c, this.d, this.e, this.f]
+    },
+
+    valueOf: function () {
+      return {
+        a: this.a,
+        b: this.b,
+        c: this.c,
+        d: this.d,
+        e: this.e,
+        f: this.f
+      }
     }
   },
 

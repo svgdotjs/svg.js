@@ -20,6 +20,10 @@ SVG.Animator = {
     return node
   },
 
+  transform_frame: function (fn) {
+    SVG.Animator.transform = fn
+  },
+
   timeout: function (fn, delay) {
     delay = delay || 0
 
@@ -70,7 +74,10 @@ SVG.Animator = {
     while ((nextFrame !== lastFrame) && (nextFrame = SVG.Animator.frames.shift())) {
       nextFrame.run()
     }
-    
+
+    SVG.Animator.transform && SVG.Animator.transform()
+    SVG.Animator.transform = null
+
     // If we have remaining timeouts or frames, draw until we don't anymore
     SVG.Animator.nextDraw = SVG.Animator.timeouts.first() || SVG.Animator.frames.first()
         ? requestAnimationFrame(SVG.Animator._draw)

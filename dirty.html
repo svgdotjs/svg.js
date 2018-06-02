@@ -74,7 +74,7 @@ function getColor(t) {
 //   .animate()
 //   .move(300, 200)
 
-
+//
 // for (let i = 0 ; i < 15; i++) {
 //   for (let j = 0 ; j < 10; j++) {
 //
@@ -90,13 +90,14 @@ function getColor(t) {
 //
 //     // Animate the rect
 //     rect.animate(3000, Math.random() * 2000)
-//       .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
+//       // .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
+//       .transform({rotate: 720, origin: [cx, cy]})
 //       // .during(t => rect.attr('transform', `rotate(${700 * t})`))
 //       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
 //   }
 // }
 
-// SVG.defaults.timeline.ease = '-'
+//SVG.defaults.timeline.ease = '-'
 //
 // var r = new SVG.Runner(1000)
 // var t = new SVG.Timeline()
@@ -197,15 +198,21 @@ function getColor(t) {
 // r.step(-300) // should be 0.9s
 
 
-let recy = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
+var timer = 0
+let recy = SVG('<rect>').addTo('svg').size(100, 100).transform({translateX: -50, translateY: -50})
+recy.timeline().source(() => {
+  timer += 16
+  return timer
+})
+
 var runner = recy
-  .animate(2000)
-    .transform({rotate: 300}, true)
-    .transform({translate: [200, 100]}, true)
+  .animate(5000)
+    .transform({rotate: 360, origin: [200, 200]}, true)
+    .transform({translate: [200, 200]}, true)
   .animate(2000, 1000, 'absolute')
-    .transform({scale: 2})
-  .animate(2000, 2000, 'absolute')
-    .transform({rotate: -300}, true)
+     .transform({scale: 2}, true)
+  // .animate(2000, 0, 'absolute')
+  //    .transform({rotate: -300})
 
 // transform(SVG.Matrix()) // should be affine
 // transform(SVG.Matrix(), true) // should be relative
