@@ -49,7 +49,6 @@ SVG.Runner = SVG.invent({
 
     // save transforms applied to this runner
     this.transforms = new SVG.Matrix()
-    this.count = 0
 
     // Looping variables
     this._haveReversed = false
@@ -428,7 +427,6 @@ SVG.Runner = SVG.invent({
     _pushLeft: function (transform) {
       this.transforms = this.transforms.lmultiply(transform)
       this.element().addRunner(this)
-      //this.element()._queueTransform(transform, false, this.id, this.count++)
       return this
     },
 

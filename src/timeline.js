@@ -9,15 +9,11 @@ SVG.easing = {
 
 var time = performance || Date
 
-var makeSchedule = function (time) {
-  return function (runner) {
-    // FIXME: This returns a wrong value when the runner is finished
-    // or it will break, because the runner clips his tim to duration
-    var start = time - runner.time()
-    var duration = runner.duration()
-    var end = start + duration
-    return {start: start, duration: duration, end: end, runner: runner}
-  }
+var makeSchedule = function (runnerInfo) {
+  var start = runnerInfo.start
+  var duration = runnerInfo.runner.duration()
+  var end = start + duration
+  return {start: start, duration: duration, end: end, runner: runnerInfo.runner}
 }
 
 SVG.Timeline = SVG.invent({
@@ -45,7 +41,8 @@ SVG.Timeline = SVG.invent({
     // Keep track of the running animations and their starting parameters
     this._nextFrame = null
     this._paused = false
-    this._runners = new Set()
+    this._runners = []
+    this._order = []
     this._time = 0
     this._lastSourceTime = 0
     this._lastStepTime = 0
@@ -70,20 +67,10 @@ SVG.Timeline = SVG.invent({
     // schedules a runner on the timeline
     schedule (runner, delay, when) {
 
-      // FIXME: Sets do not support map which makes this super ugly
       if(runner == null) {
-        var ret = []
-        var fn = makeSchedule(this._time)
-
-        this._runners.forEach(function (runner) {
-          ret.push(fn(runner))
-        })
-
-        ret.sort(function (a, b) {
+        return this._runners.map(makeSchedule).sort(function (a, b) {
           return (a.start - b.start) ||  (a.duration - b.duration)
         })
-
-        return ret
       }
 
       // The start time for the next animation can either be given explicitly,
@@ -114,19 +101,33 @@ SVG.Timeline = SVG.invent({
         // TODO: Throw error
       }
 
+      // manage runner
       runner.unschedule()
       runner.timeline(this)
       runner.time(-absoluteStartTime)
 
+      // save startTime for next runner
       this._startTime = absoluteStartTime + runner.duration()
-      this._runners.add(runner)
+
+      // save runnerInfo
+      this._runners[runner.id] = {
+        persist: this.persist(),
+        runner: runner,
+        start: absoluteStartTime
+      }
+      // save order and continue
+      this._order.push(runner.id)
       this._continue()
       return this
     },
 
     // remove the runner from this timeline
     unschedule (runner) {
-      this._runners.delete(runner)
+      var index = this._order.indexOf(runner.id)
+      if(index < 0) return this
+
+      delete this._runners[runner.id]
+      this._order.splice(index, 1)
       runner.timeline(null)
       return this
     },
@@ -182,7 +183,7 @@ SVG.Timeline = SVG.invent({
     },
 
     persist (dtOrForever) {
-      if (tdOrForever == null) return this._persist
+      if (dtOrForever == null) return this._persist
       this._persist = dtOrForever
       return this
     },
@@ -212,36 +213,43 @@ SVG.Timeline = SVG.invent({
 
       // Run all of the runners directly
       var runnersLeft = false
+      for (var i = 0, len = this._order.length; i < len; i++) {
+        // Get and run the current runner and ignore it if its inactive
+        var runnerInfo = this._runners[this._order[i]]
+        var runner = runnerInfo.runner
 
-      var eachFn = function (runner) {
-        if(!runner.active) return
+        if(runner.done) continue
+        if(!runner.active()) continue
 
-        // FIXME: runner is always called even when done
-        // run the runner with delta time
+        // If this runner is still going, signal that we need another animation
+        // frame, otherwise, remove the completed runner
         var finished = runner.step(dtTime).done
-
-        // when finished set flag and return
         if (!finished) {
           runnersLeft = true
-          return
+          continue
         }
 
-        // Remove the runner from the set
-        // this._runner.
 
-        // Runner is finished and might get removed
-        if(this._persist !== true) {
-          // Figure out end time of the runner
-          var endTime = runner.duration() - runner.time() + this._time
-
-          // Remove runner if too old
-          if(endTime + this._persist < this._time) {
-            runner.unschedule()
-          }
-        }
-      }.bind(this)
-
-      this._runners.forEach(eachFn)
+        // } else if(runnerInfo.persist !== true){
+        //
+        //   // runner is finished. And runner might get removed
+        //
+        //   // TODO: Figure out end time of runner
+        //   var endTime = runner.duration() - runner.time() + this._time
+        //
+        //   if(endTime + this._persist < this._time) {
+        //     // FIXME: which one is better?
+        //     // runner.unschedule()
+        //     // --i
+        //     // --len
+        //
+        //     // delete runner and correct index
+        //     this._runners.splice(i--, 1) && --len
+        //     runner.timeline(null)
+        //   }
+        //
+        // }
+      }
 
       // Get the next animation frame to keep the simulation going
       if (runnersLeft)
