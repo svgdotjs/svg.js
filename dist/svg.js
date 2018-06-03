@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Jun 01 2018 23:04:03 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Sun Jun 03 2018 08:16:08 GMT+0200 (Mitteleuropäische Sommerzeit)
 */;
 
 (function(root, factory) {
@@ -300,7 +300,6 @@ SVG.Queue = SVG.invent({
 
   extend: {
     push: function (value) {
-
       // An item stores an id and the provided value
       var item = value.next ? value : { value: value, next: null, prev: null }
 
@@ -319,7 +318,6 @@ SVG.Queue = SVG.invent({
     },
 
     shift: function () {
-
       // Check if we have a value
       var remove = this._first
       if (!remove) return null
@@ -343,7 +341,6 @@ SVG.Queue = SVG.invent({
 
     // Removes the item that was returned from the push
     remove: function (item) {
-
       // Relink the previous item
       if (item.prev) item.prev.next = item.next
       if (item.next) item.next.prev = item.prev
@@ -4630,9 +4627,9 @@ SVG.Animator = {
   frames: new SVG.Queue(),
   timeouts: new SVG.Queue(),
   timer: window.performance || window.Date,
+  transforms: [],
 
   frame: function (fn) {
-
     // Store the node
     var node = SVG.Animator.frames.push({ run: fn })
 
@@ -4645,8 +4642,8 @@ SVG.Animator = {
     return node
   },
 
-  transform_frame: function (fn) {
-    SVG.Animator.transform = fn
+  transform_frame: function (fn, id) {
+    SVG.Animator.transforms[id] = fn
   },
 
   timeout: function (fn, delay) {
@@ -4675,13 +4672,11 @@ SVG.Animator = {
   },
 
   _draw: function (now) {
-
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
     var nextTimeout = null
     var lastTimeout = SVG.Animator.timeouts.last()
-    while (nextTimeout = SVG.Animator.timeouts.shift()) {
-
+    while ((nextTimeout = SVG.Animator.timeouts.shift())) {
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
         nextTimeout.run()
@@ -4700,8 +4695,7 @@ SVG.Animator = {
       nextFrame.run()
     }
 
-    SVG.Animator.transform && SVG.Animator.transform()
-    SVG.Animator.transform = null
+    SVG.Animator.transforms.forEach(function (el) { el() })
 
     // If we have remaining timeouts or frames, draw until we don't anymore
     SVG.Animator.nextDraw = SVG.Animator.timeouts.first() || SVG.Animator.frames.first()

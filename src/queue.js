@@ -6,7 +6,6 @@ SVG.Queue = SVG.invent({
 
   extend: {
     push: function (value) {
-
       // An item stores an id and the provided value
       var item = value.next ? value : { value: value, next: null, prev: null }
 
@@ -25,7 +24,6 @@ SVG.Queue = SVG.invent({
     },
 
     shift: function () {
-
       // Check if we have a value
       var remove = this._first
       if (!remove) return null
@@ -49,7 +47,6 @@ SVG.Queue = SVG.invent({
 
     // Removes the item that was returned from the push
     remove: function (item) {
-
       // Relink the previous item
       if (item.prev) item.prev.next = item.next
       if (item.next) item.next.prev = item.prev

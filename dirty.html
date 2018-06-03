@@ -199,13 +199,18 @@ function getColor(t) {
 
 
 var timer = 0
-let recy = SVG('<rect>').addTo('svg').size(100, 100)//.transform({translateX: -50, translateY: -50})
-recy.timeline().source(() => {
+let rec1 = SVG('<rect>').addTo('svg').size(100, 100)//.transform({translateX: -50, translateY: -50})
+let rec2 = SVG('<rect>').addTo('svg').size(100, 100)//.transform({translateX: -50, translateY: -50})
+rec1.timeline().source(() => {
+  timer += 5
+  return timer
+})
+rec2.timeline().source(() => {
   timer += 5
   return timer
 })
 
-var runner = recy
+var runner = rec1
   // .animate(100).attr('fill', '#fff')
   //.animate().transform({rotate: -45, origin: [50, 50]})
    .animate(500)
@@ -213,6 +218,17 @@ var runner = recy
     a: -1, b: -0.1, c: 0.1, d: -1, e: 200, f: 200, affine: true
   }, true)
   .animate(500, 0, 'after')
+  .transform({scale:2}, true)
+  // .transform({rotate: 360}, true)
+  // .transform({translateX: 50, translateY: 50}, true)
+  //.transform({translateX: 50, translateY: 50}, true)
+   // .animate(500, 0, 'absolute')
+   //    .transform({scale: 2}, true)
+  // .animate(2000, 0, 'absolute')
+  //    .transform({rotate: -300})
+var runner = rec2
+  // .animate(100).attr('fill', '#fff')
+  .animate().transform({rotate: -45, origin: [50, 50]})
   .transform({scale:2}, true)
   // .transform({rotate: 360}, true)
   // .transform({translateX: 50, translateY: 50}, true)

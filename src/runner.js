@@ -492,7 +492,7 @@ SVG.extend(SVG.Element, {
 
     if(r.done) this.checkForSimplification(index)
 
-    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms.bind(this))
+    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms.bind(this), this._frameId)
   },
 
   checkForSimplification: function (index) {
@@ -507,7 +507,7 @@ SVG.extend(SVG.Element, {
     var r = this.runners[index-1]
 
     if(!r.done) return
-console.log(r, this.runners[index])
+
     var obj = {
       done: true,
       transforms: r.transforms.multiply(this.runners[index].transforms)
@@ -523,43 +523,8 @@ console.log(r, this.runners[index])
       this._mergeTransforms = null
       this._transformationChain = []
       this.runners = []
+      this._frameId = SVG.Element.frameId++
     }
-  },
-
-  // Make a function that allows us to add transformations, and cry 😭
-  _queueTransform: function (transform, right, id, count) {
-
-    // Add the transformation to the correct place
-    //this._transformationChain[right ? 'push' : 'unshift'](transform)
-
-    var runner = this._transformationChain.filter((el) => el.id === id)[0]
-
-    if(!runner) {
-      runner = {id: id, transforms: []}
-      this._transformationChain.push(runner)
-    }
-
-    runner.transforms[count] = transform
-
-    var _this = this
-
-    // This function will merge all of the transforms on the chain, but it
-    // should only be called at most, once per animation frame
-    function mergeTransforms () {
-      var net = reduceTransform(_this.runners.map(el => el.transforms), _this._baseTransform)
-      _this.transform(net)
-      _this._mergeTransforms = null
-      //_this._transformationChain = []
-    }
-
-    // Make sure we only apply the transformation merge once, at the end of
-    // the animation frame, and not any more than that
-    // var transformFrame = this._mergeTransforms
-    // if (this._mergeTransforms) {
-    //   SVG.Animator.cancelFrame(this._mergeTransforms)
-    // }
-
-    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms)
   },
 
   _currentTransform: function (r) {
@@ -569,6 +534,8 @@ console.log(r, this.runners[index])
     return reduceTransform(transforms, this._baseTransform)
   }
 })
+
+SVG.Element.frameId = 0
 
 SVG.extend(SVG.Runner, {
 
