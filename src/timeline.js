@@ -43,7 +43,6 @@ SVG.Timeline = SVG.invent({
     this._persist = 0
 
     // Keep track of the running animations and their starting parameters
-    this._baseTransform = null
     this._nextFrame = null
     this._paused = false
     this._runners = new Set()

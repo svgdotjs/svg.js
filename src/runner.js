@@ -48,7 +48,7 @@ SVG.Runner = SVG.invent({
     this.tags = {}
 
     // save transforms applied to this runner
-    // this.transforms = []
+    this.transforms = new SVG.Matrix()
     this.count = 0
 
     // Looping variables
@@ -285,19 +285,25 @@ SVG.Runner = SVG.invent({
         // this.fire('start', this)
       }
 
+      // Work out if the runner is finished
+      // set the done flag here so animations know,
+      // that they are running in the last step
+      // (this is good for transformations which can be merged)
+      this.done = !declarative && !justFinished && this._time >= duration
+
       // Call initialise and the run function
       this._initialise()
       var declarative = this._isDeclarative
       if ( runNow || declarative ) {
+        this.transforms = new SVG.Matrix()
         var converged = this._run(declarative ? dt : position)
         // this.fire('step', this)
       }
 
-      this.count = 0
+      // correct the done flag here
+      // declaritive animations itself know when they converged
+      this.done = this.done || (converged && declarative)
 
-      // Work out if we are done and return this
-      this.done = (converged && declarative)
-        || (this._time >= duration && !justFinished && !declarative)
       if (this.done) {
         // this.fire('finish', this)
       }
@@ -420,14 +426,14 @@ SVG.Runner = SVG.invent({
     },
 
     _pushLeft: function (transform) {
-      // this.transforms.push(transform)
-      // this.element().addRunner(this)
-      this.element()._queueTransform(transform, false, this.id, this.count++)
+      this.transforms = this.transforms.lmultiply(transform)
+      this.element().addRunner(this)
+      //this.element()._queueTransform(transform, false, this.id, this.count++)
       return this
     },
 
     _currentTransform: function () {
-      return this.element()._currentTransform(this.id, this.count)
+      return this.element()._currentTransform(this)
     }
 
   },
@@ -465,20 +471,58 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
-recudeTransform = function (arr, base) {
-  return arr.reduceRight(function (last, curr) {
-    if(Array.isArray(curr)) return recudeTransform(curr, last)
+reduceTransform = function (arr, base) {
+  return arr.reduce(function (last, curr) {
     return last.lmultiply(curr)
   }, base)
 }
 
+function mergeTransforms () {
+  var net = reduceTransform(this.runners.map(el => el.transforms), this._baseTransform)
+  this.transform(net)
+  this._mergeTransforms = null
+  //_this._transformationChain = []
+}
+
 SVG.extend(SVG.Element, {
+
+  addRunner: function (r) {
+    var runners = this.runners
+    var index = ((runners.indexOf(r) + 1) || this.runners.push(r)) - 1
+
+    if(r.done) this.checkForSimplification(index)
+
+    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms.bind(this))
+  },
+
+  checkForSimplification: function (index) {
+    var r
+    if(index == 0) {
+      r = this.runners.shift()
+      this._baseTransform = this._baseTransform.lmultiply(r.transforms)
+      r.transforms = new SVG.Matrix()
+      return
+    }
+
+    var r = this.runners[index-1]
+
+    if(!r.done) return
+console.log(r, this.runners[index])
+    var obj = {
+      done: true,
+      transforms: r.transforms.multiply(this.runners[index].transforms)
+    }
+
+    this.runners.splice(index-1, 2, obj)
+
+  },
 
   _prepareRunner: function () {
     if (!this._baseTransform) {
       this._baseTransform = new SVG.Matrix(this)
       this._mergeTransforms = null
       this._transformationChain = []
+      this.runners = []
     }
   },
 
@@ -502,7 +546,7 @@ SVG.extend(SVG.Element, {
     // This function will merge all of the transforms on the chain, but it
     // should only be called at most, once per animation frame
     function mergeTransforms () {
-      var net = recudeTransform(_this._transformationChain.map(el => el.transforms), _this._baseTransform)
+      var net = reduceTransform(_this.runners.map(el => el.transforms), _this._baseTransform)
       _this.transform(net)
       _this._mergeTransforms = null
       //_this._transformationChain = []
@@ -518,21 +562,11 @@ SVG.extend(SVG.Element, {
     this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms)
   },
 
-  _currentTransform: function (id, count) {
-    var runners = []
-    var chain = this._transformationChain
+  _currentTransform: function (r) {
 
-    for(var i = 0, len = chain.length; i < len; ++i) {
-      if(chain[i].id == id) {
-        var a = {id: id, transforms: chain[i].transforms.slice(0, count+1)}
-        runners.push(a)
-        break
-      }
+    var transforms = this.runners.slice(0, this.runners.indexOf(this)+1).map(el => el.transforms)
 
-      runners.push(chain[i])
-    }
-
-    return recudeTransform(runners.map(el => el.transforms), this._baseTransform)
+    return reduceTransform(transforms, this._baseTransform)
   }
 })
 
@@ -596,8 +630,9 @@ SVG.extend(SVG.Runner, {
   // 4. Now you get the delta matrix as a result: D = F * inv(M)
 
   transform: function (transforms, relative, affine) {
-    affine = transforms.affine || affine || !!transforms.a
-    relative = transforms.relative || relative || false
+    var isMatrix = transforms.a != null
+    affine = transforms.affine || affine || !isMatrix
+    relative = transforms.relative || relative
 
     var morpher
 
@@ -619,7 +654,7 @@ SVG.extend(SVG.Runner, {
     // the following cases are covered here:
     // - true, false with ObjectBag
     // - true, true with ObjectBag
-    if(relative && transforms.a == null) {
+    if(relative && !isMatrix) {
       morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
         .to(formatTransforms(transforms))
         .stepper(this._stepper)
@@ -641,7 +676,7 @@ SVG.extend(SVG.Runner, {
     // - false, false with SVG.Matrix
 
     // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-    morpher = (transforms.a && !affine)
+    morpher = (isMatrix && !affine)
       ? new SVG.Matrix().to(transforms)
       : new SVG.Morphable.TransformBag().to(transforms)
 

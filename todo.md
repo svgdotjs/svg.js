@@ -12,6 +12,9 @@ Ulima
 timeline.persist('monkey-in', Infinity)
 
 
+- animation result is different from setting directly
+- format transforms didnt take all parameters into account (theta / rotate)
+
 Both
 ====
 - We discussed that matrices should always be applied from the left for animation, so we have:
