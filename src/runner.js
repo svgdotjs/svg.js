@@ -479,6 +479,22 @@ function mergeTransforms () {
   var net = reduceTransform(this.runners.map(el => el.transforms), this._baseTransform)
   this.transform(net)
   this._mergeTransforms = null
+
+  this.runners.forEach(function (r, index, arr) {
+    if(!r.done) return
+    if(index == 0) {
+      this._baseTransform = this._baseTransform.multiply(r.transforms)
+      arr.shift()
+    } else if(arr[index-1].done) {
+      var obj = {
+        done: true,
+        transforms: r.transforms.multiply(this.runners[index].transforms)
+      }
+
+      arr.splice(index-1, 2, obj)
+    }
+  }.bind(this))
+
   //_this._transformationChain = []
 }
 
@@ -488,7 +504,7 @@ SVG.extend(SVG.Element, {
     var runners = this.runners
     var index = ((runners.indexOf(r) + 1) || this.runners.push(r)) - 1
 
-    if(r.done) this.checkForSimplification(index)
+    //if(r.done) this.checkForSimplification(index)
 
     this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms.bind(this), this._frameId)
   },
@@ -496,9 +512,11 @@ SVG.extend(SVG.Element, {
   checkForSimplification: function (index) {
     var r
     if(index == 0) {
-      r = this.runners.shift()
-      this._baseTransform = this._baseTransform.lmultiply(r.transforms)
-      r.transforms = new SVG.Matrix()
+      //while(this.runners[0] && this.runners[0].done) {
+        r = this.runners.shift()
+        this._baseTransform = this._baseTransform.lmultiply(r.transforms)
+        r.transforms = new SVG.Matrix()
+      //}
       return
     }
 
@@ -527,7 +545,12 @@ SVG.extend(SVG.Element, {
 
   _currentTransform: function (r) {
 
-    var transforms = this.runners.slice(0, this.runners.indexOf(this)+1).map(el => el.transforms)
+    var index = this.runners.indexOf(r)
+    if(index < 0) {
+      return this._baseTransform
+    }
+
+    var transforms = this.runners.slice(0, this.runners.indexOf(r)+1).map(el => el.transforms)
 
     return reduceTransform(transforms, this._baseTransform)
   }
