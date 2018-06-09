@@ -11,3 +11,5 @@ node_modules/
 .vscode/
 coverage/
 fonts/
+package-lock.json
+
