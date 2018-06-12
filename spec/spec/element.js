@@ -900,6 +900,11 @@ describe('Element', function() {
         ).toBeTruthy()
       })
     })
+    describe('With non-string parameter', function() {
+      it('throws an error if an object is the parameter to svg()', function () {
+          expect(function () {draw.svg({})}).toThrow(new Error('svg() only accepts a string as a parameter'));
+      })
+    })
   })
 
   describe('writeDataToDom()', function() {

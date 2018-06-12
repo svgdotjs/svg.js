@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat May 26 2018 22:47:07 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Jun 12 2018 16:41:33 GMT+0200 (CEST)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1232,6 +1232,10 @@ SVG.Element = SVG.invent({
     }
     // Import raw svg
   , svg: function(svg) {
+
+      if (svg && typeof svg !== 'string') {
+          throw new Error('svg() only accepts a string as a parameter');
+      }
       // create temporary holder
       var well = document.createElement('svg')
 
@@ -5595,4 +5599,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));

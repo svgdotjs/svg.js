@@ -209,6 +209,10 @@ SVG.Element = SVG.invent({
     }
     // Import raw svg
   , svg: function(svg) {
+
+      if (svg && typeof svg !== 'string') {
+          throw new Error('svg() only accepts a string as a parameter');
+      }
       // create temporary holder
       var well = document.createElement('svg')
 
