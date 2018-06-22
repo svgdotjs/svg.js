@@ -16,12 +16,12 @@ SVG.Runner = SVG.invent({
     // Store a unique id on the runner, so that we can identify it
     this.id = SVG.Runner.id++
 
-    // ensure a default value
+    // Ensure a default value
     options = options == null
       ? SVG.defaults.timeline.duration
       : options
 
-    // ensure that we get a controller
+    // Ensure that we get a controller
     options = typeof options === 'function'
       ? new SVG.Controller(options)
       : options
@@ -47,8 +47,9 @@ SVG.Runner = SVG.invent({
     this._last = 0
     this.tags = {}
 
-    // save transforms applied to this runner
+    // Save transforms applied to this runner
     this.transforms = new SVG.Matrix()
+    this._transformsRunning = true
 
     // Looping variables
     this._haveReversed = false
@@ -57,9 +58,6 @@ SVG.Runner = SVG.invent({
     this._swing = false
     this._wait = 0
     this._times = 1
-
-    // save the transformation we are starting with
-    this._baseTransform = null
   },
 
   construct: {
@@ -159,9 +157,8 @@ SVG.Runner = SVG.invent({
     These methods allow us to attach basic functions to the runner directly
     */
 
-    queue: function (initFn, runFn, alwaysInitialise) {
+    queue: function (initFn, runFn) {
       this._queue.push({
-        alwaysInitialise: alwaysInitialise || false,
         initialiser: initFn || SVG.void,
         runner: runFn || SVG.void,
         initialised: false,
@@ -266,13 +263,16 @@ SVG.Runner = SVG.invent({
 
     step: function (dt) {
 
+      // If we are inactive, this stepper just gets skipped
+      if (!this.enabled) return this
+
       // Update the time and get the new position
       dt = dt == null ? 16 : dt
       this._time += dt
       var position = this.position()
 
       // Figure out if we need to run the stepper in this frame
-      var runNow = this._lastPosition !== position && this._time >= 0
+      var running = this._lastPosition !== position && this._time >= 0
       this._lastPosition = position
 
       // Figure out if we just started
@@ -284,25 +284,22 @@ SVG.Runner = SVG.invent({
         // this.fire('start', this)
       }
 
-      // Work out if the runner is finished
-      // set the done flag here so animations know,
-      // that they are running in the last step
-      // (this is good for transformations which can be merged)
+      // Work out if the runner is finished set the done flag here so animations
+      // know, that they are running in the last step (this is good for
+      // transformations which can be merged)
+      var declarative = this._isDeclarative
       this.done = !declarative && !justFinished && this._time >= duration
 
       // Call initialise and the run function
-      this._initialise()
-      var declarative = this._isDeclarative
-      if ( runNow || declarative ) {
+      if ( running || declarative ) {
+        this._initialise(running)
         this.transforms = new SVG.Matrix()
         var converged = this._run(declarative ? dt : position)
         // this.fire('step', this)
       }
-
       // correct the done flag here
       // declaritive animations itself know when they converged
       this.done = this.done || (converged && declarative)
-
       if (this.done) {
         // this.fire('finish', this)
       }
@@ -387,16 +384,22 @@ SVG.Runner = SVG.invent({
     },
 
     // Run each initialise function in the runner if required
-    _initialise: function () {
+    _initialise: function (running) {
+
+      // If we aren't running, we shouldn't initialise when not declarative
+      if (!running && !this._isDeclarative) return
+
+      // Loop through all of the initialisers
       for (var i = 0, len = this._queue.length; i < len ; ++i) {
         // Get the current initialiser
         var current = this._queue[i]
 
         // Determine whether we need to initialise
-        var needsInit = current.alwaysInitialise || !current.initialised
+        var needsIt = this._isDeclarative || (!current.initialised && running)
         var running = !current.finished
 
-        if (needsInit && running) {
+        // Call the initialiser if we need to
+        if (needsIt && running) {
           current.initialiser.call(this)
           current.initialised = true
         }
@@ -415,8 +418,8 @@ SVG.Runner = SVG.invent({
 
         // Run the function if its not finished, we keep track of the finished
         // flag for the sake of declarative _queue
-        current.finished = current.finished
-          || (current.runner.call(this, positionOrDt) === true)
+        var converged = current.runner.call(this, positionOrDt)
+        current.finished = current.finished || (converged === true)
         allfinished = allfinished && current.finished
       }
 
@@ -424,16 +427,15 @@ SVG.Runner = SVG.invent({
       return allfinished
     },
 
-    _pushLeft: function (transform) {
+    addTransform: function (transform) {
       this.transforms = this.transforms.lmultiply(transform)
-      this.element().addRunner(this)
       return this
     },
 
-    _currentTransform: function () {
-      return this.element()._currentTransform(this)
+    clearTransform: function () {
+      this.transforms = new SVG.Matrix()
+      return this
     }
-
   },
 })
 
@@ -469,88 +471,101 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
-reduceTransform = function (arr, base) {
-  return arr.reduce(function (last, curr) {
-    return last.lmultiply(curr)
-  }, base)
-}
-
 function mergeTransforms () {
-  var net = reduceTransform(this.runners.map(el => el.transforms), this._baseTransform)
-  this.transform(net)
-  this._mergeTransforms = null
 
-  this.runners.forEach(function (r, index, arr) {
-    if(!r.done) return
-    if(index == 0) {
-      this._baseTransform = this._baseTransform.multiply(r.transforms)
-      arr.shift()
-    } else if(arr[index-1].done) {
-      var obj = {
+  // Find the matrix to apply to the element and apply it
+  let runners = this._transformationRunners
+  let netTransform = runners
+    .map(runner => runner.transforms)
+    .reduce((last, curr) => last.lmultiply(curr))
+  this.transform(netTransform)
+
+  // Merge any two transformations in a row that are done
+  let lastRunner = null
+  let lastIndex = null
+  runners.forEach((runner, i) => {
+
+    if (i != 0 && runner.done && lastRunner.done) {
+      delete runners[lastRunner.id]
+      runners[i] = {
+        transforms: runner.transforms.lmultiply(lastRunner.transforms),
         done: true,
-        transforms: r.transforms.multiply(this.runners[index].transforms)
+        id: i,
       }
-
-      arr.splice(index-1, 2, obj)
     }
-  }.bind(this))
 
-  //_this._transformationChain = []
+    lastRunner = runner
+  })
+
+  // // Try to merge any adjacent transforms into a single transform
+  // for (let i = runners.length; --i;) {
+  //
+  //   let runner = runners[i]
+  //   let lastRunner = runners[i-1]
+  //   if (!runner.done || !lastRunner.done) continue
+  //
+  //   runners.splice(i-1, 2, {
+  //     transforms: runner.transforms.lmultiply(lastRunner.transforms),
+  //     done: true,
+  //   })
+  // }
 }
 
 SVG.extend(SVG.Element, {
+  //
+  // clearTransforms: function (currentRunner) {
+  //
+  //   let runners = this._transformationRunners
+  //   for (let i = 0, len = runners.length; i < len; ++i) {
+  //     let runner = runners[i]
+  //
+  //     // if we hit the current runner
+  //     if (runner == currentRunner) {
+  //
+  //       // update the runners on the element to only use its current matrix and
+  //       // and all runners which come after the current runner + the current
+  //       this._transformationRunners = runners.slice(i)
+  //       break
+  //     }
+  //
+  //     runners[i]._transformsRunning = false
+  //   }
+  // },
 
-  addRunner: function (r) {
-    var runners = this.runners
-    var index = ((runners.indexOf(r) + 1) || this.runners.push(r)) - 1
-
-    //if(r.done) this.checkForSimplification(index)
-
-    this._mergeTransforms = SVG.Animator.transform_frame(mergeTransforms.bind(this), this._frameId)
+  _clearTransformRunnersBefore: function (currentRunner) {
+    this._transformationRunners = this._transformationRunners.filter((runner) => {
+      return runner.id >= currentRunner.id
+    })
   },
 
-  checkForSimplification: function (index) {
-    var r
-    if(index == 0) {
-      //while(this.runners[0] && this.runners[0].done) {
-        r = this.runners.shift()
-        this._baseTransform = this._baseTransform.lmultiply(r.transforms)
-        r.transforms = new SVG.Matrix()
-      //}
-      return
-    }
+  addRunner: function (runner) {
+    // let runners = this._transformationRunners
+    // if (!runners.includes(runner)) {
+    //   runners.push(runner)
+    // }
 
-    var r = this.runners[index-1]
+    this._transformationRunners[runner.id] = runner
 
-    if(!r.done) return
-
-    var obj = {
-      done: true,
-      transforms: r.transforms.multiply(this.runners[index].transforms)
-    }
-
-    this.runners.splice(index-1, 2, obj)
-
+    SVG.Animator.transform_frame(
+      mergeTransforms.bind(this), this._frameId
+    )
   },
 
   _prepareRunner: function () {
-    if (!this._baseTransform) {
-      this._baseTransform = new SVG.Matrix(this)
-      this._mergeTransforms = null
-      this._transformationChain = []
-      this.runners = []
+    if (this._frameId == null) {
+      this._transformationRunners = []
       this._frameId = SVG.Element.frameId++
     }
   },
 
   _currentTransform: function (r) {
 
-    var index = this.runners.indexOf(r)
+    var index = this._transformationRunners.indexOf(r)
     if(index < 0) {
       return this._baseTransform
     }
 
-    var transforms = this.runners.slice(0, this.runners.indexOf(r)+1).map(el => el.transforms)
+    var transforms = this._transformationRunners.slice(0, this._transformationRunners.indexOf(r)+1).map(el => el.transforms)
 
     return reduceTransform(transforms, this._baseTransform)
   }
@@ -584,7 +599,7 @@ SVG.extend(SVG.Runner, {
     }, function (pos) {
       this.element()[type](name, morpher.at(pos))
       return morpher.done()
-    }, this._isDeclarative)
+    })
 
     return this
   },
@@ -597,7 +612,7 @@ SVG.extend(SVG.Runner, {
    }, function (pos) {
      this.element().zoom(morpher.at(pos), point)
      return morpher.done()
-   }, this._isDeclarative)
+   })
 
    return this
  },
@@ -618,11 +633,11 @@ SVG.extend(SVG.Runner, {
   // 4. Now you get the delta matrix as a result: D = F * inv(M)
 
   transform: function (transforms, relative, affine) {
+
+    // Parse the parameters
     var isMatrix = transforms.a != null
     affine = transforms.affine || affine || !isMatrix
     relative = transforms.relative || relative
-
-    var morpher
 
     /**
       The default of relative is false
@@ -637,23 +652,24 @@ SVG.extend(SVG.Runner, {
     **/
 
 
-    // if we have a relative transformation and its not a matrix
+    // If we have a relative transformation and its not a matrix
     // we morph all parameters directly with the ObjectBag
     // the following cases are covered here:
     // - true, false with ObjectBag
     // - true, true with ObjectBag
+    var morpher
     if(relative && !isMatrix) {
       morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
         .to(formatTransforms(transforms))
         .stepper(this._stepper)
-// debugger
-      return this.queue(function() {}, function (pos) {
-        this._pushLeft(new SVG.Matrix(morpher.at(pos).valueOf()))
+      return this.queue(function() {
+        this.element().addRunner(this)
+      }, function (pos) {
+        this.addTransform(new SVG.Matrix(morpher.at(pos).valueOf()))
         return morpher.done()
-      }, this._isDeclarative)
+      })
       return this
     }
-
 
     // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
     // also non affine direct and relative morhing with SVG.Matrix
@@ -664,36 +680,41 @@ SVG.extend(SVG.Runner, {
     // - false, false with SVG.Matrix
 
     // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-    morpher = (isMatrix && !affine)
-      ? new SVG.Matrix().to(transforms)
-      : new SVG.Morphable.TransformBag().to(transforms)
+    var morphType = (isMatrix && !affine)
+      ? SVG.Matrix
+      : SVG.Morphable.TransformBag
+
+    morpher = new SVG.Morphable().type(morphType)
 
     morpher.stepper(this._stepper)
 
-    // create identity Matrix for relative not affine Matrix transformation
-    morpher.from()
+    this.queue(function() {
+      let element = this.element()
+      element.addRunner(this)
 
-    this.queue(function() {}, function (pos) {
+      // If we have an absolute transform, it needs to over-ride any other
+      // tranformations that are available on the element
+      if (!relative) {
 
-      // 2. on every frame: pull the current state of all previous transforms (M - m can change)
-      var curr = this._currentTransform()
-      if(!relative) morpher.from(curr)
-
-      // 3. Find the interpolated matrix F(pos) = m + pos * (t - m)
-      //   - Note F(0) = M
-      //   - Note F(1) = T
-      var matrix = morpher.at(pos)
-
-      if(!relative) {
-        // 4. Now you get the delta matrix as a result: D = F * inv(M)
-        var delta = matrix.multiply(curr.inverse())
-        this._pushLeft(delta)
-      } else {
-        this._pushLeft(matrix)
+        // Deactivate all transforms that have run so far if we are absolute
+        element._clearTransformRunnersBefore(this)
+        currentBase = new SVG.Matrix(element)
+        morpher.from(currentBase).to(transforms)
       }
 
+      // Define the starting point for the morpher
+      let startMatrix = new SVG.Matrix(relative ? null : element)
+      morpher.from(startMatrix)
+
+    }, function (pos) {
+
+      if (!this._transformsRunning) return
+      if (!relative) this.clearTransform()
+      var matrix = morpher.at(pos)
+      this.addTransform(matrix)
       return morpher.done()
-    }, this._isDeclarative)
+
+    })
 
     return this
   },
@@ -731,7 +752,7 @@ SVG.extend(SVG.Runner, {
       }, function (pos) {
         this.element()[method](morpher.at(pos))
         return morpher.done()
-      }, this._isDeclarative)
+      })
 
       // Register the morpher so that if it is changed again, we can retarget it
       this._rememberMorpher(method, morpher)
@@ -750,7 +771,7 @@ SVG.extend(SVG.Runner, {
     }, function (pos) {
       this.element()[method](morpher.at(pos))
       return morpher.done()
-    }, this._isDeclarative)
+    })
 
     // Register the morpher so that if it is changed again, we can retarget it
     this._rememberMorpher(method, morpher)

@@ -218,7 +218,6 @@ SVG.Timeline = SVG.invent({
         var runnerInfo = this._runners[this._order[i]]
         var runner = runnerInfo.runner
 
-        if(runner.done) continue
         if(!runner.active()) continue
 
         // If this runner is still going, signal that we need another animation
@@ -226,7 +225,7 @@ SVG.Timeline = SVG.invent({
         var finished = runner.step(dtTime).done
         if (!finished) {
           runnersLeft = true
-          continue
+          // continue
         }
 
 
