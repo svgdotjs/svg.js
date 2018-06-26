@@ -49,7 +49,6 @@ SVG.Runner = SVG.invent({
 
     // Save transforms applied to this runner
     this.transforms = new SVG.Matrix()
-    this._transformsRunning = true
 
     // Looping variables
     this._haveReversed = false
@@ -157,10 +156,11 @@ SVG.Runner = SVG.invent({
     These methods allow us to attach basic functions to the runner directly
     */
 
-    queue: function (initFn, runFn) {
+    queue: function (initFn, runFn, isTransform) {
       this._queue.push({
         initialiser: initFn || SVG.void,
         runner: runFn || SVG.void,
+        isTransform: !!isTransform,
         initialised: false,
         finished: false,
       })
@@ -364,6 +364,7 @@ SVG.Runner = SVG.invent({
 
     // Save a morpher to the morpher list so that we can retarget it later
     _rememberMorpher: function (method, morpher) {
+      if (method == 'transform' && !this._isDeclarative) return
       this._history[method] = {
         morpher: morpher,
         caller: this._queue[this._queue.length - 1],
@@ -373,6 +374,7 @@ SVG.Runner = SVG.invent({
     // Try to set the target for a morpher if the morpher exists, otherwise
     // do nothing and return false
     _tryRetarget: function (method, target) {
+      if (method == 'transform' && !this._isDeclarative) return false
       if(this._history[method]) {
         this._history[method].morpher.to(target)
         this._history[method].caller.finished = false
@@ -482,10 +484,9 @@ function mergeTransforms () {
 
   // Merge any two transformations in a row that are done
   let lastRunner = null
-  let lastIndex = null
   runners.forEach((runner, i) => {
 
-    if (i != 0 && runner.done && lastRunner.done) {
+    if (lastRunner && runner.done && lastRunner.done) {
       delete runners[lastRunner.id]
       runners[i] = {
         transforms: runner.transforms.lmultiply(lastRunner.transforms),
@@ -496,54 +497,24 @@ function mergeTransforms () {
 
     lastRunner = runner
   })
-
-  // // Try to merge any adjacent transforms into a single transform
-  // for (let i = runners.length; --i;) {
-  //
-  //   let runner = runners[i]
-  //   let lastRunner = runners[i-1]
-  //   if (!runner.done || !lastRunner.done) continue
-  //
-  //   runners.splice(i-1, 2, {
-  //     transforms: runner.transforms.lmultiply(lastRunner.transforms),
-  //     done: true,
-  //   })
-  // }
 }
 
 SVG.extend(SVG.Element, {
-  //
-  // clearTransforms: function (currentRunner) {
-  //
-  //   let runners = this._transformationRunners
-  //   for (let i = 0, len = runners.length; i < len; ++i) {
-  //     let runner = runners[i]
-  //
-  //     // if we hit the current runner
-  //     if (runner == currentRunner) {
-  //
-  //       // update the runners on the element to only use its current matrix and
-  //       // and all runners which come after the current runner + the current
-  //       this._transformationRunners = runners.slice(i)
-  //       break
-  //     }
-  //
-  //     runners[i]._transformsRunning = false
-  //   }
-  // },
-
   _clearTransformRunnersBefore: function (currentRunner) {
-    this._transformationRunners = this._transformationRunners.filter((runner) => {
-      return runner.id >= currentRunner.id
+
+    this._transformationRunners.forEach((runner, i, arr) => {
+      if (runner.id < currentRunner.id) {
+
+        runner._queue = runner._queue.filter((item) => {
+          return !item.isTransform
+        })
+
+        delete arr[i]
+      }
     })
   },
 
   addRunner: function (runner) {
-    // let runners = this._transformationRunners
-    // if (!runners.includes(runner)) {
-    //   runners.push(runner)
-    // }
-
     this._transformationRunners[runner.id] = runner
 
     SVG.Animator.transform_frame(
@@ -557,18 +528,6 @@ SVG.extend(SVG.Element, {
       this._frameId = SVG.Element.frameId++
     }
   },
-
-  _currentTransform: function (r) {
-
-    var index = this._transformationRunners.indexOf(r)
-    if(index < 0) {
-      return this._baseTransform
-    }
-
-    var transforms = this._transformationRunners.slice(0, this._transformationRunners.indexOf(r)+1).map(el => el.transforms)
-
-    return reduceTransform(transforms, this._baseTransform)
-  }
 })
 
 SVG.Element.frameId = 0
@@ -633,6 +592,9 @@ SVG.extend(SVG.Runner, {
   // 4. Now you get the delta matrix as a result: D = F * inv(M)
 
   transform: function (transforms, relative, affine) {
+    if (this._tryRetarget('transform', transforms)) {
+      return this
+    }
 
     // Parse the parameters
     var isMatrix = transforms.a != null
@@ -662,12 +624,15 @@ SVG.extend(SVG.Runner, {
       morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
         .to(formatTransforms(transforms))
         .stepper(this._stepper)
-      return this.queue(function() {
+
+      this.queue(function() {
         this.element().addRunner(this)
       }, function (pos) {
-        this.addTransform(new SVG.Matrix(morpher.at(pos).valueOf()))
+        this.addTransform(new SVG.Matrix(morpher.at(pos).valueOf()), true)
         return morpher.done()
-      })
+      }, true)
+
+      this._rememberMorpher('transform', morpher)
       return this
     }
 
@@ -685,6 +650,7 @@ SVG.extend(SVG.Runner, {
       : SVG.Morphable.TransformBag
 
     morpher = new SVG.Morphable().type(morphType)
+    morpher.to(transforms)
 
     morpher.stepper(this._stepper)
 
@@ -694,27 +660,25 @@ SVG.extend(SVG.Runner, {
 
       // If we have an absolute transform, it needs to over-ride any other
       // tranformations that are available on the element
-      if (!relative) {
-
+      if (!relative && !this._isDeclarative) {
         // Deactivate all transforms that have run so far if we are absolute
         element._clearTransformRunnersBefore(this)
-        currentBase = new SVG.Matrix(element)
-        morpher.from(currentBase).to(transforms)
       }
 
       // Define the starting point for the morpher
-      let startMatrix = new SVG.Matrix(relative ? null : element)
+      let startMatrix = new SVG.Matrix(relative ? undefined : element)
       morpher.from(startMatrix)
 
     }, function (pos) {
 
-      if (!this._transformsRunning) return
       if (!relative) this.clearTransform()
       var matrix = morpher.at(pos)
       this.addTransform(matrix)
       return morpher.done()
 
-    })
+    }, true)
+
+    this._rememberMorpher('transform', morpher)
 
     return this
   },

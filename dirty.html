@@ -161,17 +161,22 @@ function getColor(t) {
 // })
 
 var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
-var anim = mover.animate(new SVG.Spring(500, 10)).move(500, 500)
+var anim = mover.animate(new SVG.Spring(500, 10))
 
 let date = +new Date
 SVG.on(document, 'mousemove', function (e) {
-  if (+new Date - date > 50) {
-    date = +new Date
-  } else {
-    return
-  }
-  var p = mover.point(e.pageX - 1000, e.pageY - 1000)
-  anim.transform({px: p.x, py: p.y})
+  // if (+new Date - date > 50) {
+  //   date = +new Date
+  // } else {
+  //   return
+  // }
+
+  //var p = mover.point(e.pageX, e.pageY)
+  var p = mover.doc().point(e.clientX, e.clientY)
+  //var p = {x: e.pageX, y: e.pageY}
+  //console.log(p)
+  anim.transform({px: p.x-100, py: p.y-100})
+  //anim.center(p.x, p.y)
 })
 
 // var timeline = new SVG.Timeline().pause()
@@ -204,30 +209,36 @@ SVG.on(document, 'mousemove', function (e) {
 // r.step(-300) // should be 0.9s
 
 
-// var timer = 0
-// SVG('svg').viewbox(-300, -300, 600, 600)
-// let rec1 = SVG('<rect>').addTo('svg')
-//   .size(100, 100)
-//   //.transform({translateX: -50, translateY: -50})
-// rec1.timeline().source(() => {
-//   timer += 2
-//   document.querySelector('#absolute span').textContent = timer
-//   return timer
-// })
+var timer = 0
+SVG('svg').viewbox(-150, -150, 1000, 1000)
+let rec1 = SVG('<rect>').addTo('svg')
+  .size(100, 100)
+  //.transform({translateX: -50, translateY: -50})
+rec1.timeline().source(() => {
+  timer += 2
+  document.querySelector('#absolute span').textContent = timer
+  return timer
+})
 
-// var runner = rec1
-//   // .animate(100).attr('fill', '#fff')
-//   //.animate().transform({rotate: -45, origin: [50, 50]})
-//   .animate(200)
-//   .transform({
-//     rotate: 320,
-//     origin: [200, 200],
-//   }, true)
-//
-//   rec1.animate(150, 150, 'absolute')
-//     .transform({
-//       scale:2
-//     })
+var runner = rec1
+  // .animate(100).attr('fill', '#fff')
+  //.animate().transform({rotate: -45, origin: [50, 50]})
+  .animate(200)
+  .transform({
+    rotate: 320,
+    //origin: [200, 200],
+  }, true)
+
+  rec1.animate(150, 150, 'absolute')
+    .transform({
+      scale:2
+    })
+
+    // .animate(400, 0, 'absolute')
+    // .transform({
+    //   rotate: 360,
+    //   //origin: [200, 200],
+    // }, true)
 
   // .animate(500, 0)
   // .transform({scale:2})
