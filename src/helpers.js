@@ -228,10 +228,10 @@ function formatTransforms (o) {
     : flipY
   var shear = o.shear || 0
   var theta = o.rotate || o.theta || 0
-  var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
+  var origin = new SVG.Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y
-  var position = new SVG.Point(o.origin || o.px || o.positionX, o.py || o.positionY)
+  var position = new SVG.Point(o.position || o.px || o.positionX, o.py || o.positionY)
   var px = position.x
   var py = position.y
   var translate = new SVG.Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
@@ -258,4 +258,28 @@ function formatTransforms (o) {
     px: px,
     py: py
   }
+}
+
+function getOrigin (transforms, element) {
+  // Allow origin or around as the names
+  origin = o.around == null ? o.origin : o.around
+
+  // Allow the user to pass a string to rotate around a given point
+  if ( typeof origin === 'string' || origin == null ) {
+    // Get the bounding box of the element with no transformations applied
+    const string = (origin || 'center').toLowerCase().trim()
+    const { height, width, x, y } = this.bbox()
+
+    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+    const ox = o.ox || string.includes('left') ? x
+      : string.includes('right') ? x + width
+      : x + width / 2
+    const oy = o.oy || string.includes('top') ? y
+      : string.includes('bottom') ? y + height
+      : y + height / 2
+    return [ox, oy]
+  }
+
+  // Return the origin as it is if it wasn't a string
+  return origin
 }

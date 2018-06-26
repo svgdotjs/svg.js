@@ -17,7 +17,7 @@
 <div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
 
 <!-- Making the svg -->
-<svg width=1000px height=1000px >
+<svg width=1000px height=1000px id="canvas">
   <rect x=50 y=100 width=200 height=100 stroke=none stroke-width=2 />
 </svg>
 
@@ -160,24 +160,45 @@ function getColor(t) {
 //   ])
 // })
 
-var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
-var anim = mover.animate(new SVG.Spring(500, 10))
+// var mover = SVG('<ellipse>').size(50, 50).center(100, 100).addTo('svg')
+// var anim = mover.animate(new SVG.Spring(500, 10))
+//
+// let date = +new Date
+// SVG.on(document, 'mousemove', function (e) {
+//   // if (+new Date - date > 50) {
+//   //   date = +new Date
+//   // } else {
+//   //   return
+//   // }
+//
+//   //var p = mover.point(e.pageX, e.pageY)
+//   var p = mover.doc().point(e.clientX, e.clientY)
+//   //var p = {x: e.pageX, y: e.pageY}
+//   //console.log(p)
+//   anim.transform({px: p.x - 100, py: p.y - 100})
+//   //anim.center(p.x, p.y)
+// })
 
-let date = +new Date
-SVG.on(document, 'mousemove', function (e) {
-  // if (+new Date - date > 50) {
-  //   date = +new Date
-  // } else {
-  //   return
-  // }
+let canvas = SVG('#canvas')
 
-  //var p = mover.point(e.pageX, e.pageY)
-  var p = mover.doc().point(e.clientX, e.clientY)
-  //var p = {x: e.pageX, y: e.pageY}
-  //console.log(p)
-  anim.transform({px: p.x-100, py: p.y-100})
-  //anim.center(p.x, p.y)
-})
+// Make the green rectange
+canvas.rect(200, 400).move(200, 400)
+  .attr('opacity', 0.3)
+  .addClass('green')
+
+// Make the pink rectangle
+let a = canvas.rect(200, 400).move(200, 400)
+  .attr('opacity', 0.3)
+  .addClass('pink')
+  .transform({ px: 100, py: 500, origin: 'top-left' })
+  .animate()
+  .transform({ rotate: 500, origin: 'center' })
+
+// Put an ellipse where we expect the object to be
+canvas.ellipse(30, 30).center(100, 500)
+  .attr('opacity', 0.3)
+  .addClass('dark-pink')
+
 
 // var timeline = new SVG.Timeline().pause()
 // var runner = new SVG.Runner(100000)

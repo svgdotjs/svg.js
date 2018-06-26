@@ -87,7 +87,7 @@ var parts = [
   //
   // TODO: ADD THESE
   //
-  // 'src/morph.js'
+  // 'src/morph.js',
   // 'src/runner.js'
   // 'src/timeline.js'
 ]

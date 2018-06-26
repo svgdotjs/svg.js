@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Jun 03 2018 08:16:08 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Tue Jun 26 2018 21:05:33 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -1360,7 +1360,9 @@ SVG.Element = SVG.invent({
 
     // Move by center over y-axis
     cy: function (y) {
-      return y == null ? this.y() + this.height() / 2 : this.y(y - this.height() / 2)
+      return y == null
+        ? this.y() + this.height() / 2
+        : this.y(y - this.height() / 2)
     },
 
     // Move element to given x and y values
@@ -4707,4 +4709,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));

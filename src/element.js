@@ -44,7 +44,9 @@ SVG.Element = SVG.invent({
 
     // Move by center over y-axis
     cy: function (y) {
-      return y == null ? this.y() + this.height() / 2 : this.y(y - this.height() / 2)
+      return y == null
+        ? this.y() + this.height() / 2
+        : this.y(y - this.height() / 2)
     },
 
     // Move element to given x and y values

@@ -614,18 +614,42 @@ SVG.extend(SVG.Runner, {
     **/
 
 
+    // Set the origin here
+
+
     // If we have a relative transformation and its not a matrix
     // we morph all parameters directly with the ObjectBag
     // the following cases are covered here:
     // - true, false with ObjectBag
     // - true, true with ObjectBag
     var morpher
+    var origin
     if(relative && !isMatrix) {
+
       morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
         .to(formatTransforms(transforms))
         .stepper(this._stepper)
 
       this.queue(function() {
+
+        if (origin == null) {
+          origin = getOrigin (transforms, this.element())
+        }
+
+        // Apply the origin to the transforms
+        transforms.origin = origin
+        let sanitisedTransforms = formatTransforms(transforms)
+
+        morpher.from({origin})
+
+        var from = morpher.from()
+        var indexOfOffset = from.indexOf('offset')
+        if(indexOfOffset > -1) {
+          let to = morpher.to()
+          to[indexOfOffset+1] = origin
+          to[indexOfOffset] = 'origin'
+        }
+
         this.element().addRunner(this)
       }, function (pos) {
         this.addTransform(new SVG.Matrix(morpher.at(pos).valueOf()), true)

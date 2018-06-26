@@ -55,38 +55,14 @@ SVG.extend(SVG.Element, {
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
       return decomposed[o] || decomposed
-
-    // Allow the user to define the origin with a string
-    } else if (typeof o.origin === 'string' ||
-      (o.origin == null && o.ox == null && o.oy == null)
-    ) {
-      // Get the bounding box of the element with no transformations applied
-      var bbox = this.bbox()
-
-      // Get the bounding box and string to use in our calculations
-      var string = typeof o.origin === 'string'
-        ? o.origin.toLowerCase().trim()
-        : 'center' // We want the center by default
-      var height = bbox.height
-      var width = bbox.width
-      var x = bbox.x
-      var y = bbox.y
-
-      // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-      o.ox = string.includes('left') ? x
-        : string.includes('right') ? x + width
-        : x + width / 2
-      o.oy = string.includes('top') ? y
-        : string.includes('bottom') ? y + height
-        : y + height / 2
-
-      // Make sure we only pass ox and oy
-      o.origin = null
     }
+
+    // Set the origin according to the defined transform
+    o.origin = setOrigin (o, element)
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var cleanRelative = relative === true ? this : (relative || false)
-    var result = new SVG.Matrix(cleanRelative).transform(o)
+    var result = new SVG.Matrix(cleanRelative).transform(oWithOrigin)
     return this.attr('transform', result)
   }
 })
