@@ -592,7 +592,7 @@ SVG.extend(SVG.Runner, {
   // 4. Now you get the delta matrix as a result: D = F * inv(M)
 
   transform: function (transforms, relative, affine) {
-    if (this._tryRetarget('transform', transforms)) {
+    if (this._isDeclarative && this._tryRetarget('transform', transforms)) {
       return this
     }
 
@@ -640,14 +640,12 @@ SVG.extend(SVG.Runner, {
         transforms.origin = origin
         let sanitisedTransforms = formatTransforms(transforms)
 
-        morpher.from({origin})
+        morpher.from(formatTransforms({origin}))
 
-        var from = morpher.from()
-        var indexOfOffset = from.indexOf('offset')
+        var to = morpher.to()
+        var indexOfOffset = to.indexOf('ox')
         if(indexOfOffset > -1) {
-          let to = morpher.to()
-          to[indexOfOffset+1] = origin
-          to[indexOfOffset] = 'origin'
+          to.splice(indexOfOffset, 4, 'ox', origin[0], 'oy', origin[1])
         }
 
         this.element().addRunner(this)
@@ -656,7 +654,7 @@ SVG.extend(SVG.Runner, {
         return morpher.done()
       }, true)
 
-      this._rememberMorpher('transform', morpher)
+      this._isDeclarative && this._rememberMorpher('transform', morpher)
       return this
     }
 
@@ -702,7 +700,7 @@ SVG.extend(SVG.Runner, {
 
     }, true)
 
-    this._rememberMorpher('transform', morpher)
+    this._isDeclarative && this._rememberMorpher('transform', morpher)
 
     return this
   },
