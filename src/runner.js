@@ -673,21 +673,17 @@ SVG.extend(SVG.Runner, {
 
     morpher = new SVG.Morphable().type(morphType)
     morpher.stepper(this._stepper)
-    //morpher.to(transforms)
+    morpher.to(transforms)
 
     this.queue(function() {
       let element = this.element()
       element.addRunner(this)
 
-      if (!origin/* && affine*/) {
+      if (!origin && affine) {
         origin = getOrigin(transforms, element)
         transforms.origin = origin
 
-        console.log('Affine Parameters:', transforms)
-
         morpher.to(transforms)
-
-        console.log('End parameters:', morpher.to())
       }
 
       if (!relative && !this._isDeclarative) {
@@ -699,25 +695,17 @@ SVG.extend(SVG.Runner, {
       let startMatrix = new SVG.Matrix(relative ? undefined : element)
 
       // make sure to add an origin if we morph affine
-      //if (affine) {
-        /*startMatrix = startMatrix.decompose(origin[0], origin[1])
-
-        startMatrix = new SVG.Matrix().compose(startMatrix)*/
-
+      if (affine) {
         startMatrix.origin = origin
-      //}
+      }
 
       // FIXME: correct the rotation so that it takes the shortest path
 
       morpher.from(startMatrix)
-
-      console.log('Start Parameters:', morpher.from())
-
     }, function (pos) {
 
       if (!relative) this.clearTransform()
       var matrix = morpher.at(pos)
-      // matrix = matrix.translate(origin[0], origin[1])
       this.addTransform(matrix)
       return morpher.done()
 

@@ -161,17 +161,12 @@ SVG.Morphable.TransformBag = SVG.invent({
     SVG.Matrix.call(this, obj)
 
     if (obj && obj.origin) {
-      obj.originX = origin[0]
-      obj.originY = origin[1]
+      obj.originX = obj.origin[0]
+      obj.originY = obj.origin[1]
     }
 
     this.originX = obj && obj.originX || 0
     this.originY = obj && obj.originY || 0
-
-    /*if (obj && obj.origin){
-      this.translateO(-obj.origin[0], -obj.origin[1])
-    }*/
-    //this.value = new SVG.Matrix(obj)
   },
 
   extend: {

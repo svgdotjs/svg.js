@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Jun 28 2018 23:40:30 GMT+1000 (AEST)
+* BUILT: Thu Jun 28 2018 22:52:04 GMT+0200 (GMT+02:00)
 */;
 
 (function(root, factory) {
@@ -1736,14 +1736,14 @@ SVG.Matrix = SVG.invent({
     },
 
     // Decomposes this matrix into its affine parameters
-    decompose: function (ox=0, oy=0) {
+    decompose: function (cx=0, cy=0) {
       // Get the parameters from the matrix
       var a = this.a
       var b = this.b
       var c = this.c
       var d = this.d
-      var e = this.e - ox
-      var f = this.f - oy
+      var e = this.e
+      var f = this.f
 
       // Figure out if the winding direction is clockwise or counterclockwise
       var determinant = a * d - b * c
@@ -1752,12 +1752,18 @@ SVG.Matrix = SVG.invent({
       // Since we only shear in x, we can use the x basis to get the x scale
       // and the rotation of the resulting matrix
       var sx = ccw * Math.sqrt(a * a + b * b)
-      var theta = 180 / Math.PI * Math.atan2(ccw * b, ccw * a)
+      var thetaRad = Math.atan2(ccw * b, ccw * a)
+      var theta = 180 / Math.PI * thetaRad
+      var ct = Math.cos(thetaRad)
+      var st = Math.sin(thetaRad)
 
       // We can then solve the y basis vector simultaneously to get the other
       // two affine parameters directly from these parameters
       var lam = (a * c + b * d) / determinant
       var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
+
+      let tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
+      let ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
 
       // Construct the decomposition and return it
       return {
@@ -1766,18 +1772,18 @@ SVG.Matrix = SVG.invent({
         scaleY: sy,
         shear: lam,
         rotate: theta,
-        translateX: e + ox,
-        translateY: f + oy,
-        originX: ox,
-        originY: oy,
+        translateX: tx,
+        translateY: ty,
+        originX: cx,
+        originY: cy,
 
         // Return the matrix parameters
         a: this.a,
         b: this.b,
         c: this.c,
         d: this.d,
-        e: this.e + ox,
-        f: this.f + oy
+        e: this.e,
+        f: this.f
       }
     },
 
@@ -4722,4 +4728,4 @@ SVG.Animator = {
 
 return SVG
 
-}));
+}));
