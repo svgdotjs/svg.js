@@ -218,11 +218,11 @@ a.timeline().source(() => {
 })
 
 
-let obj = { rotate: 90, shear:2, origin: [600, 600], translate: [100, 100] }
+let obj = { rotate: 100, shear:2, origin: [600, 600], translate: [100, 100] }
 
 a.clone() // startPosition
 a.clone().transform(obj) // endPosition
-a.animate(new SVG.PID(0.1, 0.1)).transform(obj) // animation
+a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
 
 
 // Put an ellipse where we expect the object to be

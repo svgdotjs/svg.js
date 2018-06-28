@@ -129,6 +129,7 @@ SVG.Matrix = SVG.invent({
       var lam = (a * c + b * d) / determinant
       var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
 
+      // Use the translations
       let tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
       let ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
 

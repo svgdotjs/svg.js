@@ -700,6 +700,13 @@ SVG.extend(SVG.Runner, {
       }
 
       // FIXME: correct the rotation so that it takes the shortest path
+      // GIVE ME (rCurrent) (rTarget) - to store the current/target angle
+      const possibilities = [rTarget - 360, rTarget, rTarget + 360]
+      const distances = possibilities.map( a => Math.abs(a - rCurrent) )
+      const shortest = Math.min(...distances)
+      const index = distances.indexOf(shortest)
+      const target = possibilities[index]
+
 
       morpher.from(startMatrix)
     }, function (pos) {
