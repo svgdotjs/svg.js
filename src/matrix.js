@@ -75,7 +75,7 @@ SVG.Matrix = SVG.invent({
     },
 
     // Applies a matrix defined by its affine parameters
-    compose: function (o) {
+    compose: function (o, ox, oy) {
       // Get the parameters
       var sx = o.scaleX || 1
       var sy = o.scaleY || 1
@@ -217,10 +217,13 @@ SVG.Matrix = SVG.invent({
 
     // Translate matrix
     translate: function (x, y) {
-      var translation = new SVG.Matrix(this)
-      translation.e += x || 0
-      translation.f += y || 0
-      return translation
+      return new SVG.Matrix(this).translateO(x, y)
+    },
+
+    translateO: function (x, y) {
+      this.e += x || 0
+      this.f += y || 0
+      return this
     },
 
     // Scale matrix

@@ -672,16 +672,24 @@ SVG.extend(SVG.Runner, {
       : SVG.Morphable.TransformBag
 
     morpher = new SVG.Morphable().type(morphType)
-    morpher.to(transforms)
-
     morpher.stepper(this._stepper)
+    //morpher.to(transforms)
 
     this.queue(function() {
       let element = this.element()
       element.addRunner(this)
 
-      // If we have an absolute transform, it needs to over-ride any other
-      // tranformations that are available on the element
+      if (!origin/* && affine*/) {
+        origin = getOrigin(transforms, element)
+        transforms.origin = origin
+
+        console.log('Affine Parameters:', transforms)
+
+        morpher.to(transforms)
+
+        console.log('End parameters:', morpher.to())
+      }
+
       if (!relative && !this._isDeclarative) {
         // Deactivate all transforms that have run so far if we are absolute
         element._clearTransformRunnersBefore(this)
@@ -689,12 +697,23 @@ SVG.extend(SVG.Runner, {
 
       // Define the starting point for the morpher
       let startMatrix = new SVG.Matrix(relative ? undefined : element)
+
+      // make sure to add an origin if we morph affine
+      //if (affine) {
+        startMatrix = startMatrix.translate(-origin[0], -origin[1])
+      //}
+
+      // FIXME: correct the rotation so that it takes the shortest path
+
       morpher.from(startMatrix)
+
+      console.log('Start Parameters:', morpher.from())
 
     }, function (pos) {
 
       if (!relative) this.clearTransform()
       var matrix = morpher.at(pos)
+      // matrix = matrix.translate(origin[0], origin[1])
       this.addTransform(matrix)
       return morpher.done()
 

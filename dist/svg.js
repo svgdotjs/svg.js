@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Jun 26 2018 21:05:33 GMT+1000 (AEST)
+* BUILT: Thu Jun 28 2018 22:44:34 GMT+1000 (AEST)
 */;
 
 (function(root, factory) {
@@ -1708,7 +1708,7 @@ SVG.Matrix = SVG.invent({
     },
 
     // Applies a matrix defined by its affine parameters
-    compose: function (o) {
+    compose: function (o, ox, oy) {
       // Get the parameters
       var sx = o.scaleX || 1
       var sy = o.scaleY || 1
@@ -1850,10 +1850,13 @@ SVG.Matrix = SVG.invent({
 
     // Translate matrix
     translate: function (x, y) {
-      var translation = new SVG.Matrix(this)
-      translation.e += x || 0
-      translation.f += y || 0
-      return translation
+      return new SVG.Matrix(this).translateO(x, y)
+    },
+
+    translateO: function (x, y) {
+      this.e += x || 0
+      this.f += y || 0
+      return this
     },
 
     // Scale matrix
@@ -2209,34 +2212,10 @@ SVG.extend(SVG.Element, {
     if (o == null || typeof o === 'string') {
       var decomposed = new SVG.Matrix(this).decompose()
       return decomposed[o] || decomposed
-
-    // Allow the user to define the origin with a string
-    } else if (typeof o.origin === 'string' ||
-      (o.origin == null && o.ox == null && o.oy == null)
-    ) {
-      // Get the bounding box of the element with no transformations applied
-      var bbox = this.bbox()
-
-      // Get the bounding box and string to use in our calculations
-      var string = typeof o.origin === 'string'
-        ? o.origin.toLowerCase().trim()
-        : 'center' // We want the center by default
-      var height = bbox.height
-      var width = bbox.width
-      var x = bbox.x
-      var y = bbox.y
-
-      // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-      o.ox = string.includes('left') ? x
-        : string.includes('right') ? x + width
-        : x + width / 2
-      o.oy = string.includes('top') ? y
-        : string.includes('bottom') ? y + height
-        : y + height / 2
-
-      // Make sure we only pass ox and oy
-      o.origin = null
     }
+
+    // Set the origin according to the defined transform
+    o.origin = getOrigin (o, this)
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var cleanRelative = relative === true ? this : (relative || false)
@@ -4424,10 +4403,10 @@ function formatTransforms (o) {
     : flipY
   var shear = o.shear || 0
   var theta = o.rotate || o.theta || 0
-  var origin = new SVG.Point(o.origin || o.ox || o.originX, o.oy || o.originY)
+  var origin = new SVG.Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
   var ox = origin.x
   var oy = origin.y
-  var position = new SVG.Point(o.origin || o.px || o.positionX, o.py || o.positionY)
+  var position = new SVG.Point(o.position || o.px || o.positionX, o.py || o.positionY)
   var px = position.x
   var py = position.y
   var translate = new SVG.Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
@@ -4454,6 +4433,30 @@ function formatTransforms (o) {
     px: px,
     py: py
   }
+}
+
+function getOrigin (o, element) {
+  // Allow origin or around as the names
+  origin = o.around == null ? o.origin : o.around
+
+  // Allow the user to pass a string to rotate around a given point
+  if ( typeof origin === 'string' || origin == null ) {
+    // Get the bounding box of the element with no transformations applied
+    const string = (origin || 'center').toLowerCase().trim()
+    const { height, width, x, y } = element.bbox()
+
+    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+    const ox = o.ox || string.includes('left') ? x
+      : string.includes('right') ? x + width
+      : x + width / 2
+    const oy = o.oy || string.includes('top') ? y
+      : string.includes('bottom') ? y + height
+      : y + height / 2
+    return [ox, oy]
+  }
+
+  // Return the origin as it is if it wasn't a string
+  return origin
 }
 
 /* globals fullBox, domContains, isNulledBox, Exception */
