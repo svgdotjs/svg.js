@@ -152,21 +152,31 @@ SVG.Morphable.TransformBag = SVG.invent({
         shear: obj[2],
         rotate: obj[3],
         translateX: obj[4],
-        translateY: obj[5]
+        translateY: obj[5],
+        originX: obj[6],
+        originY: obj[7]
       }
     }
 
     SVG.Matrix.call(this, obj)
 
-    if (obj && obj.origin){
-      this.translateO(-obj.origin[0], -obj.origin[1])
+    if (obj && obj.origin) {
+      obj.originX = origin[0]
+      obj.originY = origin[1]
     }
+
+    this.originX = obj && obj.originX || 0
+    this.originY = obj && obj.originY || 0
+
+    /*if (obj && obj.origin){
+      this.translateO(-obj.origin[0], -obj.origin[1])
+    }*/
     //this.value = new SVG.Matrix(obj)
   },
 
   extend: {
     toArray: function (){
-      var v = this.decompose()
+      var v = this.decompose(this.originX, this.originY)
 
       return [
         v.scaleX,
@@ -174,7 +184,9 @@ SVG.Morphable.TransformBag = SVG.invent({
         v.shear,
         v.rotate,
         v.translateX,
-        v.translateY
+        v.translateY,
+        v.originX,
+        v.originY,
       ]
     }
   }

@@ -700,7 +700,11 @@ SVG.extend(SVG.Runner, {
 
       // make sure to add an origin if we morph affine
       //if (affine) {
-        startMatrix = startMatrix.translate(-origin[0], -origin[1])
+        /*startMatrix = startMatrix.decompose(origin[0], origin[1])
+
+        startMatrix = new SVG.Matrix().compose(startMatrix)*/
+
+        startMatrix.origin = origin
       //}
 
       // FIXME: correct the rotation so that it takes the shortest path
