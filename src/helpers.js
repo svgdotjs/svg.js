@@ -262,10 +262,10 @@ function formatTransforms (o) {
 
 function getOrigin (o, element) {
   // Allow origin or around as the names
-  origin = o.around == null ? o.origin : o.around
+  let origin = o.around == null ? o.origin : o.around
 
   // Allow the user to pass a string to rotate around a given point
-  if ( typeof origin === 'string' || origin == null ) {
+  if (typeof origin === 'string' || origin == null) {
     // Get the bounding box of the element with no transformations applied
     const string = (origin || 'center').toLowerCase().trim()
     const { height, width, x, y } = element.bbox()

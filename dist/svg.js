@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Jun 28 2018 22:52:04 GMT+0200 (GMT+02:00)
+* BUILT: Thu Jun 28 2018 23:06:53 GMT+0200 (GMT+02:00)
 */;
 
 (function(root, factory) {
@@ -1736,7 +1736,7 @@ SVG.Matrix = SVG.invent({
     },
 
     // Decomposes this matrix into its affine parameters
-    decompose: function (cx=0, cy=0) {
+    decompose: function (cx = 0, cy = 0) {
       // Get the parameters from the matrix
       var a = this.a
       var b = this.b
@@ -2171,7 +2171,7 @@ SVG.extend(SVG.Element, {
   }
 })
 
-/* global arrayToMatrix */
+/* global arrayToMatrix getOrigin */
 
 SVG.extend(SVG.Element, {
   // Reset all transformations
@@ -2231,7 +2231,7 @@ SVG.extend(SVG.Element, {
     }
 
     // Set the origin according to the defined transform
-    o.origin = getOrigin (o, this)
+    o.origin = getOrigin(o, this)
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var cleanRelative = relative === true ? this : (relative || false)
@@ -4453,10 +4453,10 @@ function formatTransforms (o) {
 
 function getOrigin (o, element) {
   // Allow origin or around as the names
-  origin = o.around == null ? o.origin : o.around
+  let origin = o.around == null ? o.origin : o.around
 
   // Allow the user to pass a string to rotate around a given point
-  if ( typeof origin === 'string' || origin == null ) {
+  if (typeof origin === 'string' || origin == null) {
     // Get the bounding box of the element with no transformations applied
     const string = (origin || 'center').toLowerCase().trim()
     const { height, width, x, y } = element.bbox()

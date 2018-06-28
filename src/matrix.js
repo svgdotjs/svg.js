@@ -103,7 +103,7 @@ SVG.Matrix = SVG.invent({
     },
 
     // Decomposes this matrix into its affine parameters
-    decompose: function (cx=0, cy=0) {
+    decompose: function (cx = 0, cy = 0) {
       // Get the parameters from the matrix
       var a = this.a
       var b = this.b
