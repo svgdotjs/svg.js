@@ -120,6 +120,7 @@ SVG.Spring = SVG.invent ({
   extend: {
     step: function (current, target, dt, c) {
 
+      if (typeof current == 'string') return current
       c.done = dt == Infinity
       if(dt == Infinity) return target
       if(dt == 0) return current
@@ -165,6 +166,7 @@ SVG.PID = SVG.invent ({
   extend: {
     step: function (current, target, dt, c) {
 
+      if (typeof current == 'string') return current
       c.done = dt == Infinity
 
       if(dt == Infinity) return target

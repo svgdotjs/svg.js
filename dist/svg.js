@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Jun 28 2018 23:06:53 GMT+0200 (GMT+02:00)
+* BUILT: Fri Jun 29 2018 10:28:02 GMT+0200 (GMT+02:00)
 */;
 
 (function(root, factory) {
@@ -1762,6 +1762,7 @@ SVG.Matrix = SVG.invent({
       var lam = (a * c + b * d) / determinant
       var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
 
+      // Use the translations
       let tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
       let ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
 

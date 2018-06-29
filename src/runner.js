@@ -487,11 +487,12 @@ function mergeTransforms () {
   runners.forEach((runner, i) => {
 
     if (lastRunner && runner.done && lastRunner.done) {
-      delete runners[lastRunner.id]
-      runners[i] = {
+      console.log(lastRunner, runner)
+      delete runners[runner.id+1]
+      runners[lastRunner.id+1] = {
         transforms: runner.transforms.lmultiply(lastRunner.transforms),
         done: true,
-        id: i,
+        id: lastRunner.id,
       }
     }
 
@@ -505,9 +506,12 @@ SVG.extend(SVG.Element, {
     this._transformationRunners.forEach((runner, i, arr) => {
       if (runner.id < currentRunner.id) {
 
-        runner._queue = runner._queue.filter((item) => {
-          return !item.isTransform
-        })
+        if (!runner.done) {
+          runner._queue = runner._queue.filter((item) => {
+            return !item.isTransform
+          })
+        }
+
 
         delete arr[i]
       }
@@ -515,7 +519,7 @@ SVG.extend(SVG.Element, {
   },
 
   addRunner: function (runner) {
-    this._transformationRunners[runner.id] = runner
+    this._transformationRunners[runner.id+1] = runner
 
     SVG.Animator.transform_frame(
       mergeTransforms.bind(this), this._frameId
@@ -524,7 +528,11 @@ SVG.extend(SVG.Element, {
 
   _prepareRunner: function () {
     if (this._frameId == null) {
-      this._transformationRunners = []
+      this._transformationRunners = [{
+        transforms: new SVG.Matrix(this),
+        done: true,
+        id: -1
+      }]
       this._frameId = SVG.Element.frameId++
     }
   },
@@ -624,33 +632,27 @@ SVG.extend(SVG.Runner, {
     // - true, true with ObjectBag
     var morpher
     var origin
+    var current
     if(relative && !isMatrix) {
-
-      morpher = new SVG.Morphable.ObjectBag(formatTransforms({}))
-        .to(formatTransforms(transforms))
+      morpher = new SVG.Morphable().type(SVG.Morphable.ObjectBag)
         .stepper(this._stepper)
 
       this.queue(function() {
-
         if (origin == null) {
           origin = getOrigin (transforms, this.element())
+          transforms.origin = origin
+          morpher.to(formatTransforms(transforms))
         }
 
-        // Apply the origin to the transforms
-        transforms.origin = origin
-        let sanitisedTransforms = formatTransforms(transforms)
+        let from = current || {origin}
 
-        morpher.from(formatTransforms({origin}))
-
-        var to = morpher.to()
-        var indexOfOffset = to.indexOf('ox')
-        if(indexOfOffset > -1) {
-          to.splice(indexOfOffset, 4, 'ox', origin[0], 'oy', origin[1])
-        }
+        morpher.from(formatTransforms(from))
 
         this.element().addRunner(this)
       }, function (pos) {
-        this.addTransform(new SVG.Matrix(morpher.at(pos).valueOf()), true)
+        current = morpher.at(pos).valueOf()
+        let matrix = new SVG.Matrix(current)
+        this.addTransform(matrix)
         return morpher.done()
       }, true)
 
@@ -686,7 +688,7 @@ SVG.extend(SVG.Runner, {
         morpher.to(transforms)
       }
 
-      if (!relative && !this._isDeclarative) {
+      if (!relative) {
         // Deactivate all transforms that have run so far if we are absolute
         element._clearTransformRunnersBefore(this)
       }
@@ -697,16 +699,20 @@ SVG.extend(SVG.Runner, {
       // make sure to add an origin if we morph affine
       if (affine) {
         startMatrix.origin = origin
+
+        // FIXME: correct the rotation so that it takes the shortest path
+        // GIVE ME (rCurrent) (rTarget) - to store the current/target angle
+        const rTarget = transforms.rotate || 0
+        const rCurrent = startMatrix.decompose(origin[0], origin[1]).rotate
+
+        const possibilities = [rTarget - 360, rTarget, rTarget + 360]
+        const distances = possibilities.map( a => Math.abs(a - rCurrent) )
+        const shortest = Math.min(...distances)
+        const index = distances.indexOf(shortest)
+        const target = possibilities[index]
+
+        morpher._to.splice(3, 1, target)
       }
-
-      // FIXME: correct the rotation so that it takes the shortest path
-      // GIVE ME (rCurrent) (rTarget) - to store the current/target angle
-      const possibilities = [rTarget - 360, rTarget, rTarget + 360]
-      const distances = possibilities.map( a => Math.abs(a - rCurrent) )
-      const shortest = Math.min(...distances)
-      const index = distances.indexOf(shortest)
-      const target = possibilities[index]
-
 
       morpher.from(startMatrix)
     }, function (pos) {

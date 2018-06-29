@@ -197,16 +197,11 @@ SVG.Morphable.ObjectBag = SVG.invent({
       return
     }
 
-    var keys = []
+    var entries = Object.entries(objOrArr || {}).sort((a, b) => {
+      return a[0] - b[0]
+    })
 
-    for(var i in objOrArr) {
-      keys.push(i)
-    }
-
-    for(var i = 0, len = keys.length; i < len; ++i) {
-      this.values.push(keys[i])
-      this.values.push(objOrArr[keys[i]])
-    }
+    this.values = entries.reduce((last, curr) => last.concat(curr), [])
   },
 
   extend: {
