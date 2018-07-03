@@ -48,7 +48,7 @@ SVG.Matrix = SVG.invent({
       var currentTransform = new SVG.Matrix(this)
 
       // Construct the resulting matrix
-      var transformer = new SVG.Matrix()
+      var transformer = new SVG.Matrix(currentTransform)
         .translate(-t.ox, -t.oy)
         .scale(t.scaleX, t.scaleY)
         .skew(t.skewX, t.skewY)
@@ -56,7 +56,6 @@ SVG.Matrix = SVG.invent({
         .rotate(t.theta)
         .translate(t.ox, t.oy)
         .translate(t.rx, t.ry)
-        .lmultiply(currentTransform)
 
       // If we want the origin at a particular place, we force it there
       if (isFinite(t.px) || isFinite(t.py)) {

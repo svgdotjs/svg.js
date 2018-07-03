@@ -260,23 +260,52 @@ function formatTransforms (o) {
   }
 }
 
+/* TODO: KILL
+
+
+  1. Transform the origin by figuring out the delta
+
+    - At the start, we had:
+
+      let Sinv = new SVG.Matrix(element).inverse()
+      let origin = getOrigin(element)
+
+    - At a particular frame we have:
+
+      let C = Matrix(element)
+      let newOrigin = origin.transform(S.inv).transform(C)
+
+*/
+
+
 function getOrigin (o, element) {
   // Allow origin or around as the names
   let origin = o.around == null ? o.origin : o.around
 
   // Allow the user to pass a string to rotate around a given point
   if (typeof origin === 'string' || origin == null) {
+
     // Get the bounding box of the element with no transformations applied
     const string = (origin || 'center').toLowerCase().trim()
     const { height, width, x, y } = element.bbox()
 
-    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-    const ox = o.ox || string.includes('left') ? x
+    // Calculate the transformed x and y coordinates
+    const bx = string.includes('left') ? x
       : string.includes('right') ? x + width
       : x + width / 2
-    const oy = o.oy || string.includes('top') ? y
+    const by = string.includes('top') ? y
       : string.includes('bottom') ? y + height
       : y + height / 2
+
+    // Find the new center in the transformed coordinates
+    const matrix = new SVG.Matrix(element)
+    const {x: tx , y: ty} = new SVG.Point(bx, by).transform(matrix)
+
+    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+    const ox = o.ox != null ? o.ox : tx
+    const oy = o.oy != null ? o.oy : ty
+
+    // Set the origin based on the current matrix location
     return [ox, oy]
   }
 

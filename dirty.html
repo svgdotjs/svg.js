@@ -10,10 +10,17 @@
   <script type="text/javascript" src="src/runner.js"></script>
   <script type="text/javascript" src="src/timeline.js"></script>
   <script type="text/javascript" src="src/controller.js"></script>
+
+
+
+  <script type="text/javascript" src="src/transform.js"></script>
+  <script type="text/javascript" src="src/matrix.js"></script>
+
+
 </head>
 <body style="background-color: #c7c7ff">
 
-<div id="absolute"><label>Absolute: <input type="range" min="0" max="1" step="0.01"></slider></label><span></span></div>
+<div id="absolute"><label>Absolute: <input type="range" min="0" max="90" step="0.01"></slider></label><span></span></div>
 <div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
 
 <!-- Making the svg -->
@@ -198,39 +205,58 @@ rectangle.animate().transform({
 
 
 let canvas = SVG('#canvas')
+
+SVG('#absolute').on('input slide', function (e) {
+  var val = e.target.value
+  canvas.clear()
+  canvas.ellipse(20, 20)
+  let re = canvas.rect(300, 150).move(100, 150).attr('opacity', 0.5)
+  re.clone()
+    .transform({rotate: 45, skew: 30}, true)
+
+  re.clone()
+    .transform({rotate: 45, skew: 30}, true)
+    .transform({rotate: val}, true)
+})
+
+
+
+// transform({})
+
+
 // // Make the green rectange
 // canvas.rect(200, 400).move(500, 400)
 //   .attr('opacity', 0.3)
 //   .addClass('green')
 
 // Make the pink rectangle
-let a = canvas.rect(200, 400).move(500, 400)
-  .attr('opacity', 0.3)
-  .addClass('pink')
-  .transform({ px: 100, py: 500, origin: 'top-left' })
-
-
-var timer = 0
-a.timeline().source(() => {
-  timer += 1
-  document.querySelector('#absolute span').textContent = timer
-  return timer
-})
-
-
-let obj = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
-let obj2 = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
-
-a.clone() // startPosition
-a.clone().transform(obj, true).transform(obj2, true) // endPosition
-//a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
-a.animate(300).transform(obj, true).transform(obj2, true) // animation
-
-
-// Put an ellipse where we expect the object to be
-canvas.ellipse(30, 30).center(100, 500)
-  .attr('opacity', 0.3)
-  .addClass('dark-pink')
+// let a = canvas.rect(200, 400).move(500, 400)
+//   .attr('opacity', 0.3)
+//   .addClass('pink')
+//   .transform({ px: 100, py: 500, origin: 'top-left' })
+//
+//
+// var timer = 0
+// a.timeline().source(() => {
+//   timer += 1
+//   document.querySelector('#absolute span').textContent = timer
+//   return timer
+// })
+//
+//
+// let obj = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
+// let obj2 = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
+//
+// a.clone() // startPosition
+// a.clone().transform(obj, true).transform(obj2, true) // endPosition
+// //a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
+// a.animate(300).transform(obj, true).transform(obj2, true) // animation
+//
+//
+// // Put an ellipse where we expect the object to be
+// canvas.ellipse(30, 30).center(100, 500)
+//   .attr('opacity', 0.3)
+//   .addClass('dark-pink')
 
 
 // var timeline = new SVG.Timeline().pause()
