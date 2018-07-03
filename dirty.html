@@ -20,7 +20,7 @@
 </head>
 <body style="background-color: #c7c7ff">
 
-<div id="absolute"><label>Absolute: <input type="range" min="0" max="90" step="0.01"></slider></label><span></span></div>
+<div id="absolute"><label>Absolute: <input type="range" min="0" max="1" step="0.01"></slider></label><span></span></div>
 <div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
 
 <!-- Making the svg -->
@@ -208,15 +208,41 @@ let canvas = SVG('#canvas')
 
 SVG('#absolute').on('input slide', function (e) {
   var val = e.target.value
-  canvas.clear()
-  canvas.ellipse(20, 20)
-  let re = canvas.rect(300, 150).move(100, 150).attr('opacity', 0.5)
-  re.clone()
-    .transform({rotate: 45, skew: 30}, true)
 
-  re.clone()
-    .transform({rotate: 45, skew: 30}, true)
-    .transform({rotate: val}, true)
+  canvas.clear()
+  // canvas.ellipse(20, 20)
+  // let re = canvas.rect(300, 150).move(100, 150).attr('opacity', 0.5)
+  // re.clone()
+  //   .transform({rotate: 45, skew: 30}, true)
+  //
+  // re.clone()
+  //   .transform({
+  //     rotate: 45, skew: 30, /*translate: [150, 140], */
+  //   }, true)
+  //   .transform({rotate: val, origin: 'bottom-right'}, true)
+  //
+  // re.clone()
+  //   .transform({rotate: 45, skew: 30}, true)
+  //   .transform({rotate: val, origin: 'bottom-right'}, true)
+  //   .transform({skew}, true)
+  let a = canvas.rect(200, 400).move(500, 400)
+    .attr('opacity', 0.3)
+    .addClass('pink')
+    .transform({ px: 100, py: 500, origin: 'top-left' })
+
+
+  var timer = 0
+  a.timeline().source(() => {
+    timer += 1
+    document.querySelector('#absolute span').textContent = timer
+    return timer
+  })
+
+  let obj = { rotate: val * 180, origin: 'center', translate: [300 * val, 0] }
+  let obj2 = { rotate: -val * 180, origin: 'center' }
+
+  a.clone() // startPosition
+  a.clone().transform(obj, true).transform(obj2, true) // endPosition
 })
 
 
@@ -230,28 +256,36 @@ SVG('#absolute').on('input slide', function (e) {
 //   .addClass('green')
 
 // Make the pink rectangle
-// let a = canvas.rect(200, 400).move(500, 400)
-//   .attr('opacity', 0.3)
-//   .addClass('pink')
-//   .transform({ px: 100, py: 500, origin: 'top-left' })
-//
-//
-// var timer = 0
-// a.timeline().source(() => {
-//   timer += 1
-//   document.querySelector('#absolute span').textContent = timer
-//   return timer
-// })
-//
-//
-// let obj = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
-// let obj2 = { rotate: 180, shear:2, origin: [600, 600], translate: [200, 100] }
-//
-// a.clone() // startPosition
-// a.clone().transform(obj, true).transform(obj2, true) // endPosition
-// //a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
-// a.animate(300).transform(obj, true).transform(obj2, true) // animation
-//
+let a = canvas.rect(200, 400).move(500, 400)
+  .attr('opacity', 0.3)
+  .addClass('pink')
+  .transform({ tx: 100, ty: 500, origin: 'top-left' })
+
+canvas.ellipse(20, 20).center(700, 1100)
+
+
+var timer = 0
+a.timeline().source(() => {
+  timer += 1
+  document.querySelector('#absolute span').textContent = timer
+  return timer
+})
+
+
+let el = canvas.ellipse(20, 20)
+window.moveit = function (x, y) {
+  el.move(x, y)
+}
+
+
+let obj = { rotate: 180, origin: 'center', translate: [300, 0] }
+let obj2 = { rotate: -180, origin: 'center' }
+
+a.clone() // startPosition
+a.clone().transform(obj, true).transform(obj2, true) // endPosition
+//a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
+a.animate(300).transform(obj, true).transform(obj2, true) // animation
+
 //
 // // Put an ellipse where we expect the object to be
 // canvas.ellipse(30, 30).center(100, 500)

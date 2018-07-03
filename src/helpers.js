@@ -260,23 +260,6 @@ function formatTransforms (o) {
   }
 }
 
-/* TODO: KILL
-
-
-  1. Transform the origin by figuring out the delta
-
-    - At the start, we had:
-
-      let Sinv = new SVG.Matrix(element).inverse()
-      let origin = getOrigin(element)
-
-    - At a particular frame we have:
-
-      let C = Matrix(element)
-      let newOrigin = origin.transform(S.inv).transform(C)
-
-*/
-
 
 function getOrigin (o, element) {
   // Allow origin or around as the names
@@ -298,6 +281,7 @@ function getOrigin (o, element) {
       : y + height / 2
 
     // Find the new center in the transformed coordinates
+    console.log(element.attr('transform'))
     const matrix = new SVG.Matrix(element)
     const {x: tx , y: ty} = new SVG.Point(bx, by).transform(matrix)
 

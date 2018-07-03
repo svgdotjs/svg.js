@@ -482,12 +482,12 @@ function mergeTransforms () {
     .reduce((last, curr) => last.lmultiply(curr))
   this.transform(netTransform)
 
+  this._currentMatrix = runners[0]
+
   // Merge any two transformations in a row that are done
   let lastRunner = null
   runners.forEach((runner, i) => {
-
     if (lastRunner && runner.done && lastRunner.done) {
-      console.log(lastRunner, runner)
       delete runners[runner.id+1]
       runners[lastRunner.id+1] = {
         transforms: runner.transforms.lmultiply(lastRunner.transforms),
@@ -498,6 +498,10 @@ function mergeTransforms () {
 
     lastRunner = runner
   })
+
+  if (!lastRunner) {
+    this._frameId = null
+  }
 }
 
 SVG.extend(SVG.Element, {
@@ -512,10 +516,16 @@ SVG.extend(SVG.Element, {
           })
         }
 
-
         delete arr[i]
       }
     })
+  },
+
+  _currentTransform (current) {
+    return this._transformationRunners
+      .filter((runner) => runner.id <= current.id)
+      .map(runner => runner.transforms)
+      .reduce((last, curr) => last.lmultiply(curr))
   },
 
   addRunner: function (runner) {
@@ -632,24 +642,60 @@ SVG.extend(SVG.Runner, {
     // - true, true with ObjectBag
     var morpher
     var origin
+    var startTransform
     var current
+    var element
     if(relative && !isMatrix) {
       morpher = new SVG.Morphable().type(SVG.Morphable.ObjectBag)
         .stepper(this._stepper)
 
       this.queue(function() {
         if (origin == null) {
-          origin = getOrigin (transforms, this.element())
-          transforms.origin = origin
+          element = this.element()
+          let transformedOrigin = getOrigin (transforms, element)
+          origin = new SVG.Point(transformedOrigin)
+            .transform(new SVG.Matrix(element).inverse())
+
+          transforms.origin = [origin.x, origin.y]
           morpher.to(formatTransforms(transforms))
         }
 
         let from = current || {origin}
-
         morpher.from(formatTransforms(from))
-
         this.element().addRunner(this)
+
       }, function (pos) {
+
+        let currentMatrix = element._currentTransform(this)
+        //origin = getOrigin (transforms, element)
+        let {x, y} = origin.transform(currentMatrix)
+
+moveit(x, y)
+
+// console.log(currentMatrix.decompose(origin[0], origin[1]));
+
+
+        /*
+
+
+          1. Transform the origin by figuring out the delta
+
+            - At the start, we had:
+
+              let Sinv = new SVG.Matrix(element).inverse()
+              let origin = getOrigin(element)
+
+            - At a particular frame we have:
+
+              let C = Matrix(element)
+              let newOrigin = origin.transform(S.inv).transform(C)
+
+        */
+
+        let index = morpher._from.indexOf('ox')
+        morpher._from.splice(index, 4, 'ox', x, 'oy', y)
+        morpher._to.splice(index, 4, 'ox', x, 'oy', y)
+
         current = morpher.at(pos).valueOf()
         let matrix = new SVG.Matrix(current)
         this.addTransform(matrix)
@@ -678,7 +724,7 @@ SVG.extend(SVG.Runner, {
     morpher.to(transforms)
 
     this.queue(function() {
-      let element = this.element()
+      element = this.element()
       element.addRunner(this)
 
       if (!origin && affine) {
