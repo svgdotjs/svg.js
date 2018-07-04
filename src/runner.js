@@ -631,10 +631,6 @@ SVG.extend(SVG.Runner, {
       true, true: relative whatever was passed transformation with ObjectBag
     **/
 
-
-    // Set the origin here
-
-
     // If we have a relative transformation and its not a matrix
     // we morph all parameters directly with the ObjectBag
     // the following cases are covered here:
@@ -642,7 +638,6 @@ SVG.extend(SVG.Runner, {
     // - true, true with ObjectBag
     var morpher
     var origin
-    var startTransform
     var current
     var element
     if(relative && !isMatrix) {
@@ -656,7 +651,7 @@ SVG.extend(SVG.Runner, {
           origin = new SVG.Point(transformedOrigin)
             .transform(new SVG.Matrix(element).inverse())
 
-          transforms.origin = [origin.x, origin.y]
+          transforms = {...transforms, origin: [origin.x, origin.y]}
           morpher.to(formatTransforms(transforms))
         }
 
@@ -665,19 +660,10 @@ SVG.extend(SVG.Runner, {
         this.element().addRunner(this)
 
       }, function (pos) {
-
         let currentMatrix = element._currentTransform(this)
-        //origin = getOrigin (transforms, element)
         let {x, y} = origin.transform(currentMatrix)
 
-moveit(x, y)
-
-// console.log(currentMatrix.decompose(origin[0], origin[1]));
-
-
         /*
-
-
           1. Transform the origin by figuring out the delta
 
             - At the start, we had:
@@ -689,9 +675,9 @@ moveit(x, y)
 
               let C = Matrix(element)
               let newOrigin = origin.transform(S.inv).transform(C)
-
         */
 
+        // this is an ugly hack to update the origins in the morpher
         let index = morpher._from.indexOf('ox')
         morpher._from.splice(index, 4, 'ox', x, 'oy', y)
         morpher._to.splice(index, 4, 'ox', x, 'oy', y)
@@ -714,7 +700,6 @@ moveit(x, y)
     // - true, false with SVG.Matrix
     // - false, false with SVG.Matrix
 
-    // 1.  define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
     var morphType = (isMatrix && !affine)
       ? SVG.Matrix
       : SVG.Morphable.TransformBag
@@ -728,8 +713,14 @@ moveit(x, y)
       element.addRunner(this)
 
       if (!origin && affine) {
-        origin = getOrigin(transforms, element)
-        transforms.origin = origin
+        // origin = getOrigin(transforms, element)
+        // transforms = {...transforms, origin}
+
+        let transformedOrigin = getOrigin (transforms, element)
+        origin = new SVG.Point(transformedOrigin)
+          .transform(new SVG.Matrix(element).inverse())
+
+        transforms = {...transforms, origin: [origin.x, origin.y]}
 
         morpher.to(transforms)
       }
@@ -746,8 +737,8 @@ moveit(x, y)
       if (affine) {
         startMatrix.origin = origin
 
-        // FIXME: correct the rotation so that it takes the shortest path
-        // GIVE ME (rCurrent) (rTarget) - to store the current/target angle
+        // that a hack to update the rotation in the morpher
+        // so it always takes the shortest path
         const rTarget = transforms.rotate || 0
         const rCurrent = startMatrix.decompose(origin[0], origin[1]).rotate
 
@@ -760,12 +751,22 @@ moveit(x, y)
         morpher._to.splice(3, 1, target)
       }
 
-      morpher.from(startMatrix)
+      // make sure morpher starts at the current matrix for declarative
+      // this happens only when the init function is called multiple times
+      // which is only true for declarative
+      morpher.from(current || startMatrix)
     }, function (pos) {
 
       if (!relative) this.clearTransform()
-      var matrix = morpher.at(pos)
-      this.addTransform(matrix)
+
+      let currentMatrix = element._currentTransform(this)
+      let {x, y} = origin.transform(currentMatrix)
+
+      morpher._from.splice(-2, 2, x, y)
+      morpher._to.splice(-2, 2, x, y)
+
+      current = morpher.at(pos)
+      this.addTransform(current)
       return morpher.done()
 
     }, true)

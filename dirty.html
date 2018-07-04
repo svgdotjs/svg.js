@@ -271,21 +271,22 @@ a.timeline().source(() => {
   return timer
 })
 
-
-let el = canvas.ellipse(20, 20)
-window.moveit = function (x, y) {
-  el.move(x, y)
-}
-
-
 let obj = { rotate: 180, origin: 'center', translate: [300, 0] }
-let obj2 = { rotate: -180, origin: 'center' }
+let obj2 = { rotate: 360, origin: 'center' }
 
 a.clone() // startPosition
 a.clone().transform(obj, true).transform(obj2, true) // endPosition
-//a.animate(new SVG.Spring(50, 30)).transform(obj) // animation
-a.animate(300).transform(obj, true).transform(obj2, true) // animation
 
+// that works
+a.animate(new SVG.Spring(50, 30)).transform(obj)  // animation
+// that breaks (why??)
+// a.clone().animate(new SVG.Spring(50, 30)).transform(obj)  // animation
+//a.animate(300).transform(obj, true).transform(obj2, true) // animation
+
+
+
+
+//setTimeout(()=>console.log(a.transform()), 6000)
 //
 // // Put an ellipse where we expect the object to be
 // canvas.ellipse(30, 30).center(100, 500)

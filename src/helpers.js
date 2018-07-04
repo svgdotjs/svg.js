@@ -281,7 +281,6 @@ function getOrigin (o, element) {
       : y + height / 2
 
     // Find the new center in the transformed coordinates
-    console.log(element.attr('transform'))
     const matrix = new SVG.Matrix(element)
     const {x: tx , y: ty} = new SVG.Point(bx, by).transform(matrix)
 
