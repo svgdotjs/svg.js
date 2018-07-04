@@ -124,6 +124,9 @@ SVG.Spring = SVG.invent ({
       c.done = dt == Infinity
       if(dt == Infinity) return target
       if(dt == 0) return current
+
+      if (dt > 100) dt = 16
+
       dt /= 1000
 
       // Get the previous velocity

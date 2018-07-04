@@ -275,12 +275,15 @@ let obj = { rotate: 180, origin: 'center', translate: [300, 0] }
 let obj2 = { rotate: 360, origin: 'center' }
 
 a.clone() // startPosition
-a.clone().transform(obj, true).transform(obj2, true) // endPosition
+//a.clone().transform(obj, true).transform(obj2, true) // endPosition
 
 // that works
 a.animate(new SVG.Spring(50, 30)).transform(obj)  // animation
 // that breaks (why??)
-// a.clone().animate(new SVG.Spring(50, 30)).transform(obj)  // animation
+
+var b = a.clone().animate(new SVG.Spring(500, 30))
+//debugger
+b.transform(obj)  // animation
 //a.animate(300).transform(obj, true).transform(obj2, true) // animation
 
 
