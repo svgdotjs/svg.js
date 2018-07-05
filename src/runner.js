@@ -616,8 +616,10 @@ SVG.extend(SVG.Runner, {
 
     // Parse the parameters
     var isMatrix = transforms.a != null
-    affine = transforms.affine || affine || !isMatrix
     relative = transforms.relative || relative
+    affine = transforms.affine != null
+      ? transforms.affine
+      : (affine != null ? affine : !isMatrix)
 
     /**
       The default of relative is false
@@ -645,23 +647,22 @@ SVG.extend(SVG.Runner, {
         .stepper(this._stepper)
 
       this.queue(function() {
-        if (origin == null) {
-          element = this.element()
-          let transformedOrigin = getOrigin (transforms, element)
-          origin = new SVG.Point(transformedOrigin)
-            .transform(new SVG.Matrix(element).inverse())
+        element = this.element()
+        element.addRunner(this)
 
+        if (origin == null) {
+          origin = new SVG.Point(getOrigin (transforms, element))
           transforms = {...transforms, origin: [origin.x, origin.y]}
           morpher.to(formatTransforms(transforms))
         }
 
         let from = current || {origin}
         morpher.from(formatTransforms(from))
-        this.element().addRunner(this)
 
       }, function (pos) {
         let currentMatrix = element._currentTransform(this)
         let {x, y} = origin.transform(currentMatrix)
+
 
         /*
           1. Transform the origin by figuring out the delta
@@ -685,6 +686,7 @@ SVG.extend(SVG.Runner, {
         current = morpher.at(pos).valueOf()
         let matrix = new SVG.Matrix(current)
         this.addTransform(matrix)
+
         return morpher.done()
       }, true)
 
@@ -713,15 +715,8 @@ SVG.extend(SVG.Runner, {
       element.addRunner(this)
 
       if (!origin && affine) {
-        // origin = getOrigin(transforms, element)
-        // transforms = {...transforms, origin}
-
-        let transformedOrigin = getOrigin (transforms, element)
-        origin = new SVG.Point(transformedOrigin)
-          .transform(new SVG.Matrix(element).inverse())
-
+        origin = new SVG.Point(getOrigin (transforms, element))
         transforms = {...transforms, origin: [origin.x, origin.y]}
-
         morpher.to(transforms)
       }
 
@@ -730,6 +725,7 @@ SVG.extend(SVG.Runner, {
         element._clearTransformRunnersBefore(this)
       }
 
+      // FIXME: This should be current = current || ...
       // Define the starting point for the morpher
       let startMatrix = new SVG.Matrix(relative ? undefined : element)
 
@@ -737,17 +733,18 @@ SVG.extend(SVG.Runner, {
       if (affine) {
         startMatrix.origin = origin
 
-        // that a hack to update the rotation in the morpher
-        // so it always takes the shortest path
-        const rTarget = transforms.rotate || 0
+        // Get the current and target angle as it was set
+        const rTarget = morpher._to[3]
         const rCurrent = startMatrix.decompose(origin[0], origin[1]).rotate
 
+        // Figure out the shortest path to rotate directly
         const possibilities = [rTarget - 360, rTarget, rTarget + 360]
         const distances = possibilities.map( a => Math.abs(a - rCurrent) )
         const shortest = Math.min(...distances)
         const index = distances.indexOf(shortest)
         const target = possibilities[index]
 
+        // HACK: We directly replace the rotation so that its faster
         morpher._to.splice(3, 1, target)
       }
 
@@ -759,11 +756,13 @@ SVG.extend(SVG.Runner, {
 
       if (!relative) this.clearTransform()
 
-      let currentMatrix = element._currentTransform(this)
-      let {x, y} = origin.transform(currentMatrix)
-
-      morpher._from.splice(-2, 2, x, y)
-      morpher._to.splice(-2, 2, x, y)
+      // Retarget the origin if we are in an
+      if (affine) {
+        let currentMatrix = element._currentTransform(this)
+        let {x, y} = origin.transform(currentMatrix)
+        morpher._from.splice(-2, 2, x, y)
+        morpher._to.splice(-2, 2, x, y)
+      }
 
       current = morpher.at(pos)
       this.addTransform(current)

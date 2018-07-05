@@ -259,9 +259,7 @@ SVG('#absolute').on('input slide', function (e) {
 let a = canvas.rect(200, 400).move(500, 400)
   .attr('opacity', 0.3)
   .addClass('pink')
-  .transform({ tx: 100, ty: 500, origin: 'top-left' })
-
-canvas.ellipse(20, 20).center(700, 1100)
+  // .transform({ tx: 100, ty: 500, origin: 'top-left' })
 
 
 var timer = 0
@@ -271,20 +269,42 @@ a.timeline().source(() => {
   return timer
 })
 
-let obj = { rotate: 180, origin: 'center', translate: [300, 0] }
-let obj2 = { rotate: 360, origin: 'center' }
+let obj = { rotate: 180, origin: 'top-left', tx: 500}
+let obj2 = { rotate: 280, origin: 'center' }
 
-a.clone() // startPosition
+var z = a.clone().attr('fill', 'blue') // startPosition
 //a.clone().transform(obj, true).transform(obj2, true) // endPosition
 
 // that works
-a.animate(new SVG.Spring(50, 30)).transform(obj)  // animation
+// a.animate(new SVG.Spring(50, 30)).transform(obj, false, true)  // animation
 // that breaks (why??)
 
-var b = a.clone().animate(new SVG.Spring(500, 30))
+// var b = a.clone().animate(new SVG.Spring(500, 30))
 //debugger
-b.transform(obj)  // animation
-//a.animate(300).transform(obj, true).transform(obj2, true) // animation
+//b.transform(obj, false, true)  // animation
+a.clone().animate(new SVG.Spring(1000, 15)).transform(obj).transform(obj2, true) // animation
+a.clone().animate(1000).transform(obj).transform(obj2, true) // animation
+a.clone().transform(obj).transform(obj2, true) // endPosition
+
+canvas.ellipse(20, 20).center(500, 400 + 0)
+
+//
+//el.center(100, 400)
+// z.transform({px: 100, py: 400})
+// z.transform({tx: 100, px: 100, py: 400})
+// z.transform({px: 100, py: 400})
+// z.transform({px: 100, py: 400})
+// z.transform({px: 100, py: 400})
+
+
+// SVG.on(document, 'mousemove', (e) => {
+//   let {x, y} = canvas.point(e.pageX, e.pageY)
+//   el.center(x, y)
+//   b.transform ({px: x, py: y, rotate: (x + y) / 3})
+//   z.transform ({px: x, py: y }) //, rotate: (x + y) / 3})
+// })
+
+
 
 
 

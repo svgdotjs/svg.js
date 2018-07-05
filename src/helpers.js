@@ -243,20 +243,8 @@ function formatTransforms (o) {
 
   // Populate all of the values
   return {
-    scaleX: scaleX,
-    scaleY: scaleY,
-    skewX: skewX,
-    skewY: skewY,
-    shear: shear,
-    theta: theta,
-    rx: rx,
-    ry: ry,
-    tx: tx,
-    ty: ty,
-    ox: ox,
-    oy: oy,
-    px: px,
-    py: py
+    scaleX, scaleY, skewX, skewY, shear, theta,
+    rx, ry, tx, ty, ox, oy, px, py
   }
 }
 
@@ -273,20 +261,16 @@ function getOrigin (o, element) {
     const { height, width, x, y } = element.bbox()
 
     // Calculate the transformed x and y coordinates
-    const bx = string.includes('left') ? x
+    let bx = string.includes('left') ? x
       : string.includes('right') ? x + width
       : x + width / 2
-    const by = string.includes('top') ? y
+    let by = string.includes('top') ? y
       : string.includes('bottom') ? y + height
       : y + height / 2
 
-    // Find the new center in the transformed coordinates
-    const matrix = new SVG.Matrix(element)
-    const {x: tx , y: ty} = new SVG.Point(bx, by).transform(matrix)
-
     // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-    const ox = o.ox != null ? o.ox : tx
-    const oy = o.oy != null ? o.oy : ty
+    const ox = o.ox != null ? o.ox : bx
+    const oy = o.oy != null ? o.oy : by
 
     // Set the origin based on the current matrix location
     return [ox, oy]

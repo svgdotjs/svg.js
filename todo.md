@@ -10,10 +10,10 @@ Ulima
 =====
 - Use runners[runnerid] = {startTime, runner, persist}
 timeline.persist('monkey-in', Infinity)
-
-
-- animation result is different from setting directly
-- format transforms didnt take all parameters into account (theta / rotate)
+- folding transformations
+- testing direct non affine morph
+- why cant i use current?
+- handle null values
 
 Both
 ====

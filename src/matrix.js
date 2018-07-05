@@ -45,30 +45,30 @@ SVG.Matrix = SVG.invent({
 
       // Get the proposed transformations and the current transformations
       var t = formatTransforms(o)
-      var currentTransform = new SVG.Matrix(this)
+      var current = new SVG.Matrix(this)
+      let { x: ox, y: oy } = new SVG.Point(t.ox, t.oy).transform(current)
 
       // Construct the resulting matrix
-      var transformer = new SVG.Matrix(currentTransform)
-        .translate(-t.ox, -t.oy)
+      var transformer = new SVG.Matrix()
+        .translate(t.rx, t.ry)
+        .lmultiply(current)
+        .translate(-ox, -oy)
         .scale(t.scaleX, t.scaleY)
         .skew(t.skewX, t.skewY)
         .shear(t.shear)
         .rotate(t.theta)
-        .translate(t.ox, t.oy)
-        .translate(t.rx, t.ry)
+        .translate(ox, oy)
 
       // If we want the origin at a particular place, we force it there
       if (isFinite(t.px) || isFinite(t.py)) {
-        // Figure out where the origin went and the delta to get there
-        var current = new SVG.Point(t.ox - t.rx, t.oy - t.ry).transform(transformer)
-        var dx = t.px ? t.px - current.x : 0
-        var dy = t.py ? t.py - current.y : 0
-
-        // Apply another translation
+        const origin = new SVG.Point(ox, oy).transform(transformer)
+        // TODO: Replace t.px with isFinite(t.px)
+        const dx = t.px ? t.px - origin.x : 0
+        const dy = t.py ? t.py - origin.y : 0
         transformer = transformer.translate(dx, dy)
       }
 
-      // We can apply translations after everything else
+      // Translate now after positioning
       transformer = transformer.translate(t.tx, t.ty)
       return transformer
     },
