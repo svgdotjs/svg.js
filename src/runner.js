@@ -160,7 +160,7 @@ SVG.Runner = SVG.invent({
       this._queue.push({
         initialiser: initFn || SVG.void,
         runner: runFn || SVG.void,
-        isTransform: !!isTransform,
+        isTransform: isTransform,
         initialised: false,
         finished: false,
       })
@@ -364,7 +364,6 @@ SVG.Runner = SVG.invent({
 
     // Save a morpher to the morpher list so that we can retarget it later
     _rememberMorpher: function (method, morpher) {
-      if (method == 'transform' && !this._isDeclarative) return
       this._history[method] = {
         morpher: morpher,
         caller: this._queue[this._queue.length - 1],
@@ -374,9 +373,25 @@ SVG.Runner = SVG.invent({
     // Try to set the target for a morpher if the morpher exists, otherwise
     // do nothing and return false
     _tryRetarget: function (method, target) {
-      if (method == 'transform' && !this._isDeclarative) return false
       if(this._history[method]) {
-        this._history[method].morpher.to(target)
+
+        // if the last method wasnt even initialised, throw it away
+        if (!this._history[method].caller.initialised) {
+          let index = this._queue.indexOf(this._history[method].caller)
+          this._queue.splice(index, 1)
+          return false
+        }
+
+        // for the case of transformations, we use the special retarget function
+        // which has access to the outer scope
+        if (this._history[method].caller.isTransform) {
+          this._history[method].caller.isTransform(target)
+
+        // for everything else a simple morpher change is sufficient
+        } else {
+          this._history[method].morpher.to(target)
+        }
+
         this._history[method].caller.finished = false
         var timeline = this.timeline()
         timeline && timeline._continue()
@@ -480,9 +495,8 @@ function mergeTransforms () {
   let netTransform = runners
     .map(runner => runner.transforms)
     .reduce((last, curr) => last.lmultiply(curr))
-  this.transform(netTransform)
 
-  this._currentMatrix = runners[0]
+  this.transform(netTransform)
 
   // Merge any two transformations in a row that are done
   let lastRunner = null
@@ -490,7 +504,7 @@ function mergeTransforms () {
     if (lastRunner && runner.done && lastRunner.done) {
       delete runners[runner.id+1]
       runners[lastRunner.id+1] = {
-        transforms: runner.transforms.lmultiply(lastRunner.transforms),
+        transforms: runner.transforms.multiply(lastRunner.transforms),
         done: true,
         id: lastRunner.id,
       }
@@ -499,7 +513,7 @@ function mergeTransforms () {
     lastRunner = runner
   })
 
-  if (!lastRunner) {
+  if (lastRunner == runners[0]) {
     this._frameId = null
   }
 }
@@ -621,154 +635,90 @@ SVG.extend(SVG.Runner, {
       ? transforms.affine
       : (affine != null ? affine : !isMatrix)
 
-    /**
-      The default of relative is false
-      affine defaults to true if transformations are used and to false when a matrix is given
 
-      We end up with 4 possibilities:
-      false, false: absolute direct matrix morph with SVG.Matrix
-      true, false: relative direct matrix morph with SVG.Marix or relative whatever was passed transformation with ObjectBag
+    const morpher = new SVG.Morphable().type(
+      affine ? SVG.Morphable.TransformBag2 : SVG.Matrix
+    ).stepper(this._stepper)
 
-      false, true: absolute affine transformation with SVG.TransformBag
-      true, true: relative whatever was passed transformation with ObjectBag
-    **/
+    let origin
+    let element
+    let current
+    let currentAngle
+    var u = 0
+    this.queue(function () {
 
-    // If we have a relative transformation and its not a matrix
-    // we morph all parameters directly with the ObjectBag
-    // the following cases are covered here:
-    // - true, false with ObjectBag
-    // - true, true with ObjectBag
-    var morpher
-    var origin
-    var current
-    var element
-    if(relative && !isMatrix) {
-      morpher = new SVG.Morphable().type(SVG.Morphable.ObjectBag)
-        .stepper(this._stepper)
+      // make sure element and origin is defined
+      element = element || this.element()
+      origin = origin || getOrigin(transforms, element)
 
-      this.queue(function() {
-        element = this.element()
-        element.addRunner(this)
-
-        if (origin == null) {
-          origin = new SVG.Point(getOrigin (transforms, element))
-          transforms = {...transforms, origin: [origin.x, origin.y]}
-          morpher.to(formatTransforms(transforms))
-        }
-
-        let from = current || {origin}
-        morpher.from(formatTransforms(from))
-
-      }, function (pos) {
-        let currentMatrix = element._currentTransform(this)
-        let {x, y} = origin.transform(currentMatrix)
-
-
-        /*
-          1. Transform the origin by figuring out the delta
-
-            - At the start, we had:
-
-              let Sinv = new SVG.Matrix(element).inverse()
-              let origin = getOrigin(element)
-
-            - At a particular frame we have:
-
-              let C = Matrix(element)
-              let newOrigin = origin.transform(S.inv).transform(C)
-        */
-
-        // this is an ugly hack to update the origins in the morpher
-        let index = morpher._from.indexOf('ox')
-        morpher._from.splice(index, 4, 'ox', x, 'oy', y)
-        morpher._to.splice(index, 4, 'ox', x, 'oy', y)
-
-        current = morpher.at(pos).valueOf()
-        let matrix = new SVG.Matrix(current)
-        this.addTransform(matrix)
-
-        return morpher.done()
-      }, true)
-
-      this._isDeclarative && this._rememberMorpher('transform', morpher)
-      return this
-    }
-
-    // what is left is affine morphing for SVG.Matrix and absolute transformations with TransformBag
-    // also non affine direct and relative morhing with SVG.Matrix
-    // the following cases are covered here:
-    // - false, true with SVG.Matrix
-    // - false, true with SVG.TransformBag
-    // - true, false with SVG.Matrix
-    // - false, false with SVG.Matrix
-
-    var morphType = (isMatrix && !affine)
-      ? SVG.Matrix
-      : SVG.Morphable.TransformBag
-
-    morpher = new SVG.Morphable().type(morphType)
-    morpher.stepper(this._stepper)
-    morpher.to(transforms)
-
-    this.queue(function() {
-      element = this.element()
+      // add the runner to the element so it can merge transformations
       element.addRunner(this)
-
-      if (!origin && affine) {
-        origin = new SVG.Point(getOrigin (transforms, element))
-        transforms = {...transforms, origin: [origin.x, origin.y]}
-        morpher.to(transforms)
-      }
 
       if (!relative) {
         // Deactivate all transforms that have run so far if we are absolute
         element._clearTransformRunnersBefore(this)
       }
 
-      // FIXME: This should be current = current || ...
-      // Define the starting point for the morpher
-      let startMatrix = new SVG.Matrix(relative ? undefined : element)
+      let target = new SVG.Matrix({...transforms, origin})
+      let start = current || new SVG.Matrix(relative ? undefined : element)
 
-      // make sure to add an origin if we morph affine
       if (affine) {
-        startMatrix.origin = origin
+        target = target.decompose(origin[0], origin[1])
+        start = start.decompose(origin[0], origin[1])
 
         // Get the current and target angle as it was set
-        const rTarget = morpher._to[3]
-        const rCurrent = startMatrix.decompose(origin[0], origin[1]).rotate
+        const rTarget = target.rotate
+        const rCurrent = start.rotate
 
         // Figure out the shortest path to rotate directly
         const possibilities = [rTarget - 360, rTarget, rTarget + 360]
         const distances = possibilities.map( a => Math.abs(a - rCurrent) )
         const shortest = Math.min(...distances)
         const index = distances.indexOf(shortest)
-        const target = possibilities[index]
-
-        // HACK: We directly replace the rotation so that its faster
-        morpher._to.splice(3, 1, target)
+        target.rotate = possibilities[index]
       }
 
-      // make sure morpher starts at the current matrix for declarative
-      // this happens only when the init function is called multiple times
-      // which is only true for declarative
-      morpher.from(current || startMatrix)
+      if (relative) {
+        target.rotate = transforms.rotate || 0
+        start.rotate = currentAngle || start.rotate
+      }
+
+      morpher.from(start)
+      morpher.to(target)
+
     }, function (pos) {
 
+      // clear all other transforms before this in case something is saved
+      // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform()
 
-      // Retarget the origin if we are in an
+      // fix the origin so is in the right space
       if (affine) {
         let currentMatrix = element._currentTransform(this)
-        let {x, y} = origin.transform(currentMatrix)
+        let {x, y} = new SVG.Point(origin).transform(currentMatrix)
         morpher._from.splice(-2, 2, x, y)
         morpher._to.splice(-2, 2, x, y)
       }
 
-      current = morpher.at(pos)
+      let affineParameters = morpher.at(pos)
+      currentAngle = affineParameters.rotate
+      current = new SVG.Matrix(affineParameters)
+
       this.addTransform(current)
+
       return morpher.done()
 
-    }, true)
+    }, function (newTransforms) {
+
+      // only get a new origin if it changed since the last call
+      if ((newTransforms.origin || 'center').toString() != (transforms.origin || 'center').toString()) {
+        origin = getOrigin (transforms, element)
+      }
+
+      // overwrite the old transformations with the new ones
+      transforms = {...newTransforms, origin}
+    })
+
 
     this._isDeclarative && this._rememberMorpher('transform', morpher)
 

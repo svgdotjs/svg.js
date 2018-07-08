@@ -8,7 +8,6 @@ SVG.Morphable = SVG.invent({
     this._to = null
     this._type = null
     this._context = null
-    this.modifier = function(arr) { return arr }
     this._morphObj = null
   },
 
@@ -106,21 +105,11 @@ SVG.Morphable = SVG.invent({
     at: function (pos) {
       var _this = this
 
-      // for(var i = 0, len = this._from.length; i < len; ++i) {
-      //   arr.push(this.stepper(this._from[i], this._to[i]))
-      // }
-
       return this._morphObj.fromArray(
-        this.modifier(
-          this._from.map(function (i, index) {
-            return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
-          })
-        )
+        this._from.map(function (i, index) {
+          return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
+        })
       )
-    },
-
-    valueOf: function () {
-      return this._value
     }
   }
 })
@@ -138,6 +127,42 @@ SVG.Morphable.NonMorphable = SVG.invent({
 
     toArray: function () {
       return [this.value]
+    }
+  }
+})
+
+SVG.Morphable.TransformBag2 = SVG.invent({
+  create: function (obj) {
+    if(Array.isArray(obj)) {
+      obj = {
+        scaleX: obj[0],
+        scaleY: obj[1],
+        shear: obj[2],
+        rotate: obj[3],
+        translateX: obj[4],
+        translateY: obj[5],
+        originX: obj[6],
+        originY: obj[7]
+      }
+    }
+
+    Object.assign(this, obj)
+  },
+
+  extend: {
+    toArray: function (){
+      var v = this
+
+      return [
+        v.scaleX,
+        v.scaleY,
+        v.shear,
+        v.rotate,
+        v.translateX,
+        v.translateY,
+        v.originX,
+        v.originY,
+      ]
     }
   }
 })
@@ -239,6 +264,7 @@ SVG.MorphableTypes = [
   SVG.PathArray,
   SVG.Morphable.NonMorphable,
   SVG.Morphable.TransformBag,
+  SVG.Morphable.TransformBag2,
   SVG.Morphable.ObjectBag,
 ]
 
@@ -254,29 +280,6 @@ SVG.extend(SVG.MorphableTypes, {
     return this
   }
 })
-
-
-// animate().ease(function(pos) { return pos})
-// function Ease (func) {
-//   return function eased (fromOrCurr, to, pos) {
-//     return fromOrCurr + func(pos) * (to - fromOrCurr) // normal easing
-//   }
-// }
-
-
-///
-/// el.animate()
-///   .fill('#00f')
-///   ---->> timeline.fill
-///     val = new Morphable().to('#0ff').stepper(stepper)
-///     func init() {
-///       val.from(el.fill())
-///     }
-///     func run (pos) {
-///       curr = val.at(pos)
-///       el.fill(curr)
-///     }
-///     this.queue(init, run)
 
 
 
@@ -304,42 +307,7 @@ SVG.extend(SVG.MorphableTypes, {
 
 
 
-
-// C R x = D C x = A x
-//
-//     (C R inv(C)) C x
-//
-//
-// C R = D C
-// D = C R inv(C)
-
-
-/*
-absolute -> start at current - {affine params}
-relative -> start at 0 always - {random stuff}
-*/
-
-
-
-
-
 /**
-    INIT
-     - save the current transformation
-
-    ELEMENT TIMELINE (one timeline per el)
-    - Reads the current transform and save it to the transformation stack
-    - Runs all available runners, runners will:
-      - Modify their transformation on the stack
-      - Mark their transformation as complete
-      - After each runner, we group the matrix (not for now)
-    - After running the runners, we bundle all contiguous transformations into
-      a single transformation
-
-
-    - transformtionstack is like this: [RunnerB, Matrix, RunnerC]
-      - skip merging for now (premature blabla)
-
 
 el.loop({times: 5, swing: true, wait: [20, 50]})
 

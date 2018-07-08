@@ -5,16 +5,17 @@
   <meta charset="utf-8">
   <title></title>
   <script type="text/javascript" src="dist/svg.js"></script>
-  <script type="text/javascript" src="src/morph.js"></script>
   <script type="text/javascript" src="src/helpers.js"></script>
+  <script type="text/javascript" src="src/transform.js"></script>
+  <script type="text/javascript" src="src/matrix.js"></script>
+  <script type="text/javascript" src="src/morph.js"></script>
   <script type="text/javascript" src="src/runner.js"></script>
   <script type="text/javascript" src="src/timeline.js"></script>
   <script type="text/javascript" src="src/controller.js"></script>
 
 
 
-  <script type="text/javascript" src="src/transform.js"></script>
-  <script type="text/javascript" src="src/matrix.js"></script>
+
 
 
 </head>
@@ -81,7 +82,7 @@ function getColor(t) {
 //   .animate()
 //   .move(300, 200)
 
-
+//
 // for (let i = 0 ; i < 15; i++) {
 //   for (let j = 0 ; j < 10; j++) {
 //
@@ -98,7 +99,7 @@ function getColor(t) {
 //     // Animate the rect
 //     rect.animate(3000, Math.random() * 2000)
 //       // .during(t => rect.transform({rotate: 700 * t, origin: [cx, cy]}))
-//       .transform({rotate: 720, origin: [cx, cy]})
+//       .transform({rotate: 720}, true)
 //       // .during(t => rect.attr('transform', `rotate(${700 * t})`))
 //       .during(t => rect.attr('fill', getColor(o * 0.1 + t)))
 //   }
@@ -203,7 +204,7 @@ rectangle.animate().transform({
   origin: [bbox.cx, bbox.cy]
 })*/
 
-
+//
 let canvas = SVG('#canvas')
 
 SVG('#absolute').on('input slide', function (e) {
@@ -228,7 +229,7 @@ SVG('#absolute').on('input slide', function (e) {
   let a = canvas.rect(200, 400).move(500, 400)
     .attr('opacity', 0.3)
     .addClass('pink')
-    .transform({ px: 100, py: 500, origin: 'top-left' })
+    //.transform({ px: 100, py: 500, origin: 'top-left' })
 
 
   var timer = 0
@@ -238,28 +239,18 @@ SVG('#absolute').on('input slide', function (e) {
     return timer
   })
 
-  let obj = { rotate: val * 180, origin: 'center', translate: [300 * val, 0] }
-  let obj2 = { rotate: -val * 180, origin: 'center' }
+  let obj = { rotate: val * 180, origin: 'top-left' }
+  let obj2 = { rotate: val * 280, origin: 'center' }
 
   a.clone() // startPosition
   a.clone().transform(obj, true).transform(obj2, true) // endPosition
 })
 
-
-
-// transform({})
-
-
-// // Make the green rectange
-// canvas.rect(200, 400).move(500, 400)
-//   .attr('opacity', 0.3)
-//   .addClass('green')
-
-// Make the pink rectangle
+// // Make the pink rectangle
 let a = canvas.rect(200, 400).move(500, 400)
   .attr('opacity', 0.3)
   .addClass('pink')
-  // .transform({ tx: 100, ty: 500, origin: 'top-left' })
+  .transform({ tx: 300, ty: 500, origin: 'top-left' })
 
 
 var timer = 0
@@ -269,130 +260,37 @@ a.timeline().source(() => {
   return timer
 })
 
-let obj = { rotate: 180, origin: 'top-left', tx: 500}
+let obj = { rotate: 100, origin: 'top-left'}
 let obj2 = { rotate: 280, origin: 'center' }
+let obj3 = { rotate: 1000, origin: 'center', translate: [300, 200]}
 
-var z = a.clone().attr('fill', 'blue') // startPosition
-//a.clone().transform(obj, true).transform(obj2, true) // endPosition
 
-// that works
-// a.animate(new SVG.Spring(50, 30)).transform(obj, false, true)  // animation
-// that breaks (why??)
-
-// var b = a.clone().animate(new SVG.Spring(500, 30))
-//debugger
-//b.transform(obj, false, true)  // animation
-a.clone().animate(new SVG.Spring(1000, 15)).transform(obj).transform(obj2, true) // animation
-a.clone().animate(1000).transform(obj).transform(obj2, true) // animation
-a.clone().transform(obj).transform(obj2, true) // endPosition
-
-canvas.ellipse(20, 20).center(500, 400 + 0)
-
+// var c = a.clone()
+// var d = a.clone()
 //
-//el.center(100, 400)
-// z.transform({px: 100, py: 400})
-// z.transform({tx: 100, px: 100, py: 400})
-// z.transform({px: 100, py: 400})
-// z.transform({px: 100, py: 400})
-// z.transform({px: 100, py: 400})
-
-
-// SVG.on(document, 'mousemove', (e) => {
-//   let {x, y} = canvas.point(e.pageX, e.pageY)
-//   el.center(x, y)
-//   b.transform ({px: x, py: y, rotate: (x + y) / 3})
-//   z.transform ({px: x, py: y }) //, rotate: (x + y) / 3})
-// })
-
-
-
-
-
-
-//setTimeout(()=>console.log(a.transform()), 6000)
 //
-// // Put an ellipse where we expect the object to be
-// canvas.ellipse(30, 30).center(100, 500)
-//   .attr('opacity', 0.3)
-//   .addClass('dark-pink')
-
-
-// var timeline = new SVG.Timeline().pause()
-// var runner = new SVG.Runner(100000)
-// runner.queue(null, function (pos) {
-//   console.log(pos)
-// })
-// timeline.schedule(runner)
+// c.animate(1000)
+//   //.transform(obj)
+//   .transform(obj, true) // animation
 //
-// runner.after(() => console.log('finished with after'))
-// runner.on('finish', () => console.log('finished with on'))
+// d.animate(3000)
+//   //.transform(obj)
+//   .transform(obj, true) // animation
 
-//timeline.play()
-//timeline.finish()
+// a.clone().attr('fill', 'blue')
+//   //.transform(obj)
+//   .transform(obj2, true) // endPosition
 
 
+let b = a.clone().animate(new SVG.Spring(1000, 15))
 
-// var circle = SVG('<rect>').addTo('svg').size(100, 100).center(200, 200)
-// var runner = circle.animate(1000)
-//   .loop(3, true, 500)
-//   .reverse()
-//   .ease('<>')
-//   .center(500, 200)
-//   .during(t => circle.transform({rotate: 720 * t, origin: [200, 200]}))
-
-// var r = new SVG.Runner(1000).loop(10, false, 100)
-// r.queue(null, console.log)
-//
-// r.step(1200) // should be 0.1s
-// r.step(-300) // should be 0.9s
-
-/*
-var timer = 0
-SVG('svg').viewbox(-150, -150, 1000, 1000)
-let rec1 = SVG('<rect>').addTo('svg')
-  .size(100, 100)
-  //.transform({translateX: -50, translateY: -50})
-rec1.timeline().source(() => {
-  timer += 2
-  document.querySelector('#absolute span').textContent = timer
-  return timer
+SVG.on(document, 'mousemove', (e) => {
+  let {x, y} = canvas.point(e.clientX, e.clientY)
+  b.transform ({tx: x, ty: y, rotate: (x + y) / 3}, true)
 })
 
-var runner = rec1
-  // .animate(100).attr('fill', '#fff')
-  //.animate().transform({rotate: -45, origin: [50, 50]})
-  .animate(200)
-  .transform({
-    rotate: 320,
-    //origin: [200, 200],
-  }, true)
 
-  rec1.animate(150, 150, 'absolute')
-    .transform({
-      scale:2
-    })
-*/
-    // .animate(400, 0, 'absolute')
-    // .transform({
-    //   rotate: 360,
-    //   //origin: [200, 200],
-    // }, true)
 
-  // .animate(500, 0)
-  // .transform({scale:2})
-  // .transform({rotate: 360}, true)
-  // .transform({translateX: 50, translateY: 50}, true)
-  //.transform({translateX: 50, translateY: 50}, true)
-   // .animate(500, 0, 'absolute')
-   //    .transform({scale: 2}, true)
-  // .animate(2000, 0, 'absolute')
-  //    .transform({rotate: -300})
-
-// r.step(300) // should be 0.1
-// r.step(2 * 1100) // should be 0
-// r.step(-50) // 0.05
-// r.step(-100)
-// r.step(-100) // 0.95
 
 </script>
 
