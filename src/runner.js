@@ -654,8 +654,8 @@ SVG.extend(SVG.Runner, {
       // add the runner to the element so it can merge transformations
       element.addRunner(this)
 
+      // Deactivate all transforms that have run so far if we are absolute
       if (!relative) {
-        // Deactivate all transforms that have run so far if we are absolute
         element._clearTransformRunnersBefore(this)
       }
 

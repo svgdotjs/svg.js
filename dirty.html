@@ -207,10 +207,10 @@ rectangle.animate().transform({
 //
 let canvas = SVG('#canvas')
 
-SVG('#absolute').on('input slide', function (e) {
-  var val = e.target.value
-
-  canvas.clear()
+// SVG('#absolute').on('input slide', function (e) {
+//   var val = e.target.value
+//
+//   canvas.clear()
   // canvas.ellipse(20, 20)
   // let re = canvas.rect(300, 150).move(100, 150).attr('opacity', 0.5)
   // re.clone()
@@ -226,68 +226,105 @@ SVG('#absolute').on('input slide', function (e) {
   //   .transform({rotate: 45, skew: 30}, true)
   //   .transform({rotate: val, origin: 'bottom-right'}, true)
   //   .transform({skew}, true)
-  let a = canvas.rect(200, 400).move(500, 400)
-    .attr('opacity', 0.3)
-    .addClass('pink')
-    //.transform({ px: 100, py: 500, origin: 'top-left' })
+//   let a = canvas.rect(200, 400).move(500, 400)
+//     .attr('opacity', 0.3)
+//     .addClass('pink')
+//     //.transform({ px: 100, py: 500, origin: 'top-left' })
+//
+//
+//   var timer = 0
+//   a.timeline().source(() => {
+//     timer += 1
+//     document.querySelector('#absolute span').textContent = timer
+//     return timer
+//   })
+//
+//   let obj = { rotate: val * 180, origin: 'top-left' }
+//   let obj2 = { rotate: val * 280, origin: 'center' }
+//
+//   a.clone() // startPosition
+//   a.clone().transform(obj, true).transform(obj2, true) // endPosition
+// })
 
+/**
+ * FUZZYS EXAMPLE
+ */
+// // // Make the pink rectangle
+// let a = canvas.rect(200, 400).move(500, 400)
+//   .attr('opacity', 0.3)
+//   .addClass('pink')
+//   .transform({ tx: 300, ty: 500, origin: 'top-left' })
+//
+//
+// var timer = 0
+// a.timeline().source(() => {
+//   timer += 1
+//   document.querySelector('#absolute span').textContent = timer
+//   return timer
+// })
+//
+// let obj = { rotate: 100, origin: 'top-left'}
+// let obj2 = { rotate: 280, origin: 'center' }
+// let obj3 = { rotate: 1000, origin: 'center', translate: [300, 200]}
+//
+//
+// // var c = a.clone()
+// // var d = a.clone()
+// //
+// //
+// // c.animate(1000)
+// //   //.transform(obj)
+// //   .transform(obj, true) // animation
+// //
+// // d.animate(3000)
+// //   //.transform(obj)
+// //   .transform(obj, true) // animation
+//
+// // a.clone().attr('fill', 'blue')
+// //   //.transform(obj)
+// //   .transform(obj2, true) // endPosition
+//
+// window.EL = canvas.ellipse(50, 50)
+//
+// let b = a.clone()
+// let bA = b.animate(new SVG.Spring(1000, 15))
+//
+// SVG.on(document, 'mousemove', (e) => {
+//   let {x, y} = canvas.point(e.clientX, e.clientY)
+//   bA.transform ({tx: x, ty: y, rotate: (x + y) / 3}, true)
+// })
+//
 
-  var timer = 0
-  a.timeline().source(() => {
-    timer += 1
-    document.querySelector('#absolute span').textContent = timer
-    return timer
-  })
-
-  let obj = { rotate: val * 180, origin: 'top-left' }
-  let obj2 = { rotate: val * 280, origin: 'center' }
-
-  a.clone() // startPosition
-  a.clone().transform(obj, true).transform(obj2, true) // endPosition
-})
-
-// // Make the pink rectangle
-let a = canvas.rect(200, 400).move(500, 400)
+let r = canvas.rect(200, 400).move(100, 100)
   .attr('opacity', 0.3)
-  .addClass('pink')
   .transform({ tx: 300, ty: 500, origin: 'top-left' })
 
+// Normal usage
+let wait = 500
+let rAnim = r.clone().attr('fill', 'red').animate(wait)
+let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
-var timer = 0
-a.timeline().source(() => {
-  timer += 1
-  document.querySelector('#absolute span').textContent = timer
-  return timer
-})
+// Move once
+setTimeout(() => {
+  let trans = {tx: 500, ty: 300}
+  r.transform(trans, true)
+  rAnim.animate(wait).transform(trans, true)
+  rDecl.transform(trans, true)
+}, wait)
 
-let obj = { rotate: 100, origin: 'top-left'}
-let obj2 = { rotate: 280, origin: 'center' }
-let obj3 = { rotate: 1000, origin: 'center', translate: [300, 200]}
-
-
-// var c = a.clone()
-// var d = a.clone()
-//
-//
-// c.animate(1000)
-//   //.transform(obj)
-//   .transform(obj, true) // animation
-//
-// d.animate(3000)
-//   //.transform(obj)
-//   .transform(obj, true) // animation
-
-// a.clone().attr('fill', 'blue')
-//   //.transform(obj)
-//   .transform(obj2, true) // endPosition
+// Move again
+setTimeout(() => {
+  let trans = {rotate: 300}
+  r.transform(trans, true)
+  rAnim.animate(wait).transform(trans, true)
+  rDecl.transform(trans, true)
+}, wait)
 
 
-let b = a.clone().animate(new SVG.Spring(1000, 15))
 
-SVG.on(document, 'mousemove', (e) => {
-  let {x, y} = canvas.point(e.clientX, e.clientY)
-  b.transform ({tx: x, ty: y, rotate: (x + y) / 3}, true)
-})
+
+
+
 
 
 
