@@ -1,5 +1,9 @@
+// Find global reference - uses 'this' by default when available,
+// falls back to 'window' otherwise (for bundlers like Webpack)
+var globalRef = (typeof this !== "undefined") ? this : window;
+
 // The main wrapping element
-var SVG = this.SVG = function(element) {
+var SVG = globalRef.SVG = function (element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
     
