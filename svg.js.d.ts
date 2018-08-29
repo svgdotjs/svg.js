@@ -923,6 +923,7 @@ declare namespace svgjs {
         d?: number;
         e?: number;
         f?: number;
+        scale?: number;
     }
     export interface Transformation {
         new (...transform: Transform[]): Transformation;
@@ -994,6 +995,10 @@ declare namespace svgjs {
 
     export interface Animation {
         stop(): Animation;
+        finish(): Animation;
+        pause(): Animation;
+        play(): Animation;
+        reverse(reversed?: boolean): Animation;
 
         attr(name: string, value: any, namespace?: string): Animation;
         attr(obj: Object): Animation;
@@ -1003,6 +1008,7 @@ declare namespace svgjs {
         viewbox(x: number, y: number, w: number, h: number): Animation;
 
         move(x: number, y: number, anchor?: boolean): Animation;
+        dmove(x: number, y: number): Animation;
         x(x: number, anchor?: boolean): Animation;
         y(y: number, anchor?: boolean): Animation;
 
@@ -1014,11 +1020,14 @@ declare namespace svgjs {
         during(cb: (pos: number) => void): Animation;
         to(value: number): Animation;
         after(cb: () => void): Animation;
+        
+        delay(delayMS: number): Animation;
 
         rotate(degrees: number, cx?: number, cy?: number): Animation;
         skew(skewX: number, skewY?: number,  cx?: number, cy?: number): Animation;
         scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation;
         translate(x: number, y: number): Animation;
+        transform(t: Transform, relative?: boolean): Animation;
 
         // TODO style, etc, bbox...
     }
