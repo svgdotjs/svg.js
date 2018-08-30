@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.6.5
+* @version 2.6.6
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat May 26 2018 22:47:07 GMT+0200 (Mitteleuropäische Sommerzeit)
+* BUILT: Thu Aug 30 2018 11:37:58 GMT+0200 (GMT+02:00)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -21,8 +21,12 @@
   }
 }(typeof window !== "undefined" ? window : this, function(window, document) {
 
+// Find global reference - uses 'this' by default when available,
+// falls back to 'window' otherwise (for bundlers like Webpack)
+var globalRef = (typeof this !== "undefined") ? this : window;
+
 // The main wrapping element
-var SVG = this.SVG = function(element) {
+var SVG = globalRef.SVG = function(element) {
   if (SVG.supported) {
     element = new SVG.Doc(element)
 
