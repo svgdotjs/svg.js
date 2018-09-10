@@ -104,7 +104,6 @@ SVG.Timeline = SVG.invent({
       // manage runner
       runner.unschedule()
       runner.timeline(this)
-      runner.time(-absoluteStartTime)
 
       // save startTime for next runner
       this._startTime = absoluteStartTime + runner.duration()

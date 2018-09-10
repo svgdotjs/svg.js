@@ -300,25 +300,25 @@ let r = canvas.rect(200, 400).move(100, 100)
   .transform({ tx: 300, ty: 500, origin: 'top-left' })
 
 // Normal usage
-let wait = 500
-let rAnim = r.clone().attr('fill', 'red').animate(wait)
+let wait = 1000
+let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
 let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
 // Move once
 setTimeout(() => {
   let trans = {tx: 500, ty: 300}
   r.transform(trans, true)
-  rAnim.animate(wait).transform(trans, true)
-  rDecl.transform(trans, true)
+  rAnim.animate(wait, 0, 'start').transform(trans, true)
+  //rDecl.transform(trans, true)
 }, wait)
 
 // Move again
-setTimeout(() => {
-  let trans = {rotate: 300}
-  r.transform(trans, true)
-  rAnim.animate(wait).transform(trans, true)
-  rDecl.transform(trans, true)
-}, wait)
+// setTimeout(() => {
+//   let trans = {rotate: 300}
+//   r.transform(trans, true)
+//   rAnim.animate(wait).transform(trans, true)
+//   //rDecl.transform(trans, true)
+// }, 1.5 * wait )
 
 
 
