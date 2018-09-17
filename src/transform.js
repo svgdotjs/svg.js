@@ -58,7 +58,7 @@ SVG.extend(SVG.Element, {
     }
 
     // Set the origin according to the defined transform
-    o = {...o, origin: getOrigin(o, this, relative)}
+    o = {...o, origin: getOrigin(o, this)}
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var cleanRelative = relative === true ? this : (relative || false)

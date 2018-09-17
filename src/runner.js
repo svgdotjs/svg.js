@@ -615,8 +615,10 @@ SVG.extend(SVG.Runner, {
   //
   // M v -----|-----(D M v = F v)------|----->  T v
   //
-  // 1. define the final state (T) and decompose it (once) t = [tx, ty, the, lam, sy, sx]
-  // 2. on every frame: pull the current state of all previous transforms (M - m can change)
+  // 1. define the final state (T) and decompose it (once)
+  //    t = [tx, ty, the, lam, sy, sx]
+  // 2. on every frame: pull the current state of all previous transforms
+  //    (M - m can change)
   //   and then write this as m = [tx0, ty0, the0, lam0, sy0, sx0]
   // 3. Find the interpolated matrix F(pos) = m + pos * (t - m)
   //   - Note F(0) = M
@@ -624,38 +626,43 @@ SVG.extend(SVG.Runner, {
   // 4. Now you get the delta matrix as a result: D = F * inv(M)
 
   transform: function (transforms, relative, affine) {
-    if (this._isDeclarative && this._tryRetarget('transform', transforms)) {
+    // If we have a declarative function, we should retarget it if possible
+    relative = transforms.relative || relative
+    if (this._isDeclarative && !relative && this._tryRetarget('transform', transforms)) {
       return this
     }
 
     // Parse the parameters
     var isMatrix = transforms.a != null
-    relative = transforms.relative || relative
     affine = transforms.affine != null
       ? transforms.affine
       : (affine != null ? affine : !isMatrix)
 
-
-    const morpher = new SVG.Morphable().type(
-      affine ? SVG.Morphable.TransformBag2 : SVG.Matrix
-    ).stepper(this._stepper)
+    // Create a morepher and set its type
+    const morpher = new SVG.Morphable()
+      .type( affine ? SVG.Morphable.TransformBag2 : SVG.Matrix )
+      .stepper(this._stepper)
 
     let origin
     let element
     let current
     let currentAngle
     var u = 0
-    this.queue(function () {
+
+    function setup () {
 
       // make sure element and origin is defined
       element = element || this.element()
-      origin = origin || getOrigin(transforms, element)
+      origin = origin || getOrigin(transforms, element, relative)
+
+this.element().parent().ellipse(50, 50).center(...origin)
 
       // add the runner to the element so it can merge transformations
       element.addRunner(this)
 
       // Deactivate all transforms that have run so far if we are absolute
-      if (!relative) {
+      let absolute = !relative
+      if ( absolute ) {
         element._clearTransformRunnersBefore(this)
       }
 
@@ -686,7 +693,9 @@ SVG.extend(SVG.Runner, {
       morpher.from(start)
       morpher.to(target)
 
-    }, function (pos) {
+    }
+
+    function run (pos) {
 
       // clear all other transforms before this in case something is saved
       // on this runner. We are absolute. We dont need these!
@@ -705,23 +714,25 @@ SVG.extend(SVG.Runner, {
       current = new SVG.Matrix(affineParameters)
 
       this.addTransform(current)
-
       return morpher.done()
+    }
 
-    }, function (newTransforms) {
+    function retarget (newTransforms) {
 
       // only get a new origin if it changed since the last call
-      if ((newTransforms.origin || 'center').toString() != (transforms.origin || 'center').toString()) {
+      if (
+        (newTransforms.origin || 'center').toString()
+        != (transforms.origin || 'center').toString()
+      ) {
         origin = getOrigin (transforms, element)
       }
 
       // overwrite the old transformations with the new ones
       transforms = {...newTransforms, origin}
-    })
+    }
 
-
+    this.queue(setup, run, retarget)
     this._isDeclarative && this._rememberMorpher('transform', morpher)
-
     return this
   },
 

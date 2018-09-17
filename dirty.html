@@ -25,7 +25,7 @@
 <div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
 
 <!-- Making the svg -->
-<svg width=1000px height=1000px id="canvas" viewbox="-1000 -1000 3000 3000">
+<svg width=1000px height=1000px id="canvas" viewbox="-1000 -2000 5000 5000">
   <rect x=50 y=100 width=200 height=100 stroke=none stroke-width=2 />
 </svg>
 
@@ -295,6 +295,7 @@ let canvas = SVG('#canvas')
 // })
 //
 
+canvas.ellipse(20, 20).center(100, 100)
 let r = canvas.rect(200, 400).move(100, 100)
   .attr('opacity', 0.3)
   .transform({ tx: 300, ty: 500, origin: 'top-left' })
@@ -304,26 +305,38 @@ let wait = 1000
 let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
 let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
-// Move once
-setTimeout(() => {
-  let trans = {tx: 500, ty: 300}
-  r.transform(trans, true)
-  rAnim.animate(wait, 0, 'start').transform(trans, true)
-  //rDecl.transform(trans, true)
-}, wait)
+// // Move once
+// setTimeout(() => {
+//   let trans = {tx: 500, ty: 300}
+//   r.transform(trans, true)
+//   // rAnim.animate(wait, 0, 'start').transform(trans, true)
+//   rDecl.transform(trans, true)
+// }, wait)
 
 // Move again
-// setTimeout(() => {
-//   let trans = {rotate: 300}
-//   r.transform(trans, true)
-//   rAnim.animate(wait).transform(trans, true)
-//   //rDecl.transform(trans, true)
-// }, 1.5 * wait )
+setTimeout(() => {
+  let transform = {
+    origin: 'top-left',
+    translate: [530, 250],
+    rotate: 300,
+    scale: 2,
+    shear: 1,
+  }
+  let relative = true
+  let affine = false
+  r.transform(transform, relative)
+  rAnim.animate(wait).transform(transform, relative, affine)
+  rDecl.transform(transform, relative, affine)
+}, 0.1 * wait )
 
 
+// declaritive relative (affine/nonaffine)
+// declaritive absolute non affine
+// normal non affine relative
 
-
-
+//    D N
+// R
+// A
 
 
 

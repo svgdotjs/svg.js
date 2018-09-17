@@ -249,9 +249,10 @@ function formatTransforms (o) {
 }
 
 
-function getOrigin (o, element) {
+function getOrigin (o, element, relative) {
   // Allow origin or around as the names
   let origin = o.around == null ? o.origin : o.around
+  let ox, oy
 
   // Allow the user to pass a string to rotate around a given point
   if (typeof origin === 'string' || origin == null) {
@@ -269,13 +270,22 @@ function getOrigin (o, element) {
       : y + height / 2
 
     // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-    const ox = o.ox != null ? o.ox : bx
-    const oy = o.oy != null ? o.oy : by
+    ox = o.ox != null ? o.ox : bx
+    oy = o.oy != null ? o.oy : by
 
-    // Set the origin based on the current matrix location
-    return [ox, oy]
+  } else {
+    ox = origin[0]
+    oy = origin[1]
+  }
+
+  // Transform the origin into the current reference frame
+  if ( relative ) {
+    let matrix = new SVG.Matrix(element)
+    let originRelative = new SVG.Point( ox, oy ).transform(matrix)
+    ox = originRelative.x
+    oy = originRelative.y
   }
 
   // Return the origin as it is if it wasn't a string
-  return origin
+  return [ ox, oy ]
 }
