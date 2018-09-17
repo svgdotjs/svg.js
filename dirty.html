@@ -305,10 +305,16 @@ let wait = 1000
 let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
 let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
+// var timer = 0
+// rDecl.timeline().source(() => {
+//   timer += 100
+//   return timer
+// })
+
 let runTransformation = (transform) => {
   return () => {
-    let relative = false
-    let affine = false
+    let relative = true
+    let affine = true
     r.transform(transform, relative)
     rAnim.animate(wait).transform(transform, relative, affine)
     rDecl.transform(transform, relative, affine)
@@ -323,13 +329,14 @@ setTimeout(runTransformation({
   shear: 1,
 }), 0.1 * wait )
 
-// setTimeout(runTransformation({
-//   origin: 'top-left',
-//   translate: [530, 250],
-//   rotate: 800,
-//   scale: 2,
-//   shear: 1,
-// }), wait )
+
+setTimeout(runTransformation({
+  origin: 'top-left',
+  translate: [530, 250],
+  rotate: 100,
+  scale: 2,
+  shear: 1,
+}), wait / 2)
 
 
 

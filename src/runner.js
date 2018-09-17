@@ -49,6 +49,7 @@ SVG.Runner = SVG.invent({
 
     // Save transforms applied to this runner
     this.transforms = new SVG.Matrix()
+    this.targets = new SVG.Matrix()
 
     // Looping variables
     this._haveReversed = false
@@ -449,8 +450,14 @@ SVG.Runner = SVG.invent({
       return this
     },
 
+    addTarget: function (target) {
+      this.targets = this.targets.lmultiply(target)
+      return this
+    },
+
     clearTransform: function () {
       this.transforms = new SVG.Matrix()
+      this.targets = new SVG.Matrix()
       return this
     }
   },
@@ -542,6 +549,13 @@ SVG.extend(SVG.Element, {
       .reduce((last, curr) => last.lmultiply(curr))
   },
 
+  _targetTransform (current) {
+    return this._transformationRunners
+      .filter((runner) => runner.id <= current.id)
+      .map(runner => runner.targets)
+      .reduce((last, curr) => last.lmultiply(curr))
+  },
+
   addRunner: function (runner) {
     this._transformationRunners[runner.id+1] = runner
 
@@ -554,6 +568,7 @@ SVG.extend(SVG.Element, {
     if (this._frameId == null) {
       this._transformationRunners = [{
         transforms: new SVG.Matrix(this),
+        targets: new SVG.Matrix(this),
         done: true,
         id: -1
       }]
@@ -648,6 +663,7 @@ SVG.extend(SVG.Runner, {
     let current
     let currentAngle
     var u = 0
+    let firstRun = true
 
     function setup () {
 
@@ -663,7 +679,7 @@ SVG.extend(SVG.Runner, {
       // mid-animation (try turning on the second animation in dirty)
 
       let transformSpace = relative
-        ? new SVG.Matrix(element)
+        ? element._targetTransform(this)
         : undefined
       origin = origin || getOrigin(transforms, element, transformSpace)
 
@@ -700,6 +716,11 @@ SVG.extend(SVG.Runner, {
         start.rotate = currentAngle || start.rotate
       }
 
+      if (firstRun) {
+        this.addTarget(target)
+        firstRun = false
+      }
+
       morpher.from(start)
       morpher.to(target)
 
@@ -711,13 +732,17 @@ SVG.extend(SVG.Runner, {
       // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform()
 
+      // let {x, y} = new SVG.Point(origin).transform(element._currentTransform(this))
+      // morpher._from.splice(-2, 2, x, y)
+      // morpher._to.splice(-2, 2, x, y)
+
       // fix the origin so is in the right space
-      if (affine) {
-        let currentMatrix = element._currentTransform(this)
-        let {x, y} = new SVG.Point(origin).transform(currentMatrix)
-        morpher._from.splice(-2, 2, x, y)
-        morpher._to.splice(-2, 2, x, y)
-      }
+      // if (affine) {
+      //   let currentMatrix = element._currentTransform(this)
+      //   let {x, y} = new SVG.Point(origin).transform(currentMatrix)
+      //   morpher._from.splice(-2, 2, x, y)
+      //   morpher._to.splice(-2, 2, x, y)
+      // }
 
       let affineParameters = morpher.at(pos)
       currentAngle = affineParameters.rotate
