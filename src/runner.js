@@ -653,9 +653,19 @@ SVG.extend(SVG.Runner, {
 
       // make sure element and origin is defined
       element = element || this.element()
-      origin = origin || getOrigin(transforms, element, relative)
 
-this.element().parent().ellipse(50, 50).center(...origin)
+      // TODO: Give me all matricies concatenated, up until this matrix,
+      // for example, if I have M = E D C B A
+      // If I'm about to run D, I want transform space to be
+      //    C * B * A
+      // Where C B and A are the current morpher targets
+      // The solution I've added here won't work if we interrupt an animation
+      // mid-animation (try turning on the second animation in dirty)
+
+      let transformSpace = relative
+        ? new SVG.Matrix(element)
+        : undefined
+      origin = origin || getOrigin(transforms, element, transformSpace)
 
       // add the runner to the element so it can merge transformations
       element.addRunner(this)

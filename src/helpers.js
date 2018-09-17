@@ -249,7 +249,7 @@ function formatTransforms (o) {
 }
 
 
-function getOrigin (o, element, relative) {
+function getOrigin (o, element, inSpace) {
   // Allow origin or around as the names
   let origin = o.around == null ? o.origin : o.around
   let ox, oy
@@ -279,9 +279,8 @@ function getOrigin (o, element, relative) {
   }
 
   // Transform the origin into the current reference frame
-  if ( relative ) {
-    let matrix = new SVG.Matrix(element)
-    let originRelative = new SVG.Point( ox, oy ).transform(matrix)
+  if ( inSpace ) {
+    let originRelative = new SVG.Point( ox, oy ).transform(inSpace)
     ox = originRelative.x
     oy = originRelative.y
   }

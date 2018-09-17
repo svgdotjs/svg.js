@@ -305,40 +305,31 @@ let wait = 1000
 let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
 let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
-// // Move once
-// setTimeout(() => {
-//   let trans = {tx: 500, ty: 300}
-//   r.transform(trans, true)
-//   // rAnim.animate(wait, 0, 'start').transform(trans, true)
-//   rDecl.transform(trans, true)
-// }, wait)
-
-// Move again
-setTimeout(() => {
-  let transform = {
-    origin: 'top-left',
-    translate: [530, 250],
-    rotate: 300,
-    scale: 2,
-    shear: 1,
+let runTransformation = (transform) => {
+  return () => {
+    let relative = false
+    let affine = false
+    r.transform(transform, relative)
+    rAnim.animate(wait).transform(transform, relative, affine)
+    rDecl.transform(transform, relative, affine)
   }
-  let relative = true
-  let affine = false
-  r.transform(transform, relative)
-  rAnim.animate(wait).transform(transform, relative, affine)
-  rDecl.transform(transform, relative, affine)
-}, 0.1 * wait )
+}
 
+setTimeout(runTransformation({
+  origin: 'top-left',
+  translate: [530, 250],
+  rotate: 300,
+  scale: 2,
+  shear: 1,
+}), 0.1 * wait )
 
-// declaritive relative (affine/nonaffine)
-// declaritive absolute non affine
-// normal non affine relative
-
-//    D N
-// R
-// A
-
-
+// setTimeout(runTransformation({
+//   origin: 'top-left',
+//   translate: [530, 250],
+//   rotate: 800,
+//   scale: 2,
+//   shear: 1,
+// }), wait )
 
 
 
