@@ -57,8 +57,10 @@ SVG.extend(SVG.Element, {
       return decomposed[o] || decomposed
     }
 
-    // Set the origin according to the defined transform
-    o = {...o, origin: getOrigin(o, this)}
+    if (!isMatrixLike(o)) {
+      // Set the origin according to the defined transform
+      o = {...o, origin: getOrigin(o, this)}
+    }
 
     // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
     var cleanRelative = relative === true ? this : (relative || false)

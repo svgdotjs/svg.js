@@ -204,6 +204,17 @@ function closeEnough (a, b, threshold) {
   return Math.abs(b - a) < (threshold || 1e-6)
 }
 
+function isMatrixLike (o) {
+  return (
+    o.a != null ||
+    o.b != null ||
+    o.c != null ||
+    o.d != null ||
+    o.e != null ||
+    o.f != null
+  )
+}
+
 // TODO: Refactor this to a static function of matrix.js
 function formatTransforms (o) {
   // Get all of the parameters required to form the matrix
