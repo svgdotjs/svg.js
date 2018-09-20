@@ -48,8 +48,9 @@ SVG.Runner = SVG.invent({
     this.tags = {}
 
     // Save transforms applied to this runner
+    // this.transforms = [new SVG.Matrix()]
     this.transforms = new SVG.Matrix()
-    this.targets = new SVG.Matrix()
+    this.transformId = 1
 
     // Looping variables
     this._haveReversed = false
@@ -294,6 +295,9 @@ SVG.Runner = SVG.invent({
       // Call initialise and the run function
       if ( running || declarative ) {
         this._initialise(running)
+
+        // clear the transforms on this runner so they dont get added again and again
+        // this.transforms = [new SVG.Matrix()]
         this.transforms = new SVG.Matrix()
         var converged = this._run(declarative ? dt : position)
         // this.fire('step', this)
@@ -302,7 +306,7 @@ SVG.Runner = SVG.invent({
       // declaritive animations itself know when they converged
       this.done = this.done || (converged && declarative)
       if (this.done) {
-        // this.fire('finish', this)
+        this.fire('finish', this)
       }
       return this
     },
@@ -445,19 +449,15 @@ SVG.Runner = SVG.invent({
       return allfinished
     },
 
-    addTransform: function (transform) {
+    addTransform: function (transform, index) {
+      // this.transforms[index] = transform
       this.transforms = this.transforms.lmultiply(transform)
       return this
     },
 
-    addTarget: function (target) {
-      this.targets = this.targets.lmultiply(target)
-      return this
-    },
-
     clearTransform: function () {
+      // this.transforms = [new SVG.Matrix()]
       this.transforms = new SVG.Matrix()
-      this.targets = new SVG.Matrix()
       return this
     }
   },
@@ -495,13 +495,37 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
+
+SVG.FakeRunner = class {
+  constructor (transforms, id = -1, done = true) {
+    // Object.assign(this, {transforms, id, done})
+
+    this.transforms = transforms
+    this.id = id
+    this.done = done
+  }
+}
+
+SVG.extend([SVG.Runner, SVG.FakeRunner], {
+  mergeWith (runner) {
+    return new SVG.FakeRunner(
+      runner.transforms.lmultiply(this.transforms),
+      runner.id
+    )
+  }
+})
+
+
+const lmultiply = (last, curr) => last.lmultiply(curr)
+const getRunnerTransform = (runner) => runner.transforms
+
 function mergeTransforms () {
 
   // Find the matrix to apply to the element and apply it
   let runners = this._transformationRunners
   let netTransform = runners
-    .map(runner => runner.transforms)
-    .reduce((last, curr) => last.lmultiply(curr))
+    .map(getRunnerTransform)
+    .reduce(lmultiply)
 
   this.transform(netTransform)
 
@@ -510,27 +534,37 @@ function mergeTransforms () {
   runners.forEach((runner, i) => {
     if (lastRunner && runner.done && lastRunner.done) {
       delete runners[runner.id+1]
-      runners[lastRunner.id+1] = {
-        transforms: runner.transforms.multiply(lastRunner.transforms),
-        done: true,
-        id: lastRunner.id,
-      }
+      runners[lastRunner.id+1] = runner.mergeWith(lastRunner)
     }
 
     lastRunner = runner
   })
 
+  // when the last runner is at index 0 it means all animations are done
+  // that is because the first index always holds a FakeRunner and never an
+  // actual Runner
   if (lastRunner == runners[0]) {
     this._frameId = null
   }
 }
 
+
 SVG.extend(SVG.Element, {
+
+  // this function searches for all runners on the element and deletes the ones
+  // which run before the current one. This is because absolute transformations
+  // overwfrite anything anyway so there is no need to waste time computing
+  // other runners
   _clearTransformRunnersBefore: function (currentRunner) {
 
     this._transformationRunners.forEach((runner, i, arr) => {
+
+      // only delete runners which run before the current
       if (runner.id < currentRunner.id) {
 
+        // if the runner is still running, it will add itself back on every
+        // frame. So make sure to delete the transformations from this runner
+        // so it doesnt interfer anymore
         if (!runner.done) {
           runner._queue = runner._queue.filter((item) => {
             return !item.isTransform
@@ -544,16 +578,12 @@ SVG.extend(SVG.Element, {
 
   _currentTransform (current) {
     return this._transformationRunners
+      // we need the equal sign here to make sure, that also transformations
+      // on the same runner which execute before the current transformation are
+      // taken into account
       .filter((runner) => runner.id <= current.id)
-      .map(runner => runner.transforms)
-      .reduce((last, curr) => last.lmultiply(curr))
-  },
-
-  _targetTransform (current) {
-    return this._transformationRunners
-      .filter((runner) => runner.id <= current.id)
-      .map(runner => runner.targets)
-      .reduce((last, curr) => last.lmultiply(curr))
+      .map(getRunnerTransform)
+      .reduce(lmultiply)
   },
 
   addRunner: function (runner) {
@@ -566,12 +596,10 @@ SVG.extend(SVG.Element, {
 
   _prepareRunner: function () {
     if (this._frameId == null) {
-      this._transformationRunners = [{
-        transforms: new SVG.Matrix(this),
-        targets: new SVG.Matrix(this),
-        done: true,
-        id: -1
-      }]
+      this._transformationRunners = [
+        new SVG.FakeRunner(new SVG.Matrix(this))
+      ]
+
       this._frameId = SVG.Element.frameId++
     }
   },
@@ -662,42 +690,41 @@ SVG.extend(SVG.Runner, {
     let element
     let current
     let currentAngle
-    var u = 0
-    let firstRun = true
+    let u = this.transformId++
 
     function setup () {
 
       // make sure element and origin is defined
       element = element || this.element()
-
-      // TODO: Give me all matricies concatenated, up until this matrix,
-      // for example, if I have M = E D C B A
-      // If I'm about to run D, I want transform space to be
-      //    C * B * A
-      // Where C B and A are the current morpher targets
-      // The solution I've added here won't work if we interrupt an animation
-      // mid-animation (try turning on the second animation in dirty)
-
-      let transformSpace = relative
-        ? element._targetTransform(this)
-        : undefined
-      origin = origin || getOrigin(transforms, element, transformSpace)
+      origin = origin || getOrigin(transforms, element)
 
       // add the runner to the element so it can merge transformations
       element.addRunner(this)
 
       // Deactivate all transforms that have run so far if we are absolute
-      let absolute = !relative
-      if ( absolute ) {
+      if ( !relative ) {
         element._clearTransformRunnersBefore(this)
       }
+    }
 
-      let target = new SVG.Matrix({...transforms, origin})
-      let start = current || new SVG.Matrix(relative ? undefined : element)
+    function run (pos) {
+
+      // clear all other transforms before this in case something is saved
+      // on this runner. We are absolute. We dont need these!
+      if (!relative) this.clearTransform()
+
+      let {x, y} = new SVG.Point(origin).transform(element._currentTransform(this))
+
+      let target = new SVG.Matrix({...transforms, origin: [x, y]})
+      let start = new SVG.Matrix(relative ? undefined : element)
+
+      if (this._isDeclarative && current) {
+        start = current
+      }
 
       if (affine) {
-        target = target.decompose(origin[0], origin[1])
-        start = start.decompose(origin[0], origin[1])
+        target = target.decompose(x, y)
+        start = start.decompose(x, y)
 
         // Get the current and target angle as it was set
         const rTarget = target.rotate
@@ -712,43 +739,25 @@ SVG.extend(SVG.Runner, {
       }
 
       if (relative) {
-        target.rotate = transforms.rotate || 0
-        start.rotate = currentAngle || start.rotate
-      }
-
-      if (firstRun) {
-        this.addTarget(target)
-        firstRun = false
+        // we have to be careful here not to overwrite the rotation
+        // with the rotate method of SVG.Matrix
+        if (!isMatrix) {
+          target.rotate = transforms.rotate || 0
+        }
+        if (this._isDeclarative && currentAngle) {
+          start.rotate = currentAngle
+        }
       }
 
       morpher.from(start)
       morpher.to(target)
 
-    }
-
-    function run (pos) {
-
-      // clear all other transforms before this in case something is saved
-      // on this runner. We are absolute. We dont need these!
-      if (!relative) this.clearTransform()
-
-      // let {x, y} = new SVG.Point(origin).transform(element._currentTransform(this))
-      // morpher._from.splice(-2, 2, x, y)
-      // morpher._to.splice(-2, 2, x, y)
-
-      // fix the origin so is in the right space
-      // if (affine) {
-      //   let currentMatrix = element._currentTransform(this)
-      //   let {x, y} = new SVG.Point(origin).transform(currentMatrix)
-      //   morpher._from.splice(-2, 2, x, y)
-      //   morpher._to.splice(-2, 2, x, y)
-      // }
 
       let affineParameters = morpher.at(pos)
       currentAngle = affineParameters.rotate
       current = new SVG.Matrix(affineParameters)
 
-      this.addTransform(current)
+      this.addTransform(current, u)
       return morpher.done()
     }
 

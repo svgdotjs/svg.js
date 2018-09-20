@@ -251,7 +251,7 @@ function formatTransforms (o) {
 
 function getOrigin (o, element, inSpace) {
   // Allow origin or around as the names
-  let origin = o.around == null ? o.origin : o.around
+  let origin = o.origin // o.around == null ? o.origin : o.around
   let ox, oy
 
   // Allow the user to pass a string to rotate around a given point

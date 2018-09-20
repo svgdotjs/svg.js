@@ -298,12 +298,13 @@ let canvas = SVG('#canvas')
 canvas.ellipse(20, 20).center(100, 100)
 let r = canvas.rect(200, 400).move(100, 100)
   .attr('opacity', 0.3)
-  .transform({ tx: 300, ty: 500, origin: 'top-left' })
+  //.transform({ tx: 300, ty: 500, origin: 'top-left' })
 
 // Normal usage
-let wait = 1000
+let wait = 3000
 let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
 let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
+//let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.PID(0.01, 0.001, 1, 10))
 
 // var timer = 0
 // rDecl.timeline().source(() => {
@@ -313,6 +314,7 @@ let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
 
 let runTransformation = (transform) => {
   return () => {
+    //transform = new SVG.Matrix(transform)
     let relative = true
     let affine = true
     r.transform(transform, relative)
@@ -330,15 +332,66 @@ setTimeout(runTransformation({
 }), 0.1 * wait )
 
 
+
 setTimeout(runTransformation({
   origin: 'top-left',
   translate: [530, 250],
   rotate: 100,
   scale: 2,
   shear: 1,
-}), wait / 2)
+}), 0.4 * wait)
+
+setTimeout(runTransformation({
+  origin: 'top-left',
+  translate: [530, 250],
+  rotate: 100,
+  scale: 2,
+  shear: 1,
+}), 0.6 * wait)
 
 
+// canvas.circle(50).center(100, 0).attr('fill', 'gray')
+//
+// setTimeout(runTransformation({
+//   rotate: 180,
+//   origin: [100, 0]
+// }), 0.1 * wait )
+//
+//
+// setTimeout(runTransformation({
+//   rotate: 180,
+// }), 0.4 * wait)
+
+const getConsole = (time) => {
+  return () => {
+    console.group(time)
+    console.log(0, rAnim.element()._transformationRunners[0] && rAnim.element()._transformationRunners[0].transforms.decompose().rotate)
+    console.log(1, rAnim.element()._transformationRunners[1] && rAnim.element()._transformationRunners[1].transforms.decompose().rotate)
+    console.log(2, rAnim.element()._transformationRunners[2] && rAnim.element()._transformationRunners[2].transforms.decompose().rotate)
+    console.log(3, rAnim.element()._transformationRunners[3] && rAnim.element()._transformationRunners[3].transforms.decompose().rotate)
+    console.log(4, rAnim.element()._transformationRunners[4] && rAnim.element()._transformationRunners[4].transforms.decompose().rotate)
+    console.groupEnd(time)
+  }
+}
+
+logCall = (time) => {
+  setTimeout(getConsole(time), time)
+}
+
+logCall(0.2 * wait)
+logCall(0.3 * wait)
+logCall(0.4 * wait)
+logCall(0.5 * wait)
+logCall(0.6 * wait)
+logCall(0.7 * wait)
+logCall(0.8 * wait)
+logCall(0.9 * wait)
+logCall(1 * wait)
+logCall(1.1 * wait)
+logCall(1.2 * wait)
+logCall(1.3 * wait)
+logCall(1.4 * wait)
+logCall(1.5 * wait)
 
 </script>
 
