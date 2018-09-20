@@ -48,7 +48,6 @@ SVG.Runner = SVG.invent({
     this.tags = {}
 
     // Save transforms applied to this runner
-    // this.transforms = [new SVG.Matrix()]
     this.transforms = new SVG.Matrix()
     this.transformId = 1
 
@@ -297,7 +296,6 @@ SVG.Runner = SVG.invent({
         this._initialise(running)
 
         // clear the transforms on this runner so they dont get added again and again
-        // this.transforms = [new SVG.Matrix()]
         this.transforms = new SVG.Matrix()
         var converged = this._run(declarative ? dt : position)
         // this.fire('step', this)
@@ -305,9 +303,9 @@ SVG.Runner = SVG.invent({
       // correct the done flag here
       // declaritive animations itself know when they converged
       this.done = this.done || (converged && declarative)
-      if (this.done) {
-        this.fire('finish', this)
-      }
+      // if (this.done) {
+      //   this.fire('finish', this)
+      // }
       return this
     },
 
@@ -450,13 +448,12 @@ SVG.Runner = SVG.invent({
     },
 
     addTransform: function (transform, index) {
-      // this.transforms[index] = transform
       this.transforms = this.transforms.lmultiply(transform)
+      // this._element.addToCurrentTransform(transform)
       return this
     },
 
     clearTransform: function () {
-      // this.transforms = [new SVG.Matrix()]
       this.transforms = new SVG.Matrix()
       return this
     }
@@ -546,6 +543,8 @@ function mergeTransforms () {
   if (lastRunner == runners[0]) {
     this._frameId = null
   }
+
+  this._currentTransformCache = runners[0].transforms
 }
 
 
@@ -576,7 +575,13 @@ SVG.extend(SVG.Element, {
     })
   },
 
+  addToCurrentTransform (transform) {
+    this._currentTransformCache = this._currentTransformCache.lmultiply(transform)
+    return this
+  },
+
   _currentTransform (current) {
+    // return this._currentTransformCache
     return this._transformationRunners
       // we need the equal sign here to make sure, that also transformations
       // on the same runner which execute before the current transformation are
@@ -600,6 +605,7 @@ SVG.extend(SVG.Element, {
         new SVG.FakeRunner(new SVG.Matrix(this))
       ]
 
+      // this._currentTransformCache = new SVG.Matrix(this)
       this._frameId = SVG.Element.frameId++
     }
   },

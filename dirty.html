@@ -362,36 +362,36 @@ setTimeout(runTransformation({
 //   rotate: 180,
 // }), 0.4 * wait)
 
-const getConsole = (time) => {
-  return () => {
-    console.group(time)
-    console.log(0, rAnim.element()._transformationRunners[0] && rAnim.element()._transformationRunners[0].transforms.decompose().rotate)
-    console.log(1, rAnim.element()._transformationRunners[1] && rAnim.element()._transformationRunners[1].transforms.decompose().rotate)
-    console.log(2, rAnim.element()._transformationRunners[2] && rAnim.element()._transformationRunners[2].transforms.decompose().rotate)
-    console.log(3, rAnim.element()._transformationRunners[3] && rAnim.element()._transformationRunners[3].transforms.decompose().rotate)
-    console.log(4, rAnim.element()._transformationRunners[4] && rAnim.element()._transformationRunners[4].transforms.decompose().rotate)
-    console.groupEnd(time)
-  }
-}
-
-logCall = (time) => {
-  setTimeout(getConsole(time), time)
-}
-
-logCall(0.2 * wait)
-logCall(0.3 * wait)
-logCall(0.4 * wait)
-logCall(0.5 * wait)
-logCall(0.6 * wait)
-logCall(0.7 * wait)
-logCall(0.8 * wait)
-logCall(0.9 * wait)
-logCall(1 * wait)
-logCall(1.1 * wait)
-logCall(1.2 * wait)
-logCall(1.3 * wait)
-logCall(1.4 * wait)
-logCall(1.5 * wait)
+// const getConsole = (time) => {
+//   return () => {
+//     console.group(time)
+//     console.log(0, rAnim.element()._transformationRunners[0] && rAnim.element()._transformationRunners[0].transforms.decompose().rotate)
+//     console.log(1, rAnim.element()._transformationRunners[1] && rAnim.element()._transformationRunners[1].transforms.decompose().rotate)
+//     console.log(2, rAnim.element()._transformationRunners[2] && rAnim.element()._transformationRunners[2].transforms.decompose().rotate)
+//     console.log(3, rAnim.element()._transformationRunners[3] && rAnim.element()._transformationRunners[3].transforms.decompose().rotate)
+//     console.log(4, rAnim.element()._transformationRunners[4] && rAnim.element()._transformationRunners[4].transforms.decompose().rotate)
+//     console.groupEnd(time)
+//   }
+// }
+//
+// logCall = (time) => {
+//   setTimeout(getConsole(time), time)
+// }
+//
+// logCall(0.2 * wait)
+// logCall(0.3 * wait)
+// logCall(0.4 * wait)
+// logCall(0.5 * wait)
+// logCall(0.6 * wait)
+// logCall(0.7 * wait)
+// logCall(0.8 * wait)
+// logCall(0.9 * wait)
+// logCall(1 * wait)
+// logCall(1.1 * wait)
+// logCall(1.2 * wait)
+// logCall(1.3 * wait)
+// logCall(1.4 * wait)
+// logCall(1.5 * wait)
 
 </script>
 
