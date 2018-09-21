@@ -494,7 +494,7 @@ SVG.Runner.sanitise = function (duration, delay, when) {
 
 
 SVG.FakeRunner = class {
-  constructor (transforms, id = -1, done = true) {
+  constructor (transforms = new SVG.Matrix(), id = -1, done = true) {
     // Object.assign(this, {transforms, id, done})
 
     this.transforms = transforms
@@ -573,6 +573,8 @@ SVG.extend(SVG.Element, {
         delete arr[i]
       }
     })
+
+    this._transformationRunners[0] = new SVG.FakeRunner()
   },
 
   addToCurrentTransform (transform) {
@@ -682,7 +684,7 @@ SVG.extend(SVG.Runner, {
     }
 
     // Parse the parameters
-    var isMatrix = transforms.a != null
+    var isMatrix = isMatrixLike(transforms)
     affine = transforms.affine != null
       ? transforms.affine
       : (affine != null ? affine : !isMatrix)
