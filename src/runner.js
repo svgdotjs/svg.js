@@ -698,13 +698,15 @@ SVG.extend(SVG.Runner, {
     let element
     let current
     let currentAngle
-    let u = this.transformId++
+    let startTransform
 
     function setup () {
 
       // make sure element and origin is defined
       element = element || this.element()
       origin = origin || getOrigin(transforms, element)
+
+      startTransform = new SVG.Matrix(relative ? undefined : element)
 
       // add the runner to the element so it can merge transformations
       element.addRunner(this)
@@ -724,11 +726,9 @@ SVG.extend(SVG.Runner, {
       let {x, y} = new SVG.Point(origin).transform(element._currentTransform(this))
 
       let target = new SVG.Matrix({...transforms, origin: [x, y]})
-      let start = new SVG.Matrix(relative ? undefined : element)
-
-      if (this._isDeclarative && current) {
-        start = current
-      }
+      let start = this._isDeclarative && current
+        ? current
+        : startTransform
 
       if (affine) {
         target = target.decompose(x, y)
@@ -760,12 +760,11 @@ SVG.extend(SVG.Runner, {
       morpher.from(start)
       morpher.to(target)
 
-
       let affineParameters = morpher.at(pos)
       currentAngle = affineParameters.rotate
       current = new SVG.Matrix(affineParameters)
 
-      this.addTransform(current, u)
+      this.addTransform(current)
       return morpher.done()
     }
 
