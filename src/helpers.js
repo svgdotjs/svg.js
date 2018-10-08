@@ -260,6 +260,28 @@ function formatTransforms (o) {
 }
 
 
+// left matrix, right matrix, target matrix which is overwritten
+function matrixMultiply (l, r, o) {
+  // Work out the product directly
+  var a = l.a * r.a + l.c * r.b
+  var b = l.b * r.a + l.d * r.b
+  var c = l.a * r.c + l.c * r.d
+  var d = l.b * r.c + l.d * r.d
+  var e = l.e + l.a * r.e + l.c * r.f
+  var f = l.f + l.b * r.e + l.d * r.f
+
+  // make sure to use local variables because l/r and o could be the same
+  o.a = a
+  o.b = b
+  o.c = c
+  o.d = d
+  o.e = e
+  o.f = f
+
+  return o
+}
+
+
 function getOrigin (o, element, inSpace) {
   // Allow origin or around as the names
   let origin = o.origin // o.around == null ? o.origin : o.around

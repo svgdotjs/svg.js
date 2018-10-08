@@ -1,116 +1,60 @@
 describe('Matrix', function() {
-  var matrix
+  let comp = {a:2, b:0, c:0, d:2, e:100, f:50}
 
   describe('initialization', function() {
 
-    describe('without a source', function() {
-
-      beforeEach(function() {
-        matrix = new SVG.Matrix
-      })
-
-      it('creates a new matrix with default values', function() {
-        expect(matrix.a).toBe(1)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(1)
-        expect(matrix.e).toBe(0)
-        expect(matrix.f).toBe(0)
-      })
-
-      describe('toString()' , function() {
-        it('exports correctly to a string', function() {
-          expect(matrix.toString()).toBe('matrix(1,0,0,1,0,0)')
-        })
-      })
+    it('creates a new matrix with default values', function() {
+      let matrix = new SVG.Matrix()
+      expect(matrix).toEqual(jasmine.objectContaining(
+        {a:1, b:0, c:0, d:1, e:0, f:0}
+      ))
     })
 
-    describe('with an element given', function() {
-      var rect
-
-      beforeEach(function() {
-        // Draw is defined in helpers
-        rect = draw.rect(100, 100)
-          .transform({
-            rotate: -10,
-            translate: [40, 50],
-            scale: 2,
-          })
-        matrix = new SVG.Matrix(rect)
-      })
-
-      it('parses the current transform matrix from an element', function() {
-
-        expect(matrix.a).toBeCloseTo(1.969615506024416)
-        expect(matrix.b).toBeCloseTo(-0.34729635533386066)
-        expect(matrix.c).toBeCloseTo(0.34729635533386066)
-        expect(matrix.d).toBeCloseTo(1.969615506024416)
-        expect(matrix.e).toBeCloseTo(-25.84559306791384)
-        expect(matrix.f).toBeCloseTo(18.884042465472234)
-      })
-
+    it('parses the current transform matrix from an element', function() {
+      let rect = draw.rect(100, 100).transform(comp)
+      let matrix = new SVG.Matrix(rect)
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
     })
 
-    describe('with a string given', function() {
-      it('parses the string value correctly', function() {
-        var matrix = new SVG.Matrix('2, 0, 0, 2, 100, 50')
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
+    it('parses a string value correctly', function() {
+      let matrix = new SVG.Matrix('2, 0, 0, 2, 100, 50')
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
     })
 
-    describe('with an array given', function() {
-      it('parses the array correctly', function() {
-        var matrix = new SVG.Matrix([2, 0, 0, 2, 100, 50])
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
+    it('parses an array correctly', function() {
+      let matrix = new SVG.Matrix([2, 0, 0, 2, 100, 50])
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
     })
 
-    describe('with an object given', function() {
-      it('parses the object correctly', function() {
-        var matrix = new SVG.Matrix({a:2, b:0, c:0, d:2, e:100, f:50})
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
+    it('parses an object correctly', function() {
+      let matrix = new SVG.Matrix(comp)
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
     })
 
-    describe('with 6 arguments given', function() {
-      it('parses the arguments correctly', function() {
-        var matrix = new SVG.Matrix(2, 0, 0, 2, 100, 50)
-
-        expect(matrix.a).toBe(2)
-        expect(matrix.b).toBe(0)
-        expect(matrix.c).toBe(0)
-        expect(matrix.d).toBe(2)
-        expect(matrix.e).toBe(100)
-        expect(matrix.f).toBe(50)
-      })
+    it('parses a transform object correctly', function() {
+      let matrix = new SVG.Matrix({scale: 2, translate: [100, 50]})
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
     })
 
+    it('parses 6 arguments correctly', function() {
+      let matrix = new SVG.Matrix(2, 0, 0, 2, 100, 50)
+      expect(matrix).toEqual(jasmine.objectContaining(comp))
+    })
+  })
+
+  describe('toString()' , function() {
+    it('exports correctly to a string', function() {
+      expect(new SVG.Matrix().toString()).toBe('matrix(1,0,0,1,0,0)')
+    })
   })
 
   describe('compose()', function() {
     it('composes a matrix to form the correct result', function() {
-      var composed = new SVG.Matrix().compose({
+      let composed = new SVG.Matrix().compose({
         scaleX: 3, scaleY: 20, shear: 4, rotate: 50, translateX: 23, translateY: 52,
       })
-      var expected = new SVG.Matrix().scale(3, 20).shear(4).rotate(50).translate(23, 52)
+
+      let expected = new SVG.Matrix().scale(3, 20).shear(4).rotate(50).translate(23, 52)
       expect(composed).toEqual(expected)
     })
   })
@@ -151,43 +95,8 @@ describe('Matrix', function() {
     })
   })
 
-  describe('morph()', function() {
-    it('stores a given matrix for morphing', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1, 0, 0, 1, 4, 3)
-
-      matrix1.morph(matrix2)
-
-      expect(matrix1.destination).toEqual(matrix2)
-    })
-    it('stores a clone, not the given matrix itself', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1, 0, 0, 1, 4, 3)
-
-      matrix1.morph(matrix2)
-
-      expect(matrix1.destination).not.toBe(matrix2)
-    })
-  })
-
-  describe('at()', function() {
-    it('returns a morphed array at a given position', function() {
-      var matrix1 = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-        , matrix2 = new SVG.Matrix(1, 0, 0, 1, 4, 3)
-        , matrix3 = matrix1.morph(matrix2).at(0.5)
-
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,0,0)')
-      expect(matrix2.toString()).toBe('matrix(1,0,0,1,4,3)')
-      expect(matrix3.toString()).toBe('matrix(1.5,0,0,3,2,1.5)')
-    })
-    it('returns itself when no destination specified', function() {
-      var matrix = new SVG.Matrix(2, 0, 0, 5, 0, 0)
-      expect(matrix.at(0.5)).toBe(matrix)
-    })
-  })
-
   describe('multiply()', function() {
-    it('multiplies two matices', function() {
+    it('multiplies two matrices', function() {
       var matrix1 = new SVG.Matrix(1, 4, 2, 5, 3, 6)
         , matrix2 = new SVG.Matrix(7, 8, 8, 7, 9, 6)
         , matrix3 = matrix1.multiply(matrix2)
@@ -211,9 +120,7 @@ describe('Matrix', function() {
 
       var matrix1 = new SVG.Matrix(2, 0, 0, 5, 4, 3)
         , matrix2 = matrix1.inverse()
-        , abcdef = [0.5,0,0,0.2,-2,-0.6]
-
-      expect(matrix1.toString()).toBe('matrix(2,0,0,5,4,3)')
+        , abcdef = [0.5, 0, 0, 0.2, -2, -0.6]
 
       for(var i in 'abcdef') {
         expect(matrix2['abcdef'[i]]).toBeCloseTo(abcdef[i])

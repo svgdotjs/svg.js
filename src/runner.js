@@ -448,8 +448,7 @@ SVG.Runner = SVG.invent({
     },
 
     addTransform: function (transform, index) {
-      this.transforms = this.transforms.lmultiply(transform)
-      // this._element.addToCurrentTransform(transform)
+      this.transforms.lmultiplyO(transform)
       return this
     },
 
@@ -495,8 +494,6 @@ SVG.Runner.sanitise = function (duration, delay, when) {
 
 SVG.FakeRunner = class {
   constructor (transforms = new SVG.Matrix(), id = -1, done = true) {
-    // Object.assign(this, {transforms, id, done})
-
     this.transforms = transforms
     this.id = id
     this.done = done
@@ -513,7 +510,7 @@ SVG.extend([SVG.Runner, SVG.FakeRunner], {
 })
 
 
-const lmultiply = (last, curr) => last.lmultiply(curr)
+const lmultiply = (last, curr) => last.lmultiplyO(curr)
 const getRunnerTransform = (runner) => runner.transforms
 
 function mergeTransforms () {
@@ -522,7 +519,7 @@ function mergeTransforms () {
   let runners = this._transformationRunners
   let netTransform = runners
     .map(getRunnerTransform)
-    .reduce(lmultiply)
+    .reduce(lmultiply, new SVG.Matrix())
 
   this.transform(netTransform)
 
@@ -590,7 +587,7 @@ SVG.extend(SVG.Element, {
       // taken into account
       .filter((runner) => runner.id <= current.id)
       .map(getRunnerTransform)
-      .reduce(lmultiply)
+      .reduce(lmultiply, new SVG.Matrix())
   },
 
   addRunner: function (runner) {
@@ -909,6 +906,8 @@ SVG.extend(SVG.Runner, {
       return this.plot([a, b, c, d])
     }
 
+    // FIXME: this needs to be rewritten such that the element is only accesed
+    // in the init function
     return this._queueObject('plot', new this._element.MorphArray(a))
 
     /*var morpher = this._element.morphArray().to(a)

@@ -41,13 +41,13 @@ SVG.Matrix = SVG.invent({
 
       // Get the proposed transformations and the current transformations
       var t = formatTransforms(o)
-      var current = new SVG.Matrix(this)
+      var current = this//new SVG.Matrix(this) // FIXME: do we need a new matrix here?
       let { x: ox, y: oy } = new SVG.Point(t.ox, t.oy).transform(current)
 
       // Construct the resulting matrix
       var transformer = new SVG.Matrix()
         .translateO(t.rx, t.ry)
-        .lmultiply(current)
+        .lmultiplyO(current)
         .translateO(-ox, -oy)
         .scaleO(t.scaleX, t.scaleY)
         .skewO(t.skewX, t.skewY)
@@ -183,29 +183,24 @@ SVG.Matrix = SVG.invent({
     multiplyO: function (matrix) {
       // Get the matrices
       var l = this
-      var r = new SVG.Matrix(matrix)
+      var r = matrix instanceof SVG.Matrix
+        ? matrix
+        : new SVG.Matrix(matrix)
 
-      // Work out the product directly
-      var a = l.a * r.a + l.c * r.b
-      var b = l.b * r.a + l.d * r.b
-      var c = l.a * r.c + l.c * r.d
-      var d = l.b * r.c + l.d * r.d
-      var e = l.e + l.a * r.e + l.c * r.f
-      var f = l.f + l.b * r.e + l.d * r.f
-
-      this.a = a
-      this.b = b
-      this.c = c
-      this.d = d
-      this.e = e
-      this.f = f
-
-      return this
+      return matrixMultiply(l, r, this)
     },
 
     lmultiply: function (matrix) {
-      var result = new SVG.Matrix(matrix).multiplyO(this)
-      return result
+      return this.clone().lmultiplyO(matrix)
+    },
+
+    lmultiplyO: function (matrix) {
+      var r = this
+      var l = matrix instanceof SVG.Matrix
+        ? matrix
+        : new SVG.Matrix(matrix)
+
+      return matrixMultiply(l, r, this)
     },
 
     // Inverses matrix
@@ -260,22 +255,28 @@ SVG.Matrix = SVG.invent({
 
     // Scale matrix
     scale: function (x, y, cx, cy) {
-      return this.clone().scaleO(x, y, cx, cy)
+      return this.scaleO.call(this.clone(), ...arguments)
+      //return this.clone().scaleO(x, y, cx, cy)
     },
 
-    scaleO: function (x, y, cx, cy) {
+    scaleO: function (x, y = x, cx = 0, cy = 0) {
       // Support uniform scaling
-      if (arguments.length === 1) {
-        y = x
-      } else if (arguments.length === 3) {
+      if (arguments.length == 3) {
         cy = cx
         cx = y
         y = x
       }
 
-      // Scale the current matrix
-      var scale = new SVG.Matrix(x, 0, 0, y, 0, 0)
-      return this.aroundO(cx, cy, scale)
+      let {a, b, c, d, e, f} = this
+
+      this.a = a * x
+      this.b = b * y
+      this.c = c * x
+      this.d = d * y
+      this.e = e * x - cx * x + cx
+      this.f = f * y - cy * y + cy
+
+      return this
     },
 
     // Rotate matrix
@@ -283,13 +284,23 @@ SVG.Matrix = SVG.invent({
       return this.clone().rotateO(r, cx, cy)
     },
 
-    rotateO: function (r, cx, cy) {
+    rotateO: function (r, cx = 0, cy = 0) {
       // Convert degrees to radians
       r = SVG.utils.radians(r)
 
-      // Construct the rotation matrix
-      var rotation = new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0)
-      return this.aroundO(cx, cy, rotation)
+      let cos = Math.cos(r)
+      let sin = Math.sin(r)
+
+      let {a, b, c, d, e, f} = this
+
+      this.a = a * cos - b * sin
+      this.b = b * cos + a * sin
+      this.c = c * cos - d * sin
+      this.d = d * cos + c * sin
+      this.e = e * cos - f * sin + cy * sin - cx * cos + cx
+      this.f = f * cos + e * sin - cx * sin - cy * cos + cy
+
+      return this
     },
 
     // Flip matrix on x or y, at a given offset
@@ -308,21 +319,25 @@ SVG.Matrix = SVG.invent({
       return this.clone().shearO(a, cx, cy)
     },
 
-    shearO: function (a, cx, cy) {
-      var shear = new SVG.Matrix(1, 0, a, 1, 0, 0)
-      return this.aroundO(cx, cy, shear)
+    shearO: function (lx, cx = 0, cy = 0) {
+      let {a, b, c, d, e, f} = this
+
+      this.a = a + b * lx
+      this.c = c + d * lx
+      this.e = e + f * lx - cy * lx
+
+      return this
     },
 
     // Skew Matrix
     skew: function (x, y, cx, cy) {
-      return this.clone().skewO(x, y, cx, cy)
+      return this.skewO.call(this.clone(), ...arguments)
+      //return this.clone().skew(x, y, cx, cy)
     },
 
-    skewO: function (x, y, cx, cy) {
+    skewO: function (x, y = x, cx = 0, cy = 0) {
       // support uniformal skew
-      if (arguments.length === 1) {
-        y = x
-      } else if (arguments.length === 3) {
+      if (arguments.length == 3) {
         cy = cx
         cx = y
         y = x
@@ -332,9 +347,19 @@ SVG.Matrix = SVG.invent({
       x = SVG.utils.radians(x)
       y = SVG.utils.radians(y)
 
-      // Construct the matrix
-      var skew = new SVG.Matrix(1, Math.tan(y), Math.tan(x), 1, 0, 0)
-      return this.aroundO(cx, cy, skew)
+      let lx = Math.tan(x)
+      let ly = Math.tan(y)
+
+      let {a, b, c, d, e, f} = this
+
+      this.a = a + b * lx
+      this.b = b + a * ly
+      this.c = c + d * lx
+      this.d = d + c * ly
+      this.e = e + f * lx - cy * lx
+      this.f = f + e * ly - cx * ly
+
+      return this
     },
 
     // SkewX
@@ -359,7 +384,7 @@ SVG.Matrix = SVG.invent({
     aroundO: function (cx, cy, matrix) {
       var dx = cx || 0
       var dy = cy || 0
-      return this.translateO(-dx, -dy).lmultiply(matrix).translateO(dx, dy)
+      return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy)
     },
 
     around: function (cx, cy, matrix) {
@@ -443,3 +468,10 @@ SVG.Matrix = SVG.invent({
 // })
 //
 // SVG.extend(SVG.Matrix, extensions)
+
+
+
+
+// function matrixMultiplyParams (matrix, a, b, c, d, e, f) {
+//   return matrixMultiply({a, b, c, d, e, f}, matrix, matrix)
+// }
