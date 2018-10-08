@@ -255,8 +255,7 @@ SVG.Matrix = SVG.invent({
 
     // Scale matrix
     scale: function (x, y, cx, cy) {
-      return this.scaleO.call(this.clone(), ...arguments)
-      //return this.clone().scaleO(x, y, cx, cy)
+      return this.clone().scaleO(...arguments)
     },
 
     scaleO: function (x, y = x, cx = 0, cy = 0) {
@@ -331,8 +330,7 @@ SVG.Matrix = SVG.invent({
 
     // Skew Matrix
     skew: function (x, y, cx, cy) {
-      return this.skewO.call(this.clone(), ...arguments)
-      //return this.clone().skew(x, y, cx, cy)
+      return this.clone().skewO(...arguments)
     },
 
     skewO: function (x, y = x, cx = 0, cy = 0) {
