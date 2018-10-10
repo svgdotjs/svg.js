@@ -246,6 +246,34 @@ let canvas = SVG('#canvas')
 //   a.clone().transform(obj, true).transform(obj2, true) // endPosition
 // })
 
+
+// let a = canvas.rect(200, 400).move(500, 400)
+//
+// a.animate(1000, 500).move(100, 100).animate(1000, 500).move(500, 400)
+
+let gradient = canvas.gradient('radial', function(gradient) {
+  gradient.stop(0, '#f00')
+  gradient.stop(1, '#ff0')
+})
+
+let gradientEarth = canvas.gradient('linear', function(gradient) {
+  gradient.stop(0, '#00f')
+  gradient.stop(1, '#0f0')
+})
+
+let sun = canvas.circle(200).center(500, 300).attr({ fill: gradient })
+
+let earth = canvas.circle(100).center(1000, 300).attr({fill: gradientEarth})
+
+let moon = canvas.circle(50).center(1200, 300).attr({fill: '#ffa'})
+
+earth.animate(10000).loop().ease('-')
+  .transform({rotate: 360, origin: [500, 300]}, true)
+  .transform({rotate: 720, origin: 'center'}, true)
+
+moon.animate(10000).loop().ease('-')
+  .transform({rotate: 360, origin: [500, 300]}, true)
+  .transform({rotate: 1080, origin: [1000, 300]}, true)
 /**
  * FUZZYS EXAMPLE
  */
@@ -273,59 +301,59 @@ let canvas = SVG('#canvas')
 // SAIVANS EXAMPLE
 
 
-canvas.ellipse(20, 20).center(100, 100)
-let r = canvas.rect(200, 400).move(100, 100)
-  .attr('opacity', 0.3)
-  //.transform({ tx: 300, ty: 500, origin: 'top-left' })
-
-// Normal usage
-let wait = 3000
-let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
-let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
-//let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.PID(0.01, 0.001, 1, 10))
-
-// var timer = 0
-// rDecl.timeline().source(() => {
-//   timer += 100
-//   return timer
-// })
-
-let runTransformation = (transform) => {
-  return () => {
-    //transform = new SVG.Matrix(transform)
-    let relative = true
-    let affine = true
-    r.transform(transform, relative)
-    rAnim.animate(wait).transform(transform, relative, affine)
-    rDecl.transform(transform, relative, affine)
-  }
-}
-
-setTimeout(runTransformation({
-  origin: 'top-left',
-  translate: [530, 250],
-  rotate: 300,
-  scale: 2,
-  shear: 1,
-}), 0.1 * wait )
-
-
-
-setTimeout(runTransformation({
-  origin: 'top-left',
-  translate: [530, 250],
-  rotate: 100,
-  scale: 2,
-  shear: 1,
-}), 0.4 * wait)
-
-setTimeout(runTransformation({
-  origin: 'top-left',
-  translate: [530, 250],
-  rotate: 100,
-  scale: 2,
-  shear: 1,
-}), 0.6 * wait)
+// canvas.ellipse(20, 20).center(100, 100)
+// let r = canvas.rect(200, 400).move(100, 100)
+//   .attr('opacity', 0.3)
+//   //.transform({ tx: 300, ty: 500, origin: 'top-left' })
+//
+// // Normal usage
+// let wait = 3000
+// let rAnim = r.clone().attr('fill', '#f00').animate(wait).attr('fill', '#0f0')
+// let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.Spring(wait, 15))
+// //let rDecl = r.clone().attr('fill', 'blue').animate(new SVG.PID(0.01, 0.001, 1, 10))
+//
+// // var timer = 0
+// // rDecl.timeline().source(() => {
+// //   timer += 100
+// //   return timer
+// // })
+//
+// let runTransformation = (transform) => {
+//   return () => {
+//     //transform = new SVG.Matrix(transform)
+//     let relative = true
+//     let affine = true
+//     r.transform(transform, relative)
+//     rAnim.animate(wait).transform(transform, relative, affine)
+//     rDecl.transform(transform, relative, affine)
+//   }
+// }
+//
+// setTimeout(runTransformation({
+//   origin: 'top-left',
+//   translate: [530, 250],
+//   rotate: 300,
+//   scale: 2,
+//   shear: 1,
+// }), 0.1 * wait )
+//
+//
+//
+// setTimeout(runTransformation({
+//   origin: 'top-left',
+//   translate: [530, 250],
+//   rotate: 100,
+//   scale: 2,
+//   shear: 1,
+// }), 0.4 * wait)
+//
+// setTimeout(runTransformation({
+//   origin: 'top-left',
+//   translate: [530, 250],
+//   rotate: 100,
+//   scale: 2,
+//   shear: 1,
+// }), 0.6 * wait)
 
 
 // canvas.circle(50).center(100, 0).attr('fill', 'gray')

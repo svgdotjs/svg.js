@@ -76,37 +76,39 @@ SVG.Timeline = SVG.invent({
       // The start time for the next animation can either be given explicitly,
       // derived from the current timeline time or it can be relative to the
       // last start time to chain animations direclty
-      var absoluteStartTime
+      var absoluteStartTime = 0
       delay = delay || 0
 
       // Work out when to start the animation
       if (when == null || when === 'last' || when === 'after') {
         // Take the last time and increment
-        absoluteStartTime = this._startTime + delay
+        absoluteStartTime = this._startTime //+ delay
 
       } else if (when === 'absolute' || when === 'start' ) {
         absoluteStartTime = delay
+        delay = 0
 
       } else if (when === 'now') {
-        absoluteStartTime = this._time + delay
+        absoluteStartTime = this._time //+ delay
 
-      } else if ( when === 'relative' ) {
-        absoluteStartTime = delay
-
-        if(this._runners.has(runner)) {
-          absoluteStartTime += this._time - runner.time()
+      } else if (when === 'relative') {
+        let runnerInfo = this._runners[runner.id]
+        if (runnerInfo) {
+          absoluteStartTime = runnerInfo.start + delay
+          delay = 0
         }
 
       } else {
-        // TODO: Throw error
+        throw new Error('Invalid value for the "when" parameter')
       }
 
       // manage runner
       runner.unschedule()
       runner.timeline(this)
+      runner.time(-delay)
 
       // save startTime for next runner
-      this._startTime = absoluteStartTime + runner.duration()
+      this._startTime = absoluteStartTime + runner.duration() + delay
 
       // save runnerInfo
       this._runners[runner.id] = {
@@ -216,12 +218,25 @@ SVG.Timeline = SVG.invent({
         // Get and run the current runner and ignore it if its inactive
         var runnerInfo = this._runners[this._order[i]]
         var runner = runnerInfo.runner
+        let dt = dtTime
 
-        if(!runner.active()) continue
+        // Make sure that we give the actual dt to the start if needed
+        let dtToStart = this._time - runnerInfo.start
+
+        // dont run runner if not started yet
+        if (dtToStart < 0) {
+          runnersLeft = true
+          continue
+        } else if (dtToStart < dt){
+          // adjust dt to make sure that animation is on point
+          dt = dtToStart
+        }
+
+        if (!runner.active()) continue
 
         // If this runner is still going, signal that we need another animation
         // frame, otherwise, remove the completed runner
-        var finished = runner.step(dtTime).done
+        var finished = runner.step(dt).done
         if (!finished) {
           runnersLeft = true
           // continue
