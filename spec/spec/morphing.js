@@ -103,14 +103,14 @@ describe('Morphing', function () {
     })
 
     it(`Creates a morphable out of an SVG.Morphable.TransformBag`, function () {
-      var morpher = new SVG.Morphable.TransformBag({}).to({rotate: 50, translateX: 20})
+      var morpher = new SVG.Morphable.TransformBag({rotate: 0, translateX: 0})
+        .to({rotate: 50, translateX: 20})
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
       expect(morpher.type()).toBe(SVG.Morphable.TransformBag)
       expect(morpher.at(0.5) instanceof SVG.Morphable.TransformBag).toBe(true)
 
-      // TODO: This fails because of roundingerrors and the FIXME above
-      expect(morpher.at(0.5).valueOf().decompose()).toBe(jasmine.objectContaining({rotate: 25, translateX: 10}))
+      expect(morpher.at(0.5)).toEqual(jasmine.objectContaining({rotate: 25, translateX: 10}))
     })
 
     it(`Creates a morphable out of an SVG.Morphable.ObjectBag`, function () {

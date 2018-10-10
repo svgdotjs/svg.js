@@ -27,7 +27,7 @@ describe('SVG.Animator', function () {
     it('cancels a timeout which was created with timeout()', function () {
       var spy = jasmine.createSpy('tester')
       var id = SVG.Animator.timeout(spy, 100)
-      SVG.Animator.cancelTimeout(id)
+      SVG.Animator.clearTimeout(id)
 
       expect(spy).not.toHaveBeenCalled()
       jasmine.RequestAnimationFrame.tick(100)

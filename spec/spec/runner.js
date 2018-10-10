@@ -125,10 +125,10 @@ describe('SVG.Runner', function () {
       runner.queue(initFn, runFn, true)
 
       expect(runner._queue[0]).toEqual(jasmine.objectContaining({
-        alwaysInitialise: true,
         initialiser: initFn,
         initialised: false,
-        runner: runFn
+        runner: runFn,
+        finished: false
       }))
     })
   })
@@ -182,7 +182,7 @@ describe('SVG.Runner', function () {
       expect(runner.step()).toBe(runner)
     })
 
-    it('calls initFn once and runFn at every step when alwaysInitialise is false', function() {
+    it('calls initFn once and runFn at every step', function() {
       var runner = new SVG.Runner()
       runner.queue(initFn, runFn, false)
 
@@ -195,8 +195,8 @@ describe('SVG.Runner', function () {
       expect(runFn.calls.count()).toBe(2)
     })
 
-    it('calls initFn and runFn at every step when alwaysInitialise is true', function() {
-      var runner = new SVG.Runner()
+    it('calls initFn on every step if its declaritive', function() {
+      var runner = new SVG.Runner(new SVG.Controller())
       runner.queue(initFn, runFn, true)
 
       runner.step()
@@ -775,13 +775,17 @@ describe('SVG.Runner', function () {
       var runner = new SVG.Runner(1000)
       var timeline = new SVG.Timeline()
 
-      // FIXME: schedulung a runner on a timeline does not set the timeline for the runner!
       runner.schedule(timeline)
 
-      var runner2 = runner.animate(1000)
+      var runner2 = runner.animate(500, 1000)
 
       expect(runner2.timeline()).toBe(timeline)
       expect(runner2.time()).toBe(-1000)
+
+      expect(timeline.schedule()).toEqual(jasmine.objectContaining([
+        jasmine.objectContaining({start: 0, duration: 1000, end: 1000, runner: runner}),
+        jasmine.objectContaining({start: 1000, duration: 500, end: 1500, runner: runner2})
+      ]))
     })
   })
 

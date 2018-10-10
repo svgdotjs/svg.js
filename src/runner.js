@@ -688,7 +688,7 @@ SVG.extend(SVG.Runner, {
 
     // Create a morepher and set its type
     const morpher = new SVG.Morphable()
-      .type( affine ? SVG.Morphable.TransformBag2 : SVG.Matrix )
+      .type( affine ? SVG.Morphable.TransformBag : SVG.Matrix )
       .stepper(this._stepper)
 
     let origin

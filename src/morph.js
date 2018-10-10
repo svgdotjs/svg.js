@@ -21,12 +21,11 @@ SVG.Morphable = SVG.invent({
       return this
     },
 
-    to: function (val, modifier) {
+    to: function (val) {
       if(val == null)
         return this._to
 
       this._to = this._set(val)
-      this.modifier = modifier || this.modifier
       return this
     },
 
@@ -131,7 +130,7 @@ SVG.Morphable.NonMorphable = SVG.invent({
   }
 })
 
-SVG.Morphable.TransformBag2 = SVG.invent({
+SVG.Morphable.TransformBag = SVG.invent({
   create: function (obj) {
     if(Array.isArray(obj)) {
       obj = {
@@ -146,7 +145,7 @@ SVG.Morphable.TransformBag2 = SVG.invent({
       }
     }
 
-    Object.assign(this, obj)
+    Object.assign(this, SVG.Morphable.TransformBag.defaults, obj)
   },
 
   extend: {
@@ -167,57 +166,68 @@ SVG.Morphable.TransformBag2 = SVG.invent({
   }
 })
 
-SVG.Morphable.TransformBag = SVG.invent({
-  inherit: SVG.Matrix,
-  create: function (obj) {
-    if(Array.isArray(obj)) {
-      obj = {
-        scaleX: obj[0],
-        scaleY: obj[1],
-        shear: obj[2],
-        rotate: obj[3],
-        translateX: obj[4],
-        translateY: obj[5],
-        originX: obj[6],
-        originY: obj[7]
-      }
-    }
+SVG.Morphable.TransformBag.defaults = {
+  scaleX: 1,
+  scaleY: 1,
+  shear: 0,
+  rotate: 0,
+  translateX: 0,
+  translateY: 0,
+  originX: 0,
+  originY: 0
+}
 
-    var data = {...(obj || {})}
-
-    if (typeof data.origin == 'string') {
-      delete data.origin
-    }
-
-    SVG.Matrix.call(this, data)
-
-
-    if (data.origin) {
-      data.originX = data.origin[0]
-      data.originY = data.origin[1]
-    }
-
-    this.originX = data.originX || 0
-    this.originY = data.originY || 0
-  },
-
-  extend: {
-    toArray: function (){
-      var v = this.decompose(this.originX, this.originY)
-
-      return [
-        v.scaleX,
-        v.scaleY,
-        v.shear,
-        v.rotate,
-        v.translateX,
-        v.translateY,
-        v.originX,
-        v.originY,
-      ]
-    }
-  }
-})
+// SVG.Morphable.TransformBag = SVG.invent({
+//   inherit: SVG.Matrix,
+//   create: function (obj) {
+//     if(Array.isArray(obj)) {
+//       obj = {
+//         scaleX: obj[0],
+//         scaleY: obj[1],
+//         shear: obj[2],
+//         rotate: obj[3],
+//         translateX: obj[4],
+//         translateY: obj[5],
+//         originX: obj[6],
+//         originY: obj[7]
+//       }
+//     }
+//
+//     var data = {...(obj || {})}
+//
+//     if (typeof data.origin == 'string') {
+//       delete data.origin
+//     }
+//
+//     SVG.Matrix.call(this, data)
+//
+//
+//     if (data.origin) {
+//       data.originX = data.origin[0]
+//       data.originY = data.origin[1]
+//     }
+//
+//     this.originX = data.originX || 0
+//     this.originY = data.originY || 0
+//   },
+//
+//   extend: {
+//     toArray: function (){
+//       var v = this.decompose(this.originX, this.originY)
+//
+//       return [
+//         v.scaleX,
+//         v.scaleY,
+//         v.shear,
+//         v.rotate,
+//         v.translateX,
+//         v.translateY,
+//         v.originX,
+//         v.originY,
+//       ]
+//     }
+//   }
+// })
 
 
 SVG.Morphable.ObjectBag = SVG.invent({
@@ -264,7 +274,6 @@ SVG.MorphableTypes = [
   SVG.PathArray,
   SVG.Morphable.NonMorphable,
   SVG.Morphable.TransformBag,
-  SVG.Morphable.TransformBag2,
   SVG.Morphable.ObjectBag,
 ]
 
