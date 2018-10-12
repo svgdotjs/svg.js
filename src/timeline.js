@@ -20,10 +20,7 @@ SVG.Timeline = SVG.invent({
   inherit: SVG.EventTarget,
 
   // Construct a new timeline on the given element
-  create: function (element) {
-
-    // Store a reference to the element to call its parent methods
-    this._element = element || null
+  create: function () {
     this._timeSource = function () {
       return time.now()
     }
@@ -54,12 +51,6 @@ SVG.Timeline = SVG.invent({
       return this._dispatcher
     },
 
-    // FIXME: there is no need anymore to save the element on the timeline
-    element (element) {
-      if(element == null) return this._element
-      this._element = element
-    },
-
     /**
      *
      */
@@ -71,6 +62,13 @@ SVG.Timeline = SVG.invent({
         return this._runners.map(makeSchedule).sort(function (a, b) {
           return (a.start - b.start) ||  (a.duration - b.duration)
         })
+      }
+
+      if (!this.active()) {
+        this._step()
+        if (when == null) {
+          when = 'now'
+        }
       }
 
       // The start time for the next animation can either be given explicitly,
@@ -277,6 +275,10 @@ SVG.Timeline = SVG.invent({
       if (!this._nextFrame)
         this._nextFrame = SVG.Animator.frame(this._step.bind(this))
       return this
+    },
+
+    active () {
+      return !!this._nextFrame
     }
   },
 
@@ -284,7 +286,7 @@ SVG.Timeline = SVG.invent({
   parent: SVG.Element,
   construct: {
     timeline: function () {
-      this._timeline = (this._timeline || new SVG.Timeline(this))
+      this._timeline = (this._timeline || new SVG.Timeline())
       return this._timeline
     },
   }
