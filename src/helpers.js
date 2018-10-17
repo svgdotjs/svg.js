@@ -254,11 +254,9 @@ function formatTransforms (o) {
 
   // Populate all of the values
   return {
-    scaleX, scaleY, skewX, skewY, shear, theta,
-    rx, ry, tx, ty, ox, oy, px, py
+    scaleX, scaleY, skewX, skewY, shear, theta, rx, ry, tx, ty, ox, oy, px, py
   }
 }
-
 
 // left matrix, right matrix, target matrix which is overwritten
 function matrixMultiply (l, r, o) {
@@ -281,15 +279,13 @@ function matrixMultiply (l, r, o) {
   return o
 }
 
-
-function getOrigin (o, element, inSpace) {
+function getOrigin (o, element) {
   // Allow origin or around as the names
   let origin = o.origin // o.around == null ? o.origin : o.around
   let ox, oy
 
   // Allow the user to pass a string to rotate around a given point
   if (typeof origin === 'string' || origin == null) {
-
     // Get the bounding box of the element with no transformations applied
     const string = (origin || 'center').toLowerCase().trim()
     const { height, width, x, y } = element.bbox()
@@ -305,17 +301,9 @@ function getOrigin (o, element, inSpace) {
     // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
     ox = o.ox != null ? o.ox : bx
     oy = o.oy != null ? o.oy : by
-
   } else {
     ox = origin[0]
     oy = origin[1]
-  }
-
-  // Transform the origin into the current reference frame
-  if ( inSpace ) {
-    let originRelative = new SVG.Point( ox, oy ).transform(inSpace)
-    ox = originRelative.x
-    oy = originRelative.y
   }
 
   // Return the origin as it is if it wasn't a string

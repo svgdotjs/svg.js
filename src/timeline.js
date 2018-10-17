@@ -7,7 +7,7 @@ SVG.easing = {
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 }
 
-var time = performance || Date
+var time = window.performance || Date
 
 var makeSchedule = function (runnerInfo) {
   var start = runnerInfo.start
@@ -57,10 +57,9 @@ SVG.Timeline = SVG.invent({
 
     // schedules a runner on the timeline
     schedule (runner, delay, when) {
-
-      if(runner == null) {
+      if (runner == null) {
         return this._runners.map(makeSchedule).sort(function (a, b) {
-          return (a.start - b.start) ||  (a.duration - b.duration)
+          return (a.start - b.start) || (a.duration - b.duration)
         })
       }
 
@@ -80,50 +79,47 @@ SVG.Timeline = SVG.invent({
       // Work out when to start the animation
       if (when == null || when === 'last' || when === 'after') {
         // Take the last time and increment
-        absoluteStartTime = this._startTime //+ delay
-
-      } else if (when === 'absolute' || when === 'start' ) {
+        absoluteStartTime = this._startTime
+      } else if (when === 'absolute' || when === 'start') {
         absoluteStartTime = delay
         delay = 0
-
       } else if (when === 'now') {
-        absoluteStartTime = this._time //+ delay
-
+        absoluteStartTime = this._time
       } else if (when === 'relative') {
         let runnerInfo = this._runners[runner.id]
         if (runnerInfo) {
           absoluteStartTime = runnerInfo.start + delay
           delay = 0
         }
-
       } else {
         throw new Error('Invalid value for the "when" parameter')
       }
 
-      // manage runner
+      // Manage runner
       runner.unschedule()
       runner.timeline(this)
       runner.time(-delay)
 
-      // save startTime for next runner
+      // Save startTime for next runner
       this._startTime = absoluteStartTime + runner.duration() + delay
 
-      // save runnerInfo
+      // Save runnerInfo
       this._runners[runner.id] = {
         persist: this.persist(),
         runner: runner,
         start: absoluteStartTime
       }
-      // save order and continue
+
+      // Save order and continue
       this._order.push(runner.id)
       this._continue()
       return this
     },
 
-    // remove the runner from this timeline
+    // Remove the runner from this timeline
     unschedule (runner) {
       var index = this._order.indexOf(runner.id)
-      if(index < 0) return this
+      if (index < 0) return this
 
       delete this._runners[runner.id]
       this._order.splice(index, 1)
@@ -132,7 +128,6 @@ SVG.Timeline = SVG.invent({
     },
 
     play () {
-
       // Now make sure we are not paused and continue the animation
       this._paused = false
       return this._continue()
@@ -157,14 +152,14 @@ SVG.Timeline = SVG.invent({
     },
 
     speed (speed) {
-      if(speed == null) return this._speed
+      if (speed == null) return this._speed
       this._speed = speed
       return this
     },
 
     reverse (yes) {
       var currentSpeed = this.speed()
-      if(yes == null) return this.speed(-currentSpeed)
+      if (yes == null) return this.speed(-currentSpeed)
 
       var positive = Math.abs(currentSpeed)
       return this.speed(yes ? positive : -positive)
@@ -176,7 +171,7 @@ SVG.Timeline = SVG.invent({
     },
 
     time (time) {
-      if(time == null) return this._time
+      if (time == null) return this._time
       this._time = time
       return this
     },
@@ -194,7 +189,6 @@ SVG.Timeline = SVG.invent({
     },
 
     _step () {
-
       // If the timeline is paused, just do nothing
       if (this._paused) return
 
@@ -218,15 +212,16 @@ SVG.Timeline = SVG.invent({
         var runner = runnerInfo.runner
         let dt = dtTime
 
-        // Make sure that we give the actual dt to the start if needed
+        // Make sure that we give the actual difference
+        // between runner start time and now
         let dtToStart = this._time - runnerInfo.start
 
-        // dont run runner if not started yet
+        // Dont run runner if not started yet
         if (dtToStart < 0) {
           runnersLeft = true
           continue
-        } else if (dtToStart < dt){
-          // adjust dt to make sure that animation is on point
+        } else if (dtToStart < dt) {
+          // Adjust dt to make sure that animation is on point
           dt = dtToStart
         }
 
@@ -238,42 +233,36 @@ SVG.Timeline = SVG.invent({
         if (!finished) {
           runnersLeft = true
           // continue
+        } else if (runnerInfo.persist !== true) {
+          // runner is finished. And runner might get removed
+
+          // TODO: Figure out end time of runner
+          var endTime = runner.duration() - runner.time() + this._time
+
+          if (endTime + this._persist < this._time) {
+            // Delete runner and correct index
+            delete this._runners[this._order[i]]
+            this._order.splice(i--, 1) && --len
+            runner.timeline(null)
+          }
         }
-
-
-        // } else if(runnerInfo.persist !== true){
-        //
-        //   // runner is finished. And runner might get removed
-        //
-        //   // TODO: Figure out end time of runner
-        //   var endTime = runner.duration() - runner.time() + this._time
-        //
-        //   if(endTime + this._persist < this._time) {
-        //     // FIXME: which one is better?
-        //     // runner.unschedule()
-        //     // --i
-        //     // --len
-        //
-        //     // delete runner and correct index
-        //     this._runners.splice(i--, 1) && --len
-        //     runner.timeline(null)
-        //   }
-        //
-        // }
       }
 
       // Get the next animation frame to keep the simulation going
-      if (runnersLeft)
+      if (runnersLeft) {
         this._nextFrame = SVG.Animator.frame(this._step.bind(this))
-      else this._nextFrame = null
+      } else {
+        this._nextFrame = null
+      }
       return this
     },
 
     // Checks if we are running and continues the animation
     _continue () {
       if (this._paused) return this
-      if (!this._nextFrame)
+      if (!this._nextFrame) {
         this._nextFrame = SVG.Animator.frame(this._step.bind(this))
+      }
       return this
     },
 
@@ -288,6 +277,6 @@ SVG.Timeline = SVG.invent({
     timeline: function () {
       this._timeline = (this._timeline || new SVG.Timeline())
       return this._timeline
-    },
+    }
   }
 })

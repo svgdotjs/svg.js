@@ -1,4 +1,4 @@
-/* global abcdef, arrayToMatrix, closeEnough, formatTransforms */
+/* global abcdef arrayToMatrix closeEnough formatTransforms isMatrixLike matrixMultiply */
 
 SVG.Matrix = SVG.invent({
   // Initialize
@@ -41,7 +41,7 @@ SVG.Matrix = SVG.invent({
 
       // Get the proposed transformations and the current transformations
       var t = formatTransforms(o)
-      var current = this//new SVG.Matrix(this) // FIXME: do we need a new matrix here?
+      var current = this
       let { x: ox, y: oy } = new SVG.Point(t.ox, t.oy).transform(current)
 
       // Construct the resulting matrix
@@ -260,7 +260,7 @@ SVG.Matrix = SVG.invent({
 
     scaleO: function (x, y = x, cx = 0, cy = 0) {
       // Support uniform scaling
-      if (arguments.length == 3) {
+      if (arguments.length === 3) {
         cy = cx
         cx = y
         y = x
@@ -335,7 +335,7 @@ SVG.Matrix = SVG.invent({
 
     skewO: function (x, y = x, cx = 0, cy = 0) {
       // support uniformal skew
-      if (arguments.length == 3) {
+      if (arguments.length === 3) {
         cy = cx
         cx = y
         y = x
@@ -466,9 +466,6 @@ SVG.Matrix = SVG.invent({
 // })
 //
 // SVG.extend(SVG.Matrix, extensions)
-
-
-
 
 // function matrixMultiplyParams (matrix, a, b, c, d, e, f) {
 //   return matrixMultiply({a, b, c, d, e, f}, matrix, matrix)

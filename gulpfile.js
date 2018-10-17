@@ -9,7 +9,9 @@ var del = require('del'),
   uglify = require('gulp-uglify'),
   wrapUmd = require('gulp-wrap'),
   pkg = require('./package.json'),
-  standard = require('gulp-standard')
+  standard = require('gulp-standard'),
+  babel = require('gulp-babel'),
+  sourcemaps = require('gulp-sourcemaps')
 
 var headerLong = ['/*!',
   '* <%= pkg.name %> - <%= pkg.description %>',
@@ -82,14 +84,10 @@ var parts = [
   'src/boxes.js',
   'src/parser.js',
   'src/animator.js',
-  //
-  //
-  //
-  // TODO: ADD THESE
-  //
-  // 'src/morph.js',
-  // 'src/runner.js'
-  // 'src/timeline.js'
+  'src/morph.js',
+  'src/runner.js',
+  'src/timeline.js',
+  'src/controller.js'
 ]
 
 gulp.task('clean', function () {
@@ -114,12 +112,15 @@ gulp.task('lint', function () {
 gulp.task('unify', ['clean', 'lint'], function () {
   pkg.buildDate = Date()
   return gulp.src(parts)
+    .pipe(sourcemaps.init())
     .pipe(concat('svg.js', { newLine: '\n' }))
+    .pipe(babel({presets: ['@babel/env']}))
     // wrap the whole thing in an immediate function call
     .pipe(wrapUmd({src: 'src/umd.js'}))
     .pipe(header(headerLong, { pkg: pkg }))
     .pipe(trim({ leading: false }))
     .pipe(chmod(0o644))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
 })

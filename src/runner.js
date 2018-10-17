@@ -1,3 +1,4 @@
+/* global isMatrixLike getOrigin */
 
 SVG.easing = {
   '-': function (pos) { return pos },
@@ -7,13 +8,10 @@ SVG.easing = {
 }
 
 SVG.Runner = SVG.invent({
-
-  inherit: SVG.EventTarget,
   parent: SVG.Element,
 
   create: function (options) {
-
-    // Store a unique id on the runner, so that we can identify it
+    // Store a unique id on the runner, so that we can identify it later
     this.id = SVG.Runner.id++
 
     // Ensure a default value
@@ -27,7 +25,6 @@ SVG.Runner = SVG.invent({
       : options
 
     // Declare all of the variables
-    this._dispatcher = document.createElement('div')
     this._element = null
     this._timeline = null
     this.done = false
@@ -74,7 +71,7 @@ SVG.Runner = SVG.invent({
 
     delay: function (by, when) {
       return this.animate(0, by, when)
-    },
+    }
   },
 
   extend: {
@@ -87,7 +84,7 @@ SVG.Runner = SVG.invent({
     */
 
     element: function (element) {
-      if(element == null) return this._element
+      if (element == null) return this._element
       this._element = element
       element._prepareRunner()
       return this
@@ -95,29 +92,29 @@ SVG.Runner = SVG.invent({
 
     timeline: function (timeline) {
       // check explicitly for undefined so we can set the timeline to null
-      if(typeof timeline === 'undefined') return this._timeline
+      if (typeof timeline === 'undefined') return this._timeline
       this._timeline = timeline
       return this
     },
 
-    animate: function(duration, delay, when) {
+    animate: function (duration, delay, when) {
       var o = SVG.Runner.sanitise(duration, delay, when)
       var runner = new SVG.Runner(o.duration)
-      if(this._timeline) runner.timeline(this._timeline)
-      if(this._element) runner.element(this._element)
+      if (this._timeline) runner.timeline(this._timeline)
+      if (this._element) runner.element(this._element)
       return runner.loop(o).schedule(delay, when)
     },
 
     schedule: function (timeline, delay, when) {
       // The user doesn't need to pass a timeline if we already have one
-      if(!(timeline instanceof SVG.Timeline)) {
+      if (!(timeline instanceof SVG.Timeline)) {
         when = delay
         delay = timeline
         timeline = this.timeline()
       }
 
       // If there is no timeline, yell at the user...
-      if(!timeline) {
+      if (!timeline) {
         throw Error('Runner cannot be scheduled without timeline')
       }
 
@@ -163,7 +160,7 @@ SVG.Runner = SVG.invent({
         runner: runFn || SVG.void,
         isTransform: isTransform,
         initialised: false,
-        finished: false,
+        finished: false
       })
       var timeline = this.timeline()
       timeline && this.timeline()._continue()
@@ -212,7 +209,6 @@ SVG.Runner = SVG.invent({
     },
 
     position: function (p) {
-
       // Get all of the variables we need
       var x = this._time
       var d = this._duration
@@ -220,9 +216,9 @@ SVG.Runner = SVG.invent({
       var t = this._times
       var s = this._swing
       var r = this._reverse
+      var position
 
       if (p == null) {
-
         /*
         This function converts a time to a position in the range [0, 1]
         The full explanation can be found in this desmos demonstration
@@ -231,7 +227,7 @@ SVG.Runner = SVG.invent({
         */
 
         // Figure out the value without thinking about the start or end time
-        function f (x) {
+        const f = function (x) {
           var swinging = s * Math.floor(x % (2 * (w + d)) / (w + d))
           var backwards = (swinging && !r) || (!swinging && r)
           var uncliped = Math.pow(-1, backwards) * (x % (w + d)) / d + backwards
@@ -241,7 +237,7 @@ SVG.Runner = SVG.invent({
 
         // Figure out the value by incorporating the start time
         var endTime = t * (w + d) - w
-        var position = x <= 0 ? Math.round(f(1e-5))
+        position = x <= 0 ? Math.round(f(1e-5))
           : x < endTime ? f(x)
           : Math.round(f(endTime - 1e-5))
         return position
@@ -249,9 +245,9 @@ SVG.Runner = SVG.invent({
 
       // Work out the loops done and add the position to the loops done
       var loopsDone = Math.floor(this.loops())
-      var swingForward = s && (loopsDone % 2 == 0)
+      var swingForward = s && (loopsDone % 2 === 0)
       var forwards = (swingForward && !r) || (r && swingForward)
-      var position = loopsDone + (forwards ? p : 1 - p)
+      position = loopsDone + (forwards ? p : 1 - p)
       return this.loops(position)
     },
 
@@ -263,7 +259,6 @@ SVG.Runner = SVG.invent({
     },
 
     step: function (dt) {
-
       // If we are inactive, this stepper just gets skipped
       if (!this.enabled) return this
 
@@ -292,7 +287,7 @@ SVG.Runner = SVG.invent({
       this.done = !declarative && !justFinished && this._time >= duration
 
       // Call initialise and the run function
-      if ( running || declarative ) {
+      if (running || declarative) {
         this._initialise(running)
 
         // clear the transforms on this runner so they dont get added again and again
@@ -324,7 +319,7 @@ SVG.Runner = SVG.invent({
     },
 
     active: function (enabled) {
-      if(enabled == null) return this.enabled
+      if (enabled == null) return this.enabled
       this.enabled = enabled
       return this
     },
@@ -341,7 +336,7 @@ SVG.Runner = SVG.invent({
 
       // Add all of the tags to the object directly
       name = Array.isArray(name) ? name : [name]
-      for(var i = name.length; i--;) {
+      for (var i = name.length; i--;) {
         this.tags[name[i]] = true
       }
       return this
@@ -349,7 +344,7 @@ SVG.Runner = SVG.invent({
 
     untag: function (name) {
       name = Array.isArray(name) ? name : [name]
-      for(var i = name.length; i--;) {
+      for (var i = name.length; i--;) {
         delete this.tags[name[i]]
       }
       return this
@@ -369,15 +364,14 @@ SVG.Runner = SVG.invent({
     _rememberMorpher: function (method, morpher) {
       this._history[method] = {
         morpher: morpher,
-        caller: this._queue[this._queue.length - 1],
+        caller: this._queue[this._queue.length - 1]
       }
     },
 
     // Try to set the target for a morpher if the morpher exists, otherwise
     // do nothing and return false
     _tryRetarget: function (method, target) {
-      if(this._history[method]) {
-
+      if (this._history[method]) {
         // if the last method wasnt even initialised, throw it away
         if (!this._history[method].caller.initialised) {
           let index = this._queue.indexOf(this._history[method].caller)
@@ -389,7 +383,6 @@ SVG.Runner = SVG.invent({
         // which has access to the outer scope
         if (this._history[method].caller.isTransform) {
           this._history[method].caller.isTransform(target)
-
         // for everything else a simple morpher change is sufficient
         } else {
           this._history[method].morpher.to(target)
@@ -405,18 +398,17 @@ SVG.Runner = SVG.invent({
 
     // Run each initialise function in the runner if required
     _initialise: function (running) {
-
       // If we aren't running, we shouldn't initialise when not declarative
       if (!running && !this._isDeclarative) return
 
       // Loop through all of the initialisers
-      for (var i = 0, len = this._queue.length; i < len ; ++i) {
+      for (var i = 0, len = this._queue.length; i < len; ++i) {
         // Get the current initialiser
         var current = this._queue[i]
 
         // Determine whether we need to initialise
         var needsIt = this._isDeclarative || (!current.initialised && running)
-        var running = !current.finished
+        running = !current.finished
 
         // Call the initialiser if we need to
         if (needsIt && running) {
@@ -428,11 +420,9 @@ SVG.Runner = SVG.invent({
 
     // Run each run function for the position or dt given
     _run: function (positionOrDt) {
-
       // Run all of the _queue directly
       var allfinished = true
-      for (var i = 0, len = this._queue.length; i < len ; ++i) {
-
+      for (var i = 0, len = this._queue.length; i < len; ++i) {
         // Get the current function to run
         var current = this._queue[i]
 
@@ -456,23 +446,22 @@ SVG.Runner = SVG.invent({
       this.transforms = new SVG.Matrix()
       return this
     }
-  },
+  }
 })
 
 SVG.Runner.id = 0
 
 SVG.Runner.sanitise = function (duration, delay, when) {
-
   // Initialise the default parameters
   var times = 1
   var swing = false
   var wait = 0
-  var duration = duration || SVG.defaults.timeline.duration
-  var delay = delay || SVG.defaults.timeline.delay
-  var when = when || 'last'
+  duration = duration || SVG.defaults.timeline.duration
+  delay = delay || SVG.defaults.timeline.delay
+  when = when || 'last'
 
   // If we have an object, unpack the values
-  if (typeof duration == 'object' && !(duration instanceof SVG.Stepper)) {
+  if (typeof duration === 'object' && !(duration instanceof SVG.Stepper)) {
     delay = duration.delay || delay
     when = duration.when || when
     swing = duration.swing || swing
@@ -491,7 +480,6 @@ SVG.Runner.sanitise = function (duration, delay, when) {
   }
 }
 
-
 SVG.FakeRunner = class {
   constructor (transforms = new SVG.Matrix(), id = -1, done = true) {
     this.transforms = transforms
@@ -509,79 +497,106 @@ SVG.extend([SVG.Runner, SVG.FakeRunner], {
   }
 })
 
+// SVG.FakeRunner.emptyRunner = new SVG.FakeRunner()
 
 const lmultiply = (last, curr) => last.lmultiplyO(curr)
 const getRunnerTransform = (runner) => runner.transforms
 
 function mergeTransforms () {
-
   // Find the matrix to apply to the element and apply it
-  let runners = this._transformationRunners
+  let runners = this._transformationRunners.runners
   let netTransform = runners
     .map(getRunnerTransform)
     .reduce(lmultiply, new SVG.Matrix())
 
   this.transform(netTransform)
 
-  // Merge any two transformations in a row that are done
-  let lastRunner = null
-  runners.forEach((runner, i) => {
-    if (lastRunner && runner.done && lastRunner.done) {
-      delete runners[runner.id+1]
-      runners[lastRunner.id+1] = runner.mergeWith(lastRunner)
-    }
+  this._transformationRunners.merge()
 
-    lastRunner = runner
-  })
-
-  // when the last runner is at index 0 it means all animations are done
-  // that is because the first index always holds a FakeRunner and never an
-  // actual Runner
-  if (lastRunner == runners[0]) {
+  if (this._transformationRunners.length() === 1) {
     this._frameId = null
   }
-
-  this._currentTransformCache = runners[0].transforms
 }
 
+class RunnerArray {
+  constructor () {
+    this.runners = []
+    this.ids = []
+  }
+
+  add (runner) {
+    if (this.runners.includes(runner)) return
+
+    let id = runner.id + 1
+
+    let leftSibling = this.ids.reduce((last, curr) => {
+      if (curr > last && curr < id) return curr
+      return last
+    }, 0)
+
+    let index = this.ids.indexOf(leftSibling) + 1
+
+    this.ids.splice(index, 0, id)
+    this.runners.splice(index, 0, runner)
+
+    return this
+  }
+
+  getByID (id) {
+    return this.runners[this.ids.indexOf(id + 1)]
+  }
+
+  remove (id) {
+    let index = this.ids.indexOf(id + 1)
+    this.ids.splice(index, 1)
+    this.runners.splice(index, 1)
+    return this
+  }
+
+  merge () {
+    let lastRunner = null
+    this.runners.forEach((runner, i) => {
+      if (lastRunner && runner.done && lastRunner.done) {
+        this.remove(runner.id)
+        this.edit(lastRunner.id, runner.mergeWith(lastRunner))
+      }
+
+      lastRunner = runner
+    })
+
+    return this
+  }
+
+  edit (id, newRunner) {
+    let index = this.ids.indexOf(id + 1)
+    this.ids.splice(index, 1, id)
+    this.runners.splice(index, 1, newRunner)
+    return this
+  }
+
+  length () {
+    return this.ids.length
+  }
+
+  clearBefore (id) {
+    let deleteCnt = this.ids.indexOf(id + 1) || 1
+    this.ids.splice(0, deleteCnt, 0)
+    this.runners.splice(0, deleteCnt, new SVG.FakeRunner())
+    return this
+  }
+}
 
 SVG.extend(SVG.Element, {
-
   // this function searches for all runners on the element and deletes the ones
   // which run before the current one. This is because absolute transformations
   // overwfrite anything anyway so there is no need to waste time computing
   // other runners
   _clearTransformRunnersBefore: function (currentRunner) {
-
-    this._transformationRunners.forEach((runner, i, arr) => {
-
-      // only delete runners which run before the current
-      if (runner.id < currentRunner.id) {
-
-        // if the runner is still running, it will add itself back on every
-        // frame. So make sure to delete the transformations from this runner
-        // so it doesnt interfer anymore
-        if (!runner.done) {
-          runner._queue = runner._queue.filter((item) => {
-            return !item.isTransform
-          })
-        }
-
-        delete arr[i]
-      }
-    })
-
-    this._transformationRunners[0] = new SVG.FakeRunner()
-  },
-
-  addToCurrentTransform (transform) {
-    this._currentTransformCache = this._currentTransformCache.lmultiply(transform)
-    return this
+    this._transformationRunners.clearBefore(currentRunner.id)
   },
 
   _currentTransform (current) {
-    // return this._currentTransformCache
-    return this._transformationRunners
+    return this._transformationRunners.runners
       // we need the equal sign here to make sure, that also transformations
       // on the same runner which execute before the current transformation are
       // taken into account
@@ -591,7 +606,7 @@ SVG.extend(SVG.Element, {
   },
 
   addRunner: function (runner) {
-    this._transformationRunners[runner.id+1] = runner
+    this._transformationRunners.add(runner)
 
     SVG.Animator.transform_frame(
       mergeTransforms.bind(this), this._frameId
@@ -600,20 +615,17 @@ SVG.extend(SVG.Element, {
 
   _prepareRunner: function () {
     if (this._frameId == null) {
-      this._transformationRunners = [
-        new SVG.FakeRunner(new SVG.Matrix(this))
-      ]
+      this._transformationRunners = new RunnerArray()
+        .add(new SVG.FakeRunner(new SVG.Matrix(this)))
 
-      // this._currentTransformCache = new SVG.Matrix(this)
       this._frameId = SVG.Element.frameId++
     }
-  },
+  }
 })
 
 SVG.Element.frameId = 0
 
 SVG.extend(SVG.Runner, {
-
   attr: function (a, v) {
     return this.styleAttr('attr', a, v)
   },
@@ -644,17 +656,17 @@ SVG.extend(SVG.Runner, {
   },
 
   zoom: function (level, point) {
-   var morpher = new SVG.Morphable(this._stepper).to(new SVG.Number(level))
+    var morpher = new SVG.Morphable(this._stepper).to(new SVG.Number(level))
 
-   this.queue(function() {
-     morpher = morpher.from(this.zoom())
-   }, function (pos) {
-     this.element().zoom(morpher.at(pos), point)
-     return morpher.done()
-   })
+    this.queue(function () {
+      morpher = morpher.from(this.zoom())
+    }, function (pos) {
+      this.element().zoom(morpher.at(pos), point)
+      return morpher.done()
+    })
 
-   return this
- },
+    return this
+  },
 
   /**
    ** absolute transformations
@@ -688,7 +700,7 @@ SVG.extend(SVG.Runner, {
 
     // Create a morepher and set its type
     const morpher = new SVG.Morphable()
-      .type( affine ? SVG.Morphable.TransformBag : SVG.Matrix )
+      .type(affine ? SVG.Morphable.TransformBag : SVG.Matrix)
       .stepper(this._stepper)
 
     let origin
@@ -698,7 +710,6 @@ SVG.extend(SVG.Runner, {
     let startTransform
 
     function setup () {
-
       // make sure element and origin is defined
       element = element || this.element()
       origin = origin || getOrigin(transforms, element)
@@ -709,13 +720,12 @@ SVG.extend(SVG.Runner, {
       element.addRunner(this)
 
       // Deactivate all transforms that have run so far if we are absolute
-      if ( !relative ) {
+      if (!relative) {
         element._clearTransformRunnersBefore(this)
       }
     }
 
     function run (pos) {
-
       // clear all other transforms before this in case something is saved
       // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform()
@@ -737,7 +747,7 @@ SVG.extend(SVG.Runner, {
 
         // Figure out the shortest path to rotate directly
         const possibilities = [rTarget - 360, rTarget, rTarget + 360]
-        const distances = possibilities.map( a => Math.abs(a - rCurrent) )
+        const distances = possibilities.map(a => Math.abs(a - rCurrent))
         const shortest = Math.min(...distances)
         const index = distances.indexOf(shortest)
         target.rotate = possibilities[index]
@@ -766,13 +776,12 @@ SVG.extend(SVG.Runner, {
     }
 
     function retarget (newTransforms) {
-
       // only get a new origin if it changed since the last call
       if (
-        (newTransforms.origin || 'center').toString()
-        != (transforms.origin || 'center').toString()
+        (newTransforms.origin || 'center').toString() !==
+        (transforms.origin || 'center').toString()
       ) {
-        origin = getOrigin (transforms, element)
+        origin = getOrigin(transforms, element)
       }
 
       // overwrite the old transformations with the new ones
@@ -803,29 +812,28 @@ SVG.extend(SVG.Runner, {
   },
 
   _queueNumberDelta: function (method, to) {
-      to = new SVG.Number(to)
+    to = new SVG.Number(to)
 
-      // Try to change the target if we have this method already registerd
-      if (this._tryRetargetDelta(method, to)) return this
+    // Try to change the target if we have this method already registerd
+    if (this._tryRetargetDelta(method, to)) return this
 
-      // Make a morpher and queue the animation
-      var morpher = new SVG.Morphable(this._stepper).to(to)
-      this.queue(function () {
-        var from = this.element()[method]()
-        morpher.from(from)
-        morpher.to(from + x)
-      }, function (pos) {
-        this.element()[method](morpher.at(pos))
-        return morpher.done()
-      })
+    // Make a morpher and queue the animation
+    var morpher = new SVG.Morphable(this._stepper).to(to)
+    this.queue(function () {
+      var from = this.element()[method]()
+      morpher.from(from)
+      morpher.to(from + to)
+    }, function (pos) {
+      this.element()[method](morpher.at(pos))
+      return morpher.done()
+    })
 
-      // Register the morpher so that if it is changed again, we can retarget it
-      this._rememberMorpher(method, morpher)
-      return this
+    // Register the morpher so that if it is changed again, we can retarget it
+    this._rememberMorpher(method, morpher)
+    return this
   },
 
   _queueObject: function (method, to) {
-
     // Try to change the target if we have this method already registerd
     if (this._tryRetarget(method, to)) return this
 
@@ -910,7 +918,8 @@ SVG.extend(SVG.Runner, {
     // in the init function
     return this._queueObject('plot', new this._element.MorphArray(a))
 
-    /*var morpher = this._element.morphArray().to(a)
+    /*
+    var morpher = this._element.morphArray().to(a)
 
     this.queue(function () {
       morpher.from(this._element.array())
@@ -918,7 +927,8 @@ SVG.extend(SVG.Runner, {
       this._element.plot(morpher.at(pos))
     })
 
-    return this*/
+    return this
+    */
   },
 
   // Add leading method

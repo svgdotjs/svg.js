@@ -2,7 +2,7 @@
 /* eslint-disable new-cap */
 
 // The main wrapping element
-var SVG = this.SVG = function (element) {
+var SVG = window.SVG = function (element) {
   if (SVG.supported) {
     element = createElement(element)
     return element

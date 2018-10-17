@@ -1,4 +1,4 @@
-/* global arrayToMatrix getOrigin */
+/* global arrayToMatrix getOrigin isMatrixLike */
 
 SVG.extend(SVG.Element, {
   // Reset all transformations
