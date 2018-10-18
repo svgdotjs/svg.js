@@ -10,11 +10,19 @@
   <script src="lib/jasmine-2.6.0/jasmine.js"></script>
   <script src="lib/jasmine-2.6.0/jasmine-html.js"></script>
   <script src="lib/jasmine-2.6.0/boot.js"></script>
+  <script src="lib/RAFPlugin.js"></script>
 
   <link rel="stylesheet" href="fixtures/fixture.css">
 
   <!-- include source files here... -->
   <script src="../dist/svg.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../src/helpers.js"></script>
+  <script type="text/javascript" src="../src/transform.js"></script>
+  <script type="text/javascript" src="../src/matrix.js"></script>
+  <script type="text/javascript" src="../src/morph.js"></script>
+  <script type="text/javascript" src="../src/runner.js"></script>
+  <script type="text/javascript" src="../src/timeline.js"></script>
+  <script type="text/javascript" src="../src/controller.js"></script>
 
 </head>
 
@@ -52,6 +60,7 @@
 
 
   <!-- include spec files here... -->
+  <!--
   <script src="spec/adopter.js"></script>
   <script src="spec/arrange.js"></script>
   <script src="spec/array.js"></script>
@@ -68,17 +77,15 @@
   <script src="spec/ellipse.js"></script>
   <script src="spec/event.js"></script>
   <script src="spec/fx.js"></script>
-  <script src="spec/gradient.js"></script>
-  <script src="spec/group.js"></script>
+  <script src="spec/gradient.js"></script>-->
   <script src="spec/helper.js"></script>
-  <script src="spec/hyperlink.js"></script>
+  <!--<script src="spec/hyperlink.js"></script>
   <script src="spec/image.js"></script>
   <script src="spec/line.js"></script>
   <script src="spec/marker.js"></script>
-  <script src="spec/mask.js"></script>
-  <script src="spec/matrix.js"></script>
-  <script src="spec/memory.js"></script>
-  <script src="spec/number.js"></script>
+  <script src="spec/mask.js"></script>-->
+  <!--<script src="spec/matrix.js"></script>-->
+  <!--<script src="spec/number.js"></script>
   <script src="spec/path.js"></script>
   <script src="spec/pattern.js"></script>
   <script src="spec/point.js"></script>
@@ -96,7 +103,10 @@
   <script src="spec/tspan.js"></script>
   <script src="spec/use.js"></script>
   <script src="spec/utils.js"></script>
-  <script src="spec/viewbox.js"></script>
+  <script src="spec/viewbox.js"></script> -->
 
+  <script src="spec/morphing.js"></script>
+  <script src="spec/animator.js"></script>
+  <script src="spec/runner.js"></script>
 </body>
 </html>

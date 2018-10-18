@@ -18,6 +18,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `isRoot()` on `SVG.Doc` (#809)
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added `precision()` method to round numeric element attributes -> __TODO!__
+- added a linter during the npm build process
+- added `npm build:dev` to let you develop without getting too annoyed
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -31,6 +33,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `SVG.Nested` (#809)
 - removed `show()` from `SVG.A` to avoid name clash (#802)
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
+- removed `move(), dmove()` etc for groups to avoid inconsistencies, we will expect users to use transforms to move around groups as they should (especially since they are much simpler now).
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -63,8 +66,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - default constructor now has an optional `node` argument which is used to consruct the object e.g. `new SVG.Rect(rectNode)`
 - SVG.Elements constructor now tries to import svgjs:data from the node
 - `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
-- `SVG.on()/off()` and `el.on()/off()` now accepts multiple comma or space seperated events e.g. "mousedown, foo bar" (#727)
+- `SVG.on()/off()` and `el.on()/off()` now accepts multiple comma or space separated events e.g. "mousedown, foo bar" (#727)
+- Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
+- The way `transform()` works is now completely different. See the docs for more as soon as they are updated.
 - merged `SVG.Doc` and `SVG.Nested`, added `isRoot()` on `SVG.Doc()` (#809)
+- The fx module was completely reworked to be faster and less error prone. For more information on how to use it refer to the docs
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

@@ -1,6 +1,8 @@
 /* global proportionalSize, assignNewId, createElement, matches, is */
 
 SVG.Element = SVG.invent({
+  inherit: SVG.EventTarget,
+
   // Initialize node
   create: function (node) {
     // event listener
@@ -42,7 +44,9 @@ SVG.Element = SVG.invent({
 
     // Move by center over y-axis
     cy: function (y) {
-      return y == null ? this.y() + this.height() / 2 : this.y(y - this.height() / 2)
+      return y == null
+        ? this.y() + this.height() / 2
+        : this.y(y - this.height() / 2)
     },
 
     // Move element to given x and y values
@@ -304,6 +308,9 @@ SVG.Element = SVG.invent({
     },
     is: function (obj) {
       return is(this, obj)
+    },
+    getEventTarget: function () {
+      return this.node
     }
   }
 })

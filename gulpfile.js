@@ -9,7 +9,9 @@ var del = require('del'),
   uglify = require('gulp-uglify'),
   wrapUmd = require('gulp-wrap'),
   pkg = require('./package.json'),
-  standard = require('gulp-standard')
+  standard = require('gulp-standard'),
+  babel = require('gulp-babel'),
+  sourcemaps = require('gulp-sourcemaps')
 
 var headerLong = ['/*!',
   '* <%= pkg.name %> - <%= pkg.description %>',
@@ -31,14 +33,16 @@ var parts = [
   'src/regex.js',
   'src/utilities.js',
   'src/default.js',
+  'src/queue.js',
+  'src/drawLoop.js',
   'src/color.js',
   'src/array.js',
   'src/pointarray.js',
   'src/patharray.js',
   'src/number.js',
+  'src/event.js',
   'src/HtmlNode.js',
   'src/element.js',
-  'src/fx.js',
   'src/matrix.js',
   'src/point.js',
   'src/attr.js',
@@ -47,7 +51,6 @@ var parts = [
   'src/parent.js',
   'src/flatten.js',
   'src/container.js',
-  'src/event.js',
   'src/defs.js',
   'src/group.js',
   'src/arrange.js',
@@ -79,11 +82,26 @@ var parts = [
   'src/helpers.js',
   'src/polyfill.js',
   'src/boxes.js',
-  'src/parser.js'
+  'src/parser.js',
+  'src/animator.js',
+  'src/morph.js',
+  'src/runner.js',
+  'src/timeline.js',
+  'src/controller.js'
 ]
 
 gulp.task('clean', function () {
   return del([ 'dist/*' ])
+})
+
+gulp.task('lint', function () {
+  return gulp.src(parts)
+    .pipe(standard())
+    .pipe(standard.reporter('default', {
+      showRuleNames: true,
+      breakOnError: process.argv[2] !== "--dont-break",
+      quiet: true,
+    }))
 })
 
 /**
@@ -91,21 +109,18 @@ gulp.task('clean', function () {
  * wrap the whole thing in a UMD wrapper (@see https://github.com/umdjs/umd)
  * add the license information to the header plus the build time stamp‏
  */
-gulp.task('unify', ['clean'], function () {
+gulp.task('unify', ['clean', 'lint'], function () {
   pkg.buildDate = Date()
   return gulp.src(parts)
-    .pipe(standard())
-    .pipe(standard.reporter('default', {
-      showRuleNames: true,
-      breakOnError: true,
-      quiet: true
-    }))
+    .pipe(sourcemaps.init())
     .pipe(concat('svg.js', { newLine: '\n' }))
+    .pipe(babel({presets: ['@babel/env']}))
     // wrap the whole thing in an immediate function call
     .pipe(wrapUmd({src: 'src/umd.js'}))
     .pipe(header(headerLong, { pkg: pkg }))
     .pipe(trim({ leading: false }))
     .pipe(chmod(0o644))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'))
     .pipe(size({ showFiles: true, title: 'Full' }))
 })

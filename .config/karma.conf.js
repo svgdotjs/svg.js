@@ -16,6 +16,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       '.config/pretest.js',
+      'spec/lib/RAFPlugin.js',
       {
         pattern: 'spec/fixtures/fixture.css',
         included: false,
@@ -34,7 +35,7 @@ module.exports = function(config) {
       'dist/svg.js',
       'spec/spec/**/*.js'
     ],
-    
+
     proxies: {
       '/fixtures/': '/base/spec/fixtures/'
     },

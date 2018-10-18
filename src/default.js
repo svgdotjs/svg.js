@@ -1,5 +1,14 @@
 
+SVG.void = function () {}
+
 SVG.defaults = {
+
+  // Default animation values
+  timeline: {
+    duration: 400,
+    ease: '>',
+    delay: 0
+  },
 
   // Default attribute values
   attrs: {

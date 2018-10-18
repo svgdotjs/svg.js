@@ -41,9 +41,7 @@ describe('Doc', function() {
       expect(SVG().addTo(document.createElement('div')).isRoot()).toBe(true)
     })
     it('returns true when its the root element of the dom', function () {
-      if(parserInDoc) {
-        expect(draw.isRoot()).toBe(true)
-      }
+      expect(draw.isRoot()).toBe(true)
     })
     it('returns false when parent is svg element', function () {
       expect(SVG().addTo(SVG()).isRoot()).toBe(false)
@@ -59,7 +57,7 @@ describe('Doc', function() {
       }else{
         expect(window.document.querySelectorAll('svg').length).toBe(cnt-1)
       }
-      
+
       draw = SVG().addTo(drawing).size(100,100);
       expect(window.document.querySelectorAll('svg').length).toBe(cnt)
     })

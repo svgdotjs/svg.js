@@ -134,13 +134,13 @@ describe('Element', function() {
     it('increases the global id sequence', function() {
       var did = SVG.did
       rect.id()
-    
+
       expect(did + 1).toBe(SVG.did)
     })
     it('adds a unique id containing the node name', function() {
       var did = SVG.did
       rect.id()
-    
+
       expect(rect.attr('id')).toBe('SvgjsRect' + did)
     })
     it('gets the value if the id attribute without an argument', function() {
@@ -194,23 +194,23 @@ describe('Element', function() {
       rect = draw.rect(100,100)
     })
 
-    it('gets the current transformations', function() {
-      expect(rect.transform()).toEqual(new SVG.Matrix(rect).extract())
+    it('gets the current transformation matrix', function() {
+      expect(rect.transform()).toEqual(jasmine.objectContaining({
+        a: 1, b: 0, c: 0, d: 1, e: 0, f: 0,
+        scaleX: 1, scaleY: 1, shear: 0, rotate: 0,
+        translateX: 0, translateY: 0,
+      }))
     })
     it('sets the translation of and element', function() {
-      rect.transform({ x: 10, y: 11 })
+      rect.transform({ translate: [10, 11] })
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,10,11])
     })
     it('performs an absolute translation', function() {
-      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 })
+      rect.transform({ translate: [10, 11] }).transform({ translate: [20, 21] })
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,20,21])
     })
-    it('performs a relative translation when relative is set to true', function() {
-      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21, relative: true })
-      expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
-    })
     it('performs a relative translation with relative flag', function() {
-      rect.transform({ x: 10, y: 11 }).transform({ x: 20, y: 21 }, true)
+      rect.transform({ translate: [10, 11] }).transform({ translate: [20, 21] }, true)
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,1,30,32])
     })
     it('sets the scaleX and scaleY of an element', function() {
@@ -248,7 +248,7 @@ describe('Element', function() {
       expect(ctm.f).toBe(0)
     })
     it('sets the skewX of an element with given center', function() {
-      ctm = rect.transform({ skewX: 10, cx: 0, cy: 0 }).ctm()
+      ctm = rect.transform({ skewX: 10, ox: 0, oy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBe(0)
       expect(ctm.c).toBeCloseTo(0.17632698070846498)
@@ -257,7 +257,7 @@ describe('Element', function() {
       expect(ctm.f).toBe(0)
     })
     it('sets the skewY of an element', function() {
-      ctm = rect.transform({ skewY: -10, cx: 0, cy: 0 }).ctm()
+      ctm = rect.transform({ skewY: -10, ox: 0, oy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBeCloseTo(-0.17632698070846498)
       expect(ctm.c).toBe(0)
@@ -266,7 +266,7 @@ describe('Element', function() {
       expect(ctm.f).toBe(0)
     })
     it('sets the skewX and skewY of an element', function() {
-      ctm = rect.transform({ skewX: 10, skewY: -10, cx: 0, cy: 0 }).ctm()
+      ctm = rect.transform({ skewX: 10, skewY: -10, ox: 0, oy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBeCloseTo(-0.17632698070846498)
       expect(ctm.c).toBeCloseTo(0.17632698070846498)
@@ -275,7 +275,7 @@ describe('Element', function() {
       expect(ctm.f).toBe(0)
     })
     it('performs a uniform skew with skew given', function() {
-      ctm = rect.transform({ skew: 5, cx: 0, cy: 0 }).ctm()
+      ctm = rect.transform({ skew: 5, ox: 0, oy: 0 }).ctm()
       expect(ctm.a).toBe(1)
       expect(ctm.b).toBeCloseTo(0.08748866352592401)
       expect(ctm.c).toBeCloseTo(0.08748866352592401)
@@ -284,17 +284,16 @@ describe('Element', function() {
       expect(ctm.f).toBe(0)
     })
     it('rotates the element around its centre if no rotation point is given', function() {
-      ctm = rect.center(100, 100).transform({ rotation: 45 }).ctm()
+      ctm = rect.center(100, 100).transform({ rotate: 45 }).ctm()
       expect(ctm.a).toBeCloseTo(0.7071068286895752)
       expect(ctm.b).toBeCloseTo(0.7071068286895752)
       expect(ctm.c).toBeCloseTo(-0.7071068286895752)
       expect(ctm.d).toBeCloseTo(0.7071068286895752)
       expect(ctm.e).toBeCloseTo(100)
       expect(ctm.f).toBeCloseTo(-41.421356201171875)
-      expect(rect.transform('rotation')).toBe(45)
     })
     it('rotates the element around the given rotation point', function() {
-      ctm = rect.transform({ rotation: 55, cx: 80, cy:2 }).ctm()
+      ctm = rect.transform({ rotate: 55, origin: [80, 2] }).ctm()
       expect(ctm.a).toBeCloseTo(0.5735765099525452)
       expect(ctm.b).toBeCloseTo(0.8191521167755127)
       expect(ctm.c).toBeCloseTo(-0.8191521167755127)
@@ -315,15 +314,15 @@ describe('Element', function() {
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,100,0])
     })
     it('flips the element on x axis with offset', function() {
-      rect.transform({ flip: 'x', offset: 20 })
+      rect.transform({ flip: 'x', origin: [20, 0] })
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,1,40,0])
     })
     it('flips the element on y axis with offset', function() {
-      rect.transform({ flip: 'y', offset: 20 })
+      rect.transform({ flip: 'y', origin: [0, 20] })
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([1,0,0,-1,0,40])
     })
     it('flips the element on both axis with offset', function() {
-      rect.transform({ flip: 'both', offset: 20 })
+      rect.transform({ flip: 'both', origin: [20, 20] })
       expect(window.matrixStringToArray(rect.node.getAttribute('transform'))).toEqual([-1,0,0,-1,40,40])
     })
     it('flips the element on both axis', function() {
@@ -386,6 +385,20 @@ describe('Element', function() {
       rect.attr('transform', 'translate(24,14)  , translate(36,6)')
       expect(rect.matrixify().toString()).toBe('matrix(1,0,0,1,60,20)')
     })
+
+
+    it('merges non-commutative transformations correctly', function() {
+      // Spaces before the comma
+      rect.attr('transform', 'scale(3, 2) translate(20,16)')
+      expect(rect.matrixify().toString()).toBe('matrix(3,0,0,2,60,32)')
+    })
+
+    it('doesn\'t care if you have matrices there', function() {
+      // Spaces before the comma
+      rect.attr('transform', 'matrix(3, 0, 0, 2, 0, 0) translate(20,16)')
+      expect(rect.matrixify().toString()).toBe('matrix(3,0,0,2,60,32)')
+    })
+
   })
 
   describe('toParent()', function() {
@@ -408,13 +421,11 @@ describe('Element', function() {
     })
 
     it('moves the element to other parent while maintaining the same visal representation', function() {
-      expect(rect1.toParent(nested).transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
-      }))
+      expect(window.roundMatrix(rect1.toParent(nested).matrix()))
+        .toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
       expect(rect1.parent()).toEqual(nested)
-      expect(rect2.toParent(g2).transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:-95, f:-95
-      }))
+      expect(window.roundMatrix(rect2.toParent(g2).matrix()))
+        .toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, -95, -95))
       expect(rect2.parent()).toEqual(g2)
     })
   })
@@ -466,17 +477,13 @@ describe('Element', function() {
       expect(g1.node.parentNode).toBeFalsy()
       expect(g2.node.parentNode).toBeFalsy()
 
-      expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
-      }))
-      expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:45, f:45
-      }))
+      expect(window.roundMatrix(rect1.matrix())).toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
+      expect(window.roundMatrix(rect2.matrix())).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 45, 45))
     })
 
     it('ungroups everything to the doc root when called on SVG.Doc / does not ungroup defs/parser', function() {
       draw.flatten()
-      
+
       expect(rect1.parent()).toBe(draw)
       expect(rect2.parent()).toBe(draw)
 
@@ -484,12 +491,8 @@ describe('Element', function() {
       expect(g2.node.parentNode).toBeFalsy()
       expect(nested.node.parentNode).toBeFalsy()
 
-      expect(rect1.transform()).toEqual(jasmine.objectContaining({
-        a:2, b:0, c:0, d:2, e:70, f:70
-      }))
-      expect(rect2.transform()).toEqual(jasmine.objectContaining({
-        a:0.5, b:0, c:0, d:0.5, e:45, f:45
-      }))
+      expect(window.roundMatrix(rect1.matrix())).toEqual(new SVG.Matrix(2, 0, 0, 2, 70, 70))
+      expect(window.roundMatrix(rect2.matrix())).toEqual(new SVG.Matrix(0.5, 0, 0, 0.5, 45, 45))
 
       expect(draw.children().length).toBe(3+parserInDoc) // 2 * rect + defs
     })

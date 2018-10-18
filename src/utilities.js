@@ -1,3 +1,4 @@
+
 SVG.utils = {
   // Map function
   map: function (array, block) {

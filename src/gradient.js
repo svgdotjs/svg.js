@@ -1,7 +1,7 @@
 SVG.Gradient = SVG.invent({
   // Initialize node
   create: function (type) {
-    this.constructor(typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
+    SVG.Element.call(this, typeof type === 'object' ? type : SVG.create(type + 'Gradient'))
   },
 
   // Inherit from
@@ -50,7 +50,7 @@ SVG.Gradient = SVG.invent({
 })
 
 // Add animatable methods to both gradient and fx module
-SVG.extend([SVG.Gradient, SVG.FX], {
+SVG.extend([SVG.Gradient, SVG.Timeline], {
   // From position
   from: function (x, y) {
     return (this._target || this).type === 'radialGradient'
@@ -101,5 +101,4 @@ SVG.Stop = SVG.invent({
       return this
     }
   }
-
 })

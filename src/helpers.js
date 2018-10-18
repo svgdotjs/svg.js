@@ -109,26 +109,9 @@ function proportionalSize (element, width, height) {
   }
 }
 
-// Delta transform point
-function deltaTransformPoint (matrix, x, y) {
-  return {
-    x: x * matrix.a + y * matrix.c + 0,
-    y: x * matrix.b + y * matrix.d + 0
-  }
-}
-
 // Map matrix array to object
 function arrayToMatrix (a) {
   return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
-}
-
-// Parse matrix if required
-function parseMatrix (matrix) {
-  if (!(matrix instanceof SVG.Matrix)) {
-    matrix = new SVG.Matrix(matrix)
-  }
-
-  return matrix
 }
 
 // Add centre point to transform object
@@ -216,3 +199,113 @@ function idFromReference (url) {
 
 // Create matrix array for looping
 var abcdef = 'abcdef'.split('')
+
+function closeEnough (a, b, threshold) {
+  return Math.abs(b - a) < (threshold || 1e-6)
+}
+
+function isMatrixLike (o) {
+  return (
+    o.a != null ||
+    o.b != null ||
+    o.c != null ||
+    o.d != null ||
+    o.e != null ||
+    o.f != null
+  )
+}
+
+// TODO: Refactor this to a static function of matrix.js
+function formatTransforms (o) {
+  // Get all of the parameters required to form the matrix
+  var flipBoth = o.flip === 'both' || o.flip === true
+  var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
+  var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
+  var skewX = o.skew && o.skew.length ? o.skew[0]
+    : isFinite(o.skew) ? o.skew
+    : isFinite(o.skewX) ? o.skewX
+    : 0
+  var skewY = o.skew && o.skew.length ? o.skew[1]
+    : isFinite(o.skew) ? o.skew
+    : isFinite(o.skewY) ? o.skewY
+    : 0
+  var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
+    : isFinite(o.scale) ? o.scale * flipX
+    : isFinite(o.scaleX) ? o.scaleX * flipX
+    : flipX
+  var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
+    : isFinite(o.scale) ? o.scale * flipY
+    : isFinite(o.scaleY) ? o.scaleY * flipY
+    : flipY
+  var shear = o.shear || 0
+  var theta = o.rotate || o.theta || 0
+  var origin = new SVG.Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
+  var ox = origin.x
+  var oy = origin.y
+  var position = new SVG.Point(o.position || o.px || o.positionX, o.py || o.positionY)
+  var px = position.x
+  var py = position.y
+  var translate = new SVG.Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
+  var tx = translate.x
+  var ty = translate.y
+  var relative = new SVG.Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
+  var rx = relative.x
+  var ry = relative.y
+
+  // Populate all of the values
+  return {
+    scaleX, scaleY, skewX, skewY, shear, theta, rx, ry, tx, ty, ox, oy, px, py
+  }
+}
+
+// left matrix, right matrix, target matrix which is overwritten
+function matrixMultiply (l, r, o) {
+  // Work out the product directly
+  var a = l.a * r.a + l.c * r.b
+  var b = l.b * r.a + l.d * r.b
+  var c = l.a * r.c + l.c * r.d
+  var d = l.b * r.c + l.d * r.d
+  var e = l.e + l.a * r.e + l.c * r.f
+  var f = l.f + l.b * r.e + l.d * r.f
+
+  // make sure to use local variables because l/r and o could be the same
+  o.a = a
+  o.b = b
+  o.c = c
+  o.d = d
+  o.e = e
+  o.f = f
+
+  return o
+}
+
+function getOrigin (o, element) {
+  // Allow origin or around as the names
+  let origin = o.origin // o.around == null ? o.origin : o.around
+  let ox, oy
+
+  // Allow the user to pass a string to rotate around a given point
+  if (typeof origin === 'string' || origin == null) {
+    // Get the bounding box of the element with no transformations applied
+    const string = (origin || 'center').toLowerCase().trim()
+    const { height, width, x, y } = element.bbox()
+
+    // Calculate the transformed x and y coordinates
+    let bx = string.includes('left') ? x
+      : string.includes('right') ? x + width
+      : x + width / 2
+    let by = string.includes('top') ? y
+      : string.includes('bottom') ? y + height
+      : y + height / 2
+
+    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+    ox = o.ox != null ? o.ox : bx
+    oy = o.oy != null ? o.oy : by
+  } else {
+    ox = origin[0]
+    oy = origin[1]
+  }
+
+  // Return the origin as it is if it wasn't a string
+  return [ ox, oy ]
+}

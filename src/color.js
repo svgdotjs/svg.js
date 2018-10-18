@@ -1,7 +1,36 @@
 /* globals fullHex, compToHex */
 
+/*
+
+Color {
+  constructor (a, b, c, space) {
+    space: 'hsl'
+    a: 30
+    b: 20
+    c: 10
+  },
+
+  toRgb () { return new Color in rgb space }
+  toHsl () { return new Color in hsl space }
+  toLab () { return new Color in lab space }
+
+  toArray () { [space, a, b, c] }
+  fromArray () { convert it back }
+}
+
+// Conversions aren't always exact because of monitor profiles etc...
+new Color(h, s, l, 'hsl') !== new Color(r, g, b).hsl()
+new Color(100, 100, 100, [space])
+new Color('hsl(30, 20, 10)')
+
+// Sugar
+SVG.rgb(30, 20, 50).lab()
+SVG.hsl()
+SVG.lab('rgb(100, 100, 100)')
+*/
+
 // Module for color convertions
-SVG.Color = function (color) {
+SVG.Color = function (color, g, b) {
   var match
 
   // initialize defaults
@@ -30,10 +59,18 @@ SVG.Color = function (color) {
       this.g = parseInt(match[2], 16)
       this.b = parseInt(match[3], 16)
     }
+  } else if (Array.isArray(color)) {
+    this.r = color[0]
+    this.g = color[1]
+    this.b = color[2]
   } else if (typeof color === 'object') {
     this.r = color.r
     this.g = color.g
     this.b = color.b
+  } else if (arguments.length === 3) {
+    this.r = color
+    this.g = g
+    this.b = b
   }
 }
 
@@ -42,12 +79,18 @@ SVG.extend(SVG.Color, {
   toString: function () {
     return this.toHex()
   },
+  toArray: function () {
+    return [this.r, this.g, this.b]
+  },
+  fromArray: function (a) {
+    return new SVG.Color(a)
+  },
   // Build hex value
   toHex: function () {
     return '#' +
-      compToHex(this.r) +
-      compToHex(this.g) +
-      compToHex(this.b)
+      compToHex(Math.round(this.r)) +
+      compToHex(Math.round(this.g)) +
+      compToHex(Math.round(this.b))
   },
   // Build rgb value
   toRgb: function () {

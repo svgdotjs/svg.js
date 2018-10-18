@@ -1,7 +1,7 @@
 SVG.Text = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node || SVG.create('text'))
+    SVG.Element.call(this, node || SVG.create('text'))
     this.dom.leading = new SVG.Number(1.3)    // store leading value for rebuilding
     this._rebuild = true                      // enable automatic updating of dy values
     this._build = false                     // disable build mode for adding multiple lines

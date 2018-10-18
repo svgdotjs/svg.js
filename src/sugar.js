@@ -30,58 +30,89 @@ var sugar = {
     return this
   }
 
-  SVG.extend([SVG.Element, SVG.FX], extension)
+  SVG.extend([SVG.Element, SVG.Timeline], extension)
 })
 
-SVG.extend([SVG.Element, SVG.FX], {
-  // Map rotation to transform
-  rotate: function (d, cx, cy) {
-    return this.transform({ rotation: d, cx: cx, cy: cy })
+SVG.extend([SVG.Element, SVG.Timeline], {
+  // Let the user set the matrix directly
+  matrix: function (mat, b, c, d, e, f) {
+    // Act as a getter
+    if (mat == null) {
+      return new SVG.Matrix(this)
+    }
+
+    // Act as a setter, the user can pass a matrix or a set of numbers
+    return this.attr('transform', new SVG.Matrix(mat, b, c, d, e, f))
   },
+
+  // Map rotation to transform
+  rotate: function (angle, cx, cy) {
+    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
+  },
+
   // Map skew to transform
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({ skew: x, cx: y, cy: cx })
-      : this.transform({ skewX: x, skewY: y, cx: cx, cy: cy })
+      ? this.transform({skew: x, ox: y, oy: cx}, true)
+      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
   },
+
+  shear: function (lam, cx, cy) {
+    return this.transform({shear: lam, ox: cx, oy: cy}, true)
+  },
+
   // Map scale to transform
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({ scale: x, cx: y, cy: cx })
-      : this.transform({ scaleX: x, scaleY: y, cx: cx, cy: cy })
+      ? this.transform({ scale: x, ox: y, oy: cx }, true)
+      : this.transform({ scale: [x, y], ox: cx, oy: cy }, true)
   },
+
   // Map translate to transform
   translate: function (x, y) {
-    return this.transform({ x: x, y: y })
+    return this.transform({ translate: [x, y] }, true)
   },
+
+  // Map relative translations to transform
+  relative: function (x, y) {
+    return this.transform({ relative: [x, y] }, true)
+  },
+
   // Map flip to transform
-  flip: function (a, o) {
-    o = typeof a === 'number' ? a : o
-    return this.transform({ flip: a || 'both', offset: o })
+  flip: function (direction, around) {
+    var directionString = typeof direction === 'string' ? direction
+      : isFinite(direction) ? 'both'
+      : 'both'
+    var origin = (direction === 'both' && isFinite(around)) ? [around, around]
+      : (direction === 'x') ? [around, 0]
+      : (direction === 'y') ? [0, around]
+      : isFinite(direction) ? [direction, direction]
+      : [0, 0]
+    this.transform({flip: directionString, origin: origin}, true)
   },
-  // Map matrix to transform
-  matrix: function (m) {
-    return this.attr('transform', new SVG.Matrix(arguments.length === 6 ? [].slice.call(arguments) : m))
-  },
+
   // Opacity
   opacity: function (value) {
     return this.attr('opacity', value)
   },
+
   // Relative move over x axis
   dx: function (x) {
-    return this.x(new SVG.Number(x).plus(this instanceof SVG.FX ? 0 : this.x()), true)
+    return this.x(new SVG.Number(x).plus(this instanceof SVG.Timeline ? 0 : this.x()), true)
   },
+
   // Relative move over y axis
   dy: function (y) {
-    return this.y(new SVG.Number(y).plus(this instanceof SVG.FX ? 0 : this.y()), true)
+    return this.y(new SVG.Number(y).plus(this instanceof SVG.Timeline ? 0 : this.y()), true)
   },
+
   // Relative move over x and y axes
   dmove: function (x, y) {
     return this.dx(x).dy(y)
   }
 })
 
-SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.FX], {
+SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.Timeline], {
   // Add x and y radius
   radius: function (x, y) {
     var type = (this._target || this).type
@@ -102,7 +133,7 @@ SVG.extend(SVG.Path, {
   }
 })
 
-SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.FX], {
+SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.Timeline], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

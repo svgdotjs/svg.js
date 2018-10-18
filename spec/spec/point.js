@@ -26,11 +26,11 @@ describe('Point', function() {
     })
 
     describe('with only x given', function() {
-      it('creates a point using the given value for both x and y', function() {
+      it('sets the y value to 0', function() {
         var point = new SVG.Point(7)
 
         expect(point.x).toBe(7)
-        expect(point.y).toBe(7)
+        expect(point.y).toBe(0)
       })
     })
 

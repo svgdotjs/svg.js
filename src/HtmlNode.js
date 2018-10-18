@@ -1,6 +1,7 @@
 /* global createElement */
 
 SVG.HtmlNode = SVG.invent({
+  inherit: SVG.EventTarget,
   create: function (element) {
     this.node = element
   },
@@ -19,6 +20,10 @@ SVG.HtmlNode = SVG.invent({
     put: function (element, i) {
       this.add(element, i)
       return element
+    },
+
+    getEventTarget: function () {
+      return this.node
     }
   }
 })

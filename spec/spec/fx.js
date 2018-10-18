@@ -1729,252 +1729,252 @@ describe('FX', function() {
     expect(called).toBe(true)
   })
 
-  it('animates matrix', function() {
-    var ctm, called = false
+  // it('animates matrix', function() {
+  //   var ctm, called = false
+  //
+  //   fx.transform({a:0.8, b:0.4, c:-0.15, d:0.7, e: 90.3, f: 27.07}).after(function(){
+  //
+  //     var ctm = rect.ctm()
+  //     expect(ctm.a).toBeCloseTo(0.8)
+  //     expect(ctm.b).toBeCloseTo(0.4)
+  //     expect(ctm.c).toBeCloseTo(-0.15)
+  //     expect(ctm.d).toBeCloseTo(0.7)
+  //     expect(ctm.e).toBeCloseTo(90.3)
+  //     expect(ctm.f).toBeCloseTo(27.07)
+  //     called = true
+  //
+  //   })
+  //
+  //   jasmine.clock().tick(250)
+  //   fx.step()
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBeLessThan(1)
+  //   expect(ctm.b).toBeGreaterThan(0)
+  //   expect(ctm.c).toBeLessThan(0)
+  //   expect(ctm.d).toBeGreaterThan(0)
+  //   expect(ctm.e).toBeGreaterThan(0)
+  //   expect(ctm.f).toBeGreaterThan(0)
+  //
+  //   jasmine.clock().tick(250)
+  //   fx.step()
+  //   expect(called).toBe(true)
+  // })
 
-    fx.transform({a:0.8, b:0.4, c:-0.15, d:0.7, e: 90.3, f: 27.07}).after(function(){
+  // it('animate a scale transform using the passed center point when there is already a transform in place', function(){
+  //   var ctm
+  //
+  //   // When no ceter point is passed to the method scale, it use the center of the element as the center point
+  //
+  //   rect.scale(2) // The transform in place
+  //
+  //   fx.scale(0.5)
+  //   jasmine.clock().tick(500) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(0.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(0.5)
+  //   expect(ctm.e).toBe(75)
+  //   expect(ctm.f).toBe(75)
+  // })
 
-      var ctm = rect.ctm()
-      expect(ctm.a).toBeCloseTo(0.8)
-      expect(ctm.b).toBeCloseTo(0.4)
-      expect(ctm.c).toBeCloseTo(-0.15)
-      expect(ctm.d).toBeCloseTo(0.7)
-      expect(ctm.e).toBeCloseTo(90.3)
-      expect(ctm.f).toBeCloseTo(27.07)
-      called = true
+  // it('animate a flip(x) transform', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'x'}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(0.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(1)
+  //   expect(ctm.e).toBe(75)
+  //   expect(ctm.f).toBe(0)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(-1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(1)
+  //   expect(ctm.e).toBe(300)
+  //   expect(ctm.f).toBe(0)
+  // })
 
-    })
+  // it('animate a flip(x) transform with an offset', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'x', offset: 20}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(0.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(1)
+  //   expect(ctm.e).toBe(10)
+  //   expect(ctm.f).toBe(0)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(-1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(1)
+  //   expect(ctm.e).toBe(40)
+  //   expect(ctm.f).toBe(0)
+  // })
 
-    jasmine.clock().tick(250)
-    fx.step()
-    ctm = rect.ctm()
-    expect(ctm.a).toBeLessThan(1)
-    expect(ctm.b).toBeGreaterThan(0)
-    expect(ctm.c).toBeLessThan(0)
-    expect(ctm.d).toBeGreaterThan(0)
-    expect(ctm.e).toBeGreaterThan(0)
-    expect(ctm.f).toBeGreaterThan(0)
+  // it('animate a flip(y) transform', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'y'}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(0.5)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(75)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(-1)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(300)
+  // })
 
-    jasmine.clock().tick(250)
-    fx.step()
-    expect(called).toBe(true)
-  })
+  // it('animate a flip(y) transform with an offset', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'y', offset: 20}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(0.5)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(10)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(-1)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(40)
+  // })
 
-  it('animate a scale transform using the passed center point when there is already a transform in place', function(){
-    var ctm
+  // it('animate a flip() transform', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'both'}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(0.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(0.5)
+  //   expect(ctm.e).toBe(75)
+  //   expect(ctm.f).toBe(75)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(-1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(-1)
+  //   expect(ctm.e).toBe(300)
+  //   expect(ctm.f).toBe(300)
+  // })
 
-    // When no ceter point is passed to the method scale, it use the center of the element as the center point
+  // it('animate a flip() transform with an offset', function() {
+  //   var ctm
+  //
+  //   fx.transform({flip: 'both', offset: 20}).start()
+  //
+  //   jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(0.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(0.5)
+  //   expect(ctm.e).toBe(10)
+  //   expect(ctm.f).toBe(10)
+  //
+  //   jasmine.clock().tick(475) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(-1)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(-1)
+  //   expect(ctm.e).toBe(40)
+  //   expect(ctm.f).toBe(40)
+  // })
 
-    rect.scale(2) // The transform in place
-
-    fx.scale(0.5)
-    jasmine.clock().tick(500) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(0.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(0.5)
-    expect(ctm.e).toBe(75)
-    expect(ctm.f).toBe(75)
-  })
-
-  it('animate a flip(x) transform', function() {
-    var ctm
-
-    fx.transform({flip: 'x'}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(0.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(1)
-    expect(ctm.e).toBe(75)
-    expect(ctm.f).toBe(0)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(-1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(1)
-    expect(ctm.e).toBe(300)
-    expect(ctm.f).toBe(0)
-  })
-
-  it('animate a flip(x) transform with an offset', function() {
-    var ctm
-
-    fx.transform({flip: 'x', offset: 20}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(0.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(1)
-    expect(ctm.e).toBe(10)
-    expect(ctm.f).toBe(0)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(-1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(1)
-    expect(ctm.e).toBe(40)
-    expect(ctm.f).toBe(0)
-  })
-
-  it('animate a flip(y) transform', function() {
-    var ctm
-
-    fx.transform({flip: 'y'}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(0.5)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(75)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(-1)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(300)
-  })
-
-  it('animate a flip(y) transform with an offset', function() {
-    var ctm
-
-    fx.transform({flip: 'y', offset: 20}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(0.5)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(10)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(-1)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(40)
-  })
-
-  it('animate a flip() transform', function() {
-    var ctm
-
-    fx.transform({flip: 'both'}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(0.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(0.5)
-    expect(ctm.e).toBe(75)
-    expect(ctm.f).toBe(75)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(-1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(-1)
-    expect(ctm.e).toBe(300)
-    expect(ctm.f).toBe(300)
-  })
-
-  it('animate a flip() transform with an offset', function() {
-    var ctm
-
-    fx.transform({flip: 'both', offset: 20}).start()
-
-    jasmine.clock().tick(125) // Have the animation be 1/4 of the way (not halfway as usual because of a bug in the node method getCTM on Firefox)
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(0.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(0.5)
-    expect(ctm.e).toBe(10)
-    expect(ctm.f).toBe(10)
-
-    jasmine.clock().tick(475) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(-1)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(-1)
-    expect(ctm.e).toBe(40)
-    expect(ctm.f).toBe(40)
-  })
-
-  it('animate relative matrix transform', function(){
-    var ctm
-
-    fx.transform(new SVG.Matrix().scale(2,0,0), true)
-
-    jasmine.clock().tick(250) // Have the animation be half way
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(1.5)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(1.5)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(0)
-
-    jasmine.clock().tick(250) // Have the animation reach its end
-    fx.step()
-
-    ctm = rect.ctm()
-    expect(ctm.a).toBe(2)
-    expect(ctm.b).toBe(0)
-    expect(ctm.c).toBe(0)
-    expect(ctm.d).toBe(2)
-    expect(ctm.e).toBe(0)
-    expect(ctm.f).toBe(0)
-  })
+  // it('animate relative matrix transform', function(){
+  //   var ctm
+  //
+  //   fx.transform(new SVG.Matrix().scale(2,0,0), true)
+  //
+  //   jasmine.clock().tick(250) // Have the animation be half way
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(1.5)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(1.5)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(0)
+  //
+  //   jasmine.clock().tick(250) // Have the animation reach its end
+  //   fx.step()
+  //
+  //   ctm = rect.ctm()
+  //   expect(ctm.a).toBe(2)
+  //   expect(ctm.b).toBe(0)
+  //   expect(ctm.c).toBe(0)
+  //   expect(ctm.d).toBe(2)
+  //   expect(ctm.e).toBe(0)
+  //   expect(ctm.f).toBe(0)
+  // })
 
   describe('when animating plots', function() {
     it('should allow plot animations to be chained', function() {
@@ -2154,7 +2154,7 @@ describe('FX', function() {
       var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
 
       var textPath = text.path(path).font({ size: 42.5, family: 'Verdana' })
-      
+
 
       textPath.attr('startOffset', startValue)
       fx = textPath.animate(1000).attr('startOffset', endValue)
@@ -2684,72 +2684,72 @@ describe('FX', function() {
     })
   })
 
-  describe('transform()', function() {
-    it('returns itself when no valid transformation was found', function() {
-      expect(fx.transform({})).toBe(fx)
-    })
-    it('gets the current transforms', function() {
-      expect(fx.transform()).toEqual(new SVG.Matrix(rect).extract())
-    })
-    it('gets a certain transformation if used with an argument', function() {
-      expect(fx.transform('x')).toEqual(0)
-    })
-    it('adds an entry to transforms when matrix given', function() {
-      var matrix = new SVG.Matrix(1,2,3,4,5,6)
-      fx.transform(matrix)
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
-    })
-    it('sets relative flag when given', function() {
-      var matrix = new SVG.Matrix(1,2,3,4,5,6)
-      fx.transform(matrix, true)
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
-      expect(fx.situation.transforms[0].relative).toBe(true)
-    })
-    it('adds an entry to transforms when rotation given', function() {
-      fx.transform({rotation: 30, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Rotate(30, 0, 0)))
-    })
-    it('adds an entry to transforms when scale given', function() {
-      fx.transform({scale: 2, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 2, 0, 0)))
-    })
-    it('adds an entry to transforms when scaleX given', function() {
-      fx.transform({scaleX: 2, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 1, 0, 0)))
-    })
-    it('adds an entry to transforms when scaleY given', function() {
-      fx.transform({scaleY: 2, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(1, 2, 0, 0)))
-    })
-    it('adds an entry to transforms when skewX given', function() {
-      fx.transform({skewX: 2, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(2, 0, 0, 0)))
-    })
-    it('adds an entry to transforms when skewY given', function() {
-      fx.transform({skewY: 2, cx:0, cy:0})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(0, 2, 0, 0)))
-    })
-    it('adds an entry to transforms when flip x given', function() {
-      fx.transform({flip: 'x'})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 150)))
-    })
-    it('adds an entry to transforms when flip x with offset given', function() {
-      fx.transform({flip: 'x', offset: 100})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 100)))
-    })
-    it('adds an entry to transforms when flip y given', function() {
-      fx.transform({flip: 'y'})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('y', 150)))
-    })
-    it('adds an entry to transforms when x given', function() {
-      fx.transform({x:20})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(20, undefined)))
-    })
-    it('adds an entry to transforms when y given', function() {
-      fx.transform({y:20})
-      expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(undefined, 20)))
-    })
-  })
+  // describe('transform()', function() {
+  //   it('returns itself when no valid transformation was found', function() {
+  //     expect(fx.transform({})).toBe(fx)
+  //   })
+  //   it('gets the current transforms', function() {
+  //     expect(fx.transform()).toEqual(new SVG.Matrix(rect).extract())
+  //   })
+  //   it('gets a certain transformation if used with an argument', function() {
+  //     expect(fx.transform('x')).toEqual(0)
+  //   })
+  //   it('adds an entry to transforms when matrix given', function() {
+  //     var matrix = new SVG.Matrix(1,2,3,4,5,6)
+  //     fx.transform(matrix)
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
+  //   })
+  //   it('sets relative flag when given', function() {
+  //     var matrix = new SVG.Matrix(1,2,3,4,5,6)
+  //     fx.transform(matrix, true)
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(matrix))
+  //     expect(fx.situation.transforms[0].relative).toBe(true)
+  //   })
+  //   it('adds an entry to transforms when rotation given', function() {
+  //     fx.transform({rotation: 30, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Rotate(30, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when scale given', function() {
+  //     fx.transform({scale: 2, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 2, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when scaleX given', function() {
+  //     fx.transform({scaleX: 2, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(2, 1, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when scaleY given', function() {
+  //     fx.transform({scaleY: 2, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Scale(1, 2, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when skewX given', function() {
+  //     fx.transform({skewX: 2, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(2, 0, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when skewY given', function() {
+  //     fx.transform({skewY: 2, cx:0, cy:0})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Skew(0, 2, 0, 0)))
+  //   })
+  //   it('adds an entry to transforms when flip x given', function() {
+  //     fx.transform({flip: 'x'})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 150)))
+  //   })
+  //   it('adds an entry to transforms when flip x with offset given', function() {
+  //     fx.transform({flip: 'x', offset: 100})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('x', 100)))
+  //   })
+  //   it('adds an entry to transforms when flip y given', function() {
+  //     fx.transform({flip: 'y'})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining((new SVG.Matrix()).flip('y', 150)))
+  //   })
+  //   it('adds an entry to transforms when x given', function() {
+  //     fx.transform({x:20})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(20, undefined)))
+  //   })
+  //   it('adds an entry to transforms when y given', function() {
+  //     fx.transform({y:20})
+  //     expect(fx.situation.transforms[0]).toEqual(jasmine.objectContaining(new SVG.Translate(undefined, 20)))
+  //   })
+  // })
 
   /* shortcuts for animation */
   describe('animate()', function() {

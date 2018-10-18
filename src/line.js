@@ -16,6 +16,7 @@ SVG.Line = SVG.invent({
         [ this.attr('x2'), this.attr('y2') ]
       ])
     },
+
     // Overwrite native plot() method
     plot: function (x1, y1, x2, y2) {
       if (x1 == null) {
@@ -28,10 +29,12 @@ SVG.Line = SVG.invent({
 
       return this.attr(x1)
     },
+
     // Move by left top corner
     move: function (x, y) {
       return this.attr(this.array().move(x, y).toLine())
     },
+
     // Set element size to given width and height
     size: function (width, height) {
       var p = proportionalSize(this, width, height)

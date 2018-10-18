@@ -1,7 +1,7 @@
 SVG.Doc = SVG.invent({
   // Initialize node
   create: function (node) {
-    this.constructor(node || SVG.create('svg'))
+    SVG.Element.call(this, node || SVG.create('svg'))
 
     // set svg element attributes and ensure defs node
     this.namespace()

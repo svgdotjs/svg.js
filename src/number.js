@@ -3,6 +3,9 @@
 SVG.Number = SVG.invent({
   // Initialize
   create: function (value, unit) {
+    unit = Array.isArray(value) ? value[1] : unit
+    value = Array.isArray(value) ? value[0] : value
+
     // initialize defaults
     this.value = 0
     this.unit = unit || ''
@@ -45,6 +48,9 @@ SVG.Number = SVG.invent({
     toJSON: function () {
       return this.toString()
     },   // Convert to primitive
+    toArray: function () {
+      return [this.value, this.unit]
+    },
     valueOf: function () {
       return this.value
     },
@@ -99,6 +105,5 @@ SVG.Number = SVG.invent({
           .times(pos)
           .plus(this)
     }
-
   }
 })

@@ -1,14 +1,14 @@
 describe('Ellipse', function() {
   var ellipse
-  
+
   beforeEach(function() {
     ellipse = draw.ellipse(240,90)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
       expect(ellipse.x()).toBe(0)
@@ -19,7 +19,7 @@ describe('Ellipse', function() {
       expect(box.x).toBeCloseTo(123)
     })
   })
-  
+
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(ellipse.y()).toBe(0)
@@ -30,7 +30,7 @@ describe('Ellipse', function() {
       expect(box.y).toBe(345)
     })
   })
-  
+
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
       expect(ellipse.cx()).toBe(120)
@@ -41,7 +41,7 @@ describe('Ellipse', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('returns the value of cy without an argument', function() {
       expect(ellipse.cy()).toBe(45)
@@ -70,7 +70,7 @@ describe('Ellipse', function() {
       expect(ellipse.node.getAttribute('ry')).toBe('0')
     })
   })
-  
+
   describe('move()', function() {
     it('sets the x and y position', function() {
       ellipse.move(123, 456)
@@ -104,7 +104,7 @@ describe('Ellipse', function() {
       expect(ellipse.node.getAttribute('cy')).toBe('130')
     })
   })
-  
+
   describe('center()', function() {
     it('sets the cx and cy position', function() {
       ellipse.center(321,567)
@@ -133,7 +133,7 @@ describe('Ellipse', function() {
       expect((ellipse.height() / 2).toString()).toBe(ellipse.node.getAttribute('ry'))
     })
   })
-  
+
   describe('size()', function() {
     it('defines the rx and ry of the element', function() {
       ellipse.size(987,654)
@@ -153,17 +153,17 @@ describe('Ellipse', function() {
       expect(ellipse.width() / ellipse.height()).toBe(box.width / box.height)
     })
   })
-  
+
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
       var box = ellipse.scale(2).rbox()
-      
+
       expect(box.width).toBe(ellipse.attr('rx') * 2 * 2)
       expect(box.height).toBe(ellipse.attr('ry') * 2 * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
       var box = ellipse.scale(2, 3.5).rbox()
-      
+
       expect(box.width).toBe(ellipse.attr('rx') * 2 * 2)
       expect(box.height).toBe(ellipse.attr('ry') * 2 * 3.5)
     })
@@ -171,17 +171,9 @@ describe('Ellipse', function() {
 
   describe('translate()', function() {
     it('sets the translation of an element', function() {
-      ellipse.transform({ x: 12, y: 12 })
+      ellipse.transform({ tx: 12, ty: 12 })
       expect(ellipse.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
-  
+
 })
-
-
-
-
-
-
-
-

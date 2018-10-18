@@ -1,14 +1,14 @@
 describe('Rect', function() {
   var rect
-  
+
   beforeEach(function() {
     rect = draw.rect(220,100)
   })
-  
+
   afterEach(function() {
     draw.clear()
   })
-  
+
   describe('x()', function() {
     it('should return the value of x without an argument', function() {
       expect(rect.x()).toBe(0)
@@ -18,7 +18,7 @@ describe('Rect', function() {
       expect(rect.node.getAttribute('x')).toBe('123')
     })
   })
-  
+
   describe('y()', function() {
     it('should return the value of y without an argument', function() {
       expect(rect.y()).toBe(0)
@@ -28,7 +28,7 @@ describe('Rect', function() {
       expect(rect.node.getAttribute('y')).toBe('345')
     })
   })
-  
+
   describe('cx()', function() {
     it('should return the value of cx without an argument', function() {
       expect(rect.cx()).toBe(110)
@@ -39,7 +39,7 @@ describe('Rect', function() {
       expect(box.cx).toBe(123)
     })
   })
-  
+
   describe('cy()', function() {
     it('should return the value of cy without an argument', function() {
       expect(rect.cy()).toBe(50)
@@ -63,7 +63,7 @@ describe('Rect', function() {
       expect(rect.node.getAttribute('ry')).toBe('30')
     })
   })
-  
+
   describe('move()', function() {
     it('should set the x and y position', function() {
       rect.move(123,456)
@@ -96,7 +96,7 @@ describe('Rect', function() {
       expect(rect.node.getAttribute('y')).toBe('85')
     })
   })
-  
+
   describe('center()', function() {
     it('should set the cx and cy position', function() {
       rect.center(321,567)
@@ -105,7 +105,7 @@ describe('Rect', function() {
       expect(box.cy).toBe(567)
     })
   })
-  
+
   describe('width()', function() {
     it('sets the width of the element', function() {
       rect.width(789)
@@ -145,17 +145,17 @@ describe('Rect', function() {
       expect(rect.width() / rect.height()).toBe(box.width / box.height)
     })
   })
-  
+
   describe('scale()', function() {
     it('should scale the element universally with one argument', function() {
       var box = rect.scale(2).rbox()
-      
+
       expect(box.width).toBe(rect.attr('width') * 2)
       expect(box.height).toBe(rect.attr('height') * 2)
     })
     it('should scale the element over individual x and y axes with two arguments', function() {
       var box = rect.scale(2, 3.5).rbox()
-      
+
       expect(box.width).toBe(rect.attr('width') * 2)
       expect(box.height).toBe(rect.attr('height') * 3.5)
     })
@@ -163,17 +163,9 @@ describe('Rect', function() {
 
   describe('translate()', function() {
     it('should set the translation of an element', function() {
-      rect.transform({ x: 12, y: 12 })
+      rect.transform({ tx: 12, ty: 12 })
       expect(rect.node.getAttribute('transform')).toBe('matrix(1,0,0,1,12,12)')
     })
   })
-  
+
 })
-
-
-
-
-
-
-
-

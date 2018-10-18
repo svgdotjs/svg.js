@@ -10,23 +10,23 @@ if(typeof exports === 'object'){
   drawing = document.documentElement
   imageUrl = 'spec/fixtures/pixel.png'
   parserInDoc = true
-  
+
   function tag(name, attrs, children) {
     var el = document.createElement(name)
     for(var i in attrs){
       el.setAttribute(i, attrs[i])
     }
-    
+
     for(var i in children){
       if(typeof children[i] == 'string')
         children[i] = document.createTextNode(children[i])
-        
+
       el.appendChild(children[i])
     }
-    
+
     return el
   }
-  
+
   // create fixtures in svgdom
   var el = tag('svg', {
     height:0,
@@ -122,9 +122,9 @@ if(typeof exports === 'object'){
     tag('polygon', {points: '200,10 250,190 160,210'}),
     tag('polyline', {points: '20,20 40,25 60,40 80,120 120,140 200,180'})
   ])
-  
+
   document.appendChild(el)
-  
+
 }else{
   drawing = document.createElement('div')
   document.getElementsByTagName('body')[0].appendChild(drawing)
@@ -173,5 +173,17 @@ window.roundBox = function(box) {
     Math.round(box.y),
     Math.round(box.width),
     Math.round(box.height)
+  )
+}
+
+// Same thing here with matrices
+window.roundMatrix = function (mat) {
+  return new SVG.Matrix(
+    +(mat.a.toFixed(5)),
+    +(mat.b.toFixed(5)),
+    +(mat.c.toFixed(5)),
+    +(mat.d.toFixed(5)),
+    +(mat.e.toFixed(5)),
+    +(mat.f.toFixed(5)),
   )
 }

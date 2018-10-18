@@ -19,6 +19,12 @@ SVG.extend(SVG.PointArray, {
     return array.join(' ')
   },
 
+  toArray: function () {
+    return this.value.reduce(function (prev, curr) {
+      return [].concat.call(prev, curr)
+    }, [])
+  },
+
   // Convert array to line object
   toLine: function () {
     return {

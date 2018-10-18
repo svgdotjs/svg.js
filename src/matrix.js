@@ -1,76 +1,168 @@
-/* global abcdef, arrayToMatrix, deltaTransformPoint, parseMatrix */
+/* global abcdef arrayToMatrix closeEnough formatTransforms isMatrixLike matrixMultiply */
 
 SVG.Matrix = SVG.invent({
   // Initialize
   create: function (source) {
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
-    var i
 
     // ensure source as object
     source = source instanceof SVG.Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(SVG.regex.delimiter).map(parseFloat))
-      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : Array.isArray(source) ? arrayToMatrix(source)
-      : typeof source === 'object' ? source
+      : (typeof source === 'object' && isMatrixLike(source)) ? source
+      : (typeof source === 'object') ? new SVG.Matrix().transform(source)
+      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
       : base
 
-    // merge source
-    for (i = abcdef.length - 1; i >= 0; --i) {
-      this[abcdef[i]] = source[abcdef[i]] != null
-        ? source[abcdef[i]]
-        : base[abcdef[i]]
-    }
+    // Merge the source matrix with the base matrix
+    this.a = source.a != null ? source.a : base.a
+    this.b = source.b != null ? source.b : base.b
+    this.c = source.c != null ? source.c : base.c
+    this.d = source.d != null ? source.d : base.d
+    this.e = source.e != null ? source.e : base.e
+    this.f = source.f != null ? source.f : base.f
   },
 
   // Add methods
   extend: {
-    // Extract individual transformations
-    extract: function () {
-      // find delta transform points
-      var px = deltaTransformPoint(this, 0, 1)
-      var py = deltaTransformPoint(this, 1, 0)
-      var skewX = 180 / Math.PI * Math.atan2(px.y, px.x) - 90
 
+    // Clones this matrix
+    clone: function () {
+      return new SVG.Matrix(this)
+    },
+
+    // Transform a matrix into another matrix by manipulating the space
+    transform: function (o) {
+      // Check if o is a matrix and then left multiply it directly
+      if (isMatrixLike(o)) {
+        var matrix = new SVG.Matrix(o)
+        return matrix.multiplyO(this)
+      }
+
+      // Get the proposed transformations and the current transformations
+      var t = formatTransforms(o)
+      var current = this
+      let { x: ox, y: oy } = new SVG.Point(t.ox, t.oy).transform(current)
+
+      // Construct the resulting matrix
+      var transformer = new SVG.Matrix()
+        .translateO(t.rx, t.ry)
+        .lmultiplyO(current)
+        .translateO(-ox, -oy)
+        .scaleO(t.scaleX, t.scaleY)
+        .skewO(t.skewX, t.skewY)
+        .shearO(t.shear)
+        .rotateO(t.theta)
+        .translateO(ox, oy)
+
+      // If we want the origin at a particular place, we force it there
+      if (isFinite(t.px) || isFinite(t.py)) {
+        const origin = new SVG.Point(ox, oy).transform(transformer)
+        // TODO: Replace t.px with isFinite(t.px)
+        const dx = t.px ? t.px - origin.x : 0
+        const dy = t.py ? t.py - origin.y : 0
+        transformer.translateO(dx, dy)
+      }
+
+      // Translate now after positioning
+      transformer.translateO(t.tx, t.ty)
+      return transformer
+    },
+
+    // Applies a matrix defined by its affine parameters
+    compose: function (o) {
+      if (o.origin) {
+        o.originX = o.origin[0]
+        o.originY = o.origin[1]
+      }
+      // Get the parameters
+      var ox = o.originX || 0
+      var oy = o.originY || 0
+      var sx = o.scaleX || 1
+      var sy = o.scaleY || 1
+      var lam = o.shear || 0
+      var theta = o.rotate || 0
+      var tx = o.translateX || 0
+      var ty = o.translateY || 0
+
+      // Apply the standard matrix
+      var result = new SVG.Matrix()
+        .translateO(-ox, -oy)
+        .scaleO(sx, sy)
+        .shearO(lam)
+        .rotateO(theta)
+        .translateO(tx, ty)
+        .lmultiplyO(this)
+        .translateO(ox, oy)
+      return result
+    },
+
+    // Decomposes this matrix into its affine parameters
+    decompose: function (cx = 0, cy = 0) {
+      // Get the parameters from the matrix
+      var a = this.a
+      var b = this.b
+      var c = this.c
+      var d = this.d
+      var e = this.e
+      var f = this.f
+
+      // Figure out if the winding direction is clockwise or counterclockwise
+      var determinant = a * d - b * c
+      var ccw = determinant > 0 ? 1 : -1
+
+      // Since we only shear in x, we can use the x basis to get the x scale
+      // and the rotation of the resulting matrix
+      var sx = ccw * Math.sqrt(a * a + b * b)
+      var thetaRad = Math.atan2(ccw * b, ccw * a)
+      var theta = 180 / Math.PI * thetaRad
+      var ct = Math.cos(thetaRad)
+      var st = Math.sin(thetaRad)
+
+      // We can then solve the y basis vector simultaneously to get the other
+      // two affine parameters directly from these parameters
+      var lam = (a * c + b * d) / determinant
+      var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
+
+      // Use the translations
+      let tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
+      let ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
+
+      // Construct the decomposition and return it
       return {
-        // translation
-        x: this.e,
-        y: this.f,
-        transformedX: (this.e * Math.cos(skewX * Math.PI / 180) + this.f * Math.sin(skewX * Math.PI / 180)) / Math.sqrt(this.a * this.a + this.b * this.b),
-        transformedY: (this.f * Math.cos(skewX * Math.PI / 180) + this.e * Math.sin(-skewX * Math.PI / 180)) / Math.sqrt(this.c * this.c + this.d * this.d),
-        // skew
-        skewX: -skewX,
-        skewY: 180 / Math.PI * Math.atan2(py.y, py.x),
-        // scale
-        scaleX: Math.sqrt(this.a * this.a + this.b * this.b),
-        scaleY: Math.sqrt(this.c * this.c + this.d * this.d),
-        // rotation
-        rotation: skewX,
+        // Return the affine parameters
+        scaleX: sx,
+        scaleY: sy,
+        shear: lam,
+        rotate: theta,
+        translateX: tx,
+        translateY: ty,
+        originX: cx,
+        originY: cy,
+
+        // Return the matrix parameters
         a: this.a,
         b: this.b,
         c: this.c,
         d: this.d,
         e: this.e,
-        f: this.f,
-        matrix: new SVG.Matrix(this)
+        f: this.f
       }
     },
-    // Clone matrix
-    clone: function () {
-      return new SVG.Matrix(this)
-    },
+
     // Morph one matrix into another
     morph: function (matrix) {
-      // store new destination
+      // Store new destination
       this.destination = new SVG.Matrix(matrix)
-
       return this
     },
+
     // Get morphed matrix at a given position
     at: function (pos) {
-      // make sure a destination is defined
+      // Make sure a destination is defined
       if (!this.destination) return this
 
-      // calculate morphed matrix at a given position
+      // Calculate morphed matrix at a given position
       var matrix = new SVG.Matrix({
         a: this.a + (this.destination.a - this.a) * pos,
         b: this.b + (this.destination.b - this.b) * pos,
@@ -82,76 +174,221 @@ SVG.Matrix = SVG.invent({
 
       return matrix
     },
-    // Multiplies by given matrix
+
+    // Left multiplies by the given matrix
     multiply: function (matrix) {
-      return new SVG.Matrix(this.native().multiply(parseMatrix(matrix).native()))
+      return this.clone().multiplyO(matrix)
     },
+
+    multiplyO: function (matrix) {
+      // Get the matrices
+      var l = this
+      var r = matrix instanceof SVG.Matrix
+        ? matrix
+        : new SVG.Matrix(matrix)
+
+      return matrixMultiply(l, r, this)
+    },
+
+    lmultiply: function (matrix) {
+      return this.clone().lmultiplyO(matrix)
+    },
+
+    lmultiplyO: function (matrix) {
+      var r = this
+      var l = matrix instanceof SVG.Matrix
+        ? matrix
+        : new SVG.Matrix(matrix)
+
+      return matrixMultiply(l, r, this)
+    },
+
     // Inverses matrix
-    inverse: function () {
-      return new SVG.Matrix(this.native().inverse())
+    inverseO: function () {
+      // Get the current parameters out of the matrix
+      var a = this.a
+      var b = this.b
+      var c = this.c
+      var d = this.d
+      var e = this.e
+      var f = this.f
+
+      // Invert the 2x2 matrix in the top left
+      var det = a * d - b * c
+      if (!det) throw new Error('Cannot invert ' + this)
+
+      // Calculate the top 2x2 matrix
+      var na = d / det
+      var nb = -b / det
+      var nc = -c / det
+      var nd = a / det
+
+      // Apply the inverted matrix to the top right
+      var ne = -(na * e + nc * f)
+      var nf = -(nb * e + nd * f)
+
+      // Construct the inverted matrix
+      this.a = na
+      this.b = nb
+      this.c = nc
+      this.d = nd
+      this.e = ne
+      this.f = nf
+
+      return this
     },
+
+    inverse: function () {
+      return this.clone().inverseO()
+    },
+
     // Translate matrix
     translate: function (x, y) {
-      return new SVG.Matrix(this.native().translate(x || 0, y || 0))
+      return this.clone().translateO(x, y)
     },
+
+    translateO: function (x, y) {
+      this.e += x || 0
+      this.f += y || 0
+      return this
+    },
+
     // Scale matrix
     scale: function (x, y, cx, cy) {
-      // support uniformal scale
-      if (arguments.length === 1) {
-        y = x
-      } else if (arguments.length === 3) {
+      return this.clone().scaleO(...arguments)
+    },
+
+    scaleO: function (x, y = x, cx = 0, cy = 0) {
+      // Support uniform scaling
+      if (arguments.length === 3) {
         cy = cx
         cx = y
         y = x
       }
 
-      return this.around(cx, cy, new SVG.Matrix(x, 0, 0, y, 0, 0))
+      let {a, b, c, d, e, f} = this
+
+      this.a = a * x
+      this.b = b * y
+      this.c = c * x
+      this.d = d * y
+      this.e = e * x - cx * x + cx
+      this.f = f * y - cy * y + cy
+
+      return this
     },
+
     // Rotate matrix
     rotate: function (r, cx, cy) {
-      // convert degrees to radians
+      return this.clone().rotateO(r, cx, cy)
+    },
+
+    rotateO: function (r, cx = 0, cy = 0) {
+      // Convert degrees to radians
       r = SVG.utils.radians(r)
 
-      return this.around(cx, cy, new SVG.Matrix(Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0))
+      let cos = Math.cos(r)
+      let sin = Math.sin(r)
+
+      let {a, b, c, d, e, f} = this
+
+      this.a = a * cos - b * sin
+      this.b = b * cos + a * sin
+      this.c = c * cos - d * sin
+      this.d = d * cos + c * sin
+      this.e = e * cos - f * sin + cy * sin - cx * cos + cx
+      this.f = f * cos + e * sin - cx * sin - cy * cos + cy
+
+      return this
     },
+
     // Flip matrix on x or y, at a given offset
-    flip: function (a, o) {
-      return a === 'x' ? this.scale(-1, 1, o, 0)
-        : a === 'y' ? this.scale(1, -1, 0, o)
-        : this.scale(-1, -1, a, o != null ? o : a)
+    flip: function (axis, around) {
+      return this.clone().flipO(axis, around)
     },
-    // Skew
+
+    flipO: function (axis, around) {
+      return axis === 'x' ? this.scaleO(-1, 1, around, 0)
+        : axis === 'y' ? this.scaleO(1, -1, 0, around)
+        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+    },
+
+    // Shear matrix
+    shear: function (a, cx, cy) {
+      return this.clone().shearO(a, cx, cy)
+    },
+
+    shearO: function (lx, cx = 0, cy = 0) {
+      let {a, b, c, d, e, f} = this
+
+      this.a = a + b * lx
+      this.c = c + d * lx
+      this.e = e + f * lx - cy * lx
+
+      return this
+    },
+
+    // Skew Matrix
     skew: function (x, y, cx, cy) {
+      return this.clone().skewO(...arguments)
+    },
+
+    skewO: function (x, y = x, cx = 0, cy = 0) {
       // support uniformal skew
-      if (arguments.length === 1) {
-        y = x
-      } else if (arguments.length === 3) {
+      if (arguments.length === 3) {
         cy = cx
         cx = y
         y = x
       }
 
-      // convert degrees to radians
+      // Convert degrees to radians
       x = SVG.utils.radians(x)
       y = SVG.utils.radians(y)
 
-      return this.around(cx, cy, new SVG.Matrix(1, Math.tan(y), Math.tan(x), 1, 0, 0))
+      let lx = Math.tan(x)
+      let ly = Math.tan(y)
+
+      let {a, b, c, d, e, f} = this
+
+      this.a = a + b * lx
+      this.b = b + a * ly
+      this.c = c + d * lx
+      this.d = d + c * ly
+      this.e = e + f * lx - cy * lx
+      this.f = f + e * ly - cx * ly
+
+      return this
     },
+
     // SkewX
     skewX: function (x, cx, cy) {
       return this.skew(x, 0, cx, cy)
     },
+
+    skewXO: function (x, cx, cy) {
+      return this.skewO(x, 0, cx, cy)
+    },
+
     // SkewY
     skewY: function (y, cx, cy) {
       return this.skew(0, y, cx, cy)
     },
-    // Transform around a center point
-    around: function (cx, cy, matrix) {
-      return this
-        .multiply(new SVG.Matrix(1, 0, 0, 1, cx || 0, cy || 0))
-        .multiply(matrix)
-        .multiply(new SVG.Matrix(1, 0, 0, 1, -cx || 0, -cy || 0))
+
+    skewYO: function (y, cx, cy) {
+      return this.skewO(0, y, cx, cy)
     },
+
+    // Transform around a center point
+    aroundO: function (cx, cy, matrix) {
+      var dx = cx || 0
+      var dy = cy || 0
+      return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy)
+    },
+
+    around: function (cx, cy, matrix) {
+      return this.clone().aroundO(cx, cy, matrix)
+    },
+
     // Convert to native SVGMatrix
     native: function () {
       // create new matrix
@@ -164,9 +401,33 @@ SVG.Matrix = SVG.invent({
 
       return matrix
     },
+
+    // Check if two matrices are equal
+    equals: function (other) {
+      var comp = new SVG.Matrix(other)
+      return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) &&
+        closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) &&
+        closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
+    },
+
     // Convert matrix to string
     toString: function () {
       return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+    },
+
+    toArray: function () {
+      return [this.a, this.b, this.c, this.d, this.e, this.f]
+    },
+
+    valueOf: function () {
+      return {
+        a: this.a,
+        b: this.b,
+        c: this.c,
+        d: this.d,
+        e: this.e,
+        f: this.f
+      }
     }
   },
 
@@ -195,3 +456,17 @@ SVG.Matrix = SVG.invent({
     }
   }
 })
+
+// let extensions = {}
+// ['rotate'].forEach((method) => {
+//   let methodO = method + 'O'
+//   extensions[method] = function (...args) {
+//     return new SVG.Matrix(this)[methodO](...args)
+//   }
+// })
+//
+// SVG.extend(SVG.Matrix, extensions)
+
+// function matrixMultiplyParams (matrix, a, b, c, d, e, f) {
+//   return matrixMultiply({a, b, c, d, e, f}, matrix, matrix)
+// }
