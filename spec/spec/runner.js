@@ -133,47 +133,6 @@ describe('SVG.Runner', function () {
     })
   })
 
-  describe('tag()', function () {
-    it('acts as a getter', function () {
-      var runner = new SVG.Runner()
-
-      runner.tags = {foo: true}
-      expect(runner.tag()).toEqual(jasmine.arrayContaining(['foo']))
-    })
-
-    it('sets one tag with a string given', function () {
-      var runner = new SVG.Runner()
-
-      runner.tag('foo')
-      expect(runner.tags).toEqual(jasmine.objectContaining({foo: true}))
-    })
-
-    it('sets multiple tags with an array given', function () {
-      var runner = new SVG.Runner()
-
-      runner.tag(['foo', 'bar', 'baz'])
-      expect(runner.tags).toEqual(jasmine.objectContaining({foo: true, bar: true, baz: true}))
-    })
-  })
-
-  describe('untag()', function () {
-    it('untags with a string given', function () {
-      var runner = new SVG.Runner()
-
-      runner.tag('foo')
-      runner.untag('foo')
-      expect(runner.tags).toEqual(jasmine.objectContaining({}))
-    })
-
-    it('untags multiple tags with an array given', function () {
-      var runner = new SVG.Runner()
-
-      runner.tag(['foo', 'bar', 'baz'])
-      runner.untag(['bar', 'baz'])
-      expect(runner.tags).toEqual(jasmine.objectContaining({foo: true}))
-    })
-  })
-
 
   describe('step()', function () {
 
@@ -779,12 +738,14 @@ describe('SVG.Runner', function () {
 
       var runner2 = runner.animate(500, 1000)
 
+      var t = timeline.time()
+
       expect(runner2.timeline()).toBe(timeline)
       expect(runner2.time()).toBe(-1000)
 
       expect(timeline.schedule()).toEqual(jasmine.objectContaining([
-        jasmine.objectContaining({start: 0, duration: 1000, end: 1000, runner: runner}),
-        jasmine.objectContaining({start: 1000, duration: 500, end: 1500, runner: runner2})
+        jasmine.objectContaining({start: t, duration: 1000, end: t+1000, runner: runner}),
+        jasmine.objectContaining({start: t+1000, duration: 500, end: t+1500, runner: runner2})
       ]))
     })
   })
@@ -814,35 +775,35 @@ describe('SVG.Runner', function () {
     })
   })
 
-  describe('after()', function () {
-    it('returns itself', function () {
-      var runner = new SVG.Runner()
-      expect(runner.after(runFn)).toBe(runner)
-    })
-
-    it('binds a function to the after event', function () {
-      var runner = new SVG.Runner()
-      spyOn(runner, 'on')
-      runner.after(runFn)
-
-      expect(runner.on).toHaveBeenCalledWith('finish', runFn)
-    })
-  })
-
-  describe('finish()', function () {
-    it('returns itself', function () {
-      var runner = new SVG.Runner()
-      expect(runner.finish()).toBe(runner)
-    })
-
-    it('calls step with Infinity as argument', function () {
-      var runner = new SVG.Runner()
-      spyOn(runner, 'step')
-      runner.finish()
-
-      expect(runner.step).toHaveBeenCalledWith(Infinity)
-    })
-  })
+  // describe('after()', function () {
+  //   it('returns itself', function () {
+  //     var runner = new SVG.Runner()
+  //     expect(runner.after(runFn)).toBe(runner)
+  //   })
+  //
+  //   it('binds a function to the after event', function () {
+  //     var runner = new SVG.Runner()
+  //     spyOn(runner, 'on')
+  //     runner.after(runFn)
+  //
+  //     expect(runner.on).toHaveBeenCalledWith('finish', runFn)
+  //   })
+  // })
+  //
+  // describe('finish()', function () {
+  //   it('returns itself', function () {
+  //     var runner = new SVG.Runner()
+  //     expect(runner.finish()).toBe(runner)
+  //   })
+  //
+  //   it('calls step with Infinity as argument', function () {
+  //     var runner = new SVG.Runner()
+  //     spyOn(runner, 'step')
+  //     runner.finish()
+  //
+  //     expect(runner.step).toHaveBeenCalledWith(Infinity)
+  //   })
+  // })
 
   describe('reverse()', function () {
     it('returns itself', function () {

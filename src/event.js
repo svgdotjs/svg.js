@@ -1,5 +1,4 @@
 // Add events to elements
-/*
 ;[ 'click',
   'dblclick',
   'mousedown',
@@ -16,12 +15,14 @@
   'touchcancel' ].forEach(function (event) {
     // add event to SVG.Element
     SVG.Element.prototype[event] = function (f) {
-    // bind event to element rather than element node
-      SVG.on(this, event, f)
+      if (f === null) {
+        SVG.off(this, event)
+      } else {
+        SVG.on(this, event, f)
+      }
       return this
     }
   })
-*/
 
 SVG.listenerId = 0
 
@@ -132,27 +133,3 @@ SVG.dispatch = function (node, event, data) {
   }
   return event
 }
-
-SVG.EventTarget = SVG.invent({
-  create: function () {},
-  extend: {
-    // Bind given event to listener
-    on: function (event, listener, binding, options) {
-      SVG.on(this, event, listener, binding, options)
-      return this
-    },
-    // Unbind event from listener
-    off: function (event, listener) {
-      SVG.off(this, event, listener)
-      return this
-    },
-    dispatch: function (event, data) {
-      return SVG.dispatch(this, event, data)
-    },
-    // Fire given event
-    fire: function (event, data) {
-      this.dispatch(event, data)
-      return this
-    }
-  }
-})

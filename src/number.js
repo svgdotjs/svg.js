@@ -74,16 +74,6 @@ SVG.Number = SVG.invent({
       number = new SVG.Number(number)
       return new SVG.Number(this / number, this.unit || number.unit)
     },
-    // Convert to different unit
-    to: function (unit) {
-      var number = new SVG.Number(this)
-
-      if (typeof unit === 'string') {
-        number.unit = unit
-      }
-
-      return number
-    },
     // Make number morphable
     morph: function (number) {
       this.destination = new SVG.Number(number)

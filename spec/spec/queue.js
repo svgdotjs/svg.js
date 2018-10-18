@@ -44,44 +44,18 @@ describe ('SVG.Queue()', function () {
       expect(queue.first()).toBe(1)
       expect(queue.last()).toBe(3)
     })
-
-    it ('changes the length when you add things', function () {
-      var queue = new SVG.Queue()
-      queue.push(1)
-      expect(queue.length).toBe(1)
-      queue.push(2)
-      expect(queue.length).toBe(2)
-    })
   })
 
   describe('remove ()', function () {
-    it('removes an item from the queue which matches the matcher', function () {
+    it('removes the given item from the queue', function () {
       var queue = new SVG.Queue()
       queue.push(1)
       queue.push(2)
-      queue.push(3)
+      var item = queue.push(3)
 
-      queue.remove(function(item) {
-        return item.value == 3
-      })
+      queue.remove(item)
 
-      expect(queue.length).toBe(2)
       expect(queue.last()).toBe(2)
-      expect(queue.first()).toBe(1)
-    })
-
-    it('removes no item from the queue if nothing is matched', function () {
-      var queue = new SVG.Queue()
-      queue.push(1)
-      queue.push(2)
-      queue.push(3)
-
-      queue.remove(function(item) {
-        return item.value == 4
-      })
-
-      expect(queue.length).toBe(3)
-      expect(queue.last()).toBe(3)
       expect(queue.first()).toBe(1)
     })
   })
@@ -101,7 +75,6 @@ describe ('SVG.Queue()', function () {
 
       var val = queue.shift()
 
-      expect(queue.length).toBe(2)
       expect(queue.last()).toBe(3)
       expect(queue.first()).toBe(2)
 

@@ -42,7 +42,6 @@ SVG.Runner = SVG.invent({
     this.enabled = true
     this._time = 0
     this._last = 0
-    this.tags = {}
 
     // Save transforms applied to this runner
     this.transforms = new SVG.Matrix()
@@ -322,36 +321,6 @@ SVG.Runner = SVG.invent({
       if (enabled == null) return this.enabled
       this.enabled = enabled
       return this
-    },
-
-    /*
-    Runner Management
-    =================
-    Functions that are used to help index the runner
-    */
-
-    tag: function (name) {
-      // Act as a getter to get all of the tags on this object
-      if (name == null) return Object.keys(this.tags)
-
-      // Add all of the tags to the object directly
-      name = Array.isArray(name) ? name : [name]
-      for (var i = name.length; i--;) {
-        this.tags[name[i]] = true
-      }
-      return this
-    },
-
-    untag: function (name) {
-      name = Array.isArray(name) ? name : [name]
-      for (var i = name.length; i--;) {
-        delete this.tags[name[i]]
-      }
-      return this
-    },
-
-    getEventTarget: function () {
-      return this._dispatcher
     },
 
     /*

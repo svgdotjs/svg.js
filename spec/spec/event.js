@@ -205,7 +205,7 @@ describe('Event', function() {
 
       rect.on('event.namespace bla foo.bar otherfoo.bar keepthis', action)
       rect.off('event.namespace bla .bar')
-      
+
       expect(Object.keys(rect.events['event']).length).toBe(0)
       expect(rect.events['bla']).toBeUndefined()
       expect(Object.keys(rect.events['foo']).length).toBe(0)
