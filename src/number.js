@@ -91,7 +91,7 @@ SVG.Number = SVG.invent({
     // Get morphed number at given position
     at: function (pos) {
       // Make sure a destination is defined
-      if (!this.destination) throw new Error('No destination set')
+      if (!this.destination) return this
 
       // Generate new morphed number
       return new SVG.Number(this.destination)

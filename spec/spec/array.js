@@ -113,8 +113,8 @@ describe('Array', function () {
       arr1.morph(arr2)
       expect(arr1.at(0.5).value).toEqual([1.5, 2.5, 3.5, 4.5])
     })
-    it('throws when no destination was specified', function() {
-      expect(arr1.at).toThrow()
+    it('returns itself if no destination was specified', function() {
+      expect(arr1.at(0.5)).toBe(arr1)
     })
   })
 })
@@ -221,8 +221,8 @@ describe('PointArray', function () {
       arr1.morph(arr2)
       expect(arr1.at(0.5).value).toEqual([[1.5, 2.5], [3.5, 4.5]])
     })
-    it('throws when no destination was specified', function() {
-      expect(arr1.at).toThrow()
+    it('returns itself if no destination was specified', function() {
+      expect(arr1.at(0.5)).toBe(arr1)
     })
   })
 })
@@ -394,9 +394,10 @@ describe('PathArray', function () {
       expect(morphedPathArray.value[1][4]).toBe(1)
       expect(morphedPathArray.value[1][5]).toBe(0)
     })
-    it('throws when no destination was specified', function(){
+    it('return itself if the destination attribute is null', function(){
       var pathArray = new SVG.PathArray('M  13 13 A 25 37 0 0 1  43 25')
-      expect(pathArray.at).toThrow()
+      pathArray.destination = null
+      expect(pathArray.at(0.45)).toBe(pathArray)
     })
   })
 

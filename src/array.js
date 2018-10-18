@@ -49,7 +49,7 @@ SVG.extend(SVG.Array, {
   // Get morphed array at given position
   at: function (pos) {
     // make sure a destination is defined
-    if (!this.destination) throw new Error('No destination set')
+    if (!this.destination) return this
 
     // generate morphed array
     for (var i = 0, il = this.value.length, array = []; i < il; i++) {

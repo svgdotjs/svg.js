@@ -32,7 +32,7 @@ SVG.Point = SVG.invent({
     // Get morphed point at a given position
     at: function (pos) {
       // make sure a destination is defined
-      if (!this.destination) throw new Error('No destination set')
+      if (!this.destination) return this
 
       // calculate morphed matrix at a given position
       var point = new SVG.Point({

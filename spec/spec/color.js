@@ -77,8 +77,8 @@ describe('Color', function() {
 			expect(morphed.b).toBe(255)
 		})
     
-    it('throws when no destination specified', function() {
-      expect(color.at).toThrow()
+    it('returns itself when no destination specified', function() {
+      expect(color.at(0.5)).toBe(color)
     })
 	})
 

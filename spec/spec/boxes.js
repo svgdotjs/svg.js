@@ -148,9 +148,9 @@ describe('Box', function() {
       expect(box2.toString()).toBe('50 -100 300 300')
       expect(box3.toString()).toBe('30 0 250 300')
     })
-    it('throws itself when no destination was specified', function() {
+    it('returns itself when no destination given', function() {
       var box = new SVG.Box(10, 100, 200, 300)
-      expect(box.at).toThrow()
+      expect(box.at(0.5)).toBe(box)
     })
   })
 })
