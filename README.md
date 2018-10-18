@@ -46,14 +46,6 @@ However, because we were too nice to put you through the pain of always having t
 
 This will only warn you about linting errors and give you useful feedback about possible errors you may have in your code (but this is no substitute for tests). Please make sure that **before making any pull requests**, you pass all of our tests and can build with `npm run build` first.
 
-> ⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️
-> This library still uses es5, so if you do anything like using `let`, it will
-> probably break, and you probably won't be able to figure out why. This is
-> only a temporary trouble 🙃 We will fix it as soon as we can!
->
-> The linter is ready for es6, but the build process is not, so if you get an
-> error and the linter says nothing; check for es6iness 😍
-
 ### Testing
 
 This will set up everything. While you are working, you should make sure your changes pass all of our tests, so just run:
