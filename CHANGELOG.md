@@ -70,6 +70,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
 - The way `transform()` works is now completely different. See the docs for more as soon as they are updated.
 - merged `SVG.Doc` and `SVG.Nested`, added `isRoot()` on `SVG.Doc()` (#809)
+- The fx module was completely reworked to be faster and less error prone. For more information on how to use it refer to the docs
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
