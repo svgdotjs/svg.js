@@ -12,7 +12,7 @@ SVG.js is licensed under the terms of the MIT License.
 ## Installation
 
 
-#### Node:
+#### Npm:
 
 `npm install svg.js`
 
@@ -32,6 +32,6 @@ SVG.js is licensed under the terms of the MIT License.
 [https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)
 
 ## Documentation
-Check [https://svgdotjs.github.io](https://svgdotjs.github.io/) to learn more.
+Check [https://svgjs.com/](https://svgjs.com/) to learn more.
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
