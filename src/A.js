@@ -1,35 +1,34 @@
-SVG.A = SVG.invent({
-  // Initialize node
-  create: 'a',
+import {Container, Element} from './classes.js'
+import {nodeOrNew, addFactory} from './tools.js'
+import {xlink} from './namespaces.js'
 
-  // Inherit from
-  inherit: SVG.Container,
+export default class A extends Container {
+  constructor (node) {
+    super(nodeOrNew('a', node))
+  }
 
-  // Add class methods
-  extend: {
-    // Link url
-    to: function (url) {
-      return this.attr('href', url, SVG.xlink)
-    },
-    // Link target attribute
-    target: function (target) {
-      return this.attr('target', target)
-    }
-  },
+  // Link url
+  to (url) {
+    return this.attr('href', url, xlink)
+  }
 
-  // Add parent method
-  construct: {
-    // Create a hyperlink element
-    link: function (url) {
-      return this.put(new SVG.A()).to(url)
-    }
+  // Link target attribute
+  target (target) {
+    return this.attr('target', target)
+  }
+}
+
+addFactory(Container, {
+  // Create a hyperlink element
+  link: function (url) {
+    return this.put(new A()).to(url)
   }
 })
 
-SVG.extend(SVG.Element, {
+addFactory(Element, {
   // Create a hyperlink element
   linkTo: function (url) {
-    var link = new SVG.A()
+    var link = new A()
 
     if (typeof url === 'function') { url.call(link, link) } else {
       link.to(url)
@@ -37,5 +36,4 @@ SVG.extend(SVG.Element, {
 
     return this.parent().put(link).put(this)
   }
-
 })

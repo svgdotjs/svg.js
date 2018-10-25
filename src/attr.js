@@ -1,72 +1,78 @@
-SVG.extend(SVG.Element, {
-  // Set svg element attribute
-  attr: function (a, v, n) {
-    // act as full getter
-    if (a == null) {
-      // get an object of attributes
-      a = {}
-      v = this.node.attributes
-      for (n = v.length - 1; n >= 0; n--) {
-        a[v[n].nodeName] = SVG.regex.isNumber.test(v[n].nodeValue)
-          ? parseFloat(v[n].nodeValue)
-          : v[n].nodeValue
-      }
-      return a
-    } else if (typeof a === 'object') {
-      // apply every attribute individually if an object is passed
-      for (v in a) this.attr(v, a[v])
-    } else if (v === null) {
-        // remove value
-      this.node.removeAttribute(a)
-    } else if (v == null) {
-      // act as a getter if the first and only argument is not an object
-      v = this.node.getAttribute(a)
-      return v == null ? SVG.defaults.attrs[a]
-        : SVG.regex.isNumber.test(v) ? parseFloat(v)
-        : v
-    } else {
-      // convert image fill and stroke to patterns
-      if (a === 'fill' || a === 'stroke') {
-        if (SVG.regex.isImage.test(v)) {
-          v = this.doc().defs().image(v)
-        }
+import {isNumer, isImage} from './regex.js'
+import {attrs as defaults} from './defaults.js'
+import {Color, SVGArray, Image} from './classes.js'
 
-        if (v instanceof SVG.Image) {
-          v = this.doc().defs().pattern(0, 0, function () {
-            this.add(v)
-          })
-        }
-      }
+// Set svg element attribute
+export default function attr (attr, val, ns) {
+  // act as full getter
+  if (attr == null) {
+    // get an object of attributes
+    attr = {}
+    val = this.node.attributes
 
-      // ensure correct numeric values (also accepts NaN and Infinity)
-      if (typeof v === 'number') {
-        v = new SVG.Number(v)
-      } else if (SVG.Color.isColor(v)) {
-        // ensure full hex color
-        v = new SVG.Color(v)
-      } else if (Array.isArray(v)) {
-        // parse array values
-        v = new SVG.Array(v)
+    for (let node of val) {
+      attr[node.nodeName] = isNumer.test(node.nodeValue)
+        ? parseFloat(node.nodeValue)
+        : node.nodeValue
+    }
+
+    return attr
+  } else if (Array.isArray(attr)) {
+    // FIXME: implement
+  } else if (typeof attr === 'object') {
+    // apply every attribute individually if an object is passed
+    for (val in a) this.attr(val, attr[val])
+  }else if (val === null) {
+      // remove value
+    this.node.removeAttribute(attr)
+  } else if (val == null) {
+    // act as a getter if the first and only argument is not an object
+    val = this.node.getAttribute(attr)
+    return val == null ? defaults[attr] // FIXME: do we need to return defaults?
+      : isNumber.test(val) ? parseFloat(val)
+      : val
+  } else {
+    // convert image fill and stroke to patterns
+    if (attr === 'fill' || attr === 'stroke') {
+      if (isImage.test(v)) {
+        val = this.doc().defs().image(val)
       }
 
-      // if the passed attribute is leading...
-      if (a === 'leading') {
-        // ... call the leading method instead
-        if (this.leading) {
-          this.leading(v)
-        }
-      } else {
-        // set given attribute on node
-        typeof n === 'string' ? this.node.setAttributeNS(n, a, v.toString())
-          : this.node.setAttribute(a, v.toString())
-      }
-
-      // rebuild if required
-      if (this.rebuild && (a === 'font-size' || a === 'x')) {
-        this.rebuild(a, v)
+      if (val instanceof Image) {
+        val = this.doc().defs().pattern(0, 0, function () {
+          this.add(val)
+        })
       }
     }
 
-    return this
+    // ensure correct numeric values (also accepts NaN and Infinity)
+    if (typeof val === 'number') {
+      val = new SVGNumber(val)
+    } else if (isColor(val)) {
+      // ensure full hex color
+      val = new Color(val)
+    } else if (Array.isArray(val)) {
+      // parse array values
+      val = new SVGArray(val)
+    }
+
+    // if the passed attribute is leading...
+    if (attr === 'leading') {
+      // ... call the leading method instead
+      if (this.leading) {
+        this.leading(val)
+      }
+    } else {
+      // set given attribute on node
+      typeof ns === 'string' ? this.node.setAttributeNS(ns, attr, val.toString())
+        : this.node.setAttribute(attr, val.toString())
+    }
+
+    // rebuild if required
+    if (this.rebuild && (attr === 'font-size' || attr === 'x')) {
+      this.rebuild()
+    }
   }
-})
+
+  return this
+}

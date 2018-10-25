@@ -1,15 +1,16 @@
+import Container from './Container.js'
+import {nodeOrNew} from './tools.js'
 
-SVG.Symbol = SVG.invent({
+export default class Symbol extends Container {
   // Initialize node
-  create: 'symbol',
+  constructor (node) {
+    super(nodeOrNew('symbol', node))
+  }
+}
 
-  // Inherit from
-  inherit: SVG.Container,
-
-  construct: {
-    // create symbol
-    symbol: function () {
-      return this.put(new SVG.Symbol())
-    }
+addFactory(Container, {
+  // create symbol
+  symbol () {
+    return this.put(new Symbol())
   }
 })

@@ -1,42 +1,39 @@
+import SVGArray from './SVGArray.js'
+import {delimiter} from './regex.js'
 
-// Poly points array
-SVG.PointArray = function (array, fallback) {
-  SVG.Array.call(this, array, fallback || [[0, 0]])
-}
+export default class PointArray extends SVGArray {
+  constructor (array, fallback = [[0, 0]]) {
+    super(array, fallback)
+  }
 
-// Inherit from SVG.Array
-SVG.PointArray.prototype = new SVG.Array()
-SVG.PointArray.prototype.constructor = SVG.PointArray
-
-SVG.extend(SVG.PointArray, {
   // Convert array to string
-  toString: function () {
+  toString () {
     // convert to a poly point string
     for (var i = 0, il = this.value.length, array = []; i < il; i++) {
       array.push(this.value[i].join(','))
     }
 
     return array.join(' ')
-  },
+  }
 
-  toArray: function () {
+  toArray () {
     return this.value.reduce(function (prev, curr) {
       return [].concat.call(prev, curr)
     }, [])
-  },
+  }
 
   // Convert array to line object
-  toLine: function () {
+  toLine () {
     return {
       x1: this.value[0][0],
       y1: this.value[0][1],
       x2: this.value[1][0],
       y2: this.value[1][1]
     }
-  },
+  }
 
   // Get morphed array at given position
-  at: function (pos) {
+  at (pos) {
     // make sure a destination is defined
     if (!this.destination) return this
 
@@ -48,11 +45,11 @@ SVG.extend(SVG.PointArray, {
       ])
     }
 
-    return new SVG.PointArray(array)
-  },
+    return new PointArray(array)
+  }
 
   // Parse point string and flat array
-  parse: function (array) {
+  parse (array) {
     var points = []
 
     array = array.valueOf()
@@ -65,7 +62,7 @@ SVG.extend(SVG.PointArray, {
       }
     } else { // Else, it is considered as a string
       // parse points
-      array = array.trim().split(SVG.regex.delimiter).map(parseFloat)
+      array = array.trim().split(delimiter).map(parseFloat)
     }
 
     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
@@ -78,10 +75,10 @@ SVG.extend(SVG.PointArray, {
     }
 
     return points
-  },
+  }
 
   // Move point string
-  move: function (x, y) {
+  move (x, y) {
     var box = this.bbox()
 
     // get relative offset
@@ -96,9 +93,10 @@ SVG.extend(SVG.PointArray, {
     }
 
     return this
-  },
+  }
+
   // Resize poly string
-  size: function (width, height) {
+  size (width, height) {
     var i
     var box = this.bbox()
 
@@ -109,10 +107,10 @@ SVG.extend(SVG.PointArray, {
     }
 
     return this
-  },
+  }
 
   // Get bounding box of points
-  bbox: function () {
+  bbox () {
     var maxX = -Infinity
     var maxY = -Infinity
     var minX = Infinity
@@ -125,4 +123,4 @@ SVG.extend(SVG.PointArray, {
     })
     return {x: minX, y: minY, width: maxX - minX, height: maxY - minY}
   }
-})
+}

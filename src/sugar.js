@@ -1,3 +1,5 @@
+import {Color, Element, Runner} from './classes.js'
+
 // Define list of available attributes for stroke and fill
 var sugar = {
   stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
@@ -16,7 +18,7 @@ var sugar = {
     if (typeof o === 'undefined') {
       return this
     }
-    if (typeof o === 'string' || SVG.Color.isRgb(o) || (o && typeof o.fill === 'function')) {
+    if (typeof o === 'string' || Color.isRgb(o) || (o && typeof o.fill === 'function')) {
       this.attr(m, o)
     } else {
       // set all attributes from sugar.fill and sugar.stroke list
@@ -30,19 +32,19 @@ var sugar = {
     return this
   }
 
-  SVG.extend([SVG.Element, SVG.Timeline], extension)
+  extend([Element, Runner], extension)
 })
 
-SVG.extend([SVG.Element, SVG.Timeline], {
+extend([Element, Runner], {
   // Let the user set the matrix directly
   matrix: function (mat, b, c, d, e, f) {
     // Act as a getter
     if (mat == null) {
-      return new SVG.Matrix(this)
+      return new Matrix(this)
     }
 
     // Act as a setter, the user can pass a matrix or a set of numbers
-    return this.attr('transform', new SVG.Matrix(mat, b, c, d, e, f))
+    return this.attr('transform', new Matrix(mat, b, c, d, e, f))
   },
 
   // Map rotation to transform
@@ -98,12 +100,12 @@ SVG.extend([SVG.Element, SVG.Timeline], {
 
   // Relative move over x axis
   dx: function (x) {
-    return this.x(new SVG.Number(x).plus(this instanceof SVG.Timeline ? 0 : this.x()), true)
+    return this.x(new SVGNumber(x).plus(this instanceof Runner ? 0 : this.x()), true)
   },
 
   // Relative move over y axis
   dy: function (y) {
-    return this.y(new SVG.Number(y).plus(this instanceof SVG.Timeline ? 0 : this.y()), true)
+    return this.y(new SVGNumber(y).plus(this instanceof Runner ? 0 : this.y()), true)
   },
 
   // Relative move over x and y axes
@@ -112,28 +114,28 @@ SVG.extend([SVG.Element, SVG.Timeline], {
   }
 })
 
-SVG.extend([SVG.Rect, SVG.Ellipse, SVG.Circle, SVG.Gradient, SVG.Timeline], {
+extend([Rect, Ellipse, Circle, Gradient, Runner], {
   // Add x and y radius
   radius: function (x, y) {
     var type = (this._target || this).type
     return type === 'radialGradient' || type === 'radialGradient'
-      ? this.attr('r', new SVG.Number(x))
+      ? this.attr('r', new SVGNumber(x))
       : this.rx(x).ry(y == null ? x : y)
   }
 })
 
-SVG.extend(SVG.Path, {
+extend(Path, {
   // Get path length
   length: function () {
     return this.node.getTotalLength()
   },
   // Get point at length
   pointAt: function (length) {
-    return new SVG.Point(this.node.getPointAtLength(length))
+    return new Point(this.node.getPointAtLength(length))
   }
 })
 
-SVG.extend([SVG.Parent, SVG.Text, SVG.Tspan, SVG.Timeline], {
+extend([Parent, Text, Tspan, Runner], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

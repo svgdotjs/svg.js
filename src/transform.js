@@ -1,70 +1,67 @@
-/* global arrayToMatrix getOrigin isMatrixLike */
+import {arrayToMatrix, getOrigin, isMatrixLike} from './helpers.js'
+import Matrix from './Matrix.js'
+import {delimiter, transforms} from './regex.js'
 
-SVG.extend(SVG.Element, {
-  // Reset all transformations
-  untransform: function () {
-    return this.attr('transform', null)
-  },
+// Reset all transformations
+export function untransform () {
+  return this.attr('transform', null)
+}
 
-  // merge the whole transformation chain into one matrix and returns it
-  matrixify: function () {
-    var matrix = (this.attr('transform') || '')
-      // split transformations
-      .split(SVG.regex.transforms).slice(0, -1).map(function (str) {
-        // generate key => value pairs
-        var kv = str.trim().split('(')
-        return [kv[0],
-          kv[1].split(SVG.regex.delimiter)
-            .map(function (str) { return parseFloat(str) })
-        ]
-      })
-      .reverse()
-      // merge every transformation into one matrix
-      .reduce(function (matrix, transform) {
-        if (transform[0] === 'matrix') {
-          return matrix.lmultiply(arrayToMatrix(transform[1]))
-        }
-        return matrix[transform[0]].apply(matrix, transform[1])
-      }, new SVG.Matrix())
+// merge the whole transformation chain into one matrix and returns it
+export function matrixify () {
+  var matrix = (this.attr('transform') || '')
+    // split transformations
+    .split(transforms).slice(0, -1).map(function (str) {
+      // generate key => value pairs
+      var kv = str.trim().split('(')
+      return [kv[0],
+        kv[1].split(delimiter)
+          .map(function (str) { return parseFloat(str) })
+      ]
+    })
+    .reverse()
+    // merge every transformation into one matrix
+    .reduce(function (matrix, transform) {
+      if (transform[0] === 'matrix') {
+        return matrix.lmultiply(arrayToMatrix(transform[1]))
+      }
+      return matrix[transform[0]].apply(matrix, transform[1])
+    }, new Matrix())
 
-    return matrix
-  },
+  return matrix
+}
 
-  // add an element to another parent without changing the visual representation on the screen
-  toParent: function (parent) {
-    if (this === parent) return this
-    var ctm = this.screenCTM()
-    var pCtm = parent.screenCTM().inverse()
+// add an element to another parent without changing the visual representation on the screen
+export function toParent (parent) {
+  if (this === parent) return this
+  var ctm = this.screenCTM()
+  var pCtm = parent.screenCTM().inverse()
 
-    this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
+  this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
 
-    return this
-  },
+  return this
+}
 
-  // same as above with parent equals root-svg
-  toDoc: function () {
-    return this.toParent(this.doc())
+// same as above with parent equals root-svg
+export function toDoc () {
+  return this.toParent(this.doc())
+}
+
+// Add transformations
+export function transform (o, relative) {
+  // Act as a getter if no object was passed
+  if (o == null || typeof o === 'string') {
+    var decomposed = new Matrix(this).decompose()
+    return decomposed[o] || decomposed
   }
-})
 
-SVG.extend(SVG.Element, {
-
-  // Add transformations
-  transform: function (o, relative) {
-    // Act as a getter if no object was passed
-    if (o == null || typeof o === 'string') {
-      var decomposed = new SVG.Matrix(this).decompose()
-      return decomposed[o] || decomposed
-    }
-
-    if (!isMatrixLike(o)) {
-      // Set the origin according to the defined transform
-      o = {...o, origin: getOrigin(o, this)}
-    }
-
-    // The user can pass a boolean, an SVG.Element or an SVG.Matrix or nothing
-    var cleanRelative = relative === true ? this : (relative || false)
-    var result = new SVG.Matrix(cleanRelative).transform(o)
-    return this.attr('transform', result)
+  if (!isMatrixLike(o)) {
+    // Set the origin according to the defined transform
+    o = {...o, origin: getOrigin(o, this)}
   }
-})
+
+  // The user can pass a boolean, an Element or an Matrix or nothing
+  var cleanRelative = relative === true ? this : (relative || false)
+  var result = new Matrix(cleanRelative).transform(o)
+  return this.attr('transform', result)
+}

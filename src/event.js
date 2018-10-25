@@ -1,38 +1,42 @@
-// Add events to elements
-;[ 'click',
-  'dblclick',
-  'mousedown',
-  'mouseup',
-  'mouseover',
-  'mouseout',
-  'mousemove',
-  'mouseenter',
-  'mouseleave',
-  'touchstart',
-  'touchmove',
-  'touchleave',
-  'touchend',
-  'touchcancel' ].forEach(function (event) {
-    // add event to SVG.Element
-    SVG.Element.prototype[event] = function (f) {
-      if (f === null) {
-        SVG.off(this, event)
-      } else {
-        SVG.on(this, event, f)
-      }
-      return this
-    }
-  })
+import EventTarget from './EventTarget.js'
+import Element from './Element.js'
+import {delimiter} from './regex.js'
 
-SVG.listenerId = 0
+// // Add events to elements
+// ;[ 'click',
+//   'dblclick',
+//   'mousedown',
+//   'mouseup',
+//   'mouseover',
+//   'mouseout',
+//   'mousemove',
+//   'mouseenter',
+//   'mouseleave',
+//   'touchstart',
+//   'touchmove',
+//   'touchleave',
+//   'touchend',
+//   'touchcancel' ].forEach(function (event) {
+//     // add event to Element
+//     Element.prototype[event] = function (f) {
+//       if (f === null) {
+//         off(this, event)
+//       } else {
+//         on(this, event, f)
+//       }
+//       return this
+//     }
+//   })
+
+let listenerId = 0
 
 // Add event binder in the SVG namespace
-SVG.on = function (node, events, listener, binding, options) {
+export function on (node, events, listener, binding, options) {
   var l = listener.bind(binding || node)
-  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+  var n = node instanceof EventTarget ? node.getEventTarget() : node
 
   // events can be an array of events or a string of events
-  events = Array.isArray(events) ? events : events.split(SVG.regex.delimiter)
+  events = Array.isArray(events) ? events : events.split(delimiter)
 
   // ensure instance object for nodes which are not adopted
   n.instance = n.instance || {events: {}}
@@ -42,7 +46,7 @@ SVG.on = function (node, events, listener, binding, options) {
 
   // add id to listener
   if (!listener._svgjsListenerId) {
-    listener._svgjsListenerId = ++SVG.listenerId
+    listener._svgjsListenerId = ++listenerId
   }
 
   events.forEach(function (event) {
@@ -62,8 +66,8 @@ SVG.on = function (node, events, listener, binding, options) {
 }
 
 // Add event unbinder in the SVG namespace
-SVG.off = function (node, events, listener, options) {
-  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+export function off (node, events, listener, options) {
+  var n = node instanceof EventTarget ? node.getEventTarget() : node
   if (!n.instance) return
 
   // listener can be a function or a number
@@ -76,7 +80,7 @@ SVG.off = function (node, events, listener, options) {
   var bag = n.instance.events
 
   // events can be an array of events or a string or undefined
-  events = Array.isArray(events) ? events : (events || '').split(SVG.regex.delimiter)
+  events = Array.isArray(events) ? events : (events || '').split(delimiter)
 
   events.forEach(function (event) {
     var ev = event && event.split('.')[0]
@@ -94,7 +98,7 @@ SVG.off = function (node, events, listener, options) {
     } else if (ev && ns) {
       // remove all listeners for a namespaced event
       if (bag[ev] && bag[ev][ns]) {
-        for (l in bag[ev][ns]) { SVG.off(n, [ev, ns].join('.'), l) }
+        for (l in bag[ev][ns]) { off(n, [ev, ns].join('.'), l) }
 
         delete bag[ev][ns]
       }
@@ -102,27 +106,27 @@ SVG.off = function (node, events, listener, options) {
       // remove all listeners for a specific namespace
       for (event in bag) {
         for (namespace in bag[event]) {
-          if (ns === namespace) { SVG.off(n, [event, ns].join('.')) }
+          if (ns === namespace) { off(n, [event, ns].join('.')) }
         }
       }
     } else if (ev) {
       // remove all listeners for the event
       if (bag[ev]) {
-        for (namespace in bag[ev]) { SVG.off(n, [ev, namespace].join('.')) }
+        for (namespace in bag[ev]) { off(n, [ev, namespace].join('.')) }
 
         delete bag[ev]
       }
     } else {
       // remove all listeners on a given node
-      for (event in bag) { SVG.off(n, event) }
+      for (event in bag) { off(n, event) }
 
       n.instance.events = {}
     }
   })
 }
 
-SVG.dispatch = function (node, event, data) {
-  var n = node instanceof SVG.EventTarget ? node.getEventTarget() : node
+export function dispatch (node, event, data) {
+  var n = node instanceof EventTarget ? node.getEventTarget() : node
 
   // Dispatch event
   if (event instanceof window.Event) {

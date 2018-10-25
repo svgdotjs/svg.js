@@ -1,70 +1,75 @@
-SVG.Doc = SVG.invent({
-  // Initialize node
-  create: function (node) {
-    SVG.Element.call(this, node || SVG.create('svg'))
+import Container from './Container.js'
+import Parent from './Parent.js'
+import {adopt, extend} from './tools.js'
+import {ns, xlink, xmlns, svgjs} from './namespaces.js'
 
-    // set svg element attributes and ensure defs node
-    this.namespace()
-  },
+export default class Doc extends Container {
+   constructor (node) {
+     super(nodeOrNew('svg', node))
+     this.namespace()
+   }
 
-  // Inherit from
-  inherit: SVG.Container,
+   isRoot () {
+     return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document'
+   }
 
-  // Add class methods
-  extend: {
-    isRoot: function () {
-      return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document'
-    },
-    // Check if this is a root svg. If not, call docs from this element
-    doc: function () {
-      if (this.isRoot()) return this
-      return SVG.Element.prototype.doc.call(this)
-    },
-    // Add namespaces
-    namespace: function () {
-      if (!this.isRoot()) return this.doc().namespace()
-      return this
-        .attr({ xmlns: SVG.ns, version: '1.1' })
-        .attr('xmlns:xlink', SVG.xlink, SVG.xmlns)
-        .attr('xmlns:svgjs', SVG.svgjs, SVG.xmlns)
-    },
-    // Creates and returns defs element
-    defs: function () {
-      if (!this.isRoot()) return this.doc().defs()
-      return SVG.adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new SVG.Defs())
-    },
-    // custom parent method
-    parent: function (type) {
-      if (this.isRoot()) {
-        return this.node.parentNode.nodeName === '#document' ? null : this.node.parentNode
-      }
+   // Check if this is a root svg
+   // If not, call docs from this element
+   doc () {
+     if (this.isRoot()) return this
+     return super.doc()
+   }
 
-      return SVG.Element.prototype.parent.call(this, type)
-    },
-    // Removes the doc from the DOM
-    remove: function () {
-      if (!this.isRoot()) {
-        return SVG.Element.prototype.remove.call(this)
-      }
+   // Add namespaces
+   namespace () {
+     if (!this.isRoot()) return this.doc().namespace()
+     return this
+       .attr({ xmlns: ns, version: '1.1' })
+       .attr('xmlns:xlink', xlink, xmlns)
+       .attr('xmlns:svgjs', svgjs, xmlns)
+   }
 
-      if (this.parent()) {
-        this.parent().removeChild(this.node)
-      }
+   // Creates and returns defs element
+   defs () {
+     if (!this.isRoot()) return this.doc().defs()
+     return adopt(this.node.getElementsByTagName('defs')[0]) ||
+      this.put(new Defs())
+   }
 
-      return this
-    },
-    clear: function () {
-      // remove children
-      while (this.node.hasChildNodes()) {
-        this.node.removeChild(this.node.lastChild)
-      }
-      return this
-    }
-  },
-  construct: {
-    // Create nested svg document
-    nested: function () {
-      return this.put(new SVG.Doc())
-    }
+   // custom parent method
+   parent (type) {
+     if (this.isRoot()) {
+       return this.node.parentNode.nodeName === '#document' ? null : this.node.parentNode
+     }
+
+     return super.parent(type)
+   }
+
+   // Removes the doc from the DOM
+   remove () {
+     if (!this.isRoot()) {
+       return super.remove()
+     }
+
+     if (this.parent()) {
+       this.parent().removeChild(this.node)
+     }
+
+     return this
+   }
+
+   clear () {
+     // remove children
+     while (this.node.hasChildNodes()) {
+       this.node.removeChild(this.node.lastChild)
+     }
+     return this
+   }
+}
+
+addFactory(Container, {
+  // Create nested svg document
+  nested () {
+    return this.put(new Doc())
   }
 })

@@ -1,19 +1,15 @@
-SVG.G = SVG.invent({
-  // Initialize node
-  create: 'g',
+import Container from './Container.js'
+import Parent from './Parent.js'
 
-  // Inherit from
-  inherit: SVG.Container,
+export default class G extends Container {
+  constructor (node) {
+    super(nodeorNew('group', node))
+  }
+}
 
-  // Add class methods
-  extend: {
-  },
-
-  // Add parent method
-  construct: {
-    // Create a group element
-    group: function () {
-      return this.put(new SVG.G())
-    }
+addFactory(Parent, {
+  // Create a group element
+  group: function () {
+    return this.put(new G())
   }
 })

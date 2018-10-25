@@ -1,27 +1,13 @@
+import {nodeOrNew} from './tools.js'
+import Parent from './Parent.js'
 
-SVG.Bare = SVG.invent({
-  // Initialize
-  create: function (element, inherit) {
-    // construct element
-    SVG.Element.call(this, SVG.create(element))
-
-    // inherit custom methods
-    if (inherit) {
-      for (var method in inherit.prototype) {
-        if (typeof inherit.prototype[method] === 'function') {
-          this[method] = inherit.prototype[method]
-        }
-      }
+export default function Bare (element, inherit) {
+  return class Custom extends inherit {
+    constructor (node) {
+      super(nodeOrNew(element, node))
     }
-  },
 
-  // Inherit from
-  inherit: SVG.Element,
-
-  // Add methods
-  extend: {
-    // Insert some plain text
-    words: function (text) {
+    words (text) {
       // remove contents
       while (this.node.hasChildNodes()) {
         this.node.removeChild(this.node.lastChild)
@@ -33,11 +19,20 @@ SVG.Bare = SVG.invent({
       return this
     }
   }
-})
+}
 
-SVG.extend(SVG.Parent, {
+export let constructors = {
   // Create an element that is not described by SVG.js
   element: function (element, inherit) {
-    return this.put(new SVG.Bare(element, inherit))
+    let custom = createCustom(element, inherit)
+    return this.put(new custom())
   }
-})
+}
+
+// extend(Parent, {
+//   // Create an element that is not described by SVG.js
+//   element: function (element, inherit) {
+//     let custom = createCustom(element, inherit)
+//     return this.put(new custom())
+//   }
+// })

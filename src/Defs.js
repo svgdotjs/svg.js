@@ -1,7 +1,8 @@
-SVG.Defs = SVG.invent({
-  // Initialize node
-  create: 'defs',
+import Container from './Container.js'
+import {nodeOrNew} from './tools.js'
 
-  // Inherit from
-  inherit: SVG.Container
-})
+export default class Defs extends Container {
+  constructor (node) {
+    super(nodeOrNew('defs', node))
+  }
+}

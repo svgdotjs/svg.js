@@ -1,51 +1,55 @@
-SVG.Mask = SVG.invent({
+import Container from './Container.js'
+import Element from './Element.js'
+import {nodeOrNew} from './tools.js'
+import find from './selector.js'
+
+export default class Mask extends Container {
   // Initialize node
-  create: 'mask',
+  constructor (node) {
+    super(nodeOrNew('mask', node))
+  }
 
-  // Inherit from
-  inherit: SVG.Container,
+  // Unmask all masked elements and remove itself
+  remove () {
+    // unmask all targets
+    this.targets().forEach(function (el) {
+      el.unmask()
+    })
 
-  // Add class methods
-  extend: {
-    // Unmask all masked elements and remove itself
-    remove: function () {
-      // unmask all targets
-      this.targets().forEach(function (el) {
-        el.unmask()
-      })
+    // remove mask from parent
+    return super.remove()
+  }
 
-      // remove mask from parent
-      return SVG.Element.prototype.remove.call(this)
-    },
+  targets () {
+    return find('svg [mask*="' + this.id() + '"]')
+  }
 
-    targets: function () {
-      return SVG.select('svg [mask*="' + this.id() + '"]')
-    }
-  },
+}
 
-  // Add parent method
-  construct: {
-    // Create masking element
-    mask: function () {
-      return this.defs().put(new SVG.Mask())
-    }
+addFactory(Container, {
+  mask () {
+    return this.defs().put(new Mask())
   }
 })
 
-SVG.extend(SVG.Element, {
+extend(Element, {
   // Distribute mask to svg element
-  maskWith: function (element) {
+  maskWith (element) {
     // use given mask or create a new one
-    var masker = element instanceof SVG.Mask ? element : this.parent().mask().add(element)
+    var masker = element instanceof Mask
+      ? element
+      : this.parent().mask().add(element)
 
     // apply mask
     return this.attr('mask', 'url("#' + masker.id() + '")')
   },
+
   // Unmask element
-  unmask: function () {
+  unmask () {
     return this.attr('mask', null)
   },
-  masker: function () {
+
+  masker () {
     return this.reference('mask')
   }
 })

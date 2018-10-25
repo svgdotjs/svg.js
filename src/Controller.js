@@ -1,7 +1,5 @@
 
-// c = {
-//   finished: Whether or not we are finished
-// }
+import {timeline} from './defaults.js'
 
 /***
 Base Class
@@ -18,40 +16,7 @@ function makeSetterGetter (k, f) {
   }
 }
 
-SVG.Stepper = SVG.invent({
-  create: function () {}
-})
-
-/***
-Easing Functions
-================
-***/
-
-SVG.Ease = SVG.invent({
-  inherit: SVG.Stepper,
-
-  create: function (fn) {
-    SVG.Stepper.call(this, fn)
-
-    this.ease = SVG.easing[fn || SVG.defaults.timeline.ease] || fn
-  },
-
-  extend: {
-
-    step: function (from, to, pos) {
-      if (typeof from !== 'number') {
-        return pos < 1 ? from : to
-      }
-      return from + (to - from) * this.ease(pos)
-    },
-
-    done: function (dt, c) {
-      return false
-    }
-  }
-})
-
-SVG.easing = {
+let easing = {
   '-': function (pos) { return pos },
   '<>': function (pos) { return -Math.cos(pos * Math.PI) / 2 + 0.5 },
   '>': function (pos) { return Math.sin(pos * Math.PI / 2) },
@@ -63,30 +28,50 @@ SVG.easing = {
   }
 }
 
+
+export class Stepper {
+  done () { return false }
+}
+
+/***
+Easing Functions
+================
+***/
+
+export class Ease extends Stepper {
+  constructor (fn) {
+    super()
+    this.ease = easing[fn || timeline.ease] || fn
+  }
+
+  step (from, to, pos) {
+    if (typeof from !== 'number') {
+      return pos < 1 ? from : to
+    }
+    return from + (to - from) * this.ease(pos)
+  }
+}
+
+
 /***
 Controller Types
 ================
 ***/
 
-SVG.Controller = SVG.invent({
-  inherit: SVG.Stepper,
-
-  create: function (fn) {
-    SVG.Stepper.call(this, fn)
+export class Controller extends Stepper {
+  constructor (fn) {
+    super()
     this.stepper = fn
-  },
-
-  extend: {
-
-    step: function (current, target, dt, c) {
-      return this.stepper(current, target, dt, c)
-    },
-
-    done: function (c) {
-      return c.done
-    }
   }
-})
+
+  step (current, target, dt, c) {
+    return this.stepper(current, target, dt, c)
+  }
+
+  done (c) {
+    return c.done
+  }
+}
 
 function recalculate () {
   // Apply the default parameters
@@ -105,89 +90,86 @@ function recalculate () {
   this.k = wn * wn
 }
 
-SVG.Spring = SVG.invent({
-  inherit: SVG.Controller,
-
-  create: function (duration, overshoot) {
+export class Spring extends Controller {
+  constructor (duration, overshoot) {
+    super()
     this.duration(duration || 500)
       .overshoot(overshoot || 0)
-  },
-
-  extend: {
-    step: function (current, target, dt, c) {
-      if (typeof current === 'string') return current
-      c.done = dt === Infinity
-      if (dt === Infinity) return target
-      if (dt === 0) return current
-
-      if (dt > 100) dt = 16
-
-      dt /= 1000
-
-      // Get the previous velocity
-      var velocity = c.velocity || 0
-
-      // Apply the control to get the new position and store it
-      var acceleration = -this.d * velocity - this.k * (current - target)
-      var newPosition = current +
-        velocity * dt +
-        acceleration * dt * dt / 2
-
-      // Store the velocity
-      c.velocity = velocity + acceleration * dt
-
-      // Figure out if we have converged, and if so, pass the value
-      c.done = Math.abs(target - newPosition) + Math.abs(velocity) < 0.002
-      return c.done ? target : newPosition
-    },
-
-    duration: makeSetterGetter('_duration', recalculate),
-    overshoot: makeSetterGetter('_overshoot', recalculate)
   }
+
+  step (current, target, dt, c) {
+    if (typeof current === 'string') return current
+    c.done = dt === Infinity
+    if (dt === Infinity) return target
+    if (dt === 0) return current
+
+    if (dt > 100) dt = 16
+
+    dt /= 1000
+
+    // Get the previous velocity
+    var velocity = c.velocity || 0
+
+    // Apply the control to get the new position and store it
+    var acceleration = -this.d * velocity - this.k * (current - target)
+    var newPosition = current +
+      velocity * dt +
+      acceleration * dt * dt / 2
+
+    // Store the velocity
+    c.velocity = velocity + acceleration * dt
+
+    // Figure out if we have converged, and if so, pass the value
+    c.done = Math.abs(target - newPosition) + Math.abs(velocity) < 0.002
+    return c.done ? target : newPosition
+  }
+}
+
+extend(Spring, {
+  duration: makeSetterGetter('_duration', recalculate),
+  overshoot: makeSetterGetter('_overshoot', recalculate)
 })
 
-SVG.PID = SVG.invent({
-  inherit: SVG.Controller,
-
-  create: function (p, i, d, windup) {
-    SVG.Controller.call(this)
+export class PID extends Controller {
+  constructor (p, i, d, windup) {
+    super()
 
     p = p == null ? 0.1 : p
     i = i == null ? 0.01 : i
     d = d == null ? 0 : d
     windup = windup == null ? 1000 : windup
     this.p(p).i(i).d(d).windup(windup)
-  },
-
-  extend: {
-    step: function (current, target, dt, c) {
-      if (typeof current === 'string') return current
-      c.done = dt === Infinity
-
-      if (dt === Infinity) return target
-      if (dt === 0) return current
-
-      var p = target - current
-      var i = (c.integral || 0) + p * dt
-      var d = (p - (c.error || 0)) / dt
-      var windup = this.windup
-
-      // antiwindup
-      if (windup !== false) {
-        i = Math.max(-windup, Math.min(i, windup))
-      }
-
-      c.error = p
-      c.integral = i
-
-      c.done = Math.abs(p) < 0.001
-
-      return c.done ? target : current + (this.P * p + this.I * i + this.D * d)
-    },
-
-    windup: makeSetterGetter('windup'),
-    p: makeSetterGetter('P'),
-    i: makeSetterGetter('I'),
-    d: makeSetterGetter('D')
   }
+
+  step (current, target, dt, c) {
+    if (typeof current === 'string') return current
+    c.done = dt === Infinity
+
+    if (dt === Infinity) return target
+    if (dt === 0) return current
+
+    var p = target - current
+    var i = (c.integral || 0) + p * dt
+    var d = (p - (c.error || 0)) / dt
+    var windup = this.windup
+
+    // antiwindup
+    if (windup !== false) {
+      i = Math.max(-windup, Math.min(i, windup))
+    }
+
+    c.error = p
+    c.integral = i
+
+    c.done = Math.abs(p) < 0.001
+
+    return c.done ? target : current + (this.P * p + this.I * i + this.D * d)
+  }
+}
+
+extend(PID, {
+  windup: makeSetterGetter('windup'),
+  p: makeSetterGetter('P'),
+  i: makeSetterGetter('I'),
+  d: makeSetterGetter('D')
 })

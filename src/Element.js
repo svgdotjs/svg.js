@@ -1,10 +1,15 @@
-/* global proportionalSize, assignNewId, createElement, matches, is */
+import {proportionalSize, assignNewId, makeInstance, matches} from './helpers.js'
+import {eid} from './tools.js'
+import {delimiter} from './regex.js'
+import {ns} from './namespaces.js'
+import {adopt} from './tools.js'
+// import {Doc, EventTarget, Parent} from './classes.js'
+import EventTarget from './EventTarget.js'
+import Doc from './Doc.js'
+import Parent from './Parent.js'
 
-SVG.Element = SVG.invent({
-  inherit: SVG.EventTarget,
-
-  // Initialize node
-  create: function (node) {
+export default class Element extends EventTarget {
+  constructor (node) {
     // event listener
     this.events = {}
 
@@ -23,294 +28,275 @@ SVG.Element = SVG.invent({
         this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
       }
     }
-  },
+  }
 
-  // Add class methods
-  extend: {
-    // Move over x-axis
-    x: function (x) {
-      return this.attr('x', x)
-    },
+  // Move over x-axis
+  x (x) {
+    return this.attr('x', x)
+  }
 
-    // Move over y-axis
-    y: function (y) {
-      return this.attr('y', y)
-    },
+  // Move over y-axis
+  y (y) {
+    return this.attr('y', y)
+  }
 
-    // Move by center over x-axis
-    cx: function (x) {
-      return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
-    },
+  // Move by center over x-axis
+  cx (x) {
+    return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
+  }
 
-    // Move by center over y-axis
-    cy: function (y) {
-      return y == null
-        ? this.y() + this.height() / 2
-        : this.y(y - this.height() / 2)
-    },
+  // Move by center over y-axis
+  cy (y) {
+    return y == null
+      ? this.y() + this.height() / 2
+      : this.y(y - this.height() / 2)
+  }
 
-    // Move element to given x and y values
-    move: function (x, y) {
-      return this.x(x).y(y)
-    },
+  // Move element to given x and y values
+  move (x, y) {
+    return this.x(x).y(y)
+  }
 
-    // Move element by its center
-    center: function (x, y) {
-      return this.cx(x).cy(y)
-    },
+  // Move element by its center
+  center (x, y) {
+    return this.cx(x).cy(y)
+  }
 
-    // Set width of element
-    width: function (width) {
-      return this.attr('width', width)
-    },
+  // Set width of element
+  width (width) {
+    return this.attr('width', width)
+  }
 
-    // Set height of element
-    height: function (height) {
-      return this.attr('height', height)
-    },
+  // Set height of element
+  height (height) {
+    return this.attr('height', height)
+  }
 
-    // Set element size to given width and height
-    size: function (width, height) {
-      var p = proportionalSize(this, width, height)
+  // Set element size to given width and height
+  size (width, height) {
+    let p = proportionalSize(this, width, height)
 
-      return this
-        .width(new SVG.Number(p.width))
-        .height(new SVG.Number(p.height))
-    },
+    return this
+      .width(new SVGNumber(p.width))
+      .height(new SVGNumber(p.height))
+  }
 
-    // Clone element
-    clone: function (parent) {
-      // write dom data to the dom so the clone can pickup the data
-      this.writeDataToDom()
+  // Clone element
+  clone (parent) {
+    // write dom data to the dom so the clone can pickup the data
+    this.writeDataToDom()
 
-      // clone element and assign new id
-      var clone = assignNewId(this.node.cloneNode(true))
+    // clone element and assign new id
+    let clone = assignNewId(this.node.cloneNode(true))
 
-      // insert the clone in the given parent or after myself
-      if (parent) parent.add(clone)
-      else this.after(clone)
+    // insert the clone in the given parent or after myself
+    if (parent) parent.add(clone)
+    else this.after(clone)
 
-      return clone
-    },
+    return clone
+  }
 
-    // Remove element
-    remove: function () {
-      if (this.parent()) { this.parent().removeElement(this) }
+  // Remove element
+  remove () {
+    if (this.parent()) { this.parent().removeElement(this) }
 
-      return this
-    },
+    return this
+  }
 
-    // Replace element
-    replace: function (element) {
-      this.after(element).remove()
+  // Replace element
+  replace (element) {
+    this.after(element).remove()
 
-      return element
-    },
+    return element
+  }
 
-    // Add element to given container and return self
-    addTo: function (parent) {
-      return createElement(parent).put(this)
-    },
+  // Add element to given container and return self
+  addTo (parent) {
+    return makeInstance(parent).put(this)
+  }
 
-    // Add element to given container and return container
-    putIn: function (parent) {
-      return createElement(parent).add(this)
-    },
+  // Add element to given container and return container
+  putIn (parent) {
+    return makeInstance(parent).add(this)
+  }
 
-    // Get / set id
-    id: function (id) {
-      // generate new id if no id set
-      if (typeof id === 'undefined' && !this.node.id) {
-        this.node.id = SVG.eid(this.type)
-      }
+  // Get / set id
+  id (id) {
+    // generate new id if no id set
+    if (typeof id === 'undefined' && !this.node.id) {
+      this.node.id = eid(this.type)
+    }
 
-      // dont't set directly width this.node.id to make `null` work correctly
-      return this.attr('id', id)
-    },
+    // dont't set directly width this.node.id to make `null` work correctly
+    return this.attr('id', id)
+  }
 
-    // Checks whether the given point inside the bounding box of the element
-    inside: function (x, y) {
-      var box = this.bbox()
+  // Checks whether the given point inside the bounding box of the element
+  inside (x, y) {
+    let box = this.bbox()
 
-      return x > box.x &&
-        y > box.y &&
-        x < box.x + box.width &&
-        y < box.y + box.height
-    },
+    return x > box.x &&
+      y > box.y &&
+      x < box.x + box.width &&
+      y < box.y + box.height
+  }
 
-    // Show element
-    show: function () {
-      return this.css('display', '')
-    },
+  // Return id on string conversion
+  toString () {
+    return this.id()
+  }
 
-    // Hide element
-    hide: function () {
-      return this.css('display', 'none')
-    },
+  // Return array of classes on the node
+  classes () {
+    var attr = this.attr('class')
+    return attr == null ? [] : attr.trim().split(delimiter)
+  }
 
-    // Is element visible?
-    visible: function () {
-      return this.css('display') !== 'none'
-    },
+  // Return true if class exists on the node, false otherwise
+  hasClass (name) {
+    return this.classes().indexOf(name) !== -1
+  }
 
-    // Return id on string conversion
-    toString: function () {
-      return this.id()
-    },
+  // Add class to the node
+  addClass (name) {
+    if (!this.hasClass(name)) {
+      var array = this.classes()
+      array.push(name)
+      this.attr('class', array.join(' '))
+    }
 
-    // Return array of classes on the node
-    classes: function () {
-      var attr = this.attr('class')
-      return attr == null ? [] : attr.trim().split(SVG.regex.delimiter)
-    },
+    return this
+  }
 
-    // Return true if class exists on the node, false otherwise
-    hasClass: function (name) {
-      return this.classes().indexOf(name) !== -1
-    },
+  // Remove class from the node
+  removeClass (name) {
+    if (this.hasClass(name)) {
+      this.attr('class', this.classes().filter(function (c) {
+        return c !== name
+      }).join(' '))
+    }
 
-    // Add class to the node
-    addClass: function (name) {
-      if (!this.hasClass(name)) {
-        var array = this.classes()
-        array.push(name)
-        this.attr('class', array.join(' '))
-      }
+    return this
+  }
 
-      return this
-    },
+  // Toggle the presence of a class on the node
+  toggleClass (name) {
+    return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
+  }
 
-    // Remove class from the node
-    removeClass: function (name) {
-      if (this.hasClass(name)) {
-        this.attr('class', this.classes().filter(function (c) {
-          return c !== name
-        }).join(' '))
-      }
+  // FIXME: getIdFromReference
+  // Get referenced element form attribute value
+  reference (attr) {
+    return get(this.attr(attr))
+  }
 
-      return this
-    },
+  // Returns the parent element instance
+  parent (type) {
+    var parent = this
 
-    // Toggle the presence of a class on the node
-    toggleClass: function (name) {
-      return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
-    },
+    // check for parent
+    if (!parent.node.parentNode) return null
 
-    // Get referenced element form attribute value
-    reference: function (attr) {
-      return SVG.get(this.attr(attr))
-    },
+    // get parent element
+    parent = adopt(parent.node.parentNode)
 
-    // Returns the parent element instance
-    parent: function (type) {
-      var parent = this
+    if (!type) return parent
 
-      // check for parent
-      if (!parent.node.parentNode) return null
-
-      // get parent element
-      parent = SVG.adopt(parent.node.parentNode)
-
-      if (!type) return parent
-
-      // loop trough ancestors if type is given
-      while (parent && parent.node instanceof window.SVGElement) {
-        if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-        parent = SVG.adopt(parent.node.parentNode)
-      }
-    },
-
-    // Get parent document
-    doc: function () {
-      var p = this.parent(SVG.Doc)
-      return p && p.doc()
-    },
-
-    // Get defs
-    defs: function () {
-      return this.doc().defs()
-    },
-
-    // return array of all ancestors of given type up to the root svg
-    parents: function (type) {
-      var parents = []
-      var parent = this
-
-      do {
-        parent = parent.parent(type)
-        if (!parent || !parent.node) break
-
-        parents.push(parent)
-      } while (parent.parent)
-
-      return parents
-    },
-
-    // matches the element vs a css selector
-    matches: function (selector) {
-      return matches(this.node, selector)
-    },
-
-    // Returns the svg node to call native svg methods on it
-    native: function () {
-      return this.node
-    },
-
-    // Import raw svg
-    svg: function (svg) {
-      var well, len
-
-      // act as a setter if svg is given
-      if (svg && this instanceof SVG.Parent) {
-        // create temporary holder
-        well = document.createElementNS(SVG.ns, 'svg')
-        // dump raw svg
-        well.innerHTML = svg
-
-        // transplant nodes
-        for (len = well.children.length; len--;) {
-          this.node.appendChild(well.firstElementChild)
-        }
-
-      // otherwise act as a getter
-      } else {
-        // write svgjs data to the dom
-        this.writeDataToDom()
-
-        return this.node.outerHTML
-      }
-
-      return this
-    },
-
-    // write svgjs data to the dom
-    writeDataToDom: function () {
-      // dump variables recursively
-      if (this.is(SVG.Parent)) {
-        this.each(function () {
-          this.writeDataToDom()
-        })
-      }
-
-      // remove previously set data
-      this.node.removeAttribute('svgjs:data')
-
-      if (Object.keys(this.dom).length) {
-        this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
-      }
-      return this
-    },
-
-    // set given data to the elements data property
-    setData: function (o) {
-      this.dom = o
-      return this
-    },
-    is: function (obj) {
-      return is(this, obj)
-    },
-    getEventTarget: function () {
-      return this.node
+    // loop trough ancestors if type is given
+    while (parent && parent.node instanceof window.SVGElement) {
+      if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+      parent = adopt(parent.node.parentNode)
     }
   }
-})
+
+  // Get parent document
+  doc () {
+    let p = this.parent(Doc)
+    return p && p.doc()
+  }
+
+  // Get defs
+  defs () {
+    return this.doc().defs()
+  }
+
+  // return array of all ancestors of given type up to the root svg
+  parents (type) {
+    let parents = []
+    let parent = this
+
+    do {
+      parent = parent.parent(type)
+      if (!parent || !parent.node) break
+
+      parents.push(parent)
+    } while (parent.parent)
+
+    return parents
+  }
+
+  // matches the element vs a css selector
+  matches (selector) {
+    return matches(this.node, selector)
+  }
+
+  // Returns the svg node to call native svg methods on it
+  native () {
+    return this.node
+  }
+
+  // Import raw svg
+  svg (svg) {
+    var well, len
+
+    // act as a setter if svg is given
+    if (svg && this instanceof Parent) {
+      // create temporary holder
+      well = document.createElementNS(ns, 'svg')
+      // dump raw svg
+      well.innerHTML = svg
+
+      // transplant nodes
+      for (len = well.children.length; len--;) {
+        this.node.appendChild(well.firstElementChild)
+      }
+
+    // otherwise act as a getter
+    } else {
+      // write svgjs data to the dom
+      this.writeDataToDom()
+
+      return this.node.outerHTML
+    }
+
+    return this
+  }
+
+  // write svgjs data to the dom
+  writeDataToDom () {
+    // dump variables recursively
+    if (this.is(Parent)) {
+      this.each(function () {
+        this.writeDataToDom()
+      })
+    }
+
+    // remove previously set data
+    this.node.removeAttribute('svgjs:data')
+
+    if (Object.keys(this.dom).length) {
+      this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
+    }
+    return this
+  }
+
+  // set given data to the elements data property
+  setData (o) {
+    this.dom = o
+    return this
+  }
+
+  getEventTarget () {
+    return this.node
+  }
+}

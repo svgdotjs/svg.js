@@ -1,6 +1,9 @@
-/* globals arrayToString, pathRegReplace */
+import {arrayToString, pathRegReplace} from './helpers.js'
+import parser from './parser.js'
+import {numbersWithDots, pathLetters, hyphen, delimiter, isPathLetter} from './regex.js'
+import Point from './Point.js'
 
-var pathHandlers = {
+let pathHandlers = {
   M: function (c, p, p0) {
     p.x = p0.x = c[0]
     p.y = p0.y = c[1]
@@ -52,7 +55,7 @@ var pathHandlers = {
   }
 }
 
-var mlhvqtcsaz = 'mlhvqtcsaz'.split('')
+let mlhvqtcsaz = 'mlhvqtcsaz'.split('')
 
 for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
   pathHandlers[mlhvqtcsaz[i]] = (function (i) {
@@ -73,27 +76,24 @@ for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
   })(mlhvqtcsaz[i].toUpperCase())
 }
 
-// Path points array
-SVG.PathArray = function (array, fallback) {
-  SVG.Array.call(this, array, fallback || [['M', 0, 0]])
-}
+export default class PathArray extends SVGArray {
+  constructor (array, fallback = [['M', 0, 0]]) {
+    super(array, fallback)
+  }
 
-// Inherit from SVG.Array
-SVG.PathArray.prototype = new SVG.Array()
-SVG.PathArray.prototype.constructor = SVG.PathArray
-
-SVG.extend(SVG.PathArray, {
   // Convert array to string
-  toString: function () {
+  toString () {
     return arrayToString(this.value)
-  },
-  toArray: function () {
+  }
+
+  toArray () {
     return this.value.reduce(function (prev, curr) {
       return [].concat.call(prev, curr)
     }, [])
-  },
+  }
+
   // Move path string
-  move: function (x, y) {
+  move (x, y) {
     // get bounding box of current situation
     var box = this.bbox()
 
@@ -131,9 +131,10 @@ SVG.extend(SVG.PathArray, {
     }
 
     return this
-  },
+  }
+
   // Resize path string
-  size: function (width, height) {
+  size (width, height) {
     // get bounding box of current situation
     var box = this.bbox()
     var i, l
@@ -171,12 +172,13 @@ SVG.extend(SVG.PathArray, {
     }
 
     return this
-  },
+  }
+
   // Test if the passed path array use the same path data commands as this path array
-  equalCommands: function (pathArray) {
+  equalCommands (pathArray) {
     var i, il, equalCommands
 
-    pathArray = new SVG.PathArray(pathArray)
+    pathArray = new PathArray(pathArray)
 
     equalCommands = this.value.length === pathArray.value.length
     for (i = 0, il = this.value.length; equalCommands && i < il; i++) {
@@ -184,10 +186,11 @@ SVG.extend(SVG.PathArray, {
     }
 
     return equalCommands
-  },
+  }
+
   // Make path array morphable
-  morph: function (pathArray) {
-    pathArray = new SVG.PathArray(pathArray)
+  morph (pathArray) {
+    pathArray = new PathArray(pathArray)
 
     if (this.equalCommands(pathArray)) {
       this.destination = pathArray
@@ -196,16 +199,17 @@ SVG.extend(SVG.PathArray, {
     }
 
     return this
-  },
+  }
+
   // Get morphed path array at given position
-  at: function (pos) {
+  at (pos) {
     // make sure a destination is defined
     if (!this.destination) return this
 
     var sourceArray = this.value
     var destinationArray = this.destination.value
     var array = []
-    var pathArray = new SVG.PathArray()
+    var pathArray = new PathArray()
     var i, il, j, jl
 
     // Animate has specified in the SVG spec
@@ -229,11 +233,12 @@ SVG.extend(SVG.PathArray, {
     // Directly modify the value of a path array, this is done this way for performance
     pathArray.value = array
     return pathArray
-  },
+  }
+
   // Absolutize and parse path to array
-  parse: function (array) {
+  parse (array) {
     // if it's already a patharray, no need to parse it
-    if (array instanceof SVG.PathArray) return array.valueOf()
+    if (array instanceof PathArray) return array.valueOf()
 
     // prepare for parsing
     var s
@@ -241,11 +246,11 @@ SVG.extend(SVG.PathArray, {
 
     if (typeof array === 'string') {
       array = array
-        .replace(SVG.regex.numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
-        .replace(SVG.regex.pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(SVG.regex.hyphen, '$1 -')      // add space before hyphen
+        .replace(regex.numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
+        .replace(regex.pathLetters, ' $& ') // put some room between letters and numbers
+        .replace(regex.hyphen, '$1 -')      // add space before hyphen
         .trim()                                 // trim
-        .split(SVG.regex.delimiter)   // split into array
+        .split(regex.delimiter)   // split into array
     } else {
       array = array.reduce(function (prev, curr) {
         return [].concat.call(prev, curr)
@@ -254,14 +259,14 @@ SVG.extend(SVG.PathArray, {
 
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
     var result = []
-    var p = new SVG.Point()
-    var p0 = new SVG.Point()
+    var p = new Point()
+    var p0 = new Point()
     var index = 0
     var len = array.length
 
     do {
       // Test if we have a path letter
-      if (SVG.regex.isPathLetter.test(array[index])) {
+      if (regex.isPathLetter.test(array[index])) {
         s = array[index]
         ++index
       // If last letter was a move command and we got no new, it defaults to [L]ine
@@ -279,11 +284,11 @@ SVG.extend(SVG.PathArray, {
     } while (len > index)
 
     return result
-  },
-  // Get bounding box of path
-  bbox: function () {
-    SVG.parser().path.setAttribute('d', this.toString())
-    return SVG.parser.nodes.path.getBBox()
   }
 
-})
+  // Get bounding box of path
+  bbox () {
+    parser().path.setAttribute('d', this.toString())
+    return parser.nodes.path.getBBox()
+  }
+}

@@ -1,16 +1,16 @@
+import Shape from './Shape.js'
+import {nodeOrNew} from './tools.js'
 
-SVG.Rect = SVG.invent({
+export default class Rect extends Shape {
   // Initialize node
-  create: 'rect',
+  constructor (node) {
+    super(nodeOrNew('rect', node))
+  }
+}
 
-  // Inherit from
-  inherit: SVG.Shape,
-
-  // Add parent method
-  construct: {
-    // Create a rect element
-    rect: function (width, height) {
-      return this.put(new SVG.Rect()).size(width, height)
-    }
+addFactory(Parent, {
+  // Create a rect element
+  rect (width, height) {
+    return this.put(new Rect()).size(width, height)
   }
 })

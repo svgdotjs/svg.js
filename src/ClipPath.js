@@ -1,53 +1,54 @@
-SVG.ClipPath = SVG.invent({
-  // Initialize node
-  create: 'clipPath',
+import Container from './Container.js'
+import Element from './Element.js'
+import {nodeOrNew, extend} from './tools.js'
+import find from './selector.js'
 
-  // Inherit from
-  inherit: SVG.Container,
+export default class ClipPath extends Container {
+  constructor (node) {
+    super(nodeOrNew('clipPath', node))
+  }
 
-  // Add class methods
-  extend: {
-    // Unclip all clipped elements and remove itself
-    remove: function () {
-      // unclip all targets
-      this.targets().forEach(function (el) {
-        el.unclip()
-      })
+  // Unclip all clipped elements and remove itself
+  remove () {
+    // unclip all targets
+    this.targets().forEach(function (el) {
+      el.unclip()
+    })
 
-      // remove clipPath from parent
-      return SVG.Element.prototype.remove.call(this)
-    },
+    // remove clipPath from parent
+    return super.remove()
+  }
 
-    targets: function () {
-      return SVG.select('svg [clip-path*="' + this.id() + '"]')
-    }
-  },
+  targets () {
+    return find('svg [clip-path*="' + this.id() + '"]')
+  }
+}
 
-  // Add parent method
-  construct: {
-    // Create clipping element
-    clip: function () {
-      return this.defs().put(new SVG.ClipPath())
-    }
+addFactory(Container, {
+  // Create clipping element
+  clip: function() {
+    return this.defs().put(new ClipPath)
   }
 })
 
-//
-SVG.extend(SVG.Element, {
+extend(Element, {
   // Distribute clipPath to svg element
-  clipWith: function (element) {
+  clipWith (element) {
     // use given clip or create a new one
-    var clipper = element instanceof SVG.ClipPath ? element : this.parent().clip().add(element)
+    let clipper = element instanceof ClipPath
+      ? element
+      : this.parent().clip().add(element)
 
     // apply mask
     return this.attr('clip-path', 'url("#' + clipper.id() + '")')
   },
+
   // Unclip element
-  unclip: function () {
+  unclip () {
     return this.attr('clip-path', null)
   },
-  clipper: function () {
+
+  clipper () {
     return this.reference('clip-path')
   }
-
 })

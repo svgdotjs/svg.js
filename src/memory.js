@@ -1,7 +1,8 @@
+import Element from './Element.js'
 
-SVG.extend(SVG.Element, {
+extend(Element, {
   // Remember arbitrary data
-  remember: function (k, v) {
+  remember (k, v) {
     // remember every item in an object individually
     if (typeof arguments[0] === 'object') {
       for (var key in k) {
@@ -19,7 +20,7 @@ SVG.extend(SVG.Element, {
   },
 
   // Erase a given memory
-  forget: function () {
+  forget () {
     if (arguments.length === 0) {
       this._memory = {}
     } else {
@@ -28,10 +29,10 @@ SVG.extend(SVG.Element, {
       }
     }
     return this
-  },
+  }
 
   // Initialize or return local memory object
-  memory: function () {
+  memory () {
     return this._memory || (this._memory = {})
   }
 })

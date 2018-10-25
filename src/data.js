@@ -1,7 +1,9 @@
+import Element from './Element.js'
+import {extend} from './tools.js'
 
-SVG.extend(SVG.Element, {
+extend(Element, {
   // Store data values on svg nodes
-  data: function (a, v, r) {
+  data (a, v, r) {
     if (typeof a === 'object') {
       for (v in a) {
         this.data(v, a[v])

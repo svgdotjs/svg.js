@@ -29,120 +29,99 @@ SVG.hsl()
 SVG.lab('rgb(100, 100, 100)')
 */
 
-// Module for color convertions
-SVG.Color = function (color, g, b) {
-  var match
+import {isHex, isRgb, whitespace, rgb} from './regex.js'
 
-  // initialize defaults
-  this.r = 0
-  this.g = 0
-  this.b = 0
+export default class Color {
+  constructor (color, g, b) {
+    let match
 
-  if (!color) return
+    // initialize defaults
+    this.r = 0
+    this.g = 0
+    this.b = 0
 
-  // parse color
-  if (typeof color === 'string') {
-    if (SVG.regex.isRgb.test(color)) {
-      // get rgb values
-      match = SVG.regex.rgb.exec(color.replace(SVG.regex.whitespace, ''))
+    if (!color) return
 
-      // parse numeric values
-      this.r = parseInt(match[1])
-      this.g = parseInt(match[2])
-      this.b = parseInt(match[3])
-    } else if (SVG.regex.isHex.test(color)) {
-      // get hex values
-      match = SVG.regex.hex.exec(fullHex(color))
+    // parse color
+    if (typeof color === 'string') {
+      if (isRgb.test(color)) {
+        // get rgb values
+        match = rgb.exec(color.replace(whitespace, ''))
 
-      // parse numeric values
-      this.r = parseInt(match[1], 16)
-      this.g = parseInt(match[2], 16)
-      this.b = parseInt(match[3], 16)
+        // parse numeric values
+        this.r = parseInt(match[1])
+        this.g = parseInt(match[2])
+        this.b = parseInt(match[3])
+      } else if (isHex.test(color)) {
+        // get hex values
+        match = hex.exec(fullHex(color))
+
+        // parse numeric values
+        this.r = parseInt(match[1], 16)
+        this.g = parseInt(match[2], 16)
+        this.b = parseInt(match[3], 16)
+      }
+    } else if (Array.isArray(color)) {
+      this.r = color[0]
+      this.g = color[1]
+      this.b = color[2]
+    } else if (typeof color === 'object') {
+      this.r = color.r
+      this.g = color.g
+      this.b = color.b
+    } else if (arguments.length === 3) {
+      this.r = color
+      this.g = g
+      this.b = b
     }
-  } else if (Array.isArray(color)) {
-    this.r = color[0]
-    this.g = color[1]
-    this.b = color[2]
-  } else if (typeof color === 'object') {
-    this.r = color.r
-    this.g = color.g
-    this.b = color.b
-  } else if (arguments.length === 3) {
-    this.r = color
-    this.g = g
-    this.b = b
   }
-}
 
-SVG.extend(SVG.Color, {
   // Default to hex conversion
-  toString: function () {
+  toString () {
     return this.toHex()
-  },
-  toArray: function () {
+  }
+
+  toArray () {
     return [this.r, this.g, this.b]
-  },
-  fromArray: function (a) {
-    return new SVG.Color(a)
-  },
+  }
+
   // Build hex value
-  toHex: function () {
+  toHex () {
     return '#' +
       compToHex(Math.round(this.r)) +
       compToHex(Math.round(this.g)) +
       compToHex(Math.round(this.b))
-  },
+  }
+
   // Build rgb value
-  toRgb: function () {
+  toRgb () {
     return 'rgb(' + [this.r, this.g, this.b].join() + ')'
-  },
+  }
+
   // Calculate true brightness
-  brightness: function () {
+  brightness () {
     return (this.r / 255 * 0.30) +
       (this.g / 255 * 0.59) +
       (this.b / 255 * 0.11)
-  },
-  // Make color morphable
-  morph: function (color) {
-    this.destination = new SVG.Color(color)
-
-    return this
-  },
-  // Get morphed color at given position
-  at: function (pos) {
-    // make sure a destination is defined
-    if (!this.destination) return this
-
-    // normalise pos
-    pos = pos < 0 ? 0 : pos > 1 ? 1 : pos
-
-    // generate morphed color
-    return new SVG.Color({
-      r: ~~(this.r + (this.destination.r - this.r) * pos),
-      g: ~~(this.g + (this.destination.g - this.g) * pos),
-      b: ~~(this.b + (this.destination.b - this.b) * pos)
-    })
   }
 
-})
+  // Testers
 
-// Testers
+  // Test if given value is a color string
+  static test (color) {
+    color += ''
+    return isHex.test(color) || isRgb.test(color)
+  }
 
-// Test if given value is a color string
-SVG.Color.test = function (color) {
-  color += ''
-  return SVG.regex.isHex.test(color) ||
-    SVG.regex.isRgb.test(color)
-}
+  // Test if given value is a rgb object
+  static isRgb (color) {
+    return color && typeof color.r === 'number' &&
+      typeof color.g === 'number' &&
+      typeof color.b === 'number'
+  }
 
-// Test if given value is a rgb object
-SVG.Color.isRgb = function (color) {
-  return color && typeof color.r === 'number' &&
-    typeof color.g === 'number' &&
-    typeof color.b === 'number'
-}
-
-// Test if given value is a color
-SVG.Color.isColor = function (color) {
-  return SVG.Color.isRgb(color) || SVG.Color.test(color)
+  // Test if given value is a color
+  static isColor (color) {
+    return this.isRgb(color) || this.test(color)
+  }
 }

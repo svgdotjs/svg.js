@@ -1,25 +1,21 @@
+import {Shape, Container} from './classes.js'
+import {xlink} from './namespaces.js'
 
-SVG.Use = SVG.invent({
-  // Initialize node
-  create: 'use',
+export default class Use extends Shape {
+  constructor (node) {
+    super(nodeOrNew('use', node))
+  }
 
-  // Inherit from
-  inherit: SVG.Shape,
+  // Use element as a reference
+  element (element, file) {
+    // Set lined element
+    return this.attr('href', (file || '') + '#' + element, xlink)
+  }
+}
 
-  // Add class methods
-  extend: {
-    // Use element as a reference
-    element: function (element, file) {
-      // Set lined element
-      return this.attr('href', (file || '') + '#' + element, SVG.xlink)
-    }
-  },
-
-  // Add parent method
-  construct: {
-    // Create a use element
-    use: function (element, file) {
-      return this.put(new SVG.Use()).element(element, file)
-    }
+addFactory(Container, {
+  // Create a use element
+  use: function (element, file) {
+    return this.put(new Use()).element(element, file)
   }
 })

@@ -1,29 +1,27 @@
-/* global createElement */
+import {makeInstance} from './helpers.js'
+import EventTarget from './EventTarget.js'
 
-SVG.HtmlNode = SVG.invent({
-  inherit: SVG.EventTarget,
-  create: function (element) {
+export default class HtmlNode extends EventTarget {
+  constructor (element) {
     this.node = element
-  },
-
-  extend: {
-    add: function (element, i) {
-      element = createElement(element)
-
-      if (element.node !== this.node.children[i]) {
-        this.node.insertBefore(element.node, this.node.children[i] || null)
-      }
-
-      return this
-    },
-
-    put: function (element, i) {
-      this.add(element, i)
-      return element
-    },
-
-    getEventTarget: function () {
-      return this.node
-    }
   }
-})
+
+  add (element, i) {
+    element = makeInstance(element)
+
+    if (element.node !== this.node.children[i]) {
+      this.node.insertBefore(element.node, this.node.children[i] || null)
+    }
+
+    return this
+  }
+
+  put (element, i) {
+    this.add(element, i)
+    return element
+  }
+
+  getEventTarget () {
+    return this.node
+  }
+}

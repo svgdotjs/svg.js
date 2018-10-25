@@ -1,9 +1,13 @@
-/* globals fullBox, domContains, isNulledBox, Exception */
+import {Parent, Doc, Symbol, Image, Pattern, Marker, Point} from './classes.js'
+import parser from './parser.js'
+import {fullBox, domContains, isNulledBox} from './helpers.js'
+import {extend} from './tools.js'
+import {delimiter} from './regex.js'
 
-SVG.Box = SVG.invent({
-  create: function (source) {
+export default class Box {
+  constructor (source) {
     var base = [0, 0, 0, 0]
-    source = typeof source === 'string' ? source.split(SVG.regex.delimiter).map(parseFloat)
+    source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
       : Array.isArray(source) ? source
       : typeof source === 'object' ? [source.left != null ? source.left
       : source.x, source.top != null ? source.top : source.y, source.width, source.height]
@@ -17,125 +21,104 @@ SVG.Box = SVG.invent({
 
     // add center, right, bottom...
     fullBox(this)
-  },
-  extend: {
-    // Merge rect box with another, return a new instance
-    merge: function (box) {
-      var x = Math.min(this.x, box.x)
-      var y = Math.min(this.y, box.y)
+  }
 
-      return new SVG.Box(
-        x, y,
-        Math.max(this.x + this.width, box.x + box.width) - x,
-        Math.max(this.y + this.height, box.y + box.height) - y
-      )
-    },
+  // Merge rect box with another, return a new instance
+  merge (box) {
+    let x = Math.min(this.x, box.x)
+    let y = Math.min(this.y, box.y)
+    let width = Math.max(this.x + this.width, box.x + box.width) - x
+    let height = Math.max(this.y + this.height, box.y + box.height) - y
 
-    transform: function (m) {
-      var xMin = Infinity
-      var xMax = -Infinity
-      var yMin = Infinity
-      var yMax = -Infinity
+    return new Box(x, y, width, height)
+  }
 
-      var pts = [
-        new SVG.Point(this.x, this.y),
-        new SVG.Point(this.x2, this.y),
-        new SVG.Point(this.x, this.y2),
-        new SVG.Point(this.x2, this.y2)
-      ]
+  transform (m) {
+    let xMin = Infinity
+    let xMax = -Infinity
+    let yMin = Infinity
+    let yMax = -Infinity
 
-      pts.forEach(function (p) {
-        p = p.transform(m)
-        xMin = Math.min(xMin, p.x)
-        xMax = Math.max(xMax, p.x)
-        yMin = Math.min(yMin, p.y)
-        yMax = Math.max(yMax, p.y)
-      })
+    let pts = [
+      new Point(this.x, this.y),
+      new Point(this.x2, this.y),
+      new Point(this.x, this.y2),
+      new Point(this.x2, this.y2)
+    ]
 
-      return new SVG.Box(
-        xMin, yMin,
-        xMax - xMin,
-        yMax - yMin
-      )
-    },
+    pts.forEach(function (p) {
+      p = p.transform(m)
+      xMin = Math.min(xMin, p.x)
+      xMax = Math.max(xMax, p.x)
+      yMin = Math.min(yMin, p.y)
+      yMax = Math.max(yMax, p.y)
+    })
 
-    addOffset: function () {
-      // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-      this.x += window.pageXOffset
-      this.y += window.pageYOffset
-      return this
-    },
-    toString: function () {
-      return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
-    },
-    toArray: function () {
-      return [this.x, this.y, this.width, this.height]
-    },
-    morph: function (x, y, width, height) {
-      this.destination = new SVG.Box(x, y, width, height)
-      return this
-    },
+    return new Box(
+      xMin, yMin,
+      xMax - xMin,
+      yMax - yMin
+    )
+  }
 
-    at: function (pos) {
-      if (!this.destination) return this
+  addOffset () {
+    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+    this.x += window.pageXOffset
+    this.y += window.pageYOffset
+    return this
+  }
 
-      return new SVG.Box(
-          this.x + (this.destination.x - this.x) * pos
-        , this.y + (this.destination.y - this.y) * pos
-        , this.width + (this.destination.width - this.width) * pos
-        , this.height + (this.destination.height - this.height) * pos
-      )
-    }
+  toString () {
+    return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
+  }
+
+  toArray () {
+    return [this.x, this.y, this.width, this.height]
+  }
+}
+
+
+extend(Parent, {
+  // Get bounding box
+  bbox () {
+    return new Box(getBox((node) => node.getBBox()))
   },
 
-    // Define Parent
-  parent: SVG.Element,
-
-  // Constructor
-  construct: {
-    // Get bounding box
-    bbox: function () {
-      var box
-
-      try {
-        // find native bbox
-        box = this.node.getBBox()
-
-        if (isNulledBox(box) && !domContains(this.node)) {
-          throw new Exception('Element not in the dom')
-        }
-      } catch (e) {
-        try {
-          var clone = this.clone(SVG.parser().svg).show()
-          box = clone.node.getBBox()
-          clone.remove()
-        } catch (e) {
-          console.warn('Getting a bounding box of this element is not possible')
-        }
-      }
-
-      return new SVG.Box(box)
-    },
-
-    rbox: function (el) {
-      // IE11 throws an error when element not in dom
-      try {
-        var box = new SVG.Box(this.node.getBoundingClientRect())
-        if (el) return box.transform(el.screenCTM().inverse())
-        return box.addOffset()
-      } catch (e) {
-        return new SVG.Box()
-      }
-    }
+  rbox (el) {
+    let box = new Box(getBox((node) => node.getBoundingClientRect()))
+    if (el) return box.transform(el.screenCTM().inverse())
+    return box.addOffset()
   }
 })
 
-SVG.extend([SVG.Doc, SVG.Symbol, SVG.Image, SVG.Pattern, SVG.Marker, SVG.ForeignObject, SVG.View], {
+function getBox(cb) {
+  let box
+
+  try {
+    box = cb(this.node)
+
+    if (isNulledBox(box) && !domContains(this.node)) {
+      throw new Error('Element not in the dom')
+    }
+  } catch (e) {
+    try {
+      let clone = this.clone(parser().svg).show()
+      box = cb(clone.node)
+      clone.remove()
+    } catch (e) {
+      console.warn('Getting a bounding box of this element is not possible')
+    }
+  }
+  return box
+}
+
+
+extend([Doc, Symbol, Image, Pattern, Marker], {
   viewbox: function (x, y, width, height) {
     // act as getter
-    if (x == null) return new SVG.Box(this.attr('viewBox'))
+    if (x == null) return new Box(this.attr('viewBox'))
 
     // act as setter
-    return this.attr('viewBox', new SVG.Box(x, y, width, height))
+    return this.attr('viewBox', new Box(x, y, width, height))
   }
 })

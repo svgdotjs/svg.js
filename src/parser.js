@@ -1,17 +1,16 @@
+import Doc from './Doc.js'
 
-SVG.parser = function () {
-  var b
-
-  if (!SVG.parser.nodes.svg.node.parentNode) {
-    b = document.body || document.documentElement
-    SVG.parser.nodes.svg.addTo(b)
+let parser = function () {
+  if (!parser.nodes.svg.node.parentNode) {
+    let b = document.body || document.documentElement
+    parser.nodes.svg.addTo(b)
   }
 
-  return SVG.parser.nodes
+  return parser.nodes
 }
 
-SVG.parser.nodes = {
-  svg: SVG().size(2, 0).css({
+parser.nodes = {
+  svg: new Doc().size(2, 0).css({
     opacity: 0,
     position: 'absolute',
     left: '-100%',
@@ -20,4 +19,6 @@ SVG.parser.nodes = {
   })
 }
 
-SVG.parser.nodes.path = SVG.parser.nodes.svg.path().node
+parser.nodes.path = parser.nodes.svg.path().node
+
+export default parser
