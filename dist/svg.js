@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Oct 18 2018 11:49:16 GMT+0200 (GMT+02:00)
+* BUILT: Fri Oct 26 2018 18:56:01 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1021,16 +1021,6 @@ SVG.Number = SVG.invent({
       number = new SVG.Number(number);
       return new SVG.Number(this / number, this.unit || number.unit);
     },
-    // Convert to different unit
-    to: function to(unit) {
-      var number = new SVG.Number(this);
-
-      if (typeof unit === 'string') {
-        number.unit = unit;
-      }
-
-      return number;
-    },
     // Make number morphable
     morph: function morph(number) {
       this.destination = new SVG.Number(number);
@@ -1309,7 +1299,7 @@ SVG.Element = SVG.invent({
     svg: function svg(_svg) {
       var well, len; // act as a setter if svg is given
 
-      if (_svg && this instanceof SVG.Parent) {
+      if (typeof _svg === 'string' && this instanceof SVG.Parent) {
         // create temporary holder
         well = document.createElementNS(SVG.ns, 'svg'); // dump raw svg
 
@@ -1320,7 +1310,19 @@ SVG.Element = SVG.invent({
         } // otherwise act as a getter
 
       } else {
-        // write svgjs data to the dom
+        if (typeof _svg === 'function') {
+          well = _svg(this);
+
+          if (well instanceof SVG.Element) {
+            return well.svg();
+          }
+
+          if (typeof well === 'boolean' && !well) {
+            return null;
+          }
+        } // write svgjs data to the dom
+
+
         this.writeDataToDom();
         return this.node.outerHTML;
       }
@@ -4442,8 +4444,7 @@ SVG.Runner = SVG.invent({
 
     this.enabled = true;
     this._time = 0;
-    this._last = 0;
-    this.tags = {}; // Save transforms applied to this runner
+    this._last = 0; // Save transforms applied to this runner
 
     this.transforms = new SVG.Matrix();
     this.transformId = 1; // Looping variables
@@ -4694,36 +4695,6 @@ SVG.Runner = SVG.invent({
       if (enabled == null) return this.enabled;
       this.enabled = enabled;
       return this;
-    },
-
-    /*
-    Runner Management
-    =================
-    Functions that are used to help index the runner
-    */
-    tag: function tag(name) {
-      // Act as a getter to get all of the tags on this object
-      if (name == null) return Object.keys(this.tags); // Add all of the tags to the object directly
-
-      name = Array.isArray(name) ? name : [name];
-
-      for (var i = name.length; i--;) {
-        this.tags[name[i]] = true;
-      }
-
-      return this;
-    },
-    untag: function untag(name) {
-      name = Array.isArray(name) ? name : [name];
-
-      for (var i = name.length; i--;) {
-        delete this.tags[name[i]];
-      }
-
-      return this;
-    },
-    getEventTarget: function getEventTarget() {
-      return this._dispatcher;
     },
 
     /*
@@ -5255,12 +5226,12 @@ SVG.extend(SVG.Runner, {
     return this._queueObject('plot', new this._element.MorphArray(a));
     /*
     var morpher = this._element.morphArray().to(a)
-      this.queue(function () {
+     this.queue(function () {
       morpher.from(this._element.array())
     }, function (pos) {
       this._element.plot(morpher.at(pos))
     })
-      return this
+     return this
     */
   },
   // Add leading method
