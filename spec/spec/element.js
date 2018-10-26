@@ -894,6 +894,44 @@ describe('Element', function() {
         ).toBeTruthy()
       })
     })
+    describe('with a modifier function', function() {
+      it('executes the modifier', function() {
+        var rect = draw.rect(100,100).id(null)
+        , result = rect.svg(function(instance) {
+          instance.radius(10)
+        })
+
+        expect(
+            result === '<rect width="100" height="100" rx="10" ry="10"></rect>'
+        || result === '<rect height="100" width="100" rx="10" ry="10"></rect>'
+        || result === '<rect xmlns="http://www.w3.org/2000/svg" width="100" height="100" rx="10" ry="10"></rect>'
+        ).toBeTruthy()
+      })
+
+      it("execute the modifier to replace the node", function() {
+        var rect = draw.rect(100,100).id(null)
+        , result = rect.svg(function(instance) {
+          var newInstance = new SVG.Circle()
+          return newInstance
+        })
+        
+        expect(
+            result === '<circle></circle>'
+        || result === '<circle xmlns="http://www.w3.org/2000/svg"></circle>'
+        ).toBeTruthy()
+      })
+
+      it("doesn't execute the modifier if return false", function() {
+        var rect = draw.rect(100,100).id(null)
+        , result = rect.svg(function(instance) {
+          return false
+        })
+        
+        expect(
+          result == null
+        ).toBeTruthy()
+      })
+    })
   })
 
   describe('writeDataToDom()', function() {
