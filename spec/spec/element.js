@@ -894,6 +894,57 @@ describe('Element', function() {
         ).toBeTruthy()
       })
     })
+    describe('with a modifier function', function() {
+      var rect, circle, group
+      beforeEach(function() {
+        rect   = draw.rect(10, 10)
+        circle = draw.circle(20, 20)
+        group  = draw.group()
+        
+        group.add(rect)
+        group.add(circle)
+      })
+
+      it('executes the modifier', function() {
+        var result = group.svg(function(instance) {
+          instance.addClass('test')
+        })
+
+        expect(
+          result === '<g><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g><rect height="10" width="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+        ).toBeTruthy()
+      })
+
+      it("execute the modifier to replace the node", function() {
+        var result = group.svg(function(instance) {
+          if (instance instanceof SVG.Circle) {
+            return draw.rect(15, 15)
+          }
+        })
+        
+        expect(
+          result === '<g><rect width="10" height="10"></rect><rect width="15" height="15"></rect></g>'
+          || result === '<g><rect height="10" width="10"></rect><rect height="15" width="15"></rect></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"></rect><rect width="15" height="15"></rect></g>'
+        ).toBeTruthy()
+      })
+
+      it("it deletes the node if the modifier returns false", function() {
+        var result = group.svg(function(instance) {
+          if (instance instanceof SVG.Circle) {
+            return false
+          }
+        })
+        
+        expect(
+          result === '<g><rect width="10" height="10"></rect></g>'
+          || result === '<g><rect height="10" width="10"></rect></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"></rect></g>'
+        ).toBeTruthy()
+      })
+    })
   })
 
   describe('writeDataToDom()', function() {

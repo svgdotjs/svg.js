@@ -261,7 +261,7 @@ SVG.Element = SVG.invent({
       var well, len
 
       // act as a setter if svg is given
-      if (svg && this instanceof SVG.Parent) {
+      if (typeof svg === 'string' && this instanceof SVG.Parent) {
         // create temporary holder
         well = document.createElementNS(SVG.ns, 'svg')
         // dump raw svg
@@ -271,9 +271,24 @@ SVG.Element = SVG.invent({
         for (len = well.children.length; len--;) {
           this.node.appendChild(well.firstElementChild)
         }
-
       // otherwise act as a getter
       } else {
+        // expose node modifiers
+        if (typeof svg === 'function') {
+          this.each(function () {
+            well = svg(this)
+
+            // If modifier returns false, discard node
+            if (well === false) {
+              this.remove()
+
+            // If modifier returns new node, use it
+            } else if (well && well !== this) {
+              this.replace(well)
+            }
+          }, true)
+        }
+
         // write svgjs data to the dom
         this.writeDataToDom()
 
