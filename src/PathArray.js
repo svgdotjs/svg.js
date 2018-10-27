@@ -287,7 +287,7 @@ export default class PathArray extends SVGArray {
     return result
   }
 
-  Get bounding box of path
+  // Get bounding box of path
   bbox () {
     parser().path.setAttribute('d', this.toString())
     return parser.nodes.path.getBBox()

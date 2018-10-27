@@ -11,9 +11,10 @@ import * as tools from './tools.js'
 import * as containers from './containers.js'
 import * as elements from './elements.js'
 import * as arrange from './arrange.js'
-import {select} from './selector.js'
+import {find} from './selector.js'
 import * as css from './css.js'
 import * as transform from './transform.js'
+import * as specialNeeds from './specialNeeds.js'
 const extend = tools.extend
 
 import * as EventTarget from './EventTarget.js'
@@ -41,10 +42,38 @@ extend(Classes.Defs, {
   ...Classes.Pattern.constructors.Defs,
 })
 
+extend([Classes.Text, Classes.Tspan], Classes.Tspan.constructors.Tspan)
+
+extend([Classes.Gradient, Classes.Pattern], {
+  remove: specialNeeds.patternGradientRemove,
+  targets: specialNeeds.patternGradientTargets,
+  unFill: specialNeeds.unFill,
+})
+
+extend(Classes.Gradient, {attr: specialNeeds.gradientAttr})
+extend(Classes.Pattern, {attr: specialNeeds.patternAttr})
+
+extend(Classes.ClipPath, {
+  remove: specialNeeds.clipPathRemove,
+  targets: specialNeeds.clipPathTargets
+})
+
+extend(Classes.Mask, {
+  remove: specialNeeds.maskRemove,
+  targets: specialNeeds.maskTargets
+})
+
+extend(Classes.Path, {targets: specialNeeds.pathTargets})
+
+extend(Classes.HtmlNode, {
+  add: specialNeeds.HtmlNodeAdd
+})
+
 for (let i in containers) {
   extend(containers[i], {
     ...Classes.A.constructors.Container,
     ...Classes.ClipPath.constructors.Container,
+    ...Classes.Doc.constructors.Container,
     ...Classes.G.constructors.Container,
     ...Classes.Gradient.constructors.Container,
     ...Classes.Line.constructors.Container,
@@ -55,7 +84,7 @@ for (let i in containers) {
     ...Classes.Polygon.constructors.Container,
     ...Classes.Polyline.constructors.Container,
     ...Classes.Rect.constructors.Container,
-    select,
+    find,
     ...Classes.Symbol.constructors.Container,
     ...Classes.Text.constructors.Container,
     ...Classes.TextPath.constructors.Container,
@@ -83,7 +112,6 @@ for (let i in elements) {
     ...transform,
   })
 }
-
 
 
 // The main wrapping element

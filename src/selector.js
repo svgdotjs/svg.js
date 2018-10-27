@@ -25,21 +25,13 @@ import {adopt} from './adopter.js'
 //   return SVG.adopt((parent || document).querySelector(query))
 // }
 
-export default function find (query, parent) {
+export default function baseFind (query, parent) {
   return utils.map((parent || document).querySelectorAll(query), function (node) {
     return adopt(node)
   })
 }
 
-
-export function select (query) {
-  return find(query, this.node)
+// Scoped find method
+export function find (query) {
+  return baseFind(query, this.node)
 }
-
-
-// extend(SVG.Parent, {
-//   // Scoped select method
-//   select: function (query) {
-//     return SVG.select(query, this.node)
-//   }
-// })

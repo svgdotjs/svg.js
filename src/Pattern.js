@@ -1,6 +1,6 @@
 import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
-import attr from './attr.js'
+//import attr from './attr.js'
 
 export default class Pattern extends Base {
   // Initialize node
@@ -31,11 +31,11 @@ export default class Pattern extends Base {
     return this.url()
   }
 
-  // custom attr to handle transform
-  attr (a, b, c) {
-    if (a === 'transform') a = 'patternTransform'
-    return attr.call(this, a, b, c)
-  }
+  // // custom attr to handle transform
+  // attr (a, b, c) {
+  //   if (a === 'transform') a = 'patternTransform'
+  //   return attr.call(this, a, b, c)
+  // }
 }
 
 Pattern.constructors = {

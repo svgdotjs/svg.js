@@ -2,10 +2,7 @@ import Base from './Base.js'
 import Defs from './Defs.js'
 import { extend, nodeOrNew } from './tools.js'
 import { ns, xlink, xmlns, svgjs } from './namespaces.js'
-import {adopt} from './adopter.js'
-import * as EventTarget from './EventTarget.js'
-import * as Element from './Element.js'
-import * as Parent from './Parent.js'
+//import {adopt} from './adopter.js'
 
 export default class Doc extends Base {
   constructor(node) {
@@ -39,9 +36,11 @@ export default class Doc extends Base {
   defs() {
     if (!this.isRoot()) return this.doc().defs()
 
-    if (!this.isRoot()) return this.doc().defs()
-    return adopt(this.node.getElementsByTagName('defs')[0]) ||
-      this.put(new Defs())
+    let node = this.node.getElementsByTagName('defs')[0]
+    return node ? (node.instance || new Defs(node)) : this.put(new Defs())
+    // 
+    // return adopt(this.node.getElementsByTagName('defs')[0]) ||
+    //   this.put(new Defs())
   }
 
   // custom parent method
@@ -77,11 +76,11 @@ export default class Doc extends Base {
   }
 }
 
-extend(Doc, [EventTarget, Element, Parent])
-
-// addFactory(Container, {
-//   // Create nested svg document
-//   nested() {
-//     return this.put(new Doc())
-//   }
-// })
+Doc.constructors = {
+  Container: {
+    // Create nested svg document
+    nested() {
+      return this.put(new Doc())
+    }
+  }
+}

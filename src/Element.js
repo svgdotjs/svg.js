@@ -1,6 +1,5 @@
-import {proportionalSize, assignNewId, matcher} from './helpers.js'
-import {makeInstance, adopt} from './adopter.js'
-import {eid} from './tools.js'
+import {proportionalSize, matcher} from './helpers.js'
+import {makeInstance, adopt, assignNewId, eid} from './adopter.js'
 import {delimiter} from './regex.js'
 import {ns} from './namespaces.js'
 import Doc from './Doc.js'

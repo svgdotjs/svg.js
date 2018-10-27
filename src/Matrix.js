@@ -1,4 +1,4 @@
-import {abcdef, arrayToMatrix, closeEnough, formatTransforms, isMatrixLike, matrixMultiply} from './helpers.js'
+import {abcdef, arrayToMatrix, closeEnough, isMatrixLike} from './helpers.js'
 import Point from './Point.js'
 import {delimiter} from './regex.js'
 import {radians} from './utils.js'
@@ -47,7 +47,7 @@ export default class Matrix {
     }
 
     // Get the proposed transformations and the current transformations
-    var t = formatTransforms(o)
+    var t = Matrix.formatTransforms(o)
     var current = this
     let { x: ox, y: oy } = new Point(t.ox, t.oy).transform(current)
 
@@ -169,7 +169,7 @@ export default class Matrix {
       ? matrix
       : new Matrix(matrix)
 
-    return matrixMultiply(l, r, this)
+    return Matrix.matrixMultiply(l, r, this)
   }
 
   lmultiply (matrix) {
@@ -182,7 +182,7 @@ export default class Matrix {
       ? matrix
       : new Matrix(matrix)
 
-    return matrixMultiply(l, r, this)
+    return Matrix.matrixMultiply(l, r, this)
   }
 
   // Inverses matrix
@@ -411,6 +411,71 @@ export default class Matrix {
       f: this.f
     }
   }
+
+
+  // TODO: Refactor this to a static function of matrix.js
+  static formatTransforms (o) {
+    // Get all of the parameters required to form the matrix
+    var flipBoth = o.flip === 'both' || o.flip === true
+    var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
+    var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
+    var skewX = o.skew && o.skew.length ? o.skew[0]
+      : isFinite(o.skew) ? o.skew
+      : isFinite(o.skewX) ? o.skewX
+      : 0
+    var skewY = o.skew && o.skew.length ? o.skew[1]
+      : isFinite(o.skew) ? o.skew
+      : isFinite(o.skewY) ? o.skewY
+      : 0
+    var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
+      : isFinite(o.scale) ? o.scale * flipX
+      : isFinite(o.scaleX) ? o.scaleX * flipX
+      : flipX
+    var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
+      : isFinite(o.scale) ? o.scale * flipY
+      : isFinite(o.scaleY) ? o.scaleY * flipY
+      : flipY
+    var shear = o.shear || 0
+    var theta = o.rotate || o.theta || 0
+    var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
+    var ox = origin.x
+    var oy = origin.y
+    var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY)
+    var px = position.x
+    var py = position.y
+    var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
+    var tx = translate.x
+    var ty = translate.y
+    var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
+    var rx = relative.x
+    var ry = relative.y
+
+    // Populate all of the values
+    return {
+      scaleX, scaleY, skewX, skewY, shear, theta, rx, ry, tx, ty, ox, oy, px, py
+    }
+  }
+
+  // left matrix, right matrix, target matrix which is overwritten
+  static matrixMultiply (l, r, o) {
+    // Work out the product directly
+    var a = l.a * r.a + l.c * r.b
+    var b = l.b * r.a + l.d * r.b
+    var c = l.a * r.c + l.c * r.d
+    var d = l.b * r.c + l.d * r.d
+    var e = l.e + l.a * r.e + l.c * r.f
+    var f = l.f + l.b * r.e + l.d * r.f
+
+    // make sure to use local variables because l/r and o could be the same
+    o.a = a
+    o.b = b
+    o.c = c
+    o.d = d
+    o.e = e
+    o.f = f
+
+    return o
+  }
 }
 
 Matrix.constructors = {
@@ -436,17 +501,3 @@ Matrix.constructors = {
     }
   }
 }
-
-// let extensions = {}
-// ['rotate'].forEach((method) => {
-//   let methodO = method + 'O'
-//   extensions[method] = function (...args) {
-//     return new Matrix(this)[methodO](...args)
-//   }
-// })
-//
-// extend(Matrix, extensions)
-
-// function matrixMultiplyParams (matrix, a, b, c, d, e, f) {
-//   return matrixMultiply({a, b, c, d, e, f} matrix, matrix)
-// }

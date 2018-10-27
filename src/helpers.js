@@ -1,7 +1,4 @@
-import Point from './Point.js'
-import {eid, makeNode} from './tools.js'
 import {dots, reference} from './regex.js'
-import {adopt} from './adopter.js'
 
 export function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
@@ -132,20 +129,6 @@ export function arrayToString (a) {
   return s + ' '
 }
 
-// Deep new id assignment
-export function assignNewId (node) {
-  // do the same for SVG child nodes as well
-  for (var i = node.children.length - 1; i >= 0; i--) {
-    assignNewId(node.children[i])
-  }
-
-  if (node.id) {
-    return adopt(node).id(eid(node.nodeName))
-  }
-
-  return adopt(node)
-}
-
 // Add more bounding box properties
 export function fullBox (b) {
   if (b.x == null) {
@@ -188,70 +171,6 @@ export function isMatrixLike (o) {
     o.e != null ||
     o.f != null
   )
-}
-
-// TODO: Refactor this to a static function of matrix.js
-export function formatTransforms (o) {
-  // Get all of the parameters required to form the matrix
-  var flipBoth = o.flip === 'both' || o.flip === true
-  var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
-  var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
-  var skewX = o.skew && o.skew.length ? o.skew[0]
-    : isFinite(o.skew) ? o.skew
-    : isFinite(o.skewX) ? o.skewX
-    : 0
-  var skewY = o.skew && o.skew.length ? o.skew[1]
-    : isFinite(o.skew) ? o.skew
-    : isFinite(o.skewY) ? o.skewY
-    : 0
-  var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
-    : isFinite(o.scale) ? o.scale * flipX
-    : isFinite(o.scaleX) ? o.scaleX * flipX
-    : flipX
-  var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
-    : isFinite(o.scale) ? o.scale * flipY
-    : isFinite(o.scaleY) ? o.scaleY * flipY
-    : flipY
-  var shear = o.shear || 0
-  var theta = o.rotate || o.theta || 0
-  var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
-  var ox = origin.x
-  var oy = origin.y
-  var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY)
-  var px = position.x
-  var py = position.y
-  var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
-  var tx = translate.x
-  var ty = translate.y
-  var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
-  var rx = relative.x
-  var ry = relative.y
-
-  // Populate all of the values
-  return {
-    scaleX, scaleY, skewX, skewY, shear, theta, rx, ry, tx, ty, ox, oy, px, py
-  }
-}
-
-// left matrix, right matrix, target matrix which is overwritten
-export function matrixMultiply (l, r, o) {
-  // Work out the product directly
-  var a = l.a * r.a + l.c * r.b
-  var b = l.b * r.a + l.d * r.b
-  var c = l.a * r.c + l.c * r.d
-  var d = l.b * r.c + l.d * r.d
-  var e = l.e + l.a * r.e + l.c * r.f
-  var f = l.f + l.b * r.e + l.d * r.f
-
-  // make sure to use local variables because l/r and o could be the same
-  o.a = a
-  o.b = b
-  o.c = c
-  o.d = d
-  o.e = e
-  o.f = f
-
-  return o
 }
 
 export function getOrigin (o, element) {

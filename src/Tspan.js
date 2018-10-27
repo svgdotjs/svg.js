@@ -41,3 +41,21 @@ export default class Tspan extends Base {
 }
 
 extend(Tspan, textable)
+
+Tspan.constructors = {
+  Tspan: {
+    tspan (text) {
+      var tspan = new Tspan()
+
+      // clear if build mode is disabled
+      if (!this._build) {
+        this.clear()
+      }
+
+      // add new tspan
+      this.node.appendChild(tspan.node)
+
+      return tspan.text(text)
+    }
+  }
+}

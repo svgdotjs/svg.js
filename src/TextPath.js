@@ -1,4 +1,6 @@
-import {Path, Text, PathArray} from './classes.js'
+import Path from './Path.js'
+import Text from './Text.js'
+import PathArray from './PathArray.js'
 import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
 

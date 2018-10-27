@@ -1,7 +1,7 @@
 import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
-import find from './selector.js'
-import {remove} from  './Element.js'
+// import find from './selector.js'
+// import {remove} from  './Element.js'
 
 export default class Mask extends Base {
   // Initialize node
@@ -9,20 +9,20 @@ export default class Mask extends Base {
     super(nodeOrNew('mask', node))
   }
 
-  // Unmask all masked elements and remove itself
-  remove () {
-    // unmask all targets
-    this.targets().forEach(function (el) {
-      el.unmask()
-    })
-
-    // remove mask from parent
-    return remove.call(this)
-  }
-
-  targets () {
-    return find('svg [mask*="' + this.id() + '"]')
-  }
+  // // Unmask all masked elements and remove itself
+  // remove () {
+  //   // unmask all targets
+  //   this.targets().forEach(function (el) {
+  //     el.unmask()
+  //   })
+  //
+  //   // remove mask from parent
+  //   return remove.call(this)
+  // }
+  //
+  // targets () {
+  //   return find('svg [mask*="' + this.id() + '"]')
+  // }
 
 }
 

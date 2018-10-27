@@ -1,14 +1,6 @@
 import {ns} from './namespaces.js'
 import {capitalize} from './helpers.js'
 
-// Element id sequence
-let did = 1000
-
-// Get next named element id
-export function eid (name) {
-  return 'Svgjs' + capitalize(name) + (did++)
-}
-
 export function nodeOrNew (name, node) {
   return node || makeNode(name)
 }

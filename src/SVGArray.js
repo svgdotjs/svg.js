@@ -48,4 +48,8 @@ export default class SVGArray extends BaseArray {
   clone () {
     return new this.constructor(this)
   }
+
+  toSet () {
+    return new Set(this)
+  }
 }

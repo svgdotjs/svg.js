@@ -1,6 +1,12 @@
 import {extend} from './tools.js'
-import {Color, SVGNumber, SVGArray, PathArray, Box, Matrix, PointArray} from './classes.js'
 import {Ease} from './Controller.js'
+import Color from './Color.js'
+import SVGNumber from './SVGNumber.js'
+import SVGArray from './SVGArray.js'
+import PointArray from './PointArray.js'
+import PathArray from './PathArray.js'
+import Box from './Box.js'
+import Matrix from './Matrix.js'
 
 export default class Morphable {
   constructor (stepper) {

@@ -1,7 +1,6 @@
 import Base from './Base.js'
 import * as elements from './elements.js'
 import {capitalize} from './helpers.js'
-import HtmlNode from './HtmlNode.js'
 
 export function makeInstance (element) {
   if (element instanceof Base) return element
@@ -35,7 +34,7 @@ export function adopt (node) {
   if (node.instance instanceof Element) return node.instance
 
   if (!(node instanceof window.SVGElement)) {
-    return new HtmlNode(node)
+    return new elements.HtmlNode(node)
   }
 
   // initialize variables
@@ -53,4 +52,26 @@ export function adopt (node) {
   }
 
   return element
+}
+
+// Element id sequence
+let did = 1000
+
+// Get next named element id
+export function eid (name) {
+  return 'Svgjs' + capitalize(name) + (did++)
+}
+
+// Deep new id assignment
+export function assignNewId (node) {
+  // do the same for SVG child nodes as well
+  for (var i = node.children.length - 1; i >= 0; i--) {
+    assignNewId(node.children[i])
+  }
+
+  if (node.id) {
+    return adopt(node).id(eid(node.nodeName))
+  }
+
+  return adopt(node)
 }

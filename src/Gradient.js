@@ -2,7 +2,7 @@ import Stop from './Stop.js'
 import Base from './Base.js'
 import * as gradiented from './gradiented.js'
 import {nodeOrNew, extend} from './tools.js'
-import attr from './attr.js'
+//import attr from './attr.js'
 
 export default class Gradient extends Base {
   constructor (type) {
@@ -40,11 +40,11 @@ export default class Gradient extends Base {
     return this.url()
   }
 
-  // custom attr to handle transform
-  attr (a, b, c) {
-    if (a === 'transform') a = 'gradientTransform'
-    return attr.call(this, a, b, c)
-  }
+  // // custom attr to handle transform
+  // attr (a, b, c) {
+  //   if (a === 'transform') a = 'gradientTransform'
+  //   return attr.call(this, a, b, c)
+  // }
 }
 
 extend(Gradient, gradiented)

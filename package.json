@@ -61,7 +61,8 @@
     "test": "karma start .config/karma.conf.js --single-run",
     "test:dots": "karma start .config/karma.conf.js --single-run --reporters dots",
     "test:quick": "karma start .config/karma.quick.js",
-    "server": "http-server ./ -d"
+    "server": "http-server ./ -d",
+    "rollup": "rollup -c"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -88,6 +89,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.2",
     "request": "^2.78.0",
+    "rollup": "^0.66.6",
     "snazzy": "^6.0.0",
     "standard": "^9.0.1",
     "svgdom": "latest"
