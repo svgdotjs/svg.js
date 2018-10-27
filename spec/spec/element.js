@@ -895,40 +895,53 @@ describe('Element', function() {
       })
     })
     describe('with a modifier function', function() {
+      var rect, circle, group
+      beforeEach(function() {
+        rect   = draw.rect(10, 10)
+        circle = draw.circle(20, 20)
+        group  = draw.group()
+        
+        group.add(rect)
+        group.add(circle)
+      })
+
       it('executes the modifier', function() {
-        var rect = draw.rect(100,100).id(null)
-        , result = rect.svg(function(instance) {
-          instance.radius(10)
+        var result = group.svg(function(instance) {
+          instance.addClass('test')
         })
 
         expect(
-            result === '<rect width="100" height="100" rx="10" ry="10"></rect>'
-        || result === '<rect height="100" width="100" rx="10" ry="10"></rect>'
-        || result === '<rect xmlns="http://www.w3.org/2000/svg" width="100" height="100" rx="10" ry="10"></rect>'
+          result === '<g><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g><rect height="10" width="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
         ).toBeTruthy()
       })
 
       it("execute the modifier to replace the node", function() {
-        var rect = draw.rect(100,100).id(null)
-        , result = rect.svg(function(instance) {
-          var newInstance = new SVG.Circle()
-          return newInstance
+        var result = group.svg(function(instance) {
+          if (instance instanceof SVG.Circle) {
+            return draw.rect(15, 15)
+          }
         })
         
         expect(
-            result === '<circle></circle>'
-        || result === '<circle xmlns="http://www.w3.org/2000/svg"></circle>'
+          result === '<g><rect width="10" height="10"></rect><rect width="15" height="15"></rect></g>'
+          || result === '<g><rect height="10" width="10"></rect><rect height="15" width="15"></rect></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"></rect><rect width="15" height="15"></rect></g>'
         ).toBeTruthy()
       })
 
-      it("doesn't execute the modifier if return false", function() {
-        var rect = draw.rect(100,100).id(null)
-        , result = rect.svg(function(instance) {
-          return false
+      it("it deletes the node if the modifier returns false", function() {
+        var result = group.svg(function(instance) {
+          if (instance instanceof SVG.Circle) {
+            return false
+          }
         })
         
         expect(
-          result == null
+          result === '<g><rect width="10" height="10"></rect></g>'
+          || result === '<g><rect height="10" width="10"></rect></g>'
+          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"></rect></g>'
         ).toBeTruthy()
       })
     })
