@@ -278,14 +278,15 @@ SVG.Element = SVG.invent({
           this.each(function () {
             well = svg(this)
 
-            if (well instanceof SVG.Element) {
+            // If modifier returns false, discard node
+            if (well === false) {
+              this.remove()
+
+            // If modifier returns new node, use it
+            } else if (well && well !== this) {
               this.replace(well)
             }
-
-            if (typeof well === 'boolean' && !well) {
-              this.remove()
-            }
-          })
+          }, true)
         }
 
         // write svgjs data to the dom

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Oct 27 2018 04:58:03 GMT+0200 (CEST)
+* BUILT: Sat Oct 27 2018 12:02:54 GMT+0200 (CEST)
 */;
 
 (function(root, factory) {
@@ -1313,16 +1313,14 @@ SVG.Element = SVG.invent({
         // expose node modifiers
         if (typeof _svg === 'function') {
           this.each(function () {
-            well = _svg(this);
+            well = _svg(this); // If modifier returns false, discard node
 
-            if (well instanceof SVG.Element) {
+            if (well === false) {
+              this.remove(); // If modifier returns new node, use it
+            } else if (well && well !== this) {
               this.replace(well);
             }
-
-            if (typeof well === 'boolean' && !well) {
-              this.remove();
-            }
-          });
+          }, true);
         } // write svgjs data to the dom
 
 
