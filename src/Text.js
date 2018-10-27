@@ -1,12 +1,13 @@
-import Parent from './Parent.js'
+import Base from './Base.js'
 import SVGNumber from './SVGNumber.js'
-import {nodeOrNew, adopt} from './tools.js'
+import {nodeOrNew, extend} from './tools.js'
 import {attrs} from './defaults.js'
+import * as textable from './textable.js'
 
-export default class Text extends Parent {
+export default class Text extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('text', node))
+    super(nodeOrNew('text', node), Text)
 
     this.dom.leading = new SVGNumber(1.3)    // store leading value for rebuilding
     this._rebuild = true                      // enable automatic updating of dy values
@@ -155,90 +156,18 @@ export default class Text extends Parent {
   }
 }
 
+extend(Text, textable)
 
-addFactory(Parent, {
-  // Create text element
-  text (text) {
-    return this.put(new Text()).text(text)
-  },
+Text.constructors = {
+  Container: {
+    // Create text element
+    text (text) {
+      return this.put(new Text()).text(text)
+    },
 
-  // Create plain text element
-  plain (text) {
-    return this.put(new Text()).plain(text)
-  }
-})
-
-
-class Tspan extends Parent {
-  // Initialize node
-  constructor (node) {
-    super(nodeOrNew('tspan', node))
-  }
-
-  // Set text content
-  text (text) {
-    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
-
-    typeof text === 'function' ? text.call(this, this) : this.plain(text)
-
-    return this
-  }
-
-  // Shortcut dx
-  dx (dx) {
-    return this.attr('dx', dx)
-  }
-
-  // Shortcut dy
-  dy (dy) {
-    return this.attr('dy', dy)
-  }
-
-  // Create new line
-  newLine () {
-    // fetch text parent
-    var t = this.parent(Text)
-
-    // mark new line
-    this.dom.newLined = true
-
-    // apply new position
-    return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
+    // Create plain text element
+    plain (text) {
+      return this.put(new Text()).plain(text)
+    }
   }
 }
-
-extend([Text, Tspan], {
-  // Create plain text node
-  plain: function (text) {
-    // clear if build mode is disabled
-    if (this._build === false) {
-      this.clear()
-    }
-
-    // create text node
-    this.node.appendChild(document.createTextNode(text))
-
-    return this
-  },
-
-  // Create a tspan
-  tspan: function (text) {
-    var tspan = new Tspan()
-
-    // clear if build mode is disabled
-    if (!this._build) {
-      this.clear()
-    }
-
-    // add new tspan
-    this.node.appendChild(tspan.node)
-
-    return tspan.text(text)
-  },
-
-  // FIXME: Does this also work for textpath?
-  // Get length of text element
-  length: function () {
-    return this.node.getComputedTextLength()
-  }
-})

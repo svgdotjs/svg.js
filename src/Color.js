@@ -29,10 +29,15 @@ SVG.hsl()
 SVG.lab('rgb(100, 100, 100)')
 */
 
-import {isHex, isRgb, whitespace, rgb} from './regex.js'
+import {isHex, isRgb, whitespace, rgb, hex} from './regex.js'
+import {fullHex, compToHex} from './helpers.js'
 
 export default class Color {
-  constructor (color, g, b) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (color, g, b) {
     let match
 
     // initialize defaults

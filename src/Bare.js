@@ -1,10 +1,9 @@
 import {nodeOrNew} from './tools.js'
-import Parent from './Parent.js'
 
-export default function Bare (element, inherit) {
-  return class Custom extends inherit {
+export default function Bare (element, inherit = {}) {
+  let custom =  class Custom extends inherit {
     constructor (node) {
-      super(nodeOrNew(element, node))
+      super(nodeOrNew(element, node), Custom)
     }
 
     words (text) {
@@ -19,15 +18,17 @@ export default function Bare (element, inherit) {
       return this
     }
   }
+
+  extend(custom, inherit)
 }
 
-export let constructors = {
-  // Create an element that is not described by SVG.js
-  element: function (element, inherit) {
-    let custom = createCustom(element, inherit)
-    return this.put(new custom())
-  }
-}
+// export let constructors = {
+//   // Create an element that is not described by SVG.js
+//   element: function (element, inherit) {
+//     let custom = createCustom(element, inherit)
+//     return this.put(new custom())
+//   }
+// }
 
 // extend(Parent, {
 //   // Create an element that is not described by SVG.js

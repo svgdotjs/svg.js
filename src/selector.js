@@ -1,6 +1,6 @@
 import {idFromReference} from './helpers.js'
 import {map} from './utils.js'
-import {adopt} from './tools.js'
+import {adopt} from './adopter.js'
 
 // // Method for getting an element by id
 // SVG.get = function (id) {
@@ -31,12 +31,11 @@ export default function find (query, parent) {
   })
 }
 
-export let mixings = {
-  // Scoped select method
-  select: function (query) {
-    return find(query, this.node)
-  }
+
+export function select (query) {
+  return find(query, this.node)
 }
+
 
 // extend(SVG.Parent, {
 //   // Scoped select method

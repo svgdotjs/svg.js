@@ -1,11 +1,16 @@
-import {Parent, Doc, Symbol, Image, Pattern, Marker, Point} from './classes.js'
+//import {Parent, Doc, Symbol, Image, Pattern, Marker, Point} from './classes.js'
+import Point from './Point.js'
 import parser from './parser.js'
 import {fullBox, domContains, isNulledBox} from './helpers.js'
 import {extend} from './tools.js'
 import {delimiter} from './regex.js'
 
 export default class Box {
-  constructor (source) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (source) {
     var base = [0, 0, 0, 0]
     source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
       : Array.isArray(source) ? source
@@ -77,20 +82,6 @@ export default class Box {
   }
 }
 
-
-extend(Parent, {
-  // Get bounding box
-  bbox () {
-    return new Box(getBox((node) => node.getBBox()))
-  },
-
-  rbox (el) {
-    let box = new Box(getBox((node) => node.getBoundingClientRect()))
-    if (el) return box.transform(el.screenCTM().inverse())
-    return box.addOffset()
-  }
-})
-
 function getBox(cb) {
   let box
 
@@ -106,14 +97,26 @@ function getBox(cb) {
       box = cb(clone.node)
       clone.remove()
     } catch (e) {
+      throw (e)
       console.warn('Getting a bounding box of this element is not possible')
     }
   }
   return box
 }
 
+Box.constructors = {
+  Element: {
+    // Get bounding box
+    bbox () {
+      return new Box(getBox.call(this, (node) => node.getBBox()))
+    },
 
-extend([Doc, Symbol, Image, Pattern, Marker], {
+    rbox (el) {
+      let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect()))
+      if (el) return box.transform(el.screenCTM().inverse())
+      return box.addOffset()
+    }
+  },
   viewbox: function (x, y, width, height) {
     // act as getter
     if (x == null) return new Box(this.attr('viewBox'))
@@ -121,4 +124,4 @@ extend([Doc, Symbol, Image, Pattern, Marker], {
     // act as setter
     return this.attr('viewBox', new Box(x, y, width, height))
   }
-})
+}

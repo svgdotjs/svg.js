@@ -1,15 +1,16 @@
-import Container from './Container.js'
-import Parent from './Parent.js'
+import Base from './Base.js'
 
-export default class G extends Container {
+export default class G extends Base {
   constructor (node) {
-    super(nodeorNew('group', node))
+    super(nodeorNew('g', node), G)
   }
 }
 
-addFactory(Parent, {
-  // Create a group element
-  group: function () {
-    return this.put(new G())
+G.constructors = {
+  Element: {
+    // Create a group element
+    group: function () {
+      return this.put(new G())
+    }
   }
-})
+}

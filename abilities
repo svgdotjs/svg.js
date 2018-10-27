@@ -1,0 +1,156 @@
+
+
+>> Element <<
+  Stop
+  Bare
+  >> Parent <<
+    Text
+      TextPath
+    >> Container<<
+      Doc
+      G
+      Symbol
+      Defs
+      ClipPath
+      Mask
+      A
+      Gradient
+  Shape
+    Rect
+    Circle
+    Path
+    Ellipse
+    Polygon
+    Polyline
+    Line
+    Image
+
+Animate
+Box
+Color
+Controller
+
+
+=====================================================================
+
+
+classes:
+
+  // MetaData
+  Title
+
+  // Parents
+  SVG
+  G
+
+  // Elements
+  Rect
+  Circle
+  Path
+  Ellipse
+  Polygon
+  Polyline
+  Line
+  Image
+
+  // Text Stuff
+  TSpan
+  TextPath
+
+  // Data Type
+  Box
+  Matrix
+  SVGNumber
+  SVGArray
+  PointArray
+  PathArray
+  Color
+  Controller
+
+abilities:
+  Animate
+  Container
+  Event
+  Doc
+  Movements
+  Dom
+  Create
+
+
+
+
+// DocAbility.js
+
+import SVG from 'Svg.js'
+export default function ( ...worksOn ) {
+  let workSet = new Set(worksOn)
+  return {
+
+    doc: function () {
+      return this.parent(SVG)
+    }
+
+  }
+}
+
+-> svg.js -> DocAbility.js -> 'Svg.js'
+
+extend ( [ Rect ], DocAbility() )
+
+
+
+// DomAbility.js
+
+import {makeInstance} from 'helpers.js'
+
+export default function ( ...worksOn ) {
+  let workSet = new Set(worksOn)
+  let maker = makeInstance(workSet)
+
+  return {
+
+    addTo (parent) {
+      return maker(parent).put(this)
+    }
+
+  }
+}
+
+class Rect {
+
+
+  static tagName = 'Rect'
+}
+
+
+
+
+new SVG[capitalize[node.nodeName]]
+
+
+
+new SVG.Doc() -> <svg xml="">......</svg>
+
+// SVG.js
+
+extend( [ ...Parents ], Container(...Elements, ...Parents) ) )
+extend( [ Text ], Container( TSpan, TextPath ) )
+
+
+
+Element.js
+
+new Element ()
+
+export default class Element {
+
+  static
+
+  static
+
+}
+
+Rect.js
+
+import Element from Element.js
+export default class Rect extends Element

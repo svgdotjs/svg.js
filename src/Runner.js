@@ -2,10 +2,12 @@ import {isMatrixLike, getOrigin} from './helpers.js'
 import Matrix from './Matrix.js'
 import Morphable from './Morphable.js'
 import SVGNumber from './SVGNumber.js'
-import Element from './Element.js'
 import Timeline from './Timeline.js'
 import {Controller, Ease, Stepper} from './Controller.js'
 import {noop, timeline} from './defaults.js'
+import {extend} from './tools.js'
+import Animator from './Animator.js'
+import Point from './Point.js'
 
 // FIXME: What is this doing here?
 // easing = {
@@ -15,7 +17,7 @@ import {noop, timeline} from './defaults.js'
 //   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 // }
 
-export default class Runner extends EventTarget {
+export default class Runner {
   constructor (options) {
     // Store a unique id on the runner, so that we can identify it later
     this.id = Runner.id++
@@ -435,22 +437,6 @@ export default class Runner extends EventTarget {
 
 Runner.id = 0
 
-extend(Element, {
-  animate (duration, delay, when) {
-    var o = Runner.sanitise(duration, delay, when)
-    var timeline = this.timeline()
-    return new Runner(o.duration)
-      .loop(o)
-      .element(this)
-      .timeline(timeline)
-      .schedule(delay, when)
-  },
-
-  delay (by, when) {
-    return this.animate(0, by, when)
-  }
-})
-
 class FakeRunner{
   constructor (transforms = new Matrix(), id = -1, done = true) {
     this.transforms = transforms
@@ -557,44 +543,60 @@ class RunnerArray {
   }
 }
 
-extend(Element, {
-  // this function searches for all runners on the element and deletes the ones
-  // which run before the current one. This is because absolute transformations
-  // overwfrite anything anyway so there is no need to waste time computing
-  // other runners
-  _clearTransformRunnersBefore (currentRunner) {
-    this._transformationRunners.clearBefore(currentRunner.id)
-  },
+let frameId = 0
+Runner.constructors = {
+  Element: {
+    animate (duration, delay, when) {
+      var o = Runner.sanitise(duration, delay, when)
+      var timeline = this.timeline()
+      return new Runner(o.duration)
+        .loop(o)
+        .element(this)
+        .timeline(timeline)
+        .schedule(delay, when)
+    },
 
-  _currentTransform (current) {
-    return this._transformationRunners.runners
-      // we need the equal sign here to make sure, that also transformations
-      // on the same runner which execute before the current transformation are
-      // taken into account
-      .filter((runner) => runner.id <= current.id)
-      .map(getRunnerTransform)
-      .reduce(lmultiply, new Matrix())
-  },
+    delay (by, when) {
+      return this.animate(0, by, when)
+    },
 
-  addRunner (runner) {
-    this._transformationRunners.add(runner)
+    // this function searches for all runners on the element and deletes the ones
+    // which run before the current one. This is because absolute transformations
+    // overwfrite anything anyway so there is no need to waste time computing
+    // other runners
+    _clearTransformRunnersBefore (currentRunner) {
+      this._transformationRunners.clearBefore(currentRunner.id)
+    },
 
-    Animator.transform_frame(
-      mergeTransforms.bind(this), this._frameId
-    )
-  },
+    _currentTransform (current) {
+      return this._transformationRunners.runners
+        // we need the equal sign here to make sure, that also transformations
+        // on the same runner which execute before the current transformation are
+        // taken into account
+        .filter((runner) => runner.id <= current.id)
+        .map(getRunnerTransform)
+        .reduce(lmultiply, new Matrix())
+    },
 
-  _prepareRunner () {
-    if (this._frameId == null) {
-      this._transformationRunners = new RunnerArray()
-        .add(new FakeRunner(new Matrix(this)))
+    addRunner (runner) {
+      this._transformationRunners.add(runner)
 
-      this._frameId = Element.frameId++
+      Animator.transform_frame(
+        mergeTransforms.bind(this), this._frameId
+      )
+    },
+
+    _prepareRunner () {
+      if (this._frameId == null) {
+        this._transformationRunners = new RunnerArray()
+          .add(new FakeRunner(new Matrix(this)))
+
+        this._frameId = frameId++
+      }
     }
   }
-})
+}
 
-Element.frameId = 0
 
 extend(Runner, {
   attr (a, v) {

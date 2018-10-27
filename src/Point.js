@@ -1,5 +1,4 @@
 import parser from './parser.js'
-import Element from './Element.js'
 
 export default class Point {
   // Initialize
@@ -44,9 +43,11 @@ export default class Point {
   }
 }
 
-extend(Element, {
-  // Get point
-  point: function (x, y) {
-    return new Point(x, y).transform(this.screenCTM().inverse())
+Point.constructors = {
+  Element: {
+    // Get point
+    point: function (x, y) {
+      return new Point(x, y).transform(this.screenCTM().inverse())
+    }
   }
-})
+}

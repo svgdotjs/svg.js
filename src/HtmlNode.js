@@ -1,8 +1,9 @@
-import {makeInstance} from './helpers.js'
-import EventTarget from './EventTarget.js'
+import {makeInstance} from './adopter.js'
+import Base from './Base.js'
 
-export default class HtmlNode extends EventTarget {
+export default class HtmlNode extends Base {
   constructor (element) {
+    super(element, HtmlNode)
     this.node = element
   }
 

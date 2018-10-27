@@ -1,10 +1,10 @@
-import Element from './Element.js'
+import Base from './Base.js'
 import SVGNumber from './SVGNumber.js'
 import {nodeOrNew} from './tools.js'
 
-export default class Stop extends Element {
+export default class Stop extends Base {
   constructor (node) {
-    super(nodeOrNew('stop', node))
+    super(nodeOrNew('stop', node), Stop)
   }
 
   // add color stops

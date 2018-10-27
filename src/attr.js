@@ -1,6 +1,9 @@
-import {isNumer, isImage} from './regex.js'
+import {isNumber, isImage} from './regex.js'
 import {attrs as defaults} from './defaults.js'
-import {Color, SVGArray, Image} from './classes.js'
+import Color from './Color.js'
+import SVGArray from './SVGArray.js'
+import Image from './Image.js'
+import SVGNumber from './SVGNumber.js'
 
 // Set svg element attribute
 export default function attr (attr, val, ns) {
@@ -21,8 +24,8 @@ export default function attr (attr, val, ns) {
     // FIXME: implement
   } else if (typeof attr === 'object') {
     // apply every attribute individually if an object is passed
-    for (val in a) this.attr(val, attr[val])
-  }else if (val === null) {
+    for (val in attr) this.attr(val, attr[val])
+  } else if (val === null) {
       // remove value
     this.node.removeAttribute(attr)
   } else if (val == null) {
@@ -34,7 +37,7 @@ export default function attr (attr, val, ns) {
   } else {
     // convert image fill and stroke to patterns
     if (attr === 'fill' || attr === 'stroke') {
-      if (isImage.test(v)) {
+      if (isImage.test(val)) {
         val = this.doc().defs().image(val)
       }
 
@@ -48,7 +51,7 @@ export default function attr (attr, val, ns) {
     // ensure correct numeric values (also accepts NaN and Infinity)
     if (typeof val === 'number') {
       val = new SVGNumber(val)
-    } else if (isColor(val)) {
+    } else if (Color.isColor(val)) {
       // ensure full hex color
       val = new Color(val)
     } else if (Array.isArray(val)) {

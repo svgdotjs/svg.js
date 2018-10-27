@@ -1,5 +1,5 @@
 import {ns} from './namespaces.js'
-import {Container, Element, HtmlNode, Doc, Gradient, Parent} from './classes.js'
+import {capitalize} from './helpers.js'
 
 // Element id sequence
 let did = 1000
@@ -23,13 +23,22 @@ export function makeNode (name) {
 export function extend (modules, methods) {
   var key, i
 
+  if (Array.isArray(methods)) {
+    methods.forEach((method) => {
+      extend(modules, method)
+    })
+    return
+  }
+
   modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--) {
-    if (modules[i]) {
-      for (key in methods) {
-        modules[i].prototype[key] = methods[key]
-      }
+    if (methods.name) {
+      modules[i].extensions = (modules[i].extensions || []).concat(methods)
+    }
+    for (key in methods) {
+      if (modules[i].prototype[key] || key == 'name' || key == 'setup') continue
+      modules[i].prototype[key] = methods[key]
     }
   }
 }
@@ -62,33 +71,4 @@ export function invent (config) {
   if (config.construct) { extend(config.parent || Container, config.construct) }
 
   return initializer
-}
-
-// Adopt existing svg elements
-export function adopt (node) {
-  // check for presence of node
-  if (!node) return null
-
-  // make sure a node isn't already adopted
-  if (node.instance instanceof Element) return node.instance
-
-  if (!(node instanceof window.SVGElement)) {
-    return new HtmlNode(node)
-  }
-
-  // initialize variables
-  var element
-
-  // adopt with element-specific settings
-  if (node.nodeName === 'svg') {
-    element = new Doc(node)
-  } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
-    element = new Gradient(node)
-  } else if (SVG[capitalize(node.nodeName)]) {
-    element = new SVG[capitalize(node.nodeName)](node)
-  } else {
-    element = new Parent(node)
-  }
-
-  return element
 }

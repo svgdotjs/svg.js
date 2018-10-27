@@ -1,6 +1,6 @@
 import Queue from './Queue.js'
 
-export default {
+const Animator = {
   nextDraw: null,
   frames: new Queue(),
   timeouts: new Queue(),
@@ -81,3 +81,5 @@ export default {
         : null
   }
 }
+
+export default Animator

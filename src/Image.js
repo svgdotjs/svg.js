@@ -1,13 +1,12 @@
-import Shape from './Shape.js'
-import Container from './Container.js'
+import Base from './Base.js'
 import Pattern from './Pattern.js'
 import {on, off} from './event.js'
-import {nodeOrNew, addFactory} from './tools.js'
+import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
 
-export default class Image extends Shape {
+export default class Image extends Base {
   constructor (node) {
-    super(nodeOrNew('image', node))
+    super(nodeOrNew('image', node), Image)
   }
 
   // (re)load image
@@ -50,9 +49,11 @@ export default class Image extends Shape {
   }
 }
 
-addFactory(Container, {
-  // create image element, load image and set its size
-  image (source, callback) {
-    return this.put(new Image()).size(0, 0).load(source, callback)
+Image.constructors = {
+  Container: {
+    // create image element, load image and set its size
+    image (source, callback) {
+      return this.put(new Image()).size(0, 0).load(source, callback)
+    }
   }
-})
+}

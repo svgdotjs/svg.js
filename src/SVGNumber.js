@@ -3,7 +3,11 @@ import {numberAndUnit} from './regex.js'
 // Module for unit convertions
 export default class SVGNumber {
   // Initialize
-  constructor (value, unit) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (value, unit) {
     unit = Array.isArray(value) ? value[1] : unit
     value = Array.isArray(value) ? value[0] : value
 

@@ -4,14 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-  <script type="text/javascript" src="dist/svg.js"></script>
-  <script type="text/javascript" src="src/helpers.js"></script>
-  <script type="text/javascript" src="src/transform.js"></script>
-  <script type="text/javascript" src="src/matrix.js"></script>
-  <script type="text/javascript" src="src/morph.js"></script>
-  <script type="text/javascript" src="src/runner.js"></script>
-  <script type="text/javascript" src="src/timeline.js"></script>
-  <script type="text/javascript" src="src/controller.js"></script>
+  <!--<script type="text/javascript" src="dist/svg.js"></script>-->
 
 
 
@@ -30,7 +23,11 @@
 </svg>
 
 <!-- Modifying the svg -->
-<script>
+<script type="module">
+
+import SVG from './src/svg.js'
+
+window.SVG = SVG
 
 let rect = SVG('rect').hide()
 let {sin, PI: pi, round, sqrt} = Math

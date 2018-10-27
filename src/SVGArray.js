@@ -12,8 +12,14 @@ let BaseArray = (function() {
 })()
 
 export default class SVGArray extends BaseArray {
-  constructor (array, fallback) {
+  constructor (...args) {
     super()
+    this.init(...args)
+  }
+
+  init (array, fallback) {
+    //this.splice(0, this.length)
+    this.length = 0
     this.push(...this.parse(array || fallback))
   }
 

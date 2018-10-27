@@ -1,11 +1,12 @@
 import {proportionalSize} from './helpers.js'
 import {nodeOrNew} from './tools.js'
-import {Shape, Container, PointArray} from './classes.js'
+import PointArray from './PointArray.js'
+import Base from './Base.js'
 
-export default class Line extends Shape {
+export default class Line extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('line', node))
+    super(nodeOrNew('line', node), Line)
   }
 
   // Get array
@@ -42,14 +43,16 @@ export default class Line extends Shape {
 
 }
 
-addFactory(Container, {
-  // Create a line element
-  line (...args) {
-    // make sure plot is called as a setter
-    // x1 is not necessarily a number, it can also be an array, a string and a PointArray
-    return Line.prototype.plot.apply(
-      this.put(new Line())
-    , args[0] != null ? args : [0, 0, 0, 0]
-    )
+Line.constructors = {
+  Container: {
+    // Create a line element
+    line (...args) {
+      // make sure plot is called as a setter
+      // x1 is not necessarily a number, it can also be an array, a string and a PointArray
+      return Line.prototype.plot.apply(
+        this.put(new Line())
+      , args[0] != null ? args : [0, 0, 0, 0]
+      )
+    }
   }
-})
+}

@@ -1,14 +1,14 @@
-import Container from './Container.js'
-import Defs from './Defs.js'
-import Line from './Line.js'
-import Polyline from './Polyline.js'
-import Polygon from './Polygon.js'
-import Path from './Path.js'
+import Base from './Base.js'
+// import Defs from './Defs.js'
+// import Line from './Line.js'
+// import Polyline from './Polyline.js'
+// import Polygon from './Polygon.js'
+// import Path from './Path.js'
 
-export default class Marker extends Container {
+export default class Marker extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('marker', node))
+    super(nodeOrNew('marker', node), Marker)
   }
 
   // Set width of element
@@ -43,40 +43,40 @@ export default class Marker extends Container {
   }
 }
 
-addFactory(Container, {
-  marker (width, height, block) {
-    // Create marker element in defs
-    return this.defs().marker(width, height, block)
+Marker.constructors = {
+  Container: {
+    marker (width, height, block) {
+      // Create marker element in defs
+      return this.defs().marker(width, height, block)
+    }
+  },
+  Defs: {
+    // Create marker
+    marker (width, height, block) {
+      // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
+      return this.put(new Marker())
+        .size(width, height)
+        .ref(width / 2, height / 2)
+        .viewbox(0, 0, width, height)
+        .attr('orient', 'auto')
+        .update(block)
+    }
+  },
+  marker: {
+    // Create and attach markers
+    marker (marker, width, height, block) {
+      var attr = ['marker']
+
+      // Build attribute name
+      if (marker !== 'all') attr.push(marker)
+      attr = attr.join('-')
+
+      // Set marker attribute
+      marker = arguments[1] instanceof Marker
+        ? arguments[1]
+        : this.defs().marker(width, height, block)
+
+      return this.attr(attr, marker)
+    }
   }
-})
-
-extend(Defs, {
-  // Create marker
-  marker (width, height, block) {
-    // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
-    return this.put(new Marker())
-      .size(width, height)
-      .ref(width / 2, height / 2)
-      .viewbox(0, 0, width, height)
-      .attr('orient', 'auto')
-      .update(block)
-  }
-})
-
-extend([Line, Polyline, Polygon, Path], {
-  // Create and attach markers
-  marker (marker, width, height, block) {
-    var attr = ['marker']
-
-    // Build attribute name
-    if (marker !== 'all') attr.push(marker)
-    attr = attr.join('-')
-
-    // Set marker attribute
-    marker = arguments[1] instanceof Marker
-      ? arguments[1]
-      : this.doc().marker(width, height, block)
-
-    return this.attr(attr, marker)
-  }
-})
+}

@@ -33,48 +33,47 @@ export default class TextPath extends Text {
   }
 }
 
-addFactory(Parent, {
-  textPath (text, path) {
-    return this.defs().path(path).text(text).addTo(this)
-  }
-})
-
-
-extend([Text], {
-    // Create path for text to run on
-  path: function (track) {
-    var path = new TextPath()
-
-    // if d is a path, reuse it
-    if (!(track instanceof Path)) {
-      // create path element
-      track = this.doc().defs().path(track)
+TextPath.constructors = {
+  Container: {
+    textPath (text, path) {
+      return this.defs().path(path).text(text).addTo(this)
     }
-
-    // link textPath to path and add content
-    path.attr('href', '#' + track, xlink)
-
-    // add textPath element as child node and return textPath
-    return this.put(path)
   },
+  Text: {
+      // Create path for text to run on
+    path: function (track) {
+      var path = new TextPath()
 
-  // FIXME: make this plural?
-  // Get the textPath children
-  textPath: function () {
-    return this.select('textPath')
-  }
-})
+      // if d is a path, reuse it
+      if (!(track instanceof Path)) {
+        // create path element
+        track = this.doc().defs().path(track)
+      }
 
-extend([Path], {
-  // creates a textPath from this path
-  text: function (text) {
-    if (text instanceof Text) {
-      var txt = text.text()
-      return text.clear().path(this).text(txt)
+      // link textPath to path and add content
+      path.attr('href', '#' + track, xlink)
+
+      // add textPath element as child node and return textPath
+      return this.put(path)
+    },
+
+    // FIXME: make this plural?
+    // Get the textPath children
+    textPath: function () {
+      return this.select('textPath')
     }
-    return this.parent().put(new Text()).path(this).text(text)
+  },
+  Path: {
+    // creates a textPath from this path
+    text: function (text) {
+      if (text instanceof Text) {
+        var txt = text.text()
+        return text.clear().path(this).text(txt)
+      }
+      return this.parent().put(new Text()).path(this).text(text)
+    }
+    // FIXME: Maybe add `targets` to get all textPaths associated with this path
   }
-  // FIXME: Maybe add `targets` to get all textPaths associated with this path
-})
+}
 
 TextPath.prototype.MorphArray = PathArray

@@ -1,5 +1,6 @@
 
 import {timeline} from './defaults.js'
+import {extend} from './tools.js'
 
 /***
 Base Class

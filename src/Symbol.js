@@ -1,16 +1,17 @@
-import Container from './Container.js'
+import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
 
-export default class Symbol extends Container {
+export default class Symbol extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('symbol', node))
+    super(nodeOrNew('symbol', node), Symbol)
   }
 }
 
-addFactory(Container, {
-  // create symbol
-  symbol () {
-    return this.put(new Symbol())
+Symbol.constructors = {
+  Container: {
+    symbol () {
+      return this.put(new Symbol())
+    }
   }
-})
+}

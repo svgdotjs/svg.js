@@ -1,10 +1,11 @@
-import SVGNumber from './SVGNumber.js'
-import Parent from './Parent.js'
+import Base from './Base.js'
+import {nodeOrNew, extend} from './tools.js'
 import {x, y, cx, cy, width, height, size} from './circled.js'
+import SVGNumber from './SVGNumber.js'
 
-export default class Circle extends Shape {
+export default class Circle extends Base {
   constructor (node) {
-    super(nodeOrNew('circle', node))
+    super(nodeOrNew('circle', node), Circle)
   }
 
   radius (r) {
@@ -24,11 +25,13 @@ export default class Circle extends Shape {
 
 extend(Circle, {x, y, cx, cy, width, height, size})
 
-addFactory(Parent, {
-  // Create circle element
-  circle (size) {
-    return this.put(new Circle())
-      .radius(new SVGNumber(size).divide(2))
-      .move(0, 0)
+Circle.constructors = {
+  Element: {
+    // Create circle element
+    circle (size) {
+      return this.put(new Circle())
+        .radius(new SVGNumber(size).divide(2))
+        .move(0, 0)
+    }
   }
-})
+}

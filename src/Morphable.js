@@ -1,8 +1,9 @@
 import {extend} from './tools.js'
-import {Color, SVGNumber, SVGArray, PathArray} from './classes.js'
+import {Color, SVGNumber, SVGArray, PathArray, Box, Matrix, PointArray} from './classes.js'
+import {Ease} from './Controller.js'
 
 export default class Morphable {
-  constructor () {
+  constructor (stepper) {
     // FIXME: the default stepper does not know about easing
     this._stepper = stepper || new Ease('-')
 
@@ -106,7 +107,11 @@ export default class Morphable {
 }
 
 Morphable.NonMorphable = class {
-  constructor (val) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (val) {
     val = Array.isArray(val) ? val[0] : val
     this.value = val
   }
@@ -121,7 +126,11 @@ Morphable.NonMorphable = class {
 }
 
 Morphable.TransformBag = class {
-  constructor (obj) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (obj) {
     if (Array.isArray(obj)) {
       obj = {
         scaleX: obj[0],
@@ -166,7 +175,11 @@ Morphable.TransformBag.defaults = {
 }
 
 Morphable.ObjectBag = class {
-  constructor (objOrArr) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (objOrArr) {
     this.values = []
 
     if (Array.isArray(objOrArr)) {
@@ -218,7 +231,7 @@ extend(morphableTypes, {
       .to(val, args)
   },
   fromArray (arr) {
-    this.constructor(arr)
+    this.init(arr)
     return this
   }
 })

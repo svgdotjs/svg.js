@@ -1,12 +1,12 @@
 import {proportionalSize} from './helpers.js'
 import {nodeOrNew} from './tools.js'
-import Shape from './Shape.js'
+import Base from './Base.js'
 import PathArray from './PathArray.js'
 
-export default class Path extends Shape {
+export default class Path extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('path', node))
+    super(nodeOrNew('path', node), Path)
   }
 
   // Get array
@@ -61,11 +61,13 @@ export default class Path extends Shape {
 // Define morphable array
 Path.prototype.MorphArray = PathArray
 
-  // Add parent method
-addFactory(Container, {
-  // Create a wrapped path element
-  path (d) {
-    // make sure plot is called as a setter
-    return this.put(new Path()).plot(d || new PathArray())
+// Add parent method
+Path.constructors = {
+  Container: {
+    // Create a wrapped path element
+    path (d) {
+      // make sure plot is called as a setter
+      return this.put(new Path()).plot(d || new PathArray())
+    }
   }
-})
+}

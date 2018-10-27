@@ -1,5 +1,3 @@
-import EventTarget from './EventTarget.js'
-import Element from './Element.js'
 import {delimiter} from './regex.js'
 
 // // Add events to elements
@@ -30,10 +28,16 @@ import {delimiter} from './regex.js'
 
 let listenerId = 0
 
+function getEventTarget (node) {
+  return node instanceof Base && node.is('EventTarget')
+    ? node.getEventTarget()
+    : node
+}
+
 // Add event binder in the SVG namespace
 export function on (node, events, listener, binding, options) {
   var l = listener.bind(binding || node)
-  var n = node instanceof EventTarget ? node.getEventTarget() : node
+  var n = getEventTarget(node)
 
   // events can be an array of events or a string of events
   events = Array.isArray(events) ? events : events.split(delimiter)
@@ -67,7 +71,9 @@ export function on (node, events, listener, binding, options) {
 
 // Add event unbinder in the SVG namespace
 export function off (node, events, listener, options) {
-  var n = node instanceof EventTarget ? node.getEventTarget() : node
+  var n = getEventTarget(node)
+
+  // we cannot remove an event if its not an svg.js instance
   if (!n.instance) return
 
   // listener can be a function or a number
@@ -126,7 +132,7 @@ export function off (node, events, listener, options) {
 }
 
 export function dispatch (node, event, data) {
-  var n = node instanceof EventTarget ? node.getEventTarget() : node
+  var n = getEventTarget(node)
 
   // Dispatch event
   if (event instanceof window.Event) {

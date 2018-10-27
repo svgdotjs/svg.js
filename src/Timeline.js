@@ -1,4 +1,3 @@
-import EventTarget from './EventTarget.js'
 import Animator from './Animator.js'
 
 var time = window.performance || Date
@@ -10,14 +9,14 @@ var makeSchedule = function (runnerInfo) {
   return {start: start, duration: duration, end: end, runner: runnerInfo.runner}
 }
 
-export default class Timeline extends EventTarget {
+export default class Timeline {
   // Construct a new timeline on the given element
   constructor () {
     this._timeSource = function () {
       return time.now()
     }
 
-    this._dispatcher = document.makeInstance('div')
+    this._dispatcher = document.createElement('div')
 
     // Store the timing variables
     this._startTime = 0
@@ -261,9 +260,11 @@ export default class Timeline extends EventTarget {
   }
 }
 
-extend(Element, {
-  timeline: function () {
-    this._timeline = (this._timeline || new Timeline())
-    return this._timeline
+Timeline.constructors = {
+  Element: {
+    timeline: function () {
+      this._timeline = (this._timeline || new Timeline())
+      return this._timeline
+    }
   }
-})
+}

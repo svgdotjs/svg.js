@@ -1,29 +1,7 @@
-import {Doc, Point, Element} from './classes.js'
-import {adopt, eid, makeNode} from './tools.js'
+import Point from './Point.js'
+import {eid, makeNode} from './tools.js'
 import {dots, reference} from './regex.js'
-
-export function makeInstance (element, makeNested) {
-  if (element instanceof Element) return element
-
-  if (typeof element === 'object') {
-    return adopt(element)
-  }
-
-  if (element == null) {
-    return new Doc()
-  }
-
-  if (typeof element === 'string' && element.charAt(0) !== '<') {
-    return adopt(document.querySelector(element))
-  }
-
-  var node = makeNode('svg')
-  node.innerHTML = element
-
-  element = adopt(node.firstElementChild)
-
-  return element
-}
+import {adopt} from './adopter.js'
 
 export function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
@@ -55,7 +33,7 @@ export function arrayClone (arr) {
 }
 
 // tests if a given selector matches an element
-export function matches (el, selector) {
+export function matcher (el, selector) {
   return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector)
 }
 

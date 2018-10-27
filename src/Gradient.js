@@ -1,10 +1,15 @@
 import Stop from './Stop.js'
+import Base from './Base.js'
 import * as gradiented from './gradiented.js'
-import {nodeOrNew, extend, addFactory} from './tools.js'
+import {nodeOrNew, extend} from './tools.js'
+import attr from './attr.js'
 
-export default class Gradient extends Container {
+export default class Gradient extends Base {
   constructor (type) {
-    super(nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type))
+    super(
+      nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type),
+      Gradient
+    )
   }
 
   // Add a color stop
@@ -38,23 +43,23 @@ export default class Gradient extends Container {
   // custom attr to handle transform
   attr (a, b, c) {
     if (a === 'transform') a = 'gradientTransform'
-    return super.attr(a, b, c)
+    return attr.call(this, a, b, c)
   }
 }
 
 extend(Gradient, gradiented)
 
-addFactory(Parent, {
-  // Create gradient element in defs
-  gradient (type, block) {
-    return this.defs().gradient(type, block)
-  }
-})
-
-// Base gradient generation
-addFactory(Defs, {
+Gradient.constructors = {
+  Container: {
+    // Create gradient element in defs
+    gradient (type, block) {
+      return this.defs().gradient(type, block)
+    }
+  },
   // define gradient
-  gradient: function (type, block) {
-    return this.put(new Gradient(type)).update(block)
+  Defs: {
+    gradient (type, block) {
+      return this.put(new Gradient(type)).update(block)
+    }
   }
-})
+}

@@ -1,11 +1,11 @@
-import Container from './Container.js'
-import Element from './Element.js'
+import Base from './Base.js'
 import {nodeOrNew, extend} from './tools.js'
 import find from './selector.js'
+import {remove} from './Element.js'
 
-export default class ClipPath extends Container {
+export default class ClipPath extends Base {
   constructor (node) {
-    super(nodeOrNew('clipPath', node))
+    super(nodeOrNew('clipPath', node), ClipPath)
   }
 
   // Unclip all clipped elements and remove itself
@@ -16,7 +16,7 @@ export default class ClipPath extends Container {
     })
 
     // remove clipPath from parent
-    return super.remove()
+    return remove.call(this)
   }
 
   targets () {
@@ -24,31 +24,33 @@ export default class ClipPath extends Container {
   }
 }
 
-addFactory(Container, {
-  // Create clipping element
-  clip: function() {
-    return this.defs().put(new ClipPath)
-  }
-})
 
-extend(Element, {
-  // Distribute clipPath to svg element
-  clipWith (element) {
-    // use given clip or create a new one
-    let clipper = element instanceof ClipPath
-      ? element
-      : this.parent().clip().add(element)
-
-    // apply mask
-    return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+ClipPath.constructors = {
+  Container: {
+    // Create clipping element
+    clip: function() {
+      return this.defs().put(new ClipPath)
+    }
   },
+  Element: {
+    // Distribute clipPath to svg element
+    clipWith (element) {
+      // use given clip or create a new one
+      let clipper = element instanceof ClipPath
+        ? element
+        : this.parent().clip().add(element)
 
-  // Unclip element
-  unclip () {
-    return this.attr('clip-path', null)
-  },
+      // apply mask
+      return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+    },
 
-  clipper () {
-    return this.reference('clip-path')
+    // Unclip element
+    unclip () {
+      return this.attr('clip-path', null)
+    },
+
+    clipper () {
+      return this.reference('clip-path')
+    }
   }
-})
+}

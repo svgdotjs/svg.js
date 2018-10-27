@@ -1,9 +1,9 @@
-import Container from './Container.js'
-import Element from './Element.js'
+import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
 import find from './selector.js'
+import {remove} from  './Element.js'
 
-export default class Mask extends Container {
+export default class Mask extends Base {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('mask', node))
@@ -17,7 +17,7 @@ export default class Mask extends Container {
     })
 
     // remove mask from parent
-    return super.remove()
+    return remove.call(this)
   }
 
   targets () {
@@ -26,30 +26,32 @@ export default class Mask extends Container {
 
 }
 
-addFactory(Container, {
-  mask () {
-    return this.defs().put(new Mask())
-  }
-})
 
-extend(Element, {
-  // Distribute mask to svg element
-  maskWith (element) {
-    // use given mask or create a new one
-    var masker = element instanceof Mask
-      ? element
-      : this.parent().mask().add(element)
-
-    // apply mask
-    return this.attr('mask', 'url("#' + masker.id() + '")')
+Mask.constructors = {
+  Container: {
+    mask () {
+      return this.defs().put(new Mask())
+    }
   },
+  Element: {
+    // Distribute mask to svg element
+    maskWith (element) {
+      // use given mask or create a new one
+      var masker = element instanceof Mask
+        ? element
+        : this.parent().mask().add(element)
 
-  // Unmask element
-  unmask () {
-    return this.attr('mask', null)
-  },
+      // apply mask
+      return this.attr('mask', 'url("#' + masker.id() + '")')
+    },
 
-  masker () {
-    return this.reference('mask')
+    // Unmask element
+    unmask () {
+      return this.attr('mask', null)
+    },
+
+    masker () {
+      return this.reference('mask')
+    }
   }
-})
+}

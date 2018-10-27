@@ -2,6 +2,7 @@ import {arrayToString, pathRegReplace} from './helpers.js'
 import parser from './parser.js'
 import {numbersWithDots, pathLetters, hyphen, delimiter, isPathLetter} from './regex.js'
 import Point from './Point.js'
+import SVGArray from './SVGArray.js'
 
 let pathHandlers = {
   M: function (c, p, p0) {
@@ -83,11 +84,11 @@ export default class PathArray extends SVGArray {
 
   // Convert array to string
   toString () {
-    return arrayToString(this.value)
+    return arrayToString(this)
   }
 
   toArray () {
-    return this.value.reduce(function (prev, curr) {
+    return this.reduce(function (prev, curr) {
       return [].concat.call(prev, curr)
     }, [])
   }
@@ -103,29 +104,29 @@ export default class PathArray extends SVGArray {
 
     if (!isNaN(x) && !isNaN(y)) {
       // move every point
-      for (var l, i = this.value.length - 1; i >= 0; i--) {
-        l = this.value[i][0]
+      for (var l, i = this.length - 1; i >= 0; i--) {
+        l = this[i][0]
 
         if (l === 'M' || l === 'L' || l === 'T') {
-          this.value[i][1] += x
-          this.value[i][2] += y
+          this[i][1] += x
+          this[i][2] += y
         } else if (l === 'H') {
-          this.value[i][1] += x
+          this[i][1] += x
         } else if (l === 'V') {
-          this.value[i][1] += y
+          this[i][1] += y
         } else if (l === 'C' || l === 'S' || l === 'Q') {
-          this.value[i][1] += x
-          this.value[i][2] += y
-          this.value[i][3] += x
-          this.value[i][4] += y
+          this[i][1] += x
+          this[i][2] += y
+          this[i][3] += x
+          this[i][4] += y
 
           if (l === 'C') {
-            this.value[i][5] += x
-            this.value[i][6] += y
+            this[i][5] += x
+            this[i][6] += y
           }
         } else if (l === 'A') {
-          this.value[i][6] += x
-          this.value[i][7] += y
+          this[i][6] += x
+          this[i][7] += y
         }
       }
     }
@@ -140,34 +141,34 @@ export default class PathArray extends SVGArray {
     var i, l
 
     // recalculate position of all points according to new size
-    for (i = this.value.length - 1; i >= 0; i--) {
-      l = this.value[i][0]
+    for (i = this.length - 1; i >= 0; i--) {
+      l = this[i][0]
 
       if (l === 'M' || l === 'L' || l === 'T') {
-        this.value[i][1] = ((this.value[i][1] - box.x) * width) / box.width + box.x
-        this.value[i][2] = ((this.value[i][2] - box.y) * height) / box.height + box.y
+        this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
+        this[i][2] = ((this[i][2] - box.y) * height) / box.height + box.y
       } else if (l === 'H') {
-        this.value[i][1] = ((this.value[i][1] - box.x) * width) / box.width + box.x
+        this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
       } else if (l === 'V') {
-        this.value[i][1] = ((this.value[i][1] - box.y) * height) / box.height + box.y
+        this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
       } else if (l === 'C' || l === 'S' || l === 'Q') {
-        this.value[i][1] = ((this.value[i][1] - box.x) * width) / box.width + box.x
-        this.value[i][2] = ((this.value[i][2] - box.y) * height) / box.height + box.y
-        this.value[i][3] = ((this.value[i][3] - box.x) * width) / box.width + box.x
-        this.value[i][4] = ((this.value[i][4] - box.y) * height) / box.height + box.y
+        this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
+        this[i][2] = ((this[i][2] - box.y) * height) / box.height + box.y
+        this[i][3] = ((this[i][3] - box.x) * width) / box.width + box.x
+        this[i][4] = ((this[i][4] - box.y) * height) / box.height + box.y
 
         if (l === 'C') {
-          this.value[i][5] = ((this.value[i][5] - box.x) * width) / box.width + box.x
-          this.value[i][6] = ((this.value[i][6] - box.y) * height) / box.height + box.y
+          this[i][5] = ((this[i][5] - box.x) * width) / box.width + box.x
+          this[i][6] = ((this[i][6] - box.y) * height) / box.height + box.y
         }
       } else if (l === 'A') {
         // resize radii
-        this.value[i][1] = (this.value[i][1] * width) / box.width
-        this.value[i][2] = (this.value[i][2] * height) / box.height
+        this[i][1] = (this[i][1] * width) / box.width
+        this[i][2] = (this[i][2] * height) / box.height
 
         // move position values
-        this.value[i][6] = ((this.value[i][6] - box.x) * width) / box.width + box.x
-        this.value[i][7] = ((this.value[i][7] - box.y) * height) / box.height + box.y
+        this[i][6] = ((this[i][6] - box.x) * width) / box.width + box.x
+        this[i][7] = ((this[i][7] - box.y) * height) / box.height + box.y
       }
     }
 
@@ -180,9 +181,9 @@ export default class PathArray extends SVGArray {
 
     pathArray = new PathArray(pathArray)
 
-    equalCommands = this.value.length === pathArray.value.length
-    for (i = 0, il = this.value.length; equalCommands && i < il; i++) {
-      equalCommands = this.value[i][0] === pathArray.value[i][0]
+    equalCommands = this.length === pathArray.value.length
+    for (i = 0, il = this.length; equalCommands && i < il; i++) {
+      equalCommands = this[i][0] === pathArray.value[i][0]
     }
 
     return equalCommands
@@ -206,7 +207,7 @@ export default class PathArray extends SVGArray {
     // make sure a destination is defined
     if (!this.destination) return this
 
-    var sourceArray = this.value
+    var sourceArray = this
     var destinationArray = this.destination.value
     var array = []
     var pathArray = new PathArray()
@@ -246,11 +247,11 @@ export default class PathArray extends SVGArray {
 
     if (typeof array === 'string') {
       array = array
-        .replace(regex.numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
-        .replace(regex.pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(regex.hyphen, '$1 -')      // add space before hyphen
+        .replace(numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
+        .replace(pathLetters, ' $& ') // put some room between letters and numbers
+        .replace(hyphen, '$1 -')      // add space before hyphen
         .trim()                                 // trim
-        .split(regex.delimiter)   // split into array
+        .split(delimiter)   // split into array
     } else {
       array = array.reduce(function (prev, curr) {
         return [].concat.call(prev, curr)
@@ -266,7 +267,7 @@ export default class PathArray extends SVGArray {
 
     do {
       // Test if we have a path letter
-      if (regex.isPathLetter.test(array[index])) {
+      if (isPathLetter.test(array[index])) {
         s = array[index]
         ++index
       // If last letter was a move command and we got no new, it defaults to [L]ine
@@ -286,7 +287,7 @@ export default class PathArray extends SVGArray {
     return result
   }
 
-  // Get bounding box of path
+  Get bounding box of path
   bbox () {
     parser().path.setAttribute('d', this.toString())
     return parser.nodes.path.getBBox()

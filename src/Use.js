@@ -1,9 +1,9 @@
-import {Shape, Container} from './classes.js'
+import Base from './Base.js'
 import {xlink} from './namespaces.js'
 
-export default class Use extends Shape {
+export default class Use extends Base {
   constructor (node) {
-    super(nodeOrNew('use', node))
+    super(nodeOrNew('use', node), Use)
   }
 
   // Use element as a reference
@@ -13,9 +13,11 @@ export default class Use extends Shape {
   }
 }
 
-addFactory(Container, {
-  // Create a use element
-  use: function (element, file) {
-    return this.put(new Use()).element(element, file)
+Use.constructors = {
+  Container: {
+    // Create a use element
+    use: function (element, file) {
+      return this.put(new Use()).element(element, file)
+    }
   }
-})
+}

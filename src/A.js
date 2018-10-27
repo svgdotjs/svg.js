@@ -1,10 +1,10 @@
-import {Container, Element} from './classes.js'
-import {nodeOrNew, addFactory} from './tools.js'
+import Base from './Base.js'
+import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
 
-export default class A extends Container {
+export default class A extends Base{
   constructor (node) {
-    super(nodeOrNew('a', node))
+    super(nodeOrNew('a', node), A)
   }
 
   // Link url
@@ -18,22 +18,23 @@ export default class A extends Container {
   }
 }
 
-addFactory(Container, {
-  // Create a hyperlink element
-  link: function (url) {
-    return this.put(new A()).to(url)
-  }
-})
-
-addFactory(Element, {
-  // Create a hyperlink element
-  linkTo: function (url) {
-    var link = new A()
-
-    if (typeof url === 'function') { url.call(link, link) } else {
-      link.to(url)
+A.constructors = {
+  Container: {
+    // Create a hyperlink element
+    link: function (url) {
+      return this.put(new A()).to(url)
     }
+  },
+  Element: {
+    // Create a hyperlink element
+    linkTo: function (url) {
+      var link = new A()
 
-    return this.parent().put(link).put(this)
+      if (typeof url === 'function') { url.call(link, link) } else {
+        link.to(url)
+      }
+
+      return this.parent().put(link).put(this)
+    }
   }
-})
+}

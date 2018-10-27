@@ -1,25 +1,29 @@
-import {on, off, dispatch} from './event.js'
+import {on as _on, off as _off, dispatch as _dispatch} from './event.js'
 
-export default class EventTarget {
+export const name = 'EventTarget'
+
+export function setup (node = {}) {
+  this.events = node.events || {}
+}
+
   // Bind given event to listener
-  on (event, listener, binding, options) {
-    on(this, event, listener, binding, options)
-    return this
-  }
+export function on (event, listener, binding, options) {
+  _on(this, event, listener, binding, options)
+  return this
+}
 
   // Unbind event from listener
-  off (event, listener) {
-    off(this, event, listener)
-    return this
-  }
+export function off (event, listener) {
+  _off(this, event, listener)
+  return this
+}
 
-  dispatch (event, data) {
-    return dispatch(this, event, data)
-  }
+export function dispatch (event, data) {
+  return _dispatch(this, event, data)
+}
 
   // Fire given event
-  fire (event, data) {
-    this.dispatch(event, data)
-    return this
-  }
+export function fire (event, data) {
+  this.dispatch(event, data)
+  return this
 }
