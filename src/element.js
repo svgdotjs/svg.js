@@ -273,16 +273,19 @@ SVG.Element = SVG.invent({
         }
       // otherwise act as a getter
       } else {
+        // expose node modifiers
         if (typeof svg === 'function') {
-          well = svg(this)
+          this.each(function () {
+            well = svg(this)
 
-          if (well instanceof SVG.Element) {
-            return well.svg()
-          }
+            if (well instanceof SVG.Element) {
+              this.replace(well)
+            }
 
-          if (typeof well === 'boolean' && !well) {
-            return null
-          }
+            if (typeof well === 'boolean' && !well) {
+              this.remove()
+            }
+          })
         }
 
         // write svgjs data to the dom
