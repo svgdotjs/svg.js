@@ -1,4 +1,6 @@
 import {on as _on, off as _off, dispatch as _dispatch} from './event.js'
+import {registerMethods} from './methods.js'
+import {registerConstructor} from './methods.js'
 
 export const name = 'EventTarget'
 
@@ -27,3 +29,9 @@ export function fire (event, data) {
   this.dispatch(event, data)
   return this
 }
+
+registerMethods('EventTarget', {
+  setup, on, off, dispatch, fire
+})
+
+registerConstructor('EventTarget', setup)

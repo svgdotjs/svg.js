@@ -1,5 +1,8 @@
 import {camelCase} from './helpers.js'
 import {isBlank} from './regex.js'
+import {registerMethods} from './methods.js'
+
+// FIXME: We dont need exports
 
   // Dynamic style generator
 export function css (style, val) {
@@ -64,3 +67,7 @@ export function hide () {
 export function visible () {
   return this.css('display') !== 'none'
 }
+
+registerMethods('Element', {
+  css, show, hide, visible
+})

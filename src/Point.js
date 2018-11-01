@@ -1,4 +1,5 @@
 import parser from './parser.js'
+import {registerMethods} from './methods.js'
 
 export default class Point {
   // Initialize
@@ -43,11 +44,11 @@ export default class Point {
   }
 }
 
-Point.constructors = {
+registerMethods({
   Element: {
     // Get point
     point: function (x, y) {
       return new Point(x, y).transform(this.screenCTM().inverse())
     }
   }
-}
+})

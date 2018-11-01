@@ -1,4 +1,5 @@
 import {delimiter} from './regex.js'
+import {registerMethods} from './methods.js'
 
 // // Add events to elements
 // ;[ 'click',

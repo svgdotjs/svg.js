@@ -1,3 +1,5 @@
+import {registerMethods} from './methods.js'
+import {registerConstructor} from './methods.js'
 
 export const name = 'Memory'
 
@@ -21,7 +23,7 @@ export function remember (k, v) {
   }
 
   return this
-},
+}
 
   // Erase a given memory
 export function forget () {
@@ -39,3 +41,6 @@ export function forget () {
 export function memory () {
   return this._memory
 }
+
+registerMethods('Element', {remember, forget, memory})
+registerConstructor('Memory', setup)

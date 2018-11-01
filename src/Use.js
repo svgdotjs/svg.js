@@ -1,5 +1,7 @@
 import Base from './Base.js'
 import {xlink} from './namespaces.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Use extends Base {
   constructor (node) {
@@ -13,11 +15,13 @@ export default class Use extends Base {
   }
 }
 
-Use.constructors = {
+registerMethods({
   Container: {
     // Create a use element
     use: function (element, file) {
       return this.put(new Use()).element(element, file)
     }
   }
-}
+})
+
+register(Use)

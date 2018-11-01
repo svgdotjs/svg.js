@@ -3,6 +3,8 @@ import Text from './Text.js'
 import PathArray from './PathArray.js'
 import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class TextPath extends Text {
   // Initialize node
@@ -35,7 +37,7 @@ export default class TextPath extends Text {
   }
 }
 
-TextPath.constructors = {
+registerMethods({
   Container: {
     textPath (text, path) {
       return this.defs().path(path).text(text).addTo(this)
@@ -76,6 +78,7 @@ TextPath.constructors = {
     }
     // FIXME: Maybe add `targets` to get all textPaths associated with this path
   }
-}
+})
 
 TextPath.prototype.MorphArray = PathArray
+register(TextPath)

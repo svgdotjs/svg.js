@@ -1,6 +1,8 @@
 import Base from './Base.js'
 import * as circled from './circled.js'
 import {extend} from './tools.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Ellipse extends Base {
   constructor (node) {
@@ -10,9 +12,11 @@ export default class Ellipse extends Base {
 
 extend(Ellipse, circled)
 
-// addFactory(Container, {
-//   // Create an ellipse
-//   ellipse: function (width, height) {
-//     return this.put(new Ellipse()).size(width, height).move(0, 0)
-//   }
-// })
+registerMethods('Container', {
+  // Create an ellipse
+  ellipse: function (width, height) {
+    return this.put(new Ellipse()).size(width, height).move(0, 0)
+  }
+})
+
+register(Ellipse)

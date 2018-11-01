@@ -1,4 +1,6 @@
 import Base from './Base.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class G extends Base {
   constructor (node) {
@@ -6,11 +8,13 @@ export default class G extends Base {
   }
 }
 
-G.constructors = {
+registerMethods({
   Element: {
     // Create a group element
     group: function () {
       return this.put(new G())
     }
   }
-}
+})
+
+register(G)

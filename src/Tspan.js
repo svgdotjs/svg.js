@@ -1,6 +1,8 @@
 import Base from './Base.js'
 import {nodeOrNew, extend} from './tools.js'
 import * as textable from './textable.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Tspan extends Base {
   // Initialize node
@@ -42,7 +44,7 @@ export default class Tspan extends Base {
 
 extend(Tspan, textable)
 
-Tspan.constructors = {
+registerMethods({
   Tspan: {
     tspan (text) {
       var tspan = new Tspan()
@@ -58,4 +60,6 @@ Tspan.constructors = {
       return tspan.text(text)
     }
   }
-}
+})
+
+register(Tspan)

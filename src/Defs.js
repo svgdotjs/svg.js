@@ -1,5 +1,6 @@
 import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
+import {register} from './adopter.js'
 
 export default class Defs extends Base {
   constructor (node) {
@@ -9,3 +10,5 @@ export default class Defs extends Base {
   flatten () { return this }
   ungroup () { return this }
 }
+
+register(Defs)

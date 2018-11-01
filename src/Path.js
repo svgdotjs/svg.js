@@ -2,6 +2,9 @@ import {proportionalSize} from './helpers.js'
 import {nodeOrNew} from './tools.js'
 import Base from './Base.js'
 import PathArray from './PathArray.js'
+import find from './selector.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Path extends Base {
   // Initialize node
@@ -56,13 +59,17 @@ export default class Path extends Base {
   height (height) {
     return height == null ? this.bbox().height : this.size(this.bbox().width, height)
   }
+
+  targets () {
+    return find('svg textpath [href*="' + this.id() + '"]')
+  }
 }
 
 // Define morphable array
 Path.prototype.MorphArray = PathArray
 
 // Add parent method
-Path.constructors = {
+registerMethods({
   Container: {
     // Create a wrapped path element
     path (d) {
@@ -70,4 +77,6 @@ Path.constructors = {
       return this.put(new Path()).plot(d || new PathArray())
     }
   }
-}
+})
+
+register(Path)

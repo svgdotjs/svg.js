@@ -4,6 +4,7 @@ import parser from './parser.js'
 import {fullBox, domContains, isNulledBox} from './helpers.js'
 import {extend} from './tools.js'
 import {delimiter} from './regex.js'
+import {registerMethods} from './methods.js'
 
 export default class Box {
   constructor (...args) {
@@ -104,7 +105,7 @@ function getBox(cb) {
   return box
 }
 
-Box.constructors = {
+registerMethods({
   Element: {
     // Get bounding box
     bbox () {
@@ -124,4 +125,4 @@ Box.constructors = {
     // act as setter
     return this.attr('viewBox', new Box(x, y, width, height))
   }
-}
+})

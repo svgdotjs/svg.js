@@ -3,6 +3,8 @@ import SVGNumber from './SVGNumber.js'
 import {nodeOrNew, extend} from './tools.js'
 import {attrs} from './defaults.js'
 import * as textable from './textable.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Text extends Base {
   // Initialize node
@@ -158,7 +160,7 @@ export default class Text extends Base {
 
 extend(Text, textable)
 
-Text.constructors = {
+registerMethods({
   Container: {
     // Create text element
     text (text) {
@@ -170,4 +172,6 @@ Text.constructors = {
       return this.put(new Text()).plain(text)
     }
   }
-}
+})
+
+register(Text)

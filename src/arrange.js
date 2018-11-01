@@ -1,5 +1,3 @@
-import Doc from './Doc.js'
-
 // ### This module adds backward / forward functionality to elements.
 
 // Get all siblings, including myself
@@ -31,7 +29,7 @@ export function forward () {
   p.removeElement(this).add(this, i)
 
   // make sure defs node is always at the top
-  if (p instanceof Doc) {
+  if (typeof p.isRoot == 'function' && p.isRoot()) {
     p.node.appendChild(p.defs().node)
   }
 

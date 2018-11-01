@@ -1,31 +1,33 @@
 import Base from './Base.js'
 import {nodeOrNew, extend} from './tools.js'
-//import find from './selector.js'
-//import {remove} from './Element.js'
+import find from './selector.js'
+import {remove} from './Element.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class ClipPath extends Base {
   constructor (node) {
     super(nodeOrNew('clipPath', node), ClipPath)
   }
 
-  // // Unclip all clipped elements and remove itself
-  // remove () {
-  //   // unclip all targets
-  //   this.targets().forEach(function (el) {
-  //     el.unclip()
-  //   })
-  //
-  //   // remove clipPath from parent
-  //   return remove.call(this)
-  // }
-  //
-  // targets () {
-  //   return find('svg [clip-path*="' + this.id() + '"]')
-  // }
+  // Unclip all clipped elements and remove itself
+  remove () {
+    // unclip all targets
+    this.targets().forEach(function (el) {
+      el.unclip()
+    })
+
+    // remove clipPath from parent
+    return remove.call(this)
+  }
+
+  targets () {
+    return find('svg [clip-path*="' + this.id() + '"]')
+  }
 }
 
 
-ClipPath.constructors = {
+registerMethods({
   Container: {
     // Create clipping element
     clip: function() {
@@ -53,4 +55,6 @@ ClipPath.constructors = {
       return this.reference('clip-path')
     }
   }
-}
+})
+
+register(ClipPath)

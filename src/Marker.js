@@ -1,9 +1,6 @@
 import Base from './Base.js'
-// import Defs from './Defs.js'
-// import Line from './Line.js'
-// import Polyline from './Polyline.js'
-// import Polygon from './Polygon.js'
-// import Path from './Path.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Marker extends Base {
   // Initialize node
@@ -43,7 +40,7 @@ export default class Marker extends Base {
   }
 }
 
-Marker.constructors = {
+registerMethods({
   Container: {
     marker (width, height, block) {
       // Create marker element in defs
@@ -79,4 +76,6 @@ Marker.constructors = {
       return this.attr(attr, marker)
     }
   }
-}
+})
+
+register(Marker)

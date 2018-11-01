@@ -1,6 +1,8 @@
 import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
-//import attr from './attr.js'
+import attr from './attr.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Pattern extends Base {
   // Initialize node
@@ -31,14 +33,18 @@ export default class Pattern extends Base {
     return this.url()
   }
 
-  // // custom attr to handle transform
-  // attr (a, b, c) {
-  //   if (a === 'transform') a = 'patternTransform'
-  //   return attr.call(this, a, b, c)
-  // }
+  // custom attr to handle transform
+  attr (a, b, c) {
+    if (a === 'transform') a = 'patternTransform'
+    return attr.call(this, a, b, c)
+  }
+
+  targets () {
+    return find('svg [fill*="' + this.id() + '"]')
+  }
 }
 
-Pattern.constructors = {
+registerMethods({
   Container: {
     // Create pattern element in defs
     pattern (width, height, block) {
@@ -56,4 +62,6 @@ Pattern.constructors = {
       })
     }
   }
-}
+})
+
+register(Pattern)

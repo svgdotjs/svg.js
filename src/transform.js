@@ -1,6 +1,7 @@
 import {arrayToMatrix, getOrigin, isMatrixLike} from './helpers.js'
 import Matrix from './Matrix.js'
 import {delimiter, transforms} from './regex.js'
+import {registerMethods} from './methods.js'
 
 // Reset all transformations
 export function untransform () {
@@ -65,3 +66,7 @@ export function transform (o, relative) {
   var result = new Matrix(cleanRelative).transform(o)
   return this.attr('transform', result)
 }
+
+registerMethods('Element', {
+  untransform, matrixify, toParent, toDoc, transform
+})

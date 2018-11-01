@@ -1,6 +1,7 @@
 import Base from './Base.js'
 import SVGNumber from './SVGNumber.js'
 import {nodeOrNew} from './tools.js'
+import {register} from './adopter.js'
 
 export default class Stop extends Base {
   constructor (node) {
@@ -25,3 +26,5 @@ export default class Stop extends Base {
     return this
   }
 }
+
+register(Stop)

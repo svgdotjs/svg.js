@@ -1,6 +1,9 @@
 import Base from './Base.js'
-import * as elements from './elements.js'
 import {capitalize} from './helpers.js'
+import {makeNode} from './tools.js'
+
+const elements = {}
+export const root = Symbol('root')
 
 export function makeInstance (element) {
   if (element instanceof Base) return element
@@ -10,7 +13,7 @@ export function makeInstance (element) {
   }
 
   if (element == null) {
-    return new Doc()
+    return new elements[root]()
   }
 
   if (typeof element === 'string' && element.charAt(0) !== '<') {
@@ -25,13 +28,14 @@ export function makeInstance (element) {
   return element
 }
 
+
 // Adopt existing svg elements
 export function adopt (node) {
   // check for presence of node
   if (!node) return null
 
   // make sure a node isn't already adopted
-  if (node.instance instanceof Element) return node.instance
+  if (node.instance instanceof Base) return node.instance
 
   if (!(node instanceof window.SVGElement)) {
     return new elements.HtmlNode(node)
@@ -42,7 +46,7 @@ export function adopt (node) {
 
   // adopt with element-specific settings
   if (node.nodeName === 'svg') {
-    element = new elements.Doc(node)
+    element = new elements[root](node)
   } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
     element = new elements.Gradient(node)
   } else if (elements[capitalize(node.nodeName)]) {
@@ -52,6 +56,16 @@ export function adopt (node) {
   }
 
   return element
+}
+
+export function register (element, name = element.name, asRoot = false) {
+  elements[name] = element
+  if (asRoot) elements[root] = element
+  return element
+}
+
+export function getClass(name) {
+  return elements[name]
 }
 
 // Element id sequence

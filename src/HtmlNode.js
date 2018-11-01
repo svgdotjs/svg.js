@@ -1,5 +1,6 @@
-//import {makeInstance} from './adopter.js'
+import {makeInstance} from './adopter.js'
 import Base from './Base.js'
+import {register} from './adopter.js'
 
 export default class HtmlNode extends Base {
   constructor (element) {
@@ -7,15 +8,15 @@ export default class HtmlNode extends Base {
     this.node = element
   }
 
-  // add (element, i) {
-  //   element = makeInstance(element)
-  //
-  //   if (element.node !== this.node.children[i]) {
-  //     this.node.insertBefore(element.node, this.node.children[i] || null)
-  //   }
-  //
-  //   return this
-  // }
+  add (element, i) {
+    element = makeInstance(element)
+
+    if (element.node !== this.node.children[i]) {
+      this.node.insertBefore(element.node, this.node.children[i] || null)
+    }
+
+    return this
+  }
 
   put (element, i) {
     this.add(element, i)
@@ -26,3 +27,5 @@ export default class HtmlNode extends Base {
     return this.node
   }
 }
+
+register(HtmlNode)

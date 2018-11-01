@@ -1,9 +1,12 @@
 import {proportionalSize, matcher} from './helpers.js'
-import {makeInstance, adopt, assignNewId, eid} from './adopter.js'
+import {makeInstance, adopt, assignNewId, eid, root, getClass} from './adopter.js'
 import {delimiter} from './regex.js'
 import {ns} from './namespaces.js'
-import Doc from './Doc.js'
 import SVGNumber from './SVGNumber.js'
+import {registerMethods} from './methods.js'
+import {registerConstructor} from './methods.js'
+
+const Doc = getClass(root)
 
 export const name = 'Element'
 
@@ -202,7 +205,7 @@ export function parent (type) {
   }
 }
 
-  // Get parent document
+// Get parent document
 export function doc () {
   let p = this.parent(Doc)
   return p && p.doc()
@@ -267,4 +270,11 @@ export function getEventTarget () {
   return this.node
 }
 
-export {default as attr} from './attr.js'
+registerMethods('Element', {
+  x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
+  putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
+  toggleClass, reference, doc, defs, parents, matches, native, svg,
+  writeDataToDom, setData, getEventTarget
+})
+
+registerConstructor('Element', setup)

@@ -1,3 +1,5 @@
+import {registerMethods} from './methods.js'
+
 // Store data values on svg nodes
 export function data (a, v, r) {
   if (typeof a === 'object') {
@@ -20,3 +22,5 @@ export function data (a, v, r) {
 
   return this
 }
+
+registerMethods('Element', {data})

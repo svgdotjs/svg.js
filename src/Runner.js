@@ -8,6 +8,7 @@ import {noop, timeline} from './defaults.js'
 import {extend} from './tools.js'
 import Animator from './Animator.js'
 import Point from './Point.js'
+import {registerMethods} from './methods.js'
 
 // FIXME: What is this doing here?
 // easing = {
@@ -544,7 +545,7 @@ class RunnerArray {
 }
 
 let frameId = 0
-Runner.constructors = {
+registerMethods({
   Element: {
     animate (duration, delay, when) {
       var o = Runner.sanitise(duration, delay, when)
@@ -595,7 +596,7 @@ Runner.constructors = {
       }
     }
   }
-}
+})
 
 
 extend(Runner, {

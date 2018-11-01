@@ -2,7 +2,8 @@ import Base from './Base.js'
 import Defs from './Defs.js'
 import { extend, nodeOrNew } from './tools.js'
 import { ns, xlink, xmlns, svgjs } from './namespaces.js'
-//import {adopt} from './adopter.js'
+import {adopt, register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Doc extends Base {
   constructor(node) {
@@ -36,11 +37,8 @@ export default class Doc extends Base {
   defs() {
     if (!this.isRoot()) return this.doc().defs()
 
-    let node = this.node.getElementsByTagName('defs')[0]
-    return node ? (node.instance || new Defs(node)) : this.put(new Defs())
-    // 
-    // return adopt(this.node.getElementsByTagName('defs')[0]) ||
-    //   this.put(new Defs())
+    return adopt(this.node.getElementsByTagName('defs')[0]) ||
+      this.put(new Defs())
   }
 
   // custom parent method
@@ -76,11 +74,13 @@ export default class Doc extends Base {
   }
 }
 
-Doc.constructors = {
+registerMethods({
   Container: {
     // Create nested svg document
     nested() {
       return this.put(new Doc())
     }
   }
-}
+})
+
+register(Doc, 'Doc', true)

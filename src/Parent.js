@@ -1,6 +1,6 @@
 import {makeInstance, adopt} from './adopter.js'
 import {map} from './utils.js'
-
+import {registerMethods} from './methods.js'
 
 // Returns all child elements
 export function children () {
@@ -155,3 +155,8 @@ export function ungroup (parent) {
 
   return this
 }
+
+registerMethods('Container', {
+  children, add, put, has, index, get, first, last, each,
+  removeElement, clear, svg, writeDataToDom, flatten, ungroup
+})

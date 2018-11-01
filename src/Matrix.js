@@ -4,6 +4,7 @@ import {delimiter} from './regex.js'
 import {radians} from './utils.js'
 import parser from './parser.js'
 import Base from './Base.js'
+import {registerMethods} from './methods.js'
 
 export default class Matrix {
   constructor (...args) {
@@ -478,7 +479,7 @@ export default class Matrix {
   }
 }
 
-Matrix.constructors = {
+registerMethods({
   Element: {
     // Get current matrix
     ctm () {
@@ -500,4 +501,4 @@ Matrix.constructors = {
       return new Matrix(this.node.getScreenCTM())
     }
   }
-}
+})

@@ -4,6 +4,8 @@ import {nodeOrNew, extend} from './tools.js'
 import * as pointed from './pointed.js'
 import * as poly from './poly.js'
 import PointArray from './PointArray.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Polygon extends Base {
   // Initialize node
@@ -12,7 +14,7 @@ export default class Polygon extends Base {
   }
 }
 
-Polygon.constructors = {
+registerMethods({
   Parent: {
     // Create a wrapped polygon element
     polygon (p) {
@@ -20,7 +22,8 @@ Polygon.constructors = {
       return this.put(new Polygon()).plot(p || new PointArray())
     }
   }
-}
+})
 
 extend(Polygon, pointed)
 extend(Polygon, poly)
+register(Polygon)

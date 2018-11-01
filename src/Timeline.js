@@ -1,4 +1,5 @@
 import Animator from './Animator.js'
+import {registerMethods} from './methods.js'
 
 var time = window.performance || Date
 
@@ -260,11 +261,11 @@ export default class Timeline {
   }
 }
 
-Timeline.constructors = {
+registerMethods({
   Element: {
     timeline: function () {
       this._timeline = (this._timeline || new Timeline())
       return this._timeline
     }
   }
-}
+})

@@ -2,6 +2,8 @@ import {proportionalSize} from './helpers.js'
 import {nodeOrNew} from './tools.js'
 import PointArray from './PointArray.js'
 import Base from './Base.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Line extends Base {
   // Initialize node
@@ -43,7 +45,7 @@ export default class Line extends Base {
 
 }
 
-Line.constructors = {
+registerMethods({
   Container: {
     // Create a line element
     line (...args) {
@@ -55,4 +57,6 @@ Line.constructors = {
       )
     }
   }
-}
+})
+
+register(Line)

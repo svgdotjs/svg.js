@@ -3,6 +3,8 @@ import Pattern from './Pattern.js'
 import {on, off} from './event.js'
 import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Image extends Base {
   constructor (node) {
@@ -47,13 +49,21 @@ export default class Image extends Base {
 
     return this.attr('href', (img.src = url), xlink)
   }
+
+  attrHook (obj) {
+    return obj.doc().defs().pattern(0, 0, (pattern) => {
+      pattern.add(this)
+    })
+  }
 }
 
-Image.constructors = {
+registerMethods({
   Container: {
     // create image element, load image and set its size
     image (source, callback) {
       return this.put(new Image()).size(0, 0).load(source, callback)
     }
   }
-}
+})
+
+register(Image)

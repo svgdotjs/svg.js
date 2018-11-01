@@ -1,6 +1,7 @@
 import {idFromReference} from './helpers.js'
 import {map} from './utils.js'
 import {adopt} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 // // Method for getting an element by id
 // SVG.get = function (id) {
@@ -35,3 +36,5 @@ export default function baseFind (query, parent) {
 export function find (query) {
   return baseFind(query, this.node)
 }
+
+registerMethods('Container', {find})

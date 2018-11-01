@@ -2,7 +2,9 @@ import Stop from './Stop.js'
 import Base from './Base.js'
 import * as gradiented from './gradiented.js'
 import {nodeOrNew, extend} from './tools.js'
-//import attr from './attr.js'
+import attr from './attr.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class Gradient extends Base {
   constructor (type) {
@@ -40,16 +42,20 @@ export default class Gradient extends Base {
     return this.url()
   }
 
-  // // custom attr to handle transform
-  // attr (a, b, c) {
-  //   if (a === 'transform') a = 'gradientTransform'
-  //   return attr.call(this, a, b, c)
-  // }
+  // custom attr to handle transform
+  attr (a, b, c) {
+    if (a === 'transform') a = 'gradientTransform'
+    return attr.call(this, a, b, c)
+  }
+
+  targets () {
+    return find('svg [fill*="' + this.id() + '"]')
+  }
 }
 
 extend(Gradient, gradiented)
 
-Gradient.constructors = {
+registerMethods({
   Container: {
     // Create gradient element in defs
     gradient (type, block) {
@@ -62,4 +68,6 @@ Gradient.constructors = {
       return this.put(new Gradient(type)).update(block)
     }
   }
-}
+})
+
+register(Gradient)

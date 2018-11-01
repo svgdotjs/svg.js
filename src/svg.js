@@ -10,16 +10,18 @@ import * as adopter from './adopter.js'
 import * as tools from './tools.js'
 import * as containers from './containers.js'
 import * as elements from './elements.js'
-import * as arrange from './arrange.js'
-import {find} from './selector.js'
-import * as css from './css.js'
-import * as transform from './transform.js'
-import * as specialNeeds from './specialNeeds.js'
+import './attr.js'
+import './arrange.js'
+import './selector.js'
+import './css.js'
+import './transform.js'
+import './memory.js'
+import {getMethodsFor, getConstructor} from './methods.js'
 const extend = tools.extend
 
-import * as EventTarget from './EventTarget.js'
-import * as Element from './Element.js'
-import * as Parent from './Parent.js'
+import './EventTarget.js'
+import './Element.js'
+import './Parent.js'
 
 extend([
   Classes.Doc,
@@ -27,92 +29,38 @@ extend([
   Classes.Image,
   Classes.Pattern,
   Classes.Marker
-], {viewbox: Classes.Box.constructors.viewbox})
+], getMethodsFor('viewbox'))
 
-extend([Classes.Line, Classes.Polyline, Classes.Polygon, Classes.Path], {
-  ...Classes.Marker.constructors.marker
-})
+extend([
+  Classes.Line,
+  Classes.Polyline,
+  Classes.Polygon,
+  Classes.Path
+], getMethodsFor('marker'))
 
-extend(Classes.Text, Classes.TextPath.constructors.Text)
-extend(Classes.Path, Classes.TextPath.constructors.Path)
+extend(Classes.Text, getMethodsFor('Text'))
+extend(Classes.Path, getMethodsFor('Path'))
 
-extend(Classes.Defs, {
-  ...Classes.Gradient.constructors.Defs,
-  ...Classes.Marker.constructors.Defs,
-  ...Classes.Pattern.constructors.Defs,
-})
+extend(Classes.Defs, getMethodsFor('Defs'))
 
-extend([Classes.Text, Classes.Tspan], Classes.Tspan.constructors.Tspan)
+extend([
+  Classes.Text,
+  Classes.Tspan
+], getMethodsFor('Tspan'))
 
-extend([Classes.Gradient, Classes.Pattern], {
-  remove: specialNeeds.patternGradientRemove,
-  targets: specialNeeds.patternGradientTargets,
-  unFill: specialNeeds.unFill,
-})
-
-extend(Classes.Gradient, {attr: specialNeeds.gradientAttr})
-extend(Classes.Pattern, {attr: specialNeeds.patternAttr})
-
-extend(Classes.ClipPath, {
-  remove: specialNeeds.clipPathRemove,
-  targets: specialNeeds.clipPathTargets
-})
-
-extend(Classes.Mask, {
-  remove: specialNeeds.maskRemove,
-  targets: specialNeeds.maskTargets
-})
-
-extend(Classes.Path, {targets: specialNeeds.pathTargets})
-
-extend(Classes.HtmlNode, {
-  add: specialNeeds.HtmlNodeAdd
-})
-
+const containerMethods = getMethodsFor('Container')
+// FIXME: We need a container array
 for (let i in containers) {
-  extend(containers[i], {
-    ...Classes.A.constructors.Container,
-    ...Classes.ClipPath.constructors.Container,
-    ...Classes.Doc.constructors.Container,
-    ...Classes.G.constructors.Container,
-    ...Classes.Gradient.constructors.Container,
-    ...Classes.Line.constructors.Container,
-    ...Classes.Marker.constructors.Container,
-    ...Classes.Mask.constructors.Container,
-    ...Classes.Path.constructors.Container,
-    ...Classes.Pattern.constructors.Container,
-    ...Classes.Polygon.constructors.Container,
-    ...Classes.Polyline.constructors.Container,
-    ...Classes.Rect.constructors.Container,
-    find,
-    ...Classes.Symbol.constructors.Container,
-    ...Classes.Text.constructors.Container,
-    ...Classes.TextPath.constructors.Container,
-    ...Classes.Use.constructors.Container,
-  })
+  extend(containers[i], containerMethods)
 }
 
+const elementMethods = getMethodsFor('Element')
 for (let i in elements) {
-  extend(elements[i], {
-    ...EventTarget,
-    ...Element,
-    ...Parent,
-    ...arrange,
-    ...Classes.A.constructors.Element,
-    ...Classes.Box.constructors.Element,
-    ...Classes.Circle.constructors.Element,
-    ...Classes.ClipPath.constructors.Element,
-    ...css,
-    ...Classes.Image.constructors.Element,
-    ...Classes.Mask.constructors.Element,
-    ...Classes.Matrix.constructors.Element,
-    ...Classes.Point.constructors.Element,
-    ...Classes.Runner.constructors.Element,
-    ...Classes.Timeline.constructors.Element,
-    ...transform,
-  })
+  extend(elements[i], elementMethods)
+  extend(elements[i], getConstructor('EventTarget'))
+  extend(elements[i], getConstructor('Element'))
+  extend(elements[i], getConstructor('Memory'))
 }
-
 
 // The main wrapping element
 export default function SVG (element) {

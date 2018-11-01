@@ -2,8 +2,8 @@ import {isNumber, isImage} from './regex.js'
 import {attrs as defaults} from './defaults.js'
 import Color from './Color.js'
 import SVGArray from './SVGArray.js'
-import Image from './Image.js'
 import SVGNumber from './SVGNumber.js'
+import {registerMethods} from './methods.js'
 
 // Set svg element attribute
 export default function attr (attr, val, ns) {
@@ -40,12 +40,12 @@ export default function attr (attr, val, ns) {
       if (isImage.test(val)) {
         val = this.doc().defs().image(val)
       }
+    }
 
-      if (val instanceof Image) {
-        val = this.doc().defs().pattern(0, 0, function () {
-          this.add(val)
-        })
-      }
+    // FIXME: This is fine, but what about the lines above?
+    // How does attr know about image()?
+    while (typeof val.attrHook == 'function') {
+      val = val.attrHook(this, attr)
     }
 
     // ensure correct numeric values (also accepts NaN and Infinity)
@@ -79,3 +79,5 @@ export default function attr (attr, val, ns) {
 
   return this
 }
+
+registerMethods('Element', {attr})

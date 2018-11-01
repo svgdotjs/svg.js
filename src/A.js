@@ -1,6 +1,8 @@
 import Base from './Base.js'
 import {nodeOrNew} from './tools.js'
 import {xlink} from './namespaces.js'
+import {register} from './adopter.js'
+import {registerMethods} from './methods.js'
 
 export default class A extends Base{
   constructor (node) {
@@ -18,7 +20,7 @@ export default class A extends Base{
   }
 }
 
-A.constructors = {
+registerMethods({
   Container: {
     // Create a hyperlink element
     link: function (url) {
@@ -37,4 +39,6 @@ A.constructors = {
       return this.parent().put(link).put(this)
     }
   }
-}
+})
+
+register(A)
