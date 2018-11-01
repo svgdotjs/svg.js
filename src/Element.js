@@ -272,7 +272,7 @@ export function getEventTarget () {
 
 registerMethods('Element', {
   x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
-  putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
+  addTo, putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
   toggleClass, reference, doc, defs, parents, matches, native, svg,
   writeDataToDom, setData, getEventTarget
 })

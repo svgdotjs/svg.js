@@ -1,4 +1,5 @@
-import {Color, Element, Runner} from './classes.js'
+import Color from './Color.js'
+import {registerMethods} from './methods.js'
 
 // Define list of available attributes for stroke and fill
 var sugar = {
@@ -32,10 +33,10 @@ var sugar = {
     return this
   }
 
-  extend([Element, Runner], extension)
+  registerMethods(['Element', 'Runner'], extension)
 })
 
-extend([Element, Runner], {
+registerMethods(['Element', 'Runner'], {
   // Let the user set the matrix directly
   matrix: function (mat, b, c, d, e, f) {
     // Act as a getter
@@ -114,7 +115,7 @@ extend([Element, Runner], {
   }
 })
 
-extend([Rect, Ellipse, Circle, Gradient, Runner], {
+registerMethods('radius', {
   // Add x and y radius
   radius: function (x, y) {
     var type = (this._target || this).type
@@ -124,7 +125,7 @@ extend([Rect, Ellipse, Circle, Gradient, Runner], {
   }
 })
 
-extend(Path, {
+registerMethods('Path', {
   // Get path length
   length: function () {
     return this.node.getTotalLength()
@@ -135,7 +136,7 @@ extend(Path, {
   }
 })
 
-extend([Parent, Text, Tspan, Runner], {
+registerMethods(['Container', 'Runner'], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

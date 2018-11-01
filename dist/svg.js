@@ -715,31 +715,61 @@ var SVG = (function () {
   var methods = {};
   var constructors = {};
   function registerMethods(name, m) {
+    if (Array.isArray(name)) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _name = _step.value;
+          registerMethods(_name, m);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return;
+    }
+
     if (_typeof(name) == 'object') {
       var _arr = Object.entries(name);
 
       for (var _i = 0; _i < _arr.length; _i++) {
         var _arr$_i = _slicedToArray(_arr[_i], 2),
-            _name = _arr$_i[0],
+            _name2 = _arr$_i[0],
             _m = _arr$_i[1];
 
-        registerMethods(_name, _m);
+        registerMethods(_name2, _m);
       }
+
+      return;
     }
 
     methods[name] = Object.assign(methods[name] || {}, m);
   }
   function getMethodsFor(name) {
-    return methods[name];
+    return methods[name] || {};
   } // FIXME: save memory?
   function registerConstructor(name, setup) {
     constructors[name] = setup;
   }
   function getConstructor(name) {
-    return {
+    return constructors[name] ? {
       setup: constructors[name],
       name: name
-    };
+    } : {};
   }
 
   var Doc$1 =
@@ -1053,7 +1083,7 @@ var SVG = (function () {
     }
   });
 
-  var SVGNumber =
+  var SVGNumber$1 =
   /*#__PURE__*/
   function () {
     // Initialize
@@ -1178,16 +1208,16 @@ var SVG = (function () {
   } // Set width of element
 
   function width(width) {
-    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
+    return width == null ? this.rx() * 2 : this.rx(new SVGNumber$1(width).divide(2));
   } // Set height of element
 
   function height(height) {
-    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
+    return height == null ? this.ry() * 2 : this.ry(new SVGNumber$1(height).divide(2));
   } // Custom size function
 
   function size(width, height) {
     var p = proportionalSize$1(this, width, height);
-    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
+    return this.rx(new SVGNumber$1(p.width).divide(2)).ry(new SVGNumber$1(p.height).divide(2));
   }
 
   var circled = /*#__PURE__*/Object.freeze({
@@ -1247,7 +1277,7 @@ var SVG = (function () {
     Element: {
       // Create circle element
       circle: function circle(size$$1) {
-        return this.put(new Circle()).radius(new SVGNumber(size$$1).divide(2)).move(0, 0);
+        return this.put(new Circle()).radius(new SVGNumber$1(size$$1).divide(2)).move(0, 0);
       }
     }
   });
@@ -1354,7 +1384,7 @@ var SVG = (function () {
 
   function size$1(width, height) {
     var p = proportionalSize$1(this, width, height);
-    return this.width(new SVGNumber(p.width)).height(new SVGNumber(p.height));
+    return this.width(new SVGNumber$1(p.width)).height(new SVGNumber$1(p.height));
   } // Clone element
 
   function clone(parent) {
@@ -1379,6 +1409,10 @@ var SVG = (function () {
     this.after(element).remove();
     return element;
   } // Add element to given container and return self
+
+  function addTo(parent) {
+    return makeInstance(parent).put(this);
+  } // Add element to given container and return container
 
   function putIn(parent) {
     return makeInstance(parent).add(this);
@@ -1508,6 +1542,7 @@ var SVG = (function () {
     clone: clone,
     remove: remove,
     replace: replace,
+    addTo: addTo,
     putIn: putIn,
     id: id$1,
     inside: inside,
@@ -1675,7 +1710,7 @@ var SVG = (function () {
     _createClass(Stop, [{
       key: "update",
       value: function update(o) {
-        if (typeof o === 'number' || o instanceof SVGNumber) {
+        if (typeof o === 'number' || o instanceof SVGNumber$1) {
           o = {
             offset: arguments[0],
             color: arguments[1],
@@ -1686,7 +1721,7 @@ var SVG = (function () {
 
         if (o.opacity != null) this.attr('stop-opacity', o.opacity);
         if (o.color != null) this.attr('stop-color', o.color);
-        if (o.offset != null) this.attr('offset', new SVGNumber(o.offset));
+        if (o.offset != null) this.attr('offset', new SVGNumber$1(o.offset));
         return this;
       }
     }]);
@@ -1698,20 +1733,20 @@ var SVG = (function () {
   // FIXME: add to runner
   function from(x, y) {
     return (this._element || this).type === 'radialGradient' ? this.attr({
-      fx: new SVGNumber(x),
-      fy: new SVGNumber(y)
+      fx: new SVGNumber$1(x),
+      fy: new SVGNumber$1(y)
     }) : this.attr({
-      x1: new SVGNumber(x),
-      y1: new SVGNumber(y)
+      x1: new SVGNumber$1(x),
+      y1: new SVGNumber$1(y)
     });
   }
   function to(x, y) {
     return (this._element || this).type === 'radialGradient' ? this.attr({
-      cx: new SVGNumber(x),
-      cy: new SVGNumber(y)
+      cx: new SVGNumber$1(x),
+      cy: new SVGNumber$1(y)
     }) : this.attr({
-      x2: new SVGNumber(x),
-      y2: new SVGNumber(y)
+      x2: new SVGNumber$1(x),
+      y2: new SVGNumber$1(y)
     });
   }
 
@@ -2010,7 +2045,7 @@ var SVG = (function () {
 
 
       if (typeof val === 'number') {
-        val = new SVGNumber(val);
+        val = new SVGNumber$1(val);
       } else if (Color.isColor(val)) {
         // ensure full hex color
         val = new Color(val);
@@ -2774,7 +2809,7 @@ var SVG = (function () {
     return parser.nodes;
   }
 
-  var Point =
+  var Point$1 =
   /*#__PURE__*/
   function () {
     // Initialize
@@ -2837,7 +2872,7 @@ var SVG = (function () {
     Element: {
       // Get point
       point: function point(x, y) {
-        return new Point(x, y).transform(this.screenCTM().inverse());
+        return new Point$1(x, y).transform(this.screenCTM().inverse());
       }
     }
   });
@@ -3115,8 +3150,8 @@ var SVG = (function () {
 
 
         var result = [];
-        var p = new Point();
-        var p0 = new Point();
+        var p = new Point$1();
+        var p0 = new Point$1();
         var index = 0;
         var len = array.length;
 
@@ -3433,7 +3468,7 @@ var SVG = (function () {
       _classCallCheck(this, Text);
 
       _this = _possibleConstructorReturn(this, _getPrototypeOf(Text).call(this, nodeOrNew$1('text', node), Text));
-      _this.dom.leading = new SVGNumber(1.3); // store leading value for rebuilding
+      _this.dom.leading = new SVGNumber$1(1.3); // store leading value for rebuilding
 
       _this._rebuild = true; // enable automatic updating of dy values
 
@@ -3538,7 +3573,7 @@ var SVG = (function () {
         } // act as setter
 
 
-        this.dom.leading = new SVGNumber(value);
+        this.dom.leading = new SVGNumber$1(value);
         return this.rebuild();
       } // Rebuild appearance type
 
@@ -3554,7 +3589,7 @@ var SVG = (function () {
         if (this._rebuild) {
           var self = this;
           var blankLineOffset = 0;
-          var dy = this.dom.leading * new SVGNumber(this.attr('font-size'));
+          var dy = this.dom.leading * new SVGNumber$1(this.attr('font-size'));
           this.each(function () {
             if (this.dom.newLined) {
               this.attr('x', self.attr('x'));
@@ -3584,7 +3619,7 @@ var SVG = (function () {
       key: "setData",
       value: function setData(o) {
         this.dom = o;
-        this.dom.leading = new SVGNumber(o.leading || 1.3);
+        this.dom.leading = new SVGNumber$1(o.leading || 1.3);
         return this;
       }
     }]);
@@ -3789,7 +3824,7 @@ var SVG = (function () {
   });
   register(Use);
 
-  var Matrix =
+  var Matrix$1 =
   /*#__PURE__*/
   function () {
     function Matrix() {
@@ -3833,7 +3868,7 @@ var SVG = (function () {
         var t = Matrix.formatTransforms(o);
         var current = this;
 
-        var _transform = new Point(t.ox, t.oy).transform(current),
+        var _transform = new Point$1(t.ox, t.oy).transform(current),
             ox = _transform.x,
             oy = _transform.y; // Construct the resulting matrix
 
@@ -3841,7 +3876,7 @@ var SVG = (function () {
         var transformer = new Matrix().translateO(t.rx, t.ry).lmultiplyO(current).translateO(-ox, -oy).scaleO(t.scaleX, t.scaleY).skewO(t.skewX, t.skewY).shearO(t.shear).rotateO(t.theta).translateO(ox, oy); // If we want the origin at a particular place, we force it there
 
         if (isFinite(t.px) || isFinite(t.py)) {
-          var origin = new Point(ox, oy).transform(transformer); // TODO: Replace t.px with isFinite(t.px)
+          var origin = new Point$1(ox, oy).transform(transformer); // TODO: Replace t.px with isFinite(t.px)
 
           var dx = t.px ? t.px - origin.x : 0;
           var dy = t.py ? t.py - origin.y : 0;
@@ -4229,16 +4264,16 @@ var SVG = (function () {
         var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY : isFinite(o.scale) ? o.scale * flipY : isFinite(o.scaleY) ? o.scaleY * flipY : flipY;
         var shear = o.shear || 0;
         var theta = o.rotate || o.theta || 0;
-        var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY);
+        var origin = new Point$1(o.origin || o.around || o.ox || o.originX, o.oy || o.originY);
         var ox = origin.x;
         var oy = origin.y;
-        var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY);
+        var position = new Point$1(o.position || o.px || o.positionX, o.py || o.positionY);
         var px = position.x;
         var py = position.y;
-        var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY);
+        var translate = new Point$1(o.translate || o.tx || o.translateX, o.ty || o.translateY);
         var tx = translate.x;
         var ty = translate.y;
-        var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY);
+        var relative = new Point$1(o.relative || o.rx || o.relativeX, o.ry || o.relativeY);
         var rx = relative.x;
         var ry = relative.y; // Populate all of the values
 
@@ -4287,7 +4322,7 @@ var SVG = (function () {
     Element: {
       // Get current matrix
       ctm: function ctm() {
-        return new Matrix(this.node.getCTM());
+        return new Matrix$1(this.node.getCTM());
       },
       // Get current screen matrix
       screenCTM: function screenCTM() {
@@ -4299,10 +4334,10 @@ var SVG = (function () {
           var rect = this.rect(1, 1);
           var m = rect.node.getScreenCTM();
           rect.remove();
-          return new Matrix(m);
+          return new Matrix$1(m);
         }
 
-        return new Matrix(this.node.getScreenCTM());
+        return new Matrix$1(this.node.getScreenCTM());
       }
     }
   });
@@ -4345,7 +4380,7 @@ var SVG = (function () {
         var xMax = -Infinity;
         var yMin = Infinity;
         var yMax = -Infinity;
-        var pts = [new Point(this.x, this.y), new Point(this.x2, this.y), new Point(this.x, this.y2), new Point(this.x2, this.y2)];
+        var pts = [new Point$1(this.x, this.y), new Point$1(this.x2, this.y), new Point$1(this.x, this.y2), new Point$1(this.x2, this.y2)];
         pts.forEach(function (p) {
           p = p.transform(m);
           xMin = Math.min(xMin, p.x);
@@ -4709,14 +4744,14 @@ var SVG = (function () {
           var type = _typeof(value);
 
           if (type === 'number') {
-            this.type(SVGNumber);
+            this.type(SVGNumber$1);
           } else if (type === 'string') {
             if (Color.isColor(value)) {
               this.type(Color);
             } else if (regex.delimiter.test(value)) {
               this.type(regex.pathLetters.test(value) ? PathArray : SVGArray);
             } else if (regex.numberAndUnit.test(value)) {
-              this.type(SVGNumber);
+              this.type(SVGNumber$1);
             } else {
               this.type(Morphable.NonMorphable);
             }
@@ -4893,7 +4928,7 @@ var SVG = (function () {
     return _class3;
   }();
 
-  var morphableTypes = [SVGNumber, Color, Box$1, Matrix, SVGArray, PointArray$1, PathArray, Morphable.NonMorphable, Morphable.TransformBag, Morphable.ObjectBag];
+  var morphableTypes = [SVGNumber$1, Color, Box$1, Matrix$1, SVGArray, PointArray$1, PathArray, Morphable.NonMorphable, Morphable.TransformBag, Morphable.ObjectBag];
   extend$1(morphableTypes, {
     to: function to(val, args) {
       return new Morphable().type(this.constructor).from(this.valueOf()).to(val, args);
@@ -5205,7 +5240,7 @@ var SVG = (function () {
   //   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
   // }
 
-  var Runner =
+  var Runner$1 =
   /*#__PURE__*/
   function () {
     function Runner(options) {
@@ -5233,7 +5268,7 @@ var SVG = (function () {
       this._time = 0;
       this._last = 0; // Save transforms applied to this runner
 
-      this.transforms = new Matrix();
+      this.transforms = new Matrix$1();
       this.transformId = 1; // Looping variables
 
       this._haveReversed = false;
@@ -5474,7 +5509,7 @@ var SVG = (function () {
           this._initialise(running); // clear the transforms on this runner so they dont get added again and again
 
 
-          this.transforms = new Matrix();
+          this.transforms = new Matrix$1();
 
           var converged = this._run(declarative ? dt : position); // this.fire('step', this)
 
@@ -5608,7 +5643,7 @@ var SVG = (function () {
     }, {
       key: "clearTransform",
       value: function clearTransform() {
-        this.transforms = new Matrix();
+        this.transforms = new Matrix$1();
         return this;
       }
     }], [{
@@ -5644,10 +5679,10 @@ var SVG = (function () {
 
     return Runner;
   }();
-  Runner.id = 0;
+  Runner$1.id = 0;
 
   var FakeRunner = function FakeRunner() {
-    var transforms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Matrix();
+    var transforms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Matrix$1();
     var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
     var done = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
@@ -5658,7 +5693,7 @@ var SVG = (function () {
     this.done = done;
   };
 
-  extend$1([Runner, FakeRunner], {
+  extend$1([Runner$1, FakeRunner], {
     mergeWith: function mergeWith(runner) {
       return new FakeRunner(runner.transforms.lmultiply(this.transforms), runner.id);
     }
@@ -5675,7 +5710,7 @@ var SVG = (function () {
   function mergeTransforms() {
     // Find the matrix to apply to the element and apply it
     var runners = this._transformationRunners.runners;
-    var netTransform = runners.map(getRunnerTransform).reduce(lmultiply, new Matrix());
+    var netTransform = runners.map(getRunnerTransform).reduce(lmultiply, new Matrix$1());
     this.transform(netTransform);
 
     this._transformationRunners.merge();
@@ -5769,9 +5804,9 @@ var SVG = (function () {
   registerMethods({
     Element: {
       animate: function animate(duration, delay, when) {
-        var o = Runner.sanitise(duration, delay, when);
+        var o = Runner$1.sanitise(duration, delay, when);
         var timeline$$1 = this.timeline();
-        return new Runner(o.duration).loop(o).element(this).timeline(timeline$$1).schedule(delay, when);
+        return new Runner$1(o.duration).loop(o).element(this).timeline(timeline$$1).schedule(delay, when);
       },
       delay: function delay(by, when) {
         return this.animate(0, by, when);
@@ -5789,7 +5824,7 @@ var SVG = (function () {
         // taken into account
         .filter(function (runner) {
           return runner.id <= current.id;
-        }).map(getRunnerTransform).reduce(lmultiply, new Matrix());
+        }).map(getRunnerTransform).reduce(lmultiply, new Matrix$1());
       },
       addRunner: function addRunner(runner) {
         this._transformationRunners.add(runner);
@@ -5798,13 +5833,13 @@ var SVG = (function () {
       },
       _prepareRunner: function _prepareRunner() {
         if (this._frameId == null) {
-          this._transformationRunners = new RunnerArray().add(new FakeRunner(new Matrix(this)));
+          this._transformationRunners = new RunnerArray().add(new FakeRunner(new Matrix$1(this)));
           this._frameId = frameId++;
         }
       }
     }
   });
-  extend$1(Runner, {
+  extend$1(Runner$1, {
     attr: function attr(a, v) {
       return this.styleAttr('attr', a, v);
     },
@@ -5830,7 +5865,7 @@ var SVG = (function () {
       return this;
     },
     zoom: function zoom(level, point) {
-      var morpher = new Morphable(this._stepper).to(new SVGNumber(level));
+      var morpher = new Morphable(this._stepper).to(new SVGNumber$1(level));
       this.queue(function () {
         morpher = morpher.from(this.zoom());
       }, function (pos) {
@@ -5867,7 +5902,7 @@ var SVG = (function () {
       var isMatrix = isMatrixLike(transforms);
       affine = transforms.affine != null ? transforms.affine : affine != null ? affine : !isMatrix; // Create a morepher and set its type
 
-      var morpher = new Morphable().type(affine ? Morphable.TransformBag : Matrix).stepper(this._stepper);
+      var morpher = new Morphable().type(affine ? Morphable.TransformBag : Matrix$1).stepper(this._stepper);
       var origin;
       var element;
       var current;
@@ -5878,7 +5913,7 @@ var SVG = (function () {
         // make sure element and origin is defined
         element = element || this.element();
         origin = origin || getOrigin(transforms, element);
-        startTransform = new Matrix(relative ? undefined : element); // add the runner to the element so it can merge transformations
+        startTransform = new Matrix$1(relative ? undefined : element); // add the runner to the element so it can merge transformations
 
         element.addRunner(this); // Deactivate all transforms that have run so far if we are absolute
 
@@ -5892,11 +5927,11 @@ var SVG = (function () {
         // on this runner. We are absolute. We dont need these!
         if (!relative) this.clearTransform();
 
-        var _transform = new Point(origin).transform(element._currentTransform(this)),
+        var _transform = new Point$1(origin).transform(element._currentTransform(this)),
             x = _transform.x,
             y = _transform.y;
 
-        var target = new Matrix(_objectSpread({}, transforms, {
+        var target = new Matrix$1(_objectSpread({}, transforms, {
           origin: [x, y]
         }));
         var start = this._isDeclarative && current ? current : startTransform;
@@ -5933,7 +5968,7 @@ var SVG = (function () {
         morpher.to(target);
         var affineParameters = morpher.at(pos);
         currentAngle = affineParameters.rotate;
-        current = new Matrix(affineParameters);
+        current = new Matrix$1(affineParameters);
         this.addTransform(current);
         return morpher.done();
       }
@@ -5969,7 +6004,7 @@ var SVG = (function () {
       return this._queueNumberDelta('dy', y);
     },
     _queueNumberDelta: function _queueNumberDelta(method, to) {
-      to = new SVGNumber(to); // Try to change the target if we have this method already registerd
+      to = new SVGNumber$1(to); // Try to change the target if we have this method already registerd
 
       if (this._tryRetargetDelta(method, to)) return this; // Make a morpher and queue the animation
 
@@ -6004,7 +6039,7 @@ var SVG = (function () {
       return this;
     },
     _queueNumber: function _queueNumber(method, value) {
-      return this._queueObject(method, new SVGNumber(value));
+      return this._queueObject(method, new SVGNumber$1(value));
     },
     // Animatable center x-axis
     cx: function cx(x) {
@@ -6163,17 +6198,17 @@ var SVG = (function () {
     TextPath: TextPath,
     Tspan: Tspan,
     Use: Use,
-    SVGNumber: SVGNumber,
+    SVGNumber: SVGNumber$1,
     SVGArray: SVGArray,
     PathArray: PathArray,
     PointArray: PointArray$1,
-    Matrix: Matrix,
-    Point: Point,
+    Matrix: Matrix$1,
+    Point: Point$1,
     Box: Box$1,
     Color: Color,
     Morphable: Morphable,
     Queue: Queue,
-    Runner: Runner,
+    Runner: Runner$1,
     Timeline: Timeline,
     Controller: Controller,
     Ease: Ease,
@@ -6334,7 +6369,7 @@ var SVG = (function () {
       }
 
       return matrix[transform[0]].apply(matrix, transform[1]);
-    }, new Matrix());
+    }, new Matrix$1());
     return matrix;
   } // add an element to another parent without changing the visual representation on the screen
 
@@ -6353,7 +6388,7 @@ var SVG = (function () {
   function transform(o, relative) {
     // Act as a getter if no object was passed
     if (o == null || typeof o === 'string') {
-      var decomposed = new Matrix(this).decompose();
+      var decomposed = new Matrix$1(this).decompose();
       return decomposed[o] || decomposed;
     }
 
@@ -6366,7 +6401,7 @@ var SVG = (function () {
 
 
     var cleanRelative = relative === true ? this : relative || false;
-    var result = new Matrix(cleanRelative).transform(o);
+    var result = new Matrix$1(cleanRelative).transform(o);
     return this.attr('transform', result);
   }
   registerMethods('Element', {
@@ -6420,6 +6455,157 @@ var SVG = (function () {
   });
   registerConstructor('Memory', setup$1);
 
+  var sugar = {
+    stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
+    fill: ['color', 'opacity', 'rule'],
+    prefix: function prefix(t, a) {
+      return a === 'color' ? t : t + '-' + a;
+    } // Add sugar for fill and stroke
+
+  };
+  ['fill', 'stroke'].forEach(function (m) {
+    var extension = {};
+    var i;
+
+    extension[m] = function (o) {
+      if (typeof o === 'undefined') {
+        return this;
+      }
+
+      if (typeof o === 'string' || Color.isRgb(o) || o && typeof o.fill === 'function') {
+        this.attr(m, o);
+      } else {
+        // set all attributes from sugar.fill and sugar.stroke list
+        for (i = sugar[m].length - 1; i >= 0; i--) {
+          if (o[sugar[m][i]] != null) {
+            this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]]);
+          }
+        }
+      }
+
+      return this;
+    };
+
+    registerMethods(['Element', 'Runner'], extension);
+  });
+  registerMethods(['Element', 'Runner'], {
+    // Let the user set the matrix directly
+    matrix: function matrix(mat, b, c, d, e, f) {
+      // Act as a getter
+      if (mat == null) {
+        return new Matrix(this);
+      } // Act as a setter, the user can pass a matrix or a set of numbers
+
+
+      return this.attr('transform', new Matrix(mat, b, c, d, e, f));
+    },
+    // Map rotation to transform
+    rotate: function rotate(angle, cx, cy) {
+      return this.transform({
+        rotate: angle,
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map skew to transform
+    skew: function skew(x, y, cx, cy) {
+      return arguments.length === 1 || arguments.length === 3 ? this.transform({
+        skew: x,
+        ox: y,
+        oy: cx
+      }, true) : this.transform({
+        skew: [x, y],
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    shear: function shear(lam, cx, cy) {
+      return this.transform({
+        shear: lam,
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map scale to transform
+    scale: function scale(x, y, cx, cy) {
+      return arguments.length === 1 || arguments.length === 3 ? this.transform({
+        scale: x,
+        ox: y,
+        oy: cx
+      }, true) : this.transform({
+        scale: [x, y],
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map translate to transform
+    translate: function translate(x, y) {
+      return this.transform({
+        translate: [x, y]
+      }, true);
+    },
+    // Map relative translations to transform
+    relative: function relative(x, y) {
+      return this.transform({
+        relative: [x, y]
+      }, true);
+    },
+    // Map flip to transform
+    flip: function flip(direction, around) {
+      var directionString = typeof direction === 'string' ? direction : isFinite(direction) ? 'both' : 'both';
+      var origin = direction === 'both' && isFinite(around) ? [around, around] : direction === 'x' ? [around, 0] : direction === 'y' ? [0, around] : isFinite(direction) ? [direction, direction] : [0, 0];
+      this.transform({
+        flip: directionString,
+        origin: origin
+      }, true);
+    },
+    // Opacity
+    opacity: function opacity(value) {
+      return this.attr('opacity', value);
+    },
+    // Relative move over x axis
+    dx: function dx(x) {
+      return this.x(new SVGNumber(x).plus(this instanceof Runner ? 0 : this.x()), true);
+    },
+    // Relative move over y axis
+    dy: function dy(y) {
+      return this.y(new SVGNumber(y).plus(this instanceof Runner ? 0 : this.y()), true);
+    },
+    // Relative move over x and y axes
+    dmove: function dmove(x, y) {
+      return this.dx(x).dy(y);
+    }
+  });
+  registerMethods('radius', {
+    // Add x and y radius
+    radius: function radius(x, y) {
+      var type = (this._target || this).type;
+      return type === 'radialGradient' || type === 'radialGradient' ? this.attr('r', new SVGNumber(x)) : this.rx(x).ry(y == null ? x : y);
+    }
+  });
+  registerMethods('Path', {
+    // Get path length
+    length: function length() {
+      return this.node.getTotalLength();
+    },
+    // Get point at length
+    pointAt: function pointAt(length) {
+      return new Point(this.node.getPointAtLength(length));
+    }
+  });
+  registerMethods(['Container', 'Runner'], {
+    // Set font
+    font: function font(a, v) {
+      if (_typeof(a) === 'object') {
+        for (v in a) {
+          this.font(v, a[v]);
+        }
+      }
+
+      return a === 'leading' ? this.leading(v) : a === 'anchor' ? this.attr('text-anchor', v) : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style' ? this.attr('font-' + a, v) : this.attr(a, v);
+    }
+  });
+
   function setup$2() {
     var node = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.events = node.events || {};
@@ -6462,8 +6648,10 @@ var SVG = (function () {
   function add(element, i) {
     element = makeInstance(element);
 
-    if (element.node !== this.node.children[i]) {
-      this.node.insertBefore(element.node, this.node.children[i] || null);
+    if (i == null) {
+      this.node.appendChild(element.node);
+    } else if (element.node !== this.node.childNodes[i]) {
+      this.node.insertBefore(element.node, this.node.childNodes[i]);
     }
 
     return this;
@@ -6606,6 +6794,7 @@ var SVG = (function () {
   extend$2(Path, getMethodsFor('Path'));
   extend$2(Defs, getMethodsFor('Defs'));
   extend$2([Text$1, Tspan], getMethodsFor('Tspan'));
+  extend$2([Rect, Ellipse, Circle, Gradient], getMethodsFor('radius'));
   var containerMethods = getMethodsFor('Container'); // FIXME: We need a container array
 
   for (var i$1 in containers) {

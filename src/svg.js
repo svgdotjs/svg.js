@@ -16,6 +16,7 @@ import './selector.js'
 import './css.js'
 import './transform.js'
 import './memory.js'
+import './sugar.js'
 import {getMethodsFor, getConstructor} from './methods.js'
 const extend = tools.extend
 
@@ -47,6 +48,13 @@ extend([
   Classes.Text,
   Classes.Tspan
 ], getMethodsFor('Tspan'))
+
+extend([
+  Classes.Rect,
+  Classes.Ellipse,
+  Classes.Circle,
+  Classes.Gradient
+], getMethodsFor('radius'))
 
 const containerMethods = getMethodsFor('Container')
 // FIXME: We need a container array

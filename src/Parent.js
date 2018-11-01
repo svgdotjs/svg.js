@@ -13,8 +13,10 @@ export function children () {
 export function add (element, i) {
   element = makeInstance(element)
 
-  if (element.node !== this.node.children[i]) {
-    this.node.insertBefore(element.node, this.node.children[i] || null)
+  if (i == null) {
+    this.node.appendChild(element.node)
+  } else if (element.node !== this.node.childNodes[i]) {
+    this.node.insertBefore(element.node, this.node.childNodes[i])
   }
 
   return this
@@ -33,22 +35,22 @@ export function has (element) {
 
 // Gets index of given element
 export function index (element) {
-  return [].slice.call(this.node.children).indexOf(element.node)
+  return [].slice.call(this.node.childNodes).indexOf(element.node)
 }
 
 // Get a element at the given index
 export function get (i) {
-  return adopt(this.node.children[i])
+  return adopt(this.node.childNodes[i])
 }
 
 // Get first child
 export function first () {
-  return this.get(0)
+  return adopt(this.node.firstChild)
 }
 
 // Get the last child
 export function last () {
-  return this.get(this.node.children.length - 1)
+  return adopt(this.node.lastChild)
 }
 
 // Iterates over all children and invokes a given block
