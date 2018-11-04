@@ -1,11 +1,11 @@
 import {registerMethods} from './methods.js'
 import {registerConstructor} from './methods.js'
 
-export const name = 'Memory'
-
-export function setup (node) {
-  this._memory = {}
-}
+// export const name = 'Memory'
+//
+// export function setup (node) {
+//   this._memory = {}
+// }
 
 // Remember arbitrary data
 export function remember (k, v) {
@@ -39,8 +39,8 @@ export function forget () {
 
   // return local memory object
 export function memory () {
-  return this._memory
+  return (this._memory = this._memory || {})
 }
 
 registerMethods('Element', {remember, forget, memory})
-registerConstructor('Memory', setup)
+//registerConstructor('Memory', setup)

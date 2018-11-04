@@ -24,18 +24,6 @@ export function extend (modules, methods) {
   }
 }
 
-export function extend2 (modules, methods) {
-  var key, i
-
-  modules = Array.isArray(modules) ? modules : [modules]
-
-  for (i = modules.length - 1; i >= 0; i--) {
-    for (key in methods) {
-      modules[i].prototype[key] = methods[key]
-    }
-  }
-}
-
 // FIXME: enhanced constructors here
 export function addFactory (modules, methods) {
   extend(modules, methods)

@@ -4,7 +4,7 @@ import {numbersWithDots, pathLetters, hyphen, delimiter, isPathLetter} from './r
 import Point from './Point.js'
 import SVGArray from './SVGArray.js'
 import {subClassArray} from './ArrayPolyfill.js'
-import {extend2} from './tools.js'
+import {extend} from './tools.js'
 
 const PathArray = subClassArray('PathArray', SVGArray)
 
@@ -84,7 +84,7 @@ for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
 }
 
 
-extend2(PathArray, {
+extend(PathArray, {
   // Convert array to string
   toString () {
     return arrayToString(this)

@@ -1,7 +1,7 @@
 /* global arrayClone */
 import {delimiter} from './regex.js'
 import {subClassArray} from './ArrayPolyfill.js'
-import {extend2} from './tools.js'
+import {extend} from './tools.js'
 
 const SVGArray = subClassArray('SVGArray', Array, function (...args) {
   this.init(...args)
@@ -9,7 +9,7 @@ const SVGArray = subClassArray('SVGArray', Array, function (...args) {
 
 export default SVGArray
 
-extend2(SVGArray, {
+extend(SVGArray, {
   init (...args) {
     //this.splice(0, this.length)
     this.length = 0

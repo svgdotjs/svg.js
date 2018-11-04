@@ -1,13 +1,13 @@
 import SVGArray from './SVGArray.js'
 import {delimiter} from './regex.js'
 import {subClassArray} from './ArrayPolyfill.js'
-import {extend2} from './tools.js'
+import {extend} from './tools.js'
 
 const PointArray = subClassArray('PointArray', SVGArray)
 
 export default PointArray
 
-extend2(PointArray, {
+extend(PointArray, {
   // Convert array to string
   toString () {
     // convert to a poly point string

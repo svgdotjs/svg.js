@@ -61,7 +61,7 @@ extend([
 extend(Classes.EventTarget, getMethodsFor('EventTarget'))
 extend(Classes.Element, getMethodsFor('Element'))
 extend(Classes.Element, getMethodsFor('Parent'))
-extend(Classes.Element, getConstructor('Memory'))
+//extend(Classes.Element, getConstructor('Memory'))
 extend(Classes.Container, getMethodsFor('Container'))
 
 registerMorphableType([

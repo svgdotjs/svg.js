@@ -489,16 +489,6 @@ var SVG = (function () {
         modules[i].prototype[key] = methods[key];
       }
     }
-  }
-  function extend2(modules, methods) {
-    var key, i;
-    modules = Array.isArray(modules) ? modules : [modules];
-
-    for (i = modules.length - 1; i >= 0; i--) {
-      for (key in methods) {
-        modules[i].prototype[key] = methods[key];
-      }
-    }
   } // FIXME: enhanced constructors here
 
   function addFactory(modules, methods) {
@@ -533,7 +523,6 @@ var SVG = (function () {
     nodeOrNew: nodeOrNew,
     makeNode: makeNode,
     extend: extend,
-    extend2: extend2,
     addFactory: addFactory,
     invent: invent
   });
@@ -629,7 +618,6 @@ var SVG = (function () {
   });
 
   var methods = {};
-  var constructors = {};
   function registerMethods(name, m) {
     if (Array.isArray(name)) {
       var _iteratorNormalCompletion = true;
@@ -678,15 +666,6 @@ var SVG = (function () {
   function getMethodsFor(name) {
     return methods[name] || {};
   } // FIXME: save memory?
-  function registerConstructor(name, setup) {
-    constructors[name] = setup;
-  }
-  function getConstructor(name) {
-    return constructors[name] ? {
-      setup: constructors[name],
-      name: name
-    } : {};
-  }
 
   var listenerId = 0;
 
@@ -2695,7 +2674,7 @@ var SVG = (function () {
   var SVGArray = subClassArray('SVGArray', Array, function () {
     this.init.apply(this, arguments);
   });
-  extend2(SVGArray, {
+  extend(SVGArray, {
     init: function init() {
       //this.splice(0, this.length)
       this.length = 0;
@@ -2774,7 +2753,7 @@ var SVG = (function () {
   // }
 
   var PointArray = subClassArray('PointArray', SVGArray);
-  extend2(PointArray, {
+  extend(PointArray, {
     // Convert array to string
     toString: function toString() {
       // convert to a poly point string
@@ -3307,7 +3286,7 @@ var SVG = (function () {
     }(mlhvqtcsaz[i].toUpperCase());
   }
 
-  extend2(PathArray, {
+  extend(PathArray, {
     // Convert array to string
     toString: function toString() {
       return arrayToString(this);
@@ -7130,9 +7109,11 @@ var SVG = (function () {
     transform: transform
   });
 
-  function setup(node) {
-    this._memory = {};
-  } // Remember arbitrary data
+  //
+  // export function setup (node) {
+  //   this._memory = {}
+  // }
+  // Remember arbitrary data
 
   function remember(k, v) {
     // remember every item in an object individually
@@ -7164,14 +7145,13 @@ var SVG = (function () {
   } // return local memory object
 
   function memory() {
-    return this._memory;
+    return this._memory = this._memory || {};
   }
   registerMethods('Element', {
     remember: remember,
     forget: forget,
     memory: memory
-  });
-  registerConstructor('Memory', setup);
+  }); //registerConstructor('Memory', setup)
 
   var sugar = {
     stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
@@ -7335,8 +7315,8 @@ var SVG = (function () {
   extend$1([Rect, Ellipse, Circle, Gradient], getMethodsFor('radius'));
   extend$1(EventTarget, getMethodsFor('EventTarget'));
   extend$1(Element, getMethodsFor('Element'));
-  extend$1(Element, getMethodsFor('Parent'));
-  extend$1(Element, getConstructor('Memory'));
+  extend$1(Element, getMethodsFor('Parent')); //extend(Classes.Element, getConstructor('Memory'))
+
   extend$1(Container$1, getMethodsFor('Container'));
   registerMorphableType([SVGNumber, Color, Box$1, Matrix, SVGArray, PointArray, PathArray]);
   makeMorphable(); // The main wrapping element
