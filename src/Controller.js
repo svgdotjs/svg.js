@@ -17,7 +17,7 @@ function makeSetterGetter (k, f) {
   }
 }
 
-let easing = {
+export let easing = {
   '-': function (pos) { return pos },
   '<>': function (pos) { return -Math.cos(pos * Math.PI) / 2 + 0.5 },
   '>': function (pos) { return Math.sin(pos * Math.PI / 2) },

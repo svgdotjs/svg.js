@@ -248,8 +248,8 @@ describe('Sugar', function() {
     it('redirects to x() / y() with adding the current value', function() {
       rect.dx(5)
       rect.dy(5)
-      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5')), true)
-      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5')), true)
+      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('5')), true)
+      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('5')), true)
     })
 
     it('allows to add a percentage value', function() {
@@ -258,16 +258,16 @@ describe('Sugar', function() {
       rect.dx('5%')
       rect.dy('5%')
 
-      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('10%')), true)
-      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('10%')), true)
+      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('10%')), true)
+      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('10%')), true)
     })
 
     it('allows to add a percentage value when no x/y is set', function() {
       rect.dx('5%')
       rect.dy('5%')
 
-      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5%')), true)
-      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.Number('5%')), true)
+      expect(rect.x).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('5%')), true)
+      expect(rect.y).toHaveBeenCalledWith(jasmine.objectContaining(new SVG.SVGNumber('5%')), true)
     })
   })
 

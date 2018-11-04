@@ -1,6 +1,7 @@
 import Base from './Base.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import {nodeOrNew} from './tools.js'
 
 export default class Marker extends Base {
   // Initialize node

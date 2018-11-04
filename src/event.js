@@ -2,31 +2,36 @@ import Base from './Base.js'
 import {delimiter} from './regex.js'
 import {registerMethods} from './methods.js'
 
-// // Add events to elements
-// ;[ 'click',
-//   'dblclick',
-//   'mousedown',
-//   'mouseup',
-//   'mouseover',
-//   'mouseout',
-//   'mousemove',
-//   'mouseenter',
-//   'mouseleave',
-//   'touchstart',
-//   'touchmove',
-//   'touchleave',
-//   'touchend',
-//   'touchcancel' ].forEach(function (event) {
-//     // add event to Element
-//     Element.prototype[event] = function (f) {
-//       if (f === null) {
-//         off(this, event)
-//       } else {
-//         on(this, event, f)
-//       }
-//       return this
-//     }
-//   })
+// Add events to elements
+const methods = [ 'click',
+  'dblclick',
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'mousemove',
+  'mouseenter',
+  'mouseleave',
+  'touchstart',
+  'touchmove',
+  'touchleave',
+  'touchend',
+  'touchcancel' ].reduce(function (last, event) {
+    // add event to Element
+    const fn = function (f) {
+      if (f === null) {
+        off(this, event)
+      } else {
+        on(this, event, f)
+      }
+      return this
+    }
+
+    last[event] = fn
+    return last
+  }, {})
+
+registerMethods('Element', methods)
 
 let listenerId = 0
 

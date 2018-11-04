@@ -2,6 +2,7 @@ import {makeInstance, adopt} from './adopter.js'
 import {map} from './utils.js'
 import {registerMethods} from './methods.js'
 import Base from './Base.js'
+import {ns} from './namespaces.js'
 
 // Returns all child elements
 export function children () {

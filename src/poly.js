@@ -1,5 +1,6 @@
 // Add polygon-specific functions
 import PointArray from './PointArray.js'
+import {proportionalSize} from './helpers.js'
 
 // Get array
 export function array () {

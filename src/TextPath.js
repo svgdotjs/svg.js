@@ -64,7 +64,7 @@ registerMethods({
     // FIXME: make this plural?
     // Get the textPath children
     textPath: function () {
-      return this.select('textPath')
+      return this.find('textPath')
     }
   },
   Path: {

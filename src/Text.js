@@ -3,7 +3,7 @@ import SVGNumber from './SVGNumber.js'
 import {nodeOrNew, extend} from './tools.js'
 import {attrs} from './defaults.js'
 import * as textable from './textable.js'
-import {register} from './adopter.js'
+import {register, adopt} from './adopter.js'
 import {registerMethods} from './methods.js'
 
 export default class Text extends Base {
@@ -56,6 +56,7 @@ export default class Text extends Base {
   text (text) {
     // act as getter
     if (text === undefined) {
+      // FIXME use children() or each()
       var children = this.node.childNodes
       var firstLine = 0
       text = ''

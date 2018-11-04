@@ -25,7 +25,7 @@ export default class Point {
   // Convert to native SVGPoint
   native () {
     // create new point
-    var point = parser().svg.createSVGPoint()
+    var point = parser().svg.node.createSVGPoint()
 
     // update with current values
     point.x = this.x

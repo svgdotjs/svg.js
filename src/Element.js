@@ -7,6 +7,7 @@ import {registerMethods} from './methods.js'
 import {registerConstructor} from './methods.js'
 
 const Doc = getClass(root)
+const HtmlNode = getClass('HtmlNode')
 
 export const name = 'Element'
 
@@ -223,7 +224,7 @@ export function parents (type) {
 
   do {
     parent = parent.parent(type)
-    if (!parent || !parent.node) break
+    if (!parent || parent instanceof HtmlNode) break
 
     parents.push(parent)
   } while (parent.parent)
@@ -233,7 +234,7 @@ export function parents (type) {
 
   // matches the element vs a css selector
 export function matches (selector) {
-  return matches(this.node, selector)
+  return matcher(this.node, selector)
 }
 
   // Returns the svg node to call native svg methods on it

@@ -375,7 +375,7 @@ export default class Matrix {
   // Convert to native SVGMatrix
   native () {
     // create new matrix
-    var matrix = parser().node.createSVGMatrix()
+    var matrix = parser().svg.node.createSVGMatrix()
 
     // update with current values
     for (var i = abcdef.length - 1; i >= 0; i--) {

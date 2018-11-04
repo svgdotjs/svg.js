@@ -12,6 +12,7 @@ import * as containers from './containers.js'
 import * as elements from './elements.js'
 import './attr.js'
 import './arrange.js'
+import './data.js'
 import find from './selector.js'
 import './css.js'
 import './transform.js'
@@ -106,7 +107,17 @@ SVG.regex = regex
 // satisfy tests, fix later
 import * as ns from './namespaces'
 SVG.get = SVG
-SVG.select = find
+SVG.find = find
 Object.assign(SVG, ns)
 import Base from './Base.js'
 SVG.Element = SVG.Parent = SVG.Shape = SVG.Container = Base
+import {easing} from './Controller.js'
+SVG.easing = easing
+import * as events from './event.js'
+Object.assign(SVG, events)
+import {TransformBag, ObjectBag, NonMorphable} from './Morphable.js'
+SVG.TransformBag = TransformBag
+SVG.ObjectBag = ObjectBag
+SVG.NonMorphable = NonMorphable
+import parser from './parser.js'
+SVG.parser = parser

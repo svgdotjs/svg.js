@@ -24,7 +24,7 @@ export function css (style, val) {
     if (Array.isArray(style)) {
       for (let name of style) {
         let cased = camelCase(name)
-        ret[cased] = this.node.style(cased)
+        ret[cased] = this.node.style[cased]
       }
       return ret
     }
