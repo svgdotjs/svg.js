@@ -1,6 +1,6 @@
 import {isMatrixLike, getOrigin} from './helpers.js'
 import Matrix from './Matrix.js'
-import Morphable from './Morphable.js'
+import {default as Morphable, TransformBag} from './Morphable.js'
 import SVGNumber from './SVGNumber.js'
 import Timeline from './Timeline.js'
 import {Controller, Ease, Stepper} from './Controller.js'
@@ -674,7 +674,7 @@ extend(Runner, {
 
     // Create a morepher and set its type
     const morpher = new Morphable()
-      .type(affine ? Morphable.TransformBag : Matrix)
+      .type(affine ? TransformBag : Matrix)
       .stepper(this._stepper)
 
     let origin

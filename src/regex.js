@@ -8,7 +8,7 @@ export let hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
 export let rgb = /rgb\((\d+),(\d+),(\d+)\)/
 
 // Parse reference id
-export let reference = /#([a-z0-9\-_]+)/i
+export let reference = /(#[a-z0-9\-_]+)/i
 
 // splits a transformation chain
 export let transforms = /\)\s*,?\s*/

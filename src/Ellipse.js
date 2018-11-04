@@ -1,6 +1,6 @@
 import Base from './Base.js'
 import * as circled from './circled.js'
-import {extend} from './tools.js'
+import {extend, nodeOrNew} from './tools.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 

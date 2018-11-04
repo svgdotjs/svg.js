@@ -7,7 +7,7 @@ import {registerMethods} from './methods.js'
 export default class Pattern extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('pattern', node))
+    super(nodeOrNew('pattern', node), Pattern)
   }
 
   // Return the fill id

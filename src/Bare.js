@@ -2,12 +2,13 @@ import {nodeOrNew} from './tools.js'
 import {register} from './adopter.js'
 import Base from './Base.js'
 import {registerMethods} from './methods.js'
+import {extend} from './tools.js'
 
 
 export default class Bare extends Base {
-  constructor (node, inherit) {
-    super(nodeOrNew(null, node), Bare)
-    extend(this, inherit)
+  constructor (node, inherit = {}) {
+    super(nodeOrNew(node, typeof node === 'string' ? null : node), Bare)
+    //extend(this, inherit)
   }
 
   words (text) {
@@ -25,10 +26,9 @@ export default class Bare extends Base {
 
 register(Bare)
 
-registerMethods('Bare', {
+registerMethods('Container', {
   // Create an element that is not described by SVG.js
-  element (element, inherit) {
-    let custom = createCustom(element, inherit)
-    return this.put(new custom())
+  element (node, inherit) {
+    return this.put(new Bare(node, inherit))
   }
 })

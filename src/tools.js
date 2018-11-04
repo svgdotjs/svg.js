@@ -15,13 +15,6 @@ export function makeNode (name) {
 export function extend (modules, methods) {
   var key, i
 
-  if (Array.isArray(methods)) {
-    methods.forEach((method) => {
-      extend(modules, method)
-    })
-    return
-  }
-
   modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--) {
@@ -30,6 +23,18 @@ export function extend (modules, methods) {
     }
     for (key in methods) {
       if (modules[i].prototype[key] || key == 'name' || key == 'setup') continue
+      modules[i].prototype[key] = methods[key]
+    }
+  }
+}
+
+export function extend2 (modules, methods) {
+  var key, i
+
+  modules = Array.isArray(modules) ? modules : [modules]
+
+  for (i = modules.length - 1; i >= 0; i--) {
+    for (key in methods) {
       modules[i].prototype[key] = methods[key]
     }
   }

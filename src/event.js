@@ -1,3 +1,4 @@
+import Base from './Base.js'
 import {delimiter} from './regex.js'
 import {registerMethods} from './methods.js'
 

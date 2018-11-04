@@ -2,11 +2,11 @@ describe('Adopter', function() {
   var path, polyline, polygon, linearGradient, radialGradient
 
   beforeEach(function() {
-    path      = SVG.get('lineAB')
-    polyline  = SVG.get('inlineSVG').select('polyline')[0]
-    polygon   = SVG.get('inlineSVG').select('polygon')[0]
-    linearGradient   = SVG.get('inlineSVG').select('linearGradient')[0]
-    radialGradient   = SVG.get('inlineSVG').select('radialGradient')[0]
+    path      = SVG('#lineAB')
+    polyline  = SVG('#inlineSVG').find('polyline')[0]
+    polygon   = SVG('#inlineSVG').find('polygon')[0]
+    linearGradient   = SVG('#inlineSVG').find('linearGradient')[0]
+    radialGradient   = SVG('#inlineSVG').find('radialGradient')[0]
   })
 
   describe('with SVG.Doc instance', function() {
@@ -51,7 +51,7 @@ describe('Adopter', function() {
       expect(polygon.array() instanceof SVG.PointArray).toBeTruthy()
     })
   })
-  
+
   describe('with linear SVG.Gradient instance', function() {
     it('is instance of SVG.Gradient', function() {
       expect(linearGradient instanceof SVG.Gradient).toBeTruthy()
@@ -72,7 +72,7 @@ describe('Adopter', function() {
 
   describe('with node that has no matching svg.js class', function() {
     it('wraps the node in the base SVG.Element class', function() {
-      var desc = SVG.get('inlineSVG').select('desc')[0]
+      var desc = SVG('#inlineSVG').find('desc')[0]
       expect(desc instanceof SVG.Element).toBeTruthy()
     })
   })

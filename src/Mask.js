@@ -8,7 +8,7 @@ import {registerMethods} from './methods.js'
 export default class Mask extends Base {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('mask', node))
+    super(nodeOrNew('mask', node), Mask)
   }
 
   // Unmask all masked elements and remove itself

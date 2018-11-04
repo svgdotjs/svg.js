@@ -14,7 +14,7 @@ export default class Polyline extends Base {
 }
 
 registerMethods({
-  Parent: {
+  Container: {
     // Create a wrapped polygon element
     polyline (p) {
       // make sure plot is called as a setter

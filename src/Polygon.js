@@ -15,7 +15,7 @@ export default class Polygon extends Base {
 }
 
 registerMethods({
-  Parent: {
+  Container: {
     // Create a wrapped polygon element
     polygon (p) {
       // make sure plot is called as a setter

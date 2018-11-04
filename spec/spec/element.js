@@ -26,7 +26,7 @@ describe('Element', function() {
 
     afterEach(function() {
       rect.remove()
-      //draw.defs().select('pattern').forEach(function(el) { el.remove() })
+      //draw.defs().find('pattern').forEach(function(el) { el.remove() })
       draw.defs().clear()
     })
 
@@ -95,15 +95,15 @@ describe('Element', function() {
     })
     it('creates an image in defs when image path is specified for fill', function() {
       rect.attr('fill', imageUrl)
-      expect(draw.defs().select('pattern').length).toBe(1)
-      expect(draw.defs().select('pattern image').length).toBe(1)
-      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
+      expect(draw.defs().find('pattern').length).toBe(1)
+      expect(draw.defs().find('pattern image').length).toBe(1)
+      expect(draw.defs().find('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('creates pattern in defs when image object is specified for fill', function() {
       rect.attr('fill', new SVG.Image().load(imageUrl))
-      expect(draw.defs().select('pattern').length).toBe(1)
-      expect(draw.defs().select('pattern image').length).toBe(1)
-      expect(draw.defs().select('pattern image')[0].attr('href')).toBe(imageUrl)
+      expect(draw.defs().find('pattern').length).toBe(1)
+      expect(draw.defs().find('pattern image').length).toBe(1)
+      expect(draw.defs().find('pattern image')[0].attr('href')).toBe(imageUrl)
     })
     it('correctly creates SVG.Array if array given', function() {
       rect.attr('something', [2,3,4])

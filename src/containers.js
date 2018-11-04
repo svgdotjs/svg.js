@@ -9,3 +9,7 @@ export {default as Marker} from './Marker.js'
 export {default as Mask} from './Mask.js'
 export {default as Pattern} from './Pattern.js'
 export {default as Symbol} from './Symbol.js'
+
+export {default as Text} from './Text.js'
+export {default as Tspan} from './Tspan.js'
+export {default as TextPath} from './TextPath.js'

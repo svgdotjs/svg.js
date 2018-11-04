@@ -37,7 +37,7 @@ export function forget () {
   return this
 }
 
-  // Initialize or return local memory object
+  // return local memory object
 export function memory () {
   return this._memory
 }

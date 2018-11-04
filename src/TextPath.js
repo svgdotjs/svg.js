@@ -9,7 +9,7 @@ import {registerMethods} from './methods.js'
 export default class TextPath extends Text {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('textPath', node))
+    super(nodeOrNew('textPath', node), TextPath)
   }
 
   // return the array of the path track element

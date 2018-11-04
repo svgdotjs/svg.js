@@ -54,8 +54,8 @@ export default function attr (attr, val, ns) {
     } else if (Color.isColor(val)) {
       // ensure full hex color
       val = new Color(val)
-    } else if (Array.isArray(val)) {
-      // parse array values
+    } else if (val.constructor === Array) {
+      // Check for plain arrays and parse array values
       val = new SVGArray(val)
     }
 

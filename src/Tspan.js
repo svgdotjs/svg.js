@@ -3,6 +3,7 @@ import {nodeOrNew, extend} from './tools.js'
 import * as textable from './textable.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import Text from './Text.js'
 
 export default class Tspan extends Base {
   // Initialize node

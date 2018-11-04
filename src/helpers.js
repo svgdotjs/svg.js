@@ -162,6 +162,7 @@ export function closeEnough (a, b, threshold) {
   return Math.abs(b - a) < (threshold || 1e-6)
 }
 
+// move this to static matrix method
 export function isMatrixLike (o) {
   return (
     o.a != null ||

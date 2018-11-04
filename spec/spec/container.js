@@ -236,7 +236,7 @@ describe('Container', function() {
       })
       expect(children).toEqual((parserInDoc ? [parser[0].type] : []).concat(['rect', 'ellipse', 'polygon']))
     })
-    it('should only include the its own children', function() {
+    it('should only include its own children', function() {
       var children = []
         , group = draw.group()
 
@@ -375,14 +375,3 @@ describe('Container', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-
-
-

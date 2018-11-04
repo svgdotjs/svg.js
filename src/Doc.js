@@ -4,6 +4,7 @@ import { extend, nodeOrNew } from './tools.js'
 import { ns, xlink, xmlns, svgjs } from './namespaces.js'
 import {adopt, register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import {remove, parent, doc} from './Element.js'
 
 export default class Doc extends Base {
   constructor(node) {
@@ -21,7 +22,7 @@ export default class Doc extends Base {
   // If not, call docs from this element
   doc() {
     if (this.isRoot()) return this
-    return Element.doc.call(this)
+    return doc.call(this)
   }
 
   // Add namespaces
@@ -46,16 +47,16 @@ export default class Doc extends Base {
     if (this.isRoot()) {
       return this.node.parentNode.nodeName === '#document'
         ? null
-        : this.node.parentNode
+        : adopt(this.node.parentNode)
     }
 
-    return Element.parent.call(this, type)
+    return parent.call(this, type)
   }
 
   // Removes the doc from the DOM
   remove() {
     if (!this.isRoot()) {
-      return Element.remove.call(this)
+      return remove.call(this)
     }
 
     if (this.parent()) {

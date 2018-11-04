@@ -66,16 +66,16 @@ export default class Morphable {
         } else if (regex.numberAndUnit.test(value)) {
           this.type(SVGNumber)
         } else {
-          this.type(Morphable.NonMorphable)
+          this.type(NonMorphable)
         }
-      } else if (MorphableTypes.indexOf(value.constructor) > -1) {
+      } else if (morphableTypes.indexOf(value.constructor) > -1) {
         this.type(value.constructor)
       } else if (Array.isArray(value)) {
         this.type(SVGArray)
       } else if (type === 'object') {
-        this.type(Morphable.ObjectBag)
+        this.type(ObjectBag)
       } else {
-        this.type(Morphable.NonMorphable)
+        this.type(NonMorphable)
       }
     }
 
@@ -112,7 +112,7 @@ export default class Morphable {
   }
 }
 
-Morphable.NonMorphable = class {
+export class NonMorphable {
   constructor (...args) {
     this.init(...args)
   }
@@ -131,7 +131,7 @@ Morphable.NonMorphable = class {
   }
 }
 
-Morphable.TransformBag = class {
+export class TransformBag {
   constructor (...args) {
     this.init(...args)
   }
@@ -150,7 +150,7 @@ Morphable.TransformBag = class {
       }
     }
 
-    Object.assign(this, Morphable.TransformBag.defaults, obj)
+    Object.assign(this, TransformBag.defaults, obj)
   }
 
   toArray () {
@@ -169,7 +169,7 @@ Morphable.TransformBag = class {
   }
 }
 
-Morphable.TransformBag.defaults = {
+TransformBag.defaults = {
   scaleX: 1,
   scaleY: 1,
   shear: 0,
@@ -180,7 +180,7 @@ Morphable.TransformBag.defaults = {
   originY: 0
 }
 
-Morphable.ObjectBag = class {
+export class ObjectBag {
   constructor (...args) {
     this.init(...args)
   }
@@ -216,28 +216,27 @@ Morphable.ObjectBag = class {
   }
 }
 
-let morphableTypes = [
-  SVGNumber,
-  Color,
-  Box,
-  Matrix,
-  SVGArray,
-  PointArray,
-  PathArray,
-  Morphable.NonMorphable,
-  Morphable.TransformBag,
-  Morphable.ObjectBag
+const morphableTypes = [
+  NonMorphable,
+  TransformBag,
+  ObjectBag
 ]
 
-extend(morphableTypes, {
-  to (val, args) {
-    return new Morphable()
-      .type(this.constructor)
-      .from(this.valueOf())
-      .to(val, args)
-  },
-  fromArray (arr) {
-    this.init(arr)
-    return this
-  }
-})
+export function registerMorphableType (type = []) {
+  morphableTypes.push(...[].concat(type))
+}
+
+export function makeMorphable () {
+  extend(morphableTypes, {
+    to (val, args) {
+      return new Morphable()
+        .type(this.constructor)
+        .from(this.valueOf())
+        .to(val, args)
+    },
+    fromArray (arr) {
+      this.init(arr)
+      return this
+    }
+  })
+}

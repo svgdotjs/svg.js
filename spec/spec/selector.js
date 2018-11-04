@@ -3,13 +3,13 @@ describe('Selector', function() {
   describe('get()', function() {
     it('gets an element\'s instance by id', function() {
       var rect = draw.rect(111, 333)
-      
-      expect(SVG.get(rect.id())).toBe(rect)
+
+      expect(SVG('#'+rect.id())).toBe(rect)
     })
     it('makes all the element\'s methods available', function() {
       var element = draw.group()
-        , got = SVG.get(element.id())
-      
+        , got = SVG('#'+element.id())
+
       expect(got.attr()).toEqual(element.attr())
     })
     it('gets a referenced element by attribute value', function() {
@@ -18,12 +18,12 @@ describe('Selector', function() {
         , mark = draw.marker(10, 10)
         , path = draw.path(svgPath).marker('end', mark)
 
-      expect(SVG.get(use.attr('href'))).toBe(rect)
-      expect(SVG.get(path.attr('marker-end'))).toBe(mark)
+      expect(SVG('#'+use.attr('href'))).toBe(rect)
+      expect(SVG('#'+path.attr('marker-end'))).toBe(mark)
     })
   })
 
-  describe('select()', function() {
+  describe('find()', function() {
     var e1, e2, e3, e4 ,e5
 
     beforeEach(function() {
@@ -34,14 +34,14 @@ describe('Selector', function() {
       e5 = draw.rect(100, 100).addClass('selectable-element')
     })
     it('gets all elements with a given class name', function() {
-      expect(SVG.select('rect.selectable-element').valueOf()).toEqual([e1, e3, e5])
+      expect(SVG.find('rect.selectable-element').valueOf()).toEqual([e1, e3, e5])
     })
     it('returns an Array', function() {
-      expect(SVG.select('rect.selectable-element') instanceof Array).toBe(true)
+      expect(SVG.find('rect.selectable-element') instanceof Array).toBe(true)
     })
   })
 
-  describe('Parent#select()', function() {
+  describe('Parent#find()', function() {
     it('gets all elements with a given class name inside a given element', function() {
       var group = draw.group()
         , e1 = draw.rect(100, 100).addClass('selectable-element')
@@ -50,8 +50,8 @@ describe('Selector', function() {
         , e4 = draw.rect(100, 100).addClass('unselectable-element')
         , e5 = group.rect(100, 100).addClass('selectable-element')
 
-      expect(group.select('rect.selectable-element').valueOf()).toEqual([e3, e5])
+      expect(group.find('rect.selectable-element').valueOf()).toEqual([e3, e5])
     })
   })
-  
+
 })

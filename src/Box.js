@@ -118,11 +118,13 @@ registerMethods({
       return box.addOffset()
     }
   },
-  viewbox: function (x, y, width, height) {
-    // act as getter
-    if (x == null) return new Box(this.attr('viewBox'))
+  viewbox: {
+    viewbox (x, y, width, height) {
+      // act as getter
+      if (x == null) return new Box(this.attr('viewBox'))
 
-    // act as setter
-    return this.attr('viewBox', new Box(x, y, width, height))
+      // act as setter
+      return this.attr('viewBox', new Box(x, y, width, height))
+    }
   }
 })

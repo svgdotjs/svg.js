@@ -1,4 +1,5 @@
 // Add polygon-specific functions
+import PointArray from './PointArray.js'
 
 // Get array
 export function array () {

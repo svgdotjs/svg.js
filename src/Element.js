@@ -1,4 +1,4 @@
-import {proportionalSize, matcher} from './helpers.js'
+import {proportionalSize, matcher, idFromReference} from './helpers.js'
 import {makeInstance, adopt, assignNewId, eid, root, getClass} from './adopter.js'
 import {delimiter} from './regex.js'
 import {ns} from './namespaces.js'
@@ -180,10 +180,10 @@ export function toggleClass (name) {
   return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
 }
 
-// FIXME: getIdFromReference
 // Get referenced element form attribute value
 export function reference (attr) {
-  return get(this.attr(attr))
+  let id = idFromReference(this.attr(attr))
+  return id ? makeInstance(id) : null
 }
 
   // Returns the parent element instance
@@ -273,7 +273,7 @@ export function getEventTarget () {
 registerMethods('Element', {
   x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
   addTo, putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
-  toggleClass, reference, doc, defs, parents, matches, native, svg,
+  toggleClass, reference, doc, defs, parent, parents, matches, native, svg,
   writeDataToDom, setData, getEventTarget
 })
 

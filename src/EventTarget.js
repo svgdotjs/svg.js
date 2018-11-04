@@ -31,7 +31,7 @@ export function fire (event, data) {
 }
 
 registerMethods('EventTarget', {
-  setup, on, off, dispatch, fire
+  on, off, dispatch, fire
 })
 
 registerConstructor('EventTarget', setup)

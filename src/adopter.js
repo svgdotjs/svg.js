@@ -23,7 +23,9 @@ export function makeInstance (element) {
   var node = makeNode('svg')
   node.innerHTML = element
 
-  element = adopt(node.firstElementChild)
+  // We can use firstChild here because we know,
+  // that the first char is < and thus an element
+  element = adopt(node.firstChild)
 
   return element
 }

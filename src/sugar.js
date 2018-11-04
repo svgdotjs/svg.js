@@ -1,5 +1,8 @@
 import Color from './Color.js'
+import Runner from './Runner.js'
+import SVGNumber from './SVGNumber.js'
 import {registerMethods} from './methods.js'
+
 
 // Define list of available attributes for stroke and fill
 var sugar = {
@@ -136,7 +139,7 @@ registerMethods('Path', {
   }
 })
 
-registerMethods(['Container', 'Runner'], {
+registerMethods(['Parent', 'Runner'], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

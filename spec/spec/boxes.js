@@ -119,40 +119,6 @@ describe('Box', function() {
       }))
     })
   })
-
-  describe('morph()', function() {
-    it('stores a given box for morphing', function() {
-      var box1 = new SVG.Box(10, 100, 200, 300)
-        , box2 = new SVG.Box(50, -100, 300, 300)
-
-      box1.morph(box2)
-
-      expect(box1.destination).toEqual(box2)
-    })
-    it('stores a clone, not the given viewbox itself', function() {
-      var box1 = new SVG.Box(10, 100, 200, 300)
-        , box2 = new SVG.Box(50, -100, 300, 300)
-
-      box1.morph(box2)
-      expect(box1.destination).not.toBe(box2)
-    })
-  })
-
-  describe('at()', function() {
-    it('returns a morphed box at a given position', function() {
-      var box1 = new SVG.Box(10, 100, 200, 300)
-        , box2 = new SVG.Box(50, -100, 300, 300)
-        , box3 = box1.morph(box2).at(0.5)
-
-      expect(box1.toString()).toBe('10 100 200 300')
-      expect(box2.toString()).toBe('50 -100 300 300')
-      expect(box3.toString()).toBe('30 0 250 300')
-    })
-    it('returns itself when no destination given', function() {
-      var box = new SVG.Box(10, 100, 200, 300)
-      expect(box.at(0.5)).toBe(box)
-    })
-  })
 })
 
 

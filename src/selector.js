@@ -27,7 +27,7 @@ import {registerMethods} from './methods.js'
 // }
 
 export default function baseFind (query, parent) {
-  return utils.map((parent || document).querySelectorAll(query), function (node) {
+  return map((parent || document).querySelectorAll(query), function (node) {
     return adopt(node)
   })
 }
