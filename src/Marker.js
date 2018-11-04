@@ -1,9 +1,9 @@
-import Base from './Base.js'
+import Container from './Container.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 import {nodeOrNew} from './tools.js'
 
-export default class Marker extends Base {
+export default class Marker extends Container {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('marker', node), Marker)

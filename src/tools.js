@@ -18,11 +18,7 @@ export function extend (modules, methods) {
   modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--) {
-    if (methods.name) {
-      modules[i].extensions = (modules[i].extensions || []).concat(methods)
-    }
     for (key in methods) {
-      if (modules[i].prototype[key] || key == 'name' || key == 'setup') continue
       modules[i].prototype[key] = methods[key]
     }
   }

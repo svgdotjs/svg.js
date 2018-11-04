@@ -1,11 +1,11 @@
-import Base from './Base.js'
+import Parent from './Parent.js'
 import {nodeOrNew, extend} from './tools.js'
 import * as textable from './textable.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 import Text from './Text.js'
 
-export default class Tspan extends Base {
+export default class Tspan extends Parent {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('tspan', node), Tspan)

@@ -58,21 +58,11 @@ extend([
   Classes.Gradient
 ], getMethodsFor('radius'))
 
-const containerMethods = getMethodsFor('Container')
-// FIXME: We need a container array
-for (let i in containers) {
-  extend(containers[i], containerMethods)
-}
-
-const elementMethods = getMethodsFor('Element')
-const eventTargetMethods = getMethodsFor('EventTarget')
-for (let i in elements) {
-  extend(elements[i], elementMethods)
-  extend(elements[i], eventTargetMethods)
-  extend(elements[i], getConstructor('EventTarget'))
-  extend(elements[i], getConstructor('Element'))
-  extend(elements[i], getConstructor('Memory'))
-}
+extend(Classes.EventTarget, getMethodsFor('EventTarget'))
+extend(Classes.Element, getMethodsFor('Element'))
+extend(Classes.Element, getMethodsFor('Parent'))
+extend(Classes.Element, getConstructor('Memory'))
+extend(Classes.Container, getMethodsFor('Container'))
 
 registerMorphableType([
   Classes.SVGNumber,
@@ -102,15 +92,13 @@ import * as regex from './regex.js'
 SVG.regex = regex
 
 
-
-
 // satisfy tests, fix later
-import * as ns from './namespaces'
+import * as ns from './namespaces.js'
 SVG.get = SVG
 SVG.find = find
 Object.assign(SVG, ns)
-import Base from './Base.js'
-SVG.Element = SVG.Parent = SVG.Shape = SVG.Container = Base
+// import Base from './Base.js'
+// SVG.Element = SVG.Parent = SVG.Shape = SVG.Container = Base
 import {easing} from './Controller.js'
 SVG.easing = easing
 import * as events from './event.js'
@@ -121,3 +109,5 @@ SVG.ObjectBag = ObjectBag
 SVG.NonMorphable = NonMorphable
 import parser from './parser.js'
 SVG.parser = parser
+import * as defaults from './defaults.js'
+SVG.defaults = defaults

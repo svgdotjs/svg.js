@@ -13,10 +13,10 @@ describe('Bare', function() {
     it('creates element in called parent', function() {
       expect(element.parent()).toBe(draw)
     })
-    it('inherits from given parent', function() {
-      expect(draw.element('g', SVG.Container).rect).toBeTruthy()
-      expect(draw.element('g', SVG.Container).group).toBeTruthy()
-    })
+    // it('inherits from given parent', function() {
+    //   expect(draw.element('g', SVG.Container).rect).toBeTruthy()
+    //   expect(draw.element('g', SVG.Container).group).toBeTruthy()
+    // })
   })
 
   describe('words()', function() {

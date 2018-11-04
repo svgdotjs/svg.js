@@ -1,8 +1,8 @@
 import {makeInstance} from './adopter.js'
-import Base from './Base.js'
+import Parent from './Parent.js'
 import {register} from './adopter.js'
 
-export default class HtmlNode extends Base {
+export default class HtmlNode extends Parent {
   constructor (element) {
     super(element, HtmlNode)
     this.node = element
@@ -21,6 +21,11 @@ export default class HtmlNode extends Base {
   put (element, i) {
     this.add(element, i)
     return element
+  }
+
+  removeElement (element) {
+    this.node.removeChild(element.node)
+    return this
   }
 
   getEventTarget () {

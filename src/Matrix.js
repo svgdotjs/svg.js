@@ -3,7 +3,7 @@ import Point from './Point.js'
 import {delimiter} from './regex.js'
 import {radians} from './utils.js'
 import parser from './parser.js'
-import Base from './Base.js'
+import Element from './Element.js'
 import {registerMethods} from './methods.js'
 
 export default class Matrix {
@@ -16,7 +16,7 @@ export default class Matrix {
     var base = arrayToMatrix([1, 0, 0, 1, 0, 0])
 
     // ensure source as object
-    source = source instanceof Base && source.is('Element') ? source.matrixify()
+    source = source instanceof Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(delimiter).map(parseFloat))
       : Array.isArray(source) ? arrayToMatrix(source)
       : (typeof source === 'object' && isMatrixLike(source)) ? source

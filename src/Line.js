@@ -1,11 +1,12 @@
 import {proportionalSize} from './helpers.js'
-import {nodeOrNew} from './tools.js'
+import {nodeOrNew, extend} from './tools.js'
 import PointArray from './PointArray.js'
-import Base from './Base.js'
+import Shape from './Shape.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import * as pointed from './pointed.js'
 
-export default class Line extends Base {
+export default class Line extends Shape {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('line', node), Line)
@@ -42,8 +43,9 @@ export default class Line extends Base {
     var p = proportionalSize(this, width, height)
     return this.attr(this.array().size(p.width, p.height).toLine())
   }
-
 }
+
+extend(Line, pointed)
 
 registerMethods({
   Container: {

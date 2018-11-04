@@ -1,14 +1,12 @@
 import {nodeOrNew} from './tools.js'
 import {register} from './adopter.js'
-import Base from './Base.js'
+import Parent from './Parent.js'
 import {registerMethods} from './methods.js'
 import {extend} from './tools.js'
 
-
-export default class Bare extends Base {
-  constructor (node, inherit = {}) {
+export default class Bare extends Parent {
+  constructor (node) {
     super(nodeOrNew(node, typeof node === 'string' ? null : node), Bare)
-    //extend(this, inherit)
   }
 
   words (text) {

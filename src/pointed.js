@@ -1,6 +1,6 @@
 import PointArray from './PointArray.js'
 
-export let MorphArray =  PointArray
+export let MorphArray = PointArray
 
 // Move by left top corner over x-axis
 export function x (x) {

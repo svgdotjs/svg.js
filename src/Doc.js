@@ -1,12 +1,12 @@
-import Base from './Base.js'
+import Container from './Container.js'
 import Defs from './Defs.js'
 import { extend, nodeOrNew } from './tools.js'
 import { ns, xlink, xmlns, svgjs } from './namespaces.js'
 import {adopt, register} from './adopter.js'
 import {registerMethods} from './methods.js'
-import {remove, parent, doc} from './Element.js'
+//import {remove, parent, doc} from './Element.js'
 
-export default class Doc extends Base {
+export default class Doc extends Container {
   constructor(node) {
     super(nodeOrNew('svg', node), Doc)
     this.namespace()
@@ -22,7 +22,8 @@ export default class Doc extends Base {
   // If not, call docs from this element
   doc() {
     if (this.isRoot()) return this
-    return doc.call(this)
+    return super.doc()
+    //return doc.call(this)
   }
 
   // Add namespaces
@@ -50,21 +51,22 @@ export default class Doc extends Base {
         : adopt(this.node.parentNode)
     }
 
-    return parent.call(this, type)
+    return super.parent(type)
+    //return parent.call(this, type)
   }
 
   // Removes the doc from the DOM
-  remove() {
-    if (!this.isRoot()) {
-      return remove.call(this)
-    }
-
-    if (this.parent()) {
-      this.parent().removeChild(this.node)
-    }
-
-    return this
-  }
+  // remove() {
+  //   if (!this.isRoot()) {
+  //     return super.remove()
+  //   }
+  //
+  //   if (this.parent()) {
+  //     this.parent().remove(this)
+  //   }
+  //
+  //   return this
+  // }
 
   clear() {
     // remove children

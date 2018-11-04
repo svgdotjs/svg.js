@@ -1,11 +1,11 @@
-import Base from './Base.js'
+import Shape from './Shape.js'
 import {nodeOrNew, extend} from './tools.js'
 import {x, y, cx, cy, width, height, size} from './circled.js'
 import SVGNumber from './SVGNumber.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class Circle extends Base {
+export default class Circle extends Shape {
   constructor (node) {
     super(nodeOrNew('circle', node), Circle)
   }

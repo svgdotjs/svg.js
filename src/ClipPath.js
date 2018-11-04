@@ -1,11 +1,11 @@
-import Base from './Base.js'
+import Container from './Container.js'
 import {nodeOrNew, extend} from './tools.js'
 import find from './selector.js'
-import {remove} from './Element.js'
+//import {remove} from './Element.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class ClipPath extends Base {
+export default class ClipPath extends Container {
   constructor (node) {
     super(nodeOrNew('clipPath', node), ClipPath)
   }
@@ -18,7 +18,8 @@ export default class ClipPath extends Base {
     })
 
     // remove clipPath from parent
-    return remove.call(this)
+    return super.remove()
+    //return remove.call(this)
   }
 
   targets () {

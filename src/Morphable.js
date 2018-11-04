@@ -7,6 +7,7 @@ import PointArray from './PointArray.js'
 import PathArray from './PathArray.js'
 import Box from './Box.js'
 import Matrix from './Matrix.js'
+import {delimiter, pathLetters, numberAndUnit} from './regex.js'
 
 export default class Morphable {
   constructor (stepper) {
@@ -58,12 +59,12 @@ export default class Morphable {
       } else if (type === 'string') {
         if (Color.isColor(value)) {
           this.type(Color)
-        } else if (regex.delimiter.test(value)) {
-          this.type(regex.pathLetters.test(value)
+        } else if (delimiter.test(value)) {
+          this.type(pathLetters.test(value)
             ? PathArray
             : SVGArray
           )
-        } else if (regex.numberAndUnit.test(value)) {
+        } else if (numberAndUnit.test(value)) {
           this.type(SVGNumber)
         } else {
           this.type(NonMorphable)

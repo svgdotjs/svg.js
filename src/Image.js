@@ -1,4 +1,4 @@
-import Base from './Base.js'
+import Shape from './Shape.js'
 import Pattern from './Pattern.js'
 import {on, off} from './event.js'
 import {nodeOrNew} from './tools.js'
@@ -6,7 +6,7 @@ import {xlink} from './namespaces.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class Image extends Base {
+export default class Image extends Shape {
   constructor (node) {
     super(nodeOrNew('image', node), Image)
   }

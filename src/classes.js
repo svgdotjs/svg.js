@@ -1,3 +1,8 @@
+export {default as EventTarget} from './EventTarget.js'
+export {default as Element} from './Element.js'
+export {default as Shape} from './Shape.js'
+export {default as Parent} from './Parent.js'
+export {default as Container} from './Container.js'
 export {default as HtmlNode} from './HtmlNode.js'
 export {default as Doc} from './Doc.js'
 export {default as Defs} from './Defs.js'

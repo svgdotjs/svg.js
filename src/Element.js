@@ -5,277 +5,283 @@ import {ns} from './namespaces.js'
 import SVGNumber from './SVGNumber.js'
 import {registerMethods} from './methods.js'
 import {registerConstructor} from './methods.js'
+import EventTarget from './EventTarget.js'
 
 const Doc = getClass(root)
-const HtmlNode = getClass('HtmlNode')
 
-export const name = 'Element'
+//export const name = 'Element'
 
-export function setup (node) {
+export default class Element extends EventTarget {
+  constructor (node) {
+    super()
+
   // initialize data object
-  this.dom = {}
+    this.dom = {}
 
   // create circular reference
-  this.node = node
+    this.node = node
 
-  this.type = node.nodeName
-  this.node.instance = this
+    this.type = node.nodeName
+    this.node.instance = this
 
-  if (node.hasAttribute('svgjs:data')) {
-    // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
-    this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+    if (node.hasAttribute('svgjs:data')) {
+      // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
+      this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+    }
   }
-}
 
   // Move over x-axis
-export function x (x) {
-  return this.attr('x', x)
-}
+  x (x) {
+    return this.attr('x', x)
+  }
 
   // Move over y-axis
-export function y (y) {
-  return this.attr('y', y)
-}
+  y (y) {
+    return this.attr('y', y)
+  }
 
   // Move by center over x-axis
-export function cx (x) {
-  return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
-}
+  cx (x) {
+    return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
+  }
 
   // Move by center over y-axis
-export function cy (y) {
-  return y == null
-    ? this.y() + this.height() / 2
-    : this.y(y - this.height() / 2)
-}
+  cy (y) {
+    return y == null
+      ? this.y() + this.height() / 2
+      : this.y(y - this.height() / 2)
+  }
 
   // Move element to given x and y values
-export function move (x, y) {
-  return this.x(x).y(y)
-}
+  move (x, y) {
+    return this.x(x).y(y)
+  }
 
   // Move element by its center
-export function center (x, y) {
-  return this.cx(x).cy(y)
-}
+  center (x, y) {
+    return this.cx(x).cy(y)
+  }
 
   // Set width of element
-export function width (width) {
-  return this.attr('width', width)
-}
+  width (width) {
+    return this.attr('width', width)
+  }
 
   // Set height of element
-export function height (height) {
-  return this.attr('height', height)
-}
+  height (height) {
+    return this.attr('height', height)
+  }
 
   // Set element size to given width and height
-export function size (width, height) {
-  let p = proportionalSize(this, width, height)
+  size (width, height) {
+    let p = proportionalSize(this, width, height)
 
-  return this
-    .width(new SVGNumber(p.width))
-    .height(new SVGNumber(p.height))
-}
+    return this
+      .width(new SVGNumber(p.width))
+      .height(new SVGNumber(p.height))
+  }
 
   // Clone element
-export function clone (parent) {
-  // write dom data to the dom so the clone can pickup the data
-  this.writeDataToDom()
+  clone (parent) {
+    // write dom data to the dom so the clone can pickup the data
+    this.writeDataToDom()
 
-  // clone element and assign new id
-  let clone = assignNewId(this.node.cloneNode(true))
+    // clone element and assign new id
+    let clone = assignNewId(this.node.cloneNode(true))
 
-  // insert the clone in the given parent or after myself
-  if (parent) parent.add(clone)
-  else this.after(clone)
+    // insert the clone in the given parent or after myself
+    if (parent) parent.add(clone)
+    else this.after(clone)
 
-  return clone
-}
+    return clone
+  }
 
   // Remove element
-export function remove () {
-  if (this.parent()) { this.parent().removeElement(this) }
+  remove () {
+    if (this.parent()) { this.parent().removeElement(this) }
 
-  return this
-}
+    return this
+  }
 
   // Replace element
-export function replace (element) {
-  this.after(element).remove()
+  replace (element) {
+    this.after(element).remove()
 
-  return element
-}
+    return element
+  }
 
   // Add element to given container and return self
-export function addTo (parent) {
-  return makeInstance(parent).put(this)
-}
+  addTo (parent) {
+    return makeInstance(parent).put(this)
+  }
 
   // Add element to given container and return container
-export function putIn (parent) {
-  return makeInstance(parent).add(this)
-}
+  putIn (parent) {
+    return makeInstance(parent).add(this)
+  }
 
   // Get / set id
-export function id (id) {
-  // generate new id if no id set
-  if (typeof id === 'undefined' && !this.node.id) {
-    this.node.id = eid(this.type)
-  }
+  id (id) {
+    // generate new id if no id set
+    if (typeof id === 'undefined' && !this.node.id) {
+      this.node.id = eid(this.type)
+    }
 
-  // dont't set directly width this.node.id to make `null` work correctly
-  return this.attr('id', id)
-}
+    // dont't set directly width this.node.id to make `null` work correctly
+    return this.attr('id', id)
+  }
 
   // Checks whether the given point inside the bounding box of the element
-export function inside (x, y) {
-  let box = this.bbox()
+  inside (x, y) {
+    let box = this.bbox()
 
-  return x > box.x &&
-    y > box.y &&
-    x < box.x + box.width &&
-    y < box.y + box.height
-}
+    return x > box.x &&
+      y > box.y &&
+      x < box.x + box.width &&
+      y < box.y + box.height
+  }
 
   // Return id on string conversion
-export function toString () {
-  return this.id()
-}
+  toString () {
+    return this.id()
+  }
 
   // Return array of classes on the node
-export function classes () {
-  var attr = this.attr('class')
-  return attr == null ? [] : attr.trim().split(delimiter)
-}
+  classes () {
+    var attr = this.attr('class')
+    return attr == null ? [] : attr.trim().split(delimiter)
+  }
 
   // Return true if class exists on the node, false otherwise
-export function hasClass (name) {
-  return this.classes().indexOf(name) !== -1
-}
+  hasClass (name) {
+    return this.classes().indexOf(name) !== -1
+  }
 
   // Add class to the node
-export function addClass (name) {
-  if (!this.hasClass(name)) {
-    var array = this.classes()
-    array.push(name)
-    this.attr('class', array.join(' '))
-  }
+  addClass (name) {
+    if (!this.hasClass(name)) {
+      var array = this.classes()
+      array.push(name)
+      this.attr('class', array.join(' '))
+    }
 
-  return this
-}
+    return this
+  }
 
   // Remove class from the node
-export function removeClass (name) {
-  if (this.hasClass(name)) {
-    this.attr('class', this.classes().filter(function (c) {
-      return c !== name
-    }).join(' '))
-  }
+  removeClass (name) {
+    if (this.hasClass(name)) {
+      this.attr('class', this.classes().filter(function (c) {
+        return c !== name
+      }).join(' '))
+    }
 
-  return this
-}
+    return this
+  }
 
   // Toggle the presence of a class on the node
-export function toggleClass (name) {
-  return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
-}
+  toggleClass (name) {
+    return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
+  }
 
-// Get referenced element form attribute value
-export function reference (attr) {
-  let id = idFromReference(this.attr(attr))
-  return id ? makeInstance(id) : null
-}
+  // Get referenced element form attribute value
+  reference (attr) {
+    let id = idFromReference(this.attr(attr))
+    return id ? makeInstance(id) : null
+  }
 
   // Returns the parent element instance
-export function parent (type) {
-  var parent = this
+  parent (type) {
+    var parent = this
 
-  // check for parent
-  if (!parent.node.parentNode) return null
+    // check for parent
+    if (!parent.node.parentNode) return null
 
-  // get parent element
-  parent = adopt(parent.node.parentNode)
-
-  if (!type) return parent
-
-  // loop trough ancestors if type is given
-  while (parent && parent.node instanceof window.SVGElement) {
-    if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+    // get parent element
     parent = adopt(parent.node.parentNode)
-  }
-}
 
-// Get parent document
-export function doc () {
-  let p = this.parent(Doc)
-  return p && p.doc()
-}
+    if (!type) return parent
+
+    // loop trough ancestors if type is given
+    while (parent && parent.node instanceof window.SVGElement) {
+      if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+      parent = adopt(parent.node.parentNode)
+    }
+  }
+
+  // Get parent document
+  doc () {
+    let p = this.parent(Doc)
+    return p && p.doc()
+  }
 
   // Get defs
-export function defs () {
-  return this.doc().defs()
-}
+  defs () {
+    return this.doc().defs()
+  }
 
   // return array of all ancestors of given type up to the root svg
-export function parents (type) {
-  let parents = []
-  let parent = this
+  parents (type) {
+    let parents = []
+    let parent = this
 
-  do {
-    parent = parent.parent(type)
-    if (!parent || parent instanceof HtmlNode) break
+    do {
+      parent = parent.parent(type)
+      if (!parent || parent instanceof getClass('HtmlNode')) break
 
-    parents.push(parent)
-  } while (parent.parent)
+      parents.push(parent)
+    } while (parent.parent)
 
-  return parents
-}
+    return parents
+  }
 
   // matches the element vs a css selector
-export function matches (selector) {
-  return matcher(this.node, selector)
-}
+  matches (selector) {
+    return matcher(this.node, selector)
+  }
 
   // Returns the svg node to call native svg methods on it
-export function native () {
-  return this.node
-}
+  native () {
+    return this.node
+  }
 
   // Import raw svg
-export function svg () {
-  // write svgjs data to the dom
-  this.writeDataToDom()
+  svg () {
+    // write svgjs data to the dom
+    this.writeDataToDom()
 
-  return this.node.outerHTML
-}
-
-  // write svgjs data to the dom
-export function writeDataToDom () {
-  // remove previously set data
-  this.node.removeAttribute('svgjs:data')
-
-  if (Object.keys(this.dom).length) {
-    this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
+    return this.node.outerHTML
   }
-  return this
-}
+
+  // write svgjs data to the dom
+  writeDataToDom () {
+    // remove previously set data
+    this.node.removeAttribute('svgjs:data')
+
+    if (Object.keys(this.dom).length) {
+      this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
+    }
+    return this
+  }
 
   // set given data to the elements data property
-export function setData (o) {
-  this.dom = o
-  return this
+  setData (o) {
+    this.dom = o
+    return this
+  }
+
+  getEventTarget () {
+    return this.node
+  }
 }
 
-export function getEventTarget () {
-  return this.node
-}
 
-registerMethods('Element', {
-  x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
-  addTo, putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
-  toggleClass, reference, doc, defs, parent, parents, matches, native, svg,
-  writeDataToDom, setData, getEventTarget
-})
 
-registerConstructor('Element', setup)
+// registerMethods('Element', {
+//   x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
+//   addTo, putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
+//   toggleClass, reference, doc, defs, parent, parents, matches, native, svg,
+//   writeDataToDom, setData, getEventTarget
+// })
+//
+// registerConstructor('Element', setup)

@@ -1,6 +1,5 @@
 export const subClassArray = (function () {
   try {
-    //throw 'asdad'
     // try es6 subclassing
     return Function('name', 'baseClass', '_constructor', [
       'baseClass = baseClass || Array',

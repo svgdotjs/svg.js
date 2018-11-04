@@ -1,12 +1,12 @@
 import {proportionalSize} from './helpers.js'
 import {nodeOrNew} from './tools.js'
-import Base from './Base.js'
+import Shape from './Shape.js'
 import PathArray from './PathArray.js'
 import find from './selector.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class Path extends Base {
+export default class Path extends Shape {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('path', node), Path)

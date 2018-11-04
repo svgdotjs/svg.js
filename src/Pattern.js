@@ -1,10 +1,11 @@
-import Base from './Base.js'
+import Container from './Container.js'
 import {nodeOrNew} from './tools.js'
-import attr from './attr.js'
+//import attr from './attr.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import Box from './Box.js'
 
-export default class Pattern extends Base {
+export default class Pattern extends Container {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('pattern', node), Pattern)
@@ -36,11 +37,16 @@ export default class Pattern extends Base {
   // custom attr to handle transform
   attr (a, b, c) {
     if (a === 'transform') a = 'patternTransform'
-    return attr.call(this, a, b, c)
+    return super.attr(a, b, c)
+    //return attr.call(this, a, b, c)
   }
 
   targets () {
     return find('svg [fill*="' + this.id() + '"]')
+  }
+
+  bbox () {
+    return new Box()
   }
 }
 

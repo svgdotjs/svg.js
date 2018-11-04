@@ -98,7 +98,6 @@ function getBox(cb) {
       box = cb(clone.node)
       clone.remove()
     } catch (e) {
-      throw (e)
       console.warn('Getting a bounding box of this element is not possible')
     }
   }

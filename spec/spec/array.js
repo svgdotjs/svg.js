@@ -225,9 +225,9 @@ describe('PathArray', function () {
 
       var toBeTested = p3.size(600,200)
 
-      for(var i = toBeTested.legth; --i;) {
+      for(var i = toBeTested.length; i--;) {
         expect(toBeTested[i].shift().toUpperCase()).toBe(expected[i].shift().toUpperCase())
-        for(var j = toBeTested[i].length; --j;) {
+        for(var j = toBeTested[i].length; j--;) {
           expect(toBeTested[i][j]).toBeCloseTo(expected[i][j])
         }
       }

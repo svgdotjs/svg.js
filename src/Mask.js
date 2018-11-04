@@ -1,11 +1,11 @@
-import Base from './Base.js'
+import Container from './Container.js'
 import {nodeOrNew} from './tools.js'
 import find from './selector.js'
-import {remove} from  './Element.js'
+//import {remove} from  './Element.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class Mask extends Base {
+export default class Mask extends Container {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('mask', node), Mask)
@@ -19,7 +19,8 @@ export default class Mask extends Base {
     })
 
     // remove mask from parent
-    return remove.call(this)
+    return super.remove()
+    //return remove.call(this)
   }
 
   targets () {

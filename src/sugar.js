@@ -122,7 +122,7 @@ registerMethods(['Element', 'Runner'], {
 registerMethods('radius', {
   // Add x and y radius
   radius: function (x, y) {
-    var type = (this._target || this).type
+    var type = (this._element || this).type
     return type === 'radialGradient' || type === 'radialGradient'
       ? this.attr('r', new SVGNumber(x))
       : this.rx(x).ry(y == null ? x : y)
@@ -140,7 +140,7 @@ registerMethods('Path', {
   }
 })
 
-registerMethods(['Container', 'Runner'], {
+registerMethods(['Parent', 'Runner'], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

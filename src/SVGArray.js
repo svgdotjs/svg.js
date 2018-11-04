@@ -17,19 +17,22 @@ extend2(SVGArray, {
   },
 
   toArray () {
-    const ret = []
-    ret.push(...this)
-    //Array.prototype.push.apply(ret, this)
-    return ret
-    //return Array.prototype.concat.apply([], this)
+    // const ret = []
+    // ret.push(...this)
+    // return ret
+    return Array.prototype.concat.apply([], this)
   },
 
   toString () {
     return this.join(' ')
   },
 
+  // Flattens the array if needed
   valueOf () {
-    return this.toArray()
+    const ret = []
+    ret.push(...this)
+    return ret
+    // return this.toArray()
   },
 
   // Parse whitespace separated string

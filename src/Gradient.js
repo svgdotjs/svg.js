@@ -1,12 +1,13 @@
 import Stop from './Stop.js'
-import Base from './Base.js'
+import Container from './Container.js'
 import * as gradiented from './gradiented.js'
 import {nodeOrNew, extend} from './tools.js'
-import attr from './attr.js'
+//import attr from './attr.js'
 import {register} from './adopter.js'
 import {registerMethods} from './methods.js'
+import Box from './Box.js'
 
-export default class Gradient extends Base {
+export default class Gradient extends Container {
   constructor (type) {
     super(
       nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type),
@@ -45,11 +46,16 @@ export default class Gradient extends Base {
   // custom attr to handle transform
   attr (a, b, c) {
     if (a === 'transform') a = 'gradientTransform'
-    return attr.call(this, a, b, c)
+    return super.attr(a, b, c)
+    //return attr.call(this, a, b, c)
   }
 
   targets () {
     return find('svg [fill*="' + this.id() + '"]')
+  }
+
+  bbox () {
+    return new Box()
   }
 }
 
