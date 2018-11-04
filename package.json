@@ -79,5 +79,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "request": "^2.81.0",
     "svgdom": "latest"
+  },
+  "dependencies": {
+    "build": "^0.1.4"
   }
 }
