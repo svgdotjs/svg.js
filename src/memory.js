@@ -42,5 +42,5 @@ export function memory () {
   return (this._memory = this._memory || {})
 }
 
-registerMethods('Element', {remember, forget, memory})
+registerMethods('Dom', {remember, forget, memory})
 //registerConstructor('Memory', setup)

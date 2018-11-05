@@ -1,9 +1,3 @@
-// import {extend} from './tools.js'
-// import * as Element from './Element.js'
-// import Defs from './Defs.js'
-//
-// extend(Defs, [EventTarget, Element, Parent])
-
 import {makeInstance} from './adopter.js'
 import * as Classes from './classes.js'
 import * as adopter from './adopter.js'
@@ -13,6 +7,7 @@ import * as elements from './elements.js'
 import './attr.js'
 import './arrange.js'
 import './data.js'
+import './classHandling.js'
 import find from './selector.js'
 import './css.js'
 import './transform.js'
@@ -24,7 +19,6 @@ const extend = tools.extend
 
 import './EventTarget.js'
 import './Element.js'
-import './Parent.js'
 
 extend([
   Classes.Doc,
@@ -59,8 +53,9 @@ extend([
 ], getMethodsFor('radius'))
 
 extend(Classes.EventTarget, getMethodsFor('EventTarget'))
+extend(Classes.Dom, getMethodsFor('Dom'))
 extend(Classes.Element, getMethodsFor('Element'))
-extend(Classes.Element, getMethodsFor('Parent'))
+extend(Classes.Shape, getMethodsFor('Shape'))
 //extend(Classes.Element, getConstructor('Memory'))
 extend(Classes.Container, getMethodsFor('Container'))
 
@@ -97,8 +92,6 @@ import * as ns from './namespaces.js'
 SVG.get = SVG
 SVG.find = find
 Object.assign(SVG, ns)
-// import Base from './Base.js'
-// SVG.Element = SVG.Parent = SVG.Shape = SVG.Container = Base
 import {easing} from './Controller.js'
 SVG.easing = easing
 import * as events from './event.js'

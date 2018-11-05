@@ -1,4 +1,3 @@
-//import {Parent, Doc, Symbol, Image, Pattern, Marker, Point} from './classes.js'
 import Point from './Point.js'
 import parser from './parser.js'
 import {fullBox, domContains, isNulledBox} from './helpers.js'

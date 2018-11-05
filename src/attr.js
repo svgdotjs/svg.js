@@ -3,7 +3,7 @@ import {attrs as defaults} from './defaults.js'
 import Color from './Color.js'
 import SVGArray from './SVGArray.js'
 import SVGNumber from './SVGNumber.js'
-import {registerMethods} from './methods.js'
+//import {registerMethods} from './methods.js'
 
 // Set svg element attribute
 export default function attr (attr, val, ns) {
@@ -80,4 +80,4 @@ export default function attr (attr, val, ns) {
   return this
 }
 
-registerMethods('Element', {attr})
+//registerMethods('Element', {attr})

@@ -1,2 +1,2 @@
-import Parent from './Parent.js'
-export default class Shape extends Parent {}
+import Element from './Element.js'
+export default class Shape extends Element {}

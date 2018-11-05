@@ -3,10 +3,12 @@ import {on, off, dispatch} from './event.js'
 import {extend} from './tools.js'
 
 export default class EventTarget extends Base{
-  constructor (node = {}) {
+  constructor ({events = {}} = {}) {
     super()
-    this.events = node.events || {}
+    this.events = events
   }
+
+  addEventListener () {}
 
   // Bind given event to listener
   on (event, listener, binding, options) {
@@ -24,11 +26,36 @@ export default class EventTarget extends Base{
     return dispatch(this, event, data)
   }
 
+  dispatchEvent (event) {
+    const bag = this.getEventHolder().events
+    if (!bag) return true
+
+    const events = bag[event.type]
+
+    for (let i in events) {
+      for (let j in events[i]) {
+        events[i][j](event)
+      }
+    }
+
+    return !event.defaultPrevented
+  }
+
   // Fire given event
   fire (event, data) {
     this.dispatch(event, data)
     return this
   }
+
+  getEventHolder () {
+    return this
+  }
+
+  getEventTarget () {
+    return this
+  }
+
+  removeEventListener () {}
 }
 
 

@@ -1,27 +1,38 @@
 import {delimiter} from './regex.js'
 import {registerMethods} from './methods.js'
+import {makeInstance} from './adopter.js'
 
 let listenerId = 0
 
+function getEvents (node) {
+  const n = makeInstance(node).getEventHolder()
+  if (!n.events) n.events = {}
+  return n.events
+}
+
 function getEventTarget (node) {
-  return typeof node.getEventTarget === 'function'
-    ? node.getEventTarget()
-    : node
+  return makeInstance(node).getEventTarget()
+}
+
+function clearEvents (node) {
+  const n = makeInstance(node).getEventHolder()
+  if (n.events) n.events = {}
 }
 
 // Add event binder in the SVG namespace
 export function on (node, events, listener, binding, options) {
   var l = listener.bind(binding || node)
+  var bag = getEvents(node)
   var n = getEventTarget(node)
 
   // events can be an array of events or a string of events
   events = Array.isArray(events) ? events : events.split(delimiter)
 
   // ensure instance object for nodes which are not adopted
-  n.instance = n.instance || {events: {}}
+  // n.instance = n.instance || {events: {}}
 
   // pull event handlers from the element
-  var bag = n.instance.events
+  // var bag = n.instance.events
 
   // add id to listener
   if (!listener._svgjsListenerId) {
@@ -46,10 +57,11 @@ export function on (node, events, listener, binding, options) {
 
 // Add event unbinder in the SVG namespace
 export function off (node, events, listener, options) {
+  var bag = getEvents(node)
   var n = getEventTarget(node)
 
   // we cannot remove an event if its not an svg.js instance
-  if (!n.instance) return
+  // if (!n.instance) return
 
   // listener can be a function or a number
   if (typeof listener === 'function') {
@@ -58,7 +70,7 @@ export function off (node, events, listener, options) {
   }
 
   // pull event handlers from the element
-  var bag = n.instance.events
+  // var bag = n.instance.events
 
   // events can be an array of events or a string or undefined
   events = Array.isArray(events) ? events : (events || '').split(delimiter)
@@ -101,7 +113,7 @@ export function off (node, events, listener, options) {
       // remove all listeners on a given node
       for (event in bag) { off(n, event) }
 
-      n.instance.events = {}
+      clearEvents(node)
     }
   })
 }

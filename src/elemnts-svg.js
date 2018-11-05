@@ -44,10 +44,6 @@
 
       // Act as setter if we got a string
 
-      // Make sure we are on a current when trying to import
-      if(!(this instanceof SVG.Parent))
-        throw Error('Cannot import svg into non-current element')
-
       // Create temporary holder
       well = document.createElementNS(SVG.ns, 'svg')
       fragment = document.createDocumentFragment()

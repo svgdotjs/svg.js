@@ -9,6 +9,7 @@ import {extend} from './tools.js'
 import Animator from './Animator.js'
 import Point from './Point.js'
 import {registerMethods} from './methods.js'
+import EventTarget from './EventTarget.js'
 
 // FIXME: What is this doing here?
 // easing = {
@@ -18,8 +19,10 @@ import {registerMethods} from './methods.js'
 //   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 }
 // }
 
-export default class Runner {
+export default class Runner extends EventTarget {
   constructor (options) {
+    super()
+
     // Store a unique id on the runner, so that we can identify it later
     this.id = Runner.id++
 
@@ -266,7 +269,7 @@ export default class Runner {
     var justFinished = this._lastTime < this._time && this.time > duration
     this._lastTime = this._time
     if (justStarted) {
-      // this.fire('start', this)
+       this.fire('start', this)
     }
 
     // Work out if the runner is finished set the done flag here so animations
@@ -282,14 +285,14 @@ export default class Runner {
       // clear the transforms on this runner so they dont get added again and again
       this.transforms = new Matrix()
       var converged = this._run(declarative ? dt : position)
-      // this.fire('step', this)
+      this.fire('step', this)
     }
     // correct the done flag here
     // declaritive animations itself know when they converged
     this.done = this.done || (converged && declarative)
-    // if (this.done) {
-    //   this.fire('finish', this)
-    // }
+    if (this.done) {
+      this.fire('finish', this)
+    }
     return this
   }
 

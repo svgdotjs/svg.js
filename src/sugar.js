@@ -3,6 +3,7 @@ import Runner from './Runner.js'
 import SVGNumber from './SVGNumber.js'
 import Matrix from './Matrix.js'
 import Point from './Point.js'
+import Element from './Element.js'
 import {registerMethods} from './methods.js'
 
 // Define list of available attributes for stroke and fill
@@ -23,7 +24,7 @@ var sugar = {
     if (typeof o === 'undefined') {
       return this
     }
-    if (typeof o === 'string' || Color.isRgb(o) || (o && typeof o.fill === 'function')) {
+    if (typeof o === 'string' || Color.isRgb(o) || (o instanceof Element)) {
       this.attr(m, o)
     } else {
       // set all attributes from sugar.fill and sugar.stroke list
@@ -37,7 +38,7 @@ var sugar = {
     return this
   }
 
-  registerMethods(['Element', 'Runner'], extension)
+  registerMethods(['Shape', 'Runner'], extension)
 })
 
 registerMethods(['Element', 'Runner'], {
@@ -140,7 +141,7 @@ registerMethods('Path', {
   }
 })
 
-registerMethods(['Parent', 'Runner'], {
+registerMethods(['Element', 'Runner'], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

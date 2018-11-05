@@ -1,10 +1,10 @@
 import {nodeOrNew} from './tools.js'
 import {register} from './adopter.js'
-import Parent from './Parent.js'
+import Container from './Container.js'
 import {registerMethods} from './methods.js'
 import {extend} from './tools.js'
 
-export default class Bare extends Parent {
+export default class Bare extends Container {
   constructor (node) {
     super(nodeOrNew(node, typeof node === 'string' ? null : node), Bare)
   }

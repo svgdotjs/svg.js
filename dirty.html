@@ -267,6 +267,9 @@ let moon = canvas.circle(50).center(1200, 300).attr({fill: '#ffa'})
 earth.animate(10000).loop().ease('-')
   .transform({rotate: 360, origin: [500, 300]}, true)
   .transform({rotate: 720, origin: 'center'}, true)
+  .on('step', (e) => {
+  //  console.log(e)
+  })
 
 moon.animate(10000).loop().ease('-')
   .transform({rotate: 360, origin: [500, 300]}, true)

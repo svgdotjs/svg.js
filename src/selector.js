@@ -37,4 +37,4 @@ export function find (query) {
   return baseFind(query, this.node)
 }
 
-registerMethods('Element', {find})
+registerMethods('Dom', {find})

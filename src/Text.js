@@ -1,4 +1,4 @@
-import Parent from './Parent.js'
+import Shape from './Shape.js'
 import SVGNumber from './SVGNumber.js'
 import {nodeOrNew, extend} from './tools.js'
 import {attrs} from './defaults.js'
@@ -6,7 +6,7 @@ import * as textable from './textable.js'
 import {register, adopt} from './adopter.js'
 import {registerMethods} from './methods.js'
 
-export default class Text extends Parent {
+export default class Text extends Shape {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('text', node), Text)

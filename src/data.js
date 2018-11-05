@@ -23,4 +23,4 @@ export function data (a, v, r) {
   return this
 }
 
-registerMethods('Element', {data})
+registerMethods('Dom', {data})

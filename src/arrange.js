@@ -94,6 +94,6 @@ export function after (element) {
   return this
 }
 
-registerMethods('Element', {
+registerMethods('Dom', {
   siblings, position, next, prev, forward, backward, front, back, before, after
 })

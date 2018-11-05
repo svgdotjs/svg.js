@@ -68,6 +68,6 @@ export function visible () {
   return this.css('display') !== 'none'
 }
 
-registerMethods('Element', {
+registerMethods('Dom', {
   css, show, hide, visible
 })
