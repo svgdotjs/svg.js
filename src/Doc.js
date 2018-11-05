@@ -22,7 +22,6 @@ export default class Doc extends Container {
   doc () {
     if (this.isRoot()) return this
     return super.doc()
-    // return doc.call(this)
   }
 
   // Add namespaces
@@ -51,21 +50,7 @@ export default class Doc extends Container {
     }
 
     return super.parent(type)
-    // return parent.call(this, type)
   }
-
-  // Removes the doc from the DOM
-  // remove() {
-  //   if (!this.isRoot()) {
-  //     return super.remove()
-  //   }
-  //
-  //   if (this.parent()) {
-  //     this.parent().remove(this)
-  //   }
-  //
-  //   return this
-  // }
 
   clear () {
     // remove children

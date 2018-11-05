@@ -20,7 +20,6 @@ export default class Mask extends Container {
 
     // remove mask from parent
     return super.remove()
-    // return remove.call(this)
   }
 
   targets () {

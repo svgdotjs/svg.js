@@ -79,5 +79,3 @@ export default function attr (attr, val, ns) {
 
   return this
 }
-
-// registerMethods('Element', {attr})

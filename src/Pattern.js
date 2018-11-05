@@ -39,7 +39,6 @@ export default class Pattern extends Container {
   attr (a, b, c) {
     if (a === 'transform') a = 'patternTransform'
     return super.attr(a, b, c)
-    // return attr.call(this, a, b, c)
   }
 
   targets () {

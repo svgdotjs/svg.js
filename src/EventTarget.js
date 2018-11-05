@@ -1,6 +1,6 @@
 import Base from './Base.js'
 import { on, off, dispatch } from './event.js'
-import { extend } from './tools.js'
+import { registerMethods } from './methods.js'
 
 export default class EventTarget extends Base {
   constructor ({ events = {} } = {}) {
@@ -87,10 +87,4 @@ const methods = [ 'click',
   return last
 }, {})
 
-extend(EventTarget, methods)
-
-// registerMethods('EventTarget', {
-//   on, off, dispatch, fire
-// })
-//
-// registerConstructor('EventTarget', setup)
+registerMethods('Element', methods)

@@ -186,7 +186,7 @@ export default class Dom extends EventTarget {
 
   // Replace element
   replace (element) {
-    // FIXME: after might not be available here
+    // FIXME: after() might not be available here
     this.after(element).remove()
 
     return element
@@ -234,4 +234,5 @@ export default class Dom extends EventTarget {
     return this
   }
 }
+
 extend(Dom, { attr })

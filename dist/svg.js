@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 05 2018 18:59:11 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 05 2018 21:52:42 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -216,8 +216,157 @@ var SVG = (function () {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
-  var Base = function Base() {
-    _classCallCheck(this, Base);
+  var Queue =
+  /*#__PURE__*/
+  function () {
+    function Queue() {
+      _classCallCheck(this, Queue);
+
+      this._first = null;
+      this._last = null;
+    }
+
+    _createClass(Queue, [{
+      key: "push",
+      value: function push(value) {
+        // An item stores an id and the provided value
+        var item = value.next ? value : {
+          value: value,
+          next: null,
+          prev: null // Deal with the queue being empty or populated
+
+        };
+
+        if (this._last) {
+          item.prev = this._last;
+          this._last.next = item;
+          this._last = item;
+        } else {
+          this._last = item;
+          this._first = item;
+        } // Update the length and return the current item
+
+
+        return item;
+      }
+    }, {
+      key: "shift",
+      value: function shift() {
+        // Check if we have a value
+        var remove = this._first;
+        if (!remove) return null; // If we do, remove it and relink things
+
+        this._first = remove.next;
+        if (this._first) this._first.prev = null;
+        this._last = this._first ? this._last : null;
+        return remove.value;
+      } // Shows us the first item in the list
+
+    }, {
+      key: "first",
+      value: function first() {
+        return this._first && this._first.value;
+      } // Shows us the last item in the list
+
+    }, {
+      key: "last",
+      value: function last() {
+        return this._last && this._last.value;
+      } // Removes the item that was returned from the push
+
+    }, {
+      key: "remove",
+      value: function remove(item) {
+        // Relink the previous item
+        if (item.prev) item.prev.next = item.next;
+        if (item.next) item.next.prev = item.prev;
+        if (item === this._last) this._last = item.prev;
+        if (item === this._first) this._first = item.next; // Invalidate item
+
+        item.prev = null;
+        item.next = null;
+      }
+    }]);
+
+    return Queue;
+  }();
+
+  var Animator = {
+    nextDraw: null,
+    frames: new Queue(),
+    timeouts: new Queue(),
+    timer: window.performance || window.Date,
+    transforms: [],
+    frame: function frame(fn) {
+      // Store the node
+      var node = Animator.frames.push({
+        run: fn
+      }); // Request an animation frame if we don't have one
+
+      if (Animator.nextDraw === null) {
+        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
+      } // Return the node so we can remove it easily
+
+
+      return node;
+    },
+    transform_frame: function transform_frame(fn, id) {
+      Animator.transforms[id] = fn;
+    },
+    timeout: function timeout(fn, delay) {
+      delay = delay || 0; // Work out when the event should fire
+
+      var time = Animator.timer.now() + delay; // Add the timeout to the end of the queue
+
+      var node = Animator.timeouts.push({
+        run: fn,
+        time: time
+      }); // Request another animation frame if we need one
+
+      if (Animator.nextDraw === null) {
+        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
+      }
+
+      return node;
+    },
+    cancelFrame: function cancelFrame(node) {
+      Animator.frames.remove(node);
+    },
+    clearTimeout: function clearTimeout(node) {
+      Animator.timeouts.remove(node);
+    },
+    _draw: function _draw(now) {
+      // Run all the timeouts we can run, if they are not ready yet, add them
+      // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
+      var nextTimeout = null;
+      var lastTimeout = Animator.timeouts.last();
+
+      while (nextTimeout = Animator.timeouts.shift()) {
+        // Run the timeout if its time, or push it to the end
+        if (now >= nextTimeout.time) {
+          nextTimeout.run();
+        } else {
+          Animator.timeouts.push(nextTimeout);
+        } // If we hit the last item, we should stop shifting out more items
+
+
+        if (nextTimeout === lastTimeout) break;
+      } // Run all of the animation frames
+
+
+      var nextFrame = null;
+      var lastFrame = Animator.frames.last();
+
+      while (nextFrame !== lastFrame && (nextFrame = Animator.frames.shift())) {
+        nextFrame.run();
+      }
+
+      Animator.transforms.forEach(function (el) {
+        el();
+      }); // If we have remaining timeouts or frames, draw until we don't anymore
+
+      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? window.requestAnimationFrame(Animator._draw) : null;
+    }
   };
 
   // Parse unit value
@@ -281,6 +430,47 @@ var SVG = (function () {
     numbersWithDots: numbersWithDots,
     dots: dots
   });
+
+  /* eslint no-new-func: "off" */
+  var subClassArray = function () {
+    try {
+      // try es6 subclassing
+      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '[name]: class extends baseClass {', 'constructor (...args) {', 'super(...args)', '_constructor && _constructor.apply(this, args)', '}', '}', '}[name]'].join('\n'));
+    } catch (e) {
+      // Use es5 approach
+      return function (name) {
+        var baseClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Array;
+
+        var _constructor = arguments.length > 2 ? arguments[2] : undefined;
+
+        var Arr = function Arr() {
+          baseClass.apply(this, arguments);
+          _constructor && _constructor.apply(this, arguments);
+        };
+
+        Arr.prototype = Object.create(baseClass.prototype);
+        Arr.prototype.constructor = Arr;
+        return Arr;
+      };
+    }
+  }();
+
+  // Default namespaces
+  var ns = 'http://www.w3.org/2000/svg';
+  var xmlns = 'http://www.w3.org/2000/xmlns/';
+  var xlink = 'http://www.w3.org/1999/xlink';
+  var svgjs = 'http://svgjs.com/svgjs';
+
+  var ns$1 = /*#__PURE__*/Object.freeze({
+    ns: ns,
+    xmlns: xmlns,
+    xlink: xlink,
+    svgjs: svgjs
+  });
+
+  var Base = function Base() {
+    _classCallCheck(this, Base);
+  };
 
   function isNulledBox(box) {
     return !box.w && !box.h && !box.x && !box.y;
@@ -447,76 +637,6 @@ var SVG = (function () {
     return [ox, oy];
   }
 
-  // Default namespaces
-  var ns = 'http://www.w3.org/2000/svg';
-  var xmlns = 'http://www.w3.org/2000/xmlns/';
-  var xlink = 'http://www.w3.org/1999/xlink';
-  var svgjs = 'http://svgjs.com/svgjs';
-
-  var ns$1 = /*#__PURE__*/Object.freeze({
-    ns: ns,
-    xmlns: xmlns,
-    xlink: xlink,
-    svgjs: svgjs
-  });
-
-  function nodeOrNew(name, node) {
-    return node || makeNode(name);
-  } // Method for element creation
-
-  function makeNode(name) {
-    // create element
-    return document.createElementNS(ns, name);
-  } // Method for extending objects
-
-  function extend(modules, methods) {
-    var key, i;
-    modules = Array.isArray(modules) ? modules : [modules];
-
-    for (i = modules.length - 1; i >= 0; i--) {
-      for (key in methods) {
-        modules[i].prototype[key] = methods[key];
-      }
-    }
-  } // FIXME: enhanced constructors here
-
-  function addFactory(modules, methods) {
-    extend(modules, methods);
-  } // Invent new element
-
-  function invent(config) {
-    // Create element initializer
-    var initializer = typeof config.create === 'function' ? config.create : function (node) {
-      config.inherit.call(this, node || makeNode(config.create));
-    }; // Inherit prototype
-
-    if (config.inherit) {
-      /* eslint new-cap: "off" */
-      initializer.prototype = new config.inherit();
-      initializer.prototype.constructor = initializer;
-    } // Extend with methods
-
-
-    if (config.extend) {
-      extend(initializer, config.extend);
-    } // Attach construct method to parent
-
-
-    if (config.construct) {
-      extend(config.parent || getClass('Container'), config.construct);
-    }
-
-    return initializer;
-  }
-
-  var tools = /*#__PURE__*/Object.freeze({
-    nodeOrNew: nodeOrNew,
-    makeNode: makeNode,
-    extend: extend,
-    addFactory: addFactory,
-    invent: invent
-  });
-
   var elements = {};
   var root = Symbol('root');
   function makeInstance(element) {
@@ -607,6 +727,196 @@ var SVG = (function () {
     assignNewId: assignNewId
   });
 
+  function nodeOrNew(name, node) {
+    return node || makeNode(name);
+  } // Method for element creation
+
+  function makeNode(name) {
+    // create element
+    return document.createElementNS(ns, name);
+  } // Method for extending objects
+
+  function extend(modules, methods) {
+    var key, i;
+    modules = Array.isArray(modules) ? modules : [modules];
+
+    for (i = modules.length - 1; i >= 0; i--) {
+      for (key in methods) {
+        modules[i].prototype[key] = methods[key];
+      }
+    }
+  } // FIXME: enhanced constructors here
+
+  function addFactory(modules, methods) {
+    extend(modules, methods);
+  } // Invent new element
+
+  function invent(config) {
+    // Create element initializer
+    var initializer = typeof config.create === 'function' ? config.create : function (node) {
+      config.inherit.call(this, node || makeNode(config.create));
+    }; // Inherit prototype
+
+    if (config.inherit) {
+      /* eslint new-cap: "off" */
+      initializer.prototype = new config.inherit();
+      initializer.prototype.constructor = initializer;
+    } // Extend with methods
+
+
+    if (config.extend) {
+      extend(initializer, config.extend);
+    } // Attach construct method to parent
+
+
+    if (config.construct) {
+      extend(config.parent || getClass('Container'), config.construct);
+    }
+
+    return initializer;
+  }
+
+  var tools = /*#__PURE__*/Object.freeze({
+    nodeOrNew: nodeOrNew,
+    makeNode: makeNode,
+    extend: extend,
+    addFactory: addFactory,
+    invent: invent
+  });
+
+  var SVGArray = subClassArray('SVGArray', Array, function () {
+    this.init.apply(this, arguments);
+  });
+  extend(SVGArray, {
+    init: function init() {
+      this.length = 0;
+      this.push.apply(this, _toConsumableArray(this.parse.apply(this, arguments)));
+    },
+    toArray: function toArray() {
+      return Array.prototype.concat.apply([], this);
+    },
+    toString: function toString() {
+      return this.join(' ');
+    },
+    // Flattens the array if needed
+    valueOf: function valueOf() {
+      var ret = [];
+      ret.push.apply(ret, _toConsumableArray(this));
+      return ret;
+    },
+    // Parse whitespace separated string
+    parse: function parse() {
+      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      // If already is an array, no need to parse it
+      if (array instanceof Array) return array;
+      return array.trim().split(delimiter).map(parseFloat);
+    },
+    clone: function clone() {
+      return new this.constructor(this);
+    },
+    toSet: function toSet() {
+      return new Set(this);
+    }
+  });
+
+  var SVGNumber =
+  /*#__PURE__*/
+  function () {
+    // Initialize
+    function SVGNumber() {
+      _classCallCheck(this, SVGNumber);
+
+      this.init.apply(this, arguments);
+    }
+
+    _createClass(SVGNumber, [{
+      key: "init",
+      value: function init(value, unit) {
+        unit = Array.isArray(value) ? value[1] : unit;
+        value = Array.isArray(value) ? value[0] : value; // initialize defaults
+
+        this.value = 0;
+        this.unit = unit || ''; // parse value
+
+        if (typeof value === 'number') {
+          // ensure a valid numeric value
+          this.value = isNaN(value) ? 0 : !isFinite(value) ? value < 0 ? -3.4e+38 : +3.4e+38 : value;
+        } else if (typeof value === 'string') {
+          unit = value.match(numberAndUnit);
+
+          if (unit) {
+            // make value numeric
+            this.value = parseFloat(unit[1]); // normalize
+
+            if (unit[5] === '%') {
+              this.value /= 100;
+            } else if (unit[5] === 's') {
+              this.value *= 1000;
+            } // store unit
+
+
+            this.unit = unit[5];
+          }
+        } else {
+          if (value instanceof SVGNumber) {
+            this.value = value.valueOf();
+            this.unit = value.unit;
+          }
+        }
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6 : this.unit === 's' ? this.value / 1e3 : this.value) + this.unit;
+      }
+    }, {
+      key: "toJSON",
+      value: function toJSON() {
+        return this.toString();
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.value, this.unit];
+      }
+    }, {
+      key: "valueOf",
+      value: function valueOf() {
+        return this.value;
+      } // Add number
+
+    }, {
+      key: "plus",
+      value: function plus(number) {
+        number = new SVGNumber(number);
+        return new SVGNumber(this + number, this.unit || number.unit);
+      } // Subtract number
+
+    }, {
+      key: "minus",
+      value: function minus(number) {
+        number = new SVGNumber(number);
+        return new SVGNumber(this - number, this.unit || number.unit);
+      } // Multiply number
+
+    }, {
+      key: "times",
+      value: function times(number) {
+        number = new SVGNumber(number);
+        return new SVGNumber(this * number, this.unit || number.unit);
+      } // Divide number
+
+    }, {
+      key: "divide",
+      value: function divide(number) {
+        number = new SVGNumber(number);
+        return new SVGNumber(this / number, this.unit || number.unit);
+      }
+    }]);
+
+    return SVGNumber;
+  }();
+
   var listenerId = 0;
 
   function getEvents(node) {
@@ -630,11 +940,7 @@ var SVG = (function () {
     var bag = getEvents(node);
     var n = getEventTarget(node); // events can be an array of events or a string of events
 
-    events = Array.isArray(events) ? events : events.split(delimiter); // ensure instance object for nodes which are not adopted
-    // n.instance = n.instance || {events: {}}
-    // pull event handlers from the element
-    // var bag = n.instance.events
-    // add id to listener
+    events = Array.isArray(events) ? events : events.split(delimiter); // add id to listener
 
     if (!listener._svgjsListenerId) {
       listener._svgjsListenerId = ++listenerId;
@@ -655,16 +961,12 @@ var SVG = (function () {
 
   function off(node, events, listener, options) {
     var bag = getEvents(node);
-    var n = getEventTarget(node); // we cannot remove an event if its not an svg.js instance
-    // if (!n.instance) return
-    // listener can be a function or a number
+    var n = getEventTarget(node); // listener can be a function or a number
 
     if (typeof listener === 'function') {
       listener = listener._svgjsListenerId;
       if (!listener) return;
-    } // pull event handlers from the element
-    // var bag = n.instance.events
-    // events can be an array of events or a string or undefined
+    } // events can be an array of events or a string or undefined
 
 
     events = Array.isArray(events) ? events : (events || '').split(delimiter);
@@ -738,6 +1040,56 @@ var SVG = (function () {
     off: off,
     dispatch: dispatch
   });
+
+  var methods = {};
+  function registerMethods(name, m) {
+    if (Array.isArray(name)) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _name = _step.value;
+          registerMethods(_name, m);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return;
+    }
+
+    if (_typeof(name) === 'object') {
+      var _arr = Object.entries(name);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var _arr$_i = _slicedToArray(_arr[_i], 2),
+            _name2 = _arr$_i[0],
+            _m = _arr$_i[1];
+
+        registerMethods(_name2, _m);
+      }
+
+      return;
+    }
+
+    methods[name] = Object.assign(methods[name] || {}, m);
+  }
+  function getMethodsFor(name) {
+    return methods[name] || {};
+  }
 
   var EventTarget =
   /*#__PURE__*/
@@ -821,7 +1173,7 @@ var SVG = (function () {
 
     return EventTarget;
   }(Base); // Add events to elements
-  var methods = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
+  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
     // add event to Element
     var fn = function fn(f) {
       if (f === null) {
@@ -836,11 +1188,7 @@ var SVG = (function () {
     last[event] = fn;
     return last;
   }, {});
-  extend(EventTarget, methods); // registerMethods('EventTarget', {
-  //   on, off, dispatch, fire
-  // })
-  //
-  // registerConstructor('EventTarget', setup)
+  registerMethods('Element', methods$1);
 
   // Map function
   function map(array, block) {
@@ -1039,209 +1387,6 @@ var SVG = (function () {
     return Color;
   }();
 
-  /* eslint no-new-func: "off" */
-  var subClassArray = function () {
-    try {
-      // try es6 subclassing
-      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '[name]: class extends baseClass {', 'constructor (...args) {', 'super(...args)', '_constructor && _constructor.apply(this, args)', '}', '}', '}[name]'].join('\n'));
-    } catch (e) {
-      // Use es5 approach
-      return function (name) {
-        var baseClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Array;
-
-        var _constructor = arguments.length > 2 ? arguments[2] : undefined;
-
-        var Arr = function Arr() {
-          baseClass.apply(this, arguments);
-          _constructor && _constructor.apply(this, arguments);
-        };
-
-        Arr.prototype = Object.create(baseClass.prototype);
-        Arr.prototype.constructor = Arr;
-        return Arr;
-      };
-    }
-  }();
-
-  var SVGArray = subClassArray('SVGArray', Array, function () {
-    this.init.apply(this, arguments);
-  });
-  extend(SVGArray, {
-    init: function init() {
-      // this.splice(0, this.length)
-      this.length = 0;
-      this.push.apply(this, _toConsumableArray(this.parse.apply(this, arguments)));
-    },
-    toArray: function toArray() {
-      // const ret = []
-      // ret.push(...this)
-      // return ret
-      return Array.prototype.concat.apply([], this);
-    },
-    toString: function toString() {
-      return this.join(' ');
-    },
-    // Flattens the array if needed
-    valueOf: function valueOf() {
-      var ret = [];
-      ret.push.apply(ret, _toConsumableArray(this));
-      return ret; // return this.toArray()
-    },
-    // Parse whitespace separated string
-    parse: function parse() {
-      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      // array = array.valueOf()
-      // If already is an array, no need to parse it
-      if (array instanceof Array) return array;
-      return array.trim().split(delimiter).map(parseFloat);
-    },
-    clone: function clone() {
-      return new this.constructor(this);
-    },
-    toSet: function toSet() {
-      return new Set(this);
-    }
-  }); // export default class SVGArray extends BaseArray {
-  //   constructor (...args) {
-  //     super()
-  //     this.init(...args)
-  //   }
-  //
-  //   init (array, fallback = []) {
-  //     //this.splice(0, this.length)
-  //     this.length = 0
-  //     this.push(...this.parse(array || fallback))
-  //   }
-  //
-  //   toArray () {
-  //     return [].concat(this)
-  //   }
-  //
-  //   toString () {
-  //     return this.join(' ')
-  //   }
-  //
-  //   valueOf () {
-  //     return this.toArray()
-  //   }
-  //
-  //   // Parse whitespace separated string
-  //   parse (array) {
-  //     array = array.valueOf()
-  //
-  //     // if already is an array, no need to parse it
-  //     if (Array.isArray(array)) return array
-  //
-  //     return array.trim().split(delimiter).map(parseFloat)
-  //   }
-  //
-  //   clone () {
-  //     return new this.constructor(this)
-  //   }
-  //
-  //   toSet () {
-  //     return new Set(this)
-  //   }
-  // }
-
-  var SVGNumber =
-  /*#__PURE__*/
-  function () {
-    // Initialize
-    function SVGNumber() {
-      _classCallCheck(this, SVGNumber);
-
-      this.init.apply(this, arguments);
-    }
-
-    _createClass(SVGNumber, [{
-      key: "init",
-      value: function init(value, unit) {
-        unit = Array.isArray(value) ? value[1] : unit;
-        value = Array.isArray(value) ? value[0] : value; // initialize defaults
-
-        this.value = 0;
-        this.unit = unit || ''; // parse value
-
-        if (typeof value === 'number') {
-          // ensure a valid numeric value
-          this.value = isNaN(value) ? 0 : !isFinite(value) ? value < 0 ? -3.4e+38 : +3.4e+38 : value;
-        } else if (typeof value === 'string') {
-          unit = value.match(numberAndUnit);
-
-          if (unit) {
-            // make value numeric
-            this.value = parseFloat(unit[1]); // normalize
-
-            if (unit[5] === '%') {
-              this.value /= 100;
-            } else if (unit[5] === 's') {
-              this.value *= 1000;
-            } // store unit
-
-
-            this.unit = unit[5];
-          }
-        } else {
-          if (value instanceof SVGNumber) {
-            this.value = value.valueOf();
-            this.unit = value.unit;
-          }
-        }
-      }
-    }, {
-      key: "toString",
-      value: function toString() {
-        return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6 : this.unit === 's' ? this.value / 1e3 : this.value) + this.unit;
-      }
-    }, {
-      key: "toJSON",
-      value: function toJSON() {
-        return this.toString();
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.value, this.unit];
-      }
-    }, {
-      key: "valueOf",
-      value: function valueOf() {
-        return this.value;
-      } // Add number
-
-    }, {
-      key: "plus",
-      value: function plus(number) {
-        number = new SVGNumber(number);
-        return new SVGNumber(this + number, this.unit || number.unit);
-      } // Subtract number
-
-    }, {
-      key: "minus",
-      value: function minus(number) {
-        number = new SVGNumber(number);
-        return new SVGNumber(this - number, this.unit || number.unit);
-      } // Multiply number
-
-    }, {
-      key: "times",
-      value: function times(number) {
-        number = new SVGNumber(number);
-        return new SVGNumber(this * number, this.unit || number.unit);
-      } // Divide number
-
-    }, {
-      key: "divide",
-      value: function divide(number) {
-        number = new SVGNumber(number);
-        return new SVGNumber(this / number, this.unit || number.unit);
-      }
-    }]);
-
-    return SVGNumber;
-  }();
-
   // Set svg element attribute
 
   function attr(attr, val, ns) {
@@ -1331,7 +1476,7 @@ var SVG = (function () {
     }
 
     return this;
-  } // registerMethods('Element', {attr})
+  }
 
   var Dom =
   /*#__PURE__*/
@@ -1534,7 +1679,7 @@ var SVG = (function () {
     }, {
       key: "replace",
       value: function replace(element) {
-        // FIXME: after might not be available here
+        // FIXME: after() might not be available here
         this.after(element).remove();
         return element;
       } // Return id on string conversion
@@ -1737,21 +1882,7 @@ var SVG = (function () {
     }]);
 
     return Element;
-  }(Dom); // registerMethods('Element', {
-
-  var Shape =
-  /*#__PURE__*/
-  function (_Element) {
-    _inherits(Shape, _Element);
-
-    function Shape() {
-      _classCallCheck(this, Shape);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Shape).apply(this, arguments));
-    }
-
-    return Shape;
-  }(Element);
+  }(Dom);
 
   var Container =
   /*#__PURE__*/
@@ -1790,367 +1921,6 @@ var SVG = (function () {
     return Container;
   }(Element);
 
-  var HtmlNode =
-  /*#__PURE__*/
-  function (_Dom) {
-    _inherits(HtmlNode, _Dom);
-
-    function HtmlNode(node) {
-      _classCallCheck(this, HtmlNode);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(HtmlNode).call(this, node, HtmlNode));
-    }
-
-    return HtmlNode;
-  }(Dom);
-  register(HtmlNode);
-
-  var Defs =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Defs, _Container);
-
-    function Defs(node) {
-      _classCallCheck(this, Defs);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), Defs));
-    }
-
-    _createClass(Defs, [{
-      key: "flatten",
-      value: function flatten() {
-        return this;
-      }
-    }, {
-      key: "ungroup",
-      value: function ungroup() {
-        return this;
-      }
-    }]);
-
-    return Defs;
-  }(Container);
-  register(Defs);
-
-  var methods$1 = {};
-  function registerMethods(name, m) {
-    if (Array.isArray(name)) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _name = _step.value;
-          registerMethods(_name, m);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      return;
-    }
-
-    if (_typeof(name) === 'object') {
-      var _arr = Object.entries(name);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var _arr$_i = _slicedToArray(_arr[_i], 2),
-            _name2 = _arr$_i[0],
-            _m = _arr$_i[1];
-
-        registerMethods(_name2, _m);
-      }
-
-      return;
-    }
-
-    methods$1[name] = Object.assign(methods$1[name] || {}, m);
-  }
-  function getMethodsFor(name) {
-    return methods$1[name] || {};
-  } // FIXME: save memory?
-
-  var Doc$1 =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Doc, _Container);
-
-    function Doc(node) {
-      var _this;
-
-      _classCallCheck(this, Doc);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), Doc));
-
-      _this.namespace();
-
-      return _this;
-    }
-
-    _createClass(Doc, [{
-      key: "isRoot",
-      value: function isRoot() {
-        return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document';
-      } // Check if this is a root svg
-      // If not, call docs from this element
-
-    }, {
-      key: "doc",
-      value: function doc() {
-        if (this.isRoot()) return this;
-        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this); // return doc.call(this)
-      } // Add namespaces
-
-    }, {
-      key: "namespace",
-      value: function namespace() {
-        if (!this.isRoot()) return this.doc().namespace();
-        return this.attr({
-          xmlns: ns,
-          version: '1.1'
-        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
-      } // Creates and returns defs element
-
-    }, {
-      key: "defs",
-      value: function defs() {
-        if (!this.isRoot()) return this.doc().defs();
-        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
-      } // custom parent method
-
-    }, {
-      key: "parent",
-      value: function parent(type) {
-        if (this.isRoot()) {
-          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
-        }
-
-        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type); // return parent.call(this, type)
-      } // Removes the doc from the DOM
-      // remove() {
-      //   if (!this.isRoot()) {
-      //     return super.remove()
-      //   }
-      //
-      //   if (this.parent()) {
-      //     this.parent().remove(this)
-      //   }
-      //
-      //   return this
-      // }
-
-    }, {
-      key: "clear",
-      value: function clear() {
-        // remove children
-        while (this.node.hasChildNodes()) {
-          this.node.removeChild(this.node.lastChild);
-        }
-
-        return this;
-      }
-    }]);
-
-    return Doc;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create nested svg document
-      nested: function nested() {
-        return this.put(new Doc$1());
-      }
-    }
-  });
-  register(Doc$1, 'Doc', true);
-
-  var G =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(G, _Container);
-
-    function G(node) {
-      _classCallCheck(this, G);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(G).call(this, nodeOrNew('g', node), G));
-    }
-
-    return G;
-  }(Container);
-  registerMethods({
-    Element: {
-      // Create a group element
-      group: function group() {
-        return this.put(new G());
-      }
-    }
-  });
-  register(G);
-
-  var Queue =
-  /*#__PURE__*/
-  function () {
-    function Queue() {
-      _classCallCheck(this, Queue);
-
-      this._first = null;
-      this._last = null;
-    }
-
-    _createClass(Queue, [{
-      key: "push",
-      value: function push(value) {
-        // An item stores an id and the provided value
-        var item = value.next ? value : {
-          value: value,
-          next: null,
-          prev: null // Deal with the queue being empty or populated
-
-        };
-
-        if (this._last) {
-          item.prev = this._last;
-          this._last.next = item;
-          this._last = item;
-        } else {
-          this._last = item;
-          this._first = item;
-        } // Update the length and return the current item
-
-
-        return item;
-      }
-    }, {
-      key: "shift",
-      value: function shift() {
-        // Check if we have a value
-        var remove = this._first;
-        if (!remove) return null; // If we do, remove it and relink things
-
-        this._first = remove.next;
-        if (this._first) this._first.prev = null;
-        this._last = this._first ? this._last : null;
-        return remove.value;
-      } // Shows us the first item in the list
-
-    }, {
-      key: "first",
-      value: function first() {
-        return this._first && this._first.value;
-      } // Shows us the last item in the list
-
-    }, {
-      key: "last",
-      value: function last() {
-        return this._last && this._last.value;
-      } // Removes the item that was returned from the push
-
-    }, {
-      key: "remove",
-      value: function remove(item) {
-        // Relink the previous item
-        if (item.prev) item.prev.next = item.next;
-        if (item.next) item.next.prev = item.prev;
-        if (item === this._last) this._last = item.prev;
-        if (item === this._first) this._first = item.next; // Invalidate item
-
-        item.prev = null;
-        item.next = null;
-      }
-    }]);
-
-    return Queue;
-  }();
-
-  var Animator = {
-    nextDraw: null,
-    frames: new Queue(),
-    timeouts: new Queue(),
-    timer: window.performance || window.Date,
-    transforms: [],
-    frame: function frame(fn) {
-      // Store the node
-      var node = Animator.frames.push({
-        run: fn
-      }); // Request an animation frame if we don't have one
-
-      if (Animator.nextDraw === null) {
-        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
-      } // Return the node so we can remove it easily
-
-
-      return node;
-    },
-    transform_frame: function transform_frame(fn, id) {
-      Animator.transforms[id] = fn;
-    },
-    timeout: function timeout(fn, delay) {
-      delay = delay || 0; // Work out when the event should fire
-
-      var time = Animator.timer.now() + delay; // Add the timeout to the end of the queue
-
-      var node = Animator.timeouts.push({
-        run: fn,
-        time: time
-      }); // Request another animation frame if we need one
-
-      if (Animator.nextDraw === null) {
-        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
-      }
-
-      return node;
-    },
-    cancelFrame: function cancelFrame(node) {
-      Animator.frames.remove(node);
-    },
-    clearTimeout: function clearTimeout(node) {
-      Animator.timeouts.remove(node);
-    },
-    _draw: function _draw(now) {
-      // Run all the timeouts we can run, if they are not ready yet, add them
-      // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-      var nextTimeout = null;
-      var lastTimeout = Animator.timeouts.last();
-
-      while (nextTimeout = Animator.timeouts.shift()) {
-        // Run the timeout if its time, or push it to the end
-        if (now >= nextTimeout.time) {
-          nextTimeout.run();
-        } else {
-          Animator.timeouts.push(nextTimeout);
-        } // If we hit the last item, we should stop shifting out more items
-
-
-        if (nextTimeout === lastTimeout) break;
-      } // Run all of the animation frames
-
-
-      var nextFrame = null;
-      var lastFrame = Animator.frames.last();
-
-      while (nextFrame !== lastFrame && (nextFrame = Animator.frames.shift())) {
-        nextFrame.run();
-      }
-
-      Animator.transforms.forEach(function (el) {
-        el();
-      }); // If we have remaining timeouts or frames, draw until we don't anymore
-
-      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? window.requestAnimationFrame(Animator._draw) : null;
-    }
-  };
-
   var Bare =
   /*#__PURE__*/
   function (_Container) {
@@ -2186,332 +1956,113 @@ var SVG = (function () {
     }
   });
 
-  // FIXME: import this to runner
-
-  function rx(rx) {
-    return this.attr('rx', rx);
-  } // Radius y value
-
-  function ry(ry) {
-    return this.attr('ry', ry);
-  } // Move over x-axis
-
-  function x(x) {
-    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
-  } // Move over y-axis
-
-  function y(y) {
-    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
-  } // Move by center over x-axis
-
-  function cx(x) {
-    return x == null ? this.attr('cx') : this.attr('cx', x);
-  } // Move by center over y-axis
-
-  function cy(y) {
-    return y == null ? this.attr('cy') : this.attr('cy', y);
-  } // Set width of element
-
-  function width(width) {
-    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
-  } // Set height of element
-
-  function height(height) {
-    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
-  } // Custom size function
-
-  function size(width, height) {
-    var p = proportionalSize(this, width, height);
-    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
-  }
-
-  var circled = /*#__PURE__*/Object.freeze({
-    rx: rx,
-    ry: ry,
-    x: x,
-    y: y,
-    cx: cx,
-    cy: cy,
-    width: width,
-    height: height,
-    size: size
-  });
-
-  var Circle =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Circle, _Shape);
-
-    function Circle(node) {
-      _classCallCheck(this, Circle);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), Circle));
-    }
-
-    _createClass(Circle, [{
-      key: "radius",
-      value: function radius(r) {
-        return this.attr('r', r);
-      } // Radius x value
-
-    }, {
-      key: "rx",
-      value: function rx$$1(_rx) {
-        return this.attr('r', _rx);
-      } // Alias radius x value
-
-    }, {
-      key: "ry",
-      value: function ry$$1(_ry) {
-        return this.rx(_ry);
-      }
-    }]);
-
-    return Circle;
-  }(Shape);
-  extend(Circle, {
-    x: x,
-    y: y,
-    cx: cx,
-    cy: cy,
-    width: width,
-    height: height,
-    size: size
-  });
-  registerMethods({
-    Element: {
-      // Create circle element
-      circle: function circle(size$$1) {
-        return this.put(new Circle()).radius(new SVGNumber(size$$1).divide(2)).move(0, 0);
-      }
-    }
-  });
-  register(Circle);
-
-  // SVG.get = function (id) {
-  //   var node = document.getElementById(idFromReference(id) || id)
-  //   return SVG.adopt(node)
-  // }
-  //
-  // // Select elements by query string
-  // SVG.select = function (query, parent) {
-  //   return SVG.utils.map((parent || document).querySelectorAll(query), function (node) {
-  //     return SVG.adopt(node)
-  //   })
-  // }
-  //
-  // SVG.$$ = function (query, parent) {
-  //   return SVG.utils.map((parent || document).querySelectorAll(query), function (node) {
-  //     return SVG.adopt(node)
-  //   })
-  // }
-  //
-  // SVG.$ = function (query, parent) {
-  //   return SVG.adopt((parent || document).querySelector(query))
-  // }
-
-  function baseFind(query, parent) {
-    return map((parent || document).querySelectorAll(query), function (node) {
-      return adopt(node);
-    });
-  } // Scoped find method
-
-  function find(query) {
-    return baseFind(query, this.node);
-  }
-  registerMethods('Dom', {
-    find: find
-  });
-
-  var ClipPath =
+  var Defs =
   /*#__PURE__*/
   function (_Container) {
-    _inherits(ClipPath, _Container);
+    _inherits(Defs, _Container);
 
-    function ClipPath(node) {
-      _classCallCheck(this, ClipPath);
+    function Defs(node) {
+      _classCallCheck(this, Defs);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(ClipPath).call(this, nodeOrNew('clipPath', node), ClipPath));
-    } // Unclip all clipped elements and remove itself
+      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), Defs));
+    }
 
-
-    _createClass(ClipPath, [{
-      key: "remove",
-      value: function remove() {
-        // unclip all targets
-        this.targets().forEach(function (el) {
-          el.unclip();
-        }); // remove clipPath from parent
-
-        return _get(_getPrototypeOf(ClipPath.prototype), "remove", this).call(this); // return remove.call(this)
+    _createClass(Defs, [{
+      key: "flatten",
+      value: function flatten() {
+        return this;
       }
     }, {
-      key: "targets",
-      value: function targets() {
-        return baseFind('svg [clip-path*="' + this.id() + '"]');
-      }
-    }]);
-
-    return ClipPath;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create clipping element
-      clip: function clip() {
-        return this.defs().put(new ClipPath());
-      }
-    },
-    Element: {
-      // Distribute clipPath to svg element
-      clipWith: function clipWith(element) {
-        // use given clip or create a new one
-        var clipper = element instanceof ClipPath ? element : this.parent().clip().add(element); // apply mask
-
-        return this.attr('clip-path', 'url("#' + clipper.id() + '")');
-      },
-      // Unclip element
-      unclip: function unclip() {
-        return this.attr('clip-path', null);
-      },
-      clipper: function clipper() {
-        return this.reference('clip-path');
-      }
-    }
-  });
-  register(ClipPath);
-
-  var A =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(A, _Container);
-
-    function A(node) {
-      _classCallCheck(this, A);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(A).call(this, nodeOrNew('a', node), A));
-    } // Link url
-
-
-    _createClass(A, [{
-      key: "to",
-      value: function to(url) {
-        return this.attr('href', url, xlink);
-      } // Link target attribute
-
-    }, {
-      key: "target",
-      value: function target(_target) {
-        return this.attr('target', _target);
-      }
-    }]);
-
-    return A;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create a hyperlink element
-      link: function link(url) {
-        return this.put(new A()).to(url);
-      }
-    },
-    Element: {
-      // Create a hyperlink element
-      linkTo: function linkTo(url) {
-        var link = new A();
-
-        if (typeof url === 'function') {
-          url.call(link, link);
-        } else {
-          link.to(url);
-        }
-
-        return this.parent().put(link).put(this);
-      }
-    }
-  });
-  register(A);
-
-  var Ellipse =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Ellipse, _Shape);
-
-    function Ellipse(node) {
-      _classCallCheck(this, Ellipse);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), Ellipse));
-    }
-
-    return Ellipse;
-  }(Shape);
-  extend(Ellipse, circled);
-  registerMethods('Container', {
-    // Create an ellipse
-    ellipse: function ellipse(width$$1, height$$1) {
-      return this.put(new Ellipse()).size(width$$1, height$$1).move(0, 0);
-    }
-  });
-  register(Ellipse);
-
-  var Stop =
-  /*#__PURE__*/
-  function (_Element) {
-    _inherits(Stop, _Element);
-
-    function Stop(node) {
-      _classCallCheck(this, Stop);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), Stop));
-    } // add color stops
-
-
-    _createClass(Stop, [{
-      key: "update",
-      value: function update(o) {
-        if (typeof o === 'number' || o instanceof SVGNumber) {
-          o = {
-            offset: arguments[0],
-            color: arguments[1],
-            opacity: arguments[2]
-          };
-        } // set attributes
-
-
-        if (o.opacity != null) this.attr('stop-opacity', o.opacity);
-        if (o.color != null) this.attr('stop-color', o.color);
-        if (o.offset != null) this.attr('offset', new SVGNumber(o.offset));
+      key: "ungroup",
+      value: function ungroup() {
         return this;
       }
     }]);
 
-    return Stop;
-  }(Element);
-  register(Stop);
+    return Defs;
+  }(Container);
+  register(Defs);
 
-  // FIXME: add to runner
-  function from(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      fx: new SVGNumber(x),
-      fy: new SVGNumber(y)
-    }) : this.attr({
-      x1: new SVGNumber(x),
-      y1: new SVGNumber(y)
-    });
-  }
-  function to(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      cx: new SVGNumber(x),
-      cy: new SVGNumber(y)
-    }) : this.attr({
-      x2: new SVGNumber(x),
-      y2: new SVGNumber(y)
-    });
-  }
+  var Doc$1 =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Doc, _Container);
 
-  var gradiented = /*#__PURE__*/Object.freeze({
-    from: from,
-    to: to
+    function Doc(node) {
+      var _this;
+
+      _classCallCheck(this, Doc);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), Doc));
+
+      _this.namespace();
+
+      return _this;
+    }
+
+    _createClass(Doc, [{
+      key: "isRoot",
+      value: function isRoot() {
+        return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document';
+      } // Check if this is a root svg
+      // If not, call docs from this element
+
+    }, {
+      key: "doc",
+      value: function doc() {
+        if (this.isRoot()) return this;
+        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this);
+      } // Add namespaces
+
+    }, {
+      key: "namespace",
+      value: function namespace() {
+        if (!this.isRoot()) return this.doc().namespace();
+        return this.attr({
+          xmlns: ns,
+          version: '1.1'
+        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
+      } // Creates and returns defs element
+
+    }, {
+      key: "defs",
+      value: function defs() {
+        if (!this.isRoot()) return this.doc().defs();
+        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
+      } // custom parent method
+
+    }, {
+      key: "parent",
+      value: function parent(type) {
+        if (this.isRoot()) {
+          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
+        }
+
+        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type);
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        // remove children
+        while (this.node.hasChildNodes()) {
+          this.node.removeChild(this.node.lastChild);
+        }
+
+        return this;
+      }
+    }]);
+
+    return Doc;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create nested svg document
+      nested: function nested() {
+        return this.put(new Doc$1());
+      }
+    }
   });
+  register(Doc$1, 'Doc', true);
 
   function parser() {
     // Reuse cached element if possible
@@ -2725,6 +2276,504 @@ var SVG = (function () {
     }
   });
 
+  var Shape =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Shape, _Element);
+
+    function Shape() {
+      _classCallCheck(this, Shape);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Shape).apply(this, arguments));
+    }
+
+    return Shape;
+  }(Element);
+
+  // FIXME: import this to runner
+
+  function rx(rx) {
+    return this.attr('rx', rx);
+  } // Radius y value
+
+  function ry(ry) {
+    return this.attr('ry', ry);
+  } // Move over x-axis
+
+  function x(x) {
+    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
+  } // Move over y-axis
+
+  function y(y) {
+    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
+  } // Move by center over x-axis
+
+  function cx(x) {
+    return x == null ? this.attr('cx') : this.attr('cx', x);
+  } // Move by center over y-axis
+
+  function cy(y) {
+    return y == null ? this.attr('cy') : this.attr('cy', y);
+  } // Set width of element
+
+  function width(width) {
+    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
+  } // Set height of element
+
+  function height(height) {
+    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
+  } // Custom size function
+
+  function size(width, height) {
+    var p = proportionalSize(this, width, height);
+    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
+  }
+
+  var circled = /*#__PURE__*/Object.freeze({
+    rx: rx,
+    ry: ry,
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height,
+    size: size
+  });
+
+  var Circle =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Circle, _Shape);
+
+    function Circle(node) {
+      _classCallCheck(this, Circle);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), Circle));
+    }
+
+    _createClass(Circle, [{
+      key: "radius",
+      value: function radius(r) {
+        return this.attr('r', r);
+      } // Radius x value
+
+    }, {
+      key: "rx",
+      value: function rx$$1(_rx) {
+        return this.attr('r', _rx);
+      } // Alias radius x value
+
+    }, {
+      key: "ry",
+      value: function ry$$1(_ry) {
+        return this.rx(_ry);
+      }
+    }]);
+
+    return Circle;
+  }(Shape);
+  extend(Circle, {
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height,
+    size: size
+  });
+  registerMethods({
+    Element: {
+      // Create circle element
+      circle: function circle(size$$1) {
+        return this.put(new Circle()).radius(new SVGNumber(size$$1).divide(2)).move(0, 0);
+      }
+    }
+  });
+  register(Circle);
+
+  function baseFind(query, parent) {
+    return map((parent || document).querySelectorAll(query), function (node) {
+      return adopt(node);
+    });
+  } // Scoped find method
+
+  function find(query) {
+    return baseFind(query, this.node);
+  }
+  registerMethods('Dom', {
+    find: find
+  });
+
+  var ClipPath =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(ClipPath, _Container);
+
+    function ClipPath(node) {
+      _classCallCheck(this, ClipPath);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(ClipPath).call(this, nodeOrNew('clipPath', node), ClipPath));
+    } // Unclip all clipped elements and remove itself
+
+
+    _createClass(ClipPath, [{
+      key: "remove",
+      value: function remove() {
+        // unclip all targets
+        this.targets().forEach(function (el) {
+          el.unclip();
+        }); // remove clipPath from parent
+
+        return _get(_getPrototypeOf(ClipPath.prototype), "remove", this).call(this);
+      }
+    }, {
+      key: "targets",
+      value: function targets() {
+        return baseFind('svg [clip-path*="' + this.id() + '"]');
+      }
+    }]);
+
+    return ClipPath;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create clipping element
+      clip: function clip() {
+        return this.defs().put(new ClipPath());
+      }
+    },
+    Element: {
+      // Distribute clipPath to svg element
+      clipWith: function clipWith(element) {
+        // use given clip or create a new one
+        var clipper = element instanceof ClipPath ? element : this.parent().clip().add(element); // apply mask
+
+        return this.attr('clip-path', 'url("#' + clipper.id() + '")');
+      },
+      // Unclip element
+      unclip: function unclip() {
+        return this.attr('clip-path', null);
+      },
+      clipper: function clipper() {
+        return this.reference('clip-path');
+      }
+    }
+  });
+  register(ClipPath);
+
+  /***
+  Base Class
+  ==========
+  The base stepper class that will be
+  ***/
+
+  function makeSetterGetter(k, f) {
+    return function (v) {
+      if (v == null) return this[v];
+      this[k] = v;
+      if (f) f.call(this);
+      return this;
+    };
+  }
+
+  var easing = {
+    '-': function _(pos) {
+      return pos;
+    },
+    '<>': function _(pos) {
+      return -Math.cos(pos * Math.PI) / 2 + 0.5;
+    },
+    '>': function _(pos) {
+      return Math.sin(pos * Math.PI / 2);
+    },
+    '<': function _(pos) {
+      return -Math.cos(pos * Math.PI / 2) + 1;
+    },
+    bezier: function bezier(t0, x0, t1, x1) {
+      return function (t) {// TODO: FINISH
+      };
+    }
+  };
+  var Stepper =
+  /*#__PURE__*/
+  function () {
+    function Stepper() {
+      _classCallCheck(this, Stepper);
+    }
+
+    _createClass(Stepper, [{
+      key: "done",
+      value: function done() {
+        return false;
+      }
+    }]);
+
+    return Stepper;
+  }();
+  /***
+  Easing Functions
+  ================
+  ***/
+
+  var Ease =
+  /*#__PURE__*/
+  function (_Stepper) {
+    _inherits(Ease, _Stepper);
+
+    function Ease(fn) {
+      var _this;
+
+      _classCallCheck(this, Ease);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Ease).call(this));
+      _this.ease = easing[fn || timeline.ease] || fn;
+      return _this;
+    }
+
+    _createClass(Ease, [{
+      key: "step",
+      value: function step(from, to, pos) {
+        if (typeof from !== 'number') {
+          return pos < 1 ? from : to;
+        }
+
+        return from + (to - from) * this.ease(pos);
+      }
+    }]);
+
+    return Ease;
+  }(Stepper);
+  /***
+  Controller Types
+  ================
+  ***/
+
+  var Controller =
+  /*#__PURE__*/
+  function (_Stepper2) {
+    _inherits(Controller, _Stepper2);
+
+    function Controller(fn) {
+      var _this2;
+
+      _classCallCheck(this, Controller);
+
+      _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Controller).call(this));
+      _this2.stepper = fn;
+      return _this2;
+    }
+
+    _createClass(Controller, [{
+      key: "step",
+      value: function step(current, target, dt, c) {
+        return this.stepper(current, target, dt, c);
+      }
+    }, {
+      key: "done",
+      value: function done(c) {
+        return c.done;
+      }
+    }]);
+
+    return Controller;
+  }(Stepper);
+
+  function recalculate() {
+    // Apply the default parameters
+    var duration = (this._duration || 500) / 1000;
+    var overshoot = this._overshoot || 0; // Calculate the PID natural response
+
+    var eps = 1e-10;
+    var pi = Math.PI;
+    var os = Math.log(overshoot / 100 + eps);
+    var zeta = -os / Math.sqrt(pi * pi + os * os);
+    var wn = 3.9 / (zeta * duration); // Calculate the Spring values
+
+    this.d = 2 * zeta * wn;
+    this.k = wn * wn;
+  }
+
+  var Spring =
+  /*#__PURE__*/
+  function (_Controller) {
+    _inherits(Spring, _Controller);
+
+    function Spring(duration, overshoot) {
+      var _this3;
+
+      _classCallCheck(this, Spring);
+
+      _this3 = _possibleConstructorReturn(this, _getPrototypeOf(Spring).call(this));
+
+      _this3.duration(duration || 500).overshoot(overshoot || 0);
+
+      return _this3;
+    }
+
+    _createClass(Spring, [{
+      key: "step",
+      value: function step(current, target, dt, c) {
+        if (typeof current === 'string') return current;
+        c.done = dt === Infinity;
+        if (dt === Infinity) return target;
+        if (dt === 0) return current;
+        if (dt > 100) dt = 16;
+        dt /= 1000; // Get the previous velocity
+
+        var velocity = c.velocity || 0; // Apply the control to get the new position and store it
+
+        var acceleration = -this.d * velocity - this.k * (current - target);
+        var newPosition = current + velocity * dt + acceleration * dt * dt / 2; // Store the velocity
+
+        c.velocity = velocity + acceleration * dt; // Figure out if we have converged, and if so, pass the value
+
+        c.done = Math.abs(target - newPosition) + Math.abs(velocity) < 0.002;
+        return c.done ? target : newPosition;
+      }
+    }]);
+
+    return Spring;
+  }(Controller);
+  extend(Spring, {
+    duration: makeSetterGetter('_duration', recalculate),
+    overshoot: makeSetterGetter('_overshoot', recalculate)
+  });
+  var PID =
+  /*#__PURE__*/
+  function (_Controller2) {
+    _inherits(PID, _Controller2);
+
+    function PID(p, i, d, windup) {
+      var _this4;
+
+      _classCallCheck(this, PID);
+
+      _this4 = _possibleConstructorReturn(this, _getPrototypeOf(PID).call(this));
+      p = p == null ? 0.1 : p;
+      i = i == null ? 0.01 : i;
+      d = d == null ? 0 : d;
+      windup = windup == null ? 1000 : windup;
+
+      _this4.p(p).i(i).d(d).windup(windup);
+
+      return _this4;
+    }
+
+    _createClass(PID, [{
+      key: "step",
+      value: function step(current, target, dt, c) {
+        if (typeof current === 'string') return current;
+        c.done = dt === Infinity;
+        if (dt === Infinity) return target;
+        if (dt === 0) return current;
+        var p = target - current;
+        var i = (c.integral || 0) + p * dt;
+        var d = (p - (c.error || 0)) / dt;
+        var windup = this.windup; // antiwindup
+
+        if (windup !== false) {
+          i = Math.max(-windup, Math.min(i, windup));
+        }
+
+        c.error = p;
+        c.integral = i;
+        c.done = Math.abs(p) < 0.001;
+        return c.done ? target : current + (this.P * p + this.I * i + this.D * d);
+      }
+    }]);
+
+    return PID;
+  }(Controller);
+  extend(PID, {
+    windup: makeSetterGetter('windup'),
+    p: makeSetterGetter('P'),
+    i: makeSetterGetter('I'),
+    d: makeSetterGetter('D')
+  });
+
+  var Ellipse =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Ellipse, _Shape);
+
+    function Ellipse(node) {
+      _classCallCheck(this, Ellipse);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), Ellipse));
+    }
+
+    return Ellipse;
+  }(Shape);
+  extend(Ellipse, circled);
+  registerMethods('Container', {
+    // Create an ellipse
+    ellipse: function ellipse(width$$1, height$$1) {
+      return this.put(new Ellipse()).size(width$$1, height$$1).move(0, 0);
+    }
+  });
+  register(Ellipse);
+
+  var Stop =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Stop, _Element);
+
+    function Stop(node) {
+      _classCallCheck(this, Stop);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), Stop));
+    } // add color stops
+
+
+    _createClass(Stop, [{
+      key: "update",
+      value: function update(o) {
+        if (typeof o === 'number' || o instanceof SVGNumber) {
+          o = {
+            offset: arguments[0],
+            color: arguments[1],
+            opacity: arguments[2]
+          };
+        } // set attributes
+
+
+        if (o.opacity != null) this.attr('stop-opacity', o.opacity);
+        if (o.color != null) this.attr('stop-color', o.color);
+        if (o.offset != null) this.attr('offset', new SVGNumber(o.offset));
+        return this;
+      }
+    }]);
+
+    return Stop;
+  }(Element);
+  register(Stop);
+
+  // FIXME: add to runner
+  function from(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      fx: new SVGNumber(x),
+      fy: new SVGNumber(y)
+    }) : this.attr({
+      x1: new SVGNumber(x),
+      y1: new SVGNumber(y)
+    });
+  }
+  function to(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      cx: new SVGNumber(x),
+      cy: new SVGNumber(y)
+    }) : this.attr({
+      x2: new SVGNumber(x),
+      y2: new SVGNumber(y)
+    });
+  }
+
+  var gradiented = /*#__PURE__*/Object.freeze({
+    from: from,
+    to: to
+  });
+
   var Gradient =
   /*#__PURE__*/
   function (_Container) {
@@ -2772,7 +2821,7 @@ var SVG = (function () {
       key: "attr",
       value: function attr(a, b, c) {
         if (a === 'transform') a = 'gradientTransform';
-        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c); // return attr.call(this, a, b, c)
+        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c);
       }
     }, {
       key: "targets",
@@ -2804,6 +2853,95 @@ var SVG = (function () {
     }
   });
   register(Gradient);
+
+  var G =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(G, _Container);
+
+    function G(node) {
+      _classCallCheck(this, G);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(G).call(this, nodeOrNew('g', node), G));
+    }
+
+    return G;
+  }(Container);
+  registerMethods({
+    Element: {
+      // Create a group element
+      group: function group() {
+        return this.put(new G());
+      }
+    }
+  });
+  register(G);
+
+  var HtmlNode =
+  /*#__PURE__*/
+  function (_Dom) {
+    _inherits(HtmlNode, _Dom);
+
+    function HtmlNode(node) {
+      _classCallCheck(this, HtmlNode);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(HtmlNode).call(this, node, HtmlNode));
+    }
+
+    return HtmlNode;
+  }(Dom);
+  register(HtmlNode);
+
+  var A =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(A, _Container);
+
+    function A(node) {
+      _classCallCheck(this, A);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(A).call(this, nodeOrNew('a', node), A));
+    } // Link url
+
+
+    _createClass(A, [{
+      key: "to",
+      value: function to(url) {
+        return this.attr('href', url, xlink);
+      } // Link target attribute
+
+    }, {
+      key: "target",
+      value: function target(_target) {
+        return this.attr('target', _target);
+      }
+    }]);
+
+    return A;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create a hyperlink element
+      link: function link(url) {
+        return this.put(new A()).to(url);
+      }
+    },
+    Element: {
+      // Create a hyperlink element
+      linkTo: function linkTo(url) {
+        var link = new A();
+
+        if (typeof url === 'function') {
+          url.call(link, link);
+        } else {
+          link.to(url);
+        }
+
+        return this.parent().put(link).put(this);
+      }
+    }
+  });
+  register(A);
 
   var Pattern =
   /*#__PURE__*/
@@ -2847,7 +2985,7 @@ var SVG = (function () {
       key: "attr",
       value: function attr(a, b, c) {
         if (a === 'transform') a = 'patternTransform';
-        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c); // return attr.call(this, a, b, c)
+        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c);
       }
     }, {
       key: "targets",
@@ -3056,129 +3194,7 @@ var SVG = (function () {
         height: maxY - minY
       };
     }
-  }); // export default class PointArray extends SVGArray {
-  //   constructor (array, fallback = [[0, 0]]) {
-  //     super(array, fallback)
-  //   }
-  //
-  //   // Convert array to string
-  //   toString () {
-  //     // convert to a poly point string
-  //     for (var i = 0, il = this.length, array = []; i < il; i++) {
-  //       array.push(this[i].join(','))
-  //     }
-  //
-  //     return array.join(' ')
-  //   }
-  //
-  //   // toArray () {
-  //   //   return this.reduce(function (prev, curr) {
-  //   //     return [].concat.call(prev, curr)
-  //   //   }, [])
-  //   // }
-  //
-  //   // Convert array to line object
-  //   toLine () {
-  //     return {
-  //       x1: this[0][0],
-  //       y1: this[0][1],
-  //       x2: this[1][0],
-  //       y2: this[1][1]
-  //     }
-  //   }
-  //
-  //   // Get morphed array at given position
-  //   at (pos) {
-  //     // make sure a destination is defined
-  //     if (!this.destination) return this
-  //
-  //     // generate morphed point string
-  //     for (var i = 0, il = this.length, array = []; i < il; i++) {
-  //       array.push([
-  //         this[i][0] + (this.destination[i][0] - this[i][0]) * pos,
-  //         this[i][1] + (this.destination[i][1] - this[i][1]) * pos
-  //       ])
-  //     }
-  //
-  //     return new PointArray(array)
-  //   }
-  //
-  //   // Parse point string and flat array
-  //   parse (array) {
-  //     var points = []
-  //
-  //     array = array.valueOf()
-  //
-  //     // if it is an array
-  //     if (Array.isArray(array)) {
-  //       // and it is not flat, there is no need to parse it
-  //       if (Array.isArray(array[0])) {
-  //         return array
-  //       }
-  //     } else { // Else, it is considered as a string
-  //       // parse points
-  //       array = array.trim().split(delimiter).map(parseFloat)
-  //     }
-  //
-  //     // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
-  //     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
-  //     if (array.length % 2 !== 0) array.pop()
-  //
-  //     // wrap points in two-tuples and parse points as floats
-  //     for (var i = 0, len = array.length; i < len; i = i + 2) {
-  //       points.push([ array[i], array[i + 1] ])
-  //     }
-  //
-  //     return points
-  //   }
-  //
-  //   // Move point string
-  //   move (x, y) {
-  //     var box = this.bbox()
-  //
-  //     // get relative offset
-  //     x -= box.x
-  //     y -= box.y
-  //
-  //     // move every point
-  //     if (!isNaN(x) && !isNaN(y)) {
-  //       for (var i = this.length - 1; i >= 0; i--) {
-  //         this[i] = [this[i][0] + x, this[i][1] + y]
-  //       }
-  //     }
-  //
-  //     return this
-  //   }
-  //
-  //   // Resize poly string
-  //   size (width, height) {
-  //     var i
-  //     var box = this.bbox()
-  //
-  //     // recalculate position of all points according to new size
-  //     for (i = this.length - 1; i >= 0; i--) {
-  //       if (box.width) this[i][0] = ((this[i][0] - box.x) * width) / box.width + box.x
-  //       if (box.height) this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
-  //     }
-  //
-  //     return this
-  //   }
-  //
-  //   // Get bounding box of points
-  //   bbox () {
-  //     var maxX = -Infinity
-  //     var maxY = -Infinity
-  //     var minX = Infinity
-  //     var minY = Infinity
-  //     this.forEach(function (el) {
-  //       maxX = Math.max(el[0], maxX)
-  //       maxY = Math.max(el[1], maxY)
-  //       minX = Math.min(el[0], minX)
-  //       minY = Math.min(el[1], minY)
-  //     })
-  //     return {x: minX, y: minY, width: maxX - minX, height: maxY - minY}
-  //   }
-  // }
+  });
 
   var MorphArray = PointArray; // Move by left top corner over x-axis
 
@@ -3382,7 +3398,7 @@ var SVG = (function () {
           el.unmask();
         }); // remove mask from parent
 
-        return _get(_getPrototypeOf(Mask.prototype), "remove", this).call(this); // return remove.call(this)
+        return _get(_getPrototypeOf(Mask.prototype), "remove", this).call(this);
       }
     }, {
       key: "targets",
@@ -3417,1120 +3433,6 @@ var SVG = (function () {
     }
   });
   register(Mask);
-
-  var PathArray = subClassArray('PathArray', SVGArray);
-  var pathHandlers = {
-    M: function M(c, p, p0) {
-      p.x = p0.x = c[0];
-      p.y = p0.y = c[1];
-      return ['M', p.x, p.y];
-    },
-    L: function L(c, p) {
-      p.x = c[0];
-      p.y = c[1];
-      return ['L', c[0], c[1]];
-    },
-    H: function H(c, p) {
-      p.x = c[0];
-      return ['H', c[0]];
-    },
-    V: function V(c, p) {
-      p.y = c[0];
-      return ['V', c[0]];
-    },
-    C: function C(c, p) {
-      p.x = c[4];
-      p.y = c[5];
-      return ['C', c[0], c[1], c[2], c[3], c[4], c[5]];
-    },
-    S: function S(c, p) {
-      p.x = c[2];
-      p.y = c[3];
-      return ['S', c[0], c[1], c[2], c[3]];
-    },
-    Q: function Q(c, p) {
-      p.x = c[2];
-      p.y = c[3];
-      return ['Q', c[0], c[1], c[2], c[3]];
-    },
-    T: function T(c, p) {
-      p.x = c[0];
-      p.y = c[1];
-      return ['T', c[0], c[1]];
-    },
-    Z: function Z(c, p, p0) {
-      p.x = p0.x;
-      p.y = p0.y;
-      return ['Z'];
-    },
-    A: function A(c, p) {
-      p.x = c[5];
-      p.y = c[6];
-      return ['A', c[0], c[1], c[2], c[3], c[4], c[5], c[6]];
-    }
-  };
-  var mlhvqtcsaz = 'mlhvqtcsaz'.split('');
-
-  for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
-    pathHandlers[mlhvqtcsaz[i]] = function (i) {
-      return function (c, p, p0) {
-        if (i === 'H') c[0] = c[0] + p.x;else if (i === 'V') c[0] = c[0] + p.y;else if (i === 'A') {
-          c[5] = c[5] + p.x;
-          c[6] = c[6] + p.y;
-        } else {
-          for (var j = 0, jl = c.length; j < jl; ++j) {
-            c[j] = c[j] + (j % 2 ? p.y : p.x);
-          }
-        }
-        return pathHandlers[i](c, p, p0);
-      };
-    }(mlhvqtcsaz[i].toUpperCase());
-  }
-
-  extend(PathArray, {
-    // Convert array to string
-    toString: function toString() {
-      return arrayToString(this);
-    },
-    // Move path string
-    move: function move(x, y) {
-      // get bounding box of current situation
-      var box = this.bbox(); // get relative offset
-
-      x -= box.x;
-      y -= box.y;
-
-      if (!isNaN(x) && !isNaN(y)) {
-        // move every point
-        for (var l, i = this.length - 1; i >= 0; i--) {
-          l = this[i][0];
-
-          if (l === 'M' || l === 'L' || l === 'T') {
-            this[i][1] += x;
-            this[i][2] += y;
-          } else if (l === 'H') {
-            this[i][1] += x;
-          } else if (l === 'V') {
-            this[i][1] += y;
-          } else if (l === 'C' || l === 'S' || l === 'Q') {
-            this[i][1] += x;
-            this[i][2] += y;
-            this[i][3] += x;
-            this[i][4] += y;
-
-            if (l === 'C') {
-              this[i][5] += x;
-              this[i][6] += y;
-            }
-          } else if (l === 'A') {
-            this[i][6] += x;
-            this[i][7] += y;
-          }
-        }
-      }
-
-      return this;
-    },
-    // Resize path string
-    size: function size(width, height) {
-      // get bounding box of current situation
-      var box = this.bbox();
-      var i, l; // recalculate position of all points according to new size
-
-      for (i = this.length - 1; i >= 0; i--) {
-        l = this[i][0];
-
-        if (l === 'M' || l === 'L' || l === 'T') {
-          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
-          this[i][2] = (this[i][2] - box.y) * height / box.height + box.y;
-        } else if (l === 'H') {
-          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
-        } else if (l === 'V') {
-          this[i][1] = (this[i][1] - box.y) * height / box.height + box.y;
-        } else if (l === 'C' || l === 'S' || l === 'Q') {
-          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
-          this[i][2] = (this[i][2] - box.y) * height / box.height + box.y;
-          this[i][3] = (this[i][3] - box.x) * width / box.width + box.x;
-          this[i][4] = (this[i][4] - box.y) * height / box.height + box.y;
-
-          if (l === 'C') {
-            this[i][5] = (this[i][5] - box.x) * width / box.width + box.x;
-            this[i][6] = (this[i][6] - box.y) * height / box.height + box.y;
-          }
-        } else if (l === 'A') {
-          // resize radii
-          this[i][1] = this[i][1] * width / box.width;
-          this[i][2] = this[i][2] * height / box.height; // move position values
-
-          this[i][6] = (this[i][6] - box.x) * width / box.width + box.x;
-          this[i][7] = (this[i][7] - box.y) * height / box.height + box.y;
-        }
-      }
-
-      return this;
-    },
-    // Test if the passed path array use the same path data commands as this path array
-    equalCommands: function equalCommands(pathArray) {
-      var i, il, equalCommands;
-      pathArray = new PathArray(pathArray);
-      equalCommands = this.length === pathArray.length;
-
-      for (i = 0, il = this.length; equalCommands && i < il; i++) {
-        equalCommands = this[i][0] === pathArray[i][0];
-      }
-
-      return equalCommands;
-    },
-    // Make path array morphable
-    morph: function morph(pathArray) {
-      pathArray = new PathArray(pathArray);
-
-      if (this.equalCommands(pathArray)) {
-        this.destination = pathArray;
-      } else {
-        this.destination = null;
-      }
-
-      return this;
-    },
-    // Get morphed path array at given position
-    at: function at(pos) {
-      // make sure a destination is defined
-      if (!this.destination) return this;
-      var sourceArray = this;
-      var destinationArray = this.destination.value;
-      var array = [];
-      var pathArray = new PathArray();
-      var i, il, j, jl; // Animate has specified in the SVG spec
-      // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
-
-      for (i = 0, il = sourceArray.length; i < il; i++) {
-        array[i] = [sourceArray[i][0]];
-
-        for (j = 1, jl = sourceArray[i].length; j < jl; j++) {
-          array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos;
-        } // For the two flags of the elliptical arc command, the SVG spec say:
-        // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
-        // Elliptical arc command as an array followed by corresponding indexes:
-        // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
-        //   0    1   2        3                 4             5      6  7
-
-
-        if (array[i][0] === 'A') {
-          array[i][4] = +(array[i][4] !== 0);
-          array[i][5] = +(array[i][5] !== 0);
-        }
-      } // Directly modify the value of a path array, this is done this way for performance
-
-
-      pathArray.value = array;
-      return pathArray;
-    },
-    // Absolutize and parse path to array
-    parse: function parse() {
-      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [['M', 0, 0]];
-      // if it's already a patharray, no need to parse it
-      if (array instanceof PathArray) return array; // prepare for parsing
-
-      var s;
-      var paramCnt = {
-        'M': 2,
-        'L': 2,
-        'H': 1,
-        'V': 1,
-        'C': 6,
-        'S': 4,
-        'Q': 4,
-        'T': 2,
-        'A': 7,
-        'Z': 0
-      };
-
-      if (typeof array === 'string') {
-        array = array.replace(numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
-        .replace(pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(hyphen, '$1 -') // add space before hyphen
-        .trim() // trim
-        .split(delimiter); // split into array
-      } else {
-        array = array.reduce(function (prev, curr) {
-          return [].concat.call(prev, curr);
-        }, []);
-      } // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
-
-
-      var result = [];
-      var p = new Point();
-      var p0 = new Point();
-      var index = 0;
-      var len = array.length;
-
-      do {
-        // Test if we have a path letter
-        if (isPathLetter.test(array[index])) {
-          s = array[index];
-          ++index; // If last letter was a move command and we got no new, it defaults to [L]ine
-        } else if (s === 'M') {
-          s = 'L';
-        } else if (s === 'm') {
-          s = 'l';
-        }
-
-        result.push(pathHandlers[s].call(null, array.slice(index, index = index + paramCnt[s.toUpperCase()]).map(parseFloat), p, p0));
-      } while (len > index);
-
-      return result;
-    },
-    // Get bounding box of path
-    bbox: function bbox() {
-      parser().path.setAttribute('d', this.toString());
-      return parser.nodes.path.getBBox();
-    }
-  }); // export default class PathArray extends SVGArray {
-  //   constructor (array, fallback = [['M', 0, 0]]) {
-  //     super(array, fallback)
-  //   }
-  //
-  //   // Convert array to string
-  //   toString () {
-  //     return arrayToString(this)
-  //   }
-  //
-  //   toArray () {
-  //     return this.reduce(function (prev, curr) {
-  //       return [].concat.call(prev, curr)
-  //     }, [])
-  //   }
-  //
-  //   // Move path string
-  //   move (x, y) {
-  //     // get bounding box of current situation
-  //     var box = this.bbox()
-  //
-  //     // get relative offset
-  //     x -= box.x
-  //     y -= box.y
-  //
-  //     if (!isNaN(x) && !isNaN(y)) {
-  //       // move every point
-  //       for (var l, i = this.length - 1; i >= 0; i--) {
-  //         l = this[i][0]
-  //
-  //         if (l === 'M' || l === 'L' || l === 'T') {
-  //           this[i][1] += x
-  //           this[i][2] += y
-  //         } else if (l === 'H') {
-  //           this[i][1] += x
-  //         } else if (l === 'V') {
-  //           this[i][1] += y
-  //         } else if (l === 'C' || l === 'S' || l === 'Q') {
-  //           this[i][1] += x
-  //           this[i][2] += y
-  //           this[i][3] += x
-  //           this[i][4] += y
-  //
-  //           if (l === 'C') {
-  //             this[i][5] += x
-  //             this[i][6] += y
-  //           }
-  //         } else if (l === 'A') {
-  //           this[i][6] += x
-  //           this[i][7] += y
-  //         }
-  //       }
-  //     }
-  //
-  //     return this
-  //   }
-  //
-  //   // Resize path string
-  //   size (width, height) {
-  //     // get bounding box of current situation
-  //     var box = this.bbox()
-  //     var i, l
-  //
-  //     // recalculate position of all points according to new size
-  //     for (i = this.length - 1; i >= 0; i--) {
-  //       l = this[i][0]
-  //
-  //       if (l === 'M' || l === 'L' || l === 'T') {
-  //         this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
-  //         this[i][2] = ((this[i][2] - box.y) * height) / box.height + box.y
-  //       } else if (l === 'H') {
-  //         this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
-  //       } else if (l === 'V') {
-  //         this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
-  //       } else if (l === 'C' || l === 'S' || l === 'Q') {
-  //         this[i][1] = ((this[i][1] - box.x) * width) / box.width + box.x
-  //         this[i][2] = ((this[i][2] - box.y) * height) / box.height + box.y
-  //         this[i][3] = ((this[i][3] - box.x) * width) / box.width + box.x
-  //         this[i][4] = ((this[i][4] - box.y) * height) / box.height + box.y
-  //
-  //         if (l === 'C') {
-  //           this[i][5] = ((this[i][5] - box.x) * width) / box.width + box.x
-  //           this[i][6] = ((this[i][6] - box.y) * height) / box.height + box.y
-  //         }
-  //       } else if (l === 'A') {
-  //         // resize radii
-  //         this[i][1] = (this[i][1] * width) / box.width
-  //         this[i][2] = (this[i][2] * height) / box.height
-  //
-  //         // move position values
-  //         this[i][6] = ((this[i][6] - box.x) * width) / box.width + box.x
-  //         this[i][7] = ((this[i][7] - box.y) * height) / box.height + box.y
-  //       }
-  //     }
-  //
-  //     return this
-  //   }
-  //
-  //   // Test if the passed path array use the same path data commands as this path array
-  //   equalCommands (pathArray) {
-  //     var i, il, equalCommands
-  //
-  //     pathArray = new PathArray(pathArray)
-  //
-  //     equalCommands = this.length === pathArray.value.length
-  //     for (i = 0, il = this.length; equalCommands && i < il; i++) {
-  //       equalCommands = this[i][0] === pathArray.value[i][0]
-  //     }
-  //
-  //     return equalCommands
-  //   }
-  //
-  //   // Make path array morphable
-  //   morph (pathArray) {
-  //     pathArray = new PathArray(pathArray)
-  //
-  //     if (this.equalCommands(pathArray)) {
-  //       this.destination = pathArray
-  //     } else {
-  //       this.destination = null
-  //     }
-  //
-  //     return this
-  //   }
-  //
-  //   // Get morphed path array at given position
-  //   at (pos) {
-  //     // make sure a destination is defined
-  //     if (!this.destination) return this
-  //
-  //     var sourceArray = this
-  //     var destinationArray = this.destination.value
-  //     var array = []
-  //     var pathArray = new PathArray()
-  //     var i, il, j, jl
-  //
-  //     // Animate has specified in the SVG spec
-  //     // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
-  //     for (i = 0, il = sourceArray.length; i < il; i++) {
-  //       array[i] = [sourceArray[i][0]]
-  //       for (j = 1, jl = sourceArray[i].length; j < jl; j++) {
-  //         array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
-  //       }
-  //       // For the two flags of the elliptical arc command, the SVG spec say:
-  //       // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
-  //       // Elliptical arc command as an array followed by corresponding indexes:
-  //       // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
-  //       //   0    1   2        3                 4             5      6  7
-  //       if (array[i][0] === 'A') {
-  //         array[i][4] = +(array[i][4] !== 0)
-  //         array[i][5] = +(array[i][5] !== 0)
-  //       }
-  //     }
-  //
-  //     // Directly modify the value of a path array, this is done this way for performance
-  //     pathArray.value = array
-  //     return pathArray
-  //   }
-  //
-  //   // Absolutize and parse path to array
-  //   parse (array) {
-  //     // if it's already a patharray, no need to parse it
-  //     if (array instanceof PathArray) return array.valueOf()
-  //
-  //     // prepare for parsing
-  //     var s
-  //     var paramCnt = { 'M': 2, 'L': 2, 'H': 1, 'V': 1, 'C': 6, 'S': 4, 'Q': 4, 'T': 2, 'A': 7, 'Z': 0 }
-  //
-  //     if (typeof array === 'string') {
-  //       array = array
-  //         .replace(numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
-  //         .replace(pathLetters, ' $& ') // put some room between letters and numbers
-  //         .replace(hyphen, '$1 -')      // add space before hyphen
-  //         .trim()                                 // trim
-  //         .split(delimiter)   // split into array
-  //     } else {
-  //       array = array.reduce(function (prev, curr) {
-  //         return [].concat.call(prev, curr)
-  //       }, [])
-  //     }
-  //
-  //     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
-  //     var result = []
-  //     var p = new Point()
-  //     var p0 = new Point()
-  //     var index = 0
-  //     var len = array.length
-  //
-  //     do {
-  //       // Test if we have a path letter
-  //       if (isPathLetter.test(array[index])) {
-  //         s = array[index]
-  //         ++index
-  //       // If last letter was a move command and we got no new, it defaults to [L]ine
-  //       } else if (s === 'M') {
-  //         s = 'L'
-  //       } else if (s === 'm') {
-  //         s = 'l'
-  //       }
-  //
-  //       result.push(pathHandlers[s].call(null,
-  //           array.slice(index, (index = index + paramCnt[s.toUpperCase()])).map(parseFloat),
-  //           p, p0
-  //         )
-  //       )
-  //     } while (len > index)
-  //
-  //     return result
-  //   }
-  //
-  //   // Get bounding box of path
-  //   bbox () {
-  //     parser().path.setAttribute('d', this.toString())
-  //     return parser.nodes.path.getBBox()
-  //   }
-  // }
-
-  var Path =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Path, _Shape);
-
-    // Initialize node
-    function Path(node) {
-      _classCallCheck(this, Path);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), Path));
-    } // Get array
-
-
-    _createClass(Path, [{
-      key: "array",
-      value: function array() {
-        return this._array || (this._array = new PathArray(this.attr('d')));
-      } // Plot new path
-
-    }, {
-      key: "plot",
-      value: function plot(d) {
-        return d == null ? this.array() : this.clear().attr('d', typeof d === 'string' ? d : this._array = new PathArray(d));
-      } // Clear array cache
-
-    }, {
-      key: "clear",
-      value: function clear() {
-        delete this._array;
-        return this;
-      } // Move by left top corner
-
-    }, {
-      key: "move",
-      value: function move(x, y) {
-        return this.attr('d', this.array().move(x, y));
-      } // Move by left top corner over x-axis
-
-    }, {
-      key: "x",
-      value: function x(_x) {
-        return _x == null ? this.bbox().x : this.move(_x, this.bbox().y);
-      } // Move by left top corner over y-axis
-
-    }, {
-      key: "y",
-      value: function y(_y) {
-        return _y == null ? this.bbox().y : this.move(this.bbox().x, _y);
-      } // Set element size to given width and height
-
-    }, {
-      key: "size",
-      value: function size(width, height) {
-        var p = proportionalSize(this, width, height);
-        return this.attr('d', this.array().size(p.width, p.height));
-      } // Set width of element
-
-    }, {
-      key: "width",
-      value: function width(_width) {
-        return _width == null ? this.bbox().width : this.size(_width, this.bbox().height);
-      } // Set height of element
-
-    }, {
-      key: "height",
-      value: function height(_height) {
-        return _height == null ? this.bbox().height : this.size(this.bbox().width, _height);
-      }
-    }, {
-      key: "targets",
-      value: function targets() {
-        return baseFind('svg textpath [href*="' + this.id() + '"]');
-      }
-    }]);
-
-    return Path;
-  }(Shape); // Define morphable array
-  Path.prototype.MorphArray = PathArray; // Add parent method
-
-  registerMethods({
-    Container: {
-      // Create a wrapped path element
-      path: function path(d) {
-        // make sure plot is called as a setter
-        return this.put(new Path()).plot(d || new PathArray());
-      }
-    }
-  });
-  register(Path);
-
-  // Add polygon-specific functions
-
-  function array() {
-    return this._array || (this._array = new PointArray(this.attr('points')));
-  } // Plot new path
-
-  function plot(p) {
-    return p == null ? this.array() : this.clear().attr('points', typeof p === 'string' ? p : this._array = new PointArray(p));
-  } // Clear array cache
-
-  function clear() {
-    delete this._array;
-    return this;
-  } // Move by left top corner
-
-  function move(x, y) {
-    return this.attr('points', this.array().move(x, y));
-  } // Set element size to given width and height
-
-  function size$1(width, height) {
-    var p = proportionalSize(this, width, height);
-    return this.attr('points', this.array().size(p.width, p.height));
-  }
-
-  var poly = /*#__PURE__*/Object.freeze({
-    array: array,
-    plot: plot,
-    clear: clear,
-    move: move,
-    size: size$1
-  });
-
-  var Polygon =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Polygon, _Shape);
-
-    // Initialize node
-    function Polygon(node) {
-      _classCallCheck(this, Polygon);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), Polygon));
-    }
-
-    return Polygon;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a wrapped polygon element
-      polygon: function polygon(p) {
-        // make sure plot is called as a setter
-        return this.put(new Polygon()).plot(p || new PointArray());
-      }
-    }
-  });
-  extend(Polygon, pointed);
-  extend(Polygon, poly);
-  register(Polygon);
-
-  var Polyline =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Polyline, _Shape);
-
-    // Initialize node
-    function Polyline(node) {
-      _classCallCheck(this, Polyline);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), Polyline));
-    }
-
-    return Polyline;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a wrapped polygon element
-      polyline: function polyline(p) {
-        // make sure plot is called as a setter
-        return this.put(new Polyline()).plot(p || new PointArray());
-      }
-    }
-  });
-  extend(Polyline, pointed);
-  extend(Polyline, poly);
-  register(Polyline);
-
-  var Rect =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Rect, _Shape);
-
-    // Initialize node
-    function Rect(node) {
-      _classCallCheck(this, Rect);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), Rect));
-    } // FIXME: unify with circle
-    // Radius x value
-
-
-    _createClass(Rect, [{
-      key: "rx",
-      value: function rx(_rx) {
-        return this.attr('rx', _rx);
-      } // Radius y value
-
-    }, {
-      key: "ry",
-      value: function ry(_ry) {
-        return this.attr('ry', _ry);
-      }
-    }]);
-
-    return Rect;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a rect element
-      rect: function rect(width, height) {
-        return this.put(new Rect()).size(width, height);
-      }
-    }
-  });
-  register(Rect);
-
-  var _Symbol =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(_Symbol, _Container);
-
-    // Initialize node
-    function _Symbol(node) {
-      _classCallCheck(this, _Symbol);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(_Symbol).call(this, nodeOrNew('symbol', node), _Symbol));
-    }
-
-    return _Symbol;
-  }(Container);
-  registerMethods({
-    Container: {
-      symbol: function symbol() {
-        return this.put(new _Symbol());
-      }
-    }
-  });
-  register(_Symbol);
-
-  // Create plain text node
-  function plain(text) {
-    // clear if build mode is disabled
-    if (this._build === false) {
-      this.clear();
-    } // create text node
-
-
-    this.node.appendChild(document.createTextNode(text));
-    return this;
-  } // FIXME: Does this also work for textpath?
-  // Get length of text element
-
-  function length() {
-    return this.node.getComputedTextLength();
-  }
-
-  var textable = /*#__PURE__*/Object.freeze({
-    plain: plain,
-    length: length
-  });
-
-  var Text =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Text, _Shape);
-
-    // Initialize node
-    function Text(node) {
-      var _this;
-
-      _classCallCheck(this, Text);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Text).call(this, nodeOrNew('text', node), Text));
-      _this.dom.leading = new SVGNumber(1.3); // store leading value for rebuilding
-
-      _this._rebuild = true; // enable automatic updating of dy values
-
-      _this._build = false; // disable build mode for adding multiple lines
-      // set default font
-
-      _this.attr('font-family', attrs['font-family']);
-
-      return _this;
-    } // Move over x-axis
-
-
-    _createClass(Text, [{
-      key: "x",
-      value: function x(_x) {
-        // act as getter
-        if (_x == null) {
-          return this.attr('x');
-        }
-
-        return this.attr('x', _x);
-      } // Move over y-axis
-
-    }, {
-      key: "y",
-      value: function y(_y) {
-        var oy = this.attr('y');
-        var o = typeof oy === 'number' ? oy - this.bbox().y : 0; // act as getter
-
-        if (_y == null) {
-          return typeof oy === 'number' ? oy - o : oy;
-        }
-
-        return this.attr('y', typeof _y === 'number' ? _y + o : _y);
-      } // Move center over x-axis
-
-    }, {
-      key: "cx",
-      value: function cx(x) {
-        return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2);
-      } // Move center over y-axis
-
-    }, {
-      key: "cy",
-      value: function cy(y) {
-        return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2);
-      } // Set the text content
-
-    }, {
-      key: "text",
-      value: function text(_text) {
-        // act as getter
-        if (_text === undefined) {
-          // FIXME use children() or each()
-          var children = this.node.childNodes;
-          var firstLine = 0;
-          _text = '';
-
-          for (var i = 0, len = children.length; i < len; ++i) {
-            // skip textPaths - they are no lines
-            if (children[i].nodeName === 'textPath') {
-              if (i === 0) firstLine = 1;
-              continue;
-            } // add newline if its not the first child and newLined is set to true
-
-
-            if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
-              _text += '\n';
-            } // add content of this node
-
-
-            _text += children[i].textContent;
-          }
-
-          return _text;
-        } // remove existing content
-
-
-        this.clear().build(true);
-
-        if (typeof _text === 'function') {
-          // call block
-          _text.call(this, this);
-        } else {
-          // store text and make sure text is not blank
-          _text = _text.split('\n'); // build new lines
-
-          for (var j = 0, jl = _text.length; j < jl; j++) {
-            this.tspan(_text[j]).newLine();
-          }
-        } // disable build mode and rebuild lines
-
-
-        return this.build(false).rebuild();
-      } // Set / get leading
-
-    }, {
-      key: "leading",
-      value: function leading(value) {
-        // act as getter
-        if (value == null) {
-          return this.dom.leading;
-        } // act as setter
-
-
-        this.dom.leading = new SVGNumber(value);
-        return this.rebuild();
-      } // Rebuild appearance type
-
-    }, {
-      key: "rebuild",
-      value: function rebuild(_rebuild) {
-        // store new rebuild flag if given
-        if (typeof _rebuild === 'boolean') {
-          this._rebuild = _rebuild;
-        } // define position of all lines
-
-
-        if (this._rebuild) {
-          var self = this;
-          var blankLineOffset = 0;
-          var dy = this.dom.leading * new SVGNumber(this.attr('font-size'));
-          this.each(function () {
-            if (this.dom.newLined) {
-              this.attr('x', self.attr('x'));
-
-              if (this.text() === '\n') {
-                blankLineOffset += dy;
-              } else {
-                this.attr('dy', dy + blankLineOffset);
-                blankLineOffset = 0;
-              }
-            }
-          });
-          this.fire('rebuild');
-        }
-
-        return this;
-      } // Enable / disable build mode
-
-    }, {
-      key: "build",
-      value: function build(_build) {
-        this._build = !!_build;
-        return this;
-      } // overwrite method from parent to set data properly
-
-    }, {
-      key: "setData",
-      value: function setData(o) {
-        this.dom = o;
-        this.dom.leading = new SVGNumber(o.leading || 1.3);
-        return this;
-      }
-    }]);
-
-    return Text;
-  }(Shape);
-  extend(Text, textable);
-  registerMethods({
-    Container: {
-      // Create text element
-      text: function text(_text2) {
-        return this.put(new Text()).text(_text2);
-      },
-      // Create plain text element
-      plain: function plain$$1(text) {
-        return this.put(new Text()).plain(text);
-      }
-    }
-  });
-  register(Text);
-
-  var TextPath =
-  /*#__PURE__*/
-  function (_Text) {
-    _inherits(TextPath, _Text);
-
-    // Initialize node
-    function TextPath(node) {
-      _classCallCheck(this, TextPath);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(TextPath).call(this, nodeOrNew('textPath', node), TextPath));
-    } // return the array of the path track element
-
-
-    _createClass(TextPath, [{
-      key: "array",
-      value: function array() {
-        var track = this.track();
-        return track ? track.array() : null;
-      } // Plot path if any
-
-    }, {
-      key: "plot",
-      value: function plot(d) {
-        var track = this.track();
-        var pathArray = null;
-
-        if (track) {
-          pathArray = track.plot(d);
-        }
-
-        return d == null ? pathArray : this;
-      } // Get the path element
-
-    }, {
-      key: "track",
-      value: function track() {
-        return this.reference('href');
-      }
-    }]);
-
-    return TextPath;
-  }(Text);
-  registerMethods({
-    Container: {
-      textPath: function textPath(text, path) {
-        return this.defs().path(path).text(text).addTo(this);
-      }
-    },
-    Text: {
-      // Create path for text to run on
-      path: function path(track) {
-        var path = new TextPath(); // if d is a path, reuse it
-
-        if (!(track instanceof Path)) {
-          // create path element
-          track = this.doc().defs().path(track);
-        } // link textPath to path and add content
-
-
-        path.attr('href', '#' + track, xlink); // add textPath element as child node and return textPath
-
-        return this.put(path);
-      },
-      // FIXME: make this plural?
-      // Get the textPath children
-      textPath: function textPath() {
-        return this.find('textPath');
-      }
-    },
-    Path: {
-      // creates a textPath from this path
-      text: function text(_text) {
-        if (_text instanceof Text) {
-          var txt = _text.text();
-
-          return _text.clear().path(this).text(txt);
-        }
-
-        return this.parent().put(new Text()).path(this).text(_text);
-      } // FIXME: Maybe add `targets` to get all textPaths associated with this path
-
-    }
-  });
-  TextPath.prototype.MorphArray = PathArray;
-  register(TextPath);
-
-  var Tspan =
-  /*#__PURE__*/
-  function (_Text) {
-    _inherits(Tspan, _Text);
-
-    // Initialize node
-    function Tspan(node) {
-      _classCallCheck(this, Tspan);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Tspan).call(this, nodeOrNew('tspan', node), Tspan));
-    } // Set text content
-
-
-    _createClass(Tspan, [{
-      key: "text",
-      value: function text(_text) {
-        if (_text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '');
-        typeof _text === 'function' ? _text.call(this, this) : this.plain(_text);
-        return this;
-      } // Shortcut dx
-
-    }, {
-      key: "dx",
-      value: function dx(_dx) {
-        return this.attr('dx', _dx);
-      } // Shortcut dy
-
-    }, {
-      key: "dy",
-      value: function dy(_dy) {
-        return this.attr('dy', _dy);
-      } // Create new line
-
-    }, {
-      key: "newLine",
-      value: function newLine() {
-        // fetch text parent
-        var t = this.parent(Text); // mark new line
-
-        this.dom.newLined = true; // apply new position
-
-        return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x());
-      }
-    }]);
-
-    return Tspan;
-  }(Text);
-  extend(Tspan, textable);
-  registerMethods({
-    Tspan: {
-      tspan: function tspan(text) {
-        var tspan = new Tspan(); // clear if build mode is disabled
-
-        if (!this._build) {
-          this.clear();
-        } // add new tspan
-
-
-        this.node.appendChild(tspan.node);
-        return tspan.text(text);
-      }
-    }
-  });
-  register(Tspan);
-
-  var Use =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Use, _Shape);
-
-    function Use(node) {
-      _classCallCheck(this, Use);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Use).call(this, nodeOrNew('use', node), Use));
-    } // Use element as a reference
-
-
-    _createClass(Use, [{
-      key: "element",
-      value: function element(_element, file) {
-        // Set lined element
-        return this.attr('href', (file || '') + '#' + _element, xlink);
-      }
-    }]);
-
-    return Use;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a use element
-      use: function use(element, file) {
-        return this.put(new Use()).element(element, file);
-      }
-    }
-  });
-  register(Use);
 
   var Matrix =
   /*#__PURE__*/
@@ -5050,234 +3952,274 @@ var SVG = (function () {
     }
   });
 
-  /***
-  Base Class
-  ==========
-  The base stepper class that will be
-  ***/
-
-  function makeSetterGetter(k, f) {
-    return function (v) {
-      if (v == null) return this[v];
-      this[k] = v;
-      if (f) f.call(this);
-      return this;
-    };
-  }
-
-  var easing = {
-    '-': function _(pos) {
-      return pos;
+  var PathArray = subClassArray('PathArray', SVGArray);
+  var pathHandlers = {
+    M: function M(c, p, p0) {
+      p.x = p0.x = c[0];
+      p.y = p0.y = c[1];
+      return ['M', p.x, p.y];
     },
-    '<>': function _(pos) {
-      return -Math.cos(pos * Math.PI) / 2 + 0.5;
+    L: function L(c, p) {
+      p.x = c[0];
+      p.y = c[1];
+      return ['L', c[0], c[1]];
     },
-    '>': function _(pos) {
-      return Math.sin(pos * Math.PI / 2);
+    H: function H(c, p) {
+      p.x = c[0];
+      return ['H', c[0]];
     },
-    '<': function _(pos) {
-      return -Math.cos(pos * Math.PI / 2) + 1;
+    V: function V(c, p) {
+      p.y = c[0];
+      return ['V', c[0]];
     },
-    bezier: function bezier(t0, x0, t1, x1) {
-      return function (t) {// TODO: FINISH
-      };
+    C: function C(c, p) {
+      p.x = c[4];
+      p.y = c[5];
+      return ['C', c[0], c[1], c[2], c[3], c[4], c[5]];
+    },
+    S: function S(c, p) {
+      p.x = c[2];
+      p.y = c[3];
+      return ['S', c[0], c[1], c[2], c[3]];
+    },
+    Q: function Q(c, p) {
+      p.x = c[2];
+      p.y = c[3];
+      return ['Q', c[0], c[1], c[2], c[3]];
+    },
+    T: function T(c, p) {
+      p.x = c[0];
+      p.y = c[1];
+      return ['T', c[0], c[1]];
+    },
+    Z: function Z(c, p, p0) {
+      p.x = p0.x;
+      p.y = p0.y;
+      return ['Z'];
+    },
+    A: function A(c, p) {
+      p.x = c[5];
+      p.y = c[6];
+      return ['A', c[0], c[1], c[2], c[3], c[4], c[5], c[6]];
     }
   };
-  var Stepper =
-  /*#__PURE__*/
-  function () {
-    function Stepper() {
-      _classCallCheck(this, Stepper);
-    }
+  var mlhvqtcsaz = 'mlhvqtcsaz'.split('');
 
-    _createClass(Stepper, [{
-      key: "done",
-      value: function done() {
-        return false;
-      }
-    }]);
-
-    return Stepper;
-  }();
-  /***
-  Easing Functions
-  ================
-  ***/
-
-  var Ease =
-  /*#__PURE__*/
-  function (_Stepper) {
-    _inherits(Ease, _Stepper);
-
-    function Ease(fn) {
-      var _this;
-
-      _classCallCheck(this, Ease);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Ease).call(this));
-      _this.ease = easing[fn || timeline.ease] || fn;
-      return _this;
-    }
-
-    _createClass(Ease, [{
-      key: "step",
-      value: function step(from, to, pos) {
-        if (typeof from !== 'number') {
-          return pos < 1 ? from : to;
+  for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
+    pathHandlers[mlhvqtcsaz[i]] = function (i) {
+      return function (c, p, p0) {
+        if (i === 'H') c[0] = c[0] + p.x;else if (i === 'V') c[0] = c[0] + p.y;else if (i === 'A') {
+          c[5] = c[5] + p.x;
+          c[6] = c[6] + p.y;
+        } else {
+          for (var j = 0, jl = c.length; j < jl; ++j) {
+            c[j] = c[j] + (j % 2 ? p.y : p.x);
+          }
         }
-
-        return from + (to - from) * this.ease(pos);
-      }
-    }]);
-
-    return Ease;
-  }(Stepper);
-  /***
-  Controller Types
-  ================
-  ***/
-
-  var Controller =
-  /*#__PURE__*/
-  function (_Stepper2) {
-    _inherits(Controller, _Stepper2);
-
-    function Controller(fn) {
-      var _this2;
-
-      _classCallCheck(this, Controller);
-
-      _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Controller).call(this));
-      _this2.stepper = fn;
-      return _this2;
-    }
-
-    _createClass(Controller, [{
-      key: "step",
-      value: function step(current, target, dt, c) {
-        return this.stepper(current, target, dt, c);
-      }
-    }, {
-      key: "done",
-      value: function done(c) {
-        return c.done;
-      }
-    }]);
-
-    return Controller;
-  }(Stepper);
-
-  function recalculate() {
-    // Apply the default parameters
-    var duration = (this._duration || 500) / 1000;
-    var overshoot = this._overshoot || 0; // Calculate the PID natural response
-
-    var eps = 1e-10;
-    var pi = Math.PI;
-    var os = Math.log(overshoot / 100 + eps);
-    var zeta = -os / Math.sqrt(pi * pi + os * os);
-    var wn = 3.9 / (zeta * duration); // Calculate the Spring values
-
-    this.d = 2 * zeta * wn;
-    this.k = wn * wn;
+        return pathHandlers[i](c, p, p0);
+      };
+    }(mlhvqtcsaz[i].toUpperCase());
   }
 
-  var Spring =
-  /*#__PURE__*/
-  function (_Controller) {
-    _inherits(Spring, _Controller);
+  extend(PathArray, {
+    // Convert array to string
+    toString: function toString() {
+      return arrayToString(this);
+    },
+    // Move path string
+    move: function move(x, y) {
+      // get bounding box of current situation
+      var box = this.bbox(); // get relative offset
 
-    function Spring(duration, overshoot) {
-      var _this3;
+      x -= box.x;
+      y -= box.y;
 
-      _classCallCheck(this, Spring);
+      if (!isNaN(x) && !isNaN(y)) {
+        // move every point
+        for (var l, i = this.length - 1; i >= 0; i--) {
+          l = this[i][0];
 
-      _this3 = _possibleConstructorReturn(this, _getPrototypeOf(Spring).call(this));
+          if (l === 'M' || l === 'L' || l === 'T') {
+            this[i][1] += x;
+            this[i][2] += y;
+          } else if (l === 'H') {
+            this[i][1] += x;
+          } else if (l === 'V') {
+            this[i][1] += y;
+          } else if (l === 'C' || l === 'S' || l === 'Q') {
+            this[i][1] += x;
+            this[i][2] += y;
+            this[i][3] += x;
+            this[i][4] += y;
 
-      _this3.duration(duration || 500).overshoot(overshoot || 0);
-
-      return _this3;
-    }
-
-    _createClass(Spring, [{
-      key: "step",
-      value: function step(current, target, dt, c) {
-        if (typeof current === 'string') return current;
-        c.done = dt === Infinity;
-        if (dt === Infinity) return target;
-        if (dt === 0) return current;
-        if (dt > 100) dt = 16;
-        dt /= 1000; // Get the previous velocity
-
-        var velocity = c.velocity || 0; // Apply the control to get the new position and store it
-
-        var acceleration = -this.d * velocity - this.k * (current - target);
-        var newPosition = current + velocity * dt + acceleration * dt * dt / 2; // Store the velocity
-
-        c.velocity = velocity + acceleration * dt; // Figure out if we have converged, and if so, pass the value
-
-        c.done = Math.abs(target - newPosition) + Math.abs(velocity) < 0.002;
-        return c.done ? target : newPosition;
+            if (l === 'C') {
+              this[i][5] += x;
+              this[i][6] += y;
+            }
+          } else if (l === 'A') {
+            this[i][6] += x;
+            this[i][7] += y;
+          }
+        }
       }
-    }]);
 
-    return Spring;
-  }(Controller);
-  extend(Spring, {
-    duration: makeSetterGetter('_duration', recalculate),
-    overshoot: makeSetterGetter('_overshoot', recalculate)
-  });
-  var PID =
-  /*#__PURE__*/
-  function (_Controller2) {
-    _inherits(PID, _Controller2);
+      return this;
+    },
+    // Resize path string
+    size: function size(width, height) {
+      // get bounding box of current situation
+      var box = this.bbox();
+      var i, l; // recalculate position of all points according to new size
 
-    function PID(p, i, d, windup) {
-      var _this4;
+      for (i = this.length - 1; i >= 0; i--) {
+        l = this[i][0];
 
-      _classCallCheck(this, PID);
+        if (l === 'M' || l === 'L' || l === 'T') {
+          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
+          this[i][2] = (this[i][2] - box.y) * height / box.height + box.y;
+        } else if (l === 'H') {
+          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
+        } else if (l === 'V') {
+          this[i][1] = (this[i][1] - box.y) * height / box.height + box.y;
+        } else if (l === 'C' || l === 'S' || l === 'Q') {
+          this[i][1] = (this[i][1] - box.x) * width / box.width + box.x;
+          this[i][2] = (this[i][2] - box.y) * height / box.height + box.y;
+          this[i][3] = (this[i][3] - box.x) * width / box.width + box.x;
+          this[i][4] = (this[i][4] - box.y) * height / box.height + box.y;
 
-      _this4 = _possibleConstructorReturn(this, _getPrototypeOf(PID).call(this));
-      p = p == null ? 0.1 : p;
-      i = i == null ? 0.01 : i;
-      d = d == null ? 0 : d;
-      windup = windup == null ? 1000 : windup;
+          if (l === 'C') {
+            this[i][5] = (this[i][5] - box.x) * width / box.width + box.x;
+            this[i][6] = (this[i][6] - box.y) * height / box.height + box.y;
+          }
+        } else if (l === 'A') {
+          // resize radii
+          this[i][1] = this[i][1] * width / box.width;
+          this[i][2] = this[i][2] * height / box.height; // move position values
 
-      _this4.p(p).i(i).d(d).windup(windup);
+          this[i][6] = (this[i][6] - box.x) * width / box.width + box.x;
+          this[i][7] = (this[i][7] - box.y) * height / box.height + box.y;
+        }
+      }
 
-      return _this4;
-    }
+      return this;
+    },
+    // Test if the passed path array use the same path data commands as this path array
+    equalCommands: function equalCommands(pathArray) {
+      var i, il, equalCommands;
+      pathArray = new PathArray(pathArray);
+      equalCommands = this.length === pathArray.length;
 
-    _createClass(PID, [{
-      key: "step",
-      value: function step(current, target, dt, c) {
-        if (typeof current === 'string') return current;
-        c.done = dt === Infinity;
-        if (dt === Infinity) return target;
-        if (dt === 0) return current;
-        var p = target - current;
-        var i = (c.integral || 0) + p * dt;
-        var d = (p - (c.error || 0)) / dt;
-        var windup = this.windup; // antiwindup
+      for (i = 0, il = this.length; equalCommands && i < il; i++) {
+        equalCommands = this[i][0] === pathArray[i][0];
+      }
 
-        if (windup !== false) {
-          i = Math.max(-windup, Math.min(i, windup));
+      return equalCommands;
+    },
+    // Make path array morphable
+    morph: function morph(pathArray) {
+      pathArray = new PathArray(pathArray);
+
+      if (this.equalCommands(pathArray)) {
+        this.destination = pathArray;
+      } else {
+        this.destination = null;
+      }
+
+      return this;
+    },
+    // Get morphed path array at given position
+    at: function at(pos) {
+      // make sure a destination is defined
+      if (!this.destination) return this;
+      var sourceArray = this;
+      var destinationArray = this.destination.value;
+      var array = [];
+      var pathArray = new PathArray();
+      var i, il, j, jl; // Animate has specified in the SVG spec
+      // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
+
+      for (i = 0, il = sourceArray.length; i < il; i++) {
+        array[i] = [sourceArray[i][0]];
+
+        for (j = 1, jl = sourceArray[i].length; j < jl; j++) {
+          array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos;
+        } // For the two flags of the elliptical arc command, the SVG spec say:
+        // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
+        // Elliptical arc command as an array followed by corresponding indexes:
+        // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
+        //   0    1   2        3                 4             5      6  7
+
+
+        if (array[i][0] === 'A') {
+          array[i][4] = +(array[i][4] !== 0);
+          array[i][5] = +(array[i][5] !== 0);
+        }
+      } // Directly modify the value of a path array, this is done this way for performance
+
+
+      pathArray.value = array;
+      return pathArray;
+    },
+    // Absolutize and parse path to array
+    parse: function parse() {
+      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [['M', 0, 0]];
+      // if it's already a patharray, no need to parse it
+      if (array instanceof PathArray) return array; // prepare for parsing
+
+      var s;
+      var paramCnt = {
+        'M': 2,
+        'L': 2,
+        'H': 1,
+        'V': 1,
+        'C': 6,
+        'S': 4,
+        'Q': 4,
+        'T': 2,
+        'A': 7,
+        'Z': 0
+      };
+
+      if (typeof array === 'string') {
+        array = array.replace(numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
+        .replace(pathLetters, ' $& ') // put some room between letters and numbers
+        .replace(hyphen, '$1 -') // add space before hyphen
+        .trim() // trim
+        .split(delimiter); // split into array
+      } else {
+        array = array.reduce(function (prev, curr) {
+          return [].concat.call(prev, curr);
+        }, []);
+      } // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
+
+
+      var result = [];
+      var p = new Point();
+      var p0 = new Point();
+      var index = 0;
+      var len = array.length;
+
+      do {
+        // Test if we have a path letter
+        if (isPathLetter.test(array[index])) {
+          s = array[index];
+          ++index; // If last letter was a move command and we got no new, it defaults to [L]ine
+        } else if (s === 'M') {
+          s = 'L';
+        } else if (s === 'm') {
+          s = 'l';
         }
 
-        c.error = p;
-        c.integral = i;
-        c.done = Math.abs(p) < 0.001;
-        return c.done ? target : current + (this.P * p + this.I * i + this.D * d);
-      }
-    }]);
+        result.push(pathHandlers[s].call(null, array.slice(index, index = index + paramCnt[s.toUpperCase()]).map(parseFloat), p, p0));
+      } while (len > index);
 
-    return PID;
-  }(Controller);
-  extend(PID, {
-    windup: makeSetterGetter('windup'),
-    p: makeSetterGetter('P'),
-    i: makeSetterGetter('I'),
-    d: makeSetterGetter('D')
+      return result;
+    },
+    // Get bounding box of path
+    bbox: function bbox() {
+      parser().path.setAttribute('d', this.toString());
+      return parser.nodes.path.getBBox();
+    }
   });
 
   var Morphable =
@@ -5529,6 +4471,221 @@ var SVG = (function () {
       }
     });
   }
+
+  var Path =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Path, _Shape);
+
+    // Initialize node
+    function Path(node) {
+      _classCallCheck(this, Path);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), Path));
+    } // Get array
+
+
+    _createClass(Path, [{
+      key: "array",
+      value: function array() {
+        return this._array || (this._array = new PathArray(this.attr('d')));
+      } // Plot new path
+
+    }, {
+      key: "plot",
+      value: function plot(d) {
+        return d == null ? this.array() : this.clear().attr('d', typeof d === 'string' ? d : this._array = new PathArray(d));
+      } // Clear array cache
+
+    }, {
+      key: "clear",
+      value: function clear() {
+        delete this._array;
+        return this;
+      } // Move by left top corner
+
+    }, {
+      key: "move",
+      value: function move(x, y) {
+        return this.attr('d', this.array().move(x, y));
+      } // Move by left top corner over x-axis
+
+    }, {
+      key: "x",
+      value: function x(_x) {
+        return _x == null ? this.bbox().x : this.move(_x, this.bbox().y);
+      } // Move by left top corner over y-axis
+
+    }, {
+      key: "y",
+      value: function y(_y) {
+        return _y == null ? this.bbox().y : this.move(this.bbox().x, _y);
+      } // Set element size to given width and height
+
+    }, {
+      key: "size",
+      value: function size(width, height) {
+        var p = proportionalSize(this, width, height);
+        return this.attr('d', this.array().size(p.width, p.height));
+      } // Set width of element
+
+    }, {
+      key: "width",
+      value: function width(_width) {
+        return _width == null ? this.bbox().width : this.size(_width, this.bbox().height);
+      } // Set height of element
+
+    }, {
+      key: "height",
+      value: function height(_height) {
+        return _height == null ? this.bbox().height : this.size(this.bbox().width, _height);
+      }
+    }, {
+      key: "targets",
+      value: function targets() {
+        return baseFind('svg textpath [href*="' + this.id() + '"]');
+      }
+    }]);
+
+    return Path;
+  }(Shape); // Define morphable array
+  Path.prototype.MorphArray = PathArray; // Add parent method
+
+  registerMethods({
+    Container: {
+      // Create a wrapped path element
+      path: function path(d) {
+        // make sure plot is called as a setter
+        return this.put(new Path()).plot(d || new PathArray());
+      }
+    }
+  });
+  register(Path);
+
+  // Add polygon-specific functions
+
+  function array() {
+    return this._array || (this._array = new PointArray(this.attr('points')));
+  } // Plot new path
+
+  function plot(p) {
+    return p == null ? this.array() : this.clear().attr('points', typeof p === 'string' ? p : this._array = new PointArray(p));
+  } // Clear array cache
+
+  function clear() {
+    delete this._array;
+    return this;
+  } // Move by left top corner
+
+  function move(x, y) {
+    return this.attr('points', this.array().move(x, y));
+  } // Set element size to given width and height
+
+  function size$1(width, height) {
+    var p = proportionalSize(this, width, height);
+    return this.attr('points', this.array().size(p.width, p.height));
+  }
+
+  var poly = /*#__PURE__*/Object.freeze({
+    array: array,
+    plot: plot,
+    clear: clear,
+    move: move,
+    size: size$1
+  });
+
+  var Polygon =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Polygon, _Shape);
+
+    // Initialize node
+    function Polygon(node) {
+      _classCallCheck(this, Polygon);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), Polygon));
+    }
+
+    return Polygon;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a wrapped polygon element
+      polygon: function polygon(p) {
+        // make sure plot is called as a setter
+        return this.put(new Polygon()).plot(p || new PointArray());
+      }
+    }
+  });
+  extend(Polygon, pointed);
+  extend(Polygon, poly);
+  register(Polygon);
+
+  var Polyline =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Polyline, _Shape);
+
+    // Initialize node
+    function Polyline(node) {
+      _classCallCheck(this, Polyline);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), Polyline));
+    }
+
+    return Polyline;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a wrapped polygon element
+      polyline: function polyline(p) {
+        // make sure plot is called as a setter
+        return this.put(new Polyline()).plot(p || new PointArray());
+      }
+    }
+  });
+  extend(Polyline, pointed);
+  extend(Polyline, poly);
+  register(Polyline);
+
+  var Rect =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Rect, _Shape);
+
+    // Initialize node
+    function Rect(node) {
+      _classCallCheck(this, Rect);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), Rect));
+    } // FIXME: unify with circle
+    // Radius x value
+
+
+    _createClass(Rect, [{
+      key: "rx",
+      value: function rx(_rx) {
+        return this.attr('rx', _rx);
+      } // Radius y value
+
+    }, {
+      key: "ry",
+      value: function ry(_ry) {
+        return this.attr('ry', _ry);
+      }
+    }]);
+
+    return Rect;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a rect element
+      rect: function rect(width, height) {
+        return this.put(new Rect()).size(width, height);
+      }
+    }
+  });
+  register(Rect);
 
   var time = window.performance || Date;
 
@@ -6731,96 +5888,470 @@ var SVG = (function () {
     }
   });
 
-  // export {default as SVGArray} from './SVGArray.js'
-  // export {default as Bare} from './Bare.js'
-  // export {default as Box} from './Box.js'
-  // export {default as Circle} from './Circle.js'
-  // export {default as ClipPath} from './ClipPath.js'
-  // export {default as Color} from './Color.js'
-  // export {default as Container} from './Container.js'
-  // export {Controller, Ease, PID, Spring} from './Controller.js'
-  // export {default as Defs} from './Defs.js'
-  // export {default as Doc} from './Doc.js'
-  // export {default as Element} from './Element.js'
-  // export {default as Ellipse} from './Ellipse.js'
-  // export {default as EventTarget} from './EventTarget.js'
-  // export {default as Gradient} from './Gradient.js'
-  // export {default as G} from './G.js'
-  // export {default as HtmlNode} from './HtmlNode.js'
-  // export {default as A} from './A.js'
-  // export {default as Image} from './Image.js'
-  // export {default as Line} from './Line.js'
-  // export {default as Marker} from './Marker.js'
-  // export {default as Mask} from './Mask.js'
-  // export {default as Matrix} from './Matrix.js'
-  // export {default as Morphable} from './Morphable.js'
-  // export {default as SVGNumber} from './SVGNumber.js'
-  // export {default as Path} from './Path.js'
-  // export {default as PathArray} from './PathArray.js'
-  // export {default as Pattern} from './Pattern.js'
-  // export {default as Point} from './Point.js'
-  // export {default as PointArray} from './PointArray.js'
-  // export {default as Polygon} from './Polygon.js'
-  // export {default as Polyline} from './Polyline.js'
-  // export {default as Queue} from './Queue.js'
-  // export {default as Rect} from './Rect.js'
-  // export {default as Runner} from './Runner.js'
-  // export {default as Shape} from './Shape.js'
-  // export {default as Stop} from './Stop.js'
-  // export {default as Symbol} from './Symbol.js'
-  // export {default as Text} from './Text.js'
-  // export {default as TextPath} from './TextPath.js'
-  // export {default as Timeline} from './Timeline.js'
-  // export {default as Use} from './Use.js'
+  var _Symbol =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(_Symbol, _Container);
+
+    // Initialize node
+    function _Symbol(node) {
+      _classCallCheck(this, _Symbol);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(_Symbol).call(this, nodeOrNew('symbol', node), _Symbol));
+    }
+
+    return _Symbol;
+  }(Container);
+  registerMethods({
+    Container: {
+      symbol: function symbol() {
+        return this.put(new _Symbol());
+      }
+    }
+  });
+  register(_Symbol);
+
+  // Create plain text node
+  function plain(text) {
+    // clear if build mode is disabled
+    if (this._build === false) {
+      this.clear();
+    } // create text node
+
+
+    this.node.appendChild(document.createTextNode(text));
+    return this;
+  } // FIXME: Does this also work for textpath?
+  // Get length of text element
+
+  function length() {
+    return this.node.getComputedTextLength();
+  }
+
+  var textable = /*#__PURE__*/Object.freeze({
+    plain: plain,
+    length: length
+  });
+
+  var Text =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Text, _Shape);
+
+    // Initialize node
+    function Text(node) {
+      var _this;
+
+      _classCallCheck(this, Text);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Text).call(this, nodeOrNew('text', node), Text));
+      _this.dom.leading = new SVGNumber(1.3); // store leading value for rebuilding
+
+      _this._rebuild = true; // enable automatic updating of dy values
+
+      _this._build = false; // disable build mode for adding multiple lines
+      // set default font
+
+      _this.attr('font-family', attrs['font-family']);
+
+      return _this;
+    } // Move over x-axis
+
+
+    _createClass(Text, [{
+      key: "x",
+      value: function x(_x) {
+        // act as getter
+        if (_x == null) {
+          return this.attr('x');
+        }
+
+        return this.attr('x', _x);
+      } // Move over y-axis
+
+    }, {
+      key: "y",
+      value: function y(_y) {
+        var oy = this.attr('y');
+        var o = typeof oy === 'number' ? oy - this.bbox().y : 0; // act as getter
+
+        if (_y == null) {
+          return typeof oy === 'number' ? oy - o : oy;
+        }
+
+        return this.attr('y', typeof _y === 'number' ? _y + o : _y);
+      } // Move center over x-axis
+
+    }, {
+      key: "cx",
+      value: function cx(x) {
+        return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2);
+      } // Move center over y-axis
+
+    }, {
+      key: "cy",
+      value: function cy(y) {
+        return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2);
+      } // Set the text content
+
+    }, {
+      key: "text",
+      value: function text(_text) {
+        // act as getter
+        if (_text === undefined) {
+          // FIXME use children() or each()
+          var children = this.node.childNodes;
+          var firstLine = 0;
+          _text = '';
+
+          for (var i = 0, len = children.length; i < len; ++i) {
+            // skip textPaths - they are no lines
+            if (children[i].nodeName === 'textPath') {
+              if (i === 0) firstLine = 1;
+              continue;
+            } // add newline if its not the first child and newLined is set to true
+
+
+            if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
+              _text += '\n';
+            } // add content of this node
+
+
+            _text += children[i].textContent;
+          }
+
+          return _text;
+        } // remove existing content
+
+
+        this.clear().build(true);
+
+        if (typeof _text === 'function') {
+          // call block
+          _text.call(this, this);
+        } else {
+          // store text and make sure text is not blank
+          _text = _text.split('\n'); // build new lines
+
+          for (var j = 0, jl = _text.length; j < jl; j++) {
+            this.tspan(_text[j]).newLine();
+          }
+        } // disable build mode and rebuild lines
+
+
+        return this.build(false).rebuild();
+      } // Set / get leading
+
+    }, {
+      key: "leading",
+      value: function leading(value) {
+        // act as getter
+        if (value == null) {
+          return this.dom.leading;
+        } // act as setter
+
+
+        this.dom.leading = new SVGNumber(value);
+        return this.rebuild();
+      } // Rebuild appearance type
+
+    }, {
+      key: "rebuild",
+      value: function rebuild(_rebuild) {
+        // store new rebuild flag if given
+        if (typeof _rebuild === 'boolean') {
+          this._rebuild = _rebuild;
+        } // define position of all lines
+
+
+        if (this._rebuild) {
+          var self = this;
+          var blankLineOffset = 0;
+          var dy = this.dom.leading * new SVGNumber(this.attr('font-size'));
+          this.each(function () {
+            if (this.dom.newLined) {
+              this.attr('x', self.attr('x'));
+
+              if (this.text() === '\n') {
+                blankLineOffset += dy;
+              } else {
+                this.attr('dy', dy + blankLineOffset);
+                blankLineOffset = 0;
+              }
+            }
+          });
+          this.fire('rebuild');
+        }
+
+        return this;
+      } // Enable / disable build mode
+
+    }, {
+      key: "build",
+      value: function build(_build) {
+        this._build = !!_build;
+        return this;
+      } // overwrite method from parent to set data properly
+
+    }, {
+      key: "setData",
+      value: function setData(o) {
+        this.dom = o;
+        this.dom.leading = new SVGNumber(o.leading || 1.3);
+        return this;
+      }
+    }]);
+
+    return Text;
+  }(Shape);
+  extend(Text, textable);
+  registerMethods({
+    Container: {
+      // Create text element
+      text: function text(_text2) {
+        return this.put(new Text()).text(_text2);
+      },
+      // Create plain text element
+      plain: function plain$$1(text) {
+        return this.put(new Text()).plain(text);
+      }
+    }
+  });
+  register(Text);
+
+  var TextPath =
+  /*#__PURE__*/
+  function (_Text) {
+    _inherits(TextPath, _Text);
+
+    // Initialize node
+    function TextPath(node) {
+      _classCallCheck(this, TextPath);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(TextPath).call(this, nodeOrNew('textPath', node), TextPath));
+    } // return the array of the path track element
+
+
+    _createClass(TextPath, [{
+      key: "array",
+      value: function array() {
+        var track = this.track();
+        return track ? track.array() : null;
+      } // Plot path if any
+
+    }, {
+      key: "plot",
+      value: function plot(d) {
+        var track = this.track();
+        var pathArray = null;
+
+        if (track) {
+          pathArray = track.plot(d);
+        }
+
+        return d == null ? pathArray : this;
+      } // Get the path element
+
+    }, {
+      key: "track",
+      value: function track() {
+        return this.reference('href');
+      }
+    }]);
+
+    return TextPath;
+  }(Text);
+  registerMethods({
+    Container: {
+      textPath: function textPath(text, path) {
+        return this.defs().path(path).text(text).addTo(this);
+      }
+    },
+    Text: {
+      // Create path for text to run on
+      path: function path(track) {
+        var path = new TextPath(); // if d is a path, reuse it
+
+        if (!(track instanceof Path)) {
+          // create path element
+          track = this.doc().defs().path(track);
+        } // link textPath to path and add content
+
+
+        path.attr('href', '#' + track, xlink); // add textPath element as child node and return textPath
+
+        return this.put(path);
+      },
+      // FIXME: make this plural?
+      // Get the textPath children
+      textPath: function textPath() {
+        return this.find('textPath');
+      }
+    },
+    Path: {
+      // creates a textPath from this path
+      text: function text(_text) {
+        if (_text instanceof Text) {
+          var txt = _text.text();
+
+          return _text.clear().path(this).text(txt);
+        }
+
+        return this.parent().put(new Text()).path(this).text(_text);
+      } // FIXME: Maybe add `targets` to get all textPaths associated with this path
+
+    }
+  });
+  TextPath.prototype.MorphArray = PathArray;
+  register(TextPath);
+
+  var Tspan =
+  /*#__PURE__*/
+  function (_Text) {
+    _inherits(Tspan, _Text);
+
+    // Initialize node
+    function Tspan(node) {
+      _classCallCheck(this, Tspan);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Tspan).call(this, nodeOrNew('tspan', node), Tspan));
+    } // Set text content
+
+
+    _createClass(Tspan, [{
+      key: "text",
+      value: function text(_text) {
+        if (_text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '');
+        typeof _text === 'function' ? _text.call(this, this) : this.plain(_text);
+        return this;
+      } // Shortcut dx
+
+    }, {
+      key: "dx",
+      value: function dx(_dx) {
+        return this.attr('dx', _dx);
+      } // Shortcut dy
+
+    }, {
+      key: "dy",
+      value: function dy(_dy) {
+        return this.attr('dy', _dy);
+      } // Create new line
+
+    }, {
+      key: "newLine",
+      value: function newLine() {
+        // fetch text parent
+        var t = this.parent(Text); // mark new line
+
+        this.dom.newLined = true; // apply new position
+
+        return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x());
+      }
+    }]);
+
+    return Tspan;
+  }(Text);
+  extend(Tspan, textable);
+  registerMethods({
+    Tspan: {
+      tspan: function tspan(text) {
+        var tspan = new Tspan(); // clear if build mode is disabled
+
+        if (!this._build) {
+          this.clear();
+        } // add new tspan
+
+
+        this.node.appendChild(tspan.node);
+        return tspan.text(text);
+      }
+    }
+  });
+  register(Tspan);
+
+  var Use =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Use, _Shape);
+
+    function Use(node) {
+      _classCallCheck(this, Use);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Use).call(this, nodeOrNew('use', node), Use));
+    } // Use element as a reference
+
+
+    _createClass(Use, [{
+      key: "element",
+      value: function element(_element, file) {
+        // Set lined element
+        return this.attr('href', (file || '') + '#' + _element, xlink);
+      }
+    }]);
+
+    return Use;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a use element
+      use: function use(element, file) {
+        return this.put(new Use()).element(element, file);
+      }
+    }
+  });
+  register(Use);
+
+
 
   var Classes = /*#__PURE__*/Object.freeze({
-    EventTarget: EventTarget,
-    Dom: Dom,
-    Element: Element,
-    Shape: Shape,
-    Container: Container,
-    HtmlNode: HtmlNode,
-    Doc: Doc$1,
-    Defs: Defs,
-    G: G,
     Animator: Animator,
+    SVGArray: SVGArray,
     Bare: Bare,
+    Box: Box,
     Circle: Circle,
     ClipPath: ClipPath,
-    A: A,
+    Color: Color,
+    Container: Container,
+    Controller: Controller,
+    Ease: Ease,
+    PID: PID,
+    Spring: Spring,
+    Defs: Defs,
+    Doc: Doc$1,
+    Dom: Dom,
+    Element: Element,
     Ellipse: Ellipse,
-    Stop: Stop,
+    EventTarget: EventTarget,
     Gradient: Gradient,
+    G: G,
+    HtmlNode: HtmlNode,
+    A: A,
     Image: Image,
     Line: Line,
     Marker: Marker,
     Mask: Mask,
+    Matrix: Matrix,
+    Morphable: Morphable,
+    SVGNumber: SVGNumber,
     Path: Path,
+    PathArray: PathArray,
     Pattern: Pattern,
+    Point: Point,
+    PointArray: PointArray,
     Polygon: Polygon,
     Polyline: Polyline,
+    Queue: Queue,
     Rect: Rect,
+    Runner: Runner,
+    Shape: Shape,
+    Stop: Stop,
     Symbol: _Symbol,
     Text: Text,
     TextPath: TextPath,
-    Tspan: Tspan,
-    Use: Use,
-    SVGNumber: SVGNumber,
-    SVGArray: SVGArray,
-    PathArray: PathArray,
-    PointArray: PointArray,
-    Matrix: Matrix,
-    Point: Point,
-    Box: Box,
-    Color: Color,
-    Morphable: Morphable,
-    Queue: Queue,
-    Runner: Runner,
     Timeline: Timeline,
-    Controller: Controller,
-    Ease: Ease,
-    PID: PID,
-    Spring: Spring
+    Tspan: Tspan,
+    Use: Use
   });
 
   // ### This module adds backward / forward functionality to elements.
@@ -7125,10 +6656,6 @@ var SVG = (function () {
     transform: transform
   });
 
-  //
-  // export function setup (node) {
-  //   this._memory = {}
-  // }
   // Remember arbitrary data
 
   function remember(k, v) {
@@ -7167,7 +6694,7 @@ var SVG = (function () {
     remember: remember,
     forget: forget,
     memory: memory
-  }); // registerConstructor('Memory', setup)
+  });
 
   var sugar = {
     stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],

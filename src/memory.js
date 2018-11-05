@@ -1,10 +1,6 @@
 import { registerMethods } from './methods.js'
 
-// export const name = 'Memory'
-//
-// export function setup (node) {
-//   this._memory = {}
-// }
+// FIXME: We need a constructor to set this up
 
 // Remember arbitrary data
 export function remember (k, v) {
@@ -42,4 +38,3 @@ export function memory () {
 }
 
 registerMethods('Dom', { remember, forget, memory })
-// registerConstructor('Memory', setup)

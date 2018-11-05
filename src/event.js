@@ -27,12 +27,6 @@ export function on (node, events, listener, binding, options) {
   // events can be an array of events or a string of events
   events = Array.isArray(events) ? events : events.split(delimiter)
 
-  // ensure instance object for nodes which are not adopted
-  // n.instance = n.instance || {events: {}}
-
-  // pull event handlers from the element
-  // var bag = n.instance.events
-
   // add id to listener
   if (!listener._svgjsListenerId) {
     listener._svgjsListenerId = ++listenerId
@@ -59,17 +53,11 @@ export function off (node, events, listener, options) {
   var bag = getEvents(node)
   var n = getEventTarget(node)
 
-  // we cannot remove an event if its not an svg.js instance
-  // if (!n.instance) return
-
   // listener can be a function or a number
   if (typeof listener === 'function') {
     listener = listener._svgjsListenerId
     if (!listener) return
   }
-
-  // pull event handlers from the element
-  // var bag = n.instance.events
 
   // events can be an array of events or a string or undefined
   events = Array.isArray(events) ? events : (events || '').split(delimiter)

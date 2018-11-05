@@ -23,11 +23,6 @@ export function getMethodsFor (name) {
   return methods[name] || {}
 }
 
-// FIXME: save memory?
-// export function cleanMethods () {
-//   methods = {}
-// }
-
 export function registerConstructor (name, setup) {
   constructors[name] = setup
 }

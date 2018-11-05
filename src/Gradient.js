@@ -48,7 +48,6 @@ export default class Gradient extends Container {
   attr (a, b, c) {
     if (a === 'transform') a = 'gradientTransform'
     return super.attr(a, b, c)
-    // return attr.call(this, a, b, c)
   }
 
   targets () {

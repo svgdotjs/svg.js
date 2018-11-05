@@ -136,12 +136,3 @@ export default class Element extends Dom {
     return this.attr('y', y)
   }
 }
-
-// registerMethods('Element', {
-//   x, y, cx, cy, move, center, width, height, size, clone, remove, replace,
-//   addTo, putIn, id, inside, toString, classes, hasClass, addClass, removeClass,
-//   toggleClass, reference, doc, defs, parent, parents, matches, native, svg,
-//   writeDataToDom, setData, getEventTarget
-// })
-//
-// registerConstructor('Element', setup)

@@ -19,7 +19,6 @@ export default class ClipPath extends Container {
 
     // remove clipPath from parent
     return super.remove()
-    // return remove.call(this)
   }
 
   targets () {
