@@ -1,9 +1,9 @@
 import Container from './Container.js'
-import {nodeOrNew} from './tools.js'
+import { nodeOrNew } from './tools.js'
 import find from './selector.js'
-//import {remove} from  './Element.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+// import {remove} from  './Element.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Mask extends Container {
   // Initialize node
@@ -20,15 +20,13 @@ export default class Mask extends Container {
 
     // remove mask from parent
     return super.remove()
-    //return remove.call(this)
+    // return remove.call(this)
   }
 
   targets () {
     return find('svg [mask*="' + this.id() + '"]')
   }
-
 }
-
 
 registerMethods({
   Container: {

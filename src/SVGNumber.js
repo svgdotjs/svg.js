@@ -1,4 +1,4 @@
-import {numberAndUnit} from './regex.js'
+import { numberAndUnit } from './regex.js'
 
 // Module for unit convertions
 export default class SVGNumber {
@@ -45,14 +45,13 @@ export default class SVGNumber {
   toString () {
     return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6
       : this.unit === 's' ? this.value / 1e3
-      : this.value
+        : this.value
     ) + this.unit
   }
 
   toJSON () {
     return this.toString()
   }
-
 
   toArray () {
     return [this.value, this.unit]

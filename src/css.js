@@ -1,21 +1,20 @@
-import {camelCase} from './helpers.js'
-import {isBlank} from './regex.js'
-import {registerMethods} from './methods.js'
+import { camelCase } from './helpers.js'
+import { isBlank } from './regex.js'
+import { registerMethods } from './methods.js'
 
 // FIXME: We dont need exports
 
-  // Dynamic style generator
+// Dynamic style generator
 export function css (style, val) {
   let ret = {}
-  let i
   if (arguments.length === 0) {
     // get full style as object
     this.node.style.cssText.split(/\s*;\s*/)
       .filter(function (el) { return !!el.length })
       .forEach(function (el) {
-      let t = el.split(/\s*:\s*/)
-      ret[t[0]] = t[1]
-    })
+        let t = el.split(/\s*:\s*/)
+        ret[t[0]] = t[1]
+      })
     return ret
   }
 
@@ -36,7 +35,7 @@ export function css (style, val) {
 
     // set styles in object
     if (typeof style === 'object') {
-      for (name in style) {
+      for (let name in style) {
         // set empty string if null/undefined/'' was given
         this.node.style[camelCase(name)] =
           (style[name] == null || isBlank.test(style[name])) ? '' : style[name]
@@ -53,17 +52,17 @@ export function css (style, val) {
   return this
 }
 
-  // Show element
+// Show element
 export function show () {
   return this.css('display', '')
 }
 
-  // Hide element
+// Hide element
 export function hide () {
   return this.css('display', 'none')
 }
 
-  // Is element visible?
+// Is element visible?
 export function visible () {
   return this.css('display') !== 'none'
 }

@@ -1,9 +1,9 @@
 import Container from './Container.js'
-import {nodeOrNew, extend} from './tools.js'
+import { nodeOrNew } from './tools.js'
 import find from './selector.js'
-//import {remove} from './Element.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+// import {remove} from './Element.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class ClipPath extends Container {
   constructor (node) {
@@ -19,7 +19,7 @@ export default class ClipPath extends Container {
 
     // remove clipPath from parent
     return super.remove()
-    //return remove.call(this)
+    // return remove.call(this)
   }
 
   targets () {
@@ -27,12 +27,11 @@ export default class ClipPath extends Container {
   }
 }
 
-
 registerMethods({
   Container: {
     // Create clipping element
-    clip: function() {
-      return this.defs().put(new ClipPath)
+    clip: function () {
+      return this.defs().put(new ClipPath())
     }
   },
   Element: {

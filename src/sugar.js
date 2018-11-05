@@ -4,7 +4,7 @@ import SVGNumber from './SVGNumber.js'
 import Matrix from './Matrix.js'
 import Point from './Point.js'
 import Element from './Element.js'
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 // Define list of available attributes for stroke and fill
 var sugar = {
@@ -55,18 +55,18 @@ registerMethods(['Element', 'Runner'], {
 
   // Map rotation to transform
   rotate: function (angle, cx, cy) {
-    return this.transform({rotate: angle, ox: cx, oy: cy}, true)
+    return this.transform({ rotate: angle, ox: cx, oy: cy }, true)
   },
 
   // Map skew to transform
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
-      ? this.transform({skew: x, ox: y, oy: cx}, true)
-      : this.transform({skew: [x, y], ox: cx, oy: cy}, true)
+      ? this.transform({ skew: x, ox: y, oy: cx }, true)
+      : this.transform({ skew: [x, y], ox: cx, oy: cy }, true)
   },
 
   shear: function (lam, cx, cy) {
-    return this.transform({shear: lam, ox: cx, oy: cy}, true)
+    return this.transform({ shear: lam, ox: cx, oy: cy }, true)
   },
 
   // Map scale to transform
@@ -90,13 +90,13 @@ registerMethods(['Element', 'Runner'], {
   flip: function (direction, around) {
     var directionString = typeof direction === 'string' ? direction
       : isFinite(direction) ? 'both'
-      : 'both'
+        : 'both'
     var origin = (direction === 'both' && isFinite(around)) ? [around, around]
       : (direction === 'x') ? [around, 0]
-      : (direction === 'y') ? [0, around]
-      : isFinite(direction) ? [direction, direction]
-      : [0, 0]
-    this.transform({flip: directionString, origin: origin}, true)
+        : (direction === 'y') ? [0, around]
+          : isFinite(direction) ? [direction, direction]
+            : [0, 0]
+    this.transform({ flip: directionString, origin: origin }, true)
   },
 
   // Opacity
@@ -149,11 +149,11 @@ registerMethods(['Element', 'Runner'], {
     }
 
     return a === 'leading'
-        ? this.leading(v)
+      ? this.leading(v)
       : a === 'anchor'
         ? this.attr('text-anchor', v)
-      : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style'
-        ? this.attr('font-' + a, v)
-      : this.attr(a, v)
+        : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style'
+          ? this.attr('font-' + a, v)
+          : this.attr(a, v)
   }
 })

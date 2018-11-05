@@ -1,6 +1,6 @@
 import Base from './Base.js'
-import {capitalize} from './helpers.js'
-import {makeNode} from './tools.js'
+import { capitalize } from './helpers.js'
+import { makeNode } from './tools.js'
 
 const elements = {}
 export const root = Symbol('root')
@@ -29,7 +29,6 @@ export function makeInstance (element) {
 
   return element
 }
-
 
 // Adopt existing svg elements
 export function adopt (node) {
@@ -66,7 +65,7 @@ export function register (element, name = element.name, asRoot = false) {
   return element
 }
 
-export function getClass(name) {
+export function getClass (name) {
   return elements[name]
 }
 

@@ -1,9 +1,9 @@
 import Base from './Base.js'
-import {on, off, dispatch} from './event.js'
-import {extend} from './tools.js'
+import { on, off, dispatch } from './event.js'
+import { extend } from './tools.js'
 
-export default class EventTarget extends Base{
-  constructor ({events = {}} = {}) {
+export default class EventTarget extends Base {
+  constructor ({ events = {} } = {}) {
     super()
     this.events = events
   }
@@ -58,7 +58,6 @@ export default class EventTarget extends Base{
   removeEventListener () {}
 }
 
-
 // Add events to elements
 const methods = [ 'click',
   'dblclick',
@@ -74,22 +73,21 @@ const methods = [ 'click',
   'touchleave',
   'touchend',
   'touchcancel' ].reduce(function (last, event) {
-    // add event to Element
-    const fn = function (f) {
-      if (f === null) {
-        off(this, event)
-      } else {
-        on(this, event, f)
-      }
-      return this
+  // add event to Element
+  const fn = function (f) {
+    if (f === null) {
+      off(this, event)
+    } else {
+      on(this, event, f)
     }
+    return this
+  }
 
-    last[event] = fn
-    return last
-  }, {})
+  last[event] = fn
+  return last
+}, {})
 
 extend(EventTarget, methods)
-
 
 // registerMethods('EventTarget', {
 //   on, off, dispatch, fire

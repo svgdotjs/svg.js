@@ -1,8 +1,8 @@
 import Container from './Container.js'
-import {nodeOrNew} from './tools.js'
-import {xlink} from './namespaces.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { nodeOrNew } from './tools.js'
+import { xlink } from './namespaces.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class A extends Container {
   constructor (node) {

@@ -1,5 +1,5 @@
 // ### This module adds backward / forward functionality to elements.
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 // Get all siblings, including myself
 export function siblings () {
@@ -30,7 +30,7 @@ export function forward () {
   p.removeElement(this).add(this, i)
 
   // make sure defs node is always at the top
-  if (typeof p.isRoot == 'function' && p.isRoot()) {
+  if (typeof p.isRoot === 'function' && p.isRoot()) {
     p.node.appendChild(p.defs().node)
   }
 
@@ -56,7 +56,7 @@ export function front () {
   p.node.appendChild(this.node)
 
   // Make sure defs node is always at the top
-  if (typeof p.isRoot == 'function' && p.isRoot()) {
+  if (typeof p.isRoot === 'function' && p.isRoot()) {
     p.node.appendChild(p.defs().node)
   }
 

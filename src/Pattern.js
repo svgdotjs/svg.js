@@ -1,9 +1,10 @@
 import Container from './Container.js'
-import {nodeOrNew} from './tools.js'
-//import attr from './attr.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { nodeOrNew } from './tools.js'
+// import attr from './attr.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 import Box from './Box.js'
+import { find } from './selector.js'
 
 export default class Pattern extends Container {
   // Initialize node
@@ -38,7 +39,7 @@ export default class Pattern extends Container {
   attr (a, b, c) {
     if (a === 'transform') a = 'patternTransform'
     return super.attr(a, b, c)
-    //return attr.call(this, a, b, c)
+    // return attr.call(this, a, b, c)
   }
 
   targets () {

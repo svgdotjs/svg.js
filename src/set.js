@@ -1,4 +1,5 @@
-SVG.Set = class extends Set {
+/* eslint no-unused-vars: "off" */
+class SVGSet extends Set {
   // constructor (arr) {
   //   super(arr)
   // }

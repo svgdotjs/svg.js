@@ -1,9 +1,6 @@
-import {makeInstance} from './adopter.js'
 import * as Classes from './classes.js'
 import * as adopter from './adopter.js'
 import * as tools from './tools.js'
-import * as containers from './containers.js'
-import * as elements from './elements.js'
 import './attr.js'
 import './arrange.js'
 import './data.js'
@@ -13,12 +10,23 @@ import './css.js'
 import './transform.js'
 import './memory.js'
 import './sugar.js'
-import {getMethodsFor, getConstructor} from './methods.js'
-import {registerMorphableType, makeMorphable} from './Morphable.js'
-const extend = tools.extend
+import { getMethodsFor } from './methods.js'
+import { registerMorphableType, makeMorphable, TransformBag, ObjectBag, NonMorphable } from './Morphable.js'
 
 import './EventTarget.js'
 import './Element.js'
+
+import * as utils from './utils.js'
+
+import * as regex from './regex.js'
+
+// satisfy tests, fix later
+import * as ns from './namespaces.js'
+import { easing } from './Controller.js'
+import * as events from './event.js'
+import parser from './parser.js'
+import * as defaults from './defaults.js'
+const extend = tools.extend
 
 extend([
   Classes.Doc,
@@ -56,7 +64,7 @@ extend(Classes.EventTarget, getMethodsFor('EventTarget'))
 extend(Classes.Dom, getMethodsFor('Dom'))
 extend(Classes.Element, getMethodsFor('Element'))
 extend(Classes.Shape, getMethodsFor('Shape'))
-//extend(Classes.Element, getConstructor('Memory'))
+// extend(Classes.Element, getConstructor('Memory'))
 extend(Classes.Container, getMethodsFor('Container'))
 
 registerMorphableType([
@@ -73,34 +81,21 @@ makeMorphable()
 
 // The main wrapping element
 export default function SVG (element) {
-  return makeInstance(element)
+  return adopter.makeInstance(element)
 }
 
 Object.assign(SVG, Classes)
 Object.assign(SVG, tools)
 Object.assign(SVG, adopter)
-
-import * as utils from './utils.js'
 SVG.utils = utils
-
-import * as regex from './regex.js'
 SVG.regex = regex
-
-
-// satisfy tests, fix later
-import * as ns from './namespaces.js'
 SVG.get = SVG
 SVG.find = find
 Object.assign(SVG, ns)
-import {easing} from './Controller.js'
 SVG.easing = easing
-import * as events from './event.js'
 Object.assign(SVG, events)
-import {TransformBag, ObjectBag, NonMorphable} from './Morphable.js'
 SVG.TransformBag = TransformBag
 SVG.ObjectBag = ObjectBag
 SVG.NonMorphable = NonMorphable
-import parser from './parser.js'
 SVG.parser = parser
-import * as defaults from './defaults.js'
 SVG.defaults = defaults

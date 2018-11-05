@@ -1,10 +1,10 @@
-import {arrayToString, pathRegReplace} from './helpers.js'
+import { arrayToString, pathRegReplace } from './helpers.js'
 import parser from './parser.js'
-import {numbersWithDots, pathLetters, hyphen, delimiter, isPathLetter} from './regex.js'
+import { numbersWithDots, pathLetters, hyphen, delimiter, isPathLetter } from './regex.js'
 import Point from './Point.js'
 import SVGArray from './SVGArray.js'
-import {subClassArray} from './ArrayPolyfill.js'
-import {extend} from './tools.js'
+import { subClassArray } from './ArrayPolyfill.js'
+import { extend } from './tools.js'
 
 const PathArray = subClassArray('PathArray', SVGArray)
 
@@ -82,7 +82,6 @@ for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
     }
   })(mlhvqtcsaz[i].toUpperCase())
 }
-
 
 extend(PathArray, {
   // Convert array to string
@@ -246,9 +245,9 @@ extend(PathArray, {
       array = array
         .replace(numbersWithDots, pathRegReplace) // convert 45.123.123 to 45.123 .123
         .replace(pathLetters, ' $& ') // put some room between letters and numbers
-        .replace(hyphen, '$1 -')      // add space before hyphen
-        .trim()                                 // trim
-        .split(delimiter)   // split into array
+        .replace(hyphen, '$1 -') // add space before hyphen
+        .trim() // trim
+        .split(delimiter) // split into array
     } else {
       array = array.reduce(function (prev, curr) {
         return [].concat.call(prev, curr)
@@ -275,9 +274,9 @@ extend(PathArray, {
       }
 
       result.push(pathHandlers[s].call(null,
-          array.slice(index, (index = index + paramCnt[s.toUpperCase()])).map(parseFloat),
-          p, p0
-        )
+        array.slice(index, (index = index + paramCnt[s.toUpperCase()])).map(parseFloat),
+        p, p0
+      )
       )
     } while (len > index)
 

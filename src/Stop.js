@@ -1,7 +1,7 @@
 import Element from './Element.js'
 import SVGNumber from './SVGNumber.js'
-import {nodeOrNew} from './tools.js'
-import {register} from './adopter.js'
+import { nodeOrNew } from './tools.js'
+import { register } from './adopter.js'
 
 export default class Stop extends Element {
   constructor (node) {

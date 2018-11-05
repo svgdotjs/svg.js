@@ -1,10 +1,10 @@
-import {proportionalSize} from './helpers.js'
-import {nodeOrNew} from './tools.js'
+import { proportionalSize } from './helpers.js'
+import { nodeOrNew } from './tools.js'
 import Shape from './Shape.js'
 import PathArray from './PathArray.js'
 import find from './selector.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Path extends Shape {
   // Initialize node

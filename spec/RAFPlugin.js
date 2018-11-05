@@ -57,6 +57,8 @@
             global.requestAnimationFrame = _this.realRAF;
             global.cancelAnimationFrame = _this.realCAF;
             global.performance = _this.realPerf;
+            _this.nextTime = 0
+            callbacks = []
         };
 
         /**

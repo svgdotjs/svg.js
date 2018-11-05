@@ -1,9 +1,8 @@
 import Point from './Point.js'
 import parser from './parser.js'
-import {fullBox, domContains, isNulledBox} from './helpers.js'
-import {extend} from './tools.js'
-import {delimiter} from './regex.js'
-import {registerMethods} from './methods.js'
+import { fullBox, domContains, isNulledBox } from './helpers.js'
+import { delimiter } from './regex.js'
+import { registerMethods } from './methods.js'
 
 export default class Box {
   constructor (...args) {
@@ -14,10 +13,10 @@ export default class Box {
     var base = [0, 0, 0, 0]
     source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
       : Array.isArray(source) ? source
-      : typeof source === 'object' ? [source.left != null ? source.left
-      : source.x, source.top != null ? source.top : source.y, source.width, source.height]
-      : arguments.length === 4 ? [].slice.call(arguments)
-      : base
+        : typeof source === 'object' ? [source.left != null ? source.left
+          : source.x, source.top != null ? source.top : source.y, source.width, source.height]
+          : arguments.length === 4 ? [].slice.call(arguments)
+            : base
 
     this.x = source[0]
     this.y = source[1]
@@ -82,7 +81,7 @@ export default class Box {
   }
 }
 
-function getBox(cb) {
+function getBox (cb) {
   let box
 
   try {

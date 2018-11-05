@@ -1,6 +1,6 @@
 
-import {timeline} from './defaults.js'
-import {extend} from './tools.js'
+import { timeline } from './defaults.js'
+import { extend } from './tools.js'
 
 /***
 Base Class
@@ -29,7 +29,6 @@ export let easing = {
   }
 }
 
-
 export class Stepper {
   done () { return false }
 }
@@ -52,7 +51,6 @@ export class Ease extends Stepper {
     return from + (to - from) * this.ease(pos)
   }
 }
-
 
 /***
 Controller Types

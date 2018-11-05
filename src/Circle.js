@@ -1,9 +1,9 @@
 import Shape from './Shape.js'
-import {nodeOrNew, extend} from './tools.js'
-import {x, y, cx, cy, width, height, size} from './circled.js'
+import { nodeOrNew, extend } from './tools.js'
+import { x, y, cx, cy, width, height, size } from './circled.js'
 import SVGNumber from './SVGNumber.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Circle extends Shape {
   constructor (node) {
@@ -25,7 +25,7 @@ export default class Circle extends Shape {
   }
 }
 
-extend(Circle, {x, y, cx, cy, width, height, size})
+extend(Circle, { x, y, cx, cy, width, height, size })
 
 registerMethods({
   Element: {

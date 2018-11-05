@@ -1,5 +1,5 @@
-import {registerMethods} from './methods.js'
-import {delimiter} from './regex.js'
+import { registerMethods } from './methods.js'
+import { delimiter } from './regex.js'
 
 // Return array of classes on the node
 function classes () {

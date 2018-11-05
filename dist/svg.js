@@ -1,3 +1,13 @@
+/*!
+* svg.js - A lightweight library for manipulating and animating SVG.
+* @version 3.0.0
+* https://svgdotjs.github.io/
+*
+* @copyright Wout Fierens <wout@mick-wout.com>
+* @license MIT
+*
+* BUILT: Mon Nov 05 2018 18:59:11 GMT+0100 (GMT+01:00)
+*/;
 var SVG = (function () {
   'use strict';
 
@@ -206,30 +216,9 @@ var SVG = (function () {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
-  var Base =
-  /*#__PURE__*/
-  function () {
-    function Base(node
-    /*, {extensions = []}*/
-    ) {// this.tags = []
-      //
-      // for (let extension of extensions) {
-      //   extension.setup.call(this, node)
-      //   this.tags.push(extension.name)
-      // }
-
-      _classCallCheck(this, Base);
-    }
-
-    _createClass(Base, [{
-      key: "is",
-      value: function is(ability) {
-        return this.tags.includes(ability);
-      }
-    }]);
-
-    return Base;
-  }();
+  var Base = function Base() {
+    _classCallCheck(this, Base);
+  };
 
   // Parse unit value
   var numberAndUnit = /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i; // Parse hex value
@@ -502,6 +491,7 @@ var SVG = (function () {
     }; // Inherit prototype
 
     if (config.inherit) {
+      /* eslint new-cap: "off" */
       initializer.prototype = new config.inherit();
       initializer.prototype.constructor = initializer;
     } // Extend with methods
@@ -513,7 +503,7 @@ var SVG = (function () {
 
 
     if (config.construct) {
-      extend(config.parent || Container, config.construct);
+      extend(config.parent || getClass('Container'), config.construct);
     }
 
     return initializer;
@@ -616,56 +606,6 @@ var SVG = (function () {
     eid: eid,
     assignNewId: assignNewId
   });
-
-  var methods = {};
-  function registerMethods(name, m) {
-    if (Array.isArray(name)) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _name = _step.value;
-          registerMethods(_name, m);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      return;
-    }
-
-    if (_typeof(name) == 'object') {
-      var _arr = Object.entries(name);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var _arr$_i = _slicedToArray(_arr[_i], 2),
-            _name2 = _arr$_i[0],
-            _m = _arr$_i[1];
-
-        registerMethods(_name2, _m);
-      }
-
-      return;
-    }
-
-    methods[name] = Object.assign(methods[name] || {}, m);
-  }
-  function getMethodsFor(name) {
-    return methods[name] || {};
-  } // FIXME: save memory?
 
   var listenerId = 0;
 
@@ -881,7 +821,7 @@ var SVG = (function () {
 
     return EventTarget;
   }(Base); // Add events to elements
-  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
+  var methods = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
     // add event to Element
     var fn = function fn(f) {
       if (f === null) {
@@ -896,7 +836,7 @@ var SVG = (function () {
     last[event] = fn;
     return last;
   }, {});
-  extend(EventTarget, methods$1); // registerMethods('EventTarget', {
+  extend(EventTarget, methods); // registerMethods('EventTarget', {
   //   on, off, dispatch, fire
   // })
   //
@@ -1099,6 +1039,7 @@ var SVG = (function () {
     return Color;
   }();
 
+  /* eslint no-new-func: "off" */
   var subClassArray = function () {
     try {
       // try es6 subclassing
@@ -1127,7 +1068,7 @@ var SVG = (function () {
   });
   extend(SVGArray, {
     init: function init() {
-      //this.splice(0, this.length)
+      // this.splice(0, this.length)
       this.length = 0;
       this.push.apply(this, _toConsumableArray(this.parse.apply(this, arguments)));
     },
@@ -1149,7 +1090,7 @@ var SVG = (function () {
     // Parse whitespace separated string
     parse: function parse() {
       var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      //array = array.valueOf()
+      // array = array.valueOf()
       // If already is an array, no need to parse it
       if (array instanceof Array) return array;
       return array.trim().split(delimiter).map(parseFloat);
@@ -1357,7 +1298,7 @@ var SVG = (function () {
       // How does attr know about image()?
 
 
-      while (typeof val.attrHook == 'function') {
+      while (typeof val.attrHook === 'function') {
         val = val.attrHook(this, attr);
       } // ensure correct numeric values (also accepts NaN and Infinity)
 
@@ -1390,7 +1331,7 @@ var SVG = (function () {
     }
 
     return this;
-  } //registerMethods('Element', {attr})
+  } // registerMethods('Element', {attr})
 
   var Dom =
   /*#__PURE__*/
@@ -1744,7 +1685,7 @@ var SVG = (function () {
 
     }, {
       key: "reference",
-      value: function reference$$1(attr) {
+      value: function reference(attr) {
         var id = idFromReference(this.attr(attr));
         return id ? makeInstance(id) : null;
       } // set given data to the elements data property
@@ -1812,7 +1753,7 @@ var SVG = (function () {
     return Shape;
   }(Element);
 
-  var Container$1 =
+  var Container =
   /*#__PURE__*/
   function (_Element) {
     _inherits(Container, _Element);
@@ -1888,8 +1829,58 @@ var SVG = (function () {
     }]);
 
     return Defs;
-  }(Container$1);
+  }(Container);
   register(Defs);
+
+  var methods$1 = {};
+  function registerMethods(name, m) {
+    if (Array.isArray(name)) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _name = _step.value;
+          registerMethods(_name, m);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return;
+    }
+
+    if (_typeof(name) === 'object') {
+      var _arr = Object.entries(name);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var _arr$_i = _slicedToArray(_arr[_i], 2),
+            _name2 = _arr$_i[0],
+            _m = _arr$_i[1];
+
+        registerMethods(_name2, _m);
+      }
+
+      return;
+    }
+
+    methods$1[name] = Object.assign(methods$1[name] || {}, m);
+  }
+  function getMethodsFor(name) {
+    return methods$1[name] || {};
+  } // FIXME: save memory?
 
   var Doc$1 =
   /*#__PURE__*/
@@ -1919,7 +1910,7 @@ var SVG = (function () {
       key: "doc",
       value: function doc() {
         if (this.isRoot()) return this;
-        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this); //return doc.call(this)
+        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this); // return doc.call(this)
       } // Add namespaces
 
     }, {
@@ -1946,7 +1937,7 @@ var SVG = (function () {
           return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
         }
 
-        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type); //return parent.call(this, type)
+        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type); // return parent.call(this, type)
       } // Removes the doc from the DOM
       // remove() {
       //   if (!this.isRoot()) {
@@ -1973,7 +1964,7 @@ var SVG = (function () {
     }]);
 
     return Doc;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       // Create nested svg document
@@ -1996,7 +1987,7 @@ var SVG = (function () {
     }
 
     return G;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Element: {
       // Create a group element
@@ -2186,7 +2177,7 @@ var SVG = (function () {
     }]);
 
     return Bare;
-  }(Container$1);
+  }(Container);
   register(Bare);
   registerMethods('Container', {
     // Create an element that is not described by SVG.js
@@ -2325,11 +2316,11 @@ var SVG = (function () {
     });
   } // Scoped find method
 
-  function find$1(query) {
+  function find(query) {
     return baseFind(query, this.node);
   }
   registerMethods('Dom', {
-    find: find$1
+    find: find
   });
 
   var ClipPath =
@@ -2352,7 +2343,7 @@ var SVG = (function () {
           el.unclip();
         }); // remove clipPath from parent
 
-        return _get(_getPrototypeOf(ClipPath.prototype), "remove", this).call(this); //return remove.call(this)
+        return _get(_getPrototypeOf(ClipPath.prototype), "remove", this).call(this); // return remove.call(this)
       }
     }, {
       key: "targets",
@@ -2362,7 +2353,7 @@ var SVG = (function () {
     }]);
 
     return ClipPath;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       // Create clipping element
@@ -2415,7 +2406,7 @@ var SVG = (function () {
     }]);
 
     return A;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       // Create a hyperlink element
@@ -2615,7 +2606,7 @@ var SVG = (function () {
     }
   });
 
-  var Box$1 =
+  var Box =
   /*#__PURE__*/
   function () {
     function Box() {
@@ -2712,12 +2703,12 @@ var SVG = (function () {
     Element: {
       // Get bounding box
       bbox: function bbox() {
-        return new Box$1(getBox.call(this, function (node) {
+        return new Box(getBox.call(this, function (node) {
           return node.getBBox();
         }));
       },
       rbox: function rbox(el) {
-        var box = new Box$1(getBox.call(this, function (node) {
+        var box = new Box(getBox.call(this, function (node) {
           return node.getBoundingClientRect();
         }));
         if (el) return box.transform(el.screenCTM().inverse());
@@ -2727,9 +2718,9 @@ var SVG = (function () {
     viewbox: {
       viewbox: function viewbox(x, y, width, height) {
         // act as getter
-        if (x == null) return new Box$1(this.attr('viewBox')); // act as setter
+        if (x == null) return new Box(this.attr('viewBox')); // act as setter
 
-        return this.attr('viewBox', new Box$1(x, y, width, height));
+        return this.attr('viewBox', new Box(x, y, width, height));
       }
     }
   });
@@ -2781,7 +2772,7 @@ var SVG = (function () {
       key: "attr",
       value: function attr(a, b, c) {
         if (a === 'transform') a = 'gradientTransform';
-        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c); //return attr.call(this, a, b, c)
+        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c); // return attr.call(this, a, b, c)
       }
     }, {
       key: "targets",
@@ -2791,12 +2782,12 @@ var SVG = (function () {
     }, {
       key: "bbox",
       value: function bbox() {
-        return new Box$1();
+        return new Box();
       }
     }]);
 
     return Gradient;
-  }(Container$1);
+  }(Container);
   extend(Gradient, gradiented);
   registerMethods({
     Container: {
@@ -2856,7 +2847,7 @@ var SVG = (function () {
       key: "attr",
       value: function attr(a, b, c) {
         if (a === 'transform') a = 'patternTransform';
-        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c); //return attr.call(this, a, b, c)
+        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c); // return attr.call(this, a, b, c)
       }
     }, {
       key: "targets",
@@ -2866,12 +2857,12 @@ var SVG = (function () {
     }, {
       key: "bbox",
       value: function bbox() {
-        return new Box$1();
+        return new Box();
       }
     }]);
 
     return Pattern;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       // Create pattern element in defs
@@ -3340,7 +3331,7 @@ var SVG = (function () {
     }]);
 
     return Marker;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       marker: function marker(width, height, block) {
@@ -3391,7 +3382,7 @@ var SVG = (function () {
           el.unmask();
         }); // remove mask from parent
 
-        return _get(_getPrototypeOf(Mask.prototype), "remove", this).call(this); //return remove.call(this)
+        return _get(_getPrototypeOf(Mask.prototype), "remove", this).call(this); // return remove.call(this)
       }
     }, {
       key: "targets",
@@ -3401,7 +3392,7 @@ var SVG = (function () {
     }]);
 
     return Mask;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       mask: function mask() {
@@ -4140,7 +4131,7 @@ var SVG = (function () {
     }
 
     return _Symbol;
-  }(Container$1);
+  }(Container);
   registerMethods({
     Container: {
       symbol: function symbol() {
@@ -6787,7 +6778,7 @@ var SVG = (function () {
     Dom: Dom,
     Element: Element,
     Shape: Shape,
-    Container: Container$1,
+    Container: Container,
     HtmlNode: HtmlNode,
     Doc: Doc$1,
     Defs: Defs,
@@ -6820,7 +6811,7 @@ var SVG = (function () {
     PointArray: PointArray,
     Matrix: Matrix,
     Point: Point,
-    Box: Box$1,
+    Box: Box,
     Color: Color,
     Morphable: Morphable,
     Queue: Queue,
@@ -6856,7 +6847,7 @@ var SVG = (function () {
 
     p.removeElement(this).add(this, i); // make sure defs node is always at the top
 
-    if (typeof p.isRoot == 'function' && p.isRoot()) {
+    if (typeof p.isRoot === 'function' && p.isRoot()) {
       p.node.appendChild(p.defs().node);
     }
 
@@ -6878,7 +6869,7 @@ var SVG = (function () {
 
     p.node.appendChild(this.node); // Make sure defs node is always at the top
 
-    if (typeof p.isRoot == 'function' && p.isRoot()) {
+    if (typeof p.isRoot === 'function' && p.isRoot()) {
       p.node.appendChild(p.defs().node);
     }
 
@@ -7010,8 +7001,8 @@ var SVG = (function () {
 
         try {
           for (var _iterator = style[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var _name = _step.value;
-            var cased = camelCase(_name);
+            var name = _step.value;
+            var cased = camelCase(name);
             ret[cased] = this.node.style[cased];
           }
         } catch (err) {
@@ -7039,9 +7030,9 @@ var SVG = (function () {
 
 
       if (_typeof(style) === 'object') {
-        for (name in style) {
+        for (var _name in style) {
           // set empty string if null/undefined/'' was given
-          this.node.style[camelCase(name)] = style[name] == null || isBlank.test(style[name]) ? '' : style[name];
+          this.node.style[camelCase(_name)] = style[_name] == null || isBlank.test(style[_name]) ? '' : style[_name];
         }
       }
     } // set style for property
@@ -7176,7 +7167,7 @@ var SVG = (function () {
     remember: remember,
     forget: forget,
     memory: memory
-  }); //registerConstructor('Memory', setup)
+  }); // registerConstructor('Memory', setup)
 
   var sugar = {
     stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
@@ -7340,10 +7331,10 @@ var SVG = (function () {
   extend$1(EventTarget, getMethodsFor('EventTarget'));
   extend$1(Dom, getMethodsFor('Dom'));
   extend$1(Element, getMethodsFor('Element'));
-  extend$1(Shape, getMethodsFor('Shape')); //extend(Classes.Element, getConstructor('Memory'))
+  extend$1(Shape, getMethodsFor('Shape')); // extend(Classes.Element, getConstructor('Memory'))
 
-  extend$1(Container$1, getMethodsFor('Container'));
-  registerMorphableType([SVGNumber, Color, Box$1, Matrix, SVGArray, PointArray, PathArray]);
+  extend$1(Container, getMethodsFor('Container'));
+  registerMorphableType([SVGNumber, Color, Box, Matrix, SVGArray, PointArray, PathArray]);
   makeMorphable(); // The main wrapping element
 
   function SVG(element) {
@@ -7353,7 +7344,7 @@ var SVG = (function () {
   Object.assign(SVG, tools);
   Object.assign(SVG, adopter);
   SVG.utils = utils;
-  SVG.regex = regex; // satisfy tests, fix later
+  SVG.regex = regex;
   SVG.get = SVG;
   SVG.find = baseFind;
   Object.assign(SVG, ns$1);

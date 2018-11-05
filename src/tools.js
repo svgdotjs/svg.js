@@ -1,5 +1,5 @@
-import {ns} from './namespaces.js'
-import {capitalize} from './helpers.js'
+import { ns } from './namespaces.js'
+import { getClass } from './adopter.js'
 
 export function nodeOrNew (name, node) {
   return node || makeNode(name)
@@ -39,6 +39,7 @@ export function invent (config) {
 
   // Inherit prototype
   if (config.inherit) {
+    /* eslint new-cap: "off" */
     initializer.prototype = new config.inherit()
     initializer.prototype.constructor = initializer
   }
@@ -49,7 +50,7 @@ export function invent (config) {
   }
 
   // Attach construct method to parent
-  if (config.construct) { extend(config.parent || Container, config.construct) }
+  if (config.construct) { extend(config.parent || getClass('Container'), config.construct) }
 
   return initializer
 }

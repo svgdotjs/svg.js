@@ -1,5 +1,5 @@
 // FIXME: import this to runner
-import {proportionalSize} from './helpers.js'
+import { proportionalSize } from './helpers.js'
 import SVGNumber from './SVGNumber.js'
 
 // Radius x value

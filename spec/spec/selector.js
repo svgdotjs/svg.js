@@ -28,7 +28,7 @@ describe('Selector', function() {
       e5 = draw.rect(100, 100).addClass('selectable-element')
     })
     it('gets all elements with a given class name', function() {
-      expect(SVG.find('rect.selectable-element').valueOf()).toEqual([e1, e3, e5])
+      expect(SVG.find('rect.selectable-element')).toEqual([e1, e3, e5])
     })
     it('returns an Array', function() {
       expect(SVG.find('rect.selectable-element') instanceof Array).toBe(true)

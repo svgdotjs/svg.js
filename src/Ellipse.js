@@ -1,8 +1,8 @@
 import Shape from './Shape.js'
 import * as circled from './circled.js'
-import {extend, nodeOrNew} from './tools.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { extend, nodeOrNew } from './tools.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Ellipse extends Shape {
   constructor (node) {

@@ -1,9 +1,9 @@
-import {isNumber, isImage} from './regex.js'
-import {attrs as defaults} from './defaults.js'
+import { isNumber, isImage } from './regex.js'
+import { attrs as defaults } from './defaults.js'
 import Color from './Color.js'
 import SVGArray from './SVGArray.js'
 import SVGNumber from './SVGNumber.js'
-//import {registerMethods} from './methods.js'
+// import {registerMethods} from './methods.js'
 
 // Set svg element attribute
 export default function attr (attr, val, ns) {
@@ -26,14 +26,14 @@ export default function attr (attr, val, ns) {
     // apply every attribute individually if an object is passed
     for (val in attr) this.attr(val, attr[val])
   } else if (val === null) {
-      // remove value
+    // remove value
     this.node.removeAttribute(attr)
   } else if (val == null) {
     // act as a getter if the first and only argument is not an object
     val = this.node.getAttribute(attr)
     return val == null ? defaults[attr] // FIXME: do we need to return defaults?
       : isNumber.test(val) ? parseFloat(val)
-      : val
+        : val
   } else {
     // convert image fill and stroke to patterns
     if (attr === 'fill' || attr === 'stroke') {
@@ -44,7 +44,7 @@ export default function attr (attr, val, ns) {
 
     // FIXME: This is fine, but what about the lines above?
     // How does attr know about image()?
-    while (typeof val.attrHook == 'function') {
+    while (typeof val.attrHook === 'function') {
       val = val.attrHook(this, attr)
     }
 
@@ -80,4 +80,4 @@ export default function attr (attr, val, ns) {
   return this
 }
 
-//registerMethods('Element', {attr})
+// registerMethods('Element', {attr})

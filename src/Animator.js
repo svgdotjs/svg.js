@@ -77,8 +77,8 @@ const Animator = {
 
     // If we have remaining timeouts or frames, draw until we don't anymore
     Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first()
-        ? window.requestAnimationFrame(Animator._draw)
-        : null
+      ? window.requestAnimationFrame(Animator._draw)
+      : null
   }
 }
 

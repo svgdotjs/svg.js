@@ -1,10 +1,10 @@
 import Path from './Path.js'
 import Text from './Text.js'
 import PathArray from './PathArray.js'
-import {nodeOrNew} from './tools.js'
-import {xlink} from './namespaces.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { nodeOrNew } from './tools.js'
+import { xlink } from './namespaces.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class TextPath extends Text {
   // Initialize node
@@ -44,7 +44,7 @@ registerMethods({
     }
   },
   Text: {
-      // Create path for text to run on
+    // Create path for text to run on
     path: function (track) {
       var path = new TextPath()
 

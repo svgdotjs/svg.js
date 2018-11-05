@@ -1,8 +1,8 @@
 import Text from './Text.js'
-import {nodeOrNew, extend} from './tools.js'
+import { nodeOrNew, extend } from './tools.js'
 import * as textable from './textable.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Tspan extends Text {
   // Initialize node

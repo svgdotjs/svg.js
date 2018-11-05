@@ -1,4 +1,4 @@
-import {dots, reference} from './regex.js'
+import { dots, reference } from './regex.js'
 
 export function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
@@ -188,10 +188,10 @@ export function getOrigin (o, element) {
     // Calculate the transformed x and y coordinates
     let bx = string.includes('left') ? x
       : string.includes('right') ? x + width
-      : x + width / 2
+        : x + width / 2
     let by = string.includes('top') ? y
       : string.includes('bottom') ? y + height
-      : y + height / 2
+        : y + height / 2
 
     // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
     ox = o.ox != null ? o.ox : bx

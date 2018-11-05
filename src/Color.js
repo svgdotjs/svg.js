@@ -1,5 +1,3 @@
-/* globals fullHex, compToHex */
-
 /*
 
 Color {
@@ -29,8 +27,8 @@ SVG.hsl()
 SVG.lab('rgb(100, 100, 100)')
 */
 
-import {isHex, isRgb, whitespace, rgb, hex} from './regex.js'
-import {fullHex, compToHex} from './helpers.js'
+import { isHex, isRgb, whitespace, rgb, hex } from './regex.js'
+import { fullHex, compToHex } from './helpers.js'
 
 export default class Color {
   constructor (...args) {

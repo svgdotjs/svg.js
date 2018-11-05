@@ -1,9 +1,9 @@
-import {proportionalSize} from './helpers.js'
-import {nodeOrNew, extend} from './tools.js'
+import { proportionalSize } from './helpers.js'
+import { nodeOrNew, extend } from './tools.js'
 import PointArray from './PointArray.js'
 import Shape from './Shape.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 import * as pointed from './pointed.js'
 
 export default class Line extends Shape {
@@ -55,7 +55,7 @@ registerMethods({
       // x1 is not necessarily a number, it can also be an array, a string and a PointArray
       return Line.prototype.plot.apply(
         this.put(new Line())
-      , args[0] != null ? args : [0, 0, 0, 0]
+        , args[0] != null ? args : [0, 0, 0, 0]
       )
     }
   }

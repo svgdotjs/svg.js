@@ -1,6 +1,5 @@
-import {delimiter} from './regex.js'
-import {registerMethods} from './methods.js'
-import {makeInstance} from './adopter.js'
+import { delimiter } from './regex.js'
+import { makeInstance } from './adopter.js'
 
 let listenerId = 0
 
@@ -125,7 +124,7 @@ export function dispatch (node, event, data) {
   if (event instanceof window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new window.CustomEvent(event, {detail: data, cancelable: true})
+    event = new window.CustomEvent(event, { detail: data, cancelable: true })
     n.dispatchEvent(event)
   }
   return event

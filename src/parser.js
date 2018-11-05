@@ -1,7 +1,6 @@
 import Doc from './Doc.js'
 
 export default function parser () {
-
   // Reuse cached element if possible
   if (!parser.nodes) {
     let svg = new Doc().size(2, 0).css({
@@ -14,7 +13,7 @@ export default function parser () {
 
     let path = svg.path().node
 
-    parser.nodes = {svg, path}
+    parser.nodes = { svg, path }
   }
 
   if (!parser.nodes.svg.node.parentNode) {

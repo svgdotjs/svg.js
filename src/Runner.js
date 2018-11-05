@@ -1,15 +1,16 @@
-import {isMatrixLike, getOrigin} from './helpers.js'
+import { isMatrixLike, getOrigin } from './helpers.js'
 import Matrix from './Matrix.js'
-import {default as Morphable, TransformBag} from './Morphable.js'
+import Morphable, { TransformBag } from './Morphable.js'
 import SVGNumber from './SVGNumber.js'
 import Timeline from './Timeline.js'
-import {Controller, Ease, Stepper} from './Controller.js'
-import {noop, timeline} from './defaults.js'
-import {extend} from './tools.js'
+import { Controller, Ease, Stepper } from './Controller.js'
+import { noop, timeline } from './defaults.js'
+import { extend } from './tools.js'
 import Animator from './Animator.js'
 import Point from './Point.js'
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 import EventTarget from './EventTarget.js'
+import Box from './Box.js'
 
 // FIXME: What is this doing here?
 // easing = {
@@ -231,7 +232,7 @@ export default class Runner extends EventTarget {
       var endTime = t * (w + d) - w
       position = x <= 0 ? Math.round(f(1e-5))
         : x < endTime ? f(x)
-        : Math.round(f(endTime - 1e-5))
+          : Math.round(f(endTime - 1e-5))
       return position
     }
 
@@ -269,7 +270,7 @@ export default class Runner extends EventTarget {
     var justFinished = this._lastTime < this._time && this.time > duration
     this._lastTime = this._time
     if (justStarted) {
-       this.fire('start', this)
+      this.fire('start', this)
     }
 
     // Work out if the runner is finished set the done flag here so animations
@@ -441,7 +442,7 @@ export default class Runner extends EventTarget {
 
 Runner.id = 0
 
-class FakeRunner{
+class FakeRunner {
   constructor (transforms = new Matrix(), id = -1, done = true) {
     this.transforms = transforms
     this.id = id
@@ -601,7 +602,6 @@ registerMethods({
   }
 })
 
-
 extend(Runner, {
   attr (a, v) {
     return this.styleAttr('attr', a, v)
@@ -707,9 +707,9 @@ extend(Runner, {
       // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform()
 
-      let {x, y} = new Point(origin).transform(element._currentTransform(this))
+      let { x, y } = new Point(origin).transform(element._currentTransform(this))
 
-      let target = new Matrix({...transforms, origin: [x, y]})
+      let target = new Matrix({ ...transforms, origin: [x, y] })
       let start = this._isDeclarative && current
         ? current
         : startTransform
@@ -762,7 +762,7 @@ extend(Runner, {
       }
 
       // overwrite the old transformations with the new ones
-      transforms = {...newTransforms, origin}
+      transforms = { ...newTransforms, origin }
     }
 
     this.queue(setup, run, retarget)

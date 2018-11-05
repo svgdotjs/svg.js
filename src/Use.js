@@ -1,8 +1,8 @@
 import Shape from './Shape.js'
-import {xlink} from './namespaces.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
-import {nodeOrNew} from './tools.js'
+import { xlink } from './namespaces.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
+import { nodeOrNew } from './tools.js'
 
 export default class Use extends Shape {
   constructor (node) {

@@ -1,5 +1,5 @@
 import Animator from './Animator.js'
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 var time = window.performance || Date
 
@@ -7,7 +7,7 @@ var makeSchedule = function (runnerInfo) {
   var start = runnerInfo.start
   var duration = runnerInfo.runner.duration()
   var end = start + duration
-  return {start: start, duration: duration, end: end, runner: runnerInfo.runner}
+  return { start: start, duration: duration, end: end, runner: runnerInfo.runner }
 }
 
 export default class Timeline {

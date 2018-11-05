@@ -1,7 +1,6 @@
-import {idFromReference} from './helpers.js'
-import {map} from './utils.js'
-import {adopt} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { map } from './utils.js'
+import { adopt } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 // // Method for getting an element by id
 // SVG.get = function (id) {
@@ -37,4 +36,4 @@ export function find (query) {
   return baseFind(query, this.node)
 }
 
-registerMethods('Dom', {find})
+registerMethods('Dom', { find })

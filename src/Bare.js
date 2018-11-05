@@ -1,8 +1,7 @@
-import {nodeOrNew} from './tools.js'
-import {register} from './adopter.js'
+import { nodeOrNew } from './tools.js'
+import { register } from './adopter.js'
 import Container from './Container.js'
-import {registerMethods} from './methods.js'
-import {extend} from './tools.js'
+import { registerMethods } from './methods.js'
 
 export default class Bare extends Container {
   constructor (node) {

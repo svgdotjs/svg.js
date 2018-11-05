@@ -9,7 +9,7 @@ export function registerMethods (name, m) {
     return
   }
 
-  if (typeof name == 'object') {
+  if (typeof name === 'object') {
     for (let [_name, _m] of Object.entries(name)) {
       registerMethods(_name, _m)
     }
@@ -24,15 +24,14 @@ export function getMethodsFor (name) {
 }
 
 // FIXME: save memory?
-export function cleanMethods () {
-  methods = {}
-}
-
+// export function cleanMethods () {
+//   methods = {}
+// }
 
 export function registerConstructor (name, setup) {
   constructors[name] = setup
 }
 
 export function getConstructor (name) {
-  return constructors[name] ? {setup: constructors[name], name} : {}
+  return constructors[name] ? { setup: constructors[name], name } : {}
 }

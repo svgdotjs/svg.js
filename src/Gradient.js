@@ -1,11 +1,12 @@
 import Stop from './Stop.js'
 import Container from './Container.js'
 import * as gradiented from './gradiented.js'
-import {nodeOrNew, extend} from './tools.js'
-//import attr from './attr.js'
-import {register} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { nodeOrNew, extend } from './tools.js'
+// import attr from './attr.js'
+import { register } from './adopter.js'
+import { registerMethods } from './methods.js'
 import Box from './Box.js'
+import { find } from './selector.js'
 
 export default class Gradient extends Container {
   constructor (type) {
@@ -47,7 +48,7 @@ export default class Gradient extends Container {
   attr (a, b, c) {
     if (a === 'transform') a = 'gradientTransform'
     return super.attr(a, b, c)
-    //return attr.call(this, a, b, c)
+    // return attr.call(this, a, b, c)
   }
 
   targets () {

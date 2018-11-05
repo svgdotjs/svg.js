@@ -1,16 +1,16 @@
 import parser from './parser.js'
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 export default class Point {
   // Initialize
   constructor (x, y, base) {
     let source
-    base = base || {x: 0, y: 0}
+    base = base || { x: 0, y: 0 }
 
     // ensure source as object
-    source = Array.isArray(x) ? {x: x[0], y: x[1]}
-      : typeof x === 'object' ? {x: x.x, y: x.y}
-      : {x: x, y: y}
+    source = Array.isArray(x) ? { x: x[0], y: x[1] }
+      : typeof x === 'object' ? { x: x.x, y: x.y }
+        : { x: x, y: y }
 
     // merge source
     this.x = source.x == null ? base.x : source.x

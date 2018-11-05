@@ -1,6 +1,6 @@
 // Add polygon-specific functions
 import PointArray from './PointArray.js'
-import {proportionalSize} from './helpers.js'
+import { proportionalSize } from './helpers.js'
 
 // Get array
 export function array () {
@@ -11,7 +11,7 @@ export function array () {
 export function plot (p) {
   return (p == null) ? this.array()
     : this.clear().attr('points', typeof p === 'string' ? p
-    : (this._array = new PointArray(p)))
+      : (this._array = new PointArray(p)))
 }
 
 // Clear array cache

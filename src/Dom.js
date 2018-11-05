@@ -1,8 +1,11 @@
 import EventTarget from './EventTarget.js'
-import {assignNewId, adopt, makeInstance, eid} from './adopter.js'
-import {map} from './utils.js'
-import {matcher} from './helpers.js'
-import {ns} from './namespaces.js'
+import { assignNewId, adopt, makeInstance, eid } from './adopter.js'
+import { map } from './utils.js'
+import { matcher } from './helpers.js'
+import { ns } from './namespaces.js'
+
+import { extend } from './tools.js'
+import attr from './attr.js'
 
 export default class Dom extends EventTarget {
   constructor (node) {
@@ -231,7 +234,4 @@ export default class Dom extends EventTarget {
     return this
   }
 }
-
-import {extend} from './tools.js'
-import attr from './attr.js'
-extend(Dom, {attr})
+extend(Dom, { attr })

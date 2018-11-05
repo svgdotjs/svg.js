@@ -1,10 +1,10 @@
-import {abcdef, arrayToMatrix, closeEnough, isMatrixLike} from './helpers.js'
+import { abcdef, arrayToMatrix, closeEnough, isMatrixLike } from './helpers.js'
 import Point from './Point.js'
-import {delimiter} from './regex.js'
-import {radians} from './utils.js'
+import { delimiter } from './regex.js'
+import { radians } from './utils.js'
 import parser from './parser.js'
 import Element from './Element.js'
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 export default class Matrix {
   constructor (...args) {
@@ -18,11 +18,11 @@ export default class Matrix {
     // ensure source as object
     source = source instanceof Element ? source.matrixify()
       : typeof source === 'string' ? arrayToMatrix(source.split(delimiter).map(parseFloat))
-      : Array.isArray(source) ? arrayToMatrix(source)
-      : (typeof source === 'object' && isMatrixLike(source)) ? source
-      : (typeof source === 'object') ? new Matrix().transform(source)
-      : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
-      : base
+        : Array.isArray(source) ? arrayToMatrix(source)
+          : (typeof source === 'object' && isMatrixLike(source)) ? source
+            : (typeof source === 'object') ? new Matrix().transform(source)
+              : arguments.length === 6 ? arrayToMatrix([].slice.call(arguments))
+                : base
 
     // Merge the source matrix with the base matrix
     this.a = source.a != null ? source.a : base.a
@@ -32,7 +32,6 @@ export default class Matrix {
     this.e = source.e != null ? source.e : base.e
     this.f = source.f != null ? source.f : base.f
   }
-
 
   // Clones this matrix
   clone () {
@@ -249,7 +248,7 @@ export default class Matrix {
       y = x
     }
 
-    let {a, b, c, d, e, f} = this
+    let { a, b, c, d, e, f } = this
 
     this.a = a * x
     this.b = b * y
@@ -273,7 +272,7 @@ export default class Matrix {
     let cos = Math.cos(r)
     let sin = Math.sin(r)
 
-    let {a, b, c, d, e, f} = this
+    let { a, b, c, d, e, f } = this
 
     this.a = a * cos - b * sin
     this.b = b * cos + a * sin
@@ -293,7 +292,7 @@ export default class Matrix {
   flipO (axis, around) {
     return axis === 'x' ? this.scaleO(-1, 1, around, 0)
       : axis === 'y' ? this.scaleO(1, -1, 0, around)
-      : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
   }
 
   // Shear matrix
@@ -302,7 +301,7 @@ export default class Matrix {
   }
 
   shearO (lx, cx = 0, cy = 0) {
-    let {a, b, c, d, e, f} = this
+    let { a, b, c, d, e, f } = this
 
     this.a = a + b * lx
     this.c = c + d * lx
@@ -331,7 +330,7 @@ export default class Matrix {
     let lx = Math.tan(x)
     let ly = Math.tan(y)
 
-    let {a, b, c, d, e, f} = this
+    let { a, b, c, d, e, f } = this
 
     this.a = a + b * lx
     this.b = b + a * ly
@@ -413,7 +412,6 @@ export default class Matrix {
     }
   }
 
-
   // TODO: Refactor this to a static function of matrix.js
   static formatTransforms (o) {
     // Get all of the parameters required to form the matrix
@@ -422,20 +420,20 @@ export default class Matrix {
     var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
     var skewX = o.skew && o.skew.length ? o.skew[0]
       : isFinite(o.skew) ? o.skew
-      : isFinite(o.skewX) ? o.skewX
-      : 0
+        : isFinite(o.skewX) ? o.skewX
+          : 0
     var skewY = o.skew && o.skew.length ? o.skew[1]
       : isFinite(o.skew) ? o.skew
-      : isFinite(o.skewY) ? o.skewY
-      : 0
+        : isFinite(o.skewY) ? o.skewY
+          : 0
     var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
       : isFinite(o.scale) ? o.scale * flipX
-      : isFinite(o.scaleX) ? o.scaleX * flipX
-      : flipX
+        : isFinite(o.scaleX) ? o.scaleX * flipX
+          : flipX
     var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
       : isFinite(o.scale) ? o.scale * flipY
-      : isFinite(o.scaleY) ? o.scaleY * flipY
-      : flipY
+        : isFinite(o.scaleY) ? o.scaleY * flipY
+          : flipY
     var shear = o.shear || 0
     var theta = o.rotate || o.theta || 0
     var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)

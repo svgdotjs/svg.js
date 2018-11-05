@@ -1,19 +1,19 @@
 import Shape from './Shape.js'
 import SVGNumber from './SVGNumber.js'
-import {nodeOrNew, extend} from './tools.js'
-import {attrs} from './defaults.js'
+import { nodeOrNew, extend } from './tools.js'
+import { attrs } from './defaults.js'
 import * as textable from './textable.js'
-import {register, adopt} from './adopter.js'
-import {registerMethods} from './methods.js'
+import { register, adopt } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Text extends Shape {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('text', node), Text)
 
-    this.dom.leading = new SVGNumber(1.3)    // store leading value for rebuilding
-    this._rebuild = true                      // enable automatic updating of dy values
-    this._build = false                       // disable build mode for adding multiple lines
+    this.dom.leading = new SVGNumber(1.3) // store leading value for rebuilding
+    this._rebuild = true // enable automatic updating of dy values
+    this._build = false // disable build mode for adding multiple lines
 
     // set default font
     this.attr('font-family', attrs['font-family'])

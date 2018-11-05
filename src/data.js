@@ -1,4 +1,4 @@
-import {registerMethods} from './methods.js'
+import { registerMethods } from './methods.js'
 
 // Store data values on svg nodes
 export function data (a, v, r) {
@@ -15,12 +15,12 @@ export function data (a, v, r) {
   } else {
     this.attr('data-' + a,
       v === null ? null
-      : r === true || typeof v === 'string' || typeof v === 'number' ? v
-      : JSON.stringify(v)
+        : r === true || typeof v === 'string' || typeof v === 'number' ? v
+          : JSON.stringify(v)
     )
   }
 
   return this
 }
 
-registerMethods('Dom', {data})
+registerMethods('Dom', { data })

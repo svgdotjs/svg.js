@@ -1,33 +1,32 @@
 import Container from './Container.js'
 import Defs from './Defs.js'
-import { extend, nodeOrNew } from './tools.js'
+import { nodeOrNew } from './tools.js'
 import { ns, xlink, xmlns, svgjs } from './namespaces.js'
-import {adopt, register} from './adopter.js'
-import {registerMethods} from './methods.js'
-//import {remove, parent, doc} from './Element.js'
+import { adopt, register } from './adopter.js'
+import { registerMethods } from './methods.js'
 
 export default class Doc extends Container {
-  constructor(node) {
+  constructor (node) {
     super(nodeOrNew('svg', node), Doc)
     this.namespace()
   }
 
-  isRoot() {
-    return !this.node.parentNode
-      || !(this.node.parentNode instanceof window.SVGElement)
-      || this.node.parentNode.nodeName === '#document'
+  isRoot () {
+    return !this.node.parentNode ||
+      !(this.node.parentNode instanceof window.SVGElement) ||
+      this.node.parentNode.nodeName === '#document'
   }
 
   // Check if this is a root svg
   // If not, call docs from this element
-  doc() {
+  doc () {
     if (this.isRoot()) return this
     return super.doc()
-    //return doc.call(this)
+    // return doc.call(this)
   }
 
   // Add namespaces
-  namespace() {
+  namespace () {
     if (!this.isRoot()) return this.doc().namespace()
     return this
       .attr({ xmlns: ns, version: '1.1' })
@@ -36,7 +35,7 @@ export default class Doc extends Container {
   }
 
   // Creates and returns defs element
-  defs() {
+  defs () {
     if (!this.isRoot()) return this.doc().defs()
 
     return adopt(this.node.getElementsByTagName('defs')[0]) ||
@@ -44,7 +43,7 @@ export default class Doc extends Container {
   }
 
   // custom parent method
-  parent(type) {
+  parent (type) {
     if (this.isRoot()) {
       return this.node.parentNode.nodeName === '#document'
         ? null
@@ -52,7 +51,7 @@ export default class Doc extends Container {
     }
 
     return super.parent(type)
-    //return parent.call(this, type)
+    // return parent.call(this, type)
   }
 
   // Removes the doc from the DOM
@@ -68,7 +67,7 @@ export default class Doc extends Container {
   //   return this
   // }
 
-  clear() {
+  clear () {
     // remove children
     while (this.node.hasChildNodes()) {
       this.node.removeChild(this.node.lastChild)
@@ -80,7 +79,7 @@ export default class Doc extends Container {
 registerMethods({
   Container: {
     // Create nested svg document
-    nested() {
+    nested () {
       return this.put(new Doc())
     }
   }

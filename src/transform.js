@@ -1,7 +1,7 @@
-import {arrayToMatrix, getOrigin, isMatrixLike} from './helpers.js'
+import { arrayToMatrix, getOrigin, isMatrixLike } from './helpers.js'
 import Matrix from './Matrix.js'
-import {delimiter, transforms} from './regex.js'
-import {registerMethods} from './methods.js'
+import { delimiter, transforms } from './regex.js'
+import { registerMethods } from './methods.js'
 
 // Reset all transformations
 export function untransform () {
@@ -58,7 +58,7 @@ export function transform (o, relative) {
 
   if (!isMatrixLike(o)) {
     // Set the origin according to the defined transform
-    o = {...o, origin: getOrigin(o, this)}
+    o = { ...o, origin: getOrigin(o, this) }
   }
 
   // The user can pass a boolean, an Element or an Matrix or nothing

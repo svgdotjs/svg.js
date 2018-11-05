@@ -1,7 +1,5 @@
-import {proportionalSize, matcher, idFromReference} from './helpers.js'
-import {makeInstance, root, getClass} from './adopter.js'
-import {delimiter} from './regex.js'
-import {ns} from './namespaces.js'
+import { proportionalSize, idFromReference } from './helpers.js'
+import { makeInstance, root, getClass } from './adopter.js'
 import SVGNumber from './SVGNumber.js'
 import Dom from './Dom.js'
 
@@ -138,8 +136,6 @@ export default class Element extends Dom {
     return this.attr('y', y)
   }
 }
-
-
 
 // registerMethods('Element', {
 //   x, y, cx, cy, move, center, width, height, size, clone, remove, replace,

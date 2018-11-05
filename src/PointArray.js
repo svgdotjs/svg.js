@@ -1,7 +1,7 @@
 import SVGArray from './SVGArray.js'
-import {delimiter} from './regex.js'
-import {subClassArray} from './ArrayPolyfill.js'
-import {extend} from './tools.js'
+import { delimiter } from './regex.js'
+import { subClassArray } from './ArrayPolyfill.js'
+import { extend } from './tools.js'
 
 const PointArray = subClassArray('PointArray', SVGArray)
 
@@ -115,7 +115,7 @@ extend(PointArray, {
       minX = Math.min(el[0], minX)
       minY = Math.min(el[1], minY)
     })
-    return {x: minX, y: minY, width: maxX - minX, height: maxY - minY}
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
   }
 })
 
