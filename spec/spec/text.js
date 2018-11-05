@@ -129,7 +129,7 @@ describe('Text', function() {
       text.center(321, 567)
       var box = text.bbox()
       expect(+text.node.getAttribute('x') + box.width / 2).toBeCloseTo(321, 1)
-      expect(text.y() + box.height / 2).toBeCloseTo(567)
+      expect(text.y() + box.height / 2).toBeCloseTo(567, 0)
     })
   })
 

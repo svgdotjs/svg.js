@@ -1,7 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import { uglify } from "rollup-plugin-uglify"
 import filesize from 'rollup-plugin-filesize'
-import progress from 'rollup-plugin-progress'
 const pkg = require('./package.json')
 
 const buildDate = Date()
@@ -29,7 +28,6 @@ export default [{
     banner: headerLong
   },
   plugins: [
-    progress(),
     babel({
       include: 'src/**'
     }),
