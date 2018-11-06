@@ -34,6 +34,20 @@ export default [{
     filesize(),
   ]
 }, {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/svg.es6.js',
+    name: 'SVG',
+    sourceMap: true,
+    format: 'esm',
+    banner: headerLong
+  },
+  plugins: [
+    babel({
+      include: 'src/**'
+    })
+  ]
+}, {
   input: 'src/svg.js',
   output: {
     file: 'dist/svg.min.js',
