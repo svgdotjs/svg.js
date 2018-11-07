@@ -112,7 +112,7 @@ function getBox (cb) {
     }
   } catch (e) {
     try {
-      let clone = this.clone(parser().svg).show()
+      let clone = this.clone().addTo(parser().svg).show()
       box = cb(clone.node)
       clone.remove()
     } catch (e) {

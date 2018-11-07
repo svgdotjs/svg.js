@@ -21,9 +21,65 @@ export let easing = {
   '<>': function (pos) { return -Math.cos(pos * Math.PI) / 2 + 0.5 },
   '>': function (pos) { return Math.sin(pos * Math.PI / 2) },
   '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 },
-  bezier: function (t0, x0, t1, x1) {
+  bezier: function (x1, y1, x2, y2) {
+    // see https://www.w3.org/TR/css-easing-1/#cubic-bezier-algo
     return function (t) {
-      // TODO: FINISH
+      if (t < 0) {
+        if (x1 > 0) {
+          return y1 / x1 * t
+        } else if (x2 > 0) {
+          return y2 / x2 * t
+        } else {
+          return 0
+        }
+      } else if (t > 1) {
+        if (x2 < 1) {
+          return (1 - y2) / (1 - x2) * t + (y2 - x2) / (1 - x2)
+        } else if (x1 < 1) {
+          return (1 - y1) / (1 - x1) * t + (y1 - x1) / (1 - x1)
+        } else {
+          return 1
+        }
+      } else {
+        return 3 * t * (1 - t) ** 2 * y1 + 3 * t ** 2 * (1 - t) * y2 + t ** 3
+      }
+    }
+  },
+  // https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
+  steps: function (steps, stepPosition = 'end') {
+    // deal with "jump-" prefix
+    stepPosition = stepPosition.split('-').reverse()[0]
+
+    let jumps = steps
+    if (stepPosition === 'none') {
+      --jumps
+    } else if (stepPosition === 'both') {
+      ++jumps
+    }
+
+    // The beforeFlag is essentially useless
+    return (t, beforeFlag = false) => {
+      // Step is called currentStep in referenced url
+      let step = Math.floor(t * steps)
+      const jumping = (t * step) % 1 === 0
+
+      if (stepPosition === 'start' || stepPosition === 'both') {
+        ++step
+      }
+
+      if (beforeFlag && jumping) {
+        --step
+      }
+
+      if (t >= 0 && step < 0) {
+        step = 0
+      }
+
+      if (t <= 1 && step > jumps) {
+        step = jumps
+      }
+
+      return step / jumps
     }
   }
 }

@@ -20,6 +20,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `precision()` method to round numeric element attributes -> __TODO!__
 - added a linter during the npm build process
 - added `npm build:dev` to let you develop without getting too annoyed
+- added `beziere()` and `steps()` to generate easing functions
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -70,6 +71,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - The whole lib is now splitted into es6 modules (#875)
 - `Element.svg()` now can can replace the current node, can export the children of a node and can take an export modifier to change/replace the exported nodes
 - `ungroup()` now breaks off one container and not more
+- `clone()` does not add the clone to the dom anymore
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

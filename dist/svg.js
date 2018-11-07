@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Nov 07 2018 16:59:53 GMT+0100 (GMT+01:00)
+* BUILT: Wed Nov 07 2018 22:39:24 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1380,8 +1380,7 @@ var SVG = (function () {
     } else if (val == null) {
       // act as a getter if the first and only argument is not an object
       val = this.node.getAttribute(attr);
-      return val == null ? attrs[attr] // FIXME: do we need to return defaults?
-      : isNumber.test(val) ? parseFloat(val) : val;
+      return val == null ? attrs[attr] : isNumber.test(val) ? parseFloat(val) : val;
     } else {
       // convert image fill and stroke to patterns
       if (attr === 'fill' || attr === 'stroke') {
@@ -1487,15 +1486,11 @@ var SVG = (function () {
 
     }, {
       key: "clone",
-      value: function clone(parent) {
+      value: function clone() {
         // write dom data to the dom so the clone can pickup the data
         this.writeDataToDom(); // clone element and assign new id
 
-        var clone = assignNewId(this.node.cloneNode(true)); // insert the clone in the given parent or after myself
-
-        if (parent) parent.add(clone); // FIXME: after might not be available here
-        else this.after(clone);
-        return clone;
+        return assignNewId(this.node.cloneNode(true));
       } // Iterates over all children and invokes a given block
 
     }, {
@@ -2677,8 +2672,67 @@ var SVG = (function () {
     '<': function _(pos) {
       return -Math.cos(pos * Math.PI / 2) + 1;
     },
-    bezier: function bezier(t0, x0, t1, x1) {
-      return function (t) {// TODO: FINISH
+    bezier: function bezier(x1, y1, x2, y2) {
+      // see https://www.w3.org/TR/css-easing-1/#cubic-bezier-algo
+      return function (t) {
+        if (t < 0) {
+          if (x1 > 0) {
+            return y1 / x1 * t;
+          } else if (x2 > 0) {
+            return y2 / x2 * t;
+          } else {
+            return 0;
+          }
+        } else if (t > 1) {
+          if (x2 < 1) {
+            return (1 - y2) / (1 - x2) * t + (y2 - x2) / (1 - x2);
+          } else if (x1 < 1) {
+            return (1 - y1) / (1 - x1) * t + (y1 - x1) / (1 - x1);
+          } else {
+            return 1;
+          }
+        } else {
+          return 3 * t * Math.pow(1 - t, 2) * y1 + 3 * Math.pow(t, 2) * (1 - t) * y2 + Math.pow(t, 3);
+        }
+      };
+    },
+    // https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
+    steps: function steps(_steps) {
+      var stepPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+      // deal with "jump-" prefix
+      stepPosition = stepPosition.split('-').reverse()[0];
+      var jumps = _steps;
+
+      if (stepPosition === 'none') {
+        --jumps;
+      } else if (stepPosition === 'both') {
+        ++jumps;
+      } // The beforeFlag is essentially useless
+
+
+      return function (t) {
+        var beforeFlag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        // Step is called currentStep in referenced url
+        var step = Math.floor(t * _steps);
+        var jumping = t * step % 1 === 0;
+
+        if (stepPosition === 'start' || stepPosition === 'both') {
+          ++step;
+        }
+
+        if (beforeFlag && jumping) {
+          --step;
+        }
+
+        if (t >= 0 && step < 0) {
+          step = 0;
+        }
+
+        if (t <= 1 && step > jumps) {
+          step = jumps;
+        }
+
+        return step / jumps;
       };
     }
   };
@@ -3137,7 +3191,7 @@ var SVG = (function () {
       }
     } catch (e) {
       try {
-        var clone = this.clone(parser().svg).show();
+        var clone = this.clone().addTo(parser().svg).show();
         box = cb(clone.node);
         clone.remove();
       } catch (e) {
@@ -3937,7 +3991,6 @@ var SVG = (function () {
       value: function _step() {
         // If the timeline is paused, just do nothing
         if (this._paused) return; // Get the time delta from the last time and update the time
-        // TODO: Deal with window.blur window.focus to pause animations
 
         var time = this._timeSource();
 

@@ -183,7 +183,6 @@ export default class Timeline {
     if (this._paused) return
 
     // Get the time delta from the last time and update the time
-    // TODO: Deal with window.blur window.focus to pause animations
     var time = this._timeSource()
     var dtSource = time - this._lastSourceTime
     var dtTime = this._speed * dtSource + (this._time - this._lastStepTime)

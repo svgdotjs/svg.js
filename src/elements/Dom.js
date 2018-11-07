@@ -56,19 +56,12 @@ export default class Dom extends EventTarget {
   }
 
   // Clone element
-  clone (parent) {
+  clone () {
     // write dom data to the dom so the clone can pickup the data
     this.writeDataToDom()
 
     // clone element and assign new id
-    let clone = assignNewId(this.node.cloneNode(true))
-
-    // insert the clone in the given parent or after myself
-    if (parent) parent.add(clone)
-    // FIXME: after might not be available here
-    else this.after(clone)
-
-    return clone
+    return assignNewId(this.node.cloneNode(true))
   }
 
   // Iterates over all children and invokes a given block

@@ -30,7 +30,7 @@ export default function attr (attr, val, ns) {
   } else if (val == null) {
     // act as a getter if the first and only argument is not an object
     val = this.node.getAttribute(attr)
-    return val == null ? defaults[attr] // FIXME: do we need to return defaults?
+    return val == null ? defaults[attr]
       : isNumber.test(val) ? parseFloat(val)
         : val
   } else {
