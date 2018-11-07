@@ -25,7 +25,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `SVG.Array.split()` function
 - removed workaround for browser bug with stroke-width
 - removed polyfills
-- removed `ungroup()` in favour of `flatten()`
 - removed `SVG.Set`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
 - removed `loaded()` and `error()` method on `SVG.Image` (#706)
@@ -38,8 +37,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
 - `SVG.Path.pointAt()` correctly returns an `SVG.Point` now
-- made transform-methods relative as default (breaking change)
-- changed SVG() to use querySelector instead of getElementById (breaking change) -> __TODO!__
 - replaced static reference to `masker` in `SVG.Mask` with the `masker()` method
 - replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
@@ -60,7 +57,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - moved `defs()` method from `SVG.Parent` to `SVG.Element`
 - `SVG()` can be called with css selector, node or svg string, now. Without an argument it creates a new `SVG.Doc()` (#646)
 - `add()`, `put()`, `addTo()`, `putIn()` now excepts all arguments accepted by `SVG()`
-- `SVG.Nested` is not `overflow:visible` by default
 - all `SVG.*` objects now can have a node as parameter when constructing
 - `SVG()` does not set a default size anymore
 - default constructor now has an optional `node` argument which is used to consruct the object e.g. `new SVG.Rect(rectNode)`
@@ -68,9 +64,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.on()` calls the listener in the context of the passed object. el.on always uses the svg.js object as context
 - `SVG.on()/off()` and `el.on()/off()` now accepts multiple comma or space separated events e.g. "mousedown, foo bar" (#727)
 - Matrices now apply transformations like `scale`, `translate`, etc... by left multiplying them to simplify transformations
-- The way `transform()` works is now completely different. See the docs for more as soon as they are updated.
+- The way `transform()` works is now completely different. See the docs for more as soon as they are updated
 - merged `SVG.Doc` and `SVG.Nested`, added `isRoot()` on `SVG.Doc()` (#809)
 - The fx module was completely reworked to be faster and less error prone. For more information on how to use it refer to the docs
+- The whole lib is now splitted into es6 modules (#875)
+- `Element.svg()` now can can replace the current node, can export the children of a node and can take an export modifier to change/replace the exported nodes
+- `ungroup()` now breaks off one container and not more
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
