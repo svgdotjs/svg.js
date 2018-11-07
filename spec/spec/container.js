@@ -176,8 +176,8 @@ describe('Container', function() {
     it('creates an instance of SVG.Text', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Text).toBe(true)
     })
-    it('is an instance of SVG.Parent', function() {
-      expect(draw.text(loremIpsum) instanceof SVG.Parent).toBe(true)
+    it('is an instance of SVG.Shape', function() {
+      expect(draw.text(loremIpsum) instanceof SVG.Shape).toBe(true)
     })
     it('is an instance of SVG.Element', function() {
       expect(draw.text(loremIpsum) instanceof SVG.Element).toBe(true)
@@ -197,7 +197,7 @@ describe('Container', function() {
       expect(draw.plain(loremIpsum) instanceof SVG.Text).toBe(true)
     })
     it('is an instance of SVG.Parent', function() {
-      expect(draw.plain(loremIpsum) instanceof SVG.Parent).toBe(true)
+      expect(draw.plain(loremIpsum) instanceof SVG.Shape).toBe(true)
     })
     it('is an instance of SVG.Element', function() {
       expect(draw.plain(loremIpsum) instanceof SVG.Element).toBe(true)
@@ -236,7 +236,7 @@ describe('Container', function() {
       })
       expect(children).toEqual((parserInDoc ? [parser[0].type] : []).concat(['rect', 'ellipse', 'polygon']))
     })
-    it('should only include the its own children', function() {
+    it('should only include its own children', function() {
       var children = []
         , group = draw.group()
 
@@ -375,14 +375,3 @@ describe('Container', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-
-
-

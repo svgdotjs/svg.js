@@ -1,34 +1,68 @@
-    // Import raw svg
-    svg: function (svg) {
-      var well, len
+import { ns } from './namespaces.js'
 
-      // act as getter if no svg string is given
-      if(svg == null || svg === true) {
-        // write svgjs data to the dom
-        this.writeDataToDom()
+/* eslint no-unused-vars: "off" */
+var a = {
+  // Import raw svg
+  svg (svg, fn = false) {
+    var well, len, fragment
 
-        // return outer or inner content
-        return svg
-          ? this.node.innerHTML
-          : this.node.outerHTML
+    // act as getter if no svg string is given
+    if (svg == null || svg === true || typeof svg === 'function') {
+      // write svgjs data to the dom
+      this.writeDataToDom()
+      let current = this
+
+      // An export modifier was passed
+      if (typeof svg === 'function') {
+        // Juggle arguments
+        [fn, svg] = [svg, fn]
+
+        // If the user wants outerHTML we need to process this node, too
+        if (!svg) {
+          current = fn(current)
+
+          // The user does not want this node? Well, then he gets nothing
+          if (current === false) return ''
+        }
+
+        // Deep loop through all children and apply modifier
+        current.each(function () {
+          let result = fn(this)
+
+          // If modifier returns false, discard node
+          if (result === false) {
+            this.remove()
+
+            // If modifier returns new node, use it
+          } else if (result !== this) {
+            this.replace(result)
+          }
+        }, true)
       }
 
-      // act as setter if we got a string
+      // Return outer or inner content
+      return svg
+        ? current.node.innerHTML
+        : current.node.outerHTML
+    }
 
-      // make sure we are on a parent when trying to import
-      if(!(this instanceof SVG.Parent))
-        throw Error('Cannot import svg into non-parent element')
+    // Act as setter if we got a string
 
-      // create temporary holder
-      well = document.createElementNS(SVG.ns, 'svg')
+    // Create temporary holder
+    well = document.createElementNS(ns, 'svg')
+    fragment = document.createDocumentFragment()
 
-      // dump raw svg
-      well.innerHTML = svg
+    // Dump raw svg
+    well.innerHTML = svg
 
-      // transplant nodes
-      for (len = well.children.length; len--;) {
-        this.node.appendChild(well.firstElementChild)
-      }
+    // Transplant nodes into the fragment
+    for (len = well.children.length; len--;) {
+      fragment.appendChild(well.firstElementChild)
+    }
 
-      return this
-    },
+    // Add the whole fragment at once
+    this.node.appendChild(fragment)
+
+    return this
+  }
+}

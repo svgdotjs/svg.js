@@ -11,7 +11,7 @@ describe('Color', function() {
 		expect(color.g).toBe(0)
 		expect(color.b).toBe(128)
 	})
-	
+
 	it('correclty parses a 3 digit hex string', function() {
 		color = new SVG.Color('#f06')
 		expect(color.r).toBe(255)
@@ -43,44 +43,4 @@ describe('Color', function() {
 			expect(color.brightness()).toBe(0.346)
 		})
 	})
-
-	describe('morph()', function() {
-		it('prepares the color for morphing', function() {
-			var destination = new SVG.Color
-			color.morph(destination)
-			expect(color.destination).toEqual(destination)
-		})
-	})
-
-	describe('at()', function() {
-		it('morphes color to a given position', function() {
-			var destination = new SVG.Color
-			var morphed = color.morph(destination).at(0.5)
-			expect(morphed.r).toBe(0)
-			expect(morphed.g).toBe(51)
-			expect(morphed.b).toBe(127)
-		})
-
-		it('morphes color to 1 with higher values', function() {
-			var destination = new SVG.Color('#fff')
-			var morphed = color.morph(destination).at(2)
-			expect(morphed.r).toBe(255)
-			expect(morphed.g).toBe(255)
-			expect(morphed.b).toBe(255)
-		})
-
-		it('morphes color to 0 with lower values', function() {
-			var destination = new SVG.Color('#fff')
-			var morphed = color.morph(destination).at(-3)
-			expect(morphed.r).toBe(0)
-			expect(morphed.g).toBe(102)
-			expect(morphed.b).toBe(255)
-		})
-    
-    it('returns itself when no destination specified', function() {
-      expect(color.at(0.5)).toBe(color)
-    })
-	})
-
 })
-

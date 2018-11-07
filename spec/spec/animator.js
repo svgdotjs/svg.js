@@ -3,6 +3,9 @@ describe('SVG.Animator', function () {
   beforeEach(function () {
     jasmine.RequestAnimationFrame.install()
     SVG.Animator.timer = jasmine.RequestAnimationFrame.mockPerf
+    SVG.Animator.timeouts = new SVG.Queue()
+    SVG.Animator.frames = new SVG.Queue()
+    SVG.Animator.nextDraw = null
   })
 
   afterEach(function () {
