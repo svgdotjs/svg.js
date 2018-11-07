@@ -188,11 +188,10 @@ export default class Dom extends EventTarget {
     return this
   }
 
-  // Replace element
+  // Replace this with element
   replace (element) {
-    // FIXME: after() might not be available here
-    this.after(element).remove()
-
+    element = makeInstance(element)
+    this.node.parentNode.replaceChild(element.node, this.node)
     return element
   }
 
@@ -202,30 +201,79 @@ export default class Dom extends EventTarget {
   }
 
   // Import raw svg
-  svg (svg) {
-    var well, len
+  svg (svgOrFn, outerHTML) {
+    var well, len, fragment
 
-    // act as a setter if svg is given
-    if (svg) {
-      // create temporary holder
-      well = document.createElementNS(ns, 'svg')
-      // dump raw svg
-      well.innerHTML = svg
-
-      // transplant nodes
-      for (len = well.children.length; len--;) {
-        this.node.appendChild(well.firstElementChild)
-      }
-
-    // otherwise act as a getter
-    } else {
-      // write svgjs data to the dom
-      this.writeDataToDom()
-
-      return this.node.outerHTML
+    if (svgOrFn === false) {
+      outerHTML = false
+      svgOrFn = null
     }
 
-    return this
+    // act as getter if no svg string is given
+    if (svgOrFn == null || typeof svgOrFn === 'function') {
+      // The default for exports is, that the outerNode is included
+      outerHTML = outerHTML == null ? true : outerHTML
+
+      // write svgjs data to the dom
+      this.writeDataToDom()
+      let current = this
+
+      // An export modifier was passed
+      if (svgOrFn != null) {
+        current = adopt(current.node.cloneNode(true))
+
+        // If the user wants outerHTML we need to process this node, too
+        if (outerHTML) {
+          let result = svgOrFn(current)
+          current = result || current
+
+          // The user does not want this node? Well, then he gets nothing
+          if (result === false) return ''
+        }
+
+        // Deep loop through all children and apply modifier
+        current.each(function () {
+          let result = svgOrFn(this)
+          let _this = result || this
+
+          // If modifier returns false, discard node
+          if (result === false) {
+            this.remove()
+
+          // If modifier returns new node, use it
+          } else if (result && this !== _this) {
+            this.replace(_this)
+          }
+        }, true)
+      }
+
+      // Return outer or inner content
+      return outerHTML
+        ? current.node.outerHTML
+        : current.node.innerHTML
+    }
+
+    // Act as setter if we got a string
+
+    // The default for import is, that the current node is not replaced
+    outerHTML = outerHTML == null ? false : outerHTML
+
+    // Create temporary holder
+    well = document.createElementNS(ns, 'svg')
+    fragment = document.createDocumentFragment()
+
+    // Dump raw svg
+    well.innerHTML = svgOrFn
+
+    // Transplant nodes into the fragment
+    for (len = well.children.length; len--;) {
+      fragment.appendChild(well.firstElementChild)
+    }
+
+    // Add the whole fragment at once
+    return outerHTML
+      ? this.replace(fragment)
+      : this.add(fragment)
   }
 
   // write svgjs data to the dom
