@@ -8,7 +8,7 @@ script:
 #sudo: required
 #dist: trusty
 addons:
-  firefox: "latest",
+  firefox: "latest"
   chrome: "stable"
 before_install:
     # Start a display server where all graphical operations happens in memory
