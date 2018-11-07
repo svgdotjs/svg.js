@@ -890,7 +890,7 @@ describe('Element', function() {
         rect   = draw.rect(10, 10)
         circle = draw.circle(20, 20)
         group  = draw.group()
-        
+
         group.add(rect)
         group.add(circle)
       })
@@ -901,9 +901,9 @@ describe('Element', function() {
         })
 
         expect(
-          result === '<g><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
-          || result === '<g><rect height="10" width="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
-          || result === '<g xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          result === '<g class="test"><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g class="test"><rect height="10" width="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
+          || result === '<g class="test" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10" class="test"></rect><circle r="10" cx="10" cy="10" class="test"></circle></g>'
         ).toBeTruthy()
       })
 
@@ -913,7 +913,7 @@ describe('Element', function() {
             return draw.rect(15, 15)
           }
         })
-        
+
         expect(
           result === '<g><rect width="10" height="10"></rect><rect width="15" height="15"></rect></g>'
           || result === '<g><rect height="10" width="10"></rect><rect height="15" width="15"></rect></g>'
@@ -927,7 +927,7 @@ describe('Element', function() {
             return false
           }
         })
-        
+
         expect(
           result === '<g><rect width="10" height="10"></rect></g>'
           || result === '<g><rect height="10" width="10"></rect></g>'
