@@ -1,4 +1,4 @@
-import { cx, cy, height, size, width, x, y } from '../modules/core/circled.js'
+import { cx, cy, height, width, x, y } from '../modules/core/circled.js'
 import { extend, nodeOrNew, register } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
@@ -22,16 +22,20 @@ export default class Circle extends Shape {
   ry (ry) {
     return this.rx(ry)
   }
+
+  size (size) {
+    return this.radius(new SVGNumber(size).divide(2))
+  }
 }
 
-extend(Circle, { x, y, cx, cy, width, height, size })
+extend(Circle, { x, y, cx, cy, width, height })
 
 registerMethods({
   Element: {
     // Create circle element
     circle (size) {
       return this.put(new Circle())
-        .radius(new SVGNumber(size).divide(2))
+        .size(size)
         .move(0, 0)
     }
   }

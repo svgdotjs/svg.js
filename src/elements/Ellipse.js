@@ -1,11 +1,21 @@
 import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
+import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
 import * as circled from '../modules/core/circled.js'
 
 export default class Ellipse extends Shape {
   constructor (node) {
     super(nodeOrNew('ellipse', node), Ellipse)
+  }
+
+  size (width, height) {
+    var p = proportionalSize(this, width, height)
+
+    return this
+      .rx(new SVGNumber(p.width).divide(2))
+      .ry(new SVGNumber(p.height).divide(2))
   }
 }
 

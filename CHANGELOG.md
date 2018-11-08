@@ -22,7 +22,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `npm build:dev` to let you develop without getting too annoyed
 - added `beziere()` and `steps()` to generate easing functions
 - added `insertAfter()` and `insertBefore`
-- added `SVG.Style` which can be created with `style()` or `fontface()`
+- added `SVG.Style` which can be created with `style()` or `fontface()` (#517)
+- added `EventTarget` which is a baseclass to get event abilities (#641)
+- added `Dom` which is a baseclass to get dom abilities
 
 ### Removed
 - removed `SVG.Array.split()` function

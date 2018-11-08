@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 11:29:15 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 12:02:46 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -2978,11 +2978,6 @@ var SVG = (function () {
 
   function height(height) {
     return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
-  } // Custom size function
-
-  function size(width, height) {
-    var p = proportionalSize(this, width, height);
-    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
   }
 
   var circled = /*#__PURE__*/Object.freeze({
@@ -2993,8 +2988,7 @@ var SVG = (function () {
     cx: cx,
     cy: cy,
     width: width,
-    height: height,
-    size: size
+    height: height
   });
 
   var Queue =
@@ -4973,7 +4967,7 @@ var SVG = (function () {
       return this.cx(x$$1).cy(y$$1);
     },
     // Add animatable size
-    size: function size$$1(width$$1, height$$1) {
+    size: function size(width$$1, height$$1) {
       // animate bbox based size for all other elements
       var box;
 
@@ -5317,6 +5311,11 @@ var SVG = (function () {
       value: function ry$$1(_ry) {
         return this.rx(_ry);
       }
+    }, {
+      key: "size",
+      value: function size(_size) {
+        return this.radius(new SVGNumber(_size).divide(2));
+      }
     }]);
 
     return Circle;
@@ -5327,14 +5326,13 @@ var SVG = (function () {
     cx: cx,
     cy: cy,
     width: width,
-    height: height,
-    size: size
+    height: height
   });
   registerMethods({
     Element: {
       // Create circle element
-      circle: function circle(size$$1) {
-        return this.put(new Circle()).radius(new SVGNumber(size$$1).divide(2)).move(0, 0);
+      circle: function circle(size) {
+        return this.put(new Circle()).size(size).move(0, 0);
       }
     }
   });
@@ -5350,6 +5348,14 @@ var SVG = (function () {
 
       return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), Ellipse));
     }
+
+    _createClass(Ellipse, [{
+      key: "size",
+      value: function size(width$$1, height$$1) {
+        var p = proportionalSize(this, width$$1, height$$1);
+        return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
+      }
+    }]);
 
     return Ellipse;
   }(Shape);
@@ -6038,7 +6044,7 @@ var SVG = (function () {
     return this.attr('points', this.array().move(x, y));
   } // Set element size to given width and height
 
-  function size$1(width, height) {
+  function size(width, height) {
     var p = proportionalSize(this, width, height);
     return this.attr('points', this.array().size(p.width, p.height));
   }
@@ -6048,7 +6054,7 @@ var SVG = (function () {
     plot: plot,
     clear: clear,
     move: move,
-    size: size$1
+    size: size
   });
 
   var Polygon =

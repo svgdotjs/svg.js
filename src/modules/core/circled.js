@@ -1,4 +1,3 @@
-import { proportionalSize } from '../../utils/utils.js'
 import SVGNumber from '../../types/SVGNumber.js'
 
 // Radius x value
@@ -51,13 +50,4 @@ export function height (height) {
   return height == null
     ? this.ry() * 2
     : this.ry(new SVGNumber(height).divide(2))
-}
-
-// Custom size function
-export function size (width, height) {
-  var p = proportionalSize(this, width, height)
-
-  return this
-    .rx(new SVGNumber(p.width).divide(2))
-    .ry(new SVGNumber(p.height).divide(2))
 }
