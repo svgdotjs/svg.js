@@ -1033,4 +1033,22 @@ describe('Element', function() {
       expect(g.defs() instanceof SVG.Defs).toBeTruthy()
     })
   })
+  describe('round()', function () {
+    it('round all attribues of a node to a specific precision', function () {
+      var rect = draw.rect(100.123456, 200.987654)
+
+      expect(rect.round(2).attr()).toEqual(jasmine.objectContaining({
+        width: 100.12,
+        height: 200.99
+      }))
+    })
+    it('round specified attributes of a node to a specific precision', function () {
+      var rect = draw.rect(100.123456, 200.987654)
+
+      expect(rect.round(2, ['width']).attr()).toEqual(jasmine.objectContaining({
+        width: 100.12,
+        height: 200.987654
+      }))
+    })
+  })
 })

@@ -188,6 +188,25 @@ export default class Dom extends EventTarget {
     return element
   }
 
+  round (precision = 2, map) {
+    const factor = 10 ** precision
+    const attrs = this.attr()
+
+    // If we have no map, build one from attrs
+    if (!map) {
+      map = Object.keys(attrs)
+    }
+
+    // Holds rounded attributes
+    const newAttrs = {}
+    map.forEach((key) => {
+      newAttrs[key] = Math.round(attrs[key] * factor) / factor
+    })
+
+    this.attr(newAttrs)
+    return this
+  }
+
   // Return id on string conversion
   toString () {
     return this.id()

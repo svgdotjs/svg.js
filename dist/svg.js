@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 12:02:46 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 12:57:03 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1618,6 +1618,26 @@ var SVG = (function () {
         element = makeInstance(element);
         this.node.parentNode.replaceChild(element.node, this.node);
         return element;
+      }
+    }, {
+      key: "round",
+      value: function round() {
+        var precision = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2;
+        var map$$1 = arguments.length > 1 ? arguments[1] : undefined;
+        var factor = Math.pow(10, precision);
+        var attrs = this.attr(); // If we have no map, build one from attrs
+
+        if (!map$$1) {
+          map$$1 = Object.keys(attrs);
+        } // Holds rounded attributes
+
+
+        var newAttrs = {};
+        map$$1.forEach(function (key) {
+          newAttrs[key] = Math.round(attrs[key] * factor) / factor;
+        });
+        this.attr(newAttrs);
+        return this;
       } // Return id on string conversion
 
     }, {
