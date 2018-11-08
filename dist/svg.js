@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 14:12:10 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 16:05:07 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -354,7 +354,7 @@ var SVG = (function () {
     return element;
   }
   function nodeOrNew(name, node) {
-    return node || makeNode(name);
+    return node instanceof window.Node ? node : makeNode(name);
   } // Adopt existing svg elements
 
   function adopt(node) {
@@ -412,15 +412,43 @@ var SVG = (function () {
     return adopt(node);
   } // Method for extending objects
 
-  function extend(modules, methods) {
+  function extend(modules, methods, attrCheck) {
     var key, i;
     modules = Array.isArray(modules) ? modules : [modules];
 
     for (i = modules.length - 1; i >= 0; i--) {
       for (key in methods) {
-        modules[i].prototype[key] = methods[key];
+        var method = methods[key];
+
+        if (attrCheck) {
+          method = wrapWithAttrCheck(methods[key]);
+        }
+
+        modules[i].prototype[key] = method;
       }
     }
+  }
+  function extendWithAttrCheck() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    extend.apply(void 0, args.concat([true]));
+  }
+  function wrapWithAttrCheck(fn) {
+    return function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      var o = args[args.length - 1];
+
+      if (o && !o.prototype && !(o instanceof Array) && _typeof(o) === 'object') {
+        return fn.apply(this, args.slice(0, -1)).attr(o);
+      } else {
+        return fn.apply(this, args);
+      }
+    };
   }
 
   var methods = {};
@@ -1422,7 +1450,7 @@ var SVG = (function () {
   function (_EventTarget) {
     _inherits(Dom, _EventTarget);
 
-    function Dom(node) {
+    function Dom(node, attrs) {
       var _this2;
 
       _classCallCheck(this, Dom);
@@ -1430,6 +1458,11 @@ var SVG = (function () {
       _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Dom).call(this, node));
       _this2.node = node;
       _this2.type = node.nodeName;
+
+      if (attrs && node !== attrs) {
+        _this2.attr(attrs);
+      }
+
       return _this2;
     } // Add given element at a position
 
@@ -1734,12 +1767,12 @@ var SVG = (function () {
   function (_Dom) {
     _inherits(Element, _Dom);
 
-    function Element(node) {
+    function Element(node, attrs) {
       var _this;
 
       _classCallCheck(this, Element);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Element).call(this, node)); // initialize data object
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Element).call(this, node, attrs)); // initialize data object
 
       _this.dom = {}; // create circular reference
 
@@ -1927,7 +1960,7 @@ var SVG = (function () {
     function Defs(node) {
       _classCallCheck(this, Defs);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), Defs));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), node));
     }
 
     _createClass(Defs, [{
@@ -1956,7 +1989,7 @@ var SVG = (function () {
 
       _classCallCheck(this, Doc);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), Doc));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), node));
 
       _this.namespace();
 
@@ -2051,32 +2084,37 @@ var SVG = (function () {
   /*#__PURE__*/
   function () {
     // Initialize
-    function Point(x, y, base) {
+    function Point() {
       _classCallCheck(this, Point);
 
-      var source;
-      base = base || {
-        x: 0,
-        y: 0 // ensure source as object
-
-      };
-      source = Array.isArray(x) ? {
-        x: x[0],
-        y: x[1]
-      } : _typeof(x) === 'object' ? {
-        x: x.x,
-        y: x.y
-      } : {
-        x: x,
-        y: y // merge source
-
-      };
-      this.x = source.x == null ? base.x : source.x;
-      this.y = source.y == null ? base.y : source.y;
-    } // Clone point
-
+      this.init.apply(this, arguments);
+    }
 
     _createClass(Point, [{
+      key: "init",
+      value: function init(x, y) {
+        var source;
+        var base = {
+          x: 0,
+          y: 0 // ensure source as object
+
+        };
+        source = Array.isArray(x) ? {
+          x: x[0],
+          y: x[1]
+        } : _typeof(x) === 'object' ? {
+          x: x.x,
+          y: x.y
+        } : {
+          x: x,
+          y: y // merge source
+
+        };
+        this.x = source.x == null ? base.x : source.x;
+        this.y = source.y == null ? base.y : source.y;
+      } // Clone point
+
+    }, {
       key: "clone",
       value: function clone() {
         return new Point(this);
@@ -2101,6 +2139,11 @@ var SVG = (function () {
         var y = m.b * this.x + m.d * this.y + m.f; // Return the required point
 
         return new Point(x, y);
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.x, this.y];
       }
     }]);
 
@@ -5322,7 +5365,7 @@ var SVG = (function () {
     function Circle(node) {
       _classCallCheck(this, Circle);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), Circle));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), node));
     }
 
     _createClass(Circle, [{
@@ -5377,7 +5420,7 @@ var SVG = (function () {
     function Ellipse(node) {
       _classCallCheck(this, Ellipse);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), Ellipse));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), node));
     }
 
     _createClass(Ellipse, [{
@@ -5407,7 +5450,7 @@ var SVG = (function () {
     function Stop(node) {
       _classCallCheck(this, Stop);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), Stop));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), node));
     } // add color stops
 
 
@@ -5452,10 +5495,10 @@ var SVG = (function () {
   function (_Container) {
     _inherits(Gradient, _Container);
 
-    function Gradient(type) {
+    function Gradient(type, attrs) {
       _classCallCheck(this, Gradient);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Gradient).call(this, nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type), Gradient));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Gradient).call(this, nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type), attrs));
     } // Add a color stop
 
 
@@ -5536,7 +5579,7 @@ var SVG = (function () {
     function Pattern(node) {
       _classCallCheck(this, Pattern);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Pattern).call(this, nodeOrNew('pattern', node), Pattern));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Pattern).call(this, nodeOrNew('pattern', node), node));
     } // Return the fill id
 
 
@@ -5614,7 +5657,7 @@ var SVG = (function () {
     function Image(node) {
       _classCallCheck(this, Image);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Image).call(this, nodeOrNew('image', node), Image));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Image).call(this, nodeOrNew('image', node), node));
     } // (re)load image
 
 
@@ -5824,7 +5867,7 @@ var SVG = (function () {
     function Line(node) {
       _classCallCheck(this, Line);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Line).call(this, nodeOrNew('line', node), Line));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Line).call(this, nodeOrNew('line', node), node));
     } // Get array
 
 
@@ -5895,7 +5938,7 @@ var SVG = (function () {
     function Marker(node) {
       _classCallCheck(this, Marker);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Marker).call(this, nodeOrNew('marker', node), Marker));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Marker).call(this, nodeOrNew('marker', node), node));
     } // Set width of element
 
 
@@ -5977,7 +6020,7 @@ var SVG = (function () {
     function Path(node) {
       _classCallCheck(this, Path);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), Path));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), node));
     } // Get array
 
 
@@ -6097,7 +6140,7 @@ var SVG = (function () {
     function Polygon(node) {
       _classCallCheck(this, Polygon);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), Polygon));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), node));
     }
 
     return Polygon;
@@ -6124,7 +6167,7 @@ var SVG = (function () {
     function Polyline(node) {
       _classCallCheck(this, Polyline);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), Polyline));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), node));
     }
 
     return Polyline;
@@ -6151,7 +6194,7 @@ var SVG = (function () {
     function Rect(node) {
       _classCallCheck(this, Rect);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), Rect));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), node));
     }
 
     return Rect;
@@ -6202,7 +6245,7 @@ var SVG = (function () {
 
       _classCallCheck(this, Text);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Text).call(this, nodeOrNew('text', node), Text));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Text).call(this, nodeOrNew('text', node), node));
       _this.dom.leading = new SVGNumber(1.3); // store leading value for rebuilding
 
       _this._rebuild = true; // enable automatic updating of dy values
@@ -6388,7 +6431,7 @@ var SVG = (function () {
     function Tspan(node) {
       _classCallCheck(this, Tspan);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Tspan).call(this, nodeOrNew('tspan', node), Tspan));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Tspan).call(this, nodeOrNew('tspan', node), node));
     } // Set text content
 
 
@@ -6449,10 +6492,10 @@ var SVG = (function () {
   function (_Container) {
     _inherits(Bare, _Container);
 
-    function Bare(node) {
+    function Bare(node, attrs) {
       _classCallCheck(this, Bare);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Bare).call(this, nodeOrNew(node, typeof node === 'string' ? null : node), Bare));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Bare).call(this, nodeOrNew(node, typeof node === 'string' ? null : node), attrs));
     }
 
     _createClass(Bare, [{
@@ -6487,7 +6530,7 @@ var SVG = (function () {
     function ClipPath(node) {
       _classCallCheck(this, ClipPath);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(ClipPath).call(this, nodeOrNew('clipPath', node), ClipPath));
+      return _possibleConstructorReturn(this, _getPrototypeOf(ClipPath).call(this, nodeOrNew('clipPath', node), node));
     } // Unclip all clipped elements and remove itself
 
 
@@ -6544,7 +6587,7 @@ var SVG = (function () {
     function G(node) {
       _classCallCheck(this, G);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(G).call(this, nodeOrNew('g', node), G));
+      return _possibleConstructorReturn(this, _getPrototypeOf(G).call(this, nodeOrNew('g', node), node));
     }
 
     return G;
@@ -6564,10 +6607,10 @@ var SVG = (function () {
   function (_Dom) {
     _inherits(HtmlNode, _Dom);
 
-    function HtmlNode(node) {
+    function HtmlNode() {
       _classCallCheck(this, HtmlNode);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(HtmlNode).call(this, node, HtmlNode));
+      return _possibleConstructorReturn(this, _getPrototypeOf(HtmlNode).apply(this, arguments));
     }
 
     return HtmlNode;
@@ -6582,7 +6625,7 @@ var SVG = (function () {
     function A(node) {
       _classCallCheck(this, A);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(A).call(this, nodeOrNew('a', node), A));
+      return _possibleConstructorReturn(this, _getPrototypeOf(A).call(this, nodeOrNew('a', node), node));
     } // Link url
 
 
@@ -6634,7 +6677,7 @@ var SVG = (function () {
     function Mask(node) {
       _classCallCheck(this, Mask);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Mask).call(this, nodeOrNew('mask', node), Mask));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Mask).call(this, nodeOrNew('mask', node), node));
     } // Unmask all masked elements and remove itself
 
 
@@ -6703,7 +6746,7 @@ var SVG = (function () {
     function Style(node) {
       _classCallCheck(this, Style);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Style).call(this, nodeOrNew('style', node), Style));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Style).call(this, nodeOrNew('style', node), node));
     }
 
     _createClass(Style, [{
@@ -6748,7 +6791,7 @@ var SVG = (function () {
     function _Symbol(node) {
       _classCallCheck(this, _Symbol);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(_Symbol).call(this, nodeOrNew('symbol', node), _Symbol));
+      return _possibleConstructorReturn(this, _getPrototypeOf(_Symbol).call(this, nodeOrNew('symbol', node), node));
     }
 
     return _Symbol;
@@ -6771,7 +6814,7 @@ var SVG = (function () {
     function TextPath(node) {
       _classCallCheck(this, TextPath);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(TextPath).call(this, nodeOrNew('textPath', node), TextPath));
+      return _possibleConstructorReturn(this, _getPrototypeOf(TextPath).call(this, nodeOrNew('textPath', node), node));
     } // return the array of the path track element
 
 
@@ -6857,7 +6900,7 @@ var SVG = (function () {
     function Use(node) {
       _classCallCheck(this, Use);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(Use).call(this, nodeOrNew('use', node), Use));
+      return _possibleConstructorReturn(this, _getPrototypeOf(Use).call(this, nodeOrNew('use', node), node));
     } // Use element as a reference
 
 
@@ -6981,7 +7024,9 @@ var SVG = (function () {
     getClass: getClass,
     eid: eid,
     assignNewId: assignNewId,
-    extend: extend
+    extend: extend,
+    extendWithAttrCheck: extendWithAttrCheck,
+    wrapWithAttrCheck: wrapWithAttrCheck
   });
 
   function SVG(element) {

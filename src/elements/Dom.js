@@ -11,10 +11,14 @@ import EventTarget from '../types/EventTarget.js'
 import attr from '../modules/core/attr.js'
 
 export default class Dom extends EventTarget {
-  constructor (node) {
+  constructor (node, attrs) {
     super(node)
     this.node = node
     this.type = node.nodeName
+
+    if (attrs && node !== attrs) {
+      this.attr(attrs)
+    }
   }
 
   // Add given element at a position

@@ -5,7 +5,7 @@ import Container from './Container.js'
 
 export default class A extends Container {
   constructor (node) {
-    super(nodeOrNew('a', node), A)
+    super(nodeOrNew('a', node), node)
   }
 
   // Link url

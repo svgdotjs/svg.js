@@ -7,8 +7,8 @@ import SVGNumber from '../types/SVGNumber.js'
 const Doc = getClass(root)
 
 export default class Element extends Dom {
-  constructor (node) {
-    super(node)
+  constructor (node, attrs) {
+    super(node, attrs)
 
     // initialize data object
     this.dom = {}

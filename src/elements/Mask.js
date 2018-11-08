@@ -6,7 +6,7 @@ import baseFind from '../modules/core/selector.js'
 export default class Mask extends Container {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('mask', node), Mask)
+    super(nodeOrNew('mask', node), node)
   }
 
   // Unmask all masked elements and remove itself

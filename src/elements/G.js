@@ -4,7 +4,7 @@ import Container from './Container.js'
 
 export default class G extends Container {
   constructor (node) {
-    super(nodeOrNew('g', node), G)
+    super(nodeOrNew('g', node), node)
   }
 }
 

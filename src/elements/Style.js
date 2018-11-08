@@ -20,7 +20,7 @@ function cssRule (selector, rule) {
 
 export default class Style extends Element {
   constructor (node) {
-    super(nodeOrNew('style', node), Style)
+    super(nodeOrNew('style', node), node)
   }
 
   words (w) {

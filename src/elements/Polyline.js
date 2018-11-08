@@ -8,7 +8,7 @@ import * as poly from '../modules/core/poly.js'
 export default class Polyline extends Shape {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('polyline', node), Polyline)
+    super(nodeOrNew('polyline', node), node)
   }
 }
 

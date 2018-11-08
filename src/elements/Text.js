@@ -8,7 +8,7 @@ import * as textable from '../modules/core/textable.js'
 export default class Text extends Shape {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('text', node), Text)
+    super(nodeOrNew('text', node), node)
 
     this.dom.leading = new SVGNumber(1.3) // store leading value for rebuilding
     this._rebuild = true // enable automatic updating of dy values

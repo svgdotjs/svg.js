@@ -7,10 +7,10 @@ import baseFind from '../modules/core/selector.js'
 import * as gradiented from '../modules/core/gradiented.js'
 
 export default class Gradient extends Container {
-  constructor (type) {
+  constructor (type, attrs) {
     super(
       nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type),
-      Gradient
+      attrs
     )
   }
 

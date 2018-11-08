@@ -6,7 +6,7 @@ import * as textable from '../modules/core/textable.js'
 export default class Tspan extends Text {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('tspan', node), Tspan)
+    super(nodeOrNew('tspan', node), node)
   }
 
   // Set text content

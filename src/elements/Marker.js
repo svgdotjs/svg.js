@@ -5,7 +5,7 @@ import Container from './Container.js'
 export default class Marker extends Container {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('marker', node), Marker)
+    super(nodeOrNew('marker', node), node)
   }
 
   // Set width of element

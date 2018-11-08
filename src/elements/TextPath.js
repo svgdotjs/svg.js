@@ -9,7 +9,7 @@ import Text from './Text.js'
 export default class TextPath extends Text {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('textPath', node), TextPath)
+    super(nodeOrNew('textPath', node), node)
   }
 
   // return the array of the path track element

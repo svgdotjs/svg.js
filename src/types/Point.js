@@ -3,9 +3,13 @@ import parser from '../modules/core/parser.js'
 
 export default class Point {
   // Initialize
-  constructor (x, y, base) {
+  constructor (...args) {
+    this.init(...args)
+  }
+
+  init (x, y) {
     let source
-    base = base || { x: 0, y: 0 }
+    let base = { x: 0, y: 0 }
 
     // ensure source as object
     source = Array.isArray(x) ? { x: x[0], y: x[1] }
@@ -41,6 +45,10 @@ export default class Point {
 
     // Return the required point
     return new Point(x, y)
+  }
+
+  toArray () {
+    return [this.x, this.y]
   }
 }
 

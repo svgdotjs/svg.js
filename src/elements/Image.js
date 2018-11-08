@@ -9,7 +9,7 @@ import Shape from './Shape.js'
 
 export default class Image extends Shape {
   constructor (node) {
-    super(nodeOrNew('image', node), Image)
+    super(nodeOrNew('image', node), node)
   }
 
   // (re)load image

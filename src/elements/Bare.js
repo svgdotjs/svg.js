@@ -3,8 +3,8 @@ import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
 export default class Bare extends Container {
-  constructor (node) {
-    super(nodeOrNew(node, typeof node === 'string' ? null : node), Bare)
+  constructor (node, attrs) {
+    super(nodeOrNew(node, typeof node === 'string' ? null : node), attrs)
   }
 
   words (text) {

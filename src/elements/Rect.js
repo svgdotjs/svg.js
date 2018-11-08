@@ -6,7 +6,7 @@ import Shape from './Shape.js'
 export default class Rect extends Shape {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('rect', node), Rect)
+    super(nodeOrNew('rect', node), node)
   }
 }
 

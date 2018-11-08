@@ -5,7 +5,7 @@ import baseFind from '../modules/core/selector.js'
 
 export default class ClipPath extends Container {
   constructor (node) {
-    super(nodeOrNew('clipPath', node), ClipPath)
+    super(nodeOrNew('clipPath', node), node)
   }
 
   // Unclip all clipped elements and remove itself

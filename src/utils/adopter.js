@@ -37,7 +37,7 @@ export function makeInstance (element) {
 }
 
 export function nodeOrNew (name, node) {
-  return node || makeNode(name)
+  return node instanceof window.Node ? node : makeNode(name)
 }
 
 // Adopt existing svg elements
@@ -102,14 +102,34 @@ export function assignNewId (node) {
 }
 
 // Method for extending objects
-export function extend (modules, methods) {
+export function extend (modules, methods, attrCheck) {
   var key, i
 
   modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--) {
     for (key in methods) {
-      modules[i].prototype[key] = methods[key]
+      let method = methods[key]
+      if (attrCheck) {
+        method = wrapWithAttrCheck(methods[key])
+      }
+      modules[i].prototype[key] = method
+    }
+  }
+}
+
+export function extendWithAttrCheck (...args) {
+  extend(...args, true)
+}
+
+export function wrapWithAttrCheck (fn) {
+  return function (...args) {
+    let o = args[args.length - 1]
+
+    if (o && !o.prototype && !(o instanceof Array) && typeof o === 'object') {
+      return fn.apply(this, args.slice(0, -1)).attr(o)
+    } else {
+      return fn.apply(this, args)
     }
   }
 }

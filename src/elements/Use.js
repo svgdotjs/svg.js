@@ -5,7 +5,7 @@ import Shape from './Shape.js'
 
 export default class Use extends Shape {
   constructor (node) {
-    super(nodeOrNew('use', node), Use)
+    super(nodeOrNew('use', node), node)
   }
 
   // Use element as a reference

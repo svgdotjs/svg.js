@@ -6,7 +6,7 @@ import Defs from './Defs.js'
 
 export default class Doc extends Container {
   constructor (node) {
-    super(nodeOrNew('svg', node), Doc)
+    super(nodeOrNew('svg', node), node)
     this.namespace()
   }
 

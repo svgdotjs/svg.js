@@ -6,7 +6,7 @@ import Shape from './Shape.js'
 
 export default class Circle extends Shape {
   constructor (node) {
-    super(nodeOrNew('circle', node), Circle)
+    super(nodeOrNew('circle', node), node)
   }
 
   radius (r) {

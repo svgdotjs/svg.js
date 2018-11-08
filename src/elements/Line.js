@@ -8,7 +8,7 @@ import * as pointed from '../modules/core/pointed.js'
 export default class Line extends Shape {
   // Initialize node
   constructor (node) {
-    super(nodeOrNew('line', node), Line)
+    super(nodeOrNew('line', node), node)
   }
 
   // Get array
