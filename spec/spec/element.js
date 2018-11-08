@@ -93,6 +93,19 @@ describe('Element', function() {
       rect.attr('x', '69%')
       expect(rect.attr().x).toBe('69%')
     })
+    it('acts as getter for an array of values passed', function () {
+      rect.attr({
+        x: 1,
+        y: 2,
+        width: 20,
+        "fill-opacity": 0.5
+      })
+
+      expect(rect.attr(["x", "fill-opacity"])).toEqual(jasmine.objectContaining({
+        x: 1,
+        "fill-opacity": 0.5
+      }))
+    })
     it('creates an image in defs when image path is specified for fill', function() {
       rect.attr('fill', imageUrl)
       expect(draw.defs().find('pattern').length).toBe(1)

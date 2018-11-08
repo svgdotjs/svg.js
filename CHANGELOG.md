@@ -77,6 +77,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `ungroup()` now breaks off one container and not more
 - `clone()` does not add the clone to the dom anymore
 - `SVG.Text.textPath()` returns only the first textpath child
+- `attr()` excepts array now to get multiple values at once
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
