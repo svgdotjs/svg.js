@@ -11,7 +11,6 @@ export function plain (text) {
   return this
 }
 
-// FIXME: Does this also work for textpath?
 // Get length of text element
 export function length () {
   return this.node.getComputedTextLength()

@@ -21,6 +21,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added a linter during the npm build process
 - added `npm build:dev` to let you develop without getting too annoyed
 - added `beziere()` and `steps()` to generate easing functions
+- added `insertAfter()` and `insertBefore`
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -72,6 +73,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `Element.svg()` now can can replace the current node, can export the children of a node and can take an export modifier to change/replace the exported nodes
 - `ungroup()` now breaks off one container and not more
 - `clone()` does not add the clone to the dom anymore
+- `SVG.Text.textPath()` returns only the first textpath child
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

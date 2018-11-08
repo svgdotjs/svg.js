@@ -35,10 +35,9 @@ describe('TextPath', function() {
   })
 
   describe('textPath()', function() {
-    it('returns all textPath elements in a text', function() {
+    it('returns only the first textPath element in a text', function() {
       text.path(data)
-      expect(text.textPath().length).toBe(1)
-      expect(text.textPath()[0] instanceof SVG.TextPath).toBe(true)
+      expect(text.textPath() instanceof SVG.TextPath).toBe(true)
     })
   })
 

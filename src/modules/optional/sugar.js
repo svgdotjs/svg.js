@@ -1,3 +1,4 @@
+import { on, off } from '../core/event.js'
 import { registerMethods } from '../../utils/methods.js'
 import Color from '../../types/Color.js'
 import Element from '../../elements/Element.js'
@@ -157,3 +158,34 @@ registerMethods(['Element', 'Runner'], {
           : this.attr(a, v)
   }
 })
+
+// Add events to elements
+const methods = [ 'click',
+  'dblclick',
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'mousemove',
+  'mouseenter',
+  'mouseleave',
+  'touchstart',
+  'touchmove',
+  'touchleave',
+  'touchend',
+  'touchcancel' ].reduce(function (last, event) {
+  // add event to Element
+  const fn = function (f) {
+    if (f === null) {
+      off(this, event)
+    } else {
+      on(this, event, f)
+    }
+    return this
+  }
+
+  last[event] = fn
+  return last
+}, {})
+
+registerMethods('Element', methods)

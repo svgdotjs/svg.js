@@ -1,5 +1,7 @@
+import { isImage } from '../modules/core/regex.js'
 import { nodeOrNew, register } from '../utils/adopter.js'
 import { off, on } from '../modules/core/event.js'
+import { registerAttrHook } from '../modules/core/attr.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Pattern from './Pattern.js'
@@ -48,13 +50,24 @@ export default class Image extends Shape {
 
     return this.attr('href', (img.src = url), xlink)
   }
+}
 
-  attrHook (obj) {
-    return obj.doc().defs().pattern(0, 0, (pattern) => {
-      pattern.add(this)
+registerAttrHook(function (attr, val, _this) {
+  // convert image fill and stroke to patterns
+  if (attr === 'fill' || attr === 'stroke') {
+    if (isImage.test(val)) {
+      val = _this.doc().defs().image(val)
+    }
+  }
+
+  if (val instanceof Image) {
+    val = _this.doc().defs().pattern(0, 0, (pattern) => {
+      pattern.add(val)
     })
   }
-}
+
+  return val
+})
 
 registerMethods({
   Container: {

@@ -1,8 +1,13 @@
-import { isImage, isNumber } from './regex.js'
 import { attrs as defaults } from './defaults.js'
+import { isNumber } from './regex.js'
 import Color from '../../types/Color.js'
 import SVGArray from '../../types/SVGArray.js'
 import SVGNumber from '../../types/SVGNumber.js'
+
+const hooks = []
+export function registerAttrHook (fn) {
+  hooks.push(fn)
+}
 
 // Set svg element attribute
 export default function attr (attr, val, ns) {
@@ -19,8 +24,12 @@ export default function attr (attr, val, ns) {
     }
 
     return attr
-  } else if (Array.isArray(attr)) {
-    // FIXME: implement
+  } else if (attr instanceof Array) {
+    // loop through array and get all values
+    return attr.reduce((last, curr) => {
+      last[curr] = this.attr(curr)
+      return last
+    }, {})
   } else if (typeof attr === 'object') {
     // apply every attribute individually if an object is passed
     for (val in attr) this.attr(val, attr[val])
@@ -34,18 +43,10 @@ export default function attr (attr, val, ns) {
       : isNumber.test(val) ? parseFloat(val)
         : val
   } else {
-    // convert image fill and stroke to patterns
-    if (attr === 'fill' || attr === 'stroke') {
-      if (isImage.test(val)) {
-        val = this.doc().defs().image(val)
-      }
-    }
-
-    // FIXME: This is fine, but what about the lines above?
-    // How does attr know about image()?
-    while (typeof val.attrHook === 'function') {
-      val = val.attrHook(this, attr)
-    }
+    // Loop through hooks and execute them to convert value
+    val = hooks.reduce((_val, hook) => {
+      return hook(attr, _val, this)
+    }, val)
 
     // ensure correct numeric values (also accepts NaN and Infinity)
     if (typeof val === 'number') {

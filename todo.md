@@ -1,3 +1,17 @@
+# tests to write
+- sugar.js
+  - insertBefore
+  - insertAfter
+  - after
+  - before
+- Path.js
+  - targets
+- Element.js
+  - svg
+- attr.js
+
+
+
 
 
 # Where We Left Off

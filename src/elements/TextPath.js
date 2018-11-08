@@ -1,6 +1,7 @@
 import { nodeOrNew, register } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
+import baseFind from '../modules/core/selector.js'
 import Path from './Path.js'
 import PathArray from '../types/PathArray.js'
 import Text from './Text.js'
@@ -44,10 +45,10 @@ registerMethods({
   },
   Text: {
     // Create path for text to run on
-    path: function (track) {
+    path (track) {
       var path = new TextPath()
 
-      // if d is a path, reuse it
+      // if track is a path, reuse it
       if (!(track instanceof Path)) {
         // create path element
         track = this.doc().defs().path(track)
@@ -60,22 +61,24 @@ registerMethods({
       return this.put(path)
     },
 
-    // FIXME: make this plural?
     // Get the textPath children
-    textPath: function () {
-      return this.find('textPath')
+    textPath () {
+      return this.find('textPath')[0]
     }
   },
   Path: {
     // creates a textPath from this path
-    text: function (text) {
+    text (text) {
       if (text instanceof Text) {
         var txt = text.text()
         return text.clear().path(this).text(txt)
       }
       return this.parent().put(new Text()).path(this).text(text)
+    },
+
+    targets () {
+      return baseFind('svg [href*="' + this.id() + '"]')
     }
-    // FIXME: Maybe add `targets` to get all textPaths associated with this path
   }
 })
 

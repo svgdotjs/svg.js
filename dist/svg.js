@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Nov 07 2018 22:39:24 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 09:25:46 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -216,6 +216,207 @@ var SVG = (function () {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
+  // Map function
+  function map(array, block) {
+    var i;
+    var il = array.length;
+    var result = [];
+
+    for (i = 0; i < il; i++) {
+      result.push(block(array[i]));
+    }
+
+    return result;
+  } // Filter function
+
+  function filter(array, block) {
+    var i;
+    var il = array.length;
+    var result = [];
+
+    for (i = 0; i < il; i++) {
+      if (block(array[i])) {
+        result.push(array[i]);
+      }
+    }
+
+    return result;
+  } // Degrees to radians
+
+  function radians(d) {
+    return d % 360 * Math.PI / 180;
+  } // Radians to degrees
+
+  function degrees(r) {
+    return r * 180 / Math.PI % 360;
+  } // Convert dash-separated-string to camelCase
+
+  function camelCase(s) {
+    return s.toLowerCase().replace(/-(.)/g, function (m, g) {
+      return g.toUpperCase();
+    });
+  } // Capitalize first letter of a string
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  } // Calculate proportional width and height values when necessary
+
+  function proportionalSize(element, width, height) {
+    if (width == null || height == null) {
+      var box = element.bbox();
+
+      if (width == null) {
+        width = box.width / box.height * height;
+      } else if (height == null) {
+        height = box.height / box.width * width;
+      }
+    }
+
+    return {
+      width: width,
+      height: height
+    };
+  }
+  function getOrigin(o, element) {
+    // Allow origin or around as the names
+    var origin = o.origin; // o.around == null ? o.origin : o.around
+
+    var ox, oy; // Allow the user to pass a string to rotate around a given point
+
+    if (typeof origin === 'string' || origin == null) {
+      // Get the bounding box of the element with no transformations applied
+      var string = (origin || 'center').toLowerCase().trim();
+
+      var _element$bbox = element.bbox(),
+          height = _element$bbox.height,
+          width = _element$bbox.width,
+          x = _element$bbox.x,
+          y = _element$bbox.y; // Calculate the transformed x and y coordinates
+
+
+      var bx = string.includes('left') ? x : string.includes('right') ? x + width : x + width / 2;
+      var by = string.includes('top') ? y : string.includes('bottom') ? y + height : y + height / 2; // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
+
+      ox = o.ox != null ? o.ox : bx;
+      oy = o.oy != null ? o.oy : by;
+    } else {
+      ox = origin[0];
+      oy = origin[1];
+    } // Return the origin as it is if it wasn't a string
+
+
+    return [ox, oy];
+  }
+
+  // Default namespaces
+  var ns = 'http://www.w3.org/2000/svg';
+  var xmlns = 'http://www.w3.org/2000/xmlns/';
+  var xlink = 'http://www.w3.org/1999/xlink';
+  var svgjs = 'http://svgjs.com/svgjs';
+
+  var Base = function Base() {
+    _classCallCheck(this, Base);
+  };
+
+  var elements = {};
+  var root = Symbol('root'); // Method for element creation
+
+  function makeNode(name) {
+    // create element
+    return document.createElementNS(ns, name);
+  }
+  function makeInstance(element) {
+    if (element instanceof Base) return element;
+
+    if (_typeof(element) === 'object') {
+      return adopt(element);
+    }
+
+    if (element == null) {
+      return new elements[root]();
+    }
+
+    if (typeof element === 'string' && element.charAt(0) !== '<') {
+      return adopt(document.querySelector(element));
+    }
+
+    var node = makeNode('svg');
+    node.innerHTML = element; // We can use firstChild here because we know,
+    // that the first char is < and thus an element
+
+    element = adopt(node.firstChild);
+    return element;
+  }
+  function nodeOrNew(name, node) {
+    return node || makeNode(name);
+  } // Adopt existing svg elements
+
+  function adopt(node) {
+    // check for presence of node
+    if (!node) return null; // make sure a node isn't already adopted
+
+    if (node.instance instanceof Base) return node.instance;
+
+    if (!(node instanceof window.SVGElement)) {
+      return new elements.HtmlNode(node);
+    } // initialize variables
+
+
+    var element; // adopt with element-specific settings
+
+    if (node.nodeName === 'svg') {
+      element = new elements[root](node);
+    } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
+      element = new elements.Gradient(node);
+    } else if (elements[capitalize(node.nodeName)]) {
+      element = new elements[capitalize(node.nodeName)](node);
+    } else {
+      element = new elements.Bare(node);
+    }
+
+    return element;
+  }
+  function register(element) {
+    var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : element.name;
+    var asRoot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    elements[name] = element;
+    if (asRoot) elements[root] = element;
+    return element;
+  }
+  function getClass(name) {
+    return elements[name];
+  } // Element id sequence
+
+  var did = 1000; // Get next named element id
+
+  function eid(name) {
+    return 'Svgjs' + capitalize(name) + did++;
+  } // Deep new id assignment
+
+  function assignNewId(node) {
+    // do the same for SVG child nodes as well
+    for (var i = node.children.length - 1; i >= 0; i--) {
+      assignNewId(node.children[i]);
+    }
+
+    if (node.id) {
+      return adopt(node).id(eid(node.nodeName));
+    }
+
+    return adopt(node);
+  } // Method for extending objects
+
+  function extend(modules, methods) {
+    var key, i;
+    modules = Array.isArray(modules) ? modules : [modules];
+
+    for (i = modules.length - 1; i >= 0; i--) {
+      for (key in methods) {
+        modules[i].prototype[key] = methods[key];
+      }
+    }
+  }
+
   var methods = {};
   function registerMethods(name, m) {
     if (Array.isArray(name)) {
@@ -326,6 +527,7 @@ var SVG = (function () {
   } // Inserts a given element before the targeted element
 
   function before(element) {
+    element = makeInstance(element);
     element.remove();
     var i = this.position();
     this.parent().add(element, i);
@@ -333,6 +535,7 @@ var SVG = (function () {
   } // Inserts a given element after the targeted element
 
   function after(element) {
+    element = makeInstance(element);
     element.remove();
     var i = this.position();
     this.parent().add(element, i + 1);
@@ -457,98 +660,6 @@ var SVG = (function () {
     removeClass: removeClass,
     toggleClass: toggleClass
   });
-
-  // Map function
-  function map(array, block) {
-    var i;
-    var il = array.length;
-    var result = [];
-
-    for (i = 0; i < il; i++) {
-      result.push(block(array[i]));
-    }
-
-    return result;
-  } // Filter function
-
-  function filter(array, block) {
-    var i;
-    var il = array.length;
-    var result = [];
-
-    for (i = 0; i < il; i++) {
-      if (block(array[i])) {
-        result.push(array[i]);
-      }
-    }
-
-    return result;
-  } // Degrees to radians
-
-  function radians(d) {
-    return d % 360 * Math.PI / 180;
-  } // Radians to degrees
-
-  function degrees(r) {
-    return r * 180 / Math.PI % 360;
-  } // Convert dash-separated-string to camelCase
-
-  function camelCase(s) {
-    return s.toLowerCase().replace(/-(.)/g, function (m, g) {
-      return g.toUpperCase();
-    });
-  } // Capitalize first letter of a string
-
-  function capitalize(s) {
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  } // Calculate proportional width and height values when necessary
-
-  function proportionalSize(element, width, height) {
-    if (width == null || height == null) {
-      var box = element.bbox();
-
-      if (width == null) {
-        width = box.width / box.height * height;
-      } else if (height == null) {
-        height = box.height / box.width * width;
-      }
-    }
-
-    return {
-      width: width,
-      height: height
-    };
-  }
-  function getOrigin(o, element) {
-    // Allow origin or around as the names
-    var origin = o.origin; // o.around == null ? o.origin : o.around
-
-    var ox, oy; // Allow the user to pass a string to rotate around a given point
-
-    if (typeof origin === 'string' || origin == null) {
-      // Get the bounding box of the element with no transformations applied
-      var string = (origin || 'center').toLowerCase().trim();
-
-      var _element$bbox = element.bbox(),
-          height = _element$bbox.height,
-          width = _element$bbox.width,
-          x = _element$bbox.x,
-          y = _element$bbox.y; // Calculate the transformed x and y coordinates
-
-
-      var bx = string.includes('left') ? x : string.includes('right') ? x + width : x + width / 2;
-      var by = string.includes('top') ? y : string.includes('bottom') ? y + height : y + height / 2; // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-
-      ox = o.ox != null ? o.ox : bx;
-      oy = o.oy != null ? o.oy : by;
-    } else {
-      ox = origin[0];
-      oy = origin[1];
-    } // Return the origin as it is if it wasn't a string
-
-
-    return [ox, oy];
-  }
 
   function css(style, val) {
     var ret = {};
@@ -696,228 +807,6 @@ var SVG = (function () {
     memory: memory
   });
 
-  function fullHex(hex$$1) {
-    return hex$$1.length === 4 ? ['#', hex$$1.substring(1, 2), hex$$1.substring(1, 2), hex$$1.substring(2, 3), hex$$1.substring(2, 3), hex$$1.substring(3, 4), hex$$1.substring(3, 4)].join('') : hex$$1;
-  } // Component to hex value
-
-
-  function compToHex(comp) {
-    var hex$$1 = comp.toString(16);
-    return hex$$1.length === 1 ? '0' + hex$$1 : hex$$1;
-  }
-
-  var Color =
-  /*#__PURE__*/
-  function () {
-    function Color() {
-      _classCallCheck(this, Color);
-
-      this.init.apply(this, arguments);
-    }
-
-    _createClass(Color, [{
-      key: "init",
-      value: function init(color, g, b) {
-        var match; // initialize defaults
-
-        this.r = 0;
-        this.g = 0;
-        this.b = 0;
-        if (!color) return; // parse color
-
-        if (typeof color === 'string') {
-          if (isRgb.test(color)) {
-            // get rgb values
-            match = rgb.exec(color.replace(whitespace, '')); // parse numeric values
-
-            this.r = parseInt(match[1]);
-            this.g = parseInt(match[2]);
-            this.b = parseInt(match[3]);
-          } else if (isHex.test(color)) {
-            // get hex values
-            match = hex.exec(fullHex(color)); // parse numeric values
-
-            this.r = parseInt(match[1], 16);
-            this.g = parseInt(match[2], 16);
-            this.b = parseInt(match[3], 16);
-          }
-        } else if (Array.isArray(color)) {
-          this.r = color[0];
-          this.g = color[1];
-          this.b = color[2];
-        } else if (_typeof(color) === 'object') {
-          this.r = color.r;
-          this.g = color.g;
-          this.b = color.b;
-        } else if (arguments.length === 3) {
-          this.r = color;
-          this.g = g;
-          this.b = b;
-        }
-      } // Default to hex conversion
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.toHex();
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.r, this.g, this.b];
-      } // Build hex value
-
-    }, {
-      key: "toHex",
-      value: function toHex() {
-        return '#' + compToHex(Math.round(this.r)) + compToHex(Math.round(this.g)) + compToHex(Math.round(this.b));
-      } // Build rgb value
-
-    }, {
-      key: "toRgb",
-      value: function toRgb() {
-        return 'rgb(' + [this.r, this.g, this.b].join() + ')';
-      } // Calculate true brightness
-
-    }, {
-      key: "brightness",
-      value: function brightness() {
-        return this.r / 255 * 0.30 + this.g / 255 * 0.59 + this.b / 255 * 0.11;
-      } // Testers
-      // Test if given value is a color string
-
-    }], [{
-      key: "test",
-      value: function test(color) {
-        color += '';
-        return isHex.test(color) || isRgb.test(color);
-      } // Test if given value is a rgb object
-
-    }, {
-      key: "isRgb",
-      value: function isRgb$$1(color) {
-        return color && typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number';
-      } // Test if given value is a color
-
-    }, {
-      key: "isColor",
-      value: function isColor(color) {
-        return this.isRgb(color) || this.test(color);
-      }
-    }]);
-
-    return Color;
-  }();
-
-  // Default namespaces
-  var ns = 'http://www.w3.org/2000/svg';
-  var xmlns = 'http://www.w3.org/2000/xmlns/';
-  var xlink = 'http://www.w3.org/1999/xlink';
-  var svgjs = 'http://svgjs.com/svgjs';
-
-  var Base = function Base() {
-    _classCallCheck(this, Base);
-  };
-
-  var elements = {};
-  var root = Symbol('root'); // Method for element creation
-
-  function makeNode(name) {
-    // create element
-    return document.createElementNS(ns, name);
-  }
-  function makeInstance(element) {
-    if (element instanceof Base) return element;
-
-    if (_typeof(element) === 'object') {
-      return adopt(element);
-    }
-
-    if (element == null) {
-      return new elements[root]();
-    }
-
-    if (typeof element === 'string' && element.charAt(0) !== '<') {
-      return adopt(document.querySelector(element));
-    }
-
-    var node = makeNode('svg');
-    node.innerHTML = element; // We can use firstChild here because we know,
-    // that the first char is < and thus an element
-
-    element = adopt(node.firstChild);
-    return element;
-  }
-  function nodeOrNew(name, node) {
-    return node || makeNode(name);
-  } // Adopt existing svg elements
-
-  function adopt(node) {
-    // check for presence of node
-    if (!node) return null; // make sure a node isn't already adopted
-
-    if (node.instance instanceof Base) return node.instance;
-
-    if (!(node instanceof window.SVGElement)) {
-      return new elements.HtmlNode(node);
-    } // initialize variables
-
-
-    var element; // adopt with element-specific settings
-
-    if (node.nodeName === 'svg') {
-      element = new elements[root](node);
-    } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
-      element = new elements.Gradient(node);
-    } else if (elements[capitalize(node.nodeName)]) {
-      element = new elements[capitalize(node.nodeName)](node);
-    } else {
-      element = new elements.Bare(node);
-    }
-
-    return element;
-  }
-  function register(element) {
-    var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : element.name;
-    var asRoot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    elements[name] = element;
-    if (asRoot) elements[root] = element;
-    return element;
-  }
-  function getClass(name) {
-    return elements[name];
-  } // Element id sequence
-
-  var did = 1000; // Get next named element id
-
-  function eid(name) {
-    return 'Svgjs' + capitalize(name) + did++;
-  } // Deep new id assignment
-
-  function assignNewId(node) {
-    // do the same for SVG child nodes as well
-    for (var i = node.children.length - 1; i >= 0; i--) {
-      assignNewId(node.children[i]);
-    }
-
-    if (node.id) {
-      return adopt(node).id(eid(node.nodeName));
-    }
-
-    return adopt(node);
-  } // Method for extending objects
-
-  function extend(modules, methods) {
-    var key, i;
-    modules = Array.isArray(modules) ? modules : [modules];
-
-    for (i = modules.length - 1; i >= 0; i--) {
-      for (key in methods) {
-        modules[i].prototype[key] = methods[key];
-      }
-    }
-  }
-
   var listenerId = 0;
 
   function getEvents(node) {
@@ -1036,6 +925,119 @@ var SVG = (function () {
     return event;
   }
 
+  function fullHex(hex$$1) {
+    return hex$$1.length === 4 ? ['#', hex$$1.substring(1, 2), hex$$1.substring(1, 2), hex$$1.substring(2, 3), hex$$1.substring(2, 3), hex$$1.substring(3, 4), hex$$1.substring(3, 4)].join('') : hex$$1;
+  } // Component to hex value
+
+
+  function compToHex(comp) {
+    var hex$$1 = comp.toString(16);
+    return hex$$1.length === 1 ? '0' + hex$$1 : hex$$1;
+  }
+
+  var Color =
+  /*#__PURE__*/
+  function () {
+    function Color() {
+      _classCallCheck(this, Color);
+
+      this.init.apply(this, arguments);
+    }
+
+    _createClass(Color, [{
+      key: "init",
+      value: function init(color, g, b) {
+        var match; // initialize defaults
+
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+        if (!color) return; // parse color
+
+        if (typeof color === 'string') {
+          if (isRgb.test(color)) {
+            // get rgb values
+            match = rgb.exec(color.replace(whitespace, '')); // parse numeric values
+
+            this.r = parseInt(match[1]);
+            this.g = parseInt(match[2]);
+            this.b = parseInt(match[3]);
+          } else if (isHex.test(color)) {
+            // get hex values
+            match = hex.exec(fullHex(color)); // parse numeric values
+
+            this.r = parseInt(match[1], 16);
+            this.g = parseInt(match[2], 16);
+            this.b = parseInt(match[3], 16);
+          }
+        } else if (Array.isArray(color)) {
+          this.r = color[0];
+          this.g = color[1];
+          this.b = color[2];
+        } else if (_typeof(color) === 'object') {
+          this.r = color.r;
+          this.g = color.g;
+          this.b = color.b;
+        } else if (arguments.length === 3) {
+          this.r = color;
+          this.g = g;
+          this.b = b;
+        }
+      } // Default to hex conversion
+
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.toHex();
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.r, this.g, this.b];
+      } // Build hex value
+
+    }, {
+      key: "toHex",
+      value: function toHex() {
+        return '#' + compToHex(Math.round(this.r)) + compToHex(Math.round(this.g)) + compToHex(Math.round(this.b));
+      } // Build rgb value
+
+    }, {
+      key: "toRgb",
+      value: function toRgb() {
+        return 'rgb(' + [this.r, this.g, this.b].join() + ')';
+      } // Calculate true brightness
+
+    }, {
+      key: "brightness",
+      value: function brightness() {
+        return this.r / 255 * 0.30 + this.g / 255 * 0.59 + this.b / 255 * 0.11;
+      } // Testers
+      // Test if given value is a color string
+
+    }], [{
+      key: "test",
+      value: function test(color) {
+        color += '';
+        return isHex.test(color) || isRgb.test(color);
+      } // Test if given value is a rgb object
+
+    }, {
+      key: "isRgb",
+      value: function isRgb$$1(color) {
+        return color && typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number';
+      } // Test if given value is a color
+
+    }, {
+      key: "isColor",
+      value: function isColor(color) {
+        return this.isRgb(color) || this.test(color);
+      }
+    }]);
+
+    return Color;
+  }();
+
   var EventTarget =
   /*#__PURE__*/
   function (_Base) {
@@ -1117,23 +1119,7 @@ var SVG = (function () {
     }]);
 
     return EventTarget;
-  }(Base); // Add events to elements
-  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
-    // add event to Element
-    var fn = function fn(f) {
-      if (f === null) {
-        off(this, event);
-      } else {
-        on(this, event, f);
-      }
-
-      return this;
-    };
-
-    last[event] = fn;
-    return last;
-  }, {});
-  registerMethods('Element', methods$1);
+  }(Base);
 
   function noop() {} // Default animation values
 
@@ -1338,7 +1324,14 @@ var SVG = (function () {
     return SVGNumber;
   }();
 
+  var hooks = [];
+  function registerAttrHook(fn) {
+    hooks.push(fn);
+  } // Set svg element attribute
+
   function attr(attr, val, ns) {
+    var _this = this;
+
     // act as full getter
     if (attr == null) {
       // get an object of attributes
@@ -1369,7 +1362,13 @@ var SVG = (function () {
       }
 
       return attr;
-    } else if (Array.isArray(attr)) ; else if (_typeof(attr) === 'object') {
+    } else if (attr instanceof Array) {
+      // loop through array and get all values
+      return attr.reduce(function (last, curr) {
+        last[curr] = _this.attr(curr);
+        return last;
+      }, {});
+    } else if (_typeof(attr) === 'object') {
       // apply every attribute individually if an object is passed
       for (val in attr) {
         this.attr(val, attr[val]);
@@ -1382,19 +1381,10 @@ var SVG = (function () {
       val = this.node.getAttribute(attr);
       return val == null ? attrs[attr] : isNumber.test(val) ? parseFloat(val) : val;
     } else {
-      // convert image fill and stroke to patterns
-      if (attr === 'fill' || attr === 'stroke') {
-        if (isImage.test(val)) {
-          val = this.doc().defs().image(val);
-        }
-      } // FIXME: This is fine, but what about the lines above?
-      // How does attr know about image()?
-
-
-      while (typeof val.attrHook === 'function') {
-        val = val.attrHook(this, attr);
-      } // ensure correct numeric values (also accepts NaN and Infinity)
-
+      // Loop through hooks and execute them to convert value
+      val = hooks.reduce(function (_val, hook) {
+        return hook(attr, _val, _this);
+      }, val); // ensure correct numeric values (also accepts NaN and Infinity)
 
       if (typeof val === 'number') {
         val = new SVGNumber(val);
@@ -5130,7 +5120,24 @@ var SVG = (function () {
 
       return a === 'leading' ? this.leading(v) : a === 'anchor' ? this.attr('text-anchor', v) : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style' ? this.attr('font-' + a, v) : this.attr(a, v);
     }
-  });
+  }); // Add events to elements
+
+  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
+    // add event to Element
+    var fn = function fn(f) {
+      if (f === null) {
+        off(this, event);
+      } else {
+        on(this, event, f);
+      }
+
+      return this;
+    };
+
+    last[event] = fn;
+    return last;
+  }, {});
+  registerMethods('Element', methods$1);
 
   function untransform() {
     return this.attr('transform', null);
@@ -5610,19 +5617,26 @@ var SVG = (function () {
         });
         return this.attr('href', img.src = url, xlink);
       }
-    }, {
-      key: "attrHook",
-      value: function attrHook(obj) {
-        var _this = this;
-
-        return obj.doc().defs().pattern(0, 0, function (pattern) {
-          pattern.add(_this);
-        });
-      }
     }]);
 
     return Image;
   }(Shape);
+  registerAttrHook(function (attr$$1, val, _this) {
+    // convert image fill and stroke to patterns
+    if (attr$$1 === 'fill' || attr$$1 === 'stroke') {
+      if (isImage.test(val)) {
+        val = _this.doc().defs().image(val);
+      }
+    }
+
+    if (val instanceof Image) {
+      val = _this.doc().defs().pattern(0, 0, function (pattern) {
+        pattern.add(val);
+      });
+    }
+
+    return val;
+  });
   registerMethods({
     Container: {
       // create image element, load image and set its size
@@ -6142,8 +6156,7 @@ var SVG = (function () {
 
     this.node.appendChild(document.createTextNode(text));
     return this;
-  } // FIXME: Does this also work for textpath?
-  // Get length of text element
+  } // Get length of text element
 
   function length() {
     return this.node.getComputedTextLength();
@@ -6717,7 +6730,7 @@ var SVG = (function () {
     Text: {
       // Create path for text to run on
       path: function path(track) {
-        var path = new TextPath(); // if d is a path, reuse it
+        var path = new TextPath(); // if track is a path, reuse it
 
         if (!(track instanceof Path)) {
           // create path element
@@ -6729,10 +6742,9 @@ var SVG = (function () {
 
         return this.put(path);
       },
-      // FIXME: make this plural?
       // Get the textPath children
       textPath: function textPath() {
-        return this.find('textPath');
+        return this.find('textPath')[0];
       }
     },
     Path: {
@@ -6745,8 +6757,10 @@ var SVG = (function () {
         }
 
         return this.parent().put(new Text()).path(this).text(_text);
-      } // FIXME: Maybe add `targets` to get all textPaths associated with this path
-
+      },
+      targets: function targets() {
+        return baseFind('svg [href*="' + this.id() + '"]');
+      }
     }
   });
   TextPath.prototype.MorphArray = PathArray;

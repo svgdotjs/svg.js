@@ -1,3 +1,4 @@
+import { makeInstance } from '../../utils/adopter.js'
 import { registerMethods } from '../../utils/methods.js'
 
 // Get all siblings, including myself
@@ -73,6 +74,7 @@ export function back () {
 
 // Inserts a given element before the targeted element
 export function before (element) {
+  element = makeInstance(element)
   element.remove()
 
   var i = this.position()
@@ -84,6 +86,7 @@ export function before (element) {
 
 // Inserts a given element after the targeted element
 export function after (element) {
+  element = makeInstance(element)
   element.remove()
 
   var i = this.position()
@@ -91,6 +94,16 @@ export function after (element) {
   this.parent().add(element, i + 1)
 
   return this
+}
+
+export function insertBefore (element) {
+  element = makeInstance(element)
+  element.before(this)
+}
+
+export function insertAfter (element) {
+  element = makeInstance(element)
+  element.after(this)
 }
 
 registerMethods('Dom', {
