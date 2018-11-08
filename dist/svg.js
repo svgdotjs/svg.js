@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 12:57:03 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 13:49:37 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -6313,8 +6313,11 @@ var SVG = (function () {
         if (this._rebuild) {
           var self = this;
           var blankLineOffset = 0;
-          var dy = this.dom.leading * new SVGNumber(this.attr('font-size'));
+          var leading = this.dom.leading;
           this.each(function () {
+            var fontSize = window.getComputedStyle(this.node).getPropertyValue('font-size');
+            var dy = leading * new SVGNumber(fontSize);
+
             if (this.dom.newLined) {
               this.attr('x', self.attr('x'));
 

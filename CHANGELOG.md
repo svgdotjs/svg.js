@@ -79,6 +79,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `clone()` does not add the clone to the dom anymore
 - `SVG.Text.textPath()` returns only the first textpath child
 - `attr()` excepts array now to get multiple values at once
+- `SVG.Text.rebuild()` now takes every font-size into account (#512)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

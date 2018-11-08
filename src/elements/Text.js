@@ -122,9 +122,13 @@ export default class Text extends Shape {
     if (this._rebuild) {
       var self = this
       var blankLineOffset = 0
-      var dy = this.dom.leading * new SVGNumber(this.attr('font-size'))
+      var leading = this.dom.leading
 
       this.each(function () {
+        var fontSize = window.getComputedStyle(this.node)
+          .getPropertyValue('font-size')
+        var dy = leading * new SVGNumber(fontSize)
+
         if (this.dom.newLined) {
           this.attr('x', self.attr('x'))
 
