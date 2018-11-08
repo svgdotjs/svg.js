@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 11:10:36 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 11:29:15 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -254,6 +254,12 @@ var SVG = (function () {
   function camelCase(s) {
     return s.toLowerCase().replace(/-(.)/g, function (m, g) {
       return g.toUpperCase();
+    });
+  } // Convert camel cased string to string seperated
+
+  function unCamelCase(s) {
+    return s.replace(/([A-Z])/g, function (m, g) {
+      return '-' + g.toLowerCase();
     });
   } // Capitalize first letter of a string
 
@@ -6636,6 +6642,63 @@ var SVG = (function () {
   });
   register(Mask);
 
+  function cssRule(selector, rule) {
+    if (!selector) return '';
+    if (!rule) return selector;
+    var ret = selector + '{';
+
+    for (var i in rule) {
+      ret += unCamelCase(i) + ':' + rule[i] + ';';
+    }
+
+    ret += '}';
+    return ret;
+  }
+
+  var Style =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Style, _Element);
+
+    function Style(node) {
+      _classCallCheck(this, Style);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Style).call(this, nodeOrNew('style', node), Style));
+    }
+
+    _createClass(Style, [{
+      key: "words",
+      value: function words(w) {
+        this.node.textContent += w || '';
+        return this;
+      }
+    }, {
+      key: "font",
+      value: function font(name, src) {
+        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        return this.rule('@font-face', _objectSpread({
+          fontFamily: name,
+          src: src
+        }, params));
+      }
+    }, {
+      key: "rule",
+      value: function rule(selector, obj) {
+        return this.words(cssRule(selector, obj));
+      }
+    }]);
+
+    return Style;
+  }(Element);
+  registerMethods('Element', {
+    style: function style(selector, obj) {
+      return this.put(new Style()).rule(selector, obj);
+    },
+    fontface: function fontface(name, src, params) {
+      return this.put(new Style()).font(name, src, params);
+    }
+  });
+
   var _Symbol =
   /*#__PURE__*/
   function (_Container) {
@@ -6847,6 +6910,7 @@ var SVG = (function () {
     Rect: Rect,
     Shape: Shape,
     Stop: Stop,
+    Style: Style,
     Symbol: _Symbol,
     Text: Text,
     TextPath: TextPath,
@@ -6857,6 +6921,7 @@ var SVG = (function () {
     radians: radians,
     degrees: degrees,
     camelCase: camelCase,
+    unCamelCase: unCamelCase,
     capitalize: capitalize,
     proportionalSize: proportionalSize,
     getOrigin: getOrigin,

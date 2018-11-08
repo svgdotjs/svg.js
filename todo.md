@@ -9,6 +9,7 @@
 - Element.js
   - svg
 - attr.js
+- Style.js
 
 
 

@@ -22,6 +22,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `npm build:dev` to let you develop without getting too annoyed
 - added `beziere()` and `steps()` to generate easing functions
 - added `insertAfter()` and `insertBefore`
+- added `SVG.Style` which can be created with `style()` or `fontface()`
 
 ### Removed
 - removed `SVG.Array.split()` function

@@ -41,6 +41,13 @@ export function camelCase (s) {
   })
 }
 
+// Convert camel cased string to string seperated
+export function unCamelCase (s) {
+  return s.replace(/([A-Z])/g, function (m, g) {
+    return '-' + g.toLowerCase()
+  })
+}
+
 // Capitalize first letter of a string
 export function capitalize (s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
