@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 13:49:37 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 13:57:26 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -5207,6 +5207,17 @@ var SVG = (function () {
       }
 
       return a === 'leading' ? this.leading(v) : a === 'anchor' ? this.attr('text-anchor', v) : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style' ? this.attr('font-' + a, v) : this.attr(a, v);
+    }
+  });
+  registerMethods('Text', {
+    ax: function ax(x) {
+      return this.attr('x', x);
+    },
+    ay: function ay(y) {
+      return this.attr('y', y);
+    },
+    amove: function amove(x, y) {
+      return this.ax(x).ay(y);
     }
   }); // Add events to elements
 

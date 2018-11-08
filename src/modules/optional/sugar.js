@@ -159,6 +159,18 @@ registerMethods(['Element', 'Runner'], {
   }
 })
 
+registerMethods('Text', {
+  ax (x) {
+    return this.attr('x', x)
+  },
+  ay (y) {
+    return this.attr('y', y)
+  },
+  amove (x, y) {
+    return this.ax(x).ay(y)
+  }
+})
+
 // Add events to elements
 const methods = [ 'click',
   'dblclick',

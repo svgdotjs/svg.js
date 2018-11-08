@@ -26,6 +26,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `EventTarget` which is a baseclass to get event abilities (#641)
 - added `Dom` which is a baseclass to get dom abilities
 - added `round()` which lets you round attribues from a node
+- added `ax(), ay(), amove()` to change texts x and y values directly (#787)
 
 ### Removed
 - removed `SVG.Array.split()` function
