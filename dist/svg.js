@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 09:25:46 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 11:10:36 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -621,11 +621,9 @@ var SVG = (function () {
     return attr == null ? [] : attr.trim().split(delimiter);
   } // Return true if class exists on the node, false otherwise
 
-
   function hasClass(name) {
     return this.classes().indexOf(name) !== -1;
   } // Add class to the node
-
 
   function addClass(name) {
     if (!this.hasClass(name)) {
@@ -637,7 +635,6 @@ var SVG = (function () {
     return this;
   } // Remove class from the node
 
-
   function removeClass(name) {
     if (this.hasClass(name)) {
       this.attr('class', this.classes().filter(function (c) {
@@ -648,11 +645,9 @@ var SVG = (function () {
     return this;
   } // Toggle the presence of a class on the node
 
-
   function toggleClass(name) {
     return this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
   }
-
   registerMethods('Dom', {
     classes: classes,
     hasClass: hasClass,
@@ -767,8 +762,6 @@ var SVG = (function () {
     data: data
   });
 
-  // Remember arbitrary data
-
   function remember(k, v) {
     // remember every item in an object individually
     if (_typeof(arguments[0]) === 'object') {
@@ -796,7 +789,9 @@ var SVG = (function () {
     }
 
     return this;
-  } // return local memory object
+  } // This triggers creation of a new hidden class which is not performant
+  // However, this function is not rarely used so it will not happen frequently
+  // Return local memory object
 
   function memory() {
     return this._memory = this._memory || {};
@@ -2923,6 +2918,79 @@ var SVG = (function () {
     d: makeSetterGetter('D')
   });
 
+  function from(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      fx: new SVGNumber(x),
+      fy: new SVGNumber(y)
+    }) : this.attr({
+      x1: new SVGNumber(x),
+      y1: new SVGNumber(y)
+    });
+  }
+  function to(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      cx: new SVGNumber(x),
+      cy: new SVGNumber(y)
+    }) : this.attr({
+      x2: new SVGNumber(x),
+      y2: new SVGNumber(y)
+    });
+  }
+
+  var gradiented = /*#__PURE__*/Object.freeze({
+    from: from,
+    to: to
+  });
+
+  function rx(rx) {
+    return this.attr('rx', rx);
+  } // Radius y value
+
+  function ry(ry) {
+    return this.attr('ry', ry);
+  } // Move over x-axis
+
+  function x(x) {
+    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
+  } // Move over y-axis
+
+  function y(y) {
+    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
+  } // Move by center over x-axis
+
+  function cx(x) {
+    return x == null ? this.attr('cx') : this.attr('cx', x);
+  } // Move by center over y-axis
+
+  function cy(y) {
+    return y == null ? this.attr('cy') : this.attr('cy', y);
+  } // Set width of element
+
+  function width(width) {
+    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
+  } // Set height of element
+
+  function height(height) {
+    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
+  } // Custom size function
+
+  function size(width, height) {
+    var p = proportionalSize(this, width, height);
+    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
+  }
+
+  var circled = /*#__PURE__*/Object.freeze({
+    rx: rx,
+    ry: ry,
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height,
+    size: size
+  });
+
   var Queue =
   /*#__PURE__*/
   function () {
@@ -3534,7 +3602,6 @@ var SVG = (function () {
     function Morphable(stepper) {
       _classCallCheck(this, Morphable);
 
-      // FIXME: the default stepper does not know about easing
       this._stepper = stepper || new Ease('-');
       this._from = null;
       this._to = null;
@@ -3768,8 +3835,8 @@ var SVG = (function () {
   }
   function makeMorphable() {
     extend(morphableTypes, {
-      to: function to(val, args) {
-        return new Morphable().type(this.constructor).from(this.valueOf()).to(val, args);
+      to: function to(val) {
+        return new Morphable().type(this.constructor).from(this.valueOf()).to(val);
       },
       fromArray: function fromArray(arr) {
         this.init(arr);
@@ -4020,7 +4087,6 @@ var SVG = (function () {
             runnersLeft = true; // continue
           } else if (runnerInfo.persist !== true) {
             // runner is finished. And runner might get removed
-            // TODO: Figure out end time of runner
             var endTime = runner.duration() - runner.time() + this._time;
 
             if (endTime + this._persist < this._time) {
@@ -4271,7 +4337,7 @@ var SVG = (function () {
       key: "position",
       value: function position(p) {
         // Get all of the variables we need
-        var x = this._time;
+        var x$$1 = this._time;
         var d = this._duration;
         var w = this._wait;
         var t = this._times;
@@ -4287,17 +4353,17 @@ var SVG = (function () {
           The logic is slightly simplified here because we can use booleans
           */
           // Figure out the value without thinking about the start or end time
-          var f = function f(x) {
-            var swinging = s * Math.floor(x % (2 * (w + d)) / (w + d));
+          var f = function f(x$$1) {
+            var swinging = s * Math.floor(x$$1 % (2 * (w + d)) / (w + d));
             var backwards = swinging && !r || !swinging && r;
-            var uncliped = Math.pow(-1, backwards) * (x % (w + d)) / d + backwards;
+            var uncliped = Math.pow(-1, backwards) * (x$$1 % (w + d)) / d + backwards;
             var clipped = Math.max(Math.min(uncliped, 1), 0);
             return clipped;
           }; // Figure out the value by incorporating the start time
 
 
           var endTime = t * (w + d) - w;
-          position = x <= 0 ? Math.round(f(1e-5)) : x < endTime ? f(x) : Math.round(f(endTime - 1e-5));
+          position = x$$1 <= 0 ? Math.round(f(1e-5)) : x$$1 < endTime ? f(x$$1) : Math.round(f(endTime - 1e-5));
           return position;
         } // Work out the loops done and add the position to the loops done
 
@@ -4745,7 +4811,7 @@ var SVG = (function () {
       var isMatrix = Matrix.isMatrixLike(transforms);
       affine = transforms.affine != null ? transforms.affine : affine != null ? affine : !isMatrix; // Create a morepher and set its type
 
-      var morpher = new Morphable().type(affine ? TransformBag : Matrix).stepper(this._stepper);
+      var morpher = new Morphable(this._stepper).type(affine ? TransformBag : Matrix);
       var origin;
       var element;
       var current;
@@ -4771,17 +4837,17 @@ var SVG = (function () {
         if (!relative) this.clearTransform();
 
         var _transform = new Point(origin).transform(element._currentTransform(this)),
-            x = _transform.x,
-            y = _transform.y;
+            x$$1 = _transform.x,
+            y$$1 = _transform.y;
 
         var target = new Matrix(_objectSpread({}, transforms, {
-          origin: [x, y]
+          origin: [x$$1, y$$1]
         }));
         var start = this._isDeclarative && current ? current : startTransform;
 
         if (affine) {
-          target = target.decompose(x, y);
-          start = start.decompose(x, y); // Get the current and target angle as it was set
+          target = target.decompose(x$$1, y$$1);
+          start = start.decompose(x$$1, y$$1); // Get the current and target angle as it was set
 
           var rTarget = target.rotate;
           var rCurrent = start.rotate; // Figure out the shortest path to rotate directly
@@ -4833,29 +4899,29 @@ var SVG = (function () {
       return this;
     },
     // Animatable x-axis
-    x: function x(_x, relative) {
+    x: function x$$1(_x, relative) {
       return this._queueNumber('x', _x);
     },
     // Animatable y-axis
-    y: function y(_y) {
+    y: function y$$1(_y) {
       return this._queueNumber('y', _y);
     },
-    dx: function dx(x) {
-      return this._queueNumberDelta('dx', x);
+    dx: function dx(x$$1) {
+      return this._queueNumberDelta('dx', x$$1);
     },
-    dy: function dy(y) {
-      return this._queueNumberDelta('dy', y);
+    dy: function dy(y$$1) {
+      return this._queueNumberDelta('dy', y$$1);
     },
-    _queueNumberDelta: function _queueNumberDelta(method, to) {
-      to = new SVGNumber(to); // Try to change the target if we have this method already registerd
+    _queueNumberDelta: function _queueNumberDelta(method, to$$1) {
+      to$$1 = new SVGNumber(to$$1); // Try to change the target if we have this method already registerd
 
-      if (this._tryRetargetDelta(method, to)) return this; // Make a morpher and queue the animation
+      if (this._tryRetargetDelta(method, to$$1)) return this; // Make a morpher and queue the animation
 
-      var morpher = new Morphable(this._stepper).to(to);
+      var morpher = new Morphable(this._stepper).to(to$$1);
       this.queue(function () {
-        var from = this.element()[method]();
-        morpher.from(from);
-        morpher.to(from + to);
+        var from$$1 = this.element()[method]();
+        morpher.from(from$$1);
+        morpher.to(from$$1 + to$$1);
       }, function (pos) {
         this.element()[method](morpher.at(pos));
         return morpher.done();
@@ -4865,11 +4931,11 @@ var SVG = (function () {
 
       return this;
     },
-    _queueObject: function _queueObject(method, to) {
+    _queueObject: function _queueObject(method, to$$1) {
       // Try to change the target if we have this method already registerd
-      if (this._tryRetarget(method, to)) return this; // Make a morpher and queue the animation
+      if (this._tryRetarget(method, to$$1)) return this; // Make a morpher and queue the animation
 
-      var morpher = new Morphable(this._stepper).to(to);
+      var morpher = new Morphable(this._stepper).to(to$$1);
       this.queue(function () {
         morpher.from(this.element()[method]());
       }, function (pos) {
@@ -4885,46 +4951,46 @@ var SVG = (function () {
       return this._queueObject(method, new SVGNumber(value));
     },
     // Animatable center x-axis
-    cx: function cx(x) {
-      return this._queueNumber('cx', x);
+    cx: function cx$$1(x$$1) {
+      return this._queueNumber('cx', x$$1);
     },
     // Animatable center y-axis
-    cy: function cy(y) {
-      return this._queueNumber('cy', y);
+    cy: function cy$$1(y$$1) {
+      return this._queueNumber('cy', y$$1);
     },
     // Add animatable move
-    move: function move(x, y) {
-      return this.x(x).y(y);
+    move: function move(x$$1, y$$1) {
+      return this.x(x$$1).y(y$$1);
     },
     // Add animatable center
-    center: function center(x, y) {
-      return this.cx(x).cy(y);
+    center: function center(x$$1, y$$1) {
+      return this.cx(x$$1).cy(y$$1);
     },
     // Add animatable size
-    size: function size(width, height) {
+    size: function size$$1(width$$1, height$$1) {
       // animate bbox based size for all other elements
       var box;
 
-      if (!width || !height) {
+      if (!width$$1 || !height$$1) {
         box = this._element.bbox();
       }
 
-      if (!width) {
-        width = box.width / box.height * height;
+      if (!width$$1) {
+        width$$1 = box.width / box.height * height$$1;
       }
 
-      if (!height) {
-        height = box.height / box.width * width;
+      if (!height$$1) {
+        height$$1 = box.height / box.width * width$$1;
       }
 
-      return this.width(width).height(height);
+      return this.width(width$$1).height(height$$1);
     },
     // Add animatable width
-    width: function width(_width) {
+    width: function width$$1(_width) {
       return this._queueNumber('width', _width);
     },
     // Add animatable height
-    height: function height(_height) {
+    height: function height$$1(_height) {
       return this._queueNumber('height', _height);
     },
     // Add animatable plot
@@ -4932,28 +4998,24 @@ var SVG = (function () {
       // Lines can be plotted with 4 arguments
       if (arguments.length === 4) {
         return this.plot([a, b, c, d]);
-      } // FIXME: this needs to be rewritten such that the element is only accesed
-      // in the init function
+      }
 
+      var morpher = this._element.MorphArray().to(a);
 
-      return this._queueObject('plot', new this._element.MorphArray(a));
-      /*
-      var morpher = this._element.morphArray().to(a)
-        this.queue(function () {
-        morpher.from(this._element.array())
+      this.queue(function () {
+        morpher.from(this._element.array());
       }, function (pos) {
-        this._element.plot(morpher.at(pos))
-      })
-        return this
-      */
+        this._element.plot(morpher.at(pos));
+      });
+      return this;
     },
     // Add leading method
     leading: function leading(value) {
       return this._queueNumber('leading', value);
     },
     // Add animatable viewbox
-    viewbox: function viewbox(x, y, width, height) {
-      return this._queueObject('viewbox', new Box(x, y, width, height));
+    viewbox: function viewbox(x$$1, y$$1, width$$1, height$$1) {
+      return this._queueObject('viewbox', new Box(x$$1, y$$1, width$$1, height$$1));
     },
     update: function update(o) {
       if (_typeof(o) !== 'object') {
@@ -4969,6 +5031,12 @@ var SVG = (function () {
       if (o.offset != null) this.attr('offset', o.offset);
       return this;
     }
+  });
+  extend(Runner, {
+    rx: rx,
+    ry: ry,
+    from: from,
+    to: to
   });
 
   var sugar = {
@@ -5201,57 +5269,6 @@ var SVG = (function () {
     transform: transform
   });
 
-  // FIXME: import this to runner
-
-  function rx(rx) {
-    return this.attr('rx', rx);
-  } // Radius y value
-
-  function ry(ry) {
-    return this.attr('ry', ry);
-  } // Move over x-axis
-
-  function x(x) {
-    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
-  } // Move over y-axis
-
-  function y(y) {
-    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
-  } // Move by center over x-axis
-
-  function cx(x) {
-    return x == null ? this.attr('cx') : this.attr('cx', x);
-  } // Move by center over y-axis
-
-  function cy(y) {
-    return y == null ? this.attr('cy') : this.attr('cy', y);
-  } // Set width of element
-
-  function width(width) {
-    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
-  } // Set height of element
-
-  function height(height) {
-    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
-  } // Custom size function
-
-  function size(width, height) {
-    var p = proportionalSize(this, width, height);
-    return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
-  }
-
-  var circled = /*#__PURE__*/Object.freeze({
-    rx: rx,
-    ry: ry,
-    x: x,
-    y: y,
-    cx: cx,
-    cy: cy,
-    width: width,
-    height: height,
-    size: size
-  });
-
   var Shape =
   /*#__PURE__*/
   function (_Element) {
@@ -5385,31 +5402,6 @@ var SVG = (function () {
   }
   registerMethods('Dom', {
     find: find
-  });
-
-  // FIXME: add to runner
-  function from(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      fx: new SVGNumber(x),
-      fy: new SVGNumber(y)
-    }) : this.attr({
-      x1: new SVGNumber(x),
-      y1: new SVGNumber(y)
-    });
-  }
-  function to(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      cx: new SVGNumber(x),
-      cy: new SVGNumber(y)
-    }) : this.attr({
-      x2: new SVGNumber(x),
-      y2: new SVGNumber(y)
-    });
-  }
-
-  var gradiented = /*#__PURE__*/Object.freeze({
-    from: from,
-    to: to
   });
 
   var Gradient =
@@ -6117,30 +6109,19 @@ var SVG = (function () {
       _classCallCheck(this, Rect);
 
       return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), Rect));
-    } // FIXME: unify with circle
-    // Radius x value
-
-
-    _createClass(Rect, [{
-      key: "rx",
-      value: function rx(_rx) {
-        return this.attr('rx', _rx);
-      } // Radius y value
-
-    }, {
-      key: "ry",
-      value: function ry(_ry) {
-        return this.attr('ry', _ry);
-      }
-    }]);
+    }
 
     return Rect;
   }(Shape);
+  extend(Rect, {
+    rx: rx,
+    ry: ry
+  });
   registerMethods({
     Container: {
       // Create a rect element
-      rect: function rect(width, height) {
-        return this.put(new Rect()).size(width, height);
+      rect: function rect(width$$1, height$$1) {
+        return this.put(new Rect()).size(width$$1, height$$1);
       }
     }
   });
@@ -6233,7 +6214,6 @@ var SVG = (function () {
       value: function text(_text) {
         // act as getter
         if (_text === undefined) {
-          // FIXME use children() or each()
           var children = this.node.childNodes;
           var firstLine = 0;
           _text = '';

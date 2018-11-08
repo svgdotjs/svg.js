@@ -1,8 +1,10 @@
 import { Controller, Ease, Stepper } from './Controller.js'
 import { extend } from '../utils/adopter.js'
+import { from, to } from '../modules/core/gradiented.js'
 import { getOrigin } from '../utils/utils.js'
 import { noop, timeline } from '../modules/core/defaults.js'
 import { registerMethods } from '../utils/methods.js'
+import { rx, ry } from '../modules/core/circled.js'
 import Animator from './Animator.js'
 import Box from '../types/Box.js'
 import EventTarget from '../types/EventTarget.js'
@@ -668,9 +670,8 @@ extend(Runner, {
       : (affine != null ? affine : !isMatrix)
 
     // Create a morepher and set its type
-    const morpher = new Morphable()
+    const morpher = new Morphable(this._stepper)
       .type(affine ? TransformBag : Matrix)
-      .stepper(this._stepper)
 
     let origin
     let element
@@ -883,12 +884,7 @@ extend(Runner, {
       return this.plot([a, b, c, d])
     }
 
-    // FIXME: this needs to be rewritten such that the element is only accesed
-    // in the init function
-    return this._queueObject('plot', new this._element.MorphArray(a))
-
-    /*
-    var morpher = this._element.morphArray().to(a)
+    var morpher = this._element.MorphArray().to(a)
 
     this.queue(function () {
       morpher.from(this._element.array())
@@ -897,7 +893,6 @@ extend(Runner, {
     })
 
     return this
-    */
   },
 
   // Add leading method
@@ -926,3 +921,5 @@ extend(Runner, {
     return this
   }
 })
+
+extend(Runner, { rx, ry, from, to })

@@ -1,5 +1,4 @@
 import { registerMethods } from '../../utils/methods.js'
-// FIXME: We need a constructor to set this up
 
 // Remember arbitrary data
 export function remember (k, v) {
@@ -31,7 +30,9 @@ export function forget () {
   return this
 }
 
-// return local memory object
+// This triggers creation of a new hidden class which is not performant
+// However, this function is not rarely used so it will not happen frequently
+// Return local memory object
 export function memory () {
   return (this._memory = this._memory || {})
 }

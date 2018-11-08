@@ -12,7 +12,6 @@ import SVGNumber from './SVGNumber.js'
 
 export default class Morphable {
   constructor (stepper) {
-    // FIXME: the default stepper does not know about easing
     this._stepper = stepper || new Ease('-')
 
     this._from = null
@@ -230,11 +229,11 @@ export function registerMorphableType (type = []) {
 
 export function makeMorphable () {
   extend(morphableTypes, {
-    to (val, args) {
+    to (val) {
       return new Morphable()
         .type(this.constructor)
         .from(this.valueOf())
-        .to(val, args)
+        .to(val)
     },
     fromArray (arr) {
       this.init(arr)

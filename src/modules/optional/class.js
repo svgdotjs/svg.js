@@ -2,18 +2,18 @@ import { delimiter } from '../core/regex.js'
 import { registerMethods } from '../../utils/methods.js'
 
 // Return array of classes on the node
-function classes () {
+export function classes () {
   var attr = this.attr('class')
   return attr == null ? [] : attr.trim().split(delimiter)
 }
 
 // Return true if class exists on the node, false otherwise
-function hasClass (name) {
+export function hasClass (name) {
   return this.classes().indexOf(name) !== -1
 }
 
 // Add class to the node
-function addClass (name) {
+export function addClass (name) {
   if (!this.hasClass(name)) {
     var array = this.classes()
     array.push(name)
@@ -24,7 +24,7 @@ function addClass (name) {
 }
 
 // Remove class from the node
-function removeClass (name) {
+export function removeClass (name) {
   if (this.hasClass(name)) {
     this.attr('class', this.classes().filter(function (c) {
       return c !== name
@@ -35,7 +35,7 @@ function removeClass (name) {
 }
 
 // Toggle the presence of a class on the node
-function toggleClass (name) {
+export function toggleClass (name) {
   return this.hasClass(name) ? this.removeClass(name) : this.addClass(name)
 }
 

@@ -1,4 +1,3 @@
-// FIXME: We dont need exports
 import { camelCase } from '../../utils/utils.js'
 import { isBlank } from '../core/regex.js'
 import { registerMethods } from '../../utils/methods.js'

@@ -55,7 +55,6 @@ export default class Text extends Shape {
   text (text) {
     // act as getter
     if (text === undefined) {
-      // FIXME use children() or each()
       var children = this.node.childNodes
       var firstLine = 0
       text = ''

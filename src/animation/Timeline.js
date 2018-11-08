@@ -225,7 +225,6 @@ export default class Timeline {
       } else if (runnerInfo.persist !== true) {
         // runner is finished. And runner might get removed
 
-        // TODO: Figure out end time of runner
         var endTime = runner.duration() - runner.time() + this._time
 
         if (endTime + this._persist < this._time) {

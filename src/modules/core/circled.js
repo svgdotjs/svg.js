@@ -1,4 +1,3 @@
-// FIXME: import this to runner
 import { proportionalSize } from '../../utils/utils.js'
 import SVGNumber from '../../types/SVGNumber.js'
 

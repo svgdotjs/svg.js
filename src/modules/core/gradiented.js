@@ -1,4 +1,3 @@
-// FIXME: add to runner
 import SVGNumber from '../../types/SVGNumber.js'
 
 export function from (x, y) {

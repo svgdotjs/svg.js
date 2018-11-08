@@ -1,5 +1,6 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { extend, nodeOrNew, register } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
+import { rx, ry } from '../modules/core/circled.js'
 import Shape from './Shape.js'
 
 export default class Rect extends Shape {
@@ -7,18 +8,9 @@ export default class Rect extends Shape {
   constructor (node) {
     super(nodeOrNew('rect', node), Rect)
   }
-
-  // FIXME: unify with circle
-  // Radius x value
-  rx (rx) {
-    return this.attr('rx', rx)
-  }
-
-  // Radius y value
-  ry (ry) {
-    return this.attr('ry', ry)
-  }
 }
+
+extend(Rect, { rx, ry })
 
 registerMethods({
   Container: {
