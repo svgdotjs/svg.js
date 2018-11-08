@@ -1,4 +1,9 @@
-import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
@@ -23,9 +28,9 @@ extend(Ellipse, circled)
 
 registerMethods('Container', {
   // Create an ellipse
-  ellipse: function (width, height) {
+  ellipse: wrapWithAttrCheck(function (width, height) {
     return this.put(new Ellipse()).size(width, height).move(0, 0)
-  }
+  })
 })
 
 register(Ellipse)

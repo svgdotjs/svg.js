@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
@@ -11,9 +11,9 @@ export default class Symbol extends Container {
 
 registerMethods({
   Container: {
-    symbol () {
+    symbol: wrapWithAttrCheck(function () {
       return this.put(new Symbol())
-    }
+    })
   }
 })
 

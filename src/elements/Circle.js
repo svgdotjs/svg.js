@@ -1,5 +1,10 @@
 import { cx, cy, height, width, x, y } from '../modules/core/circled.js'
-import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
@@ -33,11 +38,11 @@ extend(Circle, { x, y, cx, cy, width, height })
 registerMethods({
   Element: {
     // Create circle element
-    circle (size) {
+    circle: wrapWithAttrCheck(function (size) {
       return this.put(new Circle())
         .size(size)
         .move(0, 0)
-    }
+    })
   }
 })
 

@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 import baseFind from '../modules/core/selector.js'
@@ -27,9 +27,9 @@ export default class Mask extends Container {
 
 registerMethods({
   Container: {
-    mask () {
+    mask: wrapWithAttrCheck(function () {
       return this.defs().put(new Mask())
-    }
+    })
   },
   Element: {
     // Distribute mask to svg element
