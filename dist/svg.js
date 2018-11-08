@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 13:57:26 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 14:12:10 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -5073,7 +5073,7 @@ var SVG = (function () {
 
     extension[m] = function (o) {
       if (typeof o === 'undefined') {
-        return this;
+        return this.attr(m);
       }
 
       if (typeof o === 'string' || Color.isRgb(o) || o instanceof Element) {

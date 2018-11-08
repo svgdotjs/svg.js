@@ -34,10 +34,9 @@ describe('Sugar', function() {
       expect(rect.attr('fill-rule')).toBe('odd')
     })
 
-    it('is a nop with no argument given and returns node reference', function() {
+    it('returns fill color when called as getter', function() {
       rect.fill('red')
-      expect(rect.fill()).toBe(rect)
-      expect(rect.attr('fill')).toBe('red')
+      expect(rect.fill()).toBe('red')
     })
   })
 

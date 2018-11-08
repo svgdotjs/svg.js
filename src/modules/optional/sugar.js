@@ -23,7 +23,7 @@ var sugar = {
 
   extension[m] = function (o) {
     if (typeof o === 'undefined') {
-      return this
+      return this.attr(m)
     }
     if (typeof o === 'string' || Color.isRgb(o) || (o instanceof Element)) {
       this.attr(m, o)

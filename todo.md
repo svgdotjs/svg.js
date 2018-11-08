@@ -4,15 +4,13 @@
   - insertAfter
   - after
   - before
+  - ax, ay, amove
 - Path.js
   - targets
 - Element.js
   - svg
 - attr.js
 - Style.js
-
-
-
 
 
 # Where We Left Off
