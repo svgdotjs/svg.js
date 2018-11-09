@@ -1,4 +1,9 @@
-import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Text from './Text.js'
 import * as textable from '../modules/core/textable.js'
@@ -45,7 +50,7 @@ extend(Tspan, textable)
 
 registerMethods({
   Tspan: {
-    tspan (text) {
+    tspan: wrapWithAttrCheck(function (text) {
       var tspan = new Tspan()
 
       // clear if build mode is disabled
@@ -57,7 +62,7 @@ registerMethods({
       this.node.appendChild(tspan.node)
 
       return tspan.text(text)
-    }
+    })
   }
 })
 

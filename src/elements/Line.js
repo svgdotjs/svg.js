@@ -1,4 +1,9 @@
-import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
 import PointArray from '../types/PointArray.js'
@@ -49,14 +54,14 @@ extend(Line, pointed)
 registerMethods({
   Container: {
     // Create a line element
-    line (...args) {
+    line: wrapWithAttrCheck(function (...args) {
       // make sure plot is called as a setter
       // x1 is not necessarily a number, it can also be an array, a string and a PointArray
       return Line.prototype.plot.apply(
         this.put(new Line())
         , args[0] != null ? args : [0, 0, 0, 0]
       )
-    }
+    })
   }
 })
 

@@ -1,4 +1,9 @@
-import { adopt, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  adopt,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { ns, svgjs, xlink, xmlns } from '../modules/core/namespaces.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
@@ -63,9 +68,9 @@ export default class Doc extends Container {
 registerMethods({
   Container: {
     // Create nested svg document
-    nested () {
+    nested: wrapWithAttrCheck(function () {
       return this.put(new Doc())
-    }
+    })
   }
 })
 

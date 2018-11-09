@@ -27,7 +27,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `Dom` which is a baseclass to get dom abilities
 - added `round()` which lets you round attribues from a node
 - added `ax(), ay(), amove()` to change texts x and y values directly (#787)
-- added possibility to pass attribues into a constructor like: `new SVG.Rect({width:100})`
+- added possibility to pass attributes into a constructor like: `new SVG.Rect({width:100})`
+- added possibility to pass in additional attribues to element creators e.g. `canvas.rect({x:100})` or `canvas.rect(100, 100, {x:100})` (#796)
 
 ### Removed
 - removed `SVG.Array.split()` function

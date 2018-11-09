@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 16:05:07 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 08 2018 19:44:36 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -443,7 +443,7 @@ var SVG = (function () {
 
       var o = args[args.length - 1];
 
-      if (o && !o.prototype && !(o instanceof Array) && _typeof(o) === 'object') {
+      if (o && o.constructor === Object && !(o instanceof Array)) {
         return fn.apply(this, args.slice(0, -1)).attr(o);
       } else {
         return fn.apply(this, args);
@@ -2053,9 +2053,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create nested svg document
-      nested: function nested() {
+      nested: wrapWithAttrCheck(function () {
         return this.put(new Doc$1());
-      }
+      })
     }
   });
   register(Doc$1, 'Doc', true);
@@ -5405,9 +5405,9 @@ var SVG = (function () {
   registerMethods({
     Element: {
       // Create circle element
-      circle: function circle(size) {
+      circle: wrapWithAttrCheck(function (size) {
         return this.put(new Circle()).size(size).move(0, 0);
-      }
+      })
     }
   });
   register(Circle);
@@ -5436,9 +5436,9 @@ var SVG = (function () {
   extend(Ellipse, circled);
   registerMethods('Container', {
     // Create an ellipse
-    ellipse: function ellipse(width$$1, height$$1) {
+    ellipse: wrapWithAttrCheck(function (width$$1, height$$1) {
       return this.put(new Ellipse()).size(width$$1, height$$1).move(0, 0);
-    }
+    })
   });
   register(Ellipse);
 
@@ -5557,15 +5557,15 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create gradient element in defs
-      gradient: function gradient(type, block) {
+      gradient: wrapWithAttrCheck(function (type, block) {
         return this.defs().gradient(type, block);
-      }
+      })
     },
     // define gradient
     Defs: {
-      gradient: function gradient(type, block) {
+      gradient: wrapWithAttrCheck(function (type, block) {
         return this.put(new Gradient(type)).update(block);
-      }
+      })
     }
   });
   register(Gradient);
@@ -5631,12 +5631,14 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create pattern element in defs
-      pattern: function pattern(width, height, block) {
-        return this.defs().pattern(width, height, block);
+      pattern: function pattern() {
+        var _this$defs;
+
+        return (_this$defs = this.defs()).pattern.apply(_this$defs, arguments);
       }
     },
     Defs: {
-      pattern: function pattern(width, height, block) {
+      pattern: wrapWithAttrCheck(function (width, height, block) {
         return this.put(new Pattern()).update(block).attr({
           x: 0,
           y: 0,
@@ -5644,7 +5646,7 @@ var SVG = (function () {
           height: height,
           patternUnits: 'userSpaceOnUse'
         });
-      }
+      })
     }
   });
   register(Pattern);
@@ -5718,9 +5720,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // create image element, load image and set its size
-      image: function image(source, callback) {
+      image: wrapWithAttrCheck(function (source, callback) {
         return this.put(new Image()).size(0, 0).load(source, callback);
-      }
+      })
     }
   });
   register(Image);
@@ -5916,7 +5918,7 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a line element
-      line: function line() {
+      line: wrapWithAttrCheck(function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
@@ -5924,7 +5926,7 @@ var SVG = (function () {
         // make sure plot is called as a setter
         // x1 is not necessarily a number, it can also be an array, a string and a PointArray
         return Line.prototype.plot.apply(this.put(new Line()), args[0] != null ? args : [0, 0, 0, 0]);
-      }
+      })
     }
   });
   register(Line);
@@ -5984,17 +5986,19 @@ var SVG = (function () {
   }(Container);
   registerMethods({
     Container: {
-      marker: function marker(width, height, block) {
+      marker: function marker() {
+        var _this$defs;
+
         // Create marker element in defs
-        return this.defs().marker(width, height, block);
+        return (_this$defs = this.defs()).marker.apply(_this$defs, arguments);
       }
     },
     Defs: {
       // Create marker
-      marker: function marker(width, height, block) {
+      marker: wrapWithAttrCheck(function (width, height, block) {
         // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
         return this.put(new Marker()).size(width, height).ref(width / 2, height / 2).viewbox(0, 0, width, height).attr('orient', 'auto').update(block);
-      }
+      })
     },
     marker: {
       // Create and attach markers
@@ -6093,10 +6097,10 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a wrapped path element
-      path: function path(d) {
+      path: wrapWithAttrCheck(function (d) {
         // make sure plot is called as a setter
         return this.put(new Path()).plot(d || new PathArray());
-      }
+      })
     }
   });
   register(Path);
@@ -6148,10 +6152,10 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a wrapped polygon element
-      polygon: function polygon(p) {
+      polygon: wrapWithAttrCheck(function (p) {
         // make sure plot is called as a setter
         return this.put(new Polygon()).plot(p || new PointArray());
-      }
+      })
     }
   });
   extend(Polygon, pointed);
@@ -6175,10 +6179,10 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a wrapped polygon element
-      polyline: function polyline(p) {
+      polyline: wrapWithAttrCheck(function (p) {
         // make sure plot is called as a setter
         return this.put(new Polyline()).plot(p || new PointArray());
-      }
+      })
     }
   });
   extend(Polyline, pointed);
@@ -6206,9 +6210,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a rect element
-      rect: function rect(width$$1, height$$1) {
+      rect: wrapWithAttrCheck(function (width$$1, height$$1) {
         return this.put(new Rect()).size(width$$1, height$$1);
-      }
+      })
     }
   });
   register(Rect);
@@ -6411,13 +6415,13 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create text element
-      text: function text(_text2) {
-        return this.put(new Text()).text(_text2);
-      },
+      text: wrapWithAttrCheck(function (text) {
+        return this.put(new Text()).text(text);
+      }),
       // Create plain text element
-      plain: function plain$$1(text) {
+      plain: wrapWithAttrCheck(function (text) {
         return this.put(new Text()).plain(text);
-      }
+      })
     }
   });
   register(Text);
@@ -6472,7 +6476,7 @@ var SVG = (function () {
   extend(Tspan, textable);
   registerMethods({
     Tspan: {
-      tspan: function tspan(text) {
+      tspan: wrapWithAttrCheck(function (text) {
         var tspan = new Tspan(); // clear if build mode is disabled
 
         if (!this._build) {
@@ -6482,7 +6486,7 @@ var SVG = (function () {
 
         this.node.appendChild(tspan.node);
         return tspan.text(text);
-      }
+      })
     }
   });
   register(Tspan);
@@ -6517,9 +6521,9 @@ var SVG = (function () {
   register(Bare);
   registerMethods('Container', {
     // Create an element that is not described by SVG.js
-    element: function element(node, inherit) {
-      return this.put(new Bare(node, inherit));
-    }
+    element: wrapWithAttrCheck(function (node) {
+      return this.put(new Bare(node));
+    })
   });
 
   var ClipPath =
@@ -6556,9 +6560,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create clipping element
-      clip: function clip() {
+      clip: wrapWithAttrCheck(function () {
         return this.defs().put(new ClipPath());
-      }
+      })
     },
     Element: {
       // Distribute clipPath to svg element
@@ -6595,9 +6599,9 @@ var SVG = (function () {
   registerMethods({
     Element: {
       // Create a group element
-      group: function group() {
+      group: wrapWithAttrCheck(function () {
         return this.put(new G());
-      }
+      })
     }
   });
   register(G);
@@ -6647,9 +6651,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a hyperlink element
-      link: function link(url) {
+      link: wrapWithAttrCheck(function (url) {
         return this.put(new A()).to(url);
-      }
+      })
     },
     Element: {
       // Create a hyperlink element
@@ -6702,9 +6706,9 @@ var SVG = (function () {
   }(Container);
   registerMethods({
     Container: {
-      mask: function mask() {
+      mask: wrapWithAttrCheck(function () {
         return this.defs().put(new Mask());
-      }
+      })
     },
     Element: {
       // Distribute mask to svg element
@@ -6773,13 +6777,13 @@ var SVG = (function () {
 
     return Style;
   }(Element);
-  registerMethods('Element', {
-    style: function style(selector, obj) {
+  registerMethods('Dom', {
+    style: wrapWithAttrCheck(function (selector, obj) {
       return this.put(new Style()).rule(selector, obj);
-    },
-    fontface: function fontface(name, src, params) {
+    }),
+    fontface: wrapWithAttrCheck(function (name, src, params) {
       return this.put(new Style()).font(name, src, params);
-    }
+    })
   });
 
   var _Symbol =
@@ -6798,9 +6802,9 @@ var SVG = (function () {
   }(Container);
   registerMethods({
     Container: {
-      symbol: function symbol() {
+      symbol: wrapWithAttrCheck(function () {
         return this.put(new _Symbol());
-      }
+      })
     }
   });
   register(_Symbol);
@@ -6849,13 +6853,13 @@ var SVG = (function () {
   }(Text);
   registerMethods({
     Container: {
-      textPath: function textPath(text, path) {
+      textPath: wrapWithAttrCheck(function (text, path) {
         return this.defs().path(path).text(text).addTo(this);
-      }
+      })
     },
     Text: {
       // Create path for text to run on
-      path: function path(track) {
+      path: wrapWithAttrCheck(function (track) {
         var path = new TextPath(); // if track is a path, reuse it
 
         if (!(track instanceof Path)) {
@@ -6867,7 +6871,7 @@ var SVG = (function () {
         path.attr('href', '#' + track, xlink); // add textPath element as child node and return textPath
 
         return this.put(path);
-      },
+      }),
       // Get the textPath children
       textPath: function textPath() {
         return this.find('textPath')[0];
@@ -6875,15 +6879,14 @@ var SVG = (function () {
     },
     Path: {
       // creates a textPath from this path
-      text: function text(_text) {
-        if (_text instanceof Text) {
-          var txt = _text.text();
-
-          return _text.clear().path(this).text(txt);
+      text: wrapWithAttrCheck(function (text) {
+        if (text instanceof Text) {
+          var txt = text.text();
+          return text.clear().path(this).text(txt);
         }
 
-        return this.parent().put(new Text()).path(this).text(_text);
-      },
+        return this.parent().put(new Text()).path(this).text(text);
+      }),
       targets: function targets() {
         return baseFind('svg [href*="' + this.id() + '"]');
       }
@@ -6917,9 +6920,9 @@ var SVG = (function () {
   registerMethods({
     Container: {
       // Create a use element
-      use: function use(element, file) {
+      use: wrapWithAttrCheck(function (element, file) {
         return this.put(new Use()).element(element, file);
-      }
+      })
     }
   });
   register(Use);

@@ -126,7 +126,7 @@ export function wrapWithAttrCheck (fn) {
   return function (...args) {
     let o = args[args.length - 1]
 
-    if (o && !o.prototype && !(o instanceof Array) && typeof o === 'object') {
+    if (o && o.constructor === Object && !(o instanceof Array)) {
       return fn.apply(this, args.slice(0, -1)).attr(o)
     } else {
       return fn.apply(this, args)

@@ -1,10 +1,10 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
-import baseFind from '../modules/core/selector.js'
 import Path from './Path.js'
 import PathArray from '../types/PathArray.js'
 import Text from './Text.js'
+import baseFind from '../modules/core/selector.js'
 
 export default class TextPath extends Text {
   // Initialize node
@@ -39,13 +39,13 @@ export default class TextPath extends Text {
 
 registerMethods({
   Container: {
-    textPath (text, path) {
+    textPath: wrapWithAttrCheck(function (text, path) {
       return this.defs().path(path).text(text).addTo(this)
-    }
+    })
   },
   Text: {
     // Create path for text to run on
-    path (track) {
+    path: wrapWithAttrCheck(function (track) {
       var path = new TextPath()
 
       // if track is a path, reuse it
@@ -59,7 +59,7 @@ registerMethods({
 
       // add textPath element as child node and return textPath
       return this.put(path)
-    },
+    }),
 
     // Get the textPath children
     textPath () {
@@ -68,13 +68,13 @@ registerMethods({
   },
   Path: {
     // creates a textPath from this path
-    text (text) {
+    text: wrapWithAttrCheck(function (text) {
       if (text instanceof Text) {
         var txt = text.text()
         return text.clear().path(this).text(txt)
       }
       return this.parent().put(new Text()).path(this).text(text)
-    },
+    }),
 
     targets () {
       return baseFind('svg [href*="' + this.id() + '"]')

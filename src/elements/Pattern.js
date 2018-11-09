@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Box from '../types/Box.js'
 import Container from './Container.js'
@@ -51,12 +51,12 @@ export default class Pattern extends Container {
 registerMethods({
   Container: {
     // Create pattern element in defs
-    pattern (width, height, block) {
-      return this.defs().pattern(width, height, block)
+    pattern (...args) {
+      return this.defs().pattern(...args)
     }
   },
   Defs: {
-    pattern (width, height, block) {
+    pattern: wrapWithAttrCheck(function (width, height, block) {
       return this.put(new Pattern()).update(block).attr({
         x: 0,
         y: 0,
@@ -64,7 +64,7 @@ registerMethods({
         height: height,
         patternUnits: 'userSpaceOnUse'
       })
-    }
+    })
   }
 })
 

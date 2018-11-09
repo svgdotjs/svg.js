@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Shape from './Shape.js'
@@ -18,9 +18,9 @@ export default class Use extends Shape {
 registerMethods({
   Container: {
     // Create a use element
-    use: function (element, file) {
+    use: wrapWithAttrCheck(function (element, file) {
       return this.put(new Use()).element(element, file)
-    }
+    })
   }
 })
 

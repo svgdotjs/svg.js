@@ -1,5 +1,5 @@
 import { isImage } from '../modules/core/regex.js'
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { off, on } from '../modules/core/event.js'
 import { registerAttrHook } from '../modules/core/attr.js'
 import { registerMethods } from '../utils/methods.js'
@@ -72,9 +72,9 @@ registerAttrHook(function (attr, val, _this) {
 registerMethods({
   Container: {
     // create image element, load image and set its size
-    image (source, callback) {
+    image: wrapWithAttrCheck(function (source, callback) {
       return this.put(new Image()).size(0, 0).load(source, callback)
-    }
+    })
   }
 })
 

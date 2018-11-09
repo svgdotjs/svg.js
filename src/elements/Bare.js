@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
@@ -24,7 +24,7 @@ register(Bare)
 
 registerMethods('Container', {
   // Create an element that is not described by SVG.js
-  element (node, inherit) {
-    return this.put(new Bare(node, inherit))
-  }
+  element: wrapWithAttrCheck(function (node) {
+    return this.put(new Bare(node))
+  })
 })

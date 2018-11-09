@@ -1,4 +1,10 @@
-import { adopt, extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  adopt,
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { attrs } from '../modules/core/defaults.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
@@ -166,14 +172,14 @@ extend(Text, textable)
 registerMethods({
   Container: {
     // Create text element
-    text (text) {
+    text: wrapWithAttrCheck(function (text) {
       return this.put(new Text()).text(text)
-    },
+    }),
 
     // Create plain text element
-    plain (text) {
+    plain: wrapWithAttrCheck(function (text) {
       return this.put(new Text()).plain(text)
-    }
+    })
   }
 })
 

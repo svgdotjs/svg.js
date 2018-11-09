@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
 import PathArray from '../types/PathArray.js'
@@ -71,10 +71,10 @@ Path.prototype.MorphArray = PathArray
 registerMethods({
   Container: {
     // Create a wrapped path element
-    path (d) {
+    path: wrapWithAttrCheck(function (d) {
       // make sure plot is called as a setter
       return this.put(new Path()).plot(d || new PathArray())
-    }
+    })
   }
 })
 

@@ -1,4 +1,4 @@
-import { nodeOrNew, register } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
@@ -42,14 +42,14 @@ export default class Marker extends Container {
 
 registerMethods({
   Container: {
-    marker (width, height, block) {
+    marker (...args) {
       // Create marker element in defs
-      return this.defs().marker(width, height, block)
+      return this.defs().marker(...args)
     }
   },
   Defs: {
     // Create marker
-    marker (width, height, block) {
+    marker: wrapWithAttrCheck(function (width, height, block) {
       // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
       return this.put(new Marker())
         .size(width, height)
@@ -57,7 +57,7 @@ registerMethods({
         .viewbox(0, 0, width, height)
         .attr('orient', 'auto')
         .update(block)
-    }
+    })
   },
   marker: {
     // Create and attach markers

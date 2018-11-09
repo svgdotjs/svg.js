@@ -1,4 +1,9 @@
-import { extend, nodeOrNew, register } from '../utils/adopter.js'
+import {
+  extend,
+  nodeOrNew,
+  register,
+  wrapWithAttrCheck
+} from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Box from '../types/Box.js'
 import Container from './Container.js'
@@ -62,15 +67,15 @@ extend(Gradient, gradiented)
 registerMethods({
   Container: {
     // Create gradient element in defs
-    gradient (type, block) {
+    gradient: wrapWithAttrCheck(function (type, block) {
       return this.defs().gradient(type, block)
-    }
+    })
   },
   // define gradient
   Defs: {
-    gradient (type, block) {
+    gradient: wrapWithAttrCheck(function (type, block) {
       return this.put(new Gradient(type)).update(block)
-    }
+    })
   }
 })
 
