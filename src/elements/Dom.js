@@ -3,12 +3,14 @@ import {
   assignNewId,
   eid,
   extend,
-  makeInstance
+  makeInstance,
+  register
 } from '../utils/adopter.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
 import EventTarget from '../types/EventTarget.js'
 import attr from '../modules/core/attr.js'
+
 
 export default class Dom extends EventTarget {
   constructor (node, attrs) {
@@ -304,3 +306,4 @@ export default class Dom extends EventTarget {
 }
 
 extend(Dom, { attr })
+register(Dom)

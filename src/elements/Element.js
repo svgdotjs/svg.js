@@ -1,8 +1,9 @@
-import { getClass, makeInstance, root } from '../utils/adopter.js'
+import { getClass, makeInstance, register, root } from '../utils/adopter.js'
 import { proportionalSize } from '../utils/utils.js'
 import { reference } from '../modules/core/regex.js'
 import Dom from './Dom.js'
 import SVGNumber from '../types/SVGNumber.js'
+
 
 const Doc = getClass(root)
 
@@ -140,3 +141,5 @@ export default class Element extends Dom {
     return this.attr('y', y)
   }
 }
+
+register(Element)

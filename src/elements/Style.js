@@ -1,7 +1,8 @@
-import { nodeOrNew, wrapWithAttrCheck } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { unCamelCase } from '../utils/utils.js'
 import Element from './Element.js'
+
 
 function cssRule (selector, rule) {
   if (!selector) return ''
@@ -49,3 +50,5 @@ registerMethods('Dom', {
     return this.put(new Style()).font(name, src, params)
   })
 })
+
+register(Style)

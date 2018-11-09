@@ -1,3 +1,4 @@
+import { register } from '../utils/adopter.js'
 import Element from './Element.js'
 
 export default class Container extends Element {
@@ -25,3 +26,5 @@ export default class Container extends Element {
     return this
   }
 }
+
+register(Container)
