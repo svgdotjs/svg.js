@@ -1,3 +1,4 @@
+import { addMethodNames } from './methods.js'
 import { capitalize } from './utils.js'
 import { ns } from '../modules/core/namespaces.js'
 import { globals } from '../utils/window.js'
@@ -73,6 +74,9 @@ export function adopt (node) {
 export function register (element, name = element.name, asRoot = false) {
   elements[name] = element
   if (asRoot) elements[root] = element
+
+  addMethodNames(Object.keys(element.prototype))
+
   return element
 }
 

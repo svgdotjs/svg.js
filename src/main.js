@@ -7,15 +7,9 @@ import './modules/optional/memory.js'
 import './modules/optional/sugar.js'
 import './modules/optional/transform.js'
 
-import Morphable, {
-  NonMorphable,
-  ObjectBag,
-  TransformBag,
-  makeMorphable,
-  registerMorphableType
-} from './types/Morphable.js'
+import List from './types/List.js'
 import { extend } from './utils/adopter.js'
-import { getMethodsFor } from './utils/methods.js'
+import { getMethodNames, getMethodsFor } from './utils/methods.js'
 import Box from './types/Box.js'
 import Circle from './elements/Circle.js'
 import Color from './types/Color.js'
@@ -31,6 +25,13 @@ import Image from './elements/Image.js'
 import Line from './elements/Line.js'
 import Marker from './elements/Marker.js'
 import Matrix from './types/Matrix.js'
+import Morphable, {
+  NonMorphable,
+  ObjectBag,
+  TransformBag,
+  makeMorphable,
+  registerMorphableType
+} from './types/Morphable.js'
 import Path from './elements/Path.js'
 import PathArray from './types/PathArray.js'
 import Pattern from './elements/Pattern.js'
@@ -80,6 +81,7 @@ export { default as SVGNumber } from './types/SVGNumber.js'
 export { default as PathArray } from './types/PathArray.js'
 export { default as Point } from './types/Point.js'
 export { default as PointArray } from './types/PointArray.js'
+export { default as List } from './types/List.js'
 
 /* Elements */
 export { default as Bare } from './elements/Bare.js'
@@ -151,6 +153,8 @@ extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
 // extend(Element, getConstructor('Memory'))
 extend(Container, getMethodsFor('Container'))
+
+List.extend(getMethodNames())
 
 registerMorphableType([
   SVGNumber,

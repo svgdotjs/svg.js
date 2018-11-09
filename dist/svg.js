@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 09:31:46 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 12:58:46 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -216,6 +216,64 @@ var SVG = (function () {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
+  var methods = {};
+  var names = [];
+  function registerMethods(name, m) {
+    if (Array.isArray(name)) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _name = _step.value;
+          registerMethods(_name, m);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return;
+    }
+
+    if (_typeof(name) === 'object') {
+      var _arr = Object.entries(name);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var _arr$_i = _slicedToArray(_arr[_i], 2),
+            _name2 = _arr$_i[0],
+            _m = _arr$_i[1];
+
+        registerMethods(_name2, _m);
+      }
+
+      return;
+    }
+
+    addMethodNames(Object.keys(m));
+    methods[name] = Object.assign(methods[name] || {}, m);
+  }
+  function getMethodsFor(name) {
+    return methods[name] || {};
+  }
+  function getMethodNames() {
+    return _toConsumableArray(new Set(names));
+  }
+  function addMethodNames(_names) {
+    names.push.apply(names, _toConsumableArray(_names));
+  }
+
   // Map function
   function map(array, block) {
     var i;
@@ -398,6 +456,7 @@ var SVG = (function () {
     var asRoot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     elements[name] = element;
     if (asRoot) elements[root] = element;
+    addMethodNames(Object.keys(element.prototype));
     return element;
   }
   function getClass(name) {
@@ -460,56 +519,6 @@ var SVG = (function () {
         return fn.apply(this, args);
       }
     };
-  }
-
-  var methods = {};
-  function registerMethods(name, m) {
-    if (Array.isArray(name)) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _name = _step.value;
-          registerMethods(_name, m);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      return;
-    }
-
-    if (_typeof(name) === 'object') {
-      var _arr = Object.entries(name);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var _arr$_i = _slicedToArray(_arr[_i], 2),
-            _name2 = _arr$_i[0],
-            _m = _arr$_i[1];
-
-        registerMethods(_name2, _m);
-      }
-
-      return;
-    }
-
-    methods[name] = Object.assign(methods[name] || {}, m);
-  }
-  function getMethodsFor(name) {
-    return methods[name] || {};
   }
 
   function siblings() {
@@ -5369,6 +5378,48 @@ var SVG = (function () {
     transform: transform
   });
 
+  var List = subClassArray('List', Array, function (arr) {
+    this.length = 0;
+    this.push.apply(this, _toConsumableArray(arr));
+  });
+  extend(List, {
+    each: function each(cbOrName) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (typeof cbOrName === 'function') {
+        this.forEach(function (el) {
+          cbOrName.call(el, el);
+        });
+      } else {
+        this.forEach(function (el) {
+          el[cbOrName].apply(el, args);
+        });
+      }
+
+      return this;
+    },
+    toArray: function toArray() {
+      return Array.prototype.concat.apply([], this);
+    }
+  });
+
+  List.extend = function (methods) {
+    methods = methods.reduce(function (obj, name) {
+      obj[name] = function () {
+        for (var _len2 = arguments.length, attrs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          attrs[_key2] = arguments[_key2];
+        }
+
+        return this.each.apply(this, [name].concat(attrs));
+      };
+
+      return obj;
+    }, {});
+    extend(List, methods);
+  };
+
   var Shape =
   /*#__PURE__*/
   function (_Element) {
@@ -6968,6 +7019,7 @@ var SVG = (function () {
   extend(Shape, getMethodsFor('Shape')); // extend(Element, getConstructor('Memory'))
 
   extend(Container, getMethodsFor('Container'));
+  List.extend(getMethodNames());
   registerMorphableType([SVGNumber, Color, Box, Matrix, SVGArray, PointArray, PathArray]);
   makeMorphable();
 
@@ -7000,6 +7052,7 @@ var SVG = (function () {
     PathArray: PathArray,
     Point: Point,
     PointArray: PointArray,
+    List: List,
     Bare: Bare,
     Circle: Circle,
     ClipPath: ClipPath,
