@@ -5,12 +5,12 @@ export const subClassArray = (function () {
     return Function('name', 'baseClass', '_constructor', [
       'baseClass = baseClass || Array',
       'return {',
-      '[name]: class extends baseClass {',
-      'constructor (...args) {',
-      'super(...args)',
-      '_constructor && _constructor.apply(this, args)',
-      '}',
-      '}',
+      '  [name]: class extends baseClass {',
+      '    constructor (...args) {',
+      '      super(...args)',
+      '      _constructor && _constructor.apply(this, args)',
+      '    }',
+      '  }',
       '}[name]'
     ].join('\n'))
   } catch (e) {

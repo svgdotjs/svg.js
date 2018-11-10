@@ -9,12 +9,12 @@ const List = subClassArray('List', Array, function (arr) {
 export default List
 
 extend(List, {
-  each (cbOrName, ...args) {
-    if (typeof cbOrName === 'function') {
-      this.forEach((el) => { cbOrName.call(el, el) })
+  each (fnOrMethodName, ...args) {
+    if (typeof fnOrMethodName === 'function') {
+      this.forEach((el) => { fnOrMethodName.call(el, el) })
     } else {
       this.forEach((el) => {
-        el[cbOrName](...args)
+        el[fnOrMethodName](...args)
       })
     }
 
