@@ -58,9 +58,8 @@
     "rollup": "npx rollup -c",
     "lint": "npx eslint ./src",
     "fix": "npx eslint ./src --fix",
-    "test": "npx karma start .config/karma.conf.js --single-run",
+    "test": "npx karma start .config/karma.conf.js",
     "test:dots": "npx karma start .config/karma.conf.js --single-run --reporters dots",
-    "test:quick": "npx karma start .config/karma.quick.js",
     "server": "npx http-server ./ -d"
   },
   "devDependencies": {
