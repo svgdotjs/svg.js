@@ -1,4 +1,7 @@
+import globals from '../utils/window.js'
 import Queue from './Queue.js'
+
+const { window } = globals
 
 const Animator = {
   nextDraw: null,

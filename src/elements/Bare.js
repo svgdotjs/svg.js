@@ -1,6 +1,9 @@
 import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
+import globals from '../utils/window.js'
+
+const { document } = globals
 
 export default class Bare extends Container {
   constructor (node, attrs) {

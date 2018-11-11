@@ -93,6 +93,8 @@ export default class Color {
       this.g = g
       this.b = b
     }
+
+    return this
   }
 
   // Default to hex conversion

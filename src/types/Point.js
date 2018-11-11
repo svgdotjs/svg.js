@@ -19,6 +19,8 @@ export default class Point {
     // merge source
     this.x = source.x == null ? base.x : source.x
     this.y = source.y == null ? base.y : source.y
+
+    return this
   }
 
   // Clone point

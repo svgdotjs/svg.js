@@ -37,6 +37,8 @@ export default class Matrix {
     this.d = source.d != null ? source.d : base.d
     this.e = source.e != null ? source.e : base.e
     this.f = source.f != null ? source.f : base.f
+
+    return this
   }
 
   // Clones this matrix

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 19:44:36 GMT+0100 (GMT+01:00)
+* BUILT: Sun Nov 11 2018 17:18:46 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -320,16 +320,27 @@ var SVG = (function () {
   var xlink = 'http://www.w3.org/1999/xlink';
   var svgjs = 'http://svgjs.com/svgjs';
 
+  var globals = {
+    window: window,
+    document: document
+  };
+  function registerWindow(w) {
+    globals.window = w;
+    globals.document = w.document;
+  }
+
   var Base = function Base() {
     _classCallCheck(this, Base);
   };
 
+  var window$1 = globals.window,
+      document$1 = globals.document;
   var elements = {};
   var root = Symbol('root'); // Method for element creation
 
   function makeNode(name) {
     // create element
-    return document.createElementNS(ns, name);
+    return document$1.createElementNS(ns, name);
   }
   function makeInstance(element) {
     if (element instanceof Base) return element;
@@ -343,7 +354,7 @@ var SVG = (function () {
     }
 
     if (typeof element === 'string' && element.charAt(0) !== '<') {
-      return adopt(document.querySelector(element));
+      return adopt(document$1.querySelector(element));
     }
 
     var node = makeNode('svg');
@@ -354,7 +365,7 @@ var SVG = (function () {
     return element;
   }
   function nodeOrNew(name, node) {
-    return node instanceof window.Node ? node : makeNode(name);
+    return node instanceof window$1.Node ? node : makeNode(name);
   } // Adopt existing svg elements
 
   function adopt(node) {
@@ -363,7 +374,7 @@ var SVG = (function () {
 
     if (node.instance instanceof Base) return node.instance;
 
-    if (!(node instanceof window.SVGElement)) {
+    if (!(node instanceof window$1.SVGElement)) {
       return new elements.HtmlNode(node);
     } // initialize variables
 
@@ -836,6 +847,7 @@ var SVG = (function () {
     memory: memory
   });
 
+  var window$2 = globals.window;
   var listenerId = 0;
 
   function getEvents(node) {
@@ -941,10 +953,10 @@ var SVG = (function () {
   function dispatch(node, event, data) {
     var n = getEventTarget(node); // Dispatch event
 
-    if (event instanceof window.Event) {
+    if (event instanceof window$2.Event) {
       n.dispatchEvent(event);
     } else {
-      event = new window.CustomEvent(event, {
+      event = new window$2.CustomEvent(event, {
         detail: data,
         cancelable: true
       });
@@ -1445,6 +1457,9 @@ var SVG = (function () {
     return this;
   }
 
+  var window$3 = globals.window,
+      document$2 = globals.document;
+
   var Dom =
   /*#__PURE__*/
   function (_EventTarget) {
@@ -1609,7 +1624,8 @@ var SVG = (function () {
         parent = adopt(parent.node.parentNode);
         if (!type) return parent; // loop trough ancestors if type is given
 
-        while (parent && parent.node instanceof window.SVGElement) {
+        while (parent && parent.node instanceof window$3.SVGElement) {
+          // FIXME: That shouldnt be neccessary
           if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent;
           parent = adopt(parent.node.parentNode);
         }
@@ -1730,8 +1746,8 @@ var SVG = (function () {
 
         outerHTML = outerHTML == null ? false : outerHTML; // Create temporary holder
 
-        well = document.createElementNS(ns, 'svg');
-        fragment = document.createDocumentFragment(); // Dump raw svg
+        well = document$2.createElementNS(ns, 'svg');
+        fragment = document$2.createDocumentFragment(); // Dump raw svg
 
         well.innerHTML = svgOrFn; // Transplant nodes into the fragment
 
@@ -1759,6 +1775,7 @@ var SVG = (function () {
   extend(Dom, {
     attr: attr
   });
+  register(Dom);
 
   var Doc = getClass(root);
 
@@ -1914,6 +1931,7 @@ var SVG = (function () {
 
     return Element;
   }(Dom);
+  register(Element);
 
   var Container =
   /*#__PURE__*/
@@ -1951,6 +1969,7 @@ var SVG = (function () {
 
     return Container;
   }(Element);
+  register(Container);
 
   var Defs =
   /*#__PURE__*/
@@ -1979,6 +1998,8 @@ var SVG = (function () {
   }(Container);
   register(Defs);
 
+  var window$4 = globals.window;
+
   var Doc$1 =
   /*#__PURE__*/
   function (_Container) {
@@ -1999,7 +2020,7 @@ var SVG = (function () {
     _createClass(Doc, [{
       key: "isRoot",
       value: function isRoot() {
-        return !this.node.parentNode || !(this.node.parentNode instanceof window.SVGElement) || this.node.parentNode.nodeName === '#document';
+        return !this.node.parentNode || !(this.node.parentNode instanceof window$4.SVGElement) || this.node.parentNode.nodeName === '#document';
       } // Check if this is a root svg
       // If not, call docs from this element
 
@@ -2060,6 +2081,7 @@ var SVG = (function () {
   });
   register(Doc$1, 'Doc', true);
 
+  var document$3 = globals.document;
   function parser() {
     // Reuse cached element if possible
     if (!parser.nodes) {
@@ -2073,7 +2095,7 @@ var SVG = (function () {
     }
 
     if (!parser.nodes.svg.node.parentNode) {
-      var b = document.body || document.documentElement;
+      var b = document$3.body || document$3.documentElement;
       parser.nodes.svg.addTo(b);
     }
 
@@ -3129,11 +3151,12 @@ var SVG = (function () {
     return Queue;
   }();
 
+  var window$5 = globals.window;
   var Animator = {
     nextDraw: null,
     frames: new Queue(),
     timeouts: new Queue(),
-    timer: window.performance || window.Date,
+    timer: window$5.performance || window$5.Date,
     transforms: [],
     frame: function frame(fn) {
       // Store the node
@@ -3142,7 +3165,7 @@ var SVG = (function () {
       }); // Request an animation frame if we don't have one
 
       if (Animator.nextDraw === null) {
-        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
+        Animator.nextDraw = window$5.requestAnimationFrame(Animator._draw);
       } // Return the node so we can remove it easily
 
 
@@ -3162,7 +3185,7 @@ var SVG = (function () {
       }); // Request another animation frame if we need one
 
       if (Animator.nextDraw === null) {
-        Animator.nextDraw = window.requestAnimationFrame(Animator._draw);
+        Animator.nextDraw = window$5.requestAnimationFrame(Animator._draw);
       }
 
       return node;
@@ -3203,23 +3226,26 @@ var SVG = (function () {
         el();
       }); // If we have remaining timeouts or frames, draw until we don't anymore
 
-      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? window.requestAnimationFrame(Animator._draw) : null;
+      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? window$5.requestAnimationFrame(Animator._draw) : null;
     }
   };
+
+  var window$6 = globals.window,
+      document$4 = globals.document;
 
   function isNulledBox(box) {
     return !box.w && !box.h && !box.x && !box.y;
   }
 
   function domContains(node) {
-    return (document.documentElement.contains || function (node) {
+    return (document$4.documentElement.contains || function (node) {
       // This is IE - it does not support contains() for top-level SVGs
       while (node.parentNode) {
         node = node.parentNode;
       }
 
-      return node === document;
-    }).call(document.documentElement, node);
+      return node === document$4;
+    }).call(document$4.documentElement, node);
   }
 
   var Box =
@@ -3245,6 +3271,7 @@ var SVG = (function () {
         this.y2 = this.y + this.h;
         this.cx = this.x + this.w / 2;
         this.cy = this.y + this.h / 2;
+        return this;
       } // Merge rect box with another, return a new instance
 
     }, {
@@ -3277,8 +3304,8 @@ var SVG = (function () {
       key: "addOffset",
       value: function addOffset() {
         // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-        this.x += window.pageXOffset;
-        this.y += window.pageYOffset;
+        this.x += window$6.pageXOffset;
+        this.y += window$6.pageYOffset;
         return this;
       }
     }, {
@@ -3908,7 +3935,9 @@ var SVG = (function () {
     });
   }
 
-  var time = window.performance || Date;
+  var window$7 = globals.window,
+      document$5 = globals.document;
+  var time = window$7.performance || Date;
 
   var makeSchedule = function makeSchedule(runnerInfo) {
     var start = runnerInfo.start;
@@ -3933,7 +3962,7 @@ var SVG = (function () {
         return time.now();
       };
 
-      this._dispatcher = document.createElement('div'); // Store the timing variables
+      this._dispatcher = document$5.createElement('div'); // Store the timing variables
 
       this._startTime = 0;
       this._speed = 1.0; // Play control variables control how the animation proceeds
@@ -5356,6 +5385,7 @@ var SVG = (function () {
 
     return Shape;
   }(Element);
+  register(Shape);
 
   var Circle =
   /*#__PURE__*/
@@ -5477,8 +5507,9 @@ var SVG = (function () {
   }(Element);
   register(Stop);
 
+  var document$6 = globals.document;
   function baseFind(query, parent) {
-    return map((parent || document).querySelectorAll(query), function (node) {
+    return map((parent || document$6).querySelectorAll(query), function (node) {
       return adopt(node);
     });
   } // Scoped find method
@@ -5651,6 +5682,8 @@ var SVG = (function () {
   });
   register(Pattern);
 
+  var window$8 = globals.window;
+
   var Image =
   /*#__PURE__*/
   function (_Shape) {
@@ -5667,7 +5700,7 @@ var SVG = (function () {
       key: "load",
       value: function load(url, callback) {
         if (!url) return this;
-        var img = new window.Image();
+        var img = new window$8.Image();
         on(img, 'load', function (e) {
           var p = this.parent(Pattern); // ensure image size
 
@@ -6217,7 +6250,8 @@ var SVG = (function () {
   });
   register(Rect);
 
-  // Create plain text node
+  var document$7 = globals.document; // Create plain text node
+
   function plain(text) {
     // clear if build mode is disabled
     if (this._build === false) {
@@ -6225,7 +6259,7 @@ var SVG = (function () {
     } // create text node
 
 
-    this.node.appendChild(document.createTextNode(text));
+    this.node.appendChild(document$7.createTextNode(text));
     return this;
   } // Get length of text element
 
@@ -6237,6 +6271,8 @@ var SVG = (function () {
     plain: plain,
     length: length
   });
+
+  var window$9 = globals.window;
 
   var Text =
   /*#__PURE__*/
@@ -6373,7 +6409,7 @@ var SVG = (function () {
           var blankLineOffset = 0;
           var leading = this.dom.leading;
           this.each(function () {
-            var fontSize = window.getComputedStyle(this.node).getPropertyValue('font-size');
+            var fontSize = window$9.getComputedStyle(this.node).getPropertyValue('font-size');
             var dy = leading * new SVGNumber(fontSize);
 
             if (this.dom.newLined) {
@@ -6491,6 +6527,8 @@ var SVG = (function () {
   });
   register(Tspan);
 
+  var document$8 = globals.document;
+
   var Bare =
   /*#__PURE__*/
   function (_Container) {
@@ -6511,7 +6549,7 @@ var SVG = (function () {
         } // create text node
 
 
-        this.node.appendChild(document.createTextNode(text));
+        this.node.appendChild(document$8.createTextNode(text));
         return this;
       }
     }]);
@@ -6785,6 +6823,7 @@ var SVG = (function () {
       return this.put(new Style()).font(name, src, params);
     })
   });
+  register(Style);
 
   var _Symbol =
   /*#__PURE__*/
@@ -6954,6 +6993,7 @@ var SVG = (function () {
     defaults: defaults,
     parser: parser,
     find: baseFind,
+    registerWindow: registerWindow,
     Animator: Animator,
     Controller: Controller,
     Ease: Ease,

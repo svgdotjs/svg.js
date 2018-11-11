@@ -1,5 +1,8 @@
 import { delimiter } from './regex.js'
 import { makeInstance } from '../../utils/adopter.js'
+import globals from '../../utils/window.js'
+
+const { window } = globals
 
 let listenerId = 0
 

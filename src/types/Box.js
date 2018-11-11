@@ -1,7 +1,10 @@
 import { delimiter } from '../modules/core/regex.js'
 import { registerMethods } from '../utils/methods.js'
+import globals from '../utils/window.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
+
+const { window, document } = globals
 
 function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
@@ -41,6 +44,8 @@ export default class Box {
     this.y2 = this.y + this.h
     this.cx = this.x + this.w / 2
     this.cy = this.y + this.h / 2
+
+    return this
   }
 
   // Merge rect box with another, return a new instance

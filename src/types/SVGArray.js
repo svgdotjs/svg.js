@@ -12,6 +12,7 @@ extend(SVGArray, {
   init (arr) {
     this.length = 0
     this.push(...this.parse(arr))
+    return this
   },
 
   toArray () {

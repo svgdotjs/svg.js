@@ -1,6 +1,9 @@
 import { capitalize } from './utils.js'
 import { ns } from '../modules/core/namespaces.js'
+import globals from '../utils/window.js'
 import Base from '../types/Base.js'
+
+const { window, document } = globals
 
 const elements = {}
 export const root = Symbol('root')

@@ -1,3 +1,7 @@
+import globals from '../../utils/window.js'
+
+const { document } = globals
+
 // Create plain text node
 export function plain (text) {
   // clear if build mode is disabled

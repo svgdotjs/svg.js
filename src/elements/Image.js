@@ -6,6 +6,9 @@ import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Pattern from './Pattern.js'
 import Shape from './Shape.js'
+import globals from '../utils/window.js'
+
+const { window } = globals
 
 export default class Image extends Shape {
   constructor (node) {

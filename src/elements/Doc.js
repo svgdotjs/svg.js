@@ -8,6 +8,9 @@ import { ns, svgjs, xlink, xmlns } from '../modules/core/namespaces.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 import Defs from './Defs.js'
+import globals from '../utils/window.js'
+
+const { window } = globals
 
 export default class Doc extends Container {
   constructor (node) {

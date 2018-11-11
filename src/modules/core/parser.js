@@ -1,4 +1,7 @@
 import Doc from '../../elements/Doc.js'
+import globals from '../../utils/window.js'
+
+const { document } = globals
 
 export default function parser () {
   // Reuse cached element if possible

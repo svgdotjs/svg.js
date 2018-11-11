@@ -3,7 +3,6 @@ import { registerMethods } from '../utils/methods.js'
 import { unCamelCase } from '../utils/utils.js'
 import Element from './Element.js'
 
-
 function cssRule (selector, rule) {
   if (!selector) return ''
   if (!rule) return selector

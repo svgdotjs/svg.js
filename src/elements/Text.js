@@ -9,7 +9,10 @@ import { attrs } from '../modules/core/defaults.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
+import globals from '../utils/window.js'
 import * as textable from '../modules/core/textable.js'
+
+const { window } = globals
 
 export default class Text extends Shape {
   // Initialize node

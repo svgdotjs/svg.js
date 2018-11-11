@@ -1,6 +1,8 @@
 import { registerMethods } from '../utils/methods.js'
 import Animator from './Animator.js'
+import globals from '../utils/window.js'
 
+const { window, document } = globals
 var time = window.performance || Date
 
 var makeSchedule = function (runnerInfo) {
