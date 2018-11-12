@@ -58,6 +58,7 @@
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
+    "test:quick": "node -r esm ./spec/run.js || true",
     "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
     "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
     "postPublish": "echo Please upload a zip to the github release containing the dist, license and changelog"
@@ -82,7 +83,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "esm": "^3.0.84",
     "http-server": "^0.11.1",
-    "innersvg-polyfill": "0.0.2",
+    "jasmine": "^3.3.0",
     "jasmine-core": "^3.3.0",
     "karma": "^3.1.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -97,8 +98,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
-    "rollup-plugin-uglify-es": "0.0.1",
-    "svgdom": "latest"
+    "svgdom": "github:svgdotjs/svgdom"
   },
   "browserslist": [
     "last 1 version",
