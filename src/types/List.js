@@ -16,9 +16,6 @@ extend(List, {
       this.forEach((el) => { fnOrMethodName.call(el, el) })
     } else {
       return this.map(el => { return el[fnOrMethodName](...args) })
-      // this.forEach((el) => {
-      //   el[fnOrMethodName](...args)
-      // })
     }
 
     return this

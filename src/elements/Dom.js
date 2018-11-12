@@ -6,10 +6,11 @@ import {
   makeInstance,
   register
 } from '../utils/adopter.js'
+import { globals } from '../utils/window.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
-import { globals } from '../utils/window.js'
 import EventTarget from '../types/EventTarget.js'
+import List from '../types/List.js'
 import attr from '../modules/core/attr.js'
 
 export default class Dom extends EventTarget {
@@ -43,9 +44,9 @@ export default class Dom extends EventTarget {
 
   // Returns all child elements
   children () {
-    return map(this.node.children, function (node) {
+    return new List(map(this.node.children, function (node) {
       return adopt(node)
-    })
+    }))
   }
 
   // Remove all elements in this container

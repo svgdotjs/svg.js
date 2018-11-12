@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 13:00:40 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 13:26:51 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1172,6 +1172,82 @@ var SVG = (function () {
     return EventTarget;
   }(Base);
 
+  /* eslint no-new-func: "off" */
+  var subClassArray = function () {
+    try {
+      // try es6 subclassing
+      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '  [name]: class extends baseClass {', '    constructor (...args) {', '      super(...args)', '      _constructor && _constructor.apply(this, args)', '    }', '  }', '}[name]'].join('\n'));
+    } catch (e) {
+      // Use es5 approach
+      return function (name) {
+        var baseClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Array;
+
+        var _constructor = arguments.length > 2 ? arguments[2] : undefined;
+
+        var Arr = function Arr() {
+          baseClass.apply(this, arguments);
+          _constructor && _constructor.apply(this, arguments);
+        };
+
+        Arr.prototype = Object.create(baseClass.prototype);
+        Arr.prototype.constructor = Arr;
+
+        Arr.prototype.map = function (fn) {
+          var arr = new Arr();
+          arr.push.apply(arr, Array.prototype.map.call(this, fn));
+          return arr;
+        };
+
+        return Arr;
+      };
+    }
+  }();
+
+  var List = subClassArray('List', Array, function () {
+    var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    // This catches the case, that native map tries to create an array with new Array(1)
+    if (typeof arr === 'number') return this;
+    this.length = 0;
+    this.push.apply(this, _toConsumableArray(arr));
+  });
+  extend(List, {
+    each: function each(fnOrMethodName) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (typeof fnOrMethodName === 'function') {
+        this.forEach(function (el) {
+          fnOrMethodName.call(el, el);
+        });
+      } else {
+        return this.map(function (el) {
+          return el[fnOrMethodName].apply(el, args);
+        });
+      }
+
+      return this;
+    },
+    toArray: function toArray() {
+      return Array.prototype.concat.apply([], this);
+    }
+  });
+
+  List.extend = function (methods) {
+    methods = methods.reduce(function (obj, name) {
+      obj[name] = function () {
+        for (var _len2 = arguments.length, attrs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          attrs[_key2] = arguments[_key2];
+        }
+
+        return this.each.apply(this, [name].concat(attrs));
+      };
+
+      return obj;
+    }, {});
+    extend(List, methods);
+  };
+
   function noop() {} // Default animation values
 
   var timeline = {
@@ -1217,37 +1293,6 @@ var SVG = (function () {
     timeline: timeline,
     attrs: attrs
   });
-
-  /* eslint no-new-func: "off" */
-  var subClassArray = function () {
-    try {
-      // try es6 subclassing
-      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '  [name]: class extends baseClass {', '    constructor (...args) {', '      super(...args)', '      _constructor && _constructor.apply(this, args)', '    }', '  }', '}[name]'].join('\n'));
-    } catch (e) {
-      // Use es5 approach
-      return function (name) {
-        var baseClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Array;
-
-        var _constructor = arguments.length > 2 ? arguments[2] : undefined;
-
-        var Arr = function Arr() {
-          baseClass.apply(this, arguments);
-          _constructor && _constructor.apply(this, arguments);
-        };
-
-        Arr.prototype = Object.create(baseClass.prototype);
-        Arr.prototype.constructor = Arr;
-
-        Arr.prototype.map = function (fn) {
-          var arr = new Arr();
-          arr.push.apply(arr, Array.prototype.map.call(this, fn));
-          return arr;
-        };
-
-        return Arr;
-      };
-    }
-  }();
 
   var SVGArray = subClassArray('SVGArray', Array, function (arr) {
     this.init(arr);
@@ -1524,9 +1569,9 @@ var SVG = (function () {
     }, {
       key: "children",
       value: function children() {
-        return map(this.node.children, function (node) {
+        return new List(map(this.node.children, function (node) {
           return adopt(node);
-        });
+        }));
       } // Remove all elements in this container
 
     }, {
@@ -3303,9 +3348,9 @@ var SVG = (function () {
   register(Stop);
 
   function baseFind(query, parent) {
-    return map((parent || globals.document).querySelectorAll(query), function (node) {
+    return new List(map((parent || globals.document).querySelectorAll(query), function (node) {
       return adopt(node);
-    });
+    }));
   } // Scoped find method
 
   function find(query) {
@@ -3779,53 +3824,6 @@ var SVG = (function () {
     }
   });
   register(Line);
-
-  var List = subClassArray('List', Array, function () {
-    var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    // This catches the case, that native map tries to create an array with new Array(1)
-    if (typeof arr === 'number') return this;
-    this.length = 0;
-    this.push.apply(this, _toConsumableArray(arr));
-  });
-  extend(List, {
-    each: function each(fnOrMethodName) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      if (typeof fnOrMethodName === 'function') {
-        this.forEach(function (el) {
-          fnOrMethodName.call(el, el);
-        });
-      } else {
-        return this.map(function (el) {
-          return el[fnOrMethodName].apply(el, args);
-        }); // this.forEach((el) => {
-        //   el[fnOrMethodName](...args)
-        // })
-      }
-
-      return this;
-    },
-    toArray: function toArray() {
-      return Array.prototype.concat.apply([], this);
-    }
-  });
-
-  List.extend = function (methods) {
-    methods = methods.reduce(function (obj, name) {
-      obj[name] = function () {
-        for (var _len2 = arguments.length, attrs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          attrs[_key2] = arguments[_key2];
-        }
-
-        return this.each.apply(this, [name].concat(attrs));
-      };
-
-      return obj;
-    }, {});
-    extend(List, methods);
-  };
 
   var Marker =
   /*#__PURE__*/
