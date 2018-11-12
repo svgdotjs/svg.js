@@ -1,5 +1,14 @@
-import { getClass, makeInstance, register, root } from '../utils/adopter.js'
+import { bbox, rbox } from '../types/Box.js'
+import { ctm, screenCTM } from '../types/Matrix.js'
+import {
+  extend,
+  getClass,
+  makeInstance,
+  register,
+  root
+} from '../utils/adopter.js'
 import { globals } from '../utils/window.js'
+import { point } from '../types/Point.js'
 import { proportionalSize } from '../utils/utils.js'
 import { reference } from '../modules/core/regex.js'
 import Dom from './Dom.js'
@@ -144,5 +153,9 @@ export default class Element extends Dom {
     return this.attr('y', y)
   }
 }
+
+extend(Element, {
+  bbox, rbox, point, ctm, screenCTM
+})
 
 register(Element)

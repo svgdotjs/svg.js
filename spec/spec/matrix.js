@@ -372,11 +372,4 @@ describe('Matrix', function() {
       expect(matrix.f).toBeCloseTo(-81.2931393017)
     })
   })
-
-  describe('native()', function() {
-    it('returns the node reference', function() {
-      expect(new SVG.Matrix().native() instanceof window.SVGMatrix).toBeTruthy()
-    })
-  })
-
 })

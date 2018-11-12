@@ -43,6 +43,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `show()` from `SVG.A` to avoid name clash (#802)
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
 - removed `move(), dmove()` etc for groups to avoid inconsistencies, we will expect users to use transforms to move around groups as they should (especially since they are much simpler now).
+- removed `native()` function
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear

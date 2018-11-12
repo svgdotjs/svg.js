@@ -137,11 +137,6 @@ export default class Dom extends EventTarget {
     return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector)
   }
 
-  // Returns the svg node to call native svg methods on it
-  native () {
-    return this.node
-  }
-
   // Returns the parent element instance
   parent (type) {
     var parent = this

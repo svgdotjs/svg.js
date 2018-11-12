@@ -125,19 +125,17 @@ function getBox (cb) {
   return box
 }
 
-registerMethods({
-  Element: {
-    // Get bounding box
-    bbox () {
-      return new Box(getBox.call(this, (node) => node.getBBox()))
-    },
+export function bbox () {
+  return new Box(getBox.call(this, (node) => node.getBBox()))
+}
 
-    rbox (el) {
-      let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect()))
-      if (el) return box.transform(el.screenCTM().inverse())
-      return box.addOffset()
-    }
-  },
+export function rbox (el) {
+  let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect()))
+  if (el) return box.transform(el.screenCTM().inverse())
+  return box.addOffset()
+}
+
+registerMethods({
   viewbox: {
     viewbox (x, y, width, height) {
       // act as getter

@@ -60,16 +60,6 @@ describe('Point', function() {
         expect(point.y).toBe(4)
       })
     })
-
-    describe('with native SVGPoint given', function() {
-      it('creates a point from native SVGPoint', function() {
-        var point = new SVG.Point(new SVG.Point(2,4).native())
-
-        expect(point.x).toBe(2)
-        expect(point.y).toBe(4)
-      })
-    })
-
   })
 
   describe('clone()', function() {

@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 13:58:37 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 14:48:34 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1089,6 +1089,749 @@ var SVG = (function () {
     return Color;
   }();
 
+  var Point =
+  /*#__PURE__*/
+  function () {
+    // Initialize
+    function Point() {
+      _classCallCheck(this, Point);
+
+      this.init.apply(this, arguments);
+    }
+
+    _createClass(Point, [{
+      key: "init",
+      value: function init(x, y) {
+        var source;
+        var base = {
+          x: 0,
+          y: 0 // ensure source as object
+
+        };
+        source = Array.isArray(x) ? {
+          x: x[0],
+          y: x[1]
+        } : _typeof(x) === 'object' ? {
+          x: x.x,
+          y: x.y
+        } : {
+          x: x,
+          y: y // merge source
+
+        };
+        this.x = source.x == null ? base.x : source.x;
+        this.y = source.y == null ? base.y : source.y;
+        return this;
+      } // Clone point
+
+    }, {
+      key: "clone",
+      value: function clone() {
+        return new Point(this);
+      } // transform point with matrix
+
+    }, {
+      key: "transform",
+      value: function transform(m) {
+        // Perform the matrix multiplication
+        var x = m.a * this.x + m.c * this.y + m.e;
+        var y = m.b * this.x + m.d * this.y + m.f; // Return the required point
+
+        return new Point(x, y);
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.x, this.y];
+      }
+    }]);
+
+    return Point;
+  }();
+  function point(x, y) {
+    return new Point(x, y).transform(this.screenCTM().inverse());
+  }
+
+  function parser() {
+    // Reuse cached element if possible
+    if (!parser.nodes) {
+      var svg = makeInstance().size(2, 0);
+      svg.node.cssText = ['opacity: 0', 'position: absolute', 'left: -100%', 'top: -100%', 'overflow: hidden'].join(';');
+      var path = svg.path().node;
+      parser.nodes = {
+        svg: svg,
+        path: path
+      };
+    }
+
+    if (!parser.nodes.svg.node.parentNode) {
+      var b = globals.document.body || globals.document.documentElement;
+      parser.nodes.svg.addTo(b);
+    }
+
+    return parser.nodes;
+  }
+
+  function isNulledBox(box) {
+    return !box.w && !box.h && !box.x && !box.y;
+  }
+
+  function domContains(node) {
+    return (globals.document.documentElement.contains || function (node) {
+      // This is IE - it does not support contains() for top-level SVGs
+      while (node.parentNode) {
+        node = node.parentNode;
+      }
+
+      return node === document;
+    }).call(globals.document.documentElement, node);
+  }
+
+  var Box =
+  /*#__PURE__*/
+  function () {
+    function Box() {
+      _classCallCheck(this, Box);
+
+      this.init.apply(this, arguments);
+    }
+
+    _createClass(Box, [{
+      key: "init",
+      value: function init(source) {
+        var base = [0, 0, 0, 0];
+        source = typeof source === 'string' ? source.split(delimiter).map(parseFloat) : Array.isArray(source) ? source : _typeof(source) === 'object' ? [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] : arguments.length === 4 ? [].slice.call(arguments) : base;
+        this.x = source[0] || 0;
+        this.y = source[1] || 0;
+        this.width = this.w = source[2] || 0;
+        this.height = this.h = source[3] || 0; // Add more bounding box properties
+
+        this.x2 = this.x + this.w;
+        this.y2 = this.y + this.h;
+        this.cx = this.x + this.w / 2;
+        this.cy = this.y + this.h / 2;
+        return this;
+      } // Merge rect box with another, return a new instance
+
+    }, {
+      key: "merge",
+      value: function merge(box) {
+        var x = Math.min(this.x, box.x);
+        var y = Math.min(this.y, box.y);
+        var width = Math.max(this.x + this.width, box.x + box.width) - x;
+        var height = Math.max(this.y + this.height, box.y + box.height) - y;
+        return new Box(x, y, width, height);
+      }
+    }, {
+      key: "transform",
+      value: function transform(m) {
+        var xMin = Infinity;
+        var xMax = -Infinity;
+        var yMin = Infinity;
+        var yMax = -Infinity;
+        var pts = [new Point(this.x, this.y), new Point(this.x2, this.y), new Point(this.x, this.y2), new Point(this.x2, this.y2)];
+        pts.forEach(function (p) {
+          p = p.transform(m);
+          xMin = Math.min(xMin, p.x);
+          xMax = Math.max(xMax, p.x);
+          yMin = Math.min(yMin, p.y);
+          yMax = Math.max(yMax, p.y);
+        });
+        return new Box(xMin, yMin, xMax - xMin, yMax - yMin);
+      }
+    }, {
+      key: "addOffset",
+      value: function addOffset() {
+        // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+        this.x += globals.window.pageXOffset;
+        this.y += globals.window.pageYOffset;
+        return this;
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height;
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.x, this.y, this.width, this.height];
+      }
+    }, {
+      key: "isNulled",
+      value: function isNulled() {
+        return isNulledBox(this);
+      }
+    }]);
+
+    return Box;
+  }();
+
+  function getBox(cb) {
+    var box;
+
+    try {
+      box = cb(this.node);
+
+      if (isNulledBox(box) && !domContains(this.node)) {
+        throw new Error('Element not in the dom');
+      }
+    } catch (e) {
+      try {
+        var clone = this.clone().addTo(parser().svg).show();
+        box = cb(clone.node);
+        clone.remove();
+      } catch (e) {
+        throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible');
+      }
+    }
+
+    return box;
+  }
+
+  function bbox() {
+    return new Box(getBox.call(this, function (node) {
+      return node.getBBox();
+    }));
+  }
+  function rbox(el) {
+    var box = new Box(getBox.call(this, function (node) {
+      return node.getBoundingClientRect();
+    }));
+    if (el) return box.transform(el.screenCTM().inverse());
+    return box.addOffset();
+  }
+  registerMethods({
+    viewbox: {
+      viewbox: function viewbox(x, y, width, height) {
+        // act as getter
+        if (x == null) return new Box(this.attr('viewBox')); // act as setter
+
+        return this.attr('viewBox', new Box(x, y, width, height));
+      }
+    }
+  });
+
+  function closeEnough(a, b, threshold) {
+    return Math.abs(b - a) < (threshold || 1e-6);
+  }
+
+  var Matrix =
+  /*#__PURE__*/
+  function () {
+    function Matrix() {
+      _classCallCheck(this, Matrix);
+
+      this.init.apply(this, arguments);
+    } // Initialize
+
+
+    _createClass(Matrix, [{
+      key: "init",
+      value: function init(source) {
+        var base = Matrix.fromArray([1, 0, 0, 1, 0, 0]); // ensure source as object
+
+        source = source instanceof Element ? source.matrixify() : typeof source === 'string' ? Matrix.fromArray(source.split(delimiter).map(parseFloat)) : Array.isArray(source) ? Matrix.fromArray(source) : _typeof(source) === 'object' && Matrix.isMatrixLike(source) ? source : _typeof(source) === 'object' ? new Matrix().transform(source) : arguments.length === 6 ? Matrix.fromArray([].slice.call(arguments)) : base; // Merge the source matrix with the base matrix
+
+        this.a = source.a != null ? source.a : base.a;
+        this.b = source.b != null ? source.b : base.b;
+        this.c = source.c != null ? source.c : base.c;
+        this.d = source.d != null ? source.d : base.d;
+        this.e = source.e != null ? source.e : base.e;
+        this.f = source.f != null ? source.f : base.f;
+        return this;
+      } // Clones this matrix
+
+    }, {
+      key: "clone",
+      value: function clone() {
+        return new Matrix(this);
+      } // Transform a matrix into another matrix by manipulating the space
+
+    }, {
+      key: "transform",
+      value: function transform(o) {
+        // Check if o is a matrix and then left multiply it directly
+        if (Matrix.isMatrixLike(o)) {
+          var matrix = new Matrix(o);
+          return matrix.multiplyO(this);
+        } // Get the proposed transformations and the current transformations
+
+
+        var t = Matrix.formatTransforms(o);
+        var current = this;
+
+        var _transform = new Point(t.ox, t.oy).transform(current),
+            ox = _transform.x,
+            oy = _transform.y; // Construct the resulting matrix
+
+
+        var transformer = new Matrix().translateO(t.rx, t.ry).lmultiplyO(current).translateO(-ox, -oy).scaleO(t.scaleX, t.scaleY).skewO(t.skewX, t.skewY).shearO(t.shear).rotateO(t.theta).translateO(ox, oy); // If we want the origin at a particular place, we force it there
+
+        if (isFinite(t.px) || isFinite(t.py)) {
+          var origin = new Point(ox, oy).transform(transformer); // TODO: Replace t.px with isFinite(t.px)
+
+          var dx = t.px ? t.px - origin.x : 0;
+          var dy = t.py ? t.py - origin.y : 0;
+          transformer.translateO(dx, dy);
+        } // Translate now after positioning
+
+
+        transformer.translateO(t.tx, t.ty);
+        return transformer;
+      } // Applies a matrix defined by its affine parameters
+
+    }, {
+      key: "compose",
+      value: function compose(o) {
+        if (o.origin) {
+          o.originX = o.origin[0];
+          o.originY = o.origin[1];
+        } // Get the parameters
+
+
+        var ox = o.originX || 0;
+        var oy = o.originY || 0;
+        var sx = o.scaleX || 1;
+        var sy = o.scaleY || 1;
+        var lam = o.shear || 0;
+        var theta = o.rotate || 0;
+        var tx = o.translateX || 0;
+        var ty = o.translateY || 0; // Apply the standard matrix
+
+        var result = new Matrix().translateO(-ox, -oy).scaleO(sx, sy).shearO(lam).rotateO(theta).translateO(tx, ty).lmultiplyO(this).translateO(ox, oy);
+        return result;
+      } // Decomposes this matrix into its affine parameters
+
+    }, {
+      key: "decompose",
+      value: function decompose() {
+        var cx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var cy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        // Get the parameters from the matrix
+        var a = this.a;
+        var b = this.b;
+        var c = this.c;
+        var d = this.d;
+        var e = this.e;
+        var f = this.f; // Figure out if the winding direction is clockwise or counterclockwise
+
+        var determinant = a * d - b * c;
+        var ccw = determinant > 0 ? 1 : -1; // Since we only shear in x, we can use the x basis to get the x scale
+        // and the rotation of the resulting matrix
+
+        var sx = ccw * Math.sqrt(a * a + b * b);
+        var thetaRad = Math.atan2(ccw * b, ccw * a);
+        var theta = 180 / Math.PI * thetaRad;
+        var ct = Math.cos(thetaRad);
+        var st = Math.sin(thetaRad); // We can then solve the y basis vector simultaneously to get the other
+        // two affine parameters directly from these parameters
+
+        var lam = (a * c + b * d) / determinant;
+        var sy = c * sx / (lam * a - b) || d * sx / (lam * b + a); // Use the translations
+
+        var tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy);
+        var ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy); // Construct the decomposition and return it
+
+        return {
+          // Return the affine parameters
+          scaleX: sx,
+          scaleY: sy,
+          shear: lam,
+          rotate: theta,
+          translateX: tx,
+          translateY: ty,
+          originX: cx,
+          originY: cy,
+          // Return the matrix parameters
+          a: this.a,
+          b: this.b,
+          c: this.c,
+          d: this.d,
+          e: this.e,
+          f: this.f
+        };
+      } // Left multiplies by the given matrix
+
+    }, {
+      key: "multiply",
+      value: function multiply(matrix) {
+        return this.clone().multiplyO(matrix);
+      }
+    }, {
+      key: "multiplyO",
+      value: function multiplyO(matrix) {
+        // Get the matrices
+        var l = this;
+        var r = matrix instanceof Matrix ? matrix : new Matrix(matrix);
+        return Matrix.matrixMultiply(l, r, this);
+      }
+    }, {
+      key: "lmultiply",
+      value: function lmultiply(matrix) {
+        return this.clone().lmultiplyO(matrix);
+      }
+    }, {
+      key: "lmultiplyO",
+      value: function lmultiplyO(matrix) {
+        var r = this;
+        var l = matrix instanceof Matrix ? matrix : new Matrix(matrix);
+        return Matrix.matrixMultiply(l, r, this);
+      } // Inverses matrix
+
+    }, {
+      key: "inverseO",
+      value: function inverseO() {
+        // Get the current parameters out of the matrix
+        var a = this.a;
+        var b = this.b;
+        var c = this.c;
+        var d = this.d;
+        var e = this.e;
+        var f = this.f; // Invert the 2x2 matrix in the top left
+
+        var det = a * d - b * c;
+        if (!det) throw new Error('Cannot invert ' + this); // Calculate the top 2x2 matrix
+
+        var na = d / det;
+        var nb = -b / det;
+        var nc = -c / det;
+        var nd = a / det; // Apply the inverted matrix to the top right
+
+        var ne = -(na * e + nc * f);
+        var nf = -(nb * e + nd * f); // Construct the inverted matrix
+
+        this.a = na;
+        this.b = nb;
+        this.c = nc;
+        this.d = nd;
+        this.e = ne;
+        this.f = nf;
+        return this;
+      }
+    }, {
+      key: "inverse",
+      value: function inverse() {
+        return this.clone().inverseO();
+      } // Translate matrix
+
+    }, {
+      key: "translate",
+      value: function translate(x, y) {
+        return this.clone().translateO(x, y);
+      }
+    }, {
+      key: "translateO",
+      value: function translateO(x, y) {
+        this.e += x || 0;
+        this.f += y || 0;
+        return this;
+      } // Scale matrix
+
+    }, {
+      key: "scale",
+      value: function scale(x, y, cx, cy) {
+        var _this$clone;
+
+        return (_this$clone = this.clone()).scaleO.apply(_this$clone, arguments);
+      }
+    }, {
+      key: "scaleO",
+      value: function scaleO(x) {
+        var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : x;
+        var cx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        var cy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+        // Support uniform scaling
+        if (arguments.length === 3) {
+          cy = cx;
+          cx = y;
+          y = x;
+        }
+
+        var a = this.a,
+            b = this.b,
+            c = this.c,
+            d = this.d,
+            e = this.e,
+            f = this.f;
+        this.a = a * x;
+        this.b = b * y;
+        this.c = c * x;
+        this.d = d * y;
+        this.e = e * x - cx * x + cx;
+        this.f = f * y - cy * y + cy;
+        return this;
+      } // Rotate matrix
+
+    }, {
+      key: "rotate",
+      value: function rotate(r, cx, cy) {
+        return this.clone().rotateO(r, cx, cy);
+      }
+    }, {
+      key: "rotateO",
+      value: function rotateO(r) {
+        var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        // Convert degrees to radians
+        r = radians(r);
+        var cos = Math.cos(r);
+        var sin = Math.sin(r);
+        var a = this.a,
+            b = this.b,
+            c = this.c,
+            d = this.d,
+            e = this.e,
+            f = this.f;
+        this.a = a * cos - b * sin;
+        this.b = b * cos + a * sin;
+        this.c = c * cos - d * sin;
+        this.d = d * cos + c * sin;
+        this.e = e * cos - f * sin + cy * sin - cx * cos + cx;
+        this.f = f * cos + e * sin - cx * sin - cy * cos + cy;
+        return this;
+      } // Flip matrix on x or y, at a given offset
+
+    }, {
+      key: "flip",
+      value: function flip(axis, around) {
+        return this.clone().flipO(axis, around);
+      }
+    }, {
+      key: "flipO",
+      value: function flipO(axis, around) {
+        return axis === 'x' ? this.scaleO(-1, 1, around, 0) : axis === 'y' ? this.scaleO(1, -1, 0, around) : this.scaleO(-1, -1, axis, around || axis); // Define an x, y flip point
+      } // Shear matrix
+
+    }, {
+      key: "shear",
+      value: function shear(a, cx, cy) {
+        return this.clone().shearO(a, cx, cy);
+      }
+    }, {
+      key: "shearO",
+      value: function shearO(lx) {
+        var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        var a = this.a,
+            b = this.b,
+            c = this.c,
+            d = this.d,
+            e = this.e,
+            f = this.f;
+        this.a = a + b * lx;
+        this.c = c + d * lx;
+        this.e = e + f * lx - cy * lx;
+        return this;
+      } // Skew Matrix
+
+    }, {
+      key: "skew",
+      value: function skew(x, y, cx, cy) {
+        var _this$clone2;
+
+        return (_this$clone2 = this.clone()).skewO.apply(_this$clone2, arguments);
+      }
+    }, {
+      key: "skewO",
+      value: function skewO(x) {
+        var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : x;
+        var cx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        var cy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+        // support uniformal skew
+        if (arguments.length === 3) {
+          cy = cx;
+          cx = y;
+          y = x;
+        } // Convert degrees to radians
+
+
+        x = radians(x);
+        y = radians(y);
+        var lx = Math.tan(x);
+        var ly = Math.tan(y);
+        var a = this.a,
+            b = this.b,
+            c = this.c,
+            d = this.d,
+            e = this.e,
+            f = this.f;
+        this.a = a + b * lx;
+        this.b = b + a * ly;
+        this.c = c + d * lx;
+        this.d = d + c * ly;
+        this.e = e + f * lx - cy * lx;
+        this.f = f + e * ly - cx * ly;
+        return this;
+      } // SkewX
+
+    }, {
+      key: "skewX",
+      value: function skewX(x, cx, cy) {
+        return this.skew(x, 0, cx, cy);
+      }
+    }, {
+      key: "skewXO",
+      value: function skewXO(x, cx, cy) {
+        return this.skewO(x, 0, cx, cy);
+      } // SkewY
+
+    }, {
+      key: "skewY",
+      value: function skewY(y, cx, cy) {
+        return this.skew(0, y, cx, cy);
+      }
+    }, {
+      key: "skewYO",
+      value: function skewYO(y, cx, cy) {
+        return this.skewO(0, y, cx, cy);
+      } // Transform around a center point
+
+    }, {
+      key: "aroundO",
+      value: function aroundO(cx, cy, matrix) {
+        var dx = cx || 0;
+        var dy = cy || 0;
+        return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy);
+      }
+    }, {
+      key: "around",
+      value: function around(cx, cy, matrix) {
+        return this.clone().aroundO(cx, cy, matrix);
+      } // Check if two matrices are equal
+
+    }, {
+      key: "equals",
+      value: function equals(other) {
+        var comp = new Matrix(other);
+        return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) && closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f);
+      } // Convert matrix to string
+
+    }, {
+      key: "toString",
+      value: function toString() {
+        return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')';
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.a, this.b, this.c, this.d, this.e, this.f];
+      }
+    }, {
+      key: "valueOf",
+      value: function valueOf() {
+        return {
+          a: this.a,
+          b: this.b,
+          c: this.c,
+          d: this.d,
+          e: this.e,
+          f: this.f
+        };
+      }
+    }], [{
+      key: "fromArray",
+      value: function fromArray(a) {
+        return {
+          a: a[0],
+          b: a[1],
+          c: a[2],
+          d: a[3],
+          e: a[4],
+          f: a[5]
+        };
+      }
+    }, {
+      key: "isMatrixLike",
+      value: function isMatrixLike(o) {
+        return o.a != null || o.b != null || o.c != null || o.d != null || o.e != null || o.f != null;
+      }
+    }, {
+      key: "formatTransforms",
+      value: function formatTransforms(o) {
+        // Get all of the parameters required to form the matrix
+        var flipBoth = o.flip === 'both' || o.flip === true;
+        var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1;
+        var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1;
+        var skewX = o.skew && o.skew.length ? o.skew[0] : isFinite(o.skew) ? o.skew : isFinite(o.skewX) ? o.skewX : 0;
+        var skewY = o.skew && o.skew.length ? o.skew[1] : isFinite(o.skew) ? o.skew : isFinite(o.skewY) ? o.skewY : 0;
+        var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX : isFinite(o.scale) ? o.scale * flipX : isFinite(o.scaleX) ? o.scaleX * flipX : flipX;
+        var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY : isFinite(o.scale) ? o.scale * flipY : isFinite(o.scaleY) ? o.scaleY * flipY : flipY;
+        var shear = o.shear || 0;
+        var theta = o.rotate || o.theta || 0;
+        var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY);
+        var ox = origin.x;
+        var oy = origin.y;
+        var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY);
+        var px = position.x;
+        var py = position.y;
+        var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY);
+        var tx = translate.x;
+        var ty = translate.y;
+        var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY);
+        var rx = relative.x;
+        var ry = relative.y; // Populate all of the values
+
+        return {
+          scaleX: scaleX,
+          scaleY: scaleY,
+          skewX: skewX,
+          skewY: skewY,
+          shear: shear,
+          theta: theta,
+          rx: rx,
+          ry: ry,
+          tx: tx,
+          ty: ty,
+          ox: ox,
+          oy: oy,
+          px: px,
+          py: py
+        };
+      } // left matrix, right matrix, target matrix which is overwritten
+
+    }, {
+      key: "matrixMultiply",
+      value: function matrixMultiply(l, r, o) {
+        // Work out the product directly
+        var a = l.a * r.a + l.c * r.b;
+        var b = l.b * r.a + l.d * r.b;
+        var c = l.a * r.c + l.c * r.d;
+        var d = l.b * r.c + l.d * r.d;
+        var e = l.e + l.a * r.e + l.c * r.f;
+        var f = l.f + l.b * r.e + l.d * r.f; // make sure to use local variables because l/r and o could be the same
+
+        o.a = a;
+        o.b = b;
+        o.c = c;
+        o.d = d;
+        o.e = e;
+        o.f = f;
+        return o;
+      }
+    }]);
+
+    return Matrix;
+  }();
+  function ctm() {
+    return new Matrix(this.node.getCTM());
+  }
+  function screenCTM() {
+    /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
+       This is needed because FF does not return the transformation matrix
+       for the inner coordinate system when getScreenCTM() is called on nested svgs.
+       However all other Browsers do that */
+    if (typeof this.isRoot === 'function' && !this.isRoot()) {
+      var rect = this.rect(1, 1);
+      var m = rect.node.getScreenCTM();
+      rect.remove();
+      return new Matrix(m);
+    }
+
+    return new Matrix(this.node.getScreenCTM());
+  }
+
   var EventTarget =
   /*#__PURE__*/
   function (_Base) {
@@ -1670,12 +2413,6 @@ var SVG = (function () {
       value: function matches(selector) {
         var el = this.node;
         return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
-      } // Returns the svg node to call native svg methods on it
-
-    }, {
-      key: "native",
-      value: function native() {
-        return this.node;
       } // Returns the parent element instance
 
     }, {
@@ -1995,793 +2732,14 @@ var SVG = (function () {
 
     return Element;
   }(Dom);
+  extend(Element, {
+    bbox: bbox,
+    rbox: rbox,
+    point: point,
+    ctm: ctm,
+    screenCTM: screenCTM
+  });
   register(Element);
-
-  var Container =
-  /*#__PURE__*/
-  function (_Element) {
-    _inherits(Container, _Element);
-
-    function Container() {
-      _classCallCheck(this, Container);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Container).apply(this, arguments));
-    }
-
-    _createClass(Container, [{
-      key: "flatten",
-      value: function flatten(parent) {
-        this.each(function () {
-          if (this instanceof Container) return this.flatten(parent).ungroup(parent);
-          return this.toParent(parent);
-        }); // we need this so that Doc does not get removed
-
-        this.node.firstElementChild || this.remove();
-        return this;
-      }
-    }, {
-      key: "ungroup",
-      value: function ungroup(parent) {
-        parent = parent || this.parent();
-        this.each(function () {
-          return this.toParent(parent);
-        });
-        this.remove();
-        return this;
-      }
-    }]);
-
-    return Container;
-  }(Element);
-  register(Container);
-
-  var Defs =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Defs, _Container);
-
-    function Defs(node) {
-      _classCallCheck(this, Defs);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), node));
-    }
-
-    _createClass(Defs, [{
-      key: "flatten",
-      value: function flatten() {
-        return this;
-      }
-    }, {
-      key: "ungroup",
-      value: function ungroup() {
-        return this;
-      }
-    }]);
-
-    return Defs;
-  }(Container);
-  register(Defs);
-
-  var Doc$1 =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Doc, _Container);
-
-    function Doc(node) {
-      var _this;
-
-      _classCallCheck(this, Doc);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), node));
-
-      _this.namespace();
-
-      return _this;
-    }
-
-    _createClass(Doc, [{
-      key: "isRoot",
-      value: function isRoot() {
-        return !this.node.parentNode || !(this.node.parentNode instanceof globals.window.SVGElement) || this.node.parentNode.nodeName === '#document';
-      } // Check if this is a root svg
-      // If not, call docs from this element
-
-    }, {
-      key: "doc",
-      value: function doc() {
-        if (this.isRoot()) return this;
-        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this);
-      } // Add namespaces
-
-    }, {
-      key: "namespace",
-      value: function namespace() {
-        if (!this.isRoot()) return this.doc().namespace();
-        return this.attr({
-          xmlns: ns,
-          version: '1.1'
-        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
-      } // Creates and returns defs element
-
-    }, {
-      key: "defs",
-      value: function defs() {
-        if (!this.isRoot()) return this.doc().defs();
-        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
-      } // custom parent method
-
-    }, {
-      key: "parent",
-      value: function parent(type) {
-        if (this.isRoot()) {
-          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
-        }
-
-        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type);
-      }
-    }, {
-      key: "clear",
-      value: function clear() {
-        // remove children
-        while (this.node.hasChildNodes()) {
-          this.node.removeChild(this.node.lastChild);
-        }
-
-        return this;
-      }
-    }]);
-
-    return Doc;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create nested svg document
-      nested: wrapWithAttrCheck(function () {
-        return this.put(new Doc$1());
-      })
-    }
-  });
-  register(Doc$1, 'Doc', true);
-
-  function parser() {
-    // Reuse cached element if possible
-    if (!parser.nodes) {
-      var svg = new Doc$1().size(2, 0);
-      svg.node.cssText = ['opacity: 0', 'position: absolute', 'left: -100%', 'top: -100%', 'overflow: hidden'].join(';');
-      var path = svg.path().node;
-      parser.nodes = {
-        svg: svg,
-        path: path
-      };
-    }
-
-    if (!parser.nodes.svg.node.parentNode) {
-      var b = globals.document.body || globals.document.documentElement;
-      parser.nodes.svg.addTo(b);
-    }
-
-    return parser.nodes;
-  }
-
-  var Point =
-  /*#__PURE__*/
-  function () {
-    // Initialize
-    function Point() {
-      _classCallCheck(this, Point);
-
-      this.init.apply(this, arguments);
-    }
-
-    _createClass(Point, [{
-      key: "init",
-      value: function init(x, y) {
-        var source;
-        var base = {
-          x: 0,
-          y: 0 // ensure source as object
-
-        };
-        source = Array.isArray(x) ? {
-          x: x[0],
-          y: x[1]
-        } : _typeof(x) === 'object' ? {
-          x: x.x,
-          y: x.y
-        } : {
-          x: x,
-          y: y // merge source
-
-        };
-        this.x = source.x == null ? base.x : source.x;
-        this.y = source.y == null ? base.y : source.y;
-        return this;
-      } // Clone point
-
-    }, {
-      key: "clone",
-      value: function clone() {
-        return new Point(this);
-      } // Convert to native SVGPoint
-
-    }, {
-      key: "native",
-      value: function native() {
-        // create new point
-        var point = parser().svg.node.createSVGPoint(); // update with current values
-
-        point.x = this.x;
-        point.y = this.y;
-        return point;
-      } // transform point with matrix
-
-    }, {
-      key: "transform",
-      value: function transform(m) {
-        // Perform the matrix multiplication
-        var x = m.a * this.x + m.c * this.y + m.e;
-        var y = m.b * this.x + m.d * this.y + m.f; // Return the required point
-
-        return new Point(x, y);
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.x, this.y];
-      }
-    }]);
-
-    return Point;
-  }();
-  registerMethods({
-    Element: {
-      // Get point
-      point: function point(x, y) {
-        return new Point(x, y).transform(this.screenCTM().inverse());
-      }
-    }
-  });
-
-  var abcdef = 'abcdef'.split('');
-
-  function closeEnough(a, b, threshold) {
-    return Math.abs(b - a) < (threshold || 1e-6);
-  }
-
-  var Matrix =
-  /*#__PURE__*/
-  function () {
-    function Matrix() {
-      _classCallCheck(this, Matrix);
-
-      this.init.apply(this, arguments);
-    } // Initialize
-
-
-    _createClass(Matrix, [{
-      key: "init",
-      value: function init(source) {
-        var base = Matrix.fromArray([1, 0, 0, 1, 0, 0]); // ensure source as object
-
-        source = source instanceof Element ? source.matrixify() : typeof source === 'string' ? Matrix.fromArray(source.split(delimiter).map(parseFloat)) : Array.isArray(source) ? Matrix.fromArray(source) : _typeof(source) === 'object' && Matrix.isMatrixLike(source) ? source : _typeof(source) === 'object' ? new Matrix().transform(source) : arguments.length === 6 ? Matrix.fromArray([].slice.call(arguments)) : base; // Merge the source matrix with the base matrix
-
-        this.a = source.a != null ? source.a : base.a;
-        this.b = source.b != null ? source.b : base.b;
-        this.c = source.c != null ? source.c : base.c;
-        this.d = source.d != null ? source.d : base.d;
-        this.e = source.e != null ? source.e : base.e;
-        this.f = source.f != null ? source.f : base.f;
-        return this;
-      } // Clones this matrix
-
-    }, {
-      key: "clone",
-      value: function clone() {
-        return new Matrix(this);
-      } // Transform a matrix into another matrix by manipulating the space
-
-    }, {
-      key: "transform",
-      value: function transform(o) {
-        // Check if o is a matrix and then left multiply it directly
-        if (Matrix.isMatrixLike(o)) {
-          var matrix = new Matrix(o);
-          return matrix.multiplyO(this);
-        } // Get the proposed transformations and the current transformations
-
-
-        var t = Matrix.formatTransforms(o);
-        var current = this;
-
-        var _transform = new Point(t.ox, t.oy).transform(current),
-            ox = _transform.x,
-            oy = _transform.y; // Construct the resulting matrix
-
-
-        var transformer = new Matrix().translateO(t.rx, t.ry).lmultiplyO(current).translateO(-ox, -oy).scaleO(t.scaleX, t.scaleY).skewO(t.skewX, t.skewY).shearO(t.shear).rotateO(t.theta).translateO(ox, oy); // If we want the origin at a particular place, we force it there
-
-        if (isFinite(t.px) || isFinite(t.py)) {
-          var origin = new Point(ox, oy).transform(transformer); // TODO: Replace t.px with isFinite(t.px)
-
-          var dx = t.px ? t.px - origin.x : 0;
-          var dy = t.py ? t.py - origin.y : 0;
-          transformer.translateO(dx, dy);
-        } // Translate now after positioning
-
-
-        transformer.translateO(t.tx, t.ty);
-        return transformer;
-      } // Applies a matrix defined by its affine parameters
-
-    }, {
-      key: "compose",
-      value: function compose(o) {
-        if (o.origin) {
-          o.originX = o.origin[0];
-          o.originY = o.origin[1];
-        } // Get the parameters
-
-
-        var ox = o.originX || 0;
-        var oy = o.originY || 0;
-        var sx = o.scaleX || 1;
-        var sy = o.scaleY || 1;
-        var lam = o.shear || 0;
-        var theta = o.rotate || 0;
-        var tx = o.translateX || 0;
-        var ty = o.translateY || 0; // Apply the standard matrix
-
-        var result = new Matrix().translateO(-ox, -oy).scaleO(sx, sy).shearO(lam).rotateO(theta).translateO(tx, ty).lmultiplyO(this).translateO(ox, oy);
-        return result;
-      } // Decomposes this matrix into its affine parameters
-
-    }, {
-      key: "decompose",
-      value: function decompose() {
-        var cx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-        var cy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-        // Get the parameters from the matrix
-        var a = this.a;
-        var b = this.b;
-        var c = this.c;
-        var d = this.d;
-        var e = this.e;
-        var f = this.f; // Figure out if the winding direction is clockwise or counterclockwise
-
-        var determinant = a * d - b * c;
-        var ccw = determinant > 0 ? 1 : -1; // Since we only shear in x, we can use the x basis to get the x scale
-        // and the rotation of the resulting matrix
-
-        var sx = ccw * Math.sqrt(a * a + b * b);
-        var thetaRad = Math.atan2(ccw * b, ccw * a);
-        var theta = 180 / Math.PI * thetaRad;
-        var ct = Math.cos(thetaRad);
-        var st = Math.sin(thetaRad); // We can then solve the y basis vector simultaneously to get the other
-        // two affine parameters directly from these parameters
-
-        var lam = (a * c + b * d) / determinant;
-        var sy = c * sx / (lam * a - b) || d * sx / (lam * b + a); // Use the translations
-
-        var tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy);
-        var ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy); // Construct the decomposition and return it
-
-        return {
-          // Return the affine parameters
-          scaleX: sx,
-          scaleY: sy,
-          shear: lam,
-          rotate: theta,
-          translateX: tx,
-          translateY: ty,
-          originX: cx,
-          originY: cy,
-          // Return the matrix parameters
-          a: this.a,
-          b: this.b,
-          c: this.c,
-          d: this.d,
-          e: this.e,
-          f: this.f
-        };
-      } // Left multiplies by the given matrix
-
-    }, {
-      key: "multiply",
-      value: function multiply(matrix) {
-        return this.clone().multiplyO(matrix);
-      }
-    }, {
-      key: "multiplyO",
-      value: function multiplyO(matrix) {
-        // Get the matrices
-        var l = this;
-        var r = matrix instanceof Matrix ? matrix : new Matrix(matrix);
-        return Matrix.matrixMultiply(l, r, this);
-      }
-    }, {
-      key: "lmultiply",
-      value: function lmultiply(matrix) {
-        return this.clone().lmultiplyO(matrix);
-      }
-    }, {
-      key: "lmultiplyO",
-      value: function lmultiplyO(matrix) {
-        var r = this;
-        var l = matrix instanceof Matrix ? matrix : new Matrix(matrix);
-        return Matrix.matrixMultiply(l, r, this);
-      } // Inverses matrix
-
-    }, {
-      key: "inverseO",
-      value: function inverseO() {
-        // Get the current parameters out of the matrix
-        var a = this.a;
-        var b = this.b;
-        var c = this.c;
-        var d = this.d;
-        var e = this.e;
-        var f = this.f; // Invert the 2x2 matrix in the top left
-
-        var det = a * d - b * c;
-        if (!det) throw new Error('Cannot invert ' + this); // Calculate the top 2x2 matrix
-
-        var na = d / det;
-        var nb = -b / det;
-        var nc = -c / det;
-        var nd = a / det; // Apply the inverted matrix to the top right
-
-        var ne = -(na * e + nc * f);
-        var nf = -(nb * e + nd * f); // Construct the inverted matrix
-
-        this.a = na;
-        this.b = nb;
-        this.c = nc;
-        this.d = nd;
-        this.e = ne;
-        this.f = nf;
-        return this;
-      }
-    }, {
-      key: "inverse",
-      value: function inverse() {
-        return this.clone().inverseO();
-      } // Translate matrix
-
-    }, {
-      key: "translate",
-      value: function translate(x, y) {
-        return this.clone().translateO(x, y);
-      }
-    }, {
-      key: "translateO",
-      value: function translateO(x, y) {
-        this.e += x || 0;
-        this.f += y || 0;
-        return this;
-      } // Scale matrix
-
-    }, {
-      key: "scale",
-      value: function scale(x, y, cx, cy) {
-        var _this$clone;
-
-        return (_this$clone = this.clone()).scaleO.apply(_this$clone, arguments);
-      }
-    }, {
-      key: "scaleO",
-      value: function scaleO(x) {
-        var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : x;
-        var cx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-        var cy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-        // Support uniform scaling
-        if (arguments.length === 3) {
-          cy = cx;
-          cx = y;
-          y = x;
-        }
-
-        var a = this.a,
-            b = this.b,
-            c = this.c,
-            d = this.d,
-            e = this.e,
-            f = this.f;
-        this.a = a * x;
-        this.b = b * y;
-        this.c = c * x;
-        this.d = d * y;
-        this.e = e * x - cx * x + cx;
-        this.f = f * y - cy * y + cy;
-        return this;
-      } // Rotate matrix
-
-    }, {
-      key: "rotate",
-      value: function rotate(r, cx, cy) {
-        return this.clone().rotateO(r, cx, cy);
-      }
-    }, {
-      key: "rotateO",
-      value: function rotateO(r) {
-        var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-        var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-        // Convert degrees to radians
-        r = radians(r);
-        var cos = Math.cos(r);
-        var sin = Math.sin(r);
-        var a = this.a,
-            b = this.b,
-            c = this.c,
-            d = this.d,
-            e = this.e,
-            f = this.f;
-        this.a = a * cos - b * sin;
-        this.b = b * cos + a * sin;
-        this.c = c * cos - d * sin;
-        this.d = d * cos + c * sin;
-        this.e = e * cos - f * sin + cy * sin - cx * cos + cx;
-        this.f = f * cos + e * sin - cx * sin - cy * cos + cy;
-        return this;
-      } // Flip matrix on x or y, at a given offset
-
-    }, {
-      key: "flip",
-      value: function flip(axis, around) {
-        return this.clone().flipO(axis, around);
-      }
-    }, {
-      key: "flipO",
-      value: function flipO(axis, around) {
-        return axis === 'x' ? this.scaleO(-1, 1, around, 0) : axis === 'y' ? this.scaleO(1, -1, 0, around) : this.scaleO(-1, -1, axis, around || axis); // Define an x, y flip point
-      } // Shear matrix
-
-    }, {
-      key: "shear",
-      value: function shear(a, cx, cy) {
-        return this.clone().shearO(a, cx, cy);
-      }
-    }, {
-      key: "shearO",
-      value: function shearO(lx) {
-        var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-        var a = this.a,
-            b = this.b,
-            c = this.c,
-            d = this.d,
-            e = this.e,
-            f = this.f;
-        this.a = a + b * lx;
-        this.c = c + d * lx;
-        this.e = e + f * lx - cy * lx;
-        return this;
-      } // Skew Matrix
-
-    }, {
-      key: "skew",
-      value: function skew(x, y, cx, cy) {
-        var _this$clone2;
-
-        return (_this$clone2 = this.clone()).skewO.apply(_this$clone2, arguments);
-      }
-    }, {
-      key: "skewO",
-      value: function skewO(x) {
-        var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : x;
-        var cx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-        var cy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-        // support uniformal skew
-        if (arguments.length === 3) {
-          cy = cx;
-          cx = y;
-          y = x;
-        } // Convert degrees to radians
-
-
-        x = radians(x);
-        y = radians(y);
-        var lx = Math.tan(x);
-        var ly = Math.tan(y);
-        var a = this.a,
-            b = this.b,
-            c = this.c,
-            d = this.d,
-            e = this.e,
-            f = this.f;
-        this.a = a + b * lx;
-        this.b = b + a * ly;
-        this.c = c + d * lx;
-        this.d = d + c * ly;
-        this.e = e + f * lx - cy * lx;
-        this.f = f + e * ly - cx * ly;
-        return this;
-      } // SkewX
-
-    }, {
-      key: "skewX",
-      value: function skewX(x, cx, cy) {
-        return this.skew(x, 0, cx, cy);
-      }
-    }, {
-      key: "skewXO",
-      value: function skewXO(x, cx, cy) {
-        return this.skewO(x, 0, cx, cy);
-      } // SkewY
-
-    }, {
-      key: "skewY",
-      value: function skewY(y, cx, cy) {
-        return this.skew(0, y, cx, cy);
-      }
-    }, {
-      key: "skewYO",
-      value: function skewYO(y, cx, cy) {
-        return this.skewO(0, y, cx, cy);
-      } // Transform around a center point
-
-    }, {
-      key: "aroundO",
-      value: function aroundO(cx, cy, matrix) {
-        var dx = cx || 0;
-        var dy = cy || 0;
-        return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy);
-      }
-    }, {
-      key: "around",
-      value: function around(cx, cy, matrix) {
-        return this.clone().aroundO(cx, cy, matrix);
-      } // Convert to native SVGMatrix
-
-    }, {
-      key: "native",
-      value: function native() {
-        // create new matrix
-        var matrix = parser().svg.node.createSVGMatrix(); // update with current values
-
-        for (var i = abcdef.length - 1; i >= 0; i--) {
-          matrix[abcdef[i]] = this[abcdef[i]];
-        }
-
-        return matrix;
-      } // Check if two matrices are equal
-
-    }, {
-      key: "equals",
-      value: function equals(other) {
-        var comp = new Matrix(other);
-        return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) && closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f);
-      } // Convert matrix to string
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')';
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.a, this.b, this.c, this.d, this.e, this.f];
-      }
-    }, {
-      key: "valueOf",
-      value: function valueOf() {
-        return {
-          a: this.a,
-          b: this.b,
-          c: this.c,
-          d: this.d,
-          e: this.e,
-          f: this.f
-        };
-      }
-    }], [{
-      key: "fromArray",
-      value: function fromArray(a) {
-        return {
-          a: a[0],
-          b: a[1],
-          c: a[2],
-          d: a[3],
-          e: a[4],
-          f: a[5]
-        };
-      }
-    }, {
-      key: "isMatrixLike",
-      value: function isMatrixLike(o) {
-        return o.a != null || o.b != null || o.c != null || o.d != null || o.e != null || o.f != null;
-      }
-    }, {
-      key: "formatTransforms",
-      value: function formatTransforms(o) {
-        // Get all of the parameters required to form the matrix
-        var flipBoth = o.flip === 'both' || o.flip === true;
-        var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1;
-        var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1;
-        var skewX = o.skew && o.skew.length ? o.skew[0] : isFinite(o.skew) ? o.skew : isFinite(o.skewX) ? o.skewX : 0;
-        var skewY = o.skew && o.skew.length ? o.skew[1] : isFinite(o.skew) ? o.skew : isFinite(o.skewY) ? o.skewY : 0;
-        var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX : isFinite(o.scale) ? o.scale * flipX : isFinite(o.scaleX) ? o.scaleX * flipX : flipX;
-        var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY : isFinite(o.scale) ? o.scale * flipY : isFinite(o.scaleY) ? o.scaleY * flipY : flipY;
-        var shear = o.shear || 0;
-        var theta = o.rotate || o.theta || 0;
-        var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY);
-        var ox = origin.x;
-        var oy = origin.y;
-        var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY);
-        var px = position.x;
-        var py = position.y;
-        var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY);
-        var tx = translate.x;
-        var ty = translate.y;
-        var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY);
-        var rx = relative.x;
-        var ry = relative.y; // Populate all of the values
-
-        return {
-          scaleX: scaleX,
-          scaleY: scaleY,
-          skewX: skewX,
-          skewY: skewY,
-          shear: shear,
-          theta: theta,
-          rx: rx,
-          ry: ry,
-          tx: tx,
-          ty: ty,
-          ox: ox,
-          oy: oy,
-          px: px,
-          py: py
-        };
-      } // left matrix, right matrix, target matrix which is overwritten
-
-    }, {
-      key: "matrixMultiply",
-      value: function matrixMultiply(l, r, o) {
-        // Work out the product directly
-        var a = l.a * r.a + l.c * r.b;
-        var b = l.b * r.a + l.d * r.b;
-        var c = l.a * r.c + l.c * r.d;
-        var d = l.b * r.c + l.d * r.d;
-        var e = l.e + l.a * r.e + l.c * r.f;
-        var f = l.f + l.b * r.e + l.d * r.f; // make sure to use local variables because l/r and o could be the same
-
-        o.a = a;
-        o.b = b;
-        o.c = c;
-        o.d = d;
-        o.e = e;
-        o.f = f;
-        return o;
-      }
-    }]);
-
-    return Matrix;
-  }();
-  registerMethods({
-    Element: {
-      // Get current matrix
-      ctm: function ctm() {
-        return new Matrix(this.node.getCTM());
-      },
-      // Get current screen matrix
-      screenCTM: function screenCTM() {
-        /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
-           This is needed because FF does not return the transformation matrix
-           for the inner coordinate system when getScreenCTM() is called on nested svgs.
-           However all other Browsers do that */
-        if (typeof this.isRoot === 'function' && !this.isRoot()) {
-          var rect = this.rect(1, 1);
-          var m = rect.node.getScreenCTM();
-          rect.remove();
-          return new Matrix(m);
-        }
-
-        return new Matrix(this.node.getScreenCTM());
-      }
-    }
-  });
 
   var sugar = {
     stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
@@ -2989,9 +2947,9 @@ var SVG = (function () {
 
   function toParent(parent) {
     if (this === parent) return this;
-    var ctm = this.screenCTM();
+    var ctm$$1 = this.screenCTM();
     var pCtm = parent.screenCTM().inverse();
-    this.addTo(parent).untransform().transform(pCtm.multiply(ctm));
+    this.addTo(parent).untransform().transform(pCtm.multiply(ctm$$1));
     return this;
   } // same as above with parent equals root-svg
 
@@ -3024,149 +2982,6 @@ var SVG = (function () {
     toParent: toParent,
     toDoc: toDoc,
     transform: transform
-  });
-
-  function isNulledBox(box) {
-    return !box.w && !box.h && !box.x && !box.y;
-  }
-
-  function domContains(node) {
-    return (globals.document.documentElement.contains || function (node) {
-      // This is IE - it does not support contains() for top-level SVGs
-      while (node.parentNode) {
-        node = node.parentNode;
-      }
-
-      return node === document;
-    }).call(globals.document.documentElement, node);
-  }
-
-  var Box =
-  /*#__PURE__*/
-  function () {
-    function Box() {
-      _classCallCheck(this, Box);
-
-      this.init.apply(this, arguments);
-    }
-
-    _createClass(Box, [{
-      key: "init",
-      value: function init(source) {
-        var base = [0, 0, 0, 0];
-        source = typeof source === 'string' ? source.split(delimiter).map(parseFloat) : Array.isArray(source) ? source : _typeof(source) === 'object' ? [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] : arguments.length === 4 ? [].slice.call(arguments) : base;
-        this.x = source[0] || 0;
-        this.y = source[1] || 0;
-        this.width = this.w = source[2] || 0;
-        this.height = this.h = source[3] || 0; // Add more bounding box properties
-
-        this.x2 = this.x + this.w;
-        this.y2 = this.y + this.h;
-        this.cx = this.x + this.w / 2;
-        this.cy = this.y + this.h / 2;
-        return this;
-      } // Merge rect box with another, return a new instance
-
-    }, {
-      key: "merge",
-      value: function merge(box) {
-        var x = Math.min(this.x, box.x);
-        var y = Math.min(this.y, box.y);
-        var width = Math.max(this.x + this.width, box.x + box.width) - x;
-        var height = Math.max(this.y + this.height, box.y + box.height) - y;
-        return new Box(x, y, width, height);
-      }
-    }, {
-      key: "transform",
-      value: function transform(m) {
-        var xMin = Infinity;
-        var xMax = -Infinity;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        var pts = [new Point(this.x, this.y), new Point(this.x2, this.y), new Point(this.x, this.y2), new Point(this.x2, this.y2)];
-        pts.forEach(function (p) {
-          p = p.transform(m);
-          xMin = Math.min(xMin, p.x);
-          xMax = Math.max(xMax, p.x);
-          yMin = Math.min(yMin, p.y);
-          yMax = Math.max(yMax, p.y);
-        });
-        return new Box(xMin, yMin, xMax - xMin, yMax - yMin);
-      }
-    }, {
-      key: "addOffset",
-      value: function addOffset() {
-        // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-        this.x += globals.window.pageXOffset;
-        this.y += globals.window.pageYOffset;
-        return this;
-      }
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height;
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.x, this.y, this.width, this.height];
-      }
-    }, {
-      key: "isNulled",
-      value: function isNulled() {
-        return isNulledBox(this);
-      }
-    }]);
-
-    return Box;
-  }();
-
-  function getBox(cb) {
-    var box;
-
-    try {
-      box = cb(this.node);
-
-      if (isNulledBox(box) && !domContains(this.node)) {
-        throw new Error('Element not in the dom');
-      }
-    } catch (e) {
-      try {
-        var clone = this.clone().addTo(parser().svg).show();
-        box = cb(clone.node);
-        clone.remove();
-      } catch (e) {
-        throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible');
-      }
-    }
-
-    return box;
-  }
-
-  registerMethods({
-    Element: {
-      // Get bounding box
-      bbox: function bbox() {
-        return new Box(getBox.call(this, function (node) {
-          return node.getBBox();
-        }));
-      },
-      rbox: function rbox(el) {
-        var box = new Box(getBox.call(this, function (node) {
-          return node.getBoundingClientRect();
-        }));
-        if (el) return box.transform(el.screenCTM().inverse());
-        return box.addOffset();
-      }
-    },
-    viewbox: {
-      viewbox: function viewbox(x, y, width, height) {
-        // act as getter
-        if (x == null) return new Box(this.attr('viewBox')); // act as setter
-
-        return this.attr('viewBox', new Box(x, y, width, height));
-      }
-    }
   });
 
   function rx(rx) {
@@ -3281,6 +3096,152 @@ var SVG = (function () {
     }
   });
   register(Circle);
+
+  var Container =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Container, _Element);
+
+    function Container() {
+      _classCallCheck(this, Container);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Container).apply(this, arguments));
+    }
+
+    _createClass(Container, [{
+      key: "flatten",
+      value: function flatten(parent) {
+        this.each(function () {
+          if (this instanceof Container) return this.flatten(parent).ungroup(parent);
+          return this.toParent(parent);
+        }); // we need this so that Doc does not get removed
+
+        this.node.firstElementChild || this.remove();
+        return this;
+      }
+    }, {
+      key: "ungroup",
+      value: function ungroup(parent) {
+        parent = parent || this.parent();
+        this.each(function () {
+          return this.toParent(parent);
+        });
+        this.remove();
+        return this;
+      }
+    }]);
+
+    return Container;
+  }(Element);
+  register(Container);
+
+  var Defs =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Defs, _Container);
+
+    function Defs(node) {
+      _classCallCheck(this, Defs);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Defs).call(this, nodeOrNew('defs', node), node));
+    }
+
+    _createClass(Defs, [{
+      key: "flatten",
+      value: function flatten() {
+        return this;
+      }
+    }, {
+      key: "ungroup",
+      value: function ungroup() {
+        return this;
+      }
+    }]);
+
+    return Defs;
+  }(Container);
+  register(Defs);
+
+  var Doc$1 =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Doc, _Container);
+
+    function Doc(node) {
+      var _this;
+
+      _classCallCheck(this, Doc);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), node));
+
+      _this.namespace();
+
+      return _this;
+    }
+
+    _createClass(Doc, [{
+      key: "isRoot",
+      value: function isRoot() {
+        return !this.node.parentNode || !(this.node.parentNode instanceof globals.window.SVGElement) || this.node.parentNode.nodeName === '#document';
+      } // Check if this is a root svg
+      // If not, call docs from this element
+
+    }, {
+      key: "doc",
+      value: function doc() {
+        if (this.isRoot()) return this;
+        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this);
+      } // Add namespaces
+
+    }, {
+      key: "namespace",
+      value: function namespace() {
+        if (!this.isRoot()) return this.doc().namespace();
+        return this.attr({
+          xmlns: ns,
+          version: '1.1'
+        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
+      } // Creates and returns defs element
+
+    }, {
+      key: "defs",
+      value: function defs() {
+        if (!this.isRoot()) return this.doc().defs();
+        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
+      } // custom parent method
+
+    }, {
+      key: "parent",
+      value: function parent(type) {
+        if (this.isRoot()) {
+          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
+        }
+
+        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type);
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        // remove children
+        while (this.node.hasChildNodes()) {
+          this.node.removeChild(this.node.lastChild);
+        }
+
+        return this;
+      }
+    }]);
+
+    return Doc;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create nested svg document
+      nested: wrapWithAttrCheck(function () {
+        return this.put(new Doc$1());
+      })
+    }
+  });
+  register(Doc$1, 'Doc', true);
 
   var Ellipse =
   /*#__PURE__*/
@@ -3440,7 +3401,7 @@ var SVG = (function () {
       }
     }, {
       key: "bbox",
-      value: function bbox() {
+      value: function bbox$$1() {
         return new Box();
       }
     }]);
@@ -3515,7 +3476,7 @@ var SVG = (function () {
       }
     }, {
       key: "bbox",
-      value: function bbox() {
+      value: function bbox$$1() {
         return new Box();
       }
     }]);
@@ -6067,12 +6028,12 @@ var SVG = (function () {
       });
       return this;
     },
-    zoom: function zoom(level, point) {
+    zoom: function zoom(level, point$$1) {
       var morpher = new Morphable(this._stepper).to(new SVGNumber(level));
       this.queue(function () {
         morpher = morpher.from(this.zoom());
       }, function (pos) {
-        this.element().zoom(morpher.at(pos), point);
+        this.element().zoom(morpher.at(pos), point$$1);
         return morpher.done();
       });
       return this;
