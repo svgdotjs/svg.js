@@ -11,7 +11,6 @@ import { ns } from '../modules/core/namespaces.js'
 import EventTarget from '../types/EventTarget.js'
 import attr from '../modules/core/attr.js'
 
-
 export default class Dom extends EventTarget {
   constructor (node, attrs) {
     super(node)

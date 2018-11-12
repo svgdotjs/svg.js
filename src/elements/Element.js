@@ -4,7 +4,6 @@ import { reference } from '../modules/core/regex.js'
 import Dom from './Dom.js'
 import SVGNumber from '../types/SVGNumber.js'
 
-
 const Doc = getClass(root)
 
 export default class Element extends Dom {
