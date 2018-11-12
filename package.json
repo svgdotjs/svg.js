@@ -59,7 +59,7 @@
     "lint": "npx eslint ./src",
     "fix": "npx eslint ./src --fix",
     "test": "npx karma start .config/karma.conf.js",
-    "test:dots": "npx karma start .config/karma.conf.js --single-run --reporters dots",
+    "test:ci": "karma start .config/karma.conf.saucelabs.js",
     "server": "npx http-server ./ -d"
   },
   "devDependencies": {
