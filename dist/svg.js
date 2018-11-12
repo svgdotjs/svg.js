@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 08 2018 19:44:36 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 00:35:39 GMT+0100 (CET)
 */;
 var SVG = (function () {
   'use strict';
@@ -1759,6 +1759,7 @@ var SVG = (function () {
   extend(Dom, {
     attr: attr
   });
+  register(Dom);
 
   var Doc = getClass(root);
 
@@ -1914,6 +1915,7 @@ var SVG = (function () {
 
     return Element;
   }(Dom);
+  register(Element);
 
   var Container =
   /*#__PURE__*/
@@ -1951,6 +1953,7 @@ var SVG = (function () {
 
     return Container;
   }(Element);
+  register(Container);
 
   var Defs =
   /*#__PURE__*/
@@ -5356,6 +5359,7 @@ var SVG = (function () {
 
     return Shape;
   }(Element);
+  register(Shape);
 
   var Circle =
   /*#__PURE__*/
@@ -6785,6 +6789,7 @@ var SVG = (function () {
       return this.put(new Style()).font(name, src, params);
     })
   });
+  register(Style);
 
   var _Symbol =
   /*#__PURE__*/
