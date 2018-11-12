@@ -8,11 +8,9 @@ import {
 } from '../utils/adopter.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
-import globals from '../utils/window.js'
+import { globals } from '../utils/window.js'
 import EventTarget from '../types/EventTarget.js'
 import attr from '../modules/core/attr.js'
-
-const { window, document } = globals
 
 export default class Dom extends EventTarget {
   constructor (node, attrs) {
@@ -156,7 +154,7 @@ export default class Dom extends EventTarget {
     if (!type) return parent
 
     // loop trough ancestors if type is given
-    while (parent && parent.node instanceof window.SVGElement) { // FIXME: That shouldnt be neccessary
+    while (parent && parent.node instanceof globals.window.SVGElement) { // FIXME: That shouldnt be neccessary
       if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
       parent = adopt(parent.node.parentNode)
     }
@@ -279,8 +277,8 @@ export default class Dom extends EventTarget {
     outerHTML = outerHTML == null ? false : outerHTML
 
     // Create temporary holder
-    well = document.createElementNS(ns, 'svg')
-    fragment = document.createDocumentFragment()
+    well = globals.document.createElementNS(ns, 'svg')
+    fragment = globals.document.createDocumentFragment()
 
     // Dump raw svg
     well.innerHTML = svgOrFn

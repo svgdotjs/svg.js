@@ -1,6 +1,4 @@
-import globals from '../../utils/window.js'
-
-const { document } = globals
+import { globals } from '../../utils/window.js'
 
 // Create plain text node
 export function plain (text) {
@@ -10,7 +8,7 @@ export function plain (text) {
   }
 
   // create text node
-  this.node.appendChild(document.createTextNode(text))
+  this.node.appendChild(globals.document.createTextNode(text))
 
   return this
 }

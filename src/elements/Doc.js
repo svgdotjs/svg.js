@@ -8,9 +8,7 @@ import { ns, svgjs, xlink, xmlns } from '../modules/core/namespaces.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 import Defs from './Defs.js'
-import globals from '../utils/window.js'
-
-const { window } = globals
+import { globals } from '../utils/window.js'
 
 export default class Doc extends Container {
   constructor (node) {
@@ -20,7 +18,7 @@ export default class Doc extends Container {
 
   isRoot () {
     return !this.node.parentNode ||
-      !(this.node.parentNode instanceof window.SVGElement) ||
+      !(this.node.parentNode instanceof globals.window.SVGElement) ||
       this.node.parentNode.nodeName === '#document'
   }
 

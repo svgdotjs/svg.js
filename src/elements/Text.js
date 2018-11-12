@@ -9,10 +9,8 @@ import { attrs } from '../modules/core/defaults.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
-import globals from '../utils/window.js'
+import { globals } from '../utils/window.js'
 import * as textable from '../modules/core/textable.js'
-
-const { window } = globals
 
 export default class Text extends Shape {
   // Initialize node
@@ -134,7 +132,7 @@ export default class Text extends Shape {
       var leading = this.dom.leading
 
       this.each(function () {
-        var fontSize = window.getComputedStyle(this.node)
+        var fontSize = globals.window.getComputedStyle(this.node)
           .getPropertyValue('font-size')
         var dy = leading * new SVGNumber(fontSize)
 

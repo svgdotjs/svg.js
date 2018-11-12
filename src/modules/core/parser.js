@@ -1,7 +1,5 @@
 import Doc from '../../elements/Doc.js'
-import globals from '../../utils/window.js'
-
-const { document } = globals
+import { globals } from '../../utils/window.js'
 
 export default function parser () {
   // Reuse cached element if possible
@@ -21,7 +19,7 @@ export default function parser () {
   }
 
   if (!parser.nodes.svg.node.parentNode) {
-    let b = document.body || document.documentElement
+    let b = globals.document.body || globals.document.documentElement
     parser.nodes.svg.addTo(b)
   }
 

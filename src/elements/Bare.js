@@ -1,9 +1,7 @@
 import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
-import globals from '../utils/window.js'
-
-const { document } = globals
+import { globals } from '../utils/window.js'
 
 export default class Bare extends Container {
   constructor (node, attrs) {
@@ -17,7 +15,7 @@ export default class Bare extends Container {
     }
 
     // create text node
-    this.node.appendChild(document.createTextNode(text))
+    this.node.appendChild(globals.document.createTextNode(text))
 
     return this
   }

@@ -1,23 +1,21 @@
 import { delimiter } from '../modules/core/regex.js'
 import { registerMethods } from '../utils/methods.js'
-import globals from '../utils/window.js'
+import { globals } from '../utils/window.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
-
-const { window, document } = globals
 
 function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
 }
 
 function domContains (node) {
-  return (document.documentElement.contains || function (node) {
+  return (globals.document.documentElement.contains || function (node) {
     // This is IE - it does not support contains() for top-level SVGs
     while (node.parentNode) {
       node = node.parentNode
     }
     return node === document
-  }).call(document.documentElement, node)
+  }).call(globals.document.documentElement, node)
 }
 
 export default class Box {
@@ -88,8 +86,8 @@ export default class Box {
 
   addOffset () {
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-    this.x += window.pageXOffset
-    this.y += window.pageYOffset
+    this.x += globals.window.pageXOffset
+    this.y += globals.window.pageYOffset
     return this
   }
 
@@ -121,7 +119,7 @@ function getBox (cb) {
       box = cb(clone.node)
       clone.remove()
     } catch (e) {
-      console.warn('Getting a bounding box of this element is not possible')
+      throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible')
     }
   }
   return box
