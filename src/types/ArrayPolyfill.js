@@ -24,6 +24,12 @@ export const subClassArray = (function () {
       Arr.prototype = Object.create(baseClass.prototype)
       Arr.prototype.constructor = Arr
 
+      Arr.prototype.map = function (fn) {
+        const arr = new Arr()
+        arr.push.apply(arr, Array.prototype.map.call(this, fn))
+        return arr
+      }
+
       return Arr
     }
   }

@@ -1,7 +1,9 @@
 import { extend } from '../utils/adopter.js'
 import { subClassArray } from './ArrayPolyfill.js'
 
-const List = subClassArray('List', Array, function (arr) {
+const List = subClassArray('List', Array, function (arr = []) {
+  // This catches the case, that native map tries to create an array with new Array(1)
+  if (typeof arr === 'number') return this
   this.length = 0
   this.push(...arr)
 })
@@ -13,9 +15,10 @@ extend(List, {
     if (typeof fnOrMethodName === 'function') {
       this.forEach((el) => { fnOrMethodName.call(el, el) })
     } else {
-      this.forEach((el) => {
-        el[fnOrMethodName](...args)
-      })
+      return this.map(el => { return el[fnOrMethodName](...args) })
+      // this.forEach((el) => {
+      //   el[fnOrMethodName](...args)
+      // })
     }
 
     return this

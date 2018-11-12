@@ -7,7 +7,6 @@ import './modules/optional/memory.js'
 import './modules/optional/sugar.js'
 import './modules/optional/transform.js'
 
-import List from './types/List.js'
 import { extend } from './utils/adopter.js'
 import { getMethodNames, getMethodsFor } from './utils/methods.js'
 import Box from './types/Box.js'
@@ -23,6 +22,7 @@ import EventTarget from './types/EventTarget.js'
 import Gradient from './elements/Gradient.js'
 import Image from './elements/Image.js'
 import Line from './elements/Line.js'
+import List from './types/List.js'
 import Marker from './elements/Marker.js'
 import Matrix from './types/Matrix.js'
 import Morphable, {
@@ -39,6 +39,7 @@ import PointArray from './types/PointArray.js'
 import Polygon from './elements/Polygon.js'
 import Polyline from './elements/Polyline.js'
 import Rect from './elements/Rect.js'
+import Runner from './animation/Runner.js'
 import SVGArray from './types/SVGArray.js'
 import SVGNumber from './types/SVGNumber.js'
 import Shape from './elements/Shape.js'
@@ -153,6 +154,8 @@ extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
 // extend(Element, getConstructor('Memory'))
 extend(Container, getMethodsFor('Container'))
+
+extend(Runner, getMethodsFor('Runner'))
 
 List.extend(getMethodNames())
 

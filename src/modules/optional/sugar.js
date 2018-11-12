@@ -4,7 +4,6 @@ import Color from '../../types/Color.js'
 import Element from '../../elements/Element.js'
 import Matrix from '../../types/Matrix.js'
 import Point from '../../types/Point.js'
-import Runner from '../../animation/Runner.js'
 import SVGNumber from '../../types/SVGNumber.js'
 
 // Define list of available attributes for stroke and fill
@@ -105,19 +104,21 @@ registerMethods(['Element', 'Runner'], {
     return this.attr('opacity', value)
   },
 
+  // Relative move over x and y axes
+  dmove: function (x, y) {
+    return this.dx(x).dy(y)
+  }
+})
+
+registerMethods('Element', {
   // Relative move over x axis
   dx: function (x) {
-    return this.x(new SVGNumber(x).plus(this instanceof Runner ? 0 : this.x()), true)
+    return this.x(new SVGNumber(x).plus(this.x()))
   },
 
   // Relative move over y axis
   dy: function (y) {
-    return this.y(new SVGNumber(y).plus(this instanceof Runner ? 0 : this.y()), true)
-  },
-
-  // Relative move over x and y axes
-  dmove: function (x, y) {
-    return this.dx(x).dy(y)
+    return this.y(new SVGNumber(y).plus(this.y()))
   }
 })
 
