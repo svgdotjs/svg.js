@@ -24,17 +24,17 @@ const SauceLabsLaunchers = {
     browserName: 'Android',
     deviceName: 'Android Emulator',
     deviceOrientation: 'portrait'
-  },
-  sl_firefox: {
+  },*/
+  SL_firefox_latest: {
     base: 'SauceLabs',
     browserName: 'firefox',
     version: 'latest'
   },
-  sl_chrome: {
+  SL_chrome_latest: {
     base: 'SauceLabs',
     browserName: 'chrome',
     version: 'latest'
-  },
+  },/*
   sl_windows_edge: {
     base: 'SauceLabs',
     browserName: 'MicrosoftEdge',
@@ -82,7 +82,7 @@ const SauceLabsLaunchers = {
     platform: 'OS X 10.11',
     version: '10.0'
   } */
-  'SL_Chrome': {
+  'SL_Chrome_70': {
     base: 'SauceLabs',
     browserName: 'chrome',
     platform: 'Windows 10',

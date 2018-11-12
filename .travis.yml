@@ -4,16 +4,16 @@ node_js:
 script:
     - npm run build
     - npm run test:ci
-    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
+#    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 addons:
 #   firefox: "latest"
 #   chrome: "stable"
-  hosts:
-    - karmalocal.com
+#  hosts:
+#    - karmalocal.com
 before_install:
     # Start a display server where all graphical operations happens in memory
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
-cache:
-  directories:
-    - node_modules
+#cache:
+#  directories:
+#    - node_modules
