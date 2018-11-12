@@ -651,15 +651,16 @@ describe('Element', function() {
   })
 
   describe('parents()', function() {
-    it('returns array of parent up to but not including the dom element filtered by type', function() {
+    it('returns array of parents until the passed element or document', function() {
       var group1 = draw.group().addClass('test')
         , group2 = group1.group()
-        , rect = group2.rect(100,100)
+        , group3 = group2.group()
+        , rect = group3.rect(100,100)
 
-      expect(rect.parents('.test')[0]).toBe(group1)
-      expect(rect.parents(SVG.G)[0]).toBe(group2)
-      expect(rect.parents(SVG.G)[1]).toBe(group1)
-      expect(rect.parents().length).toBe(3)
+      expect(rect.parents('.test')[0]).toBe(group3)
+      expect(rect.parents('.test')[1]).toBe(group2)
+      expect(rect.parents(group2)[0]).toBe(group3)
+      expect(rect.parents(group1).length).toBe(2)
     })
   })
 

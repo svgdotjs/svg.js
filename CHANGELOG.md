@@ -29,12 +29,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `ax(), ay(), amove()` to change texts x and y values directly (#787)
 - added possibility to pass attributes into a constructor like: `new SVG.Rect({width:100})`
 - added possibility to pass in additional attribues to element creators e.g. `canvas.rect({x:100})` or `canvas.rect(100, 100, {x:100})` (#796)
+- added `SVG.List` (#645)
 
 ### Removed
 - removed `SVG.Array.split()` function
 - removed workaround for browser bug with stroke-width
 - removed polyfills
-- removed `SVG.Set`
+- removed `SVG.Set` in favour of `SVG.List`
 - removed feature to set style with css string (e.g. "fill:none;display:block;")
 - removed `loaded()` and `error()` method on `SVG.Image` (#706)
 - removed sub-pixel offset fix
@@ -84,6 +85,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `attr()` excepts array now to get multiple values at once
 - `SVG.Text.rebuild()` now takes every font-size into account (#512)
 - `fill()` and `stroke()` return the fill and stroke attribute when called as getter (#789)
+- `parents()` now gives back all parents until the passed one or document
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__

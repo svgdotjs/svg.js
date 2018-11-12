@@ -1,7 +1,9 @@
 import { getClass, makeInstance, register, root } from '../utils/adopter.js'
+import { globals } from '../utils/window.js'
 import { proportionalSize } from '../utils/utils.js'
 import { reference } from '../modules/core/regex.js'
 import Dom from './Dom.js'
+import List from '../types/List.js'
 import SVGNumber from '../types/SVGNumber.js'
 
 const Doc = getClass(root)
@@ -75,16 +77,18 @@ export default class Element extends Dom {
   }
 
   // return array of all ancestors of given type up to the root svg
-  parents (type) {
-    let parents = []
+  parents (until = globals.document) {
+    until = makeInstance(until)
+    let parents = new List()
     let parent = this
 
-    do {
-      parent = parent.parent(type)
-      if (!parent || parent instanceof getClass('HtmlNode')) break
-
+    while (
+      (parent = parent.parent()) &&
+      parent.node !== until.node &&
+      parent.node !== globals.document
+    ) {
       parents.push(parent)
-    } while (parent.parent)
+    }
 
     return parents
   }

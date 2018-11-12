@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 13:26:51 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 13:58:37 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1925,15 +1925,15 @@ var SVG = (function () {
 
     }, {
       key: "parents",
-      value: function parents(type) {
-        var parents = [];
+      value: function parents() {
+        var until = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : globals.document;
+        until = makeInstance(until);
+        var parents = new List();
         var parent = this;
 
-        do {
-          parent = parent.parent(type);
-          if (!parent || parent instanceof getClass('HtmlNode')) break;
+        while ((parent = parent.parent()) && parent.node !== until.node && parent.node !== globals.document) {
           parents.push(parent);
-        } while (parent.parent);
+        }
 
         return parents;
       } // Get referenced element form attribute value
