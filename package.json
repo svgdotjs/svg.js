@@ -85,7 +85,6 @@
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.2",
     "karma-sauce-launcher": "^1.2.0",
-    "karma-spec-reporter": "0.0.32",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
@@ -94,7 +93,5 @@
     "rollup-plugin-uglify": "^6.0.0",
     "rollup-plugin-uglify-es": "0.0.1",
     "svgdom": "latest"
-  },
-  "dependencies": {},
-  "optionalDependencies": {}
+  }
 }

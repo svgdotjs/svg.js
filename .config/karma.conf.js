@@ -20,14 +20,23 @@ if (process.platform === 'linux') {
 module.exports = function (config) {
   config.set(
     Object.assign(karmaCommon(config), {
-      // list of files to exclude
-      exclude: [],
-
       // preprocess matching files before serving them to the browser
       // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
       preprocessors: {
         'dist/svg.js': ['coverage']
       },
+
+      // this specifies which plugins karma should load
+      // by default all karma plugins, starting with `karma-` will load
+      // so if you are really puzzled why something isn't working, then comment
+      // out plugins: [] - it's here to make karma load faster
+      // get possible karma plugins by `ls node_modules | grep 'karma-*'`
+      plugins: [
+        'karma-chrome-launcher',
+        'karma-coverage',
+        'karma-firefox-launcher',
+        'karma-jasmine',
+      ],
 
       // test results reporter to use
       // possible values: 'dots', 'progress'

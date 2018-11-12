@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 00:35:39 GMT+0100 (CET)
+* BUILT: Mon Nov 12 2018 20:31:54 GMT+0100 (CET)
 */;
 var SVG = (function () {
   'use strict';
