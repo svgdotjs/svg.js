@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 09:31:46 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 12 2018 13:00:40 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -216,6 +216,64 @@ var SVG = (function () {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
+  var methods = {};
+  var names = [];
+  function registerMethods(name, m) {
+    if (Array.isArray(name)) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _name = _step.value;
+          registerMethods(_name, m);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return;
+    }
+
+    if (_typeof(name) === 'object') {
+      var _arr = Object.entries(name);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var _arr$_i = _slicedToArray(_arr[_i], 2),
+            _name2 = _arr$_i[0],
+            _m = _arr$_i[1];
+
+        registerMethods(_name2, _m);
+      }
+
+      return;
+    }
+
+    addMethodNames(Object.keys(m));
+    methods[name] = Object.assign(methods[name] || {}, m);
+  }
+  function getMethodsFor(name) {
+    return methods[name] || {};
+  }
+  function getMethodNames() {
+    return _toConsumableArray(new Set(names));
+  }
+  function addMethodNames(_names) {
+    names.push.apply(names, _toConsumableArray(_names));
+  }
+
   // Map function
   function map(array, block) {
     var i;
@@ -398,6 +456,7 @@ var SVG = (function () {
     var asRoot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     elements[name] = element;
     if (asRoot) elements[root] = element;
+    addMethodNames(Object.keys(element.prototype));
     return element;
   }
   function getClass(name) {
@@ -460,56 +519,6 @@ var SVG = (function () {
         return fn.apply(this, args);
       }
     };
-  }
-
-  var methods = {};
-  function registerMethods(name, m) {
-    if (Array.isArray(name)) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = name[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _name = _step.value;
-          registerMethods(_name, m);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      return;
-    }
-
-    if (_typeof(name) === 'object') {
-      var _arr = Object.entries(name);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var _arr$_i = _slicedToArray(_arr[_i], 2),
-            _name2 = _arr$_i[0],
-            _m = _arr$_i[1];
-
-        registerMethods(_name2, _m);
-      }
-
-      return;
-    }
-
-    methods[name] = Object.assign(methods[name] || {}, m);
-  }
-  function getMethodsFor(name) {
-    return methods[name] || {};
   }
 
   function siblings() {
@@ -1213,7 +1222,7 @@ var SVG = (function () {
   var subClassArray = function () {
     try {
       // try es6 subclassing
-      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '[name]: class extends baseClass {', 'constructor (...args) {', 'super(...args)', '_constructor && _constructor.apply(this, args)', '}', '}', '}[name]'].join('\n'));
+      return Function('name', 'baseClass', '_constructor', ['baseClass = baseClass || Array', 'return {', '  [name]: class extends baseClass {', '    constructor (...args) {', '      super(...args)', '      _constructor && _constructor.apply(this, args)', '    }', '  }', '}[name]'].join('\n'));
     } catch (e) {
       // Use es5 approach
       return function (name) {
@@ -1228,6 +1237,13 @@ var SVG = (function () {
 
         Arr.prototype = Object.create(baseClass.prototype);
         Arr.prototype.constructor = Arr;
+
+        Arr.prototype.map = function (fn) {
+          var arr = new Arr();
+          arr.push.apply(arr, Array.prototype.map.call(this, fn));
+          return arr;
+        };
+
         return Arr;
       };
     }
@@ -1238,6 +1254,8 @@ var SVG = (function () {
   });
   extend(SVGArray, {
     init: function init(arr) {
+      // This catches the case, that native map tries to create an array with new Array(1)
+      if (typeof arr === 'number') return this;
       this.length = 0;
       this.push.apply(this, _toConsumableArray(this.parse(arr)));
       return this;
@@ -2720,6 +2738,1179 @@ var SVG = (function () {
     }
   });
 
+  var sugar = {
+    stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
+    fill: ['color', 'opacity', 'rule'],
+    prefix: function prefix(t, a) {
+      return a === 'color' ? t : t + '-' + a;
+    } // Add sugar for fill and stroke
+
+  };
+  ['fill', 'stroke'].forEach(function (m) {
+    var extension = {};
+    var i;
+
+    extension[m] = function (o) {
+      if (typeof o === 'undefined') {
+        return this.attr(m);
+      }
+
+      if (typeof o === 'string' || Color.isRgb(o) || o instanceof Element) {
+        this.attr(m, o);
+      } else {
+        // set all attributes from sugar.fill and sugar.stroke list
+        for (i = sugar[m].length - 1; i >= 0; i--) {
+          if (o[sugar[m][i]] != null) {
+            this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]]);
+          }
+        }
+      }
+
+      return this;
+    };
+
+    registerMethods(['Shape', 'Runner'], extension);
+  });
+  registerMethods(['Element', 'Runner'], {
+    // Let the user set the matrix directly
+    matrix: function matrix(mat, b, c, d, e, f) {
+      // Act as a getter
+      if (mat == null) {
+        return new Matrix(this);
+      } // Act as a setter, the user can pass a matrix or a set of numbers
+
+
+      return this.attr('transform', new Matrix(mat, b, c, d, e, f));
+    },
+    // Map rotation to transform
+    rotate: function rotate(angle, cx, cy) {
+      return this.transform({
+        rotate: angle,
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map skew to transform
+    skew: function skew(x, y, cx, cy) {
+      return arguments.length === 1 || arguments.length === 3 ? this.transform({
+        skew: x,
+        ox: y,
+        oy: cx
+      }, true) : this.transform({
+        skew: [x, y],
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    shear: function shear(lam, cx, cy) {
+      return this.transform({
+        shear: lam,
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map scale to transform
+    scale: function scale(x, y, cx, cy) {
+      return arguments.length === 1 || arguments.length === 3 ? this.transform({
+        scale: x,
+        ox: y,
+        oy: cx
+      }, true) : this.transform({
+        scale: [x, y],
+        ox: cx,
+        oy: cy
+      }, true);
+    },
+    // Map translate to transform
+    translate: function translate(x, y) {
+      return this.transform({
+        translate: [x, y]
+      }, true);
+    },
+    // Map relative translations to transform
+    relative: function relative(x, y) {
+      return this.transform({
+        relative: [x, y]
+      }, true);
+    },
+    // Map flip to transform
+    flip: function flip(direction, around) {
+      var directionString = typeof direction === 'string' ? direction : isFinite(direction) ? 'both' : 'both';
+      var origin = direction === 'both' && isFinite(around) ? [around, around] : direction === 'x' ? [around, 0] : direction === 'y' ? [0, around] : isFinite(direction) ? [direction, direction] : [0, 0];
+      this.transform({
+        flip: directionString,
+        origin: origin
+      }, true);
+    },
+    // Opacity
+    opacity: function opacity(value) {
+      return this.attr('opacity', value);
+    },
+    // Relative move over x and y axes
+    dmove: function dmove(x, y) {
+      return this.dx(x).dy(y);
+    }
+  });
+  registerMethods('Element', {
+    // Relative move over x axis
+    dx: function dx(x) {
+      return this.x(new SVGNumber(x).plus(this.x()));
+    },
+    // Relative move over y axis
+    dy: function dy(y) {
+      return this.y(new SVGNumber(y).plus(this.y()));
+    }
+  });
+  registerMethods('radius', {
+    // Add x and y radius
+    radius: function radius(x, y) {
+      var type = (this._element || this).type;
+      return type === 'radialGradient' || type === 'radialGradient' ? this.attr('r', new SVGNumber(x)) : this.rx(x).ry(y == null ? x : y);
+    }
+  });
+  registerMethods('Path', {
+    // Get path length
+    length: function length() {
+      return this.node.getTotalLength();
+    },
+    // Get point at length
+    pointAt: function pointAt(length) {
+      return new Point(this.node.getPointAtLength(length));
+    }
+  });
+  registerMethods(['Element', 'Runner'], {
+    // Set font
+    font: function font(a, v) {
+      if (_typeof(a) === 'object') {
+        for (v in a) {
+          this.font(v, a[v]);
+        }
+      }
+
+      return a === 'leading' ? this.leading(v) : a === 'anchor' ? this.attr('text-anchor', v) : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style' ? this.attr('font-' + a, v) : this.attr(a, v);
+    }
+  });
+  registerMethods('Text', {
+    ax: function ax(x) {
+      return this.attr('x', x);
+    },
+    ay: function ay(y) {
+      return this.attr('y', y);
+    },
+    amove: function amove(x, y) {
+      return this.ax(x).ay(y);
+    }
+  }); // Add events to elements
+
+  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
+    // add event to Element
+    var fn = function fn(f) {
+      if (f === null) {
+        off(this, event);
+      } else {
+        on(this, event, f);
+      }
+
+      return this;
+    };
+
+    last[event] = fn;
+    return last;
+  }, {});
+  registerMethods('Element', methods$1);
+
+  function untransform() {
+    return this.attr('transform', null);
+  } // merge the whole transformation chain into one matrix and returns it
+
+  function matrixify() {
+    var matrix = (this.attr('transform') || ''). // split transformations
+    split(transforms).slice(0, -1).map(function (str) {
+      // generate key => value pairs
+      var kv = str.trim().split('(');
+      return [kv[0], kv[1].split(delimiter).map(function (str) {
+        return parseFloat(str);
+      })];
+    }).reverse() // merge every transformation into one matrix
+    .reduce(function (matrix, transform) {
+      if (transform[0] === 'matrix') {
+        return matrix.lmultiply(Matrix.fromArray(transform[1]));
+      }
+
+      return matrix[transform[0]].apply(matrix, transform[1]);
+    }, new Matrix());
+    return matrix;
+  } // add an element to another parent without changing the visual representation on the screen
+
+  function toParent(parent) {
+    if (this === parent) return this;
+    var ctm = this.screenCTM();
+    var pCtm = parent.screenCTM().inverse();
+    this.addTo(parent).untransform().transform(pCtm.multiply(ctm));
+    return this;
+  } // same as above with parent equals root-svg
+
+  function toDoc() {
+    return this.toParent(this.doc());
+  } // Add transformations
+
+  function transform(o, relative) {
+    // Act as a getter if no object was passed
+    if (o == null || typeof o === 'string') {
+      var decomposed = new Matrix(this).decompose();
+      return decomposed[o] || decomposed;
+    }
+
+    if (!Matrix.isMatrixLike(o)) {
+      // Set the origin according to the defined transform
+      o = _objectSpread({}, o, {
+        origin: getOrigin(o, this)
+      });
+    } // The user can pass a boolean, an Element or an Matrix or nothing
+
+
+    var cleanRelative = relative === true ? this : relative || false;
+    var result = new Matrix(cleanRelative).transform(o);
+    return this.attr('transform', result);
+  }
+  registerMethods('Element', {
+    untransform: untransform,
+    matrixify: matrixify,
+    toParent: toParent,
+    toDoc: toDoc,
+    transform: transform
+  });
+
+  function isNulledBox(box) {
+    return !box.w && !box.h && !box.x && !box.y;
+  }
+
+  function domContains(node) {
+    return (globals.document.documentElement.contains || function (node) {
+      // This is IE - it does not support contains() for top-level SVGs
+      while (node.parentNode) {
+        node = node.parentNode;
+      }
+
+      return node === document;
+    }).call(globals.document.documentElement, node);
+  }
+
+  var Box =
+  /*#__PURE__*/
+  function () {
+    function Box() {
+      _classCallCheck(this, Box);
+
+      this.init.apply(this, arguments);
+    }
+
+    _createClass(Box, [{
+      key: "init",
+      value: function init(source) {
+        var base = [0, 0, 0, 0];
+        source = typeof source === 'string' ? source.split(delimiter).map(parseFloat) : Array.isArray(source) ? source : _typeof(source) === 'object' ? [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] : arguments.length === 4 ? [].slice.call(arguments) : base;
+        this.x = source[0] || 0;
+        this.y = source[1] || 0;
+        this.width = this.w = source[2] || 0;
+        this.height = this.h = source[3] || 0; // Add more bounding box properties
+
+        this.x2 = this.x + this.w;
+        this.y2 = this.y + this.h;
+        this.cx = this.x + this.w / 2;
+        this.cy = this.y + this.h / 2;
+        return this;
+      } // Merge rect box with another, return a new instance
+
+    }, {
+      key: "merge",
+      value: function merge(box) {
+        var x = Math.min(this.x, box.x);
+        var y = Math.min(this.y, box.y);
+        var width = Math.max(this.x + this.width, box.x + box.width) - x;
+        var height = Math.max(this.y + this.height, box.y + box.height) - y;
+        return new Box(x, y, width, height);
+      }
+    }, {
+      key: "transform",
+      value: function transform(m) {
+        var xMin = Infinity;
+        var xMax = -Infinity;
+        var yMin = Infinity;
+        var yMax = -Infinity;
+        var pts = [new Point(this.x, this.y), new Point(this.x2, this.y), new Point(this.x, this.y2), new Point(this.x2, this.y2)];
+        pts.forEach(function (p) {
+          p = p.transform(m);
+          xMin = Math.min(xMin, p.x);
+          xMax = Math.max(xMax, p.x);
+          yMin = Math.min(yMin, p.y);
+          yMax = Math.max(yMax, p.y);
+        });
+        return new Box(xMin, yMin, xMax - xMin, yMax - yMin);
+      }
+    }, {
+      key: "addOffset",
+      value: function addOffset() {
+        // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+        this.x += globals.window.pageXOffset;
+        this.y += globals.window.pageYOffset;
+        return this;
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height;
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        return [this.x, this.y, this.width, this.height];
+      }
+    }, {
+      key: "isNulled",
+      value: function isNulled() {
+        return isNulledBox(this);
+      }
+    }]);
+
+    return Box;
+  }();
+
+  function getBox(cb) {
+    var box;
+
+    try {
+      box = cb(this.node);
+
+      if (isNulledBox(box) && !domContains(this.node)) {
+        throw new Error('Element not in the dom');
+      }
+    } catch (e) {
+      try {
+        var clone = this.clone().addTo(parser().svg).show();
+        box = cb(clone.node);
+        clone.remove();
+      } catch (e) {
+        throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible');
+      }
+    }
+
+    return box;
+  }
+
+  registerMethods({
+    Element: {
+      // Get bounding box
+      bbox: function bbox() {
+        return new Box(getBox.call(this, function (node) {
+          return node.getBBox();
+        }));
+      },
+      rbox: function rbox(el) {
+        var box = new Box(getBox.call(this, function (node) {
+          return node.getBoundingClientRect();
+        }));
+        if (el) return box.transform(el.screenCTM().inverse());
+        return box.addOffset();
+      }
+    },
+    viewbox: {
+      viewbox: function viewbox(x, y, width, height) {
+        // act as getter
+        if (x == null) return new Box(this.attr('viewBox')); // act as setter
+
+        return this.attr('viewBox', new Box(x, y, width, height));
+      }
+    }
+  });
+
+  function rx(rx) {
+    return this.attr('rx', rx);
+  } // Radius y value
+
+  function ry(ry) {
+    return this.attr('ry', ry);
+  } // Move over x-axis
+
+  function x(x) {
+    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
+  } // Move over y-axis
+
+  function y(y) {
+    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
+  } // Move by center over x-axis
+
+  function cx(x) {
+    return x == null ? this.attr('cx') : this.attr('cx', x);
+  } // Move by center over y-axis
+
+  function cy(y) {
+    return y == null ? this.attr('cy') : this.attr('cy', y);
+  } // Set width of element
+
+  function width(width) {
+    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
+  } // Set height of element
+
+  function height(height) {
+    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
+  }
+
+  var circled = /*#__PURE__*/Object.freeze({
+    rx: rx,
+    ry: ry,
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height
+  });
+
+  var Shape =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Shape, _Element);
+
+    function Shape() {
+      _classCallCheck(this, Shape);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Shape).apply(this, arguments));
+    }
+
+    return Shape;
+  }(Element);
+  register(Shape);
+
+  var Circle =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Circle, _Shape);
+
+    function Circle(node) {
+      _classCallCheck(this, Circle);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), node));
+    }
+
+    _createClass(Circle, [{
+      key: "radius",
+      value: function radius(r) {
+        return this.attr('r', r);
+      } // Radius x value
+
+    }, {
+      key: "rx",
+      value: function rx$$1(_rx) {
+        return this.attr('r', _rx);
+      } // Alias radius x value
+
+    }, {
+      key: "ry",
+      value: function ry$$1(_ry) {
+        return this.rx(_ry);
+      }
+    }, {
+      key: "size",
+      value: function size(_size) {
+        return this.radius(new SVGNumber(_size).divide(2));
+      }
+    }]);
+
+    return Circle;
+  }(Shape);
+  extend(Circle, {
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height
+  });
+  registerMethods({
+    Element: {
+      // Create circle element
+      circle: wrapWithAttrCheck(function (size) {
+        return this.put(new Circle()).size(size).move(0, 0);
+      })
+    }
+  });
+  register(Circle);
+
+  var Ellipse =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Ellipse, _Shape);
+
+    function Ellipse(node) {
+      _classCallCheck(this, Ellipse);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), node));
+    }
+
+    _createClass(Ellipse, [{
+      key: "size",
+      value: function size(width$$1, height$$1) {
+        var p = proportionalSize(this, width$$1, height$$1);
+        return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
+      }
+    }]);
+
+    return Ellipse;
+  }(Shape);
+  extend(Ellipse, circled);
+  registerMethods('Container', {
+    // Create an ellipse
+    ellipse: wrapWithAttrCheck(function (width$$1, height$$1) {
+      return this.put(new Ellipse()).size(width$$1, height$$1).move(0, 0);
+    })
+  });
+  register(Ellipse);
+
+  var Stop =
+  /*#__PURE__*/
+  function (_Element) {
+    _inherits(Stop, _Element);
+
+    function Stop(node) {
+      _classCallCheck(this, Stop);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), node));
+    } // add color stops
+
+
+    _createClass(Stop, [{
+      key: "update",
+      value: function update(o) {
+        if (typeof o === 'number' || o instanceof SVGNumber) {
+          o = {
+            offset: arguments[0],
+            color: arguments[1],
+            opacity: arguments[2]
+          };
+        } // set attributes
+
+
+        if (o.opacity != null) this.attr('stop-opacity', o.opacity);
+        if (o.color != null) this.attr('stop-color', o.color);
+        if (o.offset != null) this.attr('offset', new SVGNumber(o.offset));
+        return this;
+      }
+    }]);
+
+    return Stop;
+  }(Element);
+  register(Stop);
+
+  function baseFind(query, parent) {
+    return map((parent || globals.document).querySelectorAll(query), function (node) {
+      return adopt(node);
+    });
+  } // Scoped find method
+
+  function find(query) {
+    return baseFind(query, this.node);
+  }
+  registerMethods('Dom', {
+    find: find
+  });
+
+  function from(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      fx: new SVGNumber(x),
+      fy: new SVGNumber(y)
+    }) : this.attr({
+      x1: new SVGNumber(x),
+      y1: new SVGNumber(y)
+    });
+  }
+  function to(x, y) {
+    return (this._element || this).type === 'radialGradient' ? this.attr({
+      cx: new SVGNumber(x),
+      cy: new SVGNumber(y)
+    }) : this.attr({
+      x2: new SVGNumber(x),
+      y2: new SVGNumber(y)
+    });
+  }
+
+  var gradiented = /*#__PURE__*/Object.freeze({
+    from: from,
+    to: to
+  });
+
+  var Gradient =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Gradient, _Container);
+
+    function Gradient(type, attrs) {
+      _classCallCheck(this, Gradient);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Gradient).call(this, nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type), attrs));
+    } // Add a color stop
+
+
+    _createClass(Gradient, [{
+      key: "stop",
+      value: function stop(offset, color, opacity) {
+        return this.put(new Stop()).update(offset, color, opacity);
+      } // Update gradient
+
+    }, {
+      key: "update",
+      value: function update(block) {
+        // remove all stops
+        this.clear(); // invoke passed block
+
+        if (typeof block === 'function') {
+          block.call(this, this);
+        }
+
+        return this;
+      } // Return the fill id
+
+    }, {
+      key: "url",
+      value: function url() {
+        return 'url(#' + this.id() + ')';
+      } // Alias string convertion to fill
+
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.url();
+      } // custom attr to handle transform
+
+    }, {
+      key: "attr",
+      value: function attr(a, b, c) {
+        if (a === 'transform') a = 'gradientTransform';
+        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c);
+      }
+    }, {
+      key: "targets",
+      value: function targets() {
+        return baseFind('svg [fill*="' + this.id() + '"]');
+      }
+    }, {
+      key: "bbox",
+      value: function bbox() {
+        return new Box();
+      }
+    }]);
+
+    return Gradient;
+  }(Container);
+  extend(Gradient, gradiented);
+  registerMethods({
+    Container: {
+      // Create gradient element in defs
+      gradient: wrapWithAttrCheck(function (type, block) {
+        return this.defs().gradient(type, block);
+      })
+    },
+    // define gradient
+    Defs: {
+      gradient: wrapWithAttrCheck(function (type, block) {
+        return this.put(new Gradient(type)).update(block);
+      })
+    }
+  });
+  register(Gradient);
+
+  var Pattern =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Pattern, _Container);
+
+    // Initialize node
+    function Pattern(node) {
+      _classCallCheck(this, Pattern);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Pattern).call(this, nodeOrNew('pattern', node), node));
+    } // Return the fill id
+
+
+    _createClass(Pattern, [{
+      key: "url",
+      value: function url() {
+        return 'url(#' + this.id() + ')';
+      } // Update pattern by rebuilding
+
+    }, {
+      key: "update",
+      value: function update(block) {
+        // remove content
+        this.clear(); // invoke passed block
+
+        if (typeof block === 'function') {
+          block.call(this, this);
+        }
+
+        return this;
+      } // Alias string convertion to fill
+
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.url();
+      } // custom attr to handle transform
+
+    }, {
+      key: "attr",
+      value: function attr(a, b, c) {
+        if (a === 'transform') a = 'patternTransform';
+        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c);
+      }
+    }, {
+      key: "targets",
+      value: function targets() {
+        return baseFind('svg [fill*="' + this.id() + '"]');
+      }
+    }, {
+      key: "bbox",
+      value: function bbox() {
+        return new Box();
+      }
+    }]);
+
+    return Pattern;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create pattern element in defs
+      pattern: function pattern() {
+        var _this$defs;
+
+        return (_this$defs = this.defs()).pattern.apply(_this$defs, arguments);
+      }
+    },
+    Defs: {
+      pattern: wrapWithAttrCheck(function (width, height, block) {
+        return this.put(new Pattern()).update(block).attr({
+          x: 0,
+          y: 0,
+          width: width,
+          height: height,
+          patternUnits: 'userSpaceOnUse'
+        });
+      })
+    }
+  });
+  register(Pattern);
+
+  var Image =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Image, _Shape);
+
+    function Image(node) {
+      _classCallCheck(this, Image);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Image).call(this, nodeOrNew('image', node), node));
+    } // (re)load image
+
+
+    _createClass(Image, [{
+      key: "load",
+      value: function load(url, callback) {
+        if (!url) return this;
+        var img = new globals.window.Image();
+        on(img, 'load', function (e) {
+          var p = this.parent(Pattern); // ensure image size
+
+          if (this.width() === 0 && this.height() === 0) {
+            this.size(img.width, img.height);
+          }
+
+          if (p instanceof Pattern) {
+            // ensure pattern size if not set
+            if (p.width() === 0 && p.height() === 0) {
+              p.size(this.width(), this.height());
+            }
+          }
+
+          if (typeof callback === 'function') {
+            callback.call(this, {
+              width: img.width,
+              height: img.height,
+              ratio: img.width / img.height,
+              url: url
+            });
+          }
+        }, this);
+        on(img, 'load error', function () {
+          // dont forget to unbind memory leaking events
+          off(img);
+        });
+        return this.attr('href', img.src = url, xlink);
+      }
+    }]);
+
+    return Image;
+  }(Shape);
+  registerAttrHook(function (attr$$1, val, _this) {
+    // convert image fill and stroke to patterns
+    if (attr$$1 === 'fill' || attr$$1 === 'stroke') {
+      if (isImage.test(val)) {
+        val = _this.doc().defs().image(val);
+      }
+    }
+
+    if (val instanceof Image) {
+      val = _this.doc().defs().pattern(0, 0, function (pattern) {
+        pattern.add(val);
+      });
+    }
+
+    return val;
+  });
+  registerMethods({
+    Container: {
+      // create image element, load image and set its size
+      image: wrapWithAttrCheck(function (source, callback) {
+        return this.put(new Image()).size(0, 0).load(source, callback);
+      })
+    }
+  });
+  register(Image);
+
+  var PointArray = subClassArray('PointArray', SVGArray);
+  extend(PointArray, {
+    // Convert array to string
+    toString: function toString() {
+      // convert to a poly point string
+      for (var i = 0, il = this.length, array = []; i < il; i++) {
+        array.push(this[i].join(','));
+      }
+
+      return array.join(' ');
+    },
+    // Convert array to line object
+    toLine: function toLine() {
+      return {
+        x1: this[0][0],
+        y1: this[0][1],
+        x2: this[1][0],
+        y2: this[1][1]
+      };
+    },
+    // Get morphed array at given position
+    at: function at(pos) {
+      // make sure a destination is defined
+      if (!this.destination) return this; // generate morphed point string
+
+      for (var i = 0, il = this.length, array = []; i < il; i++) {
+        array.push([this[i][0] + (this.destination[i][0] - this[i][0]) * pos, this[i][1] + (this.destination[i][1] - this[i][1]) * pos]);
+      }
+
+      return new PointArray(array);
+    },
+    // Parse point string and flat array
+    parse: function parse() {
+      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [[0, 0]];
+      var points = []; // if it is an array
+
+      if (array instanceof Array) {
+        // and it is not flat, there is no need to parse it
+        if (array[0] instanceof Array) {
+          return array;
+        }
+      } else {
+        // Else, it is considered as a string
+        // parse points
+        array = array.trim().split(delimiter).map(parseFloat);
+      } // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
+      // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
+
+
+      if (array.length % 2 !== 0) array.pop(); // wrap points in two-tuples and parse points as floats
+
+      for (var i = 0, len = array.length; i < len; i = i + 2) {
+        points.push([array[i], array[i + 1]]);
+      }
+
+      return points;
+    },
+    // Move point string
+    move: function move(x, y) {
+      var box = this.bbox(); // get relative offset
+
+      x -= box.x;
+      y -= box.y; // move every point
+
+      if (!isNaN(x) && !isNaN(y)) {
+        for (var i = this.length - 1; i >= 0; i--) {
+          this[i] = [this[i][0] + x, this[i][1] + y];
+        }
+      }
+
+      return this;
+    },
+    // Resize poly string
+    size: function size(width, height) {
+      var i;
+      var box = this.bbox(); // recalculate position of all points according to new size
+
+      for (i = this.length - 1; i >= 0; i--) {
+        if (box.width) this[i][0] = (this[i][0] - box.x) * width / box.width + box.x;
+        if (box.height) this[i][1] = (this[i][1] - box.y) * height / box.height + box.y;
+      }
+
+      return this;
+    },
+    // Get bounding box of points
+    bbox: function bbox() {
+      var maxX = -Infinity;
+      var maxY = -Infinity;
+      var minX = Infinity;
+      var minY = Infinity;
+      this.forEach(function (el) {
+        maxX = Math.max(el[0], maxX);
+        maxY = Math.max(el[1], maxY);
+        minX = Math.min(el[0], minX);
+        minY = Math.min(el[1], minY);
+      });
+      return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY
+      };
+    }
+  });
+
+  var MorphArray = PointArray; // Move by left top corner over x-axis
+
+  function x$1(x) {
+    return x == null ? this.bbox().x : this.move(x, this.bbox().y);
+  } // Move by left top corner over y-axis
+
+  function y$1(y) {
+    return y == null ? this.bbox().y : this.move(this.bbox().x, y);
+  } // Set width of element
+
+  function width$1(width) {
+    var b = this.bbox();
+    return width == null ? b.width : this.size(width, b.height);
+  } // Set height of element
+
+  function height$1(height) {
+    var b = this.bbox();
+    return height == null ? b.height : this.size(b.width, height);
+  }
+
+  var pointed = /*#__PURE__*/Object.freeze({
+    MorphArray: MorphArray,
+    x: x$1,
+    y: y$1,
+    width: width$1,
+    height: height$1
+  });
+
+  var Line =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Line, _Shape);
+
+    // Initialize node
+    function Line(node) {
+      _classCallCheck(this, Line);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Line).call(this, nodeOrNew('line', node), node));
+    } // Get array
+
+
+    _createClass(Line, [{
+      key: "array",
+      value: function array() {
+        return new PointArray([[this.attr('x1'), this.attr('y1')], [this.attr('x2'), this.attr('y2')]]);
+      } // Overwrite native plot() method
+
+    }, {
+      key: "plot",
+      value: function plot(x1, y1, x2, y2) {
+        if (x1 == null) {
+          return this.array();
+        } else if (typeof y1 !== 'undefined') {
+          x1 = {
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+          };
+        } else {
+          x1 = new PointArray(x1).toLine();
+        }
+
+        return this.attr(x1);
+      } // Move by left top corner
+
+    }, {
+      key: "move",
+      value: function move(x, y) {
+        return this.attr(this.array().move(x, y).toLine());
+      } // Set element size to given width and height
+
+    }, {
+      key: "size",
+      value: function size(width, height) {
+        var p = proportionalSize(this, width, height);
+        return this.attr(this.array().size(p.width, p.height).toLine());
+      }
+    }]);
+
+    return Line;
+  }(Shape);
+  extend(Line, pointed);
+  registerMethods({
+    Container: {
+      // Create a line element
+      line: wrapWithAttrCheck(function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        // make sure plot is called as a setter
+        // x1 is not necessarily a number, it can also be an array, a string and a PointArray
+        return Line.prototype.plot.apply(this.put(new Line()), args[0] != null ? args : [0, 0, 0, 0]);
+      })
+    }
+  });
+  register(Line);
+
+  var List = subClassArray('List', Array, function () {
+    var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    // This catches the case, that native map tries to create an array with new Array(1)
+    if (typeof arr === 'number') return this;
+    this.length = 0;
+    this.push.apply(this, _toConsumableArray(arr));
+  });
+  extend(List, {
+    each: function each(fnOrMethodName) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (typeof fnOrMethodName === 'function') {
+        this.forEach(function (el) {
+          fnOrMethodName.call(el, el);
+        });
+      } else {
+        return this.map(function (el) {
+          return el[fnOrMethodName].apply(el, args);
+        }); // this.forEach((el) => {
+        //   el[fnOrMethodName](...args)
+        // })
+      }
+
+      return this;
+    },
+    toArray: function toArray() {
+      return Array.prototype.concat.apply([], this);
+    }
+  });
+
+  List.extend = function (methods) {
+    methods = methods.reduce(function (obj, name) {
+      obj[name] = function () {
+        for (var _len2 = arguments.length, attrs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          attrs[_key2] = arguments[_key2];
+        }
+
+        return this.each.apply(this, [name].concat(attrs));
+      };
+
+      return obj;
+    }, {});
+    extend(List, methods);
+  };
+
+  var Marker =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Marker, _Container);
+
+    // Initialize node
+    function Marker(node) {
+      _classCallCheck(this, Marker);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Marker).call(this, nodeOrNew('marker', node), node));
+    } // Set width of element
+
+
+    _createClass(Marker, [{
+      key: "width",
+      value: function width(_width) {
+        return this.attr('markerWidth', _width);
+      } // Set height of element
+
+    }, {
+      key: "height",
+      value: function height(_height) {
+        return this.attr('markerHeight', _height);
+      } // Set marker refX and refY
+
+    }, {
+      key: "ref",
+      value: function ref(x, y) {
+        return this.attr('refX', x).attr('refY', y);
+      } // Update marker
+
+    }, {
+      key: "update",
+      value: function update(block) {
+        // remove all content
+        this.clear(); // invoke passed block
+
+        if (typeof block === 'function') {
+          block.call(this, this);
+        }
+
+        return this;
+      } // Return the fill id
+
+    }, {
+      key: "toString",
+      value: function toString() {
+        return 'url(#' + this.id() + ')';
+      }
+    }]);
+
+    return Marker;
+  }(Container);
+  registerMethods({
+    Container: {
+      marker: function marker() {
+        var _this$defs;
+
+        // Create marker element in defs
+        return (_this$defs = this.defs()).marker.apply(_this$defs, arguments);
+      }
+    },
+    Defs: {
+      // Create marker
+      marker: wrapWithAttrCheck(function (width, height, block) {
+        // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
+        return this.put(new Marker()).size(width, height).ref(width / 2, height / 2).viewbox(0, 0, width, height).attr('orient', 'auto').update(block);
+      })
+    },
+    marker: {
+      // Create and attach markers
+      marker: function marker(_marker, width, height, block) {
+        var attr = ['marker']; // Build attribute name
+
+        if (_marker !== 'all') attr.push(_marker);
+        attr = attr.join('-'); // Set marker attribute
+
+        _marker = arguments[1] instanceof Marker ? arguments[1] : this.defs().marker(width, height, block);
+        return this.attr(attr, _marker);
+      }
+    }
+  });
+  register(Marker);
+
   /***
   Base Class
   ==========
@@ -3007,369 +4198,6 @@ var SVG = (function () {
     p: makeSetterGetter('P'),
     i: makeSetterGetter('I'),
     d: makeSetterGetter('D')
-  });
-
-  function from(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      fx: new SVGNumber(x),
-      fy: new SVGNumber(y)
-    }) : this.attr({
-      x1: new SVGNumber(x),
-      y1: new SVGNumber(y)
-    });
-  }
-  function to(x, y) {
-    return (this._element || this).type === 'radialGradient' ? this.attr({
-      cx: new SVGNumber(x),
-      cy: new SVGNumber(y)
-    }) : this.attr({
-      x2: new SVGNumber(x),
-      y2: new SVGNumber(y)
-    });
-  }
-
-  var gradiented = /*#__PURE__*/Object.freeze({
-    from: from,
-    to: to
-  });
-
-  function rx(rx) {
-    return this.attr('rx', rx);
-  } // Radius y value
-
-  function ry(ry) {
-    return this.attr('ry', ry);
-  } // Move over x-axis
-
-  function x(x) {
-    return x == null ? this.cx() - this.rx() : this.cx(x + this.rx());
-  } // Move over y-axis
-
-  function y(y) {
-    return y == null ? this.cy() - this.ry() : this.cy(y + this.ry());
-  } // Move by center over x-axis
-
-  function cx(x) {
-    return x == null ? this.attr('cx') : this.attr('cx', x);
-  } // Move by center over y-axis
-
-  function cy(y) {
-    return y == null ? this.attr('cy') : this.attr('cy', y);
-  } // Set width of element
-
-  function width(width) {
-    return width == null ? this.rx() * 2 : this.rx(new SVGNumber(width).divide(2));
-  } // Set height of element
-
-  function height(height) {
-    return height == null ? this.ry() * 2 : this.ry(new SVGNumber(height).divide(2));
-  }
-
-  var circled = /*#__PURE__*/Object.freeze({
-    rx: rx,
-    ry: ry,
-    x: x,
-    y: y,
-    cx: cx,
-    cy: cy,
-    width: width,
-    height: height
-  });
-
-  var Queue =
-  /*#__PURE__*/
-  function () {
-    function Queue() {
-      _classCallCheck(this, Queue);
-
-      this._first = null;
-      this._last = null;
-    }
-
-    _createClass(Queue, [{
-      key: "push",
-      value: function push(value) {
-        // An item stores an id and the provided value
-        var item = value.next ? value : {
-          value: value,
-          next: null,
-          prev: null // Deal with the queue being empty or populated
-
-        };
-
-        if (this._last) {
-          item.prev = this._last;
-          this._last.next = item;
-          this._last = item;
-        } else {
-          this._last = item;
-          this._first = item;
-        } // Update the length and return the current item
-
-
-        return item;
-      }
-    }, {
-      key: "shift",
-      value: function shift() {
-        // Check if we have a value
-        var remove = this._first;
-        if (!remove) return null; // If we do, remove it and relink things
-
-        this._first = remove.next;
-        if (this._first) this._first.prev = null;
-        this._last = this._first ? this._last : null;
-        return remove.value;
-      } // Shows us the first item in the list
-
-    }, {
-      key: "first",
-      value: function first() {
-        return this._first && this._first.value;
-      } // Shows us the last item in the list
-
-    }, {
-      key: "last",
-      value: function last() {
-        return this._last && this._last.value;
-      } // Removes the item that was returned from the push
-
-    }, {
-      key: "remove",
-      value: function remove(item) {
-        // Relink the previous item
-        if (item.prev) item.prev.next = item.next;
-        if (item.next) item.next.prev = item.prev;
-        if (item === this._last) this._last = item.prev;
-        if (item === this._first) this._first = item.next; // Invalidate item
-
-        item.prev = null;
-        item.next = null;
-      }
-    }]);
-
-    return Queue;
-  }();
-
-  var Animator = {
-    nextDraw: null,
-    frames: new Queue(),
-    timeouts: new Queue(),
-    timer: globals.window.performance || globals.window.Date,
-    transforms: [],
-    frame: function frame(fn) {
-      // Store the node
-      var node = Animator.frames.push({
-        run: fn
-      }); // Request an animation frame if we don't have one
-
-      if (Animator.nextDraw === null) {
-        Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw);
-      } // Return the node so we can remove it easily
-
-
-      return node;
-    },
-    transform_frame: function transform_frame(fn, id) {
-      Animator.transforms[id] = fn;
-    },
-    timeout: function timeout(fn, delay) {
-      delay = delay || 0; // Work out when the event should fire
-
-      var time = Animator.timer.now() + delay; // Add the timeout to the end of the queue
-
-      var node = Animator.timeouts.push({
-        run: fn,
-        time: time
-      }); // Request another animation frame if we need one
-
-      if (Animator.nextDraw === null) {
-        Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw);
-      }
-
-      return node;
-    },
-    cancelFrame: function cancelFrame(node) {
-      Animator.frames.remove(node);
-    },
-    clearTimeout: function clearTimeout(node) {
-      Animator.timeouts.remove(node);
-    },
-    _draw: function _draw(now) {
-      // Run all the timeouts we can run, if they are not ready yet, add them
-      // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-      var nextTimeout = null;
-      var lastTimeout = Animator.timeouts.last();
-
-      while (nextTimeout = Animator.timeouts.shift()) {
-        // Run the timeout if its time, or push it to the end
-        if (now >= nextTimeout.time) {
-          nextTimeout.run();
-        } else {
-          Animator.timeouts.push(nextTimeout);
-        } // If we hit the last item, we should stop shifting out more items
-
-
-        if (nextTimeout === lastTimeout) break;
-      } // Run all of the animation frames
-
-
-      var nextFrame = null;
-      var lastFrame = Animator.frames.last();
-
-      while (nextFrame !== lastFrame && (nextFrame = Animator.frames.shift())) {
-        nextFrame.run();
-      }
-
-      Animator.transforms.forEach(function (el) {
-        el();
-      }); // If we have remaining timeouts or frames, draw until we don't anymore
-
-      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? globals.window.requestAnimationFrame(Animator._draw) : null;
-    }
-  };
-
-  function isNulledBox(box) {
-    return !box.w && !box.h && !box.x && !box.y;
-  }
-
-  function domContains(node) {
-    return (globals.document.documentElement.contains || function (node) {
-      // This is IE - it does not support contains() for top-level SVGs
-      while (node.parentNode) {
-        node = node.parentNode;
-      }
-
-      return node === document;
-    }).call(globals.document.documentElement, node);
-  }
-
-  var Box =
-  /*#__PURE__*/
-  function () {
-    function Box() {
-      _classCallCheck(this, Box);
-
-      this.init.apply(this, arguments);
-    }
-
-    _createClass(Box, [{
-      key: "init",
-      value: function init(source) {
-        var base = [0, 0, 0, 0];
-        source = typeof source === 'string' ? source.split(delimiter).map(parseFloat) : Array.isArray(source) ? source : _typeof(source) === 'object' ? [source.left != null ? source.left : source.x, source.top != null ? source.top : source.y, source.width, source.height] : arguments.length === 4 ? [].slice.call(arguments) : base;
-        this.x = source[0] || 0;
-        this.y = source[1] || 0;
-        this.width = this.w = source[2] || 0;
-        this.height = this.h = source[3] || 0; // Add more bounding box properties
-
-        this.x2 = this.x + this.w;
-        this.y2 = this.y + this.h;
-        this.cx = this.x + this.w / 2;
-        this.cy = this.y + this.h / 2;
-        return this;
-      } // Merge rect box with another, return a new instance
-
-    }, {
-      key: "merge",
-      value: function merge(box) {
-        var x = Math.min(this.x, box.x);
-        var y = Math.min(this.y, box.y);
-        var width = Math.max(this.x + this.width, box.x + box.width) - x;
-        var height = Math.max(this.y + this.height, box.y + box.height) - y;
-        return new Box(x, y, width, height);
-      }
-    }, {
-      key: "transform",
-      value: function transform(m) {
-        var xMin = Infinity;
-        var xMax = -Infinity;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        var pts = [new Point(this.x, this.y), new Point(this.x2, this.y), new Point(this.x, this.y2), new Point(this.x2, this.y2)];
-        pts.forEach(function (p) {
-          p = p.transform(m);
-          xMin = Math.min(xMin, p.x);
-          xMax = Math.max(xMax, p.x);
-          yMin = Math.min(yMin, p.y);
-          yMax = Math.max(yMax, p.y);
-        });
-        return new Box(xMin, yMin, xMax - xMin, yMax - yMin);
-      }
-    }, {
-      key: "addOffset",
-      value: function addOffset() {
-        // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-        this.x += globals.window.pageXOffset;
-        this.y += globals.window.pageYOffset;
-        return this;
-      }
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height;
-      }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.x, this.y, this.width, this.height];
-      }
-    }, {
-      key: "isNulled",
-      value: function isNulled() {
-        return isNulledBox(this);
-      }
-    }]);
-
-    return Box;
-  }();
-
-  function getBox(cb) {
-    var box;
-
-    try {
-      box = cb(this.node);
-
-      if (isNulledBox(box) && !domContains(this.node)) {
-        throw new Error('Element not in the dom');
-      }
-    } catch (e) {
-      try {
-        var clone = this.clone().addTo(parser().svg).show();
-        box = cb(clone.node);
-        clone.remove();
-      } catch (e) {
-        throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible');
-      }
-    }
-
-    return box;
-  }
-
-  registerMethods({
-    Element: {
-      // Get bounding box
-      bbox: function bbox() {
-        return new Box(getBox.call(this, function (node) {
-          return node.getBBox();
-        }));
-      },
-      rbox: function rbox(el) {
-        var box = new Box(getBox.call(this, function (node) {
-          return node.getBoundingClientRect();
-        }));
-        if (el) return box.transform(el.screenCTM().inverse());
-        return box.addOffset();
-      }
-    },
-    viewbox: {
-      viewbox: function viewbox(x, y, width, height) {
-        // act as getter
-        if (x == null) return new Box(this.attr('viewBox')); // act as setter
-
-        return this.attr('viewBox', new Box(x, y, width, height));
-      }
-    }
   });
 
   var PathArray = subClassArray('PathArray', SVGArray);
@@ -3934,6 +4762,361 @@ var SVG = (function () {
     });
   }
 
+  var Path =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Path, _Shape);
+
+    // Initialize node
+    function Path(node) {
+      _classCallCheck(this, Path);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), node));
+    } // Get array
+
+
+    _createClass(Path, [{
+      key: "array",
+      value: function array() {
+        return this._array || (this._array = new PathArray(this.attr('d')));
+      } // Plot new path
+
+    }, {
+      key: "plot",
+      value: function plot(d) {
+        return d == null ? this.array() : this.clear().attr('d', typeof d === 'string' ? d : this._array = new PathArray(d));
+      } // Clear array cache
+
+    }, {
+      key: "clear",
+      value: function clear() {
+        delete this._array;
+        return this;
+      } // Move by left top corner
+
+    }, {
+      key: "move",
+      value: function move(x, y) {
+        return this.attr('d', this.array().move(x, y));
+      } // Move by left top corner over x-axis
+
+    }, {
+      key: "x",
+      value: function x(_x) {
+        return _x == null ? this.bbox().x : this.move(_x, this.bbox().y);
+      } // Move by left top corner over y-axis
+
+    }, {
+      key: "y",
+      value: function y(_y) {
+        return _y == null ? this.bbox().y : this.move(this.bbox().x, _y);
+      } // Set element size to given width and height
+
+    }, {
+      key: "size",
+      value: function size(width, height) {
+        var p = proportionalSize(this, width, height);
+        return this.attr('d', this.array().size(p.width, p.height));
+      } // Set width of element
+
+    }, {
+      key: "width",
+      value: function width(_width) {
+        return _width == null ? this.bbox().width : this.size(_width, this.bbox().height);
+      } // Set height of element
+
+    }, {
+      key: "height",
+      value: function height(_height) {
+        return _height == null ? this.bbox().height : this.size(this.bbox().width, _height);
+      }
+    }, {
+      key: "targets",
+      value: function targets() {
+        return baseFind('svg textpath [href*="' + this.id() + '"]');
+      }
+    }]);
+
+    return Path;
+  }(Shape); // Define morphable array
+  Path.prototype.MorphArray = PathArray; // Add parent method
+
+  registerMethods({
+    Container: {
+      // Create a wrapped path element
+      path: wrapWithAttrCheck(function (d) {
+        // make sure plot is called as a setter
+        return this.put(new Path()).plot(d || new PathArray());
+      })
+    }
+  });
+  register(Path);
+
+  function array() {
+    return this._array || (this._array = new PointArray(this.attr('points')));
+  } // Plot new path
+
+  function plot(p) {
+    return p == null ? this.array() : this.clear().attr('points', typeof p === 'string' ? p : this._array = new PointArray(p));
+  } // Clear array cache
+
+  function clear() {
+    delete this._array;
+    return this;
+  } // Move by left top corner
+
+  function move(x, y) {
+    return this.attr('points', this.array().move(x, y));
+  } // Set element size to given width and height
+
+  function size(width, height) {
+    var p = proportionalSize(this, width, height);
+    return this.attr('points', this.array().size(p.width, p.height));
+  }
+
+  var poly = /*#__PURE__*/Object.freeze({
+    array: array,
+    plot: plot,
+    clear: clear,
+    move: move,
+    size: size
+  });
+
+  var Polygon =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Polygon, _Shape);
+
+    // Initialize node
+    function Polygon(node) {
+      _classCallCheck(this, Polygon);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), node));
+    }
+
+    return Polygon;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a wrapped polygon element
+      polygon: wrapWithAttrCheck(function (p) {
+        // make sure plot is called as a setter
+        return this.put(new Polygon()).plot(p || new PointArray());
+      })
+    }
+  });
+  extend(Polygon, pointed);
+  extend(Polygon, poly);
+  register(Polygon);
+
+  var Polyline =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Polyline, _Shape);
+
+    // Initialize node
+    function Polyline(node) {
+      _classCallCheck(this, Polyline);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), node));
+    }
+
+    return Polyline;
+  }(Shape);
+  registerMethods({
+    Container: {
+      // Create a wrapped polygon element
+      polyline: wrapWithAttrCheck(function (p) {
+        // make sure plot is called as a setter
+        return this.put(new Polyline()).plot(p || new PointArray());
+      })
+    }
+  });
+  extend(Polyline, pointed);
+  extend(Polyline, poly);
+  register(Polyline);
+
+  var Rect =
+  /*#__PURE__*/
+  function (_Shape) {
+    _inherits(Rect, _Shape);
+
+    // Initialize node
+    function Rect(node) {
+      _classCallCheck(this, Rect);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), node));
+    }
+
+    return Rect;
+  }(Shape);
+  extend(Rect, {
+    rx: rx,
+    ry: ry
+  });
+  registerMethods({
+    Container: {
+      // Create a rect element
+      rect: wrapWithAttrCheck(function (width$$1, height$$1) {
+        return this.put(new Rect()).size(width$$1, height$$1);
+      })
+    }
+  });
+  register(Rect);
+
+  var Queue =
+  /*#__PURE__*/
+  function () {
+    function Queue() {
+      _classCallCheck(this, Queue);
+
+      this._first = null;
+      this._last = null;
+    }
+
+    _createClass(Queue, [{
+      key: "push",
+      value: function push(value) {
+        // An item stores an id and the provided value
+        var item = value.next ? value : {
+          value: value,
+          next: null,
+          prev: null // Deal with the queue being empty or populated
+
+        };
+
+        if (this._last) {
+          item.prev = this._last;
+          this._last.next = item;
+          this._last = item;
+        } else {
+          this._last = item;
+          this._first = item;
+        } // Update the length and return the current item
+
+
+        return item;
+      }
+    }, {
+      key: "shift",
+      value: function shift() {
+        // Check if we have a value
+        var remove = this._first;
+        if (!remove) return null; // If we do, remove it and relink things
+
+        this._first = remove.next;
+        if (this._first) this._first.prev = null;
+        this._last = this._first ? this._last : null;
+        return remove.value;
+      } // Shows us the first item in the list
+
+    }, {
+      key: "first",
+      value: function first() {
+        return this._first && this._first.value;
+      } // Shows us the last item in the list
+
+    }, {
+      key: "last",
+      value: function last() {
+        return this._last && this._last.value;
+      } // Removes the item that was returned from the push
+
+    }, {
+      key: "remove",
+      value: function remove(item) {
+        // Relink the previous item
+        if (item.prev) item.prev.next = item.next;
+        if (item.next) item.next.prev = item.prev;
+        if (item === this._last) this._last = item.prev;
+        if (item === this._first) this._first = item.next; // Invalidate item
+
+        item.prev = null;
+        item.next = null;
+      }
+    }]);
+
+    return Queue;
+  }();
+
+  var Animator = {
+    nextDraw: null,
+    frames: new Queue(),
+    timeouts: new Queue(),
+    timer: globals.window.performance || globals.window.Date,
+    transforms: [],
+    frame: function frame(fn) {
+      // Store the node
+      var node = Animator.frames.push({
+        run: fn
+      }); // Request an animation frame if we don't have one
+
+      if (Animator.nextDraw === null) {
+        Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw);
+      } // Return the node so we can remove it easily
+
+
+      return node;
+    },
+    transform_frame: function transform_frame(fn, id) {
+      Animator.transforms[id] = fn;
+    },
+    timeout: function timeout(fn, delay) {
+      delay = delay || 0; // Work out when the event should fire
+
+      var time = Animator.timer.now() + delay; // Add the timeout to the end of the queue
+
+      var node = Animator.timeouts.push({
+        run: fn,
+        time: time
+      }); // Request another animation frame if we need one
+
+      if (Animator.nextDraw === null) {
+        Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw);
+      }
+
+      return node;
+    },
+    cancelFrame: function cancelFrame(node) {
+      Animator.frames.remove(node);
+    },
+    clearTimeout: function clearTimeout(node) {
+      Animator.timeouts.remove(node);
+    },
+    _draw: function _draw(now) {
+      // Run all the timeouts we can run, if they are not ready yet, add them
+      // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
+      var nextTimeout = null;
+      var lastTimeout = Animator.timeouts.last();
+
+      while (nextTimeout = Animator.timeouts.shift()) {
+        // Run the timeout if its time, or push it to the end
+        if (now >= nextTimeout.time) {
+          nextTimeout.run();
+        } else {
+          Animator.timeouts.push(nextTimeout);
+        } // If we hit the last item, we should stop shifting out more items
+
+
+        if (nextTimeout === lastTimeout) break;
+      } // Run all of the animation frames
+
+
+      var nextFrame = null;
+      var lastFrame = Animator.frames.last();
+
+      while (nextFrame !== lastFrame && (nextFrame = Animator.frames.shift())) {
+        nextFrame.run();
+      }
+
+      Animator.transforms.forEach(function (el) {
+        el();
+      }); // If we have remaining timeouts or frames, draw until we don't anymore
+
+      Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first() ? globals.window.requestAnimationFrame(Animator._draw) : null;
+    }
+  };
+
   var time = globals.window.performance || Date;
 
   var makeSchedule = function makeSchedule(runnerInfo) {
@@ -4360,10 +5543,11 @@ var SVG = (function () {
 
     }, {
       key: "queue",
-      value: function queue(initFn, runFn, isTransform) {
+      value: function queue(initFn, runFn, retargetFn, isTransform) {
         this._queue.push({
           initialiser: initFn || noop,
           runner: runFn || noop,
+          retarget: retargetFn,
           isTransform: isTransform,
           initialised: false,
           finished: false
@@ -4577,8 +5761,8 @@ var SVG = (function () {
           // which has access to the outer scope
 
 
-          if (this._history[method].caller.isTransform) {
-            this._history[method].caller.isTransform(target); // for everything else a simple morpher change is sufficient
+          if (this._history[method].caller.retarget) {
+            this._history[method].caller.retarget(target); // for everything else a simple morpher change is sufficient
 
           } else {
             this._history[method].morpher.to(target);
@@ -4643,6 +5827,16 @@ var SVG = (function () {
       value: function clearTransform() {
         this.transforms = new Matrix();
         return this;
+      } // TODO: Keep track of all transformations so that deletion is faster
+
+    }, {
+      key: "clearTransformsFromQueue",
+      value: function clearTransformsFromQueue() {
+        if (!this.done) {
+          this._queue = this._queue.filter(function (item) {
+            return !item.isTransform;
+          });
+        }
       }
     }], [{
       key: "sanitise",
@@ -4679,17 +5873,28 @@ var SVG = (function () {
   }(EventTarget);
   Runner.id = 0;
 
-  var FakeRunner = function FakeRunner() {
-    var transforms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Matrix();
-    var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
-    var done = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  var FakeRunner =
+  /*#__PURE__*/
+  function () {
+    function FakeRunner() {
+      var transforms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Matrix();
+      var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
+      var done = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-    _classCallCheck(this, FakeRunner);
+      _classCallCheck(this, FakeRunner);
 
-    this.transforms = transforms;
-    this.id = id;
-    this.done = done;
-  };
+      this.transforms = transforms;
+      this.id = id;
+      this.done = done;
+    }
+
+    _createClass(FakeRunner, [{
+      key: "clearTransformsFromQueue",
+      value: function clearTransformsFromQueue() {}
+    }]);
+
+    return FakeRunner;
+  }();
 
   extend([Runner, FakeRunner], {
     mergeWith: function mergeWith(runner) {
@@ -4790,7 +5995,9 @@ var SVG = (function () {
       value: function clearBefore(id) {
         var deleteCnt = this.ids.indexOf(id + 1) || 1;
         this.ids.splice(0, deleteCnt, 0);
-        this.runners.splice(0, deleteCnt, new FakeRunner());
+        this.runners.splice(0, deleteCnt, new FakeRunner()).forEach(function (r) {
+          return r.clearTransformsFromQueue();
+        });
         return this;
       }
     }]);
@@ -4983,7 +6190,7 @@ var SVG = (function () {
         });
       }
 
-      this.queue(setup, run, retarget);
+      this.queue(setup, run, retarget, true);
       this._isDeclarative && this._rememberMorpher('transform', morpher);
       return this;
     },
@@ -4996,24 +6203,27 @@ var SVG = (function () {
       return this._queueNumber('y', _y);
     },
     dx: function dx(x$$1) {
-      return this._queueNumberDelta('dx', x$$1);
+      return this._queueNumberDelta('x', x$$1);
     },
     dy: function dy(y$$1) {
-      return this._queueNumberDelta('dy', y$$1);
+      return this._queueNumberDelta('y', y$$1);
     },
     _queueNumberDelta: function _queueNumberDelta(method, to$$1) {
       to$$1 = new SVGNumber(to$$1); // Try to change the target if we have this method already registerd
 
-      if (this._tryRetargetDelta(method, to$$1)) return this; // Make a morpher and queue the animation
+      if (this._tryRetarget(method, to$$1)) return this; // Make a morpher and queue the animation
 
       var morpher = new Morphable(this._stepper).to(to$$1);
+      var from$$1 = null;
       this.queue(function () {
-        var from$$1 = this.element()[method]();
+        from$$1 = this.element()[method]();
         morpher.from(from$$1);
         morpher.to(from$$1 + to$$1);
       }, function (pos) {
         this.element()[method](morpher.at(pos));
         return morpher.done();
+      }, function (newTo) {
+        morpher.to(from$$1 + new SVGNumber(newTo));
       }); // Register the morpher so that if it is changed again, we can retarget it
 
       this._rememberMorpher(method, morpher);
@@ -5127,1122 +6337,6 @@ var SVG = (function () {
     from: from,
     to: to
   });
-
-  var sugar = {
-    stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
-    fill: ['color', 'opacity', 'rule'],
-    prefix: function prefix(t, a) {
-      return a === 'color' ? t : t + '-' + a;
-    } // Add sugar for fill and stroke
-
-  };
-  ['fill', 'stroke'].forEach(function (m) {
-    var extension = {};
-    var i;
-
-    extension[m] = function (o) {
-      if (typeof o === 'undefined') {
-        return this.attr(m);
-      }
-
-      if (typeof o === 'string' || Color.isRgb(o) || o instanceof Element) {
-        this.attr(m, o);
-      } else {
-        // set all attributes from sugar.fill and sugar.stroke list
-        for (i = sugar[m].length - 1; i >= 0; i--) {
-          if (o[sugar[m][i]] != null) {
-            this.attr(sugar.prefix(m, sugar[m][i]), o[sugar[m][i]]);
-          }
-        }
-      }
-
-      return this;
-    };
-
-    registerMethods(['Shape', 'Runner'], extension);
-  });
-  registerMethods(['Element', 'Runner'], {
-    // Let the user set the matrix directly
-    matrix: function matrix(mat, b, c, d, e, f) {
-      // Act as a getter
-      if (mat == null) {
-        return new Matrix(this);
-      } // Act as a setter, the user can pass a matrix or a set of numbers
-
-
-      return this.attr('transform', new Matrix(mat, b, c, d, e, f));
-    },
-    // Map rotation to transform
-    rotate: function rotate(angle, cx, cy) {
-      return this.transform({
-        rotate: angle,
-        ox: cx,
-        oy: cy
-      }, true);
-    },
-    // Map skew to transform
-    skew: function skew(x, y, cx, cy) {
-      return arguments.length === 1 || arguments.length === 3 ? this.transform({
-        skew: x,
-        ox: y,
-        oy: cx
-      }, true) : this.transform({
-        skew: [x, y],
-        ox: cx,
-        oy: cy
-      }, true);
-    },
-    shear: function shear(lam, cx, cy) {
-      return this.transform({
-        shear: lam,
-        ox: cx,
-        oy: cy
-      }, true);
-    },
-    // Map scale to transform
-    scale: function scale(x, y, cx, cy) {
-      return arguments.length === 1 || arguments.length === 3 ? this.transform({
-        scale: x,
-        ox: y,
-        oy: cx
-      }, true) : this.transform({
-        scale: [x, y],
-        ox: cx,
-        oy: cy
-      }, true);
-    },
-    // Map translate to transform
-    translate: function translate(x, y) {
-      return this.transform({
-        translate: [x, y]
-      }, true);
-    },
-    // Map relative translations to transform
-    relative: function relative(x, y) {
-      return this.transform({
-        relative: [x, y]
-      }, true);
-    },
-    // Map flip to transform
-    flip: function flip(direction, around) {
-      var directionString = typeof direction === 'string' ? direction : isFinite(direction) ? 'both' : 'both';
-      var origin = direction === 'both' && isFinite(around) ? [around, around] : direction === 'x' ? [around, 0] : direction === 'y' ? [0, around] : isFinite(direction) ? [direction, direction] : [0, 0];
-      this.transform({
-        flip: directionString,
-        origin: origin
-      }, true);
-    },
-    // Opacity
-    opacity: function opacity(value) {
-      return this.attr('opacity', value);
-    },
-    // Relative move over x axis
-    dx: function dx(x) {
-      return this.x(new SVGNumber(x).plus(this instanceof Runner ? 0 : this.x()), true);
-    },
-    // Relative move over y axis
-    dy: function dy(y) {
-      return this.y(new SVGNumber(y).plus(this instanceof Runner ? 0 : this.y()), true);
-    },
-    // Relative move over x and y axes
-    dmove: function dmove(x, y) {
-      return this.dx(x).dy(y);
-    }
-  });
-  registerMethods('radius', {
-    // Add x and y radius
-    radius: function radius(x, y) {
-      var type = (this._element || this).type;
-      return type === 'radialGradient' || type === 'radialGradient' ? this.attr('r', new SVGNumber(x)) : this.rx(x).ry(y == null ? x : y);
-    }
-  });
-  registerMethods('Path', {
-    // Get path length
-    length: function length() {
-      return this.node.getTotalLength();
-    },
-    // Get point at length
-    pointAt: function pointAt(length) {
-      return new Point(this.node.getPointAtLength(length));
-    }
-  });
-  registerMethods(['Element', 'Runner'], {
-    // Set font
-    font: function font(a, v) {
-      if (_typeof(a) === 'object') {
-        for (v in a) {
-          this.font(v, a[v]);
-        }
-      }
-
-      return a === 'leading' ? this.leading(v) : a === 'anchor' ? this.attr('text-anchor', v) : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style' ? this.attr('font-' + a, v) : this.attr(a, v);
-    }
-  });
-  registerMethods('Text', {
-    ax: function ax(x) {
-      return this.attr('x', x);
-    },
-    ay: function ay(y) {
-      return this.attr('y', y);
-    },
-    amove: function amove(x, y) {
-      return this.ax(x).ay(y);
-    }
-  }); // Add events to elements
-
-  var methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
-    // add event to Element
-    var fn = function fn(f) {
-      if (f === null) {
-        off(this, event);
-      } else {
-        on(this, event, f);
-      }
-
-      return this;
-    };
-
-    last[event] = fn;
-    return last;
-  }, {});
-  registerMethods('Element', methods$1);
-
-  function untransform() {
-    return this.attr('transform', null);
-  } // merge the whole transformation chain into one matrix and returns it
-
-  function matrixify() {
-    var matrix = (this.attr('transform') || ''). // split transformations
-    split(transforms).slice(0, -1).map(function (str) {
-      // generate key => value pairs
-      var kv = str.trim().split('(');
-      return [kv[0], kv[1].split(delimiter).map(function (str) {
-        return parseFloat(str);
-      })];
-    }).reverse() // merge every transformation into one matrix
-    .reduce(function (matrix, transform) {
-      if (transform[0] === 'matrix') {
-        return matrix.lmultiply(Matrix.fromArray(transform[1]));
-      }
-
-      return matrix[transform[0]].apply(matrix, transform[1]);
-    }, new Matrix());
-    return matrix;
-  } // add an element to another parent without changing the visual representation on the screen
-
-  function toParent(parent) {
-    if (this === parent) return this;
-    var ctm = this.screenCTM();
-    var pCtm = parent.screenCTM().inverse();
-    this.addTo(parent).untransform().transform(pCtm.multiply(ctm));
-    return this;
-  } // same as above with parent equals root-svg
-
-  function toDoc() {
-    return this.toParent(this.doc());
-  } // Add transformations
-
-  function transform(o, relative) {
-    // Act as a getter if no object was passed
-    if (o == null || typeof o === 'string') {
-      var decomposed = new Matrix(this).decompose();
-      return decomposed[o] || decomposed;
-    }
-
-    if (!Matrix.isMatrixLike(o)) {
-      // Set the origin according to the defined transform
-      o = _objectSpread({}, o, {
-        origin: getOrigin(o, this)
-      });
-    } // The user can pass a boolean, an Element or an Matrix or nothing
-
-
-    var cleanRelative = relative === true ? this : relative || false;
-    var result = new Matrix(cleanRelative).transform(o);
-    return this.attr('transform', result);
-  }
-  registerMethods('Element', {
-    untransform: untransform,
-    matrixify: matrixify,
-    toParent: toParent,
-    toDoc: toDoc,
-    transform: transform
-  });
-
-  var Shape =
-  /*#__PURE__*/
-  function (_Element) {
-    _inherits(Shape, _Element);
-
-    function Shape() {
-      _classCallCheck(this, Shape);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Shape).apply(this, arguments));
-    }
-
-    return Shape;
-  }(Element);
-  register(Shape);
-
-  var Circle =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Circle, _Shape);
-
-    function Circle(node) {
-      _classCallCheck(this, Circle);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Circle).call(this, nodeOrNew('circle', node), node));
-    }
-
-    _createClass(Circle, [{
-      key: "radius",
-      value: function radius(r) {
-        return this.attr('r', r);
-      } // Radius x value
-
-    }, {
-      key: "rx",
-      value: function rx$$1(_rx) {
-        return this.attr('r', _rx);
-      } // Alias radius x value
-
-    }, {
-      key: "ry",
-      value: function ry$$1(_ry) {
-        return this.rx(_ry);
-      }
-    }, {
-      key: "size",
-      value: function size(_size) {
-        return this.radius(new SVGNumber(_size).divide(2));
-      }
-    }]);
-
-    return Circle;
-  }(Shape);
-  extend(Circle, {
-    x: x,
-    y: y,
-    cx: cx,
-    cy: cy,
-    width: width,
-    height: height
-  });
-  registerMethods({
-    Element: {
-      // Create circle element
-      circle: wrapWithAttrCheck(function (size) {
-        return this.put(new Circle()).size(size).move(0, 0);
-      })
-    }
-  });
-  register(Circle);
-
-  var Ellipse =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Ellipse, _Shape);
-
-    function Ellipse(node) {
-      _classCallCheck(this, Ellipse);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Ellipse).call(this, nodeOrNew('ellipse', node), node));
-    }
-
-    _createClass(Ellipse, [{
-      key: "size",
-      value: function size(width$$1, height$$1) {
-        var p = proportionalSize(this, width$$1, height$$1);
-        return this.rx(new SVGNumber(p.width).divide(2)).ry(new SVGNumber(p.height).divide(2));
-      }
-    }]);
-
-    return Ellipse;
-  }(Shape);
-  extend(Ellipse, circled);
-  registerMethods('Container', {
-    // Create an ellipse
-    ellipse: wrapWithAttrCheck(function (width$$1, height$$1) {
-      return this.put(new Ellipse()).size(width$$1, height$$1).move(0, 0);
-    })
-  });
-  register(Ellipse);
-
-  var Stop =
-  /*#__PURE__*/
-  function (_Element) {
-    _inherits(Stop, _Element);
-
-    function Stop(node) {
-      _classCallCheck(this, Stop);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Stop).call(this, nodeOrNew('stop', node), node));
-    } // add color stops
-
-
-    _createClass(Stop, [{
-      key: "update",
-      value: function update(o) {
-        if (typeof o === 'number' || o instanceof SVGNumber) {
-          o = {
-            offset: arguments[0],
-            color: arguments[1],
-            opacity: arguments[2]
-          };
-        } // set attributes
-
-
-        if (o.opacity != null) this.attr('stop-opacity', o.opacity);
-        if (o.color != null) this.attr('stop-color', o.color);
-        if (o.offset != null) this.attr('offset', new SVGNumber(o.offset));
-        return this;
-      }
-    }]);
-
-    return Stop;
-  }(Element);
-  register(Stop);
-
-  function baseFind(query, parent) {
-    return map((parent || globals.document).querySelectorAll(query), function (node) {
-      return adopt(node);
-    });
-  } // Scoped find method
-
-  function find(query) {
-    return baseFind(query, this.node);
-  }
-  registerMethods('Dom', {
-    find: find
-  });
-
-  var Gradient =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Gradient, _Container);
-
-    function Gradient(type, attrs) {
-      _classCallCheck(this, Gradient);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Gradient).call(this, nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type), attrs));
-    } // Add a color stop
-
-
-    _createClass(Gradient, [{
-      key: "stop",
-      value: function stop(offset, color, opacity) {
-        return this.put(new Stop()).update(offset, color, opacity);
-      } // Update gradient
-
-    }, {
-      key: "update",
-      value: function update(block) {
-        // remove all stops
-        this.clear(); // invoke passed block
-
-        if (typeof block === 'function') {
-          block.call(this, this);
-        }
-
-        return this;
-      } // Return the fill id
-
-    }, {
-      key: "url",
-      value: function url() {
-        return 'url(#' + this.id() + ')';
-      } // Alias string convertion to fill
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.url();
-      } // custom attr to handle transform
-
-    }, {
-      key: "attr",
-      value: function attr(a, b, c) {
-        if (a === 'transform') a = 'gradientTransform';
-        return _get(_getPrototypeOf(Gradient.prototype), "attr", this).call(this, a, b, c);
-      }
-    }, {
-      key: "targets",
-      value: function targets() {
-        return baseFind('svg [fill*="' + this.id() + '"]');
-      }
-    }, {
-      key: "bbox",
-      value: function bbox() {
-        return new Box();
-      }
-    }]);
-
-    return Gradient;
-  }(Container);
-  extend(Gradient, gradiented);
-  registerMethods({
-    Container: {
-      // Create gradient element in defs
-      gradient: wrapWithAttrCheck(function (type, block) {
-        return this.defs().gradient(type, block);
-      })
-    },
-    // define gradient
-    Defs: {
-      gradient: wrapWithAttrCheck(function (type, block) {
-        return this.put(new Gradient(type)).update(block);
-      })
-    }
-  });
-  register(Gradient);
-
-  var Pattern =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Pattern, _Container);
-
-    // Initialize node
-    function Pattern(node) {
-      _classCallCheck(this, Pattern);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Pattern).call(this, nodeOrNew('pattern', node), node));
-    } // Return the fill id
-
-
-    _createClass(Pattern, [{
-      key: "url",
-      value: function url() {
-        return 'url(#' + this.id() + ')';
-      } // Update pattern by rebuilding
-
-    }, {
-      key: "update",
-      value: function update(block) {
-        // remove content
-        this.clear(); // invoke passed block
-
-        if (typeof block === 'function') {
-          block.call(this, this);
-        }
-
-        return this;
-      } // Alias string convertion to fill
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.url();
-      } // custom attr to handle transform
-
-    }, {
-      key: "attr",
-      value: function attr(a, b, c) {
-        if (a === 'transform') a = 'patternTransform';
-        return _get(_getPrototypeOf(Pattern.prototype), "attr", this).call(this, a, b, c);
-      }
-    }, {
-      key: "targets",
-      value: function targets() {
-        return baseFind('svg [fill*="' + this.id() + '"]');
-      }
-    }, {
-      key: "bbox",
-      value: function bbox() {
-        return new Box();
-      }
-    }]);
-
-    return Pattern;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create pattern element in defs
-      pattern: function pattern() {
-        var _this$defs;
-
-        return (_this$defs = this.defs()).pattern.apply(_this$defs, arguments);
-      }
-    },
-    Defs: {
-      pattern: wrapWithAttrCheck(function (width, height, block) {
-        return this.put(new Pattern()).update(block).attr({
-          x: 0,
-          y: 0,
-          width: width,
-          height: height,
-          patternUnits: 'userSpaceOnUse'
-        });
-      })
-    }
-  });
-  register(Pattern);
-
-  var Image =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Image, _Shape);
-
-    function Image(node) {
-      _classCallCheck(this, Image);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Image).call(this, nodeOrNew('image', node), node));
-    } // (re)load image
-
-
-    _createClass(Image, [{
-      key: "load",
-      value: function load(url, callback) {
-        if (!url) return this;
-        var img = new globals.window.Image();
-        on(img, 'load', function (e) {
-          var p = this.parent(Pattern); // ensure image size
-
-          if (this.width() === 0 && this.height() === 0) {
-            this.size(img.width, img.height);
-          }
-
-          if (p instanceof Pattern) {
-            // ensure pattern size if not set
-            if (p.width() === 0 && p.height() === 0) {
-              p.size(this.width(), this.height());
-            }
-          }
-
-          if (typeof callback === 'function') {
-            callback.call(this, {
-              width: img.width,
-              height: img.height,
-              ratio: img.width / img.height,
-              url: url
-            });
-          }
-        }, this);
-        on(img, 'load error', function () {
-          // dont forget to unbind memory leaking events
-          off(img);
-        });
-        return this.attr('href', img.src = url, xlink);
-      }
-    }]);
-
-    return Image;
-  }(Shape);
-  registerAttrHook(function (attr$$1, val, _this) {
-    // convert image fill and stroke to patterns
-    if (attr$$1 === 'fill' || attr$$1 === 'stroke') {
-      if (isImage.test(val)) {
-        val = _this.doc().defs().image(val);
-      }
-    }
-
-    if (val instanceof Image) {
-      val = _this.doc().defs().pattern(0, 0, function (pattern) {
-        pattern.add(val);
-      });
-    }
-
-    return val;
-  });
-  registerMethods({
-    Container: {
-      // create image element, load image and set its size
-      image: wrapWithAttrCheck(function (source, callback) {
-        return this.put(new Image()).size(0, 0).load(source, callback);
-      })
-    }
-  });
-  register(Image);
-
-  var PointArray = subClassArray('PointArray', SVGArray);
-  extend(PointArray, {
-    // Convert array to string
-    toString: function toString() {
-      // convert to a poly point string
-      for (var i = 0, il = this.length, array = []; i < il; i++) {
-        array.push(this[i].join(','));
-      }
-
-      return array.join(' ');
-    },
-    // Convert array to line object
-    toLine: function toLine() {
-      return {
-        x1: this[0][0],
-        y1: this[0][1],
-        x2: this[1][0],
-        y2: this[1][1]
-      };
-    },
-    // Get morphed array at given position
-    at: function at(pos) {
-      // make sure a destination is defined
-      if (!this.destination) return this; // generate morphed point string
-
-      for (var i = 0, il = this.length, array = []; i < il; i++) {
-        array.push([this[i][0] + (this.destination[i][0] - this[i][0]) * pos, this[i][1] + (this.destination[i][1] - this[i][1]) * pos]);
-      }
-
-      return new PointArray(array);
-    },
-    // Parse point string and flat array
-    parse: function parse() {
-      var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [[0, 0]];
-      var points = []; // if it is an array
-
-      if (array instanceof Array) {
-        // and it is not flat, there is no need to parse it
-        if (array[0] instanceof Array) {
-          return array;
-        }
-      } else {
-        // Else, it is considered as a string
-        // parse points
-        array = array.trim().split(delimiter).map(parseFloat);
-      } // validate points - https://svgwg.org/svg2-draft/shapes.html#DataTypePoints
-      // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
-
-
-      if (array.length % 2 !== 0) array.pop(); // wrap points in two-tuples and parse points as floats
-
-      for (var i = 0, len = array.length; i < len; i = i + 2) {
-        points.push([array[i], array[i + 1]]);
-      }
-
-      return points;
-    },
-    // Move point string
-    move: function move(x, y) {
-      var box = this.bbox(); // get relative offset
-
-      x -= box.x;
-      y -= box.y; // move every point
-
-      if (!isNaN(x) && !isNaN(y)) {
-        for (var i = this.length - 1; i >= 0; i--) {
-          this[i] = [this[i][0] + x, this[i][1] + y];
-        }
-      }
-
-      return this;
-    },
-    // Resize poly string
-    size: function size(width, height) {
-      var i;
-      var box = this.bbox(); // recalculate position of all points according to new size
-
-      for (i = this.length - 1; i >= 0; i--) {
-        if (box.width) this[i][0] = (this[i][0] - box.x) * width / box.width + box.x;
-        if (box.height) this[i][1] = (this[i][1] - box.y) * height / box.height + box.y;
-      }
-
-      return this;
-    },
-    // Get bounding box of points
-    bbox: function bbox() {
-      var maxX = -Infinity;
-      var maxY = -Infinity;
-      var minX = Infinity;
-      var minY = Infinity;
-      this.forEach(function (el) {
-        maxX = Math.max(el[0], maxX);
-        maxY = Math.max(el[1], maxY);
-        minX = Math.min(el[0], minX);
-        minY = Math.min(el[1], minY);
-      });
-      return {
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY
-      };
-    }
-  });
-
-  var MorphArray = PointArray; // Move by left top corner over x-axis
-
-  function x$1(x) {
-    return x == null ? this.bbox().x : this.move(x, this.bbox().y);
-  } // Move by left top corner over y-axis
-
-  function y$1(y) {
-    return y == null ? this.bbox().y : this.move(this.bbox().x, y);
-  } // Set width of element
-
-  function width$1(width) {
-    var b = this.bbox();
-    return width == null ? b.width : this.size(width, b.height);
-  } // Set height of element
-
-  function height$1(height) {
-    var b = this.bbox();
-    return height == null ? b.height : this.size(b.width, height);
-  }
-
-  var pointed = /*#__PURE__*/Object.freeze({
-    MorphArray: MorphArray,
-    x: x$1,
-    y: y$1,
-    width: width$1,
-    height: height$1
-  });
-
-  var Line =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Line, _Shape);
-
-    // Initialize node
-    function Line(node) {
-      _classCallCheck(this, Line);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Line).call(this, nodeOrNew('line', node), node));
-    } // Get array
-
-
-    _createClass(Line, [{
-      key: "array",
-      value: function array() {
-        return new PointArray([[this.attr('x1'), this.attr('y1')], [this.attr('x2'), this.attr('y2')]]);
-      } // Overwrite native plot() method
-
-    }, {
-      key: "plot",
-      value: function plot(x1, y1, x2, y2) {
-        if (x1 == null) {
-          return this.array();
-        } else if (typeof y1 !== 'undefined') {
-          x1 = {
-            x1: x1,
-            y1: y1,
-            x2: x2,
-            y2: y2
-          };
-        } else {
-          x1 = new PointArray(x1).toLine();
-        }
-
-        return this.attr(x1);
-      } // Move by left top corner
-
-    }, {
-      key: "move",
-      value: function move(x, y) {
-        return this.attr(this.array().move(x, y).toLine());
-      } // Set element size to given width and height
-
-    }, {
-      key: "size",
-      value: function size(width, height) {
-        var p = proportionalSize(this, width, height);
-        return this.attr(this.array().size(p.width, p.height).toLine());
-      }
-    }]);
-
-    return Line;
-  }(Shape);
-  extend(Line, pointed);
-  registerMethods({
-    Container: {
-      // Create a line element
-      line: wrapWithAttrCheck(function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        // make sure plot is called as a setter
-        // x1 is not necessarily a number, it can also be an array, a string and a PointArray
-        return Line.prototype.plot.apply(this.put(new Line()), args[0] != null ? args : [0, 0, 0, 0]);
-      })
-    }
-  });
-  register(Line);
-
-  var Marker =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Marker, _Container);
-
-    // Initialize node
-    function Marker(node) {
-      _classCallCheck(this, Marker);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Marker).call(this, nodeOrNew('marker', node), node));
-    } // Set width of element
-
-
-    _createClass(Marker, [{
-      key: "width",
-      value: function width(_width) {
-        return this.attr('markerWidth', _width);
-      } // Set height of element
-
-    }, {
-      key: "height",
-      value: function height(_height) {
-        return this.attr('markerHeight', _height);
-      } // Set marker refX and refY
-
-    }, {
-      key: "ref",
-      value: function ref(x, y) {
-        return this.attr('refX', x).attr('refY', y);
-      } // Update marker
-
-    }, {
-      key: "update",
-      value: function update(block) {
-        // remove all content
-        this.clear(); // invoke passed block
-
-        if (typeof block === 'function') {
-          block.call(this, this);
-        }
-
-        return this;
-      } // Return the fill id
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return 'url(#' + this.id() + ')';
-      }
-    }]);
-
-    return Marker;
-  }(Container);
-  registerMethods({
-    Container: {
-      marker: function marker() {
-        var _this$defs;
-
-        // Create marker element in defs
-        return (_this$defs = this.defs()).marker.apply(_this$defs, arguments);
-      }
-    },
-    Defs: {
-      // Create marker
-      marker: wrapWithAttrCheck(function (width, height, block) {
-        // Set default viewbox to match the width and height, set ref to cx and cy and set orient to auto
-        return this.put(new Marker()).size(width, height).ref(width / 2, height / 2).viewbox(0, 0, width, height).attr('orient', 'auto').update(block);
-      })
-    },
-    marker: {
-      // Create and attach markers
-      marker: function marker(_marker, width, height, block) {
-        var attr = ['marker']; // Build attribute name
-
-        if (_marker !== 'all') attr.push(_marker);
-        attr = attr.join('-'); // Set marker attribute
-
-        _marker = arguments[1] instanceof Marker ? arguments[1] : this.defs().marker(width, height, block);
-        return this.attr(attr, _marker);
-      }
-    }
-  });
-  register(Marker);
-
-  var Path =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Path, _Shape);
-
-    // Initialize node
-    function Path(node) {
-      _classCallCheck(this, Path);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Path).call(this, nodeOrNew('path', node), node));
-    } // Get array
-
-
-    _createClass(Path, [{
-      key: "array",
-      value: function array() {
-        return this._array || (this._array = new PathArray(this.attr('d')));
-      } // Plot new path
-
-    }, {
-      key: "plot",
-      value: function plot(d) {
-        return d == null ? this.array() : this.clear().attr('d', typeof d === 'string' ? d : this._array = new PathArray(d));
-      } // Clear array cache
-
-    }, {
-      key: "clear",
-      value: function clear() {
-        delete this._array;
-        return this;
-      } // Move by left top corner
-
-    }, {
-      key: "move",
-      value: function move(x, y) {
-        return this.attr('d', this.array().move(x, y));
-      } // Move by left top corner over x-axis
-
-    }, {
-      key: "x",
-      value: function x(_x) {
-        return _x == null ? this.bbox().x : this.move(_x, this.bbox().y);
-      } // Move by left top corner over y-axis
-
-    }, {
-      key: "y",
-      value: function y(_y) {
-        return _y == null ? this.bbox().y : this.move(this.bbox().x, _y);
-      } // Set element size to given width and height
-
-    }, {
-      key: "size",
-      value: function size(width, height) {
-        var p = proportionalSize(this, width, height);
-        return this.attr('d', this.array().size(p.width, p.height));
-      } // Set width of element
-
-    }, {
-      key: "width",
-      value: function width(_width) {
-        return _width == null ? this.bbox().width : this.size(_width, this.bbox().height);
-      } // Set height of element
-
-    }, {
-      key: "height",
-      value: function height(_height) {
-        return _height == null ? this.bbox().height : this.size(this.bbox().width, _height);
-      }
-    }, {
-      key: "targets",
-      value: function targets() {
-        return baseFind('svg textpath [href*="' + this.id() + '"]');
-      }
-    }]);
-
-    return Path;
-  }(Shape); // Define morphable array
-  Path.prototype.MorphArray = PathArray; // Add parent method
-
-  registerMethods({
-    Container: {
-      // Create a wrapped path element
-      path: wrapWithAttrCheck(function (d) {
-        // make sure plot is called as a setter
-        return this.put(new Path()).plot(d || new PathArray());
-      })
-    }
-  });
-  register(Path);
-
-  function array() {
-    return this._array || (this._array = new PointArray(this.attr('points')));
-  } // Plot new path
-
-  function plot(p) {
-    return p == null ? this.array() : this.clear().attr('points', typeof p === 'string' ? p : this._array = new PointArray(p));
-  } // Clear array cache
-
-  function clear() {
-    delete this._array;
-    return this;
-  } // Move by left top corner
-
-  function move(x, y) {
-    return this.attr('points', this.array().move(x, y));
-  } // Set element size to given width and height
-
-  function size(width, height) {
-    var p = proportionalSize(this, width, height);
-    return this.attr('points', this.array().size(p.width, p.height));
-  }
-
-  var poly = /*#__PURE__*/Object.freeze({
-    array: array,
-    plot: plot,
-    clear: clear,
-    move: move,
-    size: size
-  });
-
-  var Polygon =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Polygon, _Shape);
-
-    // Initialize node
-    function Polygon(node) {
-      _classCallCheck(this, Polygon);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polygon).call(this, nodeOrNew('polygon', node), node));
-    }
-
-    return Polygon;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a wrapped polygon element
-      polygon: wrapWithAttrCheck(function (p) {
-        // make sure plot is called as a setter
-        return this.put(new Polygon()).plot(p || new PointArray());
-      })
-    }
-  });
-  extend(Polygon, pointed);
-  extend(Polygon, poly);
-  register(Polygon);
-
-  var Polyline =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Polyline, _Shape);
-
-    // Initialize node
-    function Polyline(node) {
-      _classCallCheck(this, Polyline);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Polyline).call(this, nodeOrNew('polyline', node), node));
-    }
-
-    return Polyline;
-  }(Shape);
-  registerMethods({
-    Container: {
-      // Create a wrapped polygon element
-      polyline: wrapWithAttrCheck(function (p) {
-        // make sure plot is called as a setter
-        return this.put(new Polyline()).plot(p || new PointArray());
-      })
-    }
-  });
-  extend(Polyline, pointed);
-  extend(Polyline, poly);
-  register(Polyline);
-
-  var Rect =
-  /*#__PURE__*/
-  function (_Shape) {
-    _inherits(Rect, _Shape);
-
-    // Initialize node
-    function Rect(node) {
-      _classCallCheck(this, Rect);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Rect).call(this, nodeOrNew('rect', node), node));
-    }
-
-    return Rect;
-  }(Shape);
-  extend(Rect, {
-    rx: rx,
-    ry: ry
-  });
-  registerMethods({
-    Container: {
-      // Create a rect element
-      rect: wrapWithAttrCheck(function (width$$1, height$$1) {
-        return this.put(new Rect()).size(width$$1, height$$1);
-      })
-    }
-  });
-  register(Rect);
 
   function plain(text) {
     // clear if build mode is disabled
@@ -6968,6 +7062,8 @@ var SVG = (function () {
   extend(Shape, getMethodsFor('Shape')); // extend(Element, getConstructor('Memory'))
 
   extend(Container, getMethodsFor('Container'));
+  extend(Runner, getMethodsFor('Runner'));
+  List.extend(getMethodNames());
   registerMorphableType([SVGNumber, Color, Box, Matrix, SVGArray, PointArray, PathArray]);
   makeMorphable();
 
@@ -7000,6 +7096,7 @@ var SVG = (function () {
     PathArray: PathArray,
     Point: Point,
     PointArray: PointArray,
+    List: List,
     Bare: Bare,
     Circle: Circle,
     ClipPath: ClipPath,

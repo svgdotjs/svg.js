@@ -141,10 +141,11 @@ export default class Runner extends EventTarget {
   These methods allow us to attach basic functions to the runner directly
   */
 
-  queue (initFn, runFn, isTransform) {
+  queue (initFn, runFn, retargetFn, isTransform) {
     this._queue.push({
       initialiser: initFn || noop,
       runner: runFn || noop,
+      retarget: retargetFn,
       isTransform: isTransform,
       initialised: false,
       finished: false
@@ -338,8 +339,8 @@ export default class Runner extends EventTarget {
 
       // for the case of transformations, we use the special retarget function
       // which has access to the outer scope
-      if (this._history[method].caller.isTransform) {
-        this._history[method].caller.isTransform(target)
+      if (this._history[method].caller.retarget) {
+        this._history[method].caller.retarget(target)
       // for everything else a simple morpher change is sufficient
       } else {
         this._history[method].morpher.to(target)
@@ -404,6 +405,15 @@ export default class Runner extends EventTarget {
     return this
   }
 
+  // TODO: Keep track of all transformations so that deletion is faster
+  clearTransformsFromQueue () {
+    if (!this.done) {
+      this._queue = this._queue.filter((item) => {
+        return !item.isTransform
+      })
+    }
+  }
+
   static sanitise (duration, delay, when) {
     // Initialise the default parameters
     var times = 1
@@ -442,6 +452,8 @@ class FakeRunner {
     this.id = id
     this.done = done
   }
+
+  clearTransformsFromQueue () { }
 }
 
 extend([Runner, FakeRunner], {
@@ -538,6 +550,7 @@ class RunnerArray {
     let deleteCnt = this.ids.indexOf(id + 1) || 1
     this.ids.splice(0, deleteCnt, 0)
     this.runners.splice(0, deleteCnt, new FakeRunner())
+      .forEach((r) => r.clearTransformsFromQueue())
     return this
   }
 }
@@ -758,7 +771,7 @@ extend(Runner, {
       transforms = { ...newTransforms, origin }
     }
 
-    this.queue(setup, run, retarget)
+    this.queue(setup, run, retarget, true)
     this._isDeclarative && this._rememberMorpher('transform', morpher)
     return this
   },
@@ -774,28 +787,31 @@ extend(Runner, {
   },
 
   dx (x) {
-    return this._queueNumberDelta('dx', x)
+    return this._queueNumberDelta('x', x)
   },
 
   dy (y) {
-    return this._queueNumberDelta('dy', y)
+    return this._queueNumberDelta('y', y)
   },
 
   _queueNumberDelta (method, to) {
     to = new SVGNumber(to)
 
     // Try to change the target if we have this method already registerd
-    if (this._tryRetargetDelta(method, to)) return this
+    if (this._tryRetarget(method, to)) return this
 
     // Make a morpher and queue the animation
     var morpher = new Morphable(this._stepper).to(to)
+    var from = null
     this.queue(function () {
-      var from = this.element()[method]()
+      from = this.element()[method]()
       morpher.from(from)
       morpher.to(from + to)
     }, function (pos) {
       this.element()[method](morpher.at(pos))
       return morpher.done()
+    }, function (newTo) {
+      morpher.to(from + new SVGNumber(newTo))
     })
 
     // Register the morpher so that if it is changed again, we can retarget it
