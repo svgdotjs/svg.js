@@ -5,7 +5,7 @@ const Animator = {
   nextDraw: null,
   frames: new Queue(),
   timeouts: new Queue(),
-  timer: globals.window.performance || globals.window.Date,
+  timer: () => globals.window.performance || globals.window.Date,
   transforms: [],
 
   frame (fn) {
@@ -29,7 +29,7 @@ const Animator = {
     delay = delay || 0
 
     // Work out when the event should fire
-    var time = Animator.timer.now() + delay
+    var time = Animator.timer().now() + delay
 
     // Add the timeout to the end of the queue
     var node = Animator.timeouts.push({ run: fn, time: time })

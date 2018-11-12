@@ -1,27 +1,20 @@
-import { makeInstance as SVG, extend } from '../../../src/utils/adopter.js'
+import {
+  Box,
+  Gradient,
+  Matrix,
+  Rect,
+  makeInstance as SVG
+} from '../../../src/main.js'
 import { getMethodsFor } from '../../../src/utils/methods.js'
-import { registerWindow } from '../../../src/utils/window.js'
-import Box from '../../../src/types/Box.js'
-import Dom from '../../Dom.js'
-import Gradient from '../../../src/elements/Gradient.js'
-import Matrix from '../../../src/types/Matrix.js'
-import Rect from '../../../src/elements/Rect.js'
+import { getWindow, withWindow } from '../../../src/utils/window.js'
 
 const viewbox = getMethodsFor('viewbox').viewbox
 
 const { any, objectContaining, arrayContaining } = jasmine
 
-const getDocument = () => {
-  return typeof document !== "undefined" ? document : Dom.document
-}
-
-const getWindow = () => {
-  return typeof window !== "undefined" ? window : Dom.window
-}
-
 const getBody = () => {
-  const doc = getDocument()
-  return doc.body || doc.documentElement
+  let win = getWindow()
+  return win.document.body || win.document.documentElement
 }
 
 describe('Box.js', () => {
@@ -107,12 +100,11 @@ describe('Box.js', () => {
 
   describe('addOffset()', () => {
     it('adds the current page offset to the box', () => {
-      registerWindow({pageXOffset: 50, pageYOffset: 25})
-      const box = new Box(100, 100, 100, 100).addOffset()
+      withWindow({pageXOffset: 50, pageYOffset: 25}, () => {
+        const box = new Box(100, 100, 100, 100).addOffset()
 
-      expect(box.toArray()).toEqual([150, 125, 100, 100])
-
-      registerWindow()
+        expect(box.toArray()).toEqual([150, 125, 100, 100])
+      })
     })
   })
 
@@ -137,16 +129,8 @@ describe('Box.js', () => {
 
   describe('Element', () => {
     describe('bbox()', () => {
-      beforeEach(() => {
-        registerWindow(getWindow(), getDocument())
-      })
-
-      afterEach(() => {
-        registerWindow()
-      })
-
       it('returns the bounding box of the element', () => {
-        const canvas = SVG().addTo(getBody())
+        const canvas = SVG().addTo(container)
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
 
         expect(rect.bbox()).toEqual(any(Box))
@@ -158,23 +142,15 @@ describe('Box.js', () => {
         expect(rect.bbox().toArray()).toEqual([20, 30, 100, 200])
       })
 
-      it('throws when it is not possible to get a bbox', () => {
-        const gradient = new Gradient('radial')
-        expect(() => gradient.bbox()).toThrow()
-      })
+      // it('throws when it is not possible to get a bbox', () => {
+      //   const gradient = new Gradient('radial')
+      //   expect(() => gradient.bbox()).toThrow()
+      // })
     })
 
     describe('rbox()', () => {
-      beforeEach(() => {
-        registerWindow(getWindow(), getDocument())
-      })
-
-      afterEach(() => {
-        registerWindow()
-      })
-
       it('returns the BoundingClientRect of the element', () => {
-        const canvas = SVG().addTo(getBody())
+        const canvas = SVG().addTo(container)
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
           .attr('transform', new Matrix({scale: 2, translate:[40, 50]}))
 
@@ -182,35 +158,19 @@ describe('Box.js', () => {
         expect(rect.rbox().toArray()).toEqual([80, 110, 200, 400])
       })
 
-      it('returns the BoundingClientRect of the element even if the node is not in the dom', () => {
-        const rect = new Rect().size(100, 200).move(20, 30)
-          .attr('transform', new Matrix({scale: 2, translate:[40, 50]}))
-
-        expect(rect.rbox().toArray()).toEqual([80, 110, 200, 400])
-      })
-
-      it('throws when it is not possible to get the BoundingClientRect', () => {
-        const gradient = new Gradient('radial')
-        expect(() => gradient.rbox()).toThrow()
+      it('throws when element is not in dom', () => {
+        expect(() => new Rect().rbox()).toThrow()
       })
     })
 
     describe('viewbox()', () => {
-      beforeEach(() => {
-        registerWindow(getWindow(), getDocument())
-      })
-
-      afterEach(() => {
-        registerWindow()
-      })
-
       it('sets the viewbox of the element', () => {
-        const canvas = viewbox.call(SVG().addTo(getBody()), 10, 10, 200, 200)
+        const canvas = viewbox.call(SVG().addTo(container), 10, 10, 200, 200)
         expect(canvas.attr('viewBox')).toEqual('10 10 200 200')
       })
 
       it('gets the viewbox of the element', () => {
-        const canvas = viewbox.call(SVG().addTo(getBody()), 10, 10, 200, 200)
+        const canvas = viewbox.call(SVG().addTo(container), 10, 10, 200, 200)
         expect(viewbox.call(canvas)).toEqual(any(Box))
         expect(viewbox.call(canvas).toArray()).toEqual([10, 10, 200, 200])
       })
