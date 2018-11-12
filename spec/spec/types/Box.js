@@ -7,8 +7,6 @@ import Gradient from '../../../src/elements/Gradient.js'
 import Matrix from '../../../src/types/Matrix.js'
 import Rect from '../../../src/elements/Rect.js'
 
-const bbox = getMethodsFor('Element').bbox
-const rbox = getMethodsFor('Element').rbox
 const viewbox = getMethodsFor('viewbox').viewbox
 
 const { any, objectContaining, arrayContaining } = jasmine
@@ -151,18 +149,18 @@ describe('Box.js', () => {
         const canvas = SVG().addTo(getBody())
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
 
-        expect(bbox.call(rect)).toEqual(any(Box))
-        expect(bbox.call(rect).toArray()).toEqual([20, 30, 100, 200])
+        expect(rect.bbox()).toEqual(any(Box))
+        expect(rect.bbox().toArray()).toEqual([20, 30, 100, 200])
       })
 
       it('returns the bounding box of the element even if the node is not in the dom', () => {
         const rect = new Rect().size(100, 200).move(20, 30)
-        expect(bbox.call(rect).toArray()).toEqual([20, 30, 100, 200])
+        expect(rect.bbox().toArray()).toEqual([20, 30, 100, 200])
       })
 
       it('throws when it is not possible to get a bbox', () => {
         const gradient = new Gradient('radial')
-        expect(() => bbox.call(gradient)).toThrow()
+        expect(() => gradient.bbox()).toThrow()
       })
     })
 
@@ -180,20 +178,20 @@ describe('Box.js', () => {
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
           .attr('transform', new Matrix({scale: 2, translate:[40, 50]}))
 
-        expect(rbox.call(rect)).toEqual(any(Box))
-        expect(rbox.call(rect).toArray()).toEqual([80, 110, 200, 400])
+        expect(rect.rbox()).toEqual(any(Box))
+        expect(rect.rbox().toArray()).toEqual([80, 110, 200, 400])
       })
 
       it('returns the BoundingClientRect of the element even if the node is not in the dom', () => {
         const rect = new Rect().size(100, 200).move(20, 30)
           .attr('transform', new Matrix({scale: 2, translate:[40, 50]}))
 
-        expect(rbox.call(rect).toArray()).toEqual([80, 110, 200, 400])
+        expect(rect.rbox().toArray()).toEqual([80, 110, 200, 400])
       })
 
       it('throws when it is not possible to get the BoundingClientRect', () => {
         const gradient = new Gradient('radial')
-        expect(() => rbox.call(gradient)).toThrow()
+        expect(() => gradient.rbox()).toThrow()
       })
     })
 
