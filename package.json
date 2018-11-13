@@ -52,14 +52,15 @@
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "npm run fix && npm run rollup",
+    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
     "fix": "npx eslint ./src --fix",
     "lint": "eslint ./src",
     "rollup": "rollup -c .config/rollup.config.js",
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
-    "test:quick": "node -r esm ./spec/run.js || true",
-    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "test:svgdom": "node -r esm ./spec/run.js || true",
+    "test:es6": "npx karma start .config/karma.es6.js --single-run",
     "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
     "postPublish": "echo Please upload a zip to the github release containing the dist, license and changelog"
   },
