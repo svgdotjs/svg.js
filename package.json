@@ -60,7 +60,9 @@
     "rollup": "rollup -c .config/rollup.config.js",
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
-    "test:ci": "karma start .config/karma.conf.saucelabs.js"
+    "test:ci": "karma start .config/karma.conf.saucelabs.js",
+    "server": "npx http-server ./ -d",
+    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
