@@ -2,7 +2,7 @@
 // https://wiki.saucelabs.com/display/DOCS/Platform+Configurator
 
 // TODO: remove dotenv after local test
-// require('dotenv').config()
+require('dotenv').config()
 
 const karmaCommon = require('./karma.conf.common.js')
 
@@ -34,6 +34,11 @@ const SauceLabsLaunchers = {
     base: 'SauceLabs',
     browserName: 'chrome',
     version: 'latest'
+  },
+  SL_InternetExplorer: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    version: '11.0'
   },/*
   sl_windows_edge: {
     base: 'SauceLabs',
@@ -70,24 +75,12 @@ const SauceLabsLaunchers = {
     version: '50.0',
     platform: 'Windows 10'
   },
-  'SL_InternetExplorer': {
-    base: 'SauceLabs',
-    browserName: 'internet explorer',
-    version: '11.0',
-    platform: 'Windows 7'
-  },
   'SL_Safari': {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'OS X 10.11',
     version: '10.0'
   } */
-  'SL_Chrome_70': {
-    base: 'SauceLabs',
-    browserName: 'chrome',
-    platform: 'Windows 10',
-    version: '70.0'
-  }
 }
 
 
