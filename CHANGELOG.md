@@ -29,6 +29,19 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
+## [2.7.0] - 2018-11-13
+
+### Fixed
+- fixed calling `parent()` on `documentFragment`s children (#927)
+- parser is not focusable anymore (#908)
+- `SVG.Element.click(null)` correctly unbinds the event (#878)
+- fix memory leak (#905)
+
+### Added
+- `SVG.Set` now accepts another Set as input (#893)
+- `on()/off()` accepts multiple event names as input (backport from 3.0)
+
+
 ## [2.6.6] - 2018-08-30
 
 ### Added
@@ -640,6 +653,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.7.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.0
 [2.6.6]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.6
 [2.6.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.5
 [2.6.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.4

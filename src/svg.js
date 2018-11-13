@@ -139,7 +139,7 @@ SVG.prepare = function() {
   // Create parser object
   SVG.parser = {
     body: body || document.documentElement
-  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden').node
+  , draw: draw.style('opacity:0;position:absolute;left:-100%;top:-100%;overflow:hidden').attr('focusable', 'false').node
   , poly: draw.polyline().node
   , path: draw.path().node
   , native: SVG.create('svg')

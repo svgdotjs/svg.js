@@ -23,7 +23,15 @@ describe('Set', function() {
     var members = [1, 2, 4]
 
     expect(draw.set(members).valueOf()).toBe(members)
-  })  
+  })
+
+  it('creates a set when passing another set', function() {
+    var set = new SVG.Set([1, 2, 4])
+    var set2 = new SVG.Set(set)
+
+    expect(set.valueOf()).not.toBe(set2.valueOf())
+    expect(set.valueOf()).toEqual(set2.valueOf())
+  })
 
   describe('add()', function() {
     it('returns the set instance', function() {
@@ -204,12 +212,3 @@ describe('Set', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-

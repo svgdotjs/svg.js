@@ -1,8 +1,11 @@
 SVG.Set = SVG.invent({
   // Initialize
   create: function(members) {
-    // Set initial state
-    Array.isArray(members) ? this.members = members : this.clear()
+    if (members instanceof SVG.Set) {
+      this.members = members.members.slice()
+    } else {
+      Array.isArray(members) ? this.members = members : this.clear()
+    }
   }
 
   // Add class methods
@@ -13,13 +16,13 @@ SVG.Set = SVG.invent({
 
       for (i = 0, il = elements.length; i < il; i++)
         this.members.push(elements[i])
-      
+
       return this
     }
     // Remove element from set
   , remove: function(element) {
       var i = this.index(element)
-      
+
       // remove given child
       if (i > -1)
         this.members.splice(i, 1)
@@ -85,7 +88,7 @@ SVG.Set = SVG.invent({
       return rbox
     }
   }
-  
+
   // Add parent method
 , construct: {
     // Create a new set
@@ -108,7 +111,7 @@ SVG.FX.Set = SVG.invent({
 SVG.Set.inherit = function() {
   var m
     , methods = []
-  
+
   // gather shape methods
   for(var m in SVG.Shape.prototype)
     if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
@@ -143,5 +146,3 @@ SVG.Set.inherit = function() {
     }
   })
 }
-
-
