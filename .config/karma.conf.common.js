@@ -32,7 +32,7 @@ module.exports = function (config) {
         served: true
       },
       'dist/svg.js',
-      'spec/spec/**/*.js'
+      'spec/spec/*.js'
     ],
 
     proxies: {

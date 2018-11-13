@@ -1,6 +1,3 @@
-import { registerMethods } from '../utils/methods.js'
-import parser from '../modules/core/parser.js'
-
 export default class Point {
   // Initialize
   constructor (...args) {
@@ -19,22 +16,13 @@ export default class Point {
     // merge source
     this.x = source.x == null ? base.x : source.x
     this.y = source.y == null ? base.y : source.y
+
+    return this
   }
 
   // Clone point
   clone () {
     return new Point(this)
-  }
-
-  // Convert to native SVGPoint
-  native () {
-    // create new point
-    var point = parser().svg.node.createSVGPoint()
-
-    // update with current values
-    point.x = this.x
-    point.y = this.y
-    return point
   }
 
   // transform point with matrix
@@ -52,11 +40,6 @@ export default class Point {
   }
 }
 
-registerMethods({
-  Element: {
-    // Get point
-    point: function (x, y) {
-      return new Point(x, y).transform(this.screenCTM().inverse())
-    }
-  }
-})
+export function point (x, y) {
+  return new Point(x, y).transform(this.screenCTM().inverse())
+}

@@ -1,5 +1,6 @@
 import { delimiter } from './regex.js'
 import { makeInstance } from '../../utils/adopter.js'
+import { globals } from '../../utils/window.js'
 
 let listenerId = 0
 
@@ -109,10 +110,10 @@ export function dispatch (node, event, data) {
   var n = getEventTarget(node)
 
   // Dispatch event
-  if (event instanceof window.Event) {
+  if (event instanceof globals.window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new window.CustomEvent(event, { detail: data, cancelable: true })
+    event = new globals.window.CustomEvent(event, { detail: data, cancelable: true })
     n.dispatchEvent(event)
   }
   return event

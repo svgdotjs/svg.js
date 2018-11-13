@@ -6,9 +6,11 @@ import {
   makeInstance,
   register
 } from '../utils/adopter.js'
+import { globals } from '../utils/window.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
 import EventTarget from '../types/EventTarget.js'
+import List from '../types/List.js'
 import attr from '../modules/core/attr.js'
 
 export default class Dom extends EventTarget {
@@ -42,9 +44,9 @@ export default class Dom extends EventTarget {
 
   // Returns all child elements
   children () {
-    return map(this.node.children, function (node) {
+    return new List(map(this.node.children, function (node) {
       return adopt(node)
-    })
+    }))
   }
 
   // Remove all elements in this container
@@ -135,11 +137,6 @@ export default class Dom extends EventTarget {
     return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector)
   }
 
-  // Returns the svg node to call native svg methods on it
-  native () {
-    return this.node
-  }
-
   // Returns the parent element instance
   parent (type) {
     var parent = this
@@ -153,7 +150,7 @@ export default class Dom extends EventTarget {
     if (!type) return parent
 
     // loop trough ancestors if type is given
-    while (parent && parent.node instanceof window.SVGElement) {
+    while (parent && parent.node instanceof globals.window.SVGElement) { // FIXME: That shouldnt be neccessary
       if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
       parent = adopt(parent.node.parentNode)
     }
@@ -276,8 +273,8 @@ export default class Dom extends EventTarget {
     outerHTML = outerHTML == null ? false : outerHTML
 
     // Create temporary holder
-    well = document.createElementNS(ns, 'svg')
-    fragment = document.createDocumentFragment()
+    well = globals.document.createElementNS(ns, 'svg')
+    fragment = globals.document.createDocumentFragment()
 
     // Dump raw svg
     well.innerHTML = svgOrFn

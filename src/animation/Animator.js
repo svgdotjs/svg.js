@@ -1,10 +1,11 @@
+import { globals } from '../utils/window.js'
 import Queue from './Queue.js'
 
 const Animator = {
   nextDraw: null,
   frames: new Queue(),
   timeouts: new Queue(),
-  timer: window.performance || window.Date,
+  timer: globals.window.performance || globals.window.Date,
   transforms: [],
 
   frame (fn) {
@@ -13,7 +14,7 @@ const Animator = {
 
     // Request an animation frame if we don't have one
     if (Animator.nextDraw === null) {
-      Animator.nextDraw = window.requestAnimationFrame(Animator._draw)
+      Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw)
     }
 
     // Return the node so we can remove it easily
@@ -35,7 +36,7 @@ const Animator = {
 
     // Request another animation frame if we need one
     if (Animator.nextDraw === null) {
-      Animator.nextDraw = window.requestAnimationFrame(Animator._draw)
+      Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw)
     }
 
     return node
@@ -77,7 +78,7 @@ const Animator = {
 
     // If we have remaining timeouts or frames, draw until we don't anymore
     Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first()
-      ? window.requestAnimationFrame(Animator._draw)
+      ? globals.window.requestAnimationFrame(Animator._draw)
       : null
   }
 }

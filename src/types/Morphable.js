@@ -121,6 +121,7 @@ export class NonMorphable {
   init (val) {
     val = Array.isArray(val) ? val[0] : val
     this.value = val
+    return this
   }
 
   valueOf () {
@@ -152,6 +153,7 @@ export class TransformBag {
     }
 
     Object.assign(this, TransformBag.defaults, obj)
+    return this
   }
 
   toArray () {
@@ -199,6 +201,7 @@ export class ObjectBag {
     })
 
     this.values = entries.reduce((last, curr) => last.concat(curr), [])
+    return this
   }
 
   valueOf () {

@@ -6,6 +6,7 @@ import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Pattern from './Pattern.js'
 import Shape from './Shape.js'
+import { globals } from '../utils/window.js'
 
 export default class Image extends Shape {
   constructor (node) {
@@ -16,7 +17,7 @@ export default class Image extends Shape {
   load (url, callback) {
     if (!url) return this
 
-    var img = new window.Image()
+    var img = new globals.window.Image()
 
     on(img, 'load', function (e) {
       var p = this.parent(Pattern)

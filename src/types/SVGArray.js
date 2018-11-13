@@ -10,8 +10,11 @@ export default SVGArray
 
 extend(SVGArray, {
   init (arr) {
+    // This catches the case, that native map tries to create an array with new Array(1)
+    if (typeof arr === 'number') return this
     this.length = 0
     this.push(...this.parse(arr))
+    return this
   },
 
   toArray () {

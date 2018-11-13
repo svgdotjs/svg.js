@@ -7,15 +7,8 @@ import './modules/optional/memory.js'
 import './modules/optional/sugar.js'
 import './modules/optional/transform.js'
 
-import Morphable, {
-  NonMorphable,
-  ObjectBag,
-  TransformBag,
-  makeMorphable,
-  registerMorphableType
-} from './types/Morphable.js'
 import { extend } from './utils/adopter.js'
-import { getMethodsFor } from './utils/methods.js'
+import { getMethodNames, getMethodsFor } from './utils/methods.js'
 import Box from './types/Box.js'
 import Circle from './elements/Circle.js'
 import Color from './types/Color.js'
@@ -29,8 +22,16 @@ import EventTarget from './types/EventTarget.js'
 import Gradient from './elements/Gradient.js'
 import Image from './elements/Image.js'
 import Line from './elements/Line.js'
+import List from './types/List.js'
 import Marker from './elements/Marker.js'
 import Matrix from './types/Matrix.js'
+import Morphable, {
+  NonMorphable,
+  ObjectBag,
+  TransformBag,
+  makeMorphable,
+  registerMorphableType
+} from './types/Morphable.js'
 import Path from './elements/Path.js'
 import PathArray from './types/PathArray.js'
 import Pattern from './elements/Pattern.js'
@@ -38,6 +39,7 @@ import PointArray from './types/PointArray.js'
 import Polygon from './elements/Polygon.js'
 import Polyline from './elements/Polyline.js'
 import Rect from './elements/Rect.js'
+import Runner from './animation/Runner.js'
 import SVGArray from './types/SVGArray.js'
 import SVGNumber from './types/SVGNumber.js'
 import Shape from './elements/Shape.js'
@@ -61,6 +63,7 @@ export { default as parser } from './modules/core/parser.js'
 export { default as find } from './modules/core/selector.js'
 export * from './modules/core/event.js'
 export * from './utils/adopter.js'
+export { registerWindow } from './utils/window.js'
 
 /* Animation Modules */
 export { default as Animator } from './animation/Animator.js'
@@ -79,6 +82,7 @@ export { default as SVGNumber } from './types/SVGNumber.js'
 export { default as PathArray } from './types/PathArray.js'
 export { default as Point } from './types/Point.js'
 export { default as PointArray } from './types/PointArray.js'
+export { default as List } from './types/List.js'
 
 /* Elements */
 export { default as Bare } from './elements/Bare.js'
@@ -150,6 +154,10 @@ extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
 // extend(Element, getConstructor('Memory'))
 extend(Container, getMethodsFor('Container'))
+
+extend(Runner, getMethodsFor('Runner'))
+
+List.extend(getMethodNames())
 
 registerMorphableType([
   SVGNumber,

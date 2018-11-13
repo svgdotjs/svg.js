@@ -1,5 +1,7 @@
+import { addMethodNames } from './methods.js'
 import { capitalize } from './utils.js'
 import { ns } from '../modules/core/namespaces.js'
+import { globals } from '../utils/window.js'
 import Base from '../types/Base.js'
 
 const elements = {}
@@ -8,7 +10,7 @@ export const root = Symbol('root')
 // Method for element creation
 export function makeNode (name) {
   // create element
-  return document.createElementNS(ns, name)
+  return globals.document.createElementNS(ns, name)
 }
 
 export function makeInstance (element) {
@@ -23,7 +25,7 @@ export function makeInstance (element) {
   }
 
   if (typeof element === 'string' && element.charAt(0) !== '<') {
-    return adopt(document.querySelector(element))
+    return adopt(globals.document.querySelector(element))
   }
 
   var node = makeNode('svg')
@@ -37,7 +39,7 @@ export function makeInstance (element) {
 }
 
 export function nodeOrNew (name, node) {
-  return node instanceof window.Node ? node : makeNode(name)
+  return node instanceof globals.window.Node ? node : makeNode(name)
 }
 
 // Adopt existing svg elements
@@ -48,7 +50,7 @@ export function adopt (node) {
   // make sure a node isn't already adopted
   if (node.instance instanceof Base) return node.instance
 
-  if (!(node instanceof window.SVGElement)) {
+  if (!(node instanceof globals.window.SVGElement)) {
     return new elements.HtmlNode(node)
   }
 
@@ -72,6 +74,9 @@ export function adopt (node) {
 export function register (element, name = element.name, asRoot = false) {
   elements[name] = element
   if (asRoot) elements[root] = element
+
+  addMethodNames(Object.keys(element.prototype))
+
   return element
 }
 

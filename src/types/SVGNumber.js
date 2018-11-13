@@ -40,6 +40,8 @@ export default class SVGNumber {
         this.unit = value.unit
       }
     }
+
+    return this
   }
 
   toString () {

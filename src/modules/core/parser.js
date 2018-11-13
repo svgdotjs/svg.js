@@ -1,9 +1,10 @@
-import Doc from '../../elements/Doc.js'
+import { globals } from '../../utils/window.js'
+import { makeInstance } from '../../utils/adopter.js'
 
 export default function parser () {
   // Reuse cached element if possible
   if (!parser.nodes) {
-    let svg = new Doc().size(2, 0)
+    let svg = makeInstance().size(2, 0)
     svg.node.cssText = [
       'opacity: 0',
       'position: absolute',
@@ -18,7 +19,7 @@ export default function parser () {
   }
 
   if (!parser.nodes.svg.node.parentNode) {
-    let b = document.body || document.documentElement
+    let b = globals.document.body || globals.document.documentElement
     parser.nodes.svg.addTo(b)
   }
 

@@ -1,12 +1,7 @@
 import { delimiter } from '../modules/core/regex.js'
 import { radians } from '../utils/utils.js'
-import { registerMethods } from '../utils/methods.js'
 import Element from '../elements/Element.js'
 import Point from './Point.js'
-import parser from '../modules/core/parser.js'
-
-// Create matrix array for looping
-const abcdef = 'abcdef'.split('')
 
 function closeEnough (a, b, threshold) {
   return Math.abs(b - a) < (threshold || 1e-6)
@@ -37,6 +32,8 @@ export default class Matrix {
     this.d = source.d != null ? source.d : base.d
     this.e = source.e != null ? source.e : base.e
     this.f = source.f != null ? source.f : base.f
+
+    return this
   }
 
   // Clones this matrix
@@ -377,19 +374,6 @@ export default class Matrix {
     return this.clone().aroundO(cx, cy, matrix)
   }
 
-  // Convert to native SVGMatrix
-  native () {
-    // create new matrix
-    var matrix = parser().svg.node.createSVGMatrix()
-
-    // update with current values
-    for (var i = abcdef.length - 1; i >= 0; i--) {
-      matrix[abcdef[i]] = this[abcdef[i]]
-    }
-
-    return matrix
-  }
-
   // Check if two matrices are equal
   equals (other) {
     var comp = new Matrix(other)
@@ -497,26 +481,20 @@ export default class Matrix {
   }
 }
 
-registerMethods({
-  Element: {
-    // Get current matrix
-    ctm () {
-      return new Matrix(this.node.getCTM())
-    },
+export function ctm () {
+  return new Matrix(this.node.getCTM())
+}
 
-    // Get current screen matrix
-    screenCTM () {
-      /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
-         This is needed because FF does not return the transformation matrix
-         for the inner coordinate system when getScreenCTM() is called on nested svgs.
-         However all other Browsers do that */
-      if (typeof this.isRoot === 'function' && !this.isRoot()) {
-        var rect = this.rect(1, 1)
-        var m = rect.node.getScreenCTM()
-        rect.remove()
-        return new Matrix(m)
-      }
-      return new Matrix(this.node.getScreenCTM())
-    }
+export function screenCTM () {
+  /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
+     This is needed because FF does not return the transformation matrix
+     for the inner coordinate system when getScreenCTM() is called on nested svgs.
+     However all other Browsers do that */
+  if (typeof this.isRoot === 'function' && !this.isRoot()) {
+    var rect = this.rect(1, 1)
+    var m = rect.node.getScreenCTM()
+    rect.remove()
+    return new Matrix(m)
   }
-})
+  return new Matrix(this.node.getScreenCTM())
+}
