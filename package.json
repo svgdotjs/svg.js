@@ -53,6 +53,7 @@
   "scripts": {
     "build": "npm run fix && npm run rollup",
     "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "build:tests": "npx rollup -c rollup.tests.js",
     "fix": "npx eslint ./src --fix",
     "lint": "eslint ./src",
     "rollup": "rollup -c .config/rollup.config.js",
@@ -96,6 +97,7 @@
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-filesize": "^5.0.1",
+    "rollup-plugin-multi-entry": "^2.0.2",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
