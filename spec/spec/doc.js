@@ -63,4 +63,12 @@ describe('Doc', function() {
     })
   })
 
+  describe('parent()', function () {
+    it('returns null if nodeName is document-fragment', function() {
+      var fragment = document.createDocumentFragment();
+      var svgFrag = new SVG(fragment);
+      expect(svgFrag.parent()).toBe(null);
+    })
+  })
+
 })

@@ -635,6 +635,11 @@ describe('Element', function() {
       var g = new SVG.G()
       expect(new SVG.Rect().addTo(g).parent()).toBe(g)
     })
+    it('returns null if nodeName is document-fragment', function() {
+      var fragment = document.createDocumentFragment();
+      var svgFrag = new SVG(fragment);
+      expect(svgFrag.parent()).toBe(null);
+    })
   })
 
   describe('parents()', function() {
