@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Aug 30 2018 11:37:58 GMT+0200 (GMT+02:00)
+* BUILT: Tue Nov 13 2018 17:12:15 GMT+0100 (CET)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -1205,7 +1205,7 @@ SVG.Element = SVG.invent({
       // loop trough ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-        if(!parent.node.parentNode || parent.node.parentNode.nodeName == '#document') return null // #759, #720
+        if(!parent.node.parentNode || parent.node.parentNode.nodeName == '#document' || parent.node.parentNode.nodeName == '#document-fragment') return null // #759, #720
         parent = SVG.adopt(parent.node.parentNode)
       }
     }
@@ -3659,7 +3659,7 @@ SVG.Doc = SVG.invent({
     }
     // custom parent method
   , parent: function() {
-      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document') return null
+      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document' || this.node.parentNode.nodeName == '#document-fragment') return null
       return this.node.parentNode
     }
     // Fix for possible sub-pixel offset. See:
