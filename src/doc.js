@@ -53,7 +53,7 @@ SVG.Doc = SVG.invent({
     }
     // custom parent method
   , parent: function() {
-      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document') return null
+      if(!this.node.parentNode || this.node.parentNode.nodeName == '#document' || this.node.parentNode.nodeName == '#document-fragment') return null
       return this.node.parentNode
     }
     // Fix for possible sub-pixel offset. See:
