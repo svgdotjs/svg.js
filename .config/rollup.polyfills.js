@@ -4,7 +4,7 @@ import commonjs from 'rollup-plugin-commonjs'
 
 export default [
   {
-    input: './.config/polyfills.js',
+    input: './.config/polyfillList.js',
     output: {
       file: 'dist/polyfills.js',
       name: 'polyfills',

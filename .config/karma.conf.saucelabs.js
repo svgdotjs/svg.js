@@ -107,7 +107,7 @@ module.exports = function(config) {
       'karma-sauce-launcher',
     ],
 
-    logLevel: config.LOG_DEBUG,
+    // logLevel: config.LOG_DEBUG,
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
