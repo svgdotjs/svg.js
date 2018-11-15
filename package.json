@@ -61,7 +61,6 @@
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
-    "server": "npx http-server ./ -d",
     "build:polyfills": "npx rollup -c .config/rollup.polyfills.js"
   },
   "devDependencies": {
@@ -86,7 +85,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "^1.1.0",
-    "karma-jasmine": "^1.1.2",
+    "karma-jasmine": "^2.0.0",
     "karma-sauce-launcher": "^1.2.0",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^4.0.3",
