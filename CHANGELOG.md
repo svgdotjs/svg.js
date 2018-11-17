@@ -11,13 +11,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## UNRELEASED 3.0.0
 
 ### Added
-- added `SVG.$()` and `SVG.$$()` which will query for one/multiple elements
 - added `text()` method to `SVG.Path` to create a textPath from this path (#705)
 - added `SVG.HTMLNode` which is the object wrapped around html nodes to put something in them
 - added `dispatch()` method on `SVG.Element` which returns the dispatched event for event cancelation (#550)
 - added `isRoot()` on `SVG.Doc` (#809)
 - added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
-- added `precision()` method to round numeric element attributes -> __TODO!__
 - added a linter during the npm build process
 - added `npm build:dev` to let you develop without getting too annoyed
 - added `beziere()` and `steps()` to generate easing functions
@@ -52,7 +50,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - replaced static reference to `clipper` in `SVG.ClipPath` with the `clipper()` method
 - replaced static reference to `targets` in `SVG.Mask` and `SVG.ClipPath` with the `targets()` method
 - moved all regexes to `SVG.regex`
-- `svg()` will now return the element without svg-wrapper
 - new constructor signature for `SVG.Image` and `load()`: `container.image(src, callback) / image.load(src, callback)` (#706)
 - changed `style()` to `css()`. Now accepts array as input and returns object when no argument given (#517)
 - ids are not generated upon creation anymore. Instead they are generated when requested (#559)
@@ -60,11 +57,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Text.path()` now returns an instance of SVG.TextPath (#705)
 - `SVG.Text.path()` does not move all contents to the textPath (#705)
 - `SVG.TextPath` now inherits from `SVG.Text` and can be manipulated the same way (#705)
-- `SVG.Text.textPath()` now returns all textPaths in the text element (#705)
+- `SVG.Text.textPath()` returns the first textPaths in the text element (#705)
 - renamed `SVG.Stop` constructor `at()` on `SVG.Gradient` to `stop()` (#707)
 - renamed `fill()` method on `SVG.Gradient` and `SVG.Pattern` to `url()` (#708)
 - renamed `previous()` method to `prev()`
-- changed `childNodes` to `children` (same for `firstChild`, `lastChild`, ...) (#710)
+- changed `childNodes` to `children` (same for `firstChild`, `lastChild`, ...) (#710) - changed it back because of performance drop
 - moved `defs()` method from `SVG.Parent` to `SVG.Element`
 - `SVG()` can be called with css selector, node or svg string, now. Without an argument it creates a new `SVG.Doc()` (#646)
 - `add()`, `put()`, `addTo()`, `putIn()` now excepts all arguments accepted by `SVG()`
@@ -82,7 +79,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `Element.svg()` now can can replace the current node, can export the children of a node and can take an export modifier to change/replace the exported nodes
 - `ungroup()` now breaks off one container and not more
 - `clone()` does not add the clone to the dom anymore
-- `SVG.Text.textPath()` returns only the first textpath child
 - `attr()` excepts array now to get multiple values at once
 - `SVG.Text.rebuild()` now takes every font-size into account (#512)
 - `fill()` and `stroke()` return the fill and stroke attribute when called as getter (#789)

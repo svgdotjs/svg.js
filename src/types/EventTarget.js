@@ -9,18 +9,6 @@ export default class EventTarget extends Base {
 
   addEventListener () {}
 
-  // Bind given event to listener
-  on (event, listener, binding, options) {
-    on(this, event, listener, binding, options)
-    return this
-  }
-
-  // Unbind event from listener
-  off (event, listener) {
-    off(this, event, listener)
-    return this
-  }
-
   dispatch (event, data) {
     return dispatch(this, event, data)
   }
@@ -51,6 +39,18 @@ export default class EventTarget extends Base {
   }
 
   getEventTarget () {
+    return this
+  }
+
+  // Unbind event from listener
+  off (event, listener) {
+    off(this, event, listener)
+    return this
+  }
+
+  // Bind given event to listener
+  on (event, listener, binding, options) {
+    on(this, event, listener, binding, options)
     return this
   }
 

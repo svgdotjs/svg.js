@@ -6,6 +6,7 @@ import {
   makeInstance,
   register
 } from '../utils/adopter.js'
+import { find } from '../modules/core/selector';
 import { globals } from '../utils/window.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
@@ -301,5 +302,5 @@ export default class Dom extends EventTarget {
   }
 }
 
-extend(Dom, { attr })
+extend(Dom, { attr, find })
 register(Dom)

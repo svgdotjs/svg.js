@@ -45,7 +45,7 @@ export let easing = {
       }
     }
   },
-  // https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
+  // see https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
   steps: function (steps, stepPosition = 'end') {
     // deal with "jump-" prefix
     stepPosition = stepPosition.split('-').reverse()[0]

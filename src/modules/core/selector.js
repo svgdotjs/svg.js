@@ -14,5 +14,3 @@ export default function baseFind (query, parent) {
 export function find (query) {
   return baseFind(query, this.node)
 }
-
-registerMethods('Dom', { find })
