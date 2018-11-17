@@ -35,12 +35,7 @@ export default class Image extends Shape {
       }
 
       if (typeof callback === 'function') {
-        callback.call(this, {
-          width: img.width,
-          height: img.height,
-          ratio: img.width / img.height,
-          url: url
-        })
+        callback.call(this, e)
       }
     }, this)
 

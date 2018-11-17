@@ -32,12 +32,7 @@ describe('Image', function() {
       expect(img.load()).toBe(img)
     })
     it('executes the load callback', function() {
-      expect(loadCb.cb).toHaveBeenCalledWith({
-        width: 1,
-        height: 1,
-        ratio: 1,
-        url: jasmine.any(String)
-      })
+      expect(loadCb.cb).toHaveBeenCalledWith(jasmine.any(Event))
     })
   })
 })

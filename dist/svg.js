@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 12 2018 14:48:34 GMT+0100 (GMT+01:00)
+* BUILT: Sat Nov 17 2018 10:54:31 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1832,89 +1832,6 @@ var SVG = (function () {
     return new Matrix(this.node.getScreenCTM());
   }
 
-  var EventTarget =
-  /*#__PURE__*/
-  function (_Base) {
-    _inherits(EventTarget, _Base);
-
-    function EventTarget() {
-      var _this;
-
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref$events = _ref.events,
-          events = _ref$events === void 0 ? {} : _ref$events;
-
-      _classCallCheck(this, EventTarget);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(EventTarget).call(this));
-      _this.events = events;
-      return _this;
-    }
-
-    _createClass(EventTarget, [{
-      key: "addEventListener",
-      value: function addEventListener() {} // Bind given event to listener
-
-    }, {
-      key: "on",
-      value: function on$$1(event, listener, binding, options) {
-        on(this, event, listener, binding, options);
-
-        return this;
-      } // Unbind event from listener
-
-    }, {
-      key: "off",
-      value: function off$$1(event, listener) {
-        off(this, event, listener);
-
-        return this;
-      }
-    }, {
-      key: "dispatch",
-      value: function dispatch$$1(event, data) {
-        return dispatch(this, event, data);
-      }
-    }, {
-      key: "dispatchEvent",
-      value: function dispatchEvent(event) {
-        var bag = this.getEventHolder().events;
-        if (!bag) return true;
-        var events = bag[event.type];
-
-        for (var i in events) {
-          for (var j in events[i]) {
-            events[i][j](event);
-          }
-        }
-
-        return !event.defaultPrevented;
-      } // Fire given event
-
-    }, {
-      key: "fire",
-      value: function fire(event, data) {
-        this.dispatch(event, data);
-        return this;
-      }
-    }, {
-      key: "getEventHolder",
-      value: function getEventHolder() {
-        return this;
-      }
-    }, {
-      key: "getEventTarget",
-      value: function getEventTarget() {
-        return this;
-      }
-    }, {
-      key: "removeEventListener",
-      value: function removeEventListener() {}
-    }]);
-
-    return EventTarget;
-  }(Base);
-
   /* eslint no-new-func: "off" */
   var subClassArray = function () {
     try {
@@ -1990,6 +1907,99 @@ var SVG = (function () {
     }, {});
     extend(List, methods);
   };
+
+  function baseFind(query, parent) {
+    return new List(map((parent || globals.document).querySelectorAll(query), function (node) {
+      return adopt(node);
+    }));
+  } // Scoped find method
+
+  function find(query) {
+    return baseFind(query, this.node);
+  }
+
+  var EventTarget =
+  /*#__PURE__*/
+  function (_Base) {
+    _inherits(EventTarget, _Base);
+
+    function EventTarget() {
+      var _this;
+
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref$events = _ref.events,
+          events = _ref$events === void 0 ? {} : _ref$events;
+
+      _classCallCheck(this, EventTarget);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(EventTarget).call(this));
+      _this.events = events;
+      return _this;
+    }
+
+    _createClass(EventTarget, [{
+      key: "addEventListener",
+      value: function addEventListener() {}
+    }, {
+      key: "dispatch",
+      value: function dispatch$$1(event, data) {
+        return dispatch(this, event, data);
+      }
+    }, {
+      key: "dispatchEvent",
+      value: function dispatchEvent(event) {
+        var bag = this.getEventHolder().events;
+        if (!bag) return true;
+        var events = bag[event.type];
+
+        for (var i in events) {
+          for (var j in events[i]) {
+            events[i][j](event);
+          }
+        }
+
+        return !event.defaultPrevented;
+      } // Fire given event
+
+    }, {
+      key: "fire",
+      value: function fire(event, data) {
+        this.dispatch(event, data);
+        return this;
+      }
+    }, {
+      key: "getEventHolder",
+      value: function getEventHolder() {
+        return this;
+      }
+    }, {
+      key: "getEventTarget",
+      value: function getEventTarget() {
+        return this;
+      } // Unbind event from listener
+
+    }, {
+      key: "off",
+      value: function off$$1(event, listener) {
+        off(this, event, listener);
+
+        return this;
+      } // Bind given event to listener
+
+    }, {
+      key: "on",
+      value: function on$$1(event, listener, binding, options) {
+        on(this, event, listener, binding, options);
+
+        return this;
+      }
+    }, {
+      key: "removeEventListener",
+      value: function removeEventListener() {}
+    }]);
+
+    return EventTarget;
+  }(Base);
 
   function noop() {} // Default animation values
 
@@ -2574,7 +2584,8 @@ var SVG = (function () {
     return Dom;
   }(EventTarget);
   extend(Dom, {
-    attr: attr
+    attr: attr,
+    find: find
   });
   register(Dom);
 
@@ -3308,19 +3319,6 @@ var SVG = (function () {
   }(Element);
   register(Stop);
 
-  function baseFind(query, parent) {
-    return new List(map((parent || globals.document).querySelectorAll(query), function (node) {
-      return adopt(node);
-    }));
-  } // Scoped find method
-
-  function find(query) {
-    return baseFind(query, this.node);
-  }
-  registerMethods('Dom', {
-    find: find
-  });
-
   function from(x, y) {
     return (this._element || this).type === 'radialGradient' ? this.attr({
       fx: new SVGNumber(x),
@@ -3538,12 +3536,7 @@ var SVG = (function () {
           }
 
           if (typeof callback === 'function') {
-            callback.call(this, {
-              width: img.width,
-              height: img.height,
-              ratio: img.width / img.height,
-              url: url
-            });
+            callback.call(this, e);
           }
         }, this);
         on(img, 'load error', function () {
@@ -3922,7 +3915,7 @@ var SVG = (function () {
         }
       };
     },
-    // https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
+    // see https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
     steps: function steps(_steps) {
       var stepPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
       // deal with "jump-" prefix

@@ -1,7 +1,6 @@
 import { adopt } from '../../utils/adopter.js'
 import { globals } from '../../utils/window.js'
 import { map } from '../../utils/utils.js'
-import { registerMethods } from '../../utils/methods.js'
 import List from '../../types/List.js'
 
 export default function baseFind (query, parent) {

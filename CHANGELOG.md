@@ -83,6 +83,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `SVG.Text.rebuild()` now takes every font-size into account (#512)
 - `fill()` and `stroke()` return the fill and stroke attribute when called as getter (#789)
 - `parents()` now gives back all parents until the passed one or document
+- `Image` callback passes normal `load` event instead of custom object (#931)
 
 ### Fixed
 - fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
