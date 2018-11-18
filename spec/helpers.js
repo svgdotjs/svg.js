@@ -152,8 +152,9 @@ export function buildCanvas () {
 export function clear () {
   let doc = getWindow().document
   let canvas = doc.getElementById('canvas')
-  //let fixtures = doc.getElementById('fixtures')
+  let fixtures = doc.getElementById('fixtures')
 
-  //fixtures.parentNode.removeChild(fixtures)
+  // remove if present
+  fixtures && fixtures.parentNode.removeChild(fixtures)
   canvas.parentNode.removeChild(canvas)
 }
