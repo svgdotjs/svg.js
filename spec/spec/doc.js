@@ -17,7 +17,7 @@ describe('Svg', function() {
   })
 
   it('returns itself as Svg when root', function() {
-    expect(draw.doc()).toBe(draw)
+    expect(draw.root()).toBe(draw)
   })
 
   it('has a defs element when root', function() {

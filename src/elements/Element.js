@@ -52,13 +52,13 @@ export default class Element extends Dom {
 
   // Get defs
   defs () {
-    return this.doc().defs()
+    return this.root().defs()
   }
 
   // Get parent document
-  doc () {
+  root () {
     let p = this.parent(Svg)
-    return p && p.doc()
+    return p && p.root()
   }
 
   getEventHolder () {

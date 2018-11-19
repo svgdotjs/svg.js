@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 19 2018 19:49:34 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 19 2018 21:40:15 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -2637,14 +2637,14 @@ var SVG = (function () {
     }, {
       key: "defs",
       value: function defs() {
-        return this.doc().defs();
+        return this.root().defs();
       } // Get parent document
 
     }, {
-      key: "doc",
-      value: function doc() {
+      key: "root",
+      value: function root$$1() {
         var p = this.parent(Svg);
-        return p && p.doc();
+        return p && p.root();
       }
     }, {
       key: "getEventHolder",
@@ -2964,8 +2964,8 @@ var SVG = (function () {
     return this;
   } // same as above with parent equals root-svg
 
-  function toDoc() {
-    return this.toParent(this.doc());
+  function toRoot() {
+    return this.toParent(this.root());
   } // Add transformations
 
   function transform(o, relative) {
@@ -2991,7 +2991,7 @@ var SVG = (function () {
     untransform: untransform,
     matrixify: matrixify,
     toParent: toParent,
-    toDoc: toDoc,
+    toRoot: toRoot,
     transform: transform
   });
 
@@ -3472,12 +3472,12 @@ var SVG = (function () {
     // convert image fill and stroke to patterns
     if (attr$$1 === 'fill' || attr$$1 === 'stroke') {
       if (isImage.test(val)) {
-        val = _this.doc().defs().image(val);
+        val = _this.root().defs().image(val);
       }
     }
 
     if (val instanceof Image) {
-      val = _this.doc().defs().pattern(0, 0, function (pattern) {
+      val = _this.root().defs().pattern(0, 0, function (pattern) {
         pattern.add(val);
       });
     }
@@ -6235,16 +6235,16 @@ var SVG = (function () {
       // If not, call docs from this element
 
     }, {
-      key: "doc",
-      value: function doc() {
+      key: "root",
+      value: function root$$1() {
         if (this.isRoot()) return this;
-        return _get(_getPrototypeOf(Svg.prototype), "doc", this).call(this);
+        return _get(_getPrototypeOf(Svg.prototype), "root", this).call(this);
       } // Add namespaces
 
     }, {
       key: "namespace",
       value: function namespace() {
-        if (!this.isRoot()) return this.doc().namespace();
+        if (!this.isRoot()) return this.root().namespace();
         return this.attr({
           xmlns: ns,
           version: '1.1'
@@ -6254,7 +6254,7 @@ var SVG = (function () {
     }, {
       key: "defs",
       value: function defs() {
-        if (!this.isRoot()) return this.doc().defs();
+        if (!this.isRoot()) return this.root().defs();
         return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
       } // custom parent method
 
@@ -6938,7 +6938,7 @@ var SVG = (function () {
 
         if (!(track instanceof Path)) {
           // create path element
-          track = this.doc().defs().path(track);
+          track = this.root().defs().path(track);
         } // link textPath to path and add content
 
 

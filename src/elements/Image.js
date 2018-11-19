@@ -52,12 +52,12 @@ registerAttrHook(function (attr, val, _this) {
   // convert image fill and stroke to patterns
   if (attr === 'fill' || attr === 'stroke') {
     if (isImage.test(val)) {
-      val = _this.doc().defs().image(val)
+      val = _this.root().defs().image(val)
     }
   }
 
   if (val instanceof Image) {
-    val = _this.doc().defs().pattern(0, 0, (pattern) => {
+    val = _this.root().defs().pattern(0, 0, (pattern) => {
       pattern.add(val)
     })
   }

@@ -24,14 +24,14 @@ export default class Svg extends Container {
 
   // Check if this is a root svg
   // If not, call docs from this element
-  doc () {
+  root () {
     if (this.isRoot()) return this
-    return super.doc()
+    return super.root()
   }
 
   // Add namespaces
   namespace () {
-    if (!this.isRoot()) return this.doc().namespace()
+    if (!this.isRoot()) return this.root().namespace()
     return this
       .attr({ xmlns: ns, version: '1.1' })
       .attr('xmlns:xlink', xlink, xmlns)
@@ -40,7 +40,7 @@ export default class Svg extends Container {
 
   // Creates and returns defs element
   defs () {
-    if (!this.isRoot()) return this.doc().defs()
+    if (!this.isRoot()) return this.root().defs()
 
     return adopt(this.node.getElementsByTagName('defs')[0]) ||
       this.put(new Defs())

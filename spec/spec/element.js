@@ -435,7 +435,7 @@ describe('Element', function() {
     })
   })
 
-  describe('toDoc()', function() {
+  describe('toRoot()', function() {
     var nested, g1, g2, rect
 
     beforeEach(function() {
@@ -447,9 +447,9 @@ describe('Element', function() {
       draw.clear()
     })
 
-    it('redirects to toParent(doc)', function() {
-      rect.toDoc()
-      expect(rect.toParent).toHaveBeenCalledWith(rect.doc())
+    it('redirects to toParent(root)', function() {
+      rect.toRoot()
+      expect(rect.toParent).toHaveBeenCalledWith(rect.root())
     })
   })
 
@@ -613,10 +613,10 @@ describe('Element', function() {
     })
   })
 
-  describe('doc()', function() {
+  describe('root()', function() {
     it('returns the parent document', function() {
       var rect = draw.rect(100,100)
-      expect(rect.doc()).toBe(draw)
+      expect(rect.root()).toBe(draw)
     })
   })
 
@@ -819,7 +819,7 @@ describe('Element', function() {
 
   describe('svg()', function() {
     describe('without an argument', function() {
-      it('returns full raw svg when called on the main svg doc', function() {
+      it('returns full raw svg when called on the root svg', function() {
         draw.size(100,100).rect(100,100).id(null)
         draw.circle(100).fill('#f06').id(null)
 
@@ -1023,7 +1023,7 @@ describe('Element', function() {
   describe('defs()', function() {
     it('returns the defs from the svg', function() {
       var g = draw.group()
-      expect(g.defs()).toBe(draw.doc().defs())
+      expect(g.defs()).toBe(draw.root().defs())
       expect(g.defs() instanceof SVG.Defs).toBeTruthy()
     })
   })

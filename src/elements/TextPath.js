@@ -51,7 +51,7 @@ registerMethods({
       // if track is a path, reuse it
       if (!(track instanceof Path)) {
         // create path element
-        track = this.doc().defs().path(track)
+        track = this.root().defs().path(track)
       }
 
       // link textPath to path and add content
