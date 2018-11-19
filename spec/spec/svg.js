@@ -18,8 +18,8 @@ describe('SVG', function() {
       wrapperHTML.parentNode.removeChild(wrapperHTML)
     })
 
-    it('creates an instanceof SVG.Doc without any argument', function() {
-      expect(SVG() instanceof SVG.Doc).toBe(true)
+    it('creates an instanceof SVG.Svg without any argument', function() {
+      expect(SVG() instanceof SVG.Svg).toBe(true)
       expect(SVG().node.nodeName).toBe('svg')
     })
 
@@ -35,15 +35,15 @@ describe('SVG', function() {
       expect(el.node).toBe(wrapperHTML)
     })
 
-    it('creates an instanceof SVG.Doc with svg node', function() {
+    it('creates an instanceof SVG.Svg with svg node', function() {
       var doc = SVG(wrapper)
-      expect(doc instanceof SVG.Doc).toBe(true)
+      expect(doc instanceof SVG.Svg).toBe(true)
       expect(doc.node).toBe(wrapper)
     })
 
-    it('creates new SVG.Doc when called with css selector pointing to svg node', function() {
+    it('creates new SVG.Svg when called with css selector pointing to svg node', function() {
       var doc = SVG('#testSvg')
-      expect(doc instanceof SVG.Doc).toBe(true)
+      expect(doc instanceof SVG.Svg).toBe(true)
       expect(doc.node).toBe(wrapper)
     })
 
@@ -52,10 +52,10 @@ describe('SVG', function() {
       expect(SVG(rect).node).toBe(rect)
     })
 
-    it('creates an instanceof SVG.Doc when importing a whole svg', function() {
+    it('creates an instanceof SVG.Svg when importing a whole svg', function() {
       var doc = SVG('<svg width="200"><rect></rect></svg>')
 
-      expect(doc instanceof SVG.Doc).toBe(true)
+      expect(doc instanceof SVG.Svg).toBe(true)
       expect(doc.node.nodeName).toBe('svg')
       expect(doc.width()).toBe(200)
       expect(doc.get(0).node.nodeName).toBe('rect')

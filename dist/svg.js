@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Nov 17 2018 10:54:31 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 19 2018 19:49:34 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -2589,7 +2589,7 @@ var SVG = (function () {
   });
   register(Dom);
 
-  var Doc = getClass(root);
+  var Svg = getClass(root);
 
   var Element =
   /*#__PURE__*/
@@ -2643,7 +2643,7 @@ var SVG = (function () {
     }, {
       key: "doc",
       value: function doc() {
-        var p = this.parent(Doc);
+        var p = this.parent(Svg);
         return p && p.doc();
       }
     }, {
@@ -3125,7 +3125,7 @@ var SVG = (function () {
         this.each(function () {
           if (this instanceof Container) return this.flatten(parent).ungroup(parent);
           return this.toParent(parent);
-        }); // we need this so that Doc does not get removed
+        }); // we need this so that the root does not get removed
 
         this.node.firstElementChild || this.remove();
         return this;
@@ -3172,87 +3172,6 @@ var SVG = (function () {
     return Defs;
   }(Container);
   register(Defs);
-
-  var Doc$1 =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Doc, _Container);
-
-    function Doc(node) {
-      var _this;
-
-      _classCallCheck(this, Doc);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Doc).call(this, nodeOrNew('svg', node), node));
-
-      _this.namespace();
-
-      return _this;
-    }
-
-    _createClass(Doc, [{
-      key: "isRoot",
-      value: function isRoot() {
-        return !this.node.parentNode || !(this.node.parentNode instanceof globals.window.SVGElement) || this.node.parentNode.nodeName === '#document';
-      } // Check if this is a root svg
-      // If not, call docs from this element
-
-    }, {
-      key: "doc",
-      value: function doc() {
-        if (this.isRoot()) return this;
-        return _get(_getPrototypeOf(Doc.prototype), "doc", this).call(this);
-      } // Add namespaces
-
-    }, {
-      key: "namespace",
-      value: function namespace() {
-        if (!this.isRoot()) return this.doc().namespace();
-        return this.attr({
-          xmlns: ns,
-          version: '1.1'
-        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
-      } // Creates and returns defs element
-
-    }, {
-      key: "defs",
-      value: function defs() {
-        if (!this.isRoot()) return this.doc().defs();
-        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
-      } // custom parent method
-
-    }, {
-      key: "parent",
-      value: function parent(type) {
-        if (this.isRoot()) {
-          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
-        }
-
-        return _get(_getPrototypeOf(Doc.prototype), "parent", this).call(this, type);
-      }
-    }, {
-      key: "clear",
-      value: function clear() {
-        // remove children
-        while (this.node.hasChildNodes()) {
-          this.node.removeChild(this.node.lastChild);
-        }
-
-        return this;
-      }
-    }]);
-
-    return Doc;
-  }(Container);
-  registerMethods({
-    Container: {
-      // Create nested svg document
-      nested: wrapWithAttrCheck(function () {
-        return this.put(new Doc$1());
-      })
-    }
-  });
-  register(Doc$1, 'Doc', true);
 
   var Ellipse =
   /*#__PURE__*/
@@ -5069,8 +4988,6 @@ var SVG = (function () {
     }
   };
 
-  var time = globals.window.performance || Date;
-
   var makeSchedule = function makeSchedule(runnerInfo) {
     var start = runnerInfo.start;
     var duration = runnerInfo.runner.duration();
@@ -5085,45 +5002,48 @@ var SVG = (function () {
 
   var Timeline =
   /*#__PURE__*/
-  function () {
+  function (_EventTarget) {
+    _inherits(Timeline, _EventTarget);
+
     // Construct a new timeline on the given element
     function Timeline() {
+      var _this;
+
       _classCallCheck(this, Timeline);
 
-      this._timeSource = function () {
-        return time.now();
-      };
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Timeline).call(this));
 
-      this._dispatcher = globals.document.createElement('div'); // Store the timing variables
+      _this._timeSource = function () {
+        var w = globals.window;
+        return (w.performance || w.Date).now();
+      }; // Store the timing variables
 
-      this._startTime = 0;
-      this._speed = 1.0; // Play control variables control how the animation proceeds
 
-      this._reverse = false;
-      this._persist = 0; // Keep track of the running animations and their starting parameters
+      _this._startTime = 0;
+      _this._speed = 1.0; // Play control variables control how the animation proceeds
 
-      this._nextFrame = null;
-      this._paused = false;
-      this._runners = [];
-      this._order = [];
-      this._time = 0;
-      this._lastSourceTime = 0;
-      this._lastStepTime = 0;
+      _this._reverse = false;
+      _this._persist = 0; // Keep track of the running animations and their starting parameters
+
+      _this._nextFrame = null;
+      _this._paused = false;
+      _this._runners = [];
+      _this._order = [];
+      _this._time = 0;
+      _this._lastSourceTime = 0;
+      _this._lastStepTime = 0;
+      return _this;
     }
+    /**
+     *
+     */
+    // schedules a runner on the timeline
+
 
     _createClass(Timeline, [{
-      key: "getEventTarget",
-      value: function getEventTarget() {
-        return this._dispatcher;
-      }
-      /**
-       *
-       */
-      // schedules a runner on the timeline
-
-    }, {
       key: "schedule",
       value: function schedule(runner, delay, when) {
+        // FIXME: how to sort? maybe by runner id?
         if (runner == null) {
           return this._runners.map(makeSchedule).sort(function (a, b) {
             return a.start - b.start || a.duration - b.duration;
@@ -5351,7 +5271,7 @@ var SVG = (function () {
     }]);
 
     return Timeline;
-  }();
+  }(EventTarget);
   registerMethods({
     Element: {
       timeline: function timeline() {
@@ -6290,6 +6210,87 @@ var SVG = (function () {
     to: to
   });
 
+  var Svg$1 =
+  /*#__PURE__*/
+  function (_Container) {
+    _inherits(Svg, _Container);
+
+    function Svg(node) {
+      var _this;
+
+      _classCallCheck(this, Svg);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Svg).call(this, nodeOrNew('svg', node), node));
+
+      _this.namespace();
+
+      return _this;
+    }
+
+    _createClass(Svg, [{
+      key: "isRoot",
+      value: function isRoot() {
+        return !this.node.parentNode || !(this.node.parentNode instanceof globals.window.SVGElement) || this.node.parentNode.nodeName === '#document';
+      } // Check if this is a root svg
+      // If not, call docs from this element
+
+    }, {
+      key: "doc",
+      value: function doc() {
+        if (this.isRoot()) return this;
+        return _get(_getPrototypeOf(Svg.prototype), "doc", this).call(this);
+      } // Add namespaces
+
+    }, {
+      key: "namespace",
+      value: function namespace() {
+        if (!this.isRoot()) return this.doc().namespace();
+        return this.attr({
+          xmlns: ns,
+          version: '1.1'
+        }).attr('xmlns:xlink', xlink, xmlns).attr('xmlns:svgjs', svgjs, xmlns);
+      } // Creates and returns defs element
+
+    }, {
+      key: "defs",
+      value: function defs() {
+        if (!this.isRoot()) return this.doc().defs();
+        return adopt(this.node.getElementsByTagName('defs')[0]) || this.put(new Defs());
+      } // custom parent method
+
+    }, {
+      key: "parent",
+      value: function parent(type) {
+        if (this.isRoot()) {
+          return this.node.parentNode.nodeName === '#document' ? null : adopt(this.node.parentNode);
+        }
+
+        return _get(_getPrototypeOf(Svg.prototype), "parent", this).call(this, type);
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        // remove children
+        while (this.node.hasChildNodes()) {
+          this.node.removeChild(this.node.lastChild);
+        }
+
+        return this;
+      }
+    }]);
+
+    return Svg;
+  }(Container);
+  registerMethods({
+    Container: {
+      // Create nested svg document
+      nested: wrapWithAttrCheck(function () {
+        return this.put(new Svg$1());
+      })
+    }
+  });
+  register(Svg$1, 'Svg', true);
+
   function plain(text) {
     // clear if build mode is disabled
     if (this._build === false) {
@@ -7001,7 +7002,7 @@ var SVG = (function () {
   register(Use);
 
   /* Optional Modules */
-  extend([Doc$1, Symbol, Image, Pattern, Marker], getMethodsFor('viewbox'));
+  extend([Svg$1, Symbol, Image, Pattern, Marker], getMethodsFor('viewbox'));
   extend([Line, Polyline, Polygon, Path], getMethodsFor('marker'));
   extend(Text, getMethodsFor('Text'));
   extend(Path, getMethodsFor('Path'));
@@ -7054,7 +7055,6 @@ var SVG = (function () {
     ClipPath: ClipPath,
     Container: Container,
     Defs: Defs,
-    Doc: Doc$1,
     Dom: Dom,
     Element: Element,
     Ellipse: Ellipse,
@@ -7074,6 +7074,7 @@ var SVG = (function () {
     Shape: Shape,
     Stop: Stop,
     Style: Style,
+    Svg: Svg$1,
     Symbol: _Symbol,
     Text: Text,
     TextPath: TextPath,

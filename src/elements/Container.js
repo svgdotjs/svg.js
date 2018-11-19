@@ -8,7 +8,7 @@ export default class Container extends Element {
       return this.toParent(parent)
     })
 
-    // we need this so that Doc does not get removed
+    // we need this so that the root does not get removed
     this.node.firstElementChild || this.remove()
 
     return this

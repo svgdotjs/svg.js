@@ -10,7 +10,7 @@ import Container from './Container.js'
 import Defs from './Defs.js'
 import { globals } from '../utils/window.js'
 
-export default class Doc extends Container {
+export default class Svg extends Container {
   constructor (node) {
     super(nodeOrNew('svg', node), node)
     this.namespace()
@@ -70,9 +70,9 @@ registerMethods({
   Container: {
     // Create nested svg document
     nested: wrapWithAttrCheck(function () {
-      return this.put(new Doc())
+      return this.put(new Svg())
     })
   }
 })
 
-register(Doc, 'Doc', true)
+register(Svg, 'Svg', true)

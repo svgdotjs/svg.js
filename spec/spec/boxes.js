@@ -182,7 +182,7 @@ describe('Boxes', function() {
 
     })
 
-    it('returns the elements box in coordinates of given element (doc)', function() {
+    it('returns the elements box in coordinates of given element (root)', function() {
       var box = rect.rbox(draw)
 
       expect(window.roundBox(box)).toEqual(jasmine.objectContaining({

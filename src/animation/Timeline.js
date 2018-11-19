@@ -1,8 +1,7 @@
+import { globals } from '../utils/window.js'
 import { registerMethods } from '../utils/methods.js'
 import Animator from './Animator.js'
-import { globals } from '../utils/window.js'
-
-var time = globals.window.performance || Date
+import EventTarget from '../types/EventTarget.js'
 
 var makeSchedule = function (runnerInfo) {
   var start = runnerInfo.start
@@ -11,14 +10,15 @@ var makeSchedule = function (runnerInfo) {
   return { start: start, duration: duration, end: end, runner: runnerInfo.runner }
 }
 
-export default class Timeline {
+export default class Timeline extends EventTarget {
   // Construct a new timeline on the given element
   constructor () {
-    this._timeSource = function () {
-      return time.now()
-    }
+    super()
 
-    this._dispatcher = globals.document.createElement('div')
+    this._timeSource = function () {
+      let w = globals.window
+      return (w.performance || w.Date).now()
+    }
 
     // Store the timing variables
     this._startTime = 0
@@ -38,16 +38,13 @@ export default class Timeline {
     this._lastStepTime = 0
   }
 
-  getEventTarget () {
-    return this._dispatcher
-  }
-
   /**
    *
    */
 
   // schedules a runner on the timeline
   schedule (runner, delay, when) {
+    // FIXME: how to sort? maybe by runner id?
     if (runner == null) {
       return this._runners.map(makeSchedule).sort(function (a, b) {
         return (a.start - b.start) || (a.duration - b.duration)

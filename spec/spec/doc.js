@@ -1,4 +1,4 @@
-describe('Doc', function() {
+describe('Svg', function() {
 
   describe('create()', function(){
     it('doenst alter size when adopting width SVG()', function() {
@@ -12,11 +12,11 @@ describe('Doc', function() {
     expect(draw instanceof SVG.Container).toBe(true)
   })
 
-  it('is an instance of SVG.Doc', function() {
-    expect(draw instanceof SVG.Doc).toBe(true)
+  it('is an instance of SVG.Svg', function() {
+    expect(draw instanceof SVG.Svg).toBe(true)
   })
 
-  it('returns itself as Doc when root', function() {
+  it('returns itself as Svg when root', function() {
     expect(draw.doc()).toBe(draw)
   })
 
@@ -34,7 +34,7 @@ describe('Doc', function() {
   })
 
   describe('isRoot()', function() {
-    it('returns true when the doc is not attached to dom', function() {
+    it('returns true when the Svg is not attached to dom', function() {
       expect(SVG().isRoot()).toBe(true)
     })
     it('returns true when its outer element is not an svg element', function () {
@@ -49,7 +49,7 @@ describe('Doc', function() {
   })
 
   describe('remove()', function() {
-    it('removes the doc from the dom only if doc is not root element', function() {
+    it('removes the Svg from the dom only if Svg is not root element', function() {
       var cnt = window.document.querySelectorAll('svg').length
       draw.remove()
       if(parserInDoc){

@@ -9,9 +9,9 @@ describe('Adopter', function() {
     radialGradient   = SVG('#inlineSVG').find('radialGradient')[0]
   })
 
-  describe('with SVG.Doc instance', function() {
+  describe('with SVG.Svg instance', function() {
     it('adopts the main svg document when parent() method is called on first level children', function() {
-      expect(path.parent() instanceof SVG.Doc).toBeTruthy()
+      expect(path.parent() instanceof SVG.Svg).toBeTruthy()
     })
     it('defines a xmlns attribute', function() {
       expect(path.parent().node.getAttribute('xmlns')).toBe(SVG.ns)

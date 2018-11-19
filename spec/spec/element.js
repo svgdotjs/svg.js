@@ -633,7 +633,7 @@ describe('Element', function() {
     it('contains the parent which matches type', function() {
       var group = draw.group()
         , rect = group.rect(100,100)
-      expect(rect.parent(SVG.Doc)).toBe(draw)
+      expect(rect.parent(SVG.Svg)).toBe(draw)
     })
     it('contains the parent which matches selector', function() {
       var group1 = draw.group().addClass('test')
