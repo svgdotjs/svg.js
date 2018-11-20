@@ -103,7 +103,7 @@ describe('Adopter.js', () => {
     })
   })
 
-  describe('edi()', () => {
+  describe('eid()', () => {
     it('returns a unique id', () => {
       expect(eid('foo')).not.toBe(eid('foo'))
     })
