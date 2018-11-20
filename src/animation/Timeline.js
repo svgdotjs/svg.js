@@ -38,16 +38,11 @@ export default class Timeline extends EventTarget {
     this._lastStepTime = 0
   }
 
-  /**
-   *
-   */
-
   // schedules a runner on the timeline
   schedule (runner, delay, when) {
-    // FIXME: how to sort? maybe by runner id?
     if (runner == null) {
       return this._runners.map(makeSchedule).sort(function (a, b) {
-        return (a.start - b.start) || (a.duration - b.duration)
+        return a.runner.id - b.runner.id
       })
     }
 
@@ -189,7 +184,7 @@ export default class Timeline extends EventTarget {
     // Update the time
     this._time += dtTime
     this._lastStepTime = this._time
-    // this.fire('time', this._time)
+    this.fire('time', this._time)
 
     // Run all of the runners directly
     var runnersLeft = false
@@ -238,6 +233,7 @@ export default class Timeline extends EventTarget {
     if (runnersLeft) {
       this._nextFrame = Animator.frame(this._step.bind(this))
     } else {
+      this.fire('finished')
       this._nextFrame = null
     }
     return this

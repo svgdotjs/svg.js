@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 19 2018 21:40:15 GMT+0100 (GMT+01:00)
+* BUILT: Tue Nov 20 2018 16:59:18 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -595,6 +595,14 @@ var SVG = (function () {
     this.parent().add(element, i + 1);
     return this;
   }
+  function insertBefore(element) {
+    element = makeInstance(element);
+    element.before(this);
+  }
+  function insertAfter(element) {
+    element = makeInstance(element);
+    element.after(this);
+  }
   registerMethods('Dom', {
     siblings: siblings,
     position: position,
@@ -605,7 +613,9 @@ var SVG = (function () {
     front: front,
     back: back,
     before: before,
-    after: after
+    after: after,
+    insertBefore: insertBefore,
+    insertAfter: insertAfter
   });
 
   // Parse unit value
@@ -5046,7 +5056,7 @@ var SVG = (function () {
         // FIXME: how to sort? maybe by runner id?
         if (runner == null) {
           return this._runners.map(makeSchedule).sort(function (a, b) {
-            return a.start - b.start || a.duration - b.duration;
+            return a.runner.id - b.runner.id; // return (a.start - b.start) || (a.duration - b.duration)
           });
         }
 
@@ -5200,8 +5210,8 @@ var SVG = (function () {
         this._lastSourceTime = time; // Update the time
 
         this._time += dtTime;
-        this._lastStepTime = this._time; // this.fire('time', this._time)
-        // Run all of the runners directly
+        this._lastStepTime = this._time;
+        this.fire('time', this._time); // Run all of the runners directly
 
         var runnersLeft = false;
 

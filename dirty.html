@@ -102,41 +102,45 @@ function getColor(t) {
 //   }
 // }
 
-//SVG.defaults.timeline.ease = '-'
-//
-// var r = new SVG.Runner(1000)
-// var t = new SVG.Timeline()
-// r.schedule(t, 200)
-//   .animate(500).loop(5, true, 100)
-//   .animate(600, 200, 'absolute')
-//   .animate(600, 300)
-//   .animate(600, 300, 'now')
-//   .animate(1000, 0, 'absolute').loop(6, true)
-//
-// var canvas = SVG('svg')
-// var schedule = t.schedule()
-//
-// schedule.forEach((s, i) => {
-//   var rect = canvas.rect(s.duration / 10, 25)
-//     .move(100 + s.start/10, 100 + i*30)
-//     .attr('fill', '#777')
-//
-//   s.runner.element(rect)
-//     .attr('fill', getColor(i*0.1))
-//
-//   // if (i===0)
-//   //   s.runner.during(console.log)
-// })
-//
-// var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black').clone()
-// canvas.line(100, 300, 800, 300).attr('stroke', 'black')
-//
+let canvas = SVG('#canvas')
+
+canvas.attr('viewBox', null)
+
+SVG.defaults.timeline.ease = '-'
+
+var r = new SVG.Runner(1000)
+var t = new SVG.Timeline()
+r.schedule(t, 200)
+  .animate(500).loop(5, true, 100)
+  .animate(600, 200, 'absolute')
+  .animate(600, 300)
+  .animate(600, 300, 'now')
+  .animate(1000, 0, 'absolute').loop(6, true)
+
+var schedule = t.schedule()
+
+schedule.forEach((s, i) => {
+  var rect = canvas.rect(s.duration / 10, 25)
+    .move(100 + s.start/10, 100 + i*30)
+    .attr('fill', '#000')
+
+  s.runner.element(rect)
+    .attr('fill', getColor(i*0.1))
+
+  // if (i===0)
+  //   s.runner.during(console.log)
+})
+
+var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black')
+mover.clone().insertAfter(mover)
+canvas.line(100, 300, 800, 300).attr('stroke', 'black')
+
 // t.on('time', function (e) {
 //   mover.x(100 + e.detail/10)
 // })
-//
-//
-// console.log(schedule)
+
+
+console.log(schedule)
 
 // var bla = SVG('<rect>').size(0, 0).move(200, 200).addTo('svg')
 // bla.animate().size(220, 200).queue(null, console.log)
@@ -202,7 +206,7 @@ rectangle.animate().transform({
 })*/
 
 //
-let canvas = SVG('#canvas')
+
 
 // SVG('#absolute').on('input slide', function (e) {
 //   var val = e.target.value
@@ -248,32 +252,51 @@ let canvas = SVG('#canvas')
 //
 // a.animate(1000, 500).move(100, 100).animate(1000, 500).move(500, 400)
 
-let gradient = canvas.gradient('radial', function(gradient) {
-  gradient.stop(0, '#f00')
-  gradient.stop(1, '#ff0')
-})
 
-let gradientEarth = canvas.gradient('linear', function(gradient) {
-  gradient.stop(0, '#00f')
-  gradient.stop(1, '#0f0')
-})
 
-let sun = canvas.circle(200).center(500, 300).attr({ fill: gradient })
 
-let earth = canvas.circle(100).center(1000, 300).attr({fill: gradientEarth})
+/*  FUZZYMS PLANETS!! */
+// let canvas = SVG('#canvas')
+// let gradient = canvas.gradient('radial', function(gradient) {
+//   gradient.stop(0, '#f00')
+//   gradient.stop(1, '#ff0')
+// })
+//
+// let gradientEarth = canvas.gradient('linear', function(gradient) {
+//   gradient.stop(0, '#00f')
+//   gradient.stop(1, '#0f0')
+// })
+//
+// let sun = canvas.circle(200).center(500, 300).attr({ fill: gradient })
+//
+// let earth = canvas.circle(100).center(1000, 300).attr({fill: gradientEarth})
+//
+// let moon = canvas.circle(50).center(1200, 300).attr({fill: '#ffa'})
+//
+// earth.animate(10000).loop().ease('-')
+//   .transform({rotate: 360, origin: [500, 300]}, true)
+//   .transform({rotate: 720, origin: 'center'}, true)
+//   .on('step', (e) => {
+//   //  console.log(e)
+//   })
+//
+// moon.animate(10000).loop().ease('-')
+//   .transform({rotate: 360, origin: [500, 300]}, true)
+//   .transform({rotate: 1080, origin: [1000, 300]}, true)
 
-let moon = canvas.circle(50).center(1200, 300).attr({fill: '#ffa'})
 
-earth.animate(10000).loop().ease('-')
-  .transform({rotate: 360, origin: [500, 300]}, true)
-  .transform({rotate: 720, origin: 'center'}, true)
-  .on('step', (e) => {
-  //  console.log(e)
-  })
 
-moon.animate(10000).loop().ease('-')
-  .transform({rotate: 360, origin: [500, 300]}, true)
-  .transform({rotate: 1080, origin: [1000, 300]}, true)
+
+
+
+
+
+
+
+
+
+
+
 /**
  * FUZZYS EXAMPLE
  */
