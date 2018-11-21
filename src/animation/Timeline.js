@@ -10,15 +10,17 @@ var makeSchedule = function (runnerInfo) {
   return { start: start, duration: duration, end: end, runner: runnerInfo.runner }
 }
 
+const defaultSource = function () {
+  let w = globals.window
+  return (w.performance || w.Date).now()
+}
+
 export default class Timeline extends EventTarget {
   // Construct a new timeline on the given element
-  constructor () {
+  constructor (timeSource = defaultSource) {
     super()
 
-    this._timeSource = function () {
-      let w = globals.window
-      return (w.performance || w.Date).now()
-    }
+    this._timeSource = timeSource
 
     // Store the timing variables
     this._startTime = 0

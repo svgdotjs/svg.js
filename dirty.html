@@ -135,9 +135,9 @@ var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black')
 mover.clone().insertAfter(mover)
 canvas.line(100, 300, 800, 300).attr('stroke', 'black')
 
-// t.on('time', function (e) {
-//   mover.x(100 + e.detail/10)
-// })
+t.on('time', function (e) {
+  mover.x(100 + e.detail/10)
+})
 
 
 console.log(schedule)

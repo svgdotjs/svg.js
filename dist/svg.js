@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Nov 20 2018 16:59:18 GMT+0100 (GMT+01:00)
+* BUILT: Wed Nov 21 2018 10:58:56 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -5010,6 +5010,11 @@ var SVG = (function () {
     };
   };
 
+  var defaultSource = function defaultSource() {
+    var w = globals.window;
+    return (w.performance || w.Date).now();
+  };
+
   var Timeline =
   /*#__PURE__*/
   function (_EventTarget) {
@@ -5019,15 +5024,12 @@ var SVG = (function () {
     function Timeline() {
       var _this;
 
+      var timeSource = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultSource;
+
       _classCallCheck(this, Timeline);
 
       _this = _possibleConstructorReturn(this, _getPrototypeOf(Timeline).call(this));
-
-      _this._timeSource = function () {
-        var w = globals.window;
-        return (w.performance || w.Date).now();
-      }; // Store the timing variables
-
+      _this._timeSource = timeSource; // Store the timing variables
 
       _this._startTime = 0;
       _this._speed = 1.0; // Play control variables control how the animation proceeds
@@ -5043,20 +5045,15 @@ var SVG = (function () {
       _this._lastSourceTime = 0;
       _this._lastStepTime = 0;
       return _this;
-    }
-    /**
-     *
-     */
-    // schedules a runner on the timeline
+    } // schedules a runner on the timeline
 
 
     _createClass(Timeline, [{
       key: "schedule",
       value: function schedule(runner, delay, when) {
-        // FIXME: how to sort? maybe by runner id?
         if (runner == null) {
           return this._runners.map(makeSchedule).sort(function (a, b) {
-            return a.runner.id - b.runner.id; // return (a.start - b.start) || (a.duration - b.duration)
+            return a.runner.id - b.runner.id;
           });
         }
 
@@ -5256,6 +5253,7 @@ var SVG = (function () {
         if (runnersLeft) {
           this._nextFrame = Animator.frame(this._step.bind(this));
         } else {
+          this.fire('finished');
           this._nextFrame = null;
         }
 
