@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Nov 21 2018 10:58:56 GMT+0100 (GMT+01:00)
+* BUILT: Wed Nov 21 2018 22:04:17 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -437,19 +437,17 @@ var SVG = (function () {
     } // initialize variables
 
 
-    var element; // adopt with element-specific settings
+    var className = capitalize(node.nodeName);
 
-    if (node.nodeName === 'svg') {
-      element = new elements[root](node);
-    } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
-      element = new elements.Gradient(node);
-    } else if (elements[capitalize(node.nodeName)]) {
-      element = new elements[capitalize(node.nodeName)](node);
-    } else {
-      element = new elements.Bare(node);
+    if (className === 'LinearGradient' || className === 'RadialGradient') {
+      className = 'Gradient';
     }
 
-    return element;
+    if (!elements[className]) {
+      className = 'Bare';
+    }
+
+    return new elements[className](node);
   }
   function register(element) {
     var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : element.name;

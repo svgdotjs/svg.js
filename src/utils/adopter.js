@@ -55,20 +55,17 @@ export function adopt (node) {
   }
 
   // initialize variables
-  var element
+  var className = capitalize(node.nodeName)
 
-  // adopt with element-specific settings
-  if (node.nodeName === 'svg') {
-    element = new elements[root](node)
-  } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
-    element = new elements.Gradient(node)
-  } else if (elements[capitalize(node.nodeName)]) {
-    element = new elements[capitalize(node.nodeName)](node)
-  } else {
-    element = new elements.Bare(node)
+  if (className === 'LinearGradient' || className === 'RadialGradient') {
+    className = 'Gradient'
   }
 
-  return element
+  if (!elements[className]) {
+    className = 'Bare'
+  }
+
+  return new elements[className](node)
 }
 
 export function register (element, name = element.name, asRoot = false) {
