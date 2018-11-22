@@ -43,11 +43,11 @@ const Animator = {
   },
 
   cancelFrame (node) {
-    Animator.frames.remove(node)
+    node != null && Animator.frames.remove(node)
   },
 
   clearTimeout (node) {
-    Animator.timeouts.remove(node)
+    node != null && Animator.timeouts.remove(node)
   },
 
   _draw (now) {

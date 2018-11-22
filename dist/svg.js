@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Nov 21 2018 22:04:17 GMT+0100 (GMT+01:00)
+* BUILT: Thu Nov 22 2018 15:30:35 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -4957,10 +4957,10 @@ var SVG = (function () {
       return node;
     },
     cancelFrame: function cancelFrame(node) {
-      Animator.frames.remove(node);
+      node != null && Animator.frames.remove(node);
     },
     clearTimeout: function clearTimeout(node) {
-      Animator.timeouts.remove(node);
+      node != null && Animator.timeouts.remove(node);
     },
     _draw: function _draw(now) {
       // Run all the timeouts we can run, if they are not ready yet, add them
@@ -5041,7 +5041,9 @@ var SVG = (function () {
       _this._order = [];
       _this._time = 0;
       _this._lastSourceTime = 0;
-      _this._lastStepTime = 0;
+      _this._lastStepTime = 0; // Make sure that step is always called in class context
+
+      _this._step = _this._step.bind(_assertThisInitialized(_assertThisInitialized(_this)));
       return _this;
     } // schedules a runner on the timeline
 
@@ -5098,7 +5100,8 @@ var SVG = (function () {
         this._runners[runner.id] = {
           persist: this.persist(),
           runner: runner,
-          start: absoluteStartTime // Save order and continue
+          start: absoluteStartTime // + delay
+          // Save order and continue
 
         };
 
@@ -5127,26 +5130,26 @@ var SVG = (function () {
       value: function play() {
         // Now make sure we are not paused and continue the animation
         this._paused = false;
+        this._lastSourceTime = this._timeSource();
         return this._continue();
       }
     }, {
       key: "pause",
       value: function pause() {
-        // Cancel the next animation frame and pause
-        this._nextFrame = null;
         this._paused = true;
-        return this;
+        return this._continue();
       }
     }, {
       key: "stop",
       value: function stop() {
-        // Cancel the next animation frame and go to start
+        // Go to start and pause
         this.seek(-this._time);
         return this.pause();
       }
     }, {
       key: "finish",
       value: function finish() {
+        // Go to Infinity and pause
         this.seek(Infinity);
         return this.pause();
       }
@@ -5168,8 +5171,9 @@ var SVG = (function () {
     }, {
       key: "seek",
       value: function seek(dt) {
-        this._time += dt;
-        return this._continue();
+        this._time += dt; // this._lastStepTime = this._time
+
+        return this._continue(true);
       }
     }, {
       key: "time",
@@ -5195,16 +5199,22 @@ var SVG = (function () {
     }, {
       key: "_step",
       value: function _step() {
-        // If the timeline is paused, just do nothing
-        if (this._paused) return; // Get the time delta from the last time and update the time
+        var immediateStep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
+        // Get the time delta from the last time and update the time
         var time = this._timeSource();
 
         var dtSource = time - this._lastSourceTime;
+        if (immediateStep) dtSource = 0;
         var dtTime = this._speed * dtSource + (this._time - this._lastStepTime);
-        this._lastSourceTime = time; // Update the time
+        this._lastSourceTime = time; // Only update the time if we use the timeSource.
+        // Otherwise use the current time
 
-        this._time += dtTime;
+        if (!immediateStep) {
+          // Update the time
+          this._time += dtTime;
+        }
+
         this._lastStepTime = this._time;
         this.fire('time', this._time); // Run all of the runners directly
 
@@ -5219,8 +5229,12 @@ var SVG = (function () {
 
           var dtToStart = this._time - runnerInfo.start; // Dont run runner if not started yet
 
-          if (dtToStart < 0) {
-            runnersLeft = true;
+          if (dtToStart <= 0) {
+            runnersLeft = true; // This is for the case that teh timeline was seeked so that the time
+            // is now before the startTime of the runner. Thats why we need to set
+            // the runner to position 0
+
+            runner.reset();
             continue;
           } else if (dtToStart < dt) {
             // Adjust dt to make sure that animation is on point
@@ -5245,11 +5259,10 @@ var SVG = (function () {
               runner.timeline(null);
             }
           }
-        } // Get the next animation frame to keep the simulation going
-
+        }
 
         if (runnersLeft) {
-          this._nextFrame = Animator.frame(this._step.bind(this));
+          this._continue();
         } else {
           this.fire('finished');
           this._nextFrame = null;
@@ -5261,12 +5274,12 @@ var SVG = (function () {
     }, {
       key: "_continue",
       value: function _continue() {
+        var immediateStep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+        Animator.cancelFrame(this._nextFrame);
+        this._nextFrame = null;
+        if (immediateStep) return this._step(true);
         if (this._paused) return this;
-
-        if (!this._nextFrame) {
-          this._nextFrame = Animator.frame(this._step.bind(this));
-        }
-
+        this._nextFrame = Animator.frame(this._step);
         return this;
       }
     }, {
@@ -5318,7 +5331,9 @@ var SVG = (function () {
 
       _this.enabled = true;
       _this._time = 0;
-      _this._last = 0; // Save transforms applied to this runner
+      _this._last = 0; // At creation, the runner is in reseted state
+
+      _this._reseted = true; // Save transforms applied to this runner
 
       _this.transforms = new Matrix();
       _this.transformId = 1; // Looping variables
@@ -5563,6 +5578,9 @@ var SVG = (function () {
         this.done = !declarative && !justFinished && this._time >= duration; // Call initialise and the run function
 
         if (running || declarative) {
+          // Runner is running. So its not in reseted state anymore
+          this._reseted = false;
+
           this._initialise(running); // clear the transforms on this runner so they dont get added again and again
 
 
@@ -5581,6 +5599,14 @@ var SVG = (function () {
           this.fire('finish', this);
         }
 
+        return this;
+      }
+    }, {
+      key: "reset",
+      value: function reset() {
+        if (this._reseted) return this;
+        this.loops(0);
+        this._reseted = true;
         return this;
       }
     }, {

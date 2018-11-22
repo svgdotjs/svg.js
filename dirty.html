@@ -14,8 +14,21 @@
 </head>
 <body style="background-color: #c7c7ff">
 
-<div id="absolute"><label>Absolute: <input type="range" min="0" max="1" step="0.01"></slider></label><span></span></div>
-<div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div>
+<!-- <div id="absolute"><label>Absolute: <input type="range" min="0" max="1" step="0.01"></slider></label><span></span></div>
+<div id="position"><label>Position: <input type="range" min="0" max="5" step="0.01"></slider></label><span></span></div> -->
+
+<button name="back1000">Back 1000</button>
+<button name="back100">Back 100</button>
+<button name="forth100">Forth 100</button>
+<button name="forth1000">Forth 1000</button>
+<button name="speed2">Speed x2</button>
+<button name="speed05">Speed x0.5</button>
+<button name="stop">Stop</button>
+<button name="finish">Finish</button>
+<button name="pause">Pause</button>
+<button name="play">Play</button>
+<button name="reverse">Reverse</button>
+<span id="displayText"></span>
 
 <!-- Making the svg -->
 <svg width=1000px height=1000px id="canvas" viewbox="-1000 -2000 5000 5000">
@@ -109,7 +122,8 @@ canvas.attr('viewBox', null)
 SVG.defaults.timeline.ease = '-'
 
 var r = new SVG.Runner(1000)
-var t = new SVG.Timeline()
+var t = new SVG.Timeline().persist(true)
+
 r.schedule(t, 200)
   .animate(500).loop(5, true, 100)
   .animate(600, 200, 'absolute')
@@ -135,8 +149,56 @@ var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black')
 mover.clone().insertAfter(mover)
 canvas.line(100, 300, 800, 300).attr('stroke', 'black')
 
+const text = SVG('#displayText')
+
 t.on('time', function (e) {
   mover.x(100 + e.detail/10)
+  text.node.textContent = e.detail
+})
+
+t.on('finished', () => {
+  console.log('finished')
+})
+
+SVG('button[name="back100"]').on('click', () => {
+  t.seek(-100)
+})
+SVG('button[name="back1000"]').on('click', () => {
+  t.seek(-1000)
+})
+SVG('button[name="forth100"]').on('click', () => {
+  t.seek(100)
+})
+SVG('button[name="forth1000"]').on('click', () => {
+  t.seek(1000)
+})
+
+SVG('button[name="speed2"]').on('click', () => {
+  t.speed(2)
+})
+
+SVG('button[name="speed05"]').on('click', () => {
+  t.speed(0.5)
+})
+
+SVG('button[name="pause"]').on('click', () => {
+  t.pause()
+})
+
+SVG('button[name="play"]').on('click', () => {
+  t.play()
+})
+
+SVG('button[name="stop"]').on('click', () => {
+  t.stop()
+})
+
+SVG('button[name="finish"]').on('click', () => {
+  t.finish()
+})
+
+SVG('button[name="reverse"]').on('click', () => {
+  t.reverse()
 })
 
 

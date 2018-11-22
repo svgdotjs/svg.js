@@ -50,6 +50,9 @@ export default class Runner extends EventTarget {
     this._time = 0
     this._last = 0
 
+    // At creation, the runner is in reseted state
+    this._reseted = true
+
     // Save transforms applied to this runner
     this.transforms = new Matrix()
     this.transformId = 1
@@ -276,11 +279,15 @@ export default class Runner extends EventTarget {
 
     // Call initialise and the run function
     if (running || declarative) {
+      // Runner is running. So its not in reseted state anymore
+      this._reseted = false
+
       this._initialise(running)
 
       // clear the transforms on this runner so they dont get added again and again
       this.transforms = new Matrix()
       var converged = this._run(declarative ? dt : position)
+
       this.fire('step', this)
     }
     // correct the done flag here
@@ -289,6 +296,13 @@ export default class Runner extends EventTarget {
     if (this.done) {
       this.fire('finish', this)
     }
+    return this
+  }
+
+  reset () {
+    if (this._reseted) return this
+    this.loops(0)
+    this._reseted = true
     return this
   }
 
