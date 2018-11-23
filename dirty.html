@@ -145,6 +145,8 @@ schedule.forEach((s, i) => {
   //   s.runner.during(console.log)
 })
 
+// t.play()
+
 var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black')
 mover.clone().insertAfter(mover)
 canvas.line(100, 300, 800, 300).attr('stroke', 'black')
@@ -199,6 +201,13 @@ SVG('button[name="finish"]').on('click', () => {
 
 SVG('button[name="reverse"]').on('click', () => {
   t.reverse()
+})
+
+
+canvas.rect(100, 100).on('click', (e) => {
+  e.target.instance.animate().move(Math.random()*1000, Math.random()*750).timeline().on('finished', () => {
+    console.log('rect finished')
+  })
 })
 
 

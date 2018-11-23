@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Thu Nov 22 2018 15:30:35 GMT+0100 (GMT+01:00)
+* BUILT: Fri Nov 23 2018 14:47:42 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -5030,13 +5030,12 @@ var SVG = (function () {
       _this._timeSource = timeSource; // Store the timing variables
 
       _this._startTime = 0;
-      _this._speed = 1.0; // Play control variables control how the animation proceeds
+      _this._speed = 1.0; // Determines how long a runner is hold in memory. Can be a dt or true/false
 
-      _this._reverse = false;
       _this._persist = 0; // Keep track of the running animations and their starting parameters
 
       _this._nextFrame = null;
-      _this._paused = false;
+      _this._paused = true;
       _this._runners = [];
       _this._order = [];
       _this._time = 0;
@@ -5055,25 +5054,18 @@ var SVG = (function () {
           return this._runners.map(makeSchedule).sort(function (a, b) {
             return a.runner.id - b.runner.id;
           });
-        }
-
-        if (!this.active()) {
-          this._step();
-
-          if (when == null) {
-            when = 'now';
-          }
         } // The start time for the next animation can either be given explicitly,
         // derived from the current timeline time or it can be relative to the
         // last start time to chain animations direclty
 
 
         var absoluteStartTime = 0;
+        var endTime = this.getEndTime();
         delay = delay || 0; // Work out when to start the animation
 
         if (when == null || when === 'last' || when === 'after') {
           // Take the last time and increment
-          absoluteStartTime = this._startTime;
+          absoluteStartTime = endTime;
         } else if (when === 'absolute' || when === 'start') {
           absoluteStartTime = delay;
           delay = 0;
@@ -5092,22 +5084,19 @@ var SVG = (function () {
 
 
         runner.unschedule();
-        runner.timeline(this);
-        runner.time(-delay); // Save startTime for next runner
-
-        this._startTime = absoluteStartTime + runner.duration() + delay; // Save runnerInfo
+        runner.timeline(this); // runner.time(-delay)
+        // Save runnerInfo
 
         this._runners[runner.id] = {
           persist: this.persist(),
           runner: runner,
-          start: absoluteStartTime // + delay
-          // Save order and continue
+          start: absoluteStartTime + delay // Save order, update Time if needed and continue
 
         };
 
         this._order.push(runner.id);
 
-        this._continue();
+        this.updateTime()._continue();
 
         return this;
       } // Remove the runner from this timeline
@@ -5124,14 +5113,32 @@ var SVG = (function () {
 
         runner.timeline(null);
         return this;
+      } // Calculates the end of the timeline
+
+    }, {
+      key: "getEndTime",
+      value: function getEndTime() {
+        var lastRunnerInfo = this._runners[this._order[this._order.length - 1]];
+        var lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0;
+        var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : 0;
+        return lastStartTime + lastDuration;
+      } // Makes sure, that after pausing the time doesn't jump
+
+    }, {
+      key: "updateTime",
+      value: function updateTime() {
+        if (!this.active()) {
+          this._lastSourceTime = this._timeSource();
+        }
+
+        return this;
       }
     }, {
       key: "play",
       value: function play() {
         // Now make sure we are not paused and continue the animation
         this._paused = false;
-        this._lastSourceTime = this._timeSource();
-        return this._continue();
+        return this.updateTime()._continue();
       }
     }, {
       key: "pause",
@@ -5143,14 +5150,14 @@ var SVG = (function () {
       key: "stop",
       value: function stop() {
         // Go to start and pause
-        this.seek(-this._time);
+        this.time(0);
         return this.pause();
       }
     }, {
       key: "finish",
       value: function finish() {
-        // Go to Infinity and pause
-        this.seek(Infinity);
+        // Go to end and pause
+        this.time(this.getEndTime() + 1);
         return this.pause();
       }
     }, {
@@ -5171,16 +5178,14 @@ var SVG = (function () {
     }, {
       key: "seek",
       value: function seek(dt) {
-        this._time += dt; // this._lastStepTime = this._time
-
-        return this._continue(true);
+        return this.time(this._time + dt);
       }
     }, {
       key: "time",
       value: function time(_time) {
         if (_time == null) return this._time;
         this._time = _time;
-        return this;
+        return this._continue(true);
       }
     }, {
       key: "persist",
@@ -5213,6 +5218,7 @@ var SVG = (function () {
         if (!immediateStep) {
           // Update the time
           this._time += dtTime;
+          this._time = this._time < 0 ? 0 : this._time;
         }
 
         this._lastStepTime = this._time;
@@ -5259,13 +5265,15 @@ var SVG = (function () {
               runner.timeline(null);
             }
           }
-        }
+        } // Basically: we continue when there are runners right from us in time
+        // when -->, and when runners are left from us when <--
 
-        if (runnersLeft) {
+
+        if (runnersLeft && !(this._speed < 0 && this._time === 0) || this._order.length && this._speed < 0 && this._time > 0) {
           this._continue();
         } else {
           this.fire('finished');
-          this._nextFrame = null;
+          this.pause();
         }
 
         return this;
@@ -5915,7 +5923,7 @@ var SVG = (function () {
       animate: function animate(duration, delay, when) {
         var o = Runner.sanitise(duration, delay, when);
         var timeline$$1 = this.timeline();
-        return new Runner(o.duration).loop(o).element(this).timeline(timeline$$1).schedule(delay, when);
+        return new Runner(o.duration).loop(o).element(this).timeline(timeline$$1.play()).schedule(delay, when);
       },
       delay: function delay(by, when) {
         return this.animate(0, by, when);

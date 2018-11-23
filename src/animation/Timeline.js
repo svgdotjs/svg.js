@@ -26,13 +26,12 @@ export default class Timeline extends EventTarget {
     this._startTime = 0
     this._speed = 1.0
 
-    // Play control variables control how the animation proceeds
-    this._reverse = false
+    // Determines how long a runner is hold in memory. Can be a dt or true/false
     this._persist = 0
 
     // Keep track of the running animations and their starting parameters
     this._nextFrame = null
-    this._paused = false
+    this._paused = true
     this._runners = []
     this._order = []
     this._time = 0
@@ -51,23 +50,18 @@ export default class Timeline extends EventTarget {
       })
     }
 
-    if (!this.active()) {
-      this._step()
-      if (when == null) {
-        when = 'now'
-      }
-    }
-
     // The start time for the next animation can either be given explicitly,
     // derived from the current timeline time or it can be relative to the
     // last start time to chain animations direclty
+
     var absoluteStartTime = 0
+    var endTime = this.getEndTime()
     delay = delay || 0
 
     // Work out when to start the animation
     if (when == null || when === 'last' || when === 'after') {
       // Take the last time and increment
-      absoluteStartTime = this._startTime
+      absoluteStartTime = endTime
     } else if (when === 'absolute' || when === 'start') {
       absoluteStartTime = delay
       delay = 0
@@ -86,21 +80,18 @@ export default class Timeline extends EventTarget {
     // Manage runner
     runner.unschedule()
     runner.timeline(this)
-    runner.time(-delay)
-
-    // Save startTime for next runner
-    this._startTime = absoluteStartTime + runner.duration() + delay
+    // runner.time(-delay)
 
     // Save runnerInfo
     this._runners[runner.id] = {
       persist: this.persist(),
       runner: runner,
-      start: absoluteStartTime// + delay
+      start: absoluteStartTime + delay
     }
 
-    // Save order and continue
+    // Save order, update Time if needed and continue
     this._order.push(runner.id)
-    this._continue()
+    this.updateTime()._continue()
     return this
   }
 
@@ -115,11 +106,26 @@ export default class Timeline extends EventTarget {
     return this
   }
 
+  // Calculates the end of the timeline
+  getEndTime () {
+    var lastRunnerInfo = this._runners[this._order[this._order.length - 1]]
+    var lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
+    var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : 0
+    return lastStartTime + lastDuration
+  }
+
+  // Makes sure, that after pausing the time doesn't jump
+  updateTime () {
+    if (!this.active()) {
+      this._lastSourceTime = this._timeSource()
+    }
+    return this
+  }
+
   play () {
     // Now make sure we are not paused and continue the animation
     this._paused = false
-    this._lastSourceTime = this._timeSource()
-    return this._continue()
+    return this.updateTime()._continue()
   }
 
   pause () {
@@ -129,13 +135,13 @@ export default class Timeline extends EventTarget {
 
   stop () {
     // Go to start and pause
-    this.seek(-this._time)
+    this.time(0)
     return this.pause()
   }
 
   finish () {
-    // Go to Infinity and pause
-    this.seek(Infinity)
+    // Go to end and pause
+    this.time(this.getEndTime() + 1)
     return this.pause()
   }
 
@@ -154,15 +160,13 @@ export default class Timeline extends EventTarget {
   }
 
   seek (dt) {
-    this._time += dt
-    // this._lastStepTime = this._time
-    return this._continue(true)
+    return this.time(this._time + dt)
   }
 
   time (time) {
     if (time == null) return this._time
     this._time = time
-    return this
+    return this._continue(true)
   }
 
   persist (dtOrForever) {
@@ -192,6 +196,7 @@ export default class Timeline extends EventTarget {
     if (!immediateStep) {
       // Update the time
       this._time += dtTime
+      this._time = this._time < 0 ? 0 : this._time
     }
     this._lastStepTime = this._time
     this.fire('time', this._time)
@@ -244,11 +249,13 @@ export default class Timeline extends EventTarget {
       }
     }
 
-    if (runnersLeft) {
+    // Basically: we continue when there are runners right from us in time
+    // when -->, and when runners are left from us when <--
+    if ((runnersLeft && !(this._speed < 0 && this._time === 0)) || (this._order.length && this._speed < 0 && this._time > 0)) {
       this._continue()
     } else {
       this.fire('finished')
-      this._nextFrame = null
+      this.pause()
     }
 
     return this

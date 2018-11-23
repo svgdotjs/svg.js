@@ -742,11 +742,11 @@ describe('SVG.Runner', function () {
       var t = timeline.time()
 
       expect(runner2.timeline()).toBe(timeline)
-      expect(runner2.time()).toBe(-1000)
+      expect(runner2.time()).toBe(0)
 
-      expect(timeline.schedule()).toEqual(jasmine.objectContaining([
+      expect(timeline.schedule()).toEqual(jasmine.arrayContaining([
         jasmine.objectContaining({start: t, duration: 1000, end: t+1000, runner: runner}),
-        jasmine.objectContaining({start: t+1000, duration: 500, end: t+1500, runner: runner2})
+        jasmine.objectContaining({start: t+2000, duration: 500, end: t+2500, runner: runner2})
       ]))
     })
   })

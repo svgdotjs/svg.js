@@ -578,7 +578,7 @@ registerMethods({
       return new Runner(o.duration)
         .loop(o)
         .element(this)
-        .timeline(timeline)
+        .timeline(timeline.play())
         .schedule(delay, when)
     },
 
