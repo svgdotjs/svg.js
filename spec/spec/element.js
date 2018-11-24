@@ -111,7 +111,7 @@ describe('Element', function() {
       expect(draw.defs().find('pattern image').length).toBe(1)
       expect(draw.defs().find('pattern image')[0].attr('href')).toBe(imageUrl)
     })
-    it('correctly creates SVG.SVGArray if array given', function() {
+    it('correctly creates SVG.Array if array given', function() {
       rect.attr('something', [2,3,4])
       expect(rect.attr('something')).toBe('2 3 4')
     })
@@ -939,7 +939,7 @@ describe('Element', function() {
     it('set all properties in el.dom to the svgjs:data attribute', function(){
       var rect = draw.rect(100,100)
       rect.dom.foo = 'bar'
-      rect.dom.number = new SVG.SVGNumber('3px')
+      rect.dom.number = new SVG.Number('3px')
 
       rect.writeDataToDom()
 
@@ -949,7 +949,7 @@ describe('Element', function() {
       var g = draw.group()
       rect = g.rect(100,100)
       g.dom.foo = 'bar'
-      rect.dom.number = new SVG.SVGNumber('3px')
+      rect.dom.number = new SVG.Number('3px')
 
       g.writeDataToDom()
 

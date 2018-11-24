@@ -5,8 +5,8 @@ describe('Morphing', function () {
       var morpher = new SVG.Morphable().from(10).to(5)
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
-      expect(morpher.type()).toBe(SVG.SVGNumber)
-      expect(morpher.at(0.5) instanceof SVG.SVGNumber).toBe(true)
+      expect(morpher.type()).toBe(SVG.Number)
+      expect(morpher.at(0.5) instanceof SVG.Number).toBe(true)
       expect(morpher.at(0.5).valueOf()).toBe(7.5)
     })
 
@@ -29,12 +29,12 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).valueOf()).toEqual(jasmine.objectContaining({a: 7.5, b: 15}))
     })
 
-    it(`Creates a morphable out of an SVG.SVGNumber`, function () {
-      var morpher = new SVG.SVGNumber(5).to(10)
+    it(`Creates a morphable out of an SVG.Number`, function () {
+      var morpher = new SVG.Number(5).to(10)
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
-      expect(morpher.type()).toBe(SVG.SVGNumber)
-      expect(morpher.at(0.5) instanceof SVG.SVGNumber).toBe(true)
+      expect(morpher.type()).toBe(SVG.Number)
+      expect(morpher.at(0.5) instanceof SVG.Number).toBe(true)
       expect(morpher.at(0.5).valueOf()).toBe(7.5)
     })
 
@@ -65,12 +65,12 @@ describe('Morphing', function () {
       expect(morpher.at(0.5)).toEqual(jasmine.objectContaining(new SVG.Matrix(2, 3, 4, 5, 6, 7)))
     })
 
-    it(`Creates a morphable out of an SVG.SVGArray`, function () {
-      var morpher = new SVG.SVGArray([1,2,3,4,5,6]).to([3,4,5,6,7,8])
+    it(`Creates a morphable out of an SVG.Array`, function () {
+      var morpher = new SVG.Array([1,2,3,4,5,6]).to([3,4,5,6,7,8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
-      expect(morpher.type()).toBe(SVG.SVGArray)
-      expect(morpher.at(0.5) instanceof SVG.SVGArray).toBe(true)
+      expect(morpher.type()).toBe(SVG.Array)
+      expect(morpher.at(0.5) instanceof SVG.Array).toBe(true)
       expect(morpher.at(0.5).toArray()).toEqual(jasmine.arrayContaining([2, 3, 4, 5, 6, 7]))
     })
 
@@ -126,7 +126,7 @@ describe('Morphing', function () {
   describe('from()', function () {
     it('sets the type of the runner', function () {
       var morpher = new SVG.Morphable().from(5)
-      expect(morpher.type()).toBe(SVG.SVGNumber)
+      expect(morpher.type()).toBe(SVG.Number)
     })
 
     it('sets the from attribute to an array representation of the morphable type', function () {
@@ -137,20 +137,20 @@ describe('Morphing', function () {
 
   describe('type()', function () {
     it('sets the type of the runner', function () {
-      var morpher = new SVG.Morphable().type(SVG.SVGNumber)
-      expect(morpher._type).toBe(SVG.SVGNumber)
+      var morpher = new SVG.Morphable().type(SVG.Number)
+      expect(morpher._type).toBe(SVG.Number)
     })
 
     it('gets the type of the runner', function () {
-      var morpher = new SVG.Morphable().type(SVG.SVGNumber)
-      expect(morpher.type()).toBe(SVG.SVGNumber)
+      var morpher = new SVG.Morphable().type(SVG.Number)
+      expect(morpher.type()).toBe(SVG.Number)
     })
   })
 
   describe('to()', function () {
     it('sets the type of the runner', function () {
       var morpher = new SVG.Morphable().to(5)
-      expect(morpher.type()).toBe(SVG.SVGNumber)
+      expect(morpher.type()).toBe(SVG.Number)
     })
 
     it('sets the from attribute to an array representation of the morphable type', function () {

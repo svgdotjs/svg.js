@@ -15,7 +15,7 @@ describe('Text', function() {
 
   describe('leading()', function() {
     it('returns the leading value of the text without an argument', function() {
-      expect(text.leading() instanceof SVG.SVGNumber)
+      expect(text.leading() instanceof SVG.Number)
       expect(text.leading().valueOf()).toBe(1.3)
     })
     it('sets the leading value of the text with the first argument', function() {
@@ -283,7 +283,7 @@ describe('Text', function() {
       text.setData(JSON.parse(text.attr('svgjs:data')))
 
       expect(text.dom.foo).toBe('bar')
-      expect(text.dom.leading instanceof SVG.SVGNumber).toBeTruthy()
+      expect(text.dom.leading instanceof SVG.Number).toBeTruthy()
       expect(text.dom.leading.value).toBe(3)
       expect(text.dom.leading.unit).toBe('px')
     })

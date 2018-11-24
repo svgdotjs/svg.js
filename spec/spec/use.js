@@ -14,7 +14,7 @@ describe('Use', function() {
     })
 
     it('sets the target element id to its href attribute', function() {
-      expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe('#' + rect)
+      expect(use.node.getAttributeNS(SVG.namespaces.xlink, 'href')).toBe('#' + rect)
     })
 
     it('adopts the geometry of the target element', function() {
@@ -35,9 +35,9 @@ describe('Use', function() {
     })
 
     it('sets the target element id and file path to its href attribute', function() {
-      expect(use.node.getAttributeNS(SVG.xlink, 'href')).toBe(file + '#' + id)
+      expect(use.node.getAttributeNS(SVG.namespaces.xlink, 'href')).toBe(file + '#' + id)
     })
 
   })
-  
+
 })

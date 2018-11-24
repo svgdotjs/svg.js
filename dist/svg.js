@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Nov 24 2018 11:07:45 GMT+0100 (GMT+01:00)
+* BUILT: Sat Nov 24 2018 14:31:28 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -372,11 +372,30 @@ var SVG = (function () {
     return [ox, oy];
   }
 
+  var utils = /*#__PURE__*/Object.freeze({
+    map: map,
+    filter: filter,
+    radians: radians,
+    degrees: degrees,
+    camelCase: camelCase,
+    unCamelCase: unCamelCase,
+    capitalize: capitalize,
+    proportionalSize: proportionalSize,
+    getOrigin: getOrigin
+  });
+
   // Default namespaces
   var ns = 'http://www.w3.org/2000/svg';
   var xmlns = 'http://www.w3.org/2000/xmlns/';
   var xlink = 'http://www.w3.org/1999/xlink';
   var svgjs = 'http://svgjs.com/svgjs';
+
+  var namespaces = /*#__PURE__*/Object.freeze({
+    ns: ns,
+    xmlns: xmlns,
+    xlink: xlink,
+    svgjs: svgjs
+  });
 
   var globals = {
     window: typeof window === 'undefined' ? null : window,
@@ -6999,6 +7018,7 @@ var SVG = (function () {
   register(Use);
 
   /* Optional Modules */
+  var SVG = makeInstance;
   extend([Svg$1, Symbol, Image, Pattern, Marker], getMethodsFor('viewbox'));
   extend([Line, Polyline, Polygon, Path], getMethodsFor('marker'));
   extend(Text, getMethodsFor('Text'));
@@ -7025,6 +7045,10 @@ var SVG = (function () {
     ObjectBag: ObjectBag,
     NonMorphable: NonMorphable,
     defaults: defaults,
+    utils: utils,
+    namespaces: namespaces,
+    regex: regex,
+    SVG: SVG,
     parser: parser,
     find: baseFind,
     registerWindow: registerWindow,
@@ -7037,12 +7061,12 @@ var SVG = (function () {
     Queue: Queue,
     Runner: Runner,
     Timeline: Timeline,
-    SVGArray: SVGArray,
+    Array: SVGArray,
     Box: Box,
     Color: Color,
     EventTarget: EventTarget,
     Matrix: Matrix,
-    SVGNumber: SVGNumber,
+    Number: SVGNumber,
     PathArray: PathArray,
     Point: Point,
     PointArray: PointArray,
@@ -7075,19 +7099,6 @@ var SVG = (function () {
     TextPath: TextPath,
     Tspan: Tspan,
     Use: Use,
-    map: map,
-    filter: filter,
-    radians: radians,
-    degrees: degrees,
-    camelCase: camelCase,
-    unCamelCase: unCamelCase,
-    capitalize: capitalize,
-    proportionalSize: proportionalSize,
-    getOrigin: getOrigin,
-    ns: ns,
-    xmlns: xmlns,
-    xlink: xlink,
-    svgjs: svgjs,
     on: on,
     off: off,
     dispatch: dispatch,
@@ -7105,14 +7116,11 @@ var SVG = (function () {
     wrapWithAttrCheck: wrapWithAttrCheck
   });
 
-  function SVG(element) {
+  function SVG$1(element) {
     return makeInstance(element);
   }
-  Object.assign(SVG, svgMembers);
-  SVG.utils = SVG;
-  SVG.regex = regex;
-  SVG.get = SVG;
+  Object.assign(SVG$1, svgMembers);
 
-  return SVG;
+  return SVG$1;
 
 }());

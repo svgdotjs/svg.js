@@ -7,7 +7,7 @@ import './modules/optional/memory.js'
 import './modules/optional/sugar.js'
 import './modules/optional/transform.js'
 
-import { extend } from './utils/adopter.js'
+import { extend, makeInstance } from './utils/adopter.js'
 import { getMethodNames, getMethodsFor } from './utils/methods.js'
 import Box from './types/Box.js'
 import Circle from './elements/Circle.js'
@@ -46,6 +46,9 @@ import Svg from './elements/Svg.js'
 import Text from './elements/Text.js'
 import Tspan from './elements/Tspan.js'
 import * as defaults from './modules/core/defaults.js'
+import * as utils from './utils/utils.js'
+import * as namespaces from './modules/core/namespaces.js'
+import * as regex from './modules/core/regex.js'
 
 export {
   Morphable,
@@ -56,9 +59,8 @@ export {
   NonMorphable
 }
 
-export { defaults }
-export * from './utils/utils.js'
-export * from './modules/core/namespaces.js'
+export { defaults, utils, namespaces, regex }
+export const SVG = makeInstance
 export { default as parser } from './modules/core/parser.js'
 export { default as find } from './modules/core/selector.js'
 export * from './modules/core/event.js'
@@ -73,12 +75,12 @@ export { default as Runner } from './animation/Runner.js'
 export { default as Timeline } from './animation/Timeline.js'
 
 /* Types */
-export { default as SVGArray } from './types/SVGArray.js'
+export { default as Array } from './types/SVGArray.js'
 export { default as Box } from './types/Box.js'
 export { default as Color } from './types/Color.js'
 export { default as EventTarget } from './types/EventTarget.js'
 export { default as Matrix } from './types/Matrix.js'
-export { default as SVGNumber } from './types/SVGNumber.js'
+export { default as Number } from './types/SVGNumber.js'
 export { default as PathArray } from './types/PathArray.js'
 export { default as Point } from './types/Point.js'
 export { default as PointArray } from './types/PointArray.js'

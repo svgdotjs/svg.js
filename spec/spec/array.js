@@ -2,7 +2,7 @@ describe('Array', function () {
   var array, arr1, arr2
 
   it('parses a matrix array correctly to string', function() {
-    array = new SVG.SVGArray([ .343,  .669, .119, 0,   0
+    array = new SVG.Array([ .343,  .669, .119, 0,   0
                           , .249, -.626, .130, 0,   0
                           , .172,  .334, .111, 0,   0
                           , .000,  .000, .000, 1,  -0 ])
@@ -10,31 +10,31 @@ describe('Array', function () {
     expect(array + '').toBe('0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0')
   })
   it('parses space seperated string and converts it to array', function() {
-    expect((new SVG.SVGArray('1 2 3 4')).valueOf()).toEqual([1,2,3,4])
+    expect((new SVG.Array('1 2 3 4')).valueOf()).toEqual([1,2,3,4])
   })
   it('parses comma seperated string and converts it to array', function() {
-    expect((new SVG.SVGArray('1,2,3,4')).valueOf()).toEqual([1,2,3,4])
+    expect((new SVG.Array('1,2,3,4')).valueOf()).toEqual([1,2,3,4])
   })
   describe('reverse()', function() {
     it('reverses the array', function() {
-      array = new SVG.SVGArray([1 ,2 ,3, 4, 5]).reverse()
+      array = new SVG.Array([1 ,2 ,3, 4, 5]).reverse()
       expect(array.valueOf()).toEqual([5, 4, 3, 2, 1])
     })
     it('returns itself', function() {
-      array = new SVG.SVGArray()
+      array = new SVG.Array()
       expect(array.reverse()).toBe(array)
     })
   })
   describe('clone()', function() {
     it('creates a deep clone of the array', function() {
-      array = new SVG.SVGArray([1, 2, 3, 4, 5])
+      array = new SVG.Array([1, 2, 3, 4, 5])
 
       clone = array.clone()
 
       expect(array).toEqual(clone)
       expect(array).not.toBe(clone)
 
-      array = new SVG.SVGArray([[1,2], [3, 4], [5]])
+      array = new SVG.Array([[1,2], [3, 4], [5]])
       clone = array.clone()
 
       expect(array).toEqual(array)
