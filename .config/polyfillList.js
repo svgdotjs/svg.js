@@ -7,3 +7,5 @@ import 'core-js/modules/es6.string.includes'
 import 'core-js/modules/es6.array.iterator'
 import 'core-js/modules/es7.object.entries'
 import 'core-js/modules/es6.object.assign'
+import CustomEventPolyfill from '@target/custom-event-polyfill'
+CustomEventPolyfill()

@@ -69,6 +69,7 @@
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "@target/custom-event-polyfill": "github:Adobe-Marketing-Cloud/custom-event-polyfill",
     "babel-eslint": "^10.0.1",
     "core-js": "^2.5.7",
     "coveralls": "^3.0.2",
