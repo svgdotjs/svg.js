@@ -71,11 +71,9 @@ describe('Adopter', function() {
   })
 
   describe('with node that has no matching svg.js class', function() {
-    it('wraps the node in the base SVG.Element class', function() {
+    it('wraps the node in the Dom class', function() {
       var desc = SVG('#inlineSVG').find('desc')[0]
-      expect(desc instanceof SVG.Element).toBeTruthy()
+      expect(desc instanceof SVG.Dom).toBeTruthy()
     })
   })
-
-
 })

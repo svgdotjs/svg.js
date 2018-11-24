@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Fri Nov 23 2018 14:47:42 GMT+0100 (GMT+01:00)
+* BUILT: Sat Nov 24 2018 11:07:45 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -430,21 +430,14 @@ var SVG = (function () {
     // check for presence of node
     if (!node) return null; // make sure a node isn't already adopted
 
-    if (node.instance instanceof Base) return node.instance;
+    if (node.instance instanceof Base) return node.instance; // initialize variables
 
-    if (!(node instanceof globals.window.SVGElement)) {
-      return new elements.HtmlNode(node);
-    } // initialize variables
-
-
-    var className = capitalize(node.nodeName);
+    var className = capitalize(node.nodeName); // Make sure that gradients are adopted correctly
 
     if (className === 'LinearGradient' || className === 'RadialGradient') {
-      className = 'Gradient';
-    }
-
-    if (!elements[className]) {
-      className = 'Bare';
+      className = 'Gradient'; // Fallback to Dom if element is not known
+    } else if (!elements[className]) {
+      className = 'Dom';
     }
 
     return new elements[className](node);
@@ -2372,6 +2365,11 @@ var SVG = (function () {
         }
 
         return this;
+      }
+    }, {
+      key: "element",
+      value: function element(nodeName) {
+        return this.put(new Dom(makeNode(nodeName)));
       } // Get first child
 
     }, {
@@ -2572,10 +2570,18 @@ var SVG = (function () {
 
         for (len = well.children.length; len--;) {
           fragment.appendChild(well.firstElementChild);
-        } // Add the whole fragment at once
+        }
 
+        var parent = this.parent(); // Add the whole fragment at once
 
-        return outerHTML ? this.replace(fragment) : this.add(fragment);
+        return outerHTML ? this.replace(fragment) && parent : this.add(fragment);
+      }
+    }, {
+      key: "words",
+      value: function words(text) {
+        // This is faster than removing all children and adding a new one
+        this.node.textContent = text;
+        return this;
       } // write svgjs data to the dom
 
     }, {
@@ -6604,41 +6610,6 @@ var SVG = (function () {
   });
   register(Tspan);
 
-  var Bare =
-  /*#__PURE__*/
-  function (_Container) {
-    _inherits(Bare, _Container);
-
-    function Bare(node, attrs) {
-      _classCallCheck(this, Bare);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Bare).call(this, nodeOrNew(node, typeof node === 'string' ? null : node), attrs));
-    }
-
-    _createClass(Bare, [{
-      key: "words",
-      value: function words(text) {
-        // remove contents
-        while (this.node.hasChildNodes()) {
-          this.node.removeChild(this.node.lastChild);
-        } // create text node
-
-
-        this.node.appendChild(globals.document.createTextNode(text));
-        return this;
-      }
-    }]);
-
-    return Bare;
-  }(Container);
-  register(Bare);
-  registerMethods('Container', {
-    // Create an element that is not described by SVG.js
-    element: wrapWithAttrCheck(function (node) {
-      return this.put(new Bare(node));
-    })
-  });
-
   var ClipPath =
   /*#__PURE__*/
   function (_Container) {
@@ -6718,21 +6689,6 @@ var SVG = (function () {
     }
   });
   register(G);
-
-  var HtmlNode =
-  /*#__PURE__*/
-  function (_Dom) {
-    _inherits(HtmlNode, _Dom);
-
-    function HtmlNode() {
-      _classCallCheck(this, HtmlNode);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(HtmlNode).apply(this, arguments));
-    }
-
-    return HtmlNode;
-  }(Dom);
-  register(HtmlNode);
 
   var A =
   /*#__PURE__*/
@@ -6867,9 +6823,10 @@ var SVG = (function () {
     }
 
     _createClass(Style, [{
-      key: "words",
-      value: function words(w) {
-        this.node.textContent += w || '';
+      key: "addText",
+      value: function addText() {
+        var w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+        this.node.textContent += w;
         return this;
       }
     }, {
@@ -6884,7 +6841,7 @@ var SVG = (function () {
     }, {
       key: "rule",
       value: function rule(selector, obj) {
-        return this.words(cssRule(selector, obj));
+        return this.addText(cssRule(selector, obj));
       }
     }]);
 
@@ -7090,7 +7047,6 @@ var SVG = (function () {
     Point: Point,
     PointArray: PointArray,
     List: List,
-    Bare: Bare,
     Circle: Circle,
     ClipPath: ClipPath,
     Container: Container,
@@ -7100,7 +7056,6 @@ var SVG = (function () {
     Ellipse: Ellipse,
     Gradient: Gradient,
     G: G,
-    HtmlNode: HtmlNode,
     A: A,
     Image: Image,
     Line: Line,

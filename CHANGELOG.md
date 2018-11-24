@@ -28,6 +28,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added possibility to pass attributes into a constructor like: `new SVG.Rect({width:100})`
 - added possibility to pass in additional attribues to element creators e.g. `canvas.rect({x:100})` or `canvas.rect(100, 100, {x:100})` (#796)
 - added `SVG.List` (#645)
+- added `words()` and `element()` to `Dom` because of (#935)
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -42,6 +43,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
 - removed `move(), dmove()` etc for groups to avoid inconsistencies, we will expect users to use transforms to move around groups as they should (especially since they are much simpler now).
 - removed `native()` function
+- removed `Bare` in favour of `Dom` (#935)
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear

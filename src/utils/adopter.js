@@ -50,19 +50,16 @@ export function adopt (node) {
   // make sure a node isn't already adopted
   if (node.instance instanceof Base) return node.instance
 
-  if (!(node instanceof globals.window.SVGElement)) {
-    return new elements.HtmlNode(node)
-  }
-
   // initialize variables
   var className = capitalize(node.nodeName)
 
+  // Make sure that gradients are adopted correctly
   if (className === 'LinearGradient' || className === 'RadialGradient') {
     className = 'Gradient'
-  }
 
-  if (!elements[className]) {
-    className = 'Bare'
+  // Fallback to Dom if element is not known
+  } else if (!elements[className]) {
+    className = 'Dom'
   }
 
   return new elements[className](node)

@@ -30,7 +30,7 @@ import Morphable, {
   TransformBag,
   makeMorphable,
   registerMorphableType
-} from './types/Morphable.js'
+} from './animation/Morphable.js'
 import Path from './elements/Path.js'
 import PathArray from './types/PathArray.js'
 import Pattern from './elements/Pattern.js'
@@ -85,7 +85,6 @@ export { default as PointArray } from './types/PointArray.js'
 export { default as List } from './types/List.js'
 
 /* Elements */
-export { default as Bare } from './elements/Bare.js'
 export { default as Circle } from './elements/Circle.js'
 export { default as ClipPath } from './elements/ClipPath.js'
 export { default as Container } from './elements/Container.js'
@@ -95,7 +94,6 @@ export { default as Element } from './elements/Element.js'
 export { default as Ellipse } from './elements/Ellipse.js'
 export { default as Gradient } from './elements/Gradient.js'
 export { default as G } from './elements/G.js'
-export { default as HtmlNode } from './elements/HtmlNode.js'
 export { default as A } from './elements/A.js'
 export { default as Image } from './elements/Image.js'
 export { default as Line } from './elements/Line.js'

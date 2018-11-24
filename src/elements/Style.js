@@ -23,8 +23,8 @@ export default class Style extends Element {
     super(nodeOrNew('style', node), node)
   }
 
-  words (w) {
-    this.node.textContent += (w || '')
+  addText (w = '') {
+    this.node.textContent += w
     return this
   }
 
@@ -37,7 +37,7 @@ export default class Style extends Element {
   }
 
   rule (selector, obj) {
-    return this.words(cssRule(selector, obj))
+    return this.addText(cssRule(selector, obj))
   }
 }
 

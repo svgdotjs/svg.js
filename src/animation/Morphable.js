@@ -1,14 +1,14 @@
-import { Ease } from '../animation/Controller.js'
+import { Ease } from './Controller.js'
 import {
   delimiter,
   numberAndUnit,
   pathLetters
 } from '../modules/core/regex.js'
 import { extend } from '../utils/adopter.js'
-import Color from './Color.js'
-import PathArray from './PathArray.js'
-import SVGArray from './SVGArray.js'
-import SVGNumber from './SVGNumber.js'
+import Color from '../types/Color.js'
+import PathArray from '../types/PathArray.js'
+import SVGArray from '../types/SVGArray.js'
+import SVGNumber from '../types/SVGNumber.js'
 
 export default class Morphable {
   constructor (stepper) {

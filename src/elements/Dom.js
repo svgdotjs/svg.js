@@ -4,6 +4,7 @@ import {
   eid,
   extend,
   makeInstance,
+  makeNode,
   register
 } from '../utils/adopter.js'
 import { find } from '../modules/core/selector'
@@ -86,6 +87,10 @@ export default class Dom extends EventTarget {
     }
 
     return this
+  }
+
+  element (nodeName) {
+    return this.put(new Dom(makeNode(nodeName)))
   }
 
   // Get first child
@@ -285,10 +290,18 @@ export default class Dom extends EventTarget {
       fragment.appendChild(well.firstElementChild)
     }
 
+    let parent = this.parent()
+
     // Add the whole fragment at once
     return outerHTML
-      ? this.replace(fragment)
+      ? this.replace(fragment) && parent
       : this.add(fragment)
+  }
+
+  words (text) {
+    // This is faster than removing all children and adding a new one
+    this.node.textContent = text
+    return this
   }
 
   // write svgjs data to the dom
