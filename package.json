@@ -1,5 +1,5 @@
 {
-  "name": "svg.js",
+  "name": "@svgdotjs/svg.js",
   "version": "3.0.0",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgdotjs.github.io/",
@@ -12,6 +12,7 @@
   ],
   "author": "Wout Fierens <wout@mick-wout.com>",
   "main": "dist/svg.js",
+  "module": "dist/svg.esm.js",
   "jam": {
     "include": [
       "dist/svg.js",
