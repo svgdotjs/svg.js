@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 26 2018 00:15:11 GMT+1300 (New Zealand Daylight Time)
+* BUILT: Sun Nov 25 2018 13:00:14 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1091,11 +1091,10 @@ var SVG = (function () {
         var d = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
         var space = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'rgb';
 
-        // If the user gave us an array, make the color from it
         if (typeof a === 'number') {
           // Allow for the case that we don't need d...
           space = typeof d === 'string' ? d : space;
-          d = typeof d === 'string' ? undefined : d; // Assign the values straight to the color
+          d = typeof d === 'string' ? 0 : d; // Assign the values straight to the color
 
           Object.assign(this, {
             _a: a,
@@ -1103,7 +1102,7 @@ var SVG = (function () {
             _c: c,
             _d: d,
             space: space
-          });
+          }); // If the user gave us an array, make the color from it
         } else if (a instanceof Array) {
           this.space = b || 'rgb';
           Object.assign(this, {
@@ -1195,7 +1194,7 @@ var SVG = (function () {
         this.opacity = _opacity;
       }
       /*
-        */
+         */
 
     }, {
       key: "brightness",
@@ -4914,7 +4913,13 @@ var SVG = (function () {
           }
         }
 
-        var result = new this._type(value).toArray();
+        var result = new this._type(value);
+
+        if (this._type === Color) {
+          result = this._to ? result[this._to[4]]() : this._from ? result[this._from[4]]() : result;
+        }
+
+        result = result.toArray();
         this._morphObj = this._morphObj || new this._type();
         this._context = this._context || Array.apply(null, Array(result.length)).map(Object);
         return result;

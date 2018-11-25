@@ -80,7 +80,14 @@ export default class Morphable {
       }
     }
 
-    var result = (new this._type(value)).toArray()
+    var result = (new this._type(value))
+    if (this._type === Color) {
+      result = this._to ? result[this._to[4]]()
+        : this._from ? result[this._from[4]]()
+        : result
+    }
+    result = result.toArray()
+
     this._morphObj = this._morphObj || new this._type()
     this._context = this._context
       || Array.apply(null, Array(result.length)).map(Object)

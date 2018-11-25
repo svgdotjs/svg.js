@@ -44,7 +44,7 @@ describe('Morphing', function () {
       expect(morpher instanceof SVG.Morphable).toBe(true)
       expect(morpher.type()).toBe(SVG.Color)
       expect(morpher.at(0.5) instanceof SVG.Color).toBe(true)
-      expect(morpher.at(0.5).toHex()).toBe('#808080')
+      expect(morpher.at(0.5).hex()).toBe('#808080')
     })
 
     it(`Creates a morphable out of an SVG.Box`, function () {

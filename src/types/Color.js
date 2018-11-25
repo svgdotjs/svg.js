@@ -60,14 +60,14 @@ export default class Color {
   }
 
   init (a = 0, b = 0, c = 0, d = 0, space = 'rgb') {
-    // If the user gave us an array, make the color from it
     if (typeof a === 'number') {
       // Allow for the case that we don't need d...
       space = typeof d === 'string' ? d : space
-      d = typeof d === 'string' ? undefined : d
+      d = typeof d === 'string' ? 0 : d
 
       // Assign the values straight to the color
       Object.assign(this, { _a: a, _b: b, _c: c, _d: d, space })
+    // If the user gave us an array, make the color from it
     } else if (a instanceof Array) {
       this.space = b || 'rgb'
       Object.assign(this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] })
