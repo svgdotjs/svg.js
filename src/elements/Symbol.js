@@ -3,18 +3,24 @@ import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
 export default class Symbol extends Container {
+
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('symbol', node), node)
+  constructor ( node ) {
+
+    super( nodeOrNew( 'symbol', node ), node )
+
   }
+
 }
 
-registerMethods({
+registerMethods( {
   Container: {
-    symbol: wrapWithAttrCheck(function () {
-      return this.put(new Symbol())
-    })
-  }
-})
+    symbol: wrapWithAttrCheck( function () {
 
-register(Symbol)
+      return this.put( new Symbol() )
+
+    } )
+  }
+} )
+
+register( Symbol )

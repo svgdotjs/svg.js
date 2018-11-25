@@ -11,68 +11,90 @@ import Defs from './Defs.js'
 import { globals } from '../utils/window.js'
 
 export default class Svg extends Container {
-  constructor (node) {
-    super(nodeOrNew('svg', node), node)
+
+  constructor ( node ) {
+
+    super( nodeOrNew( 'svg', node ), node )
     this.namespace()
+
   }
 
   isRoot () {
-    return !this.node.parentNode ||
-      !(this.node.parentNode instanceof globals.window.SVGElement) ||
-      this.node.parentNode.nodeName === '#document'
+
+    return !this.node.parentNode
+      || !( this.node.parentNode instanceof globals.window.SVGElement )
+      || this.node.parentNode.nodeName === '#document'
+
   }
 
   // Check if this is a root svg
   // If not, call docs from this element
   root () {
-    if (this.isRoot()) return this
+
+    if ( this.isRoot() ) return this
     return super.root()
+
   }
 
   // Add namespaces
   namespace () {
-    if (!this.isRoot()) return this.root().namespace()
+
+    if ( !this.isRoot() ) return this.root().namespace()
     return this
-      .attr({ xmlns: ns, version: '1.1' })
-      .attr('xmlns:xlink', xlink, xmlns)
-      .attr('xmlns:svgjs', svgjs, xmlns)
+      .attr( { xmlns: ns, version: '1.1' } )
+      .attr( 'xmlns:xlink', xlink, xmlns )
+      .attr( 'xmlns:svgjs', svgjs, xmlns )
+
   }
 
   // Creates and returns defs element
   defs () {
-    if (!this.isRoot()) return this.root().defs()
 
-    return adopt(this.node.getElementsByTagName('defs')[0]) ||
-      this.put(new Defs())
+    if ( !this.isRoot() ) return this.root().defs()
+
+    return adopt( this.node.getElementsByTagName( 'defs' )[0] )
+      || this.put( new Defs() )
+
   }
 
   // custom parent method
-  parent (type) {
-    if (this.isRoot()) {
+  parent ( type ) {
+
+    if ( this.isRoot() ) {
+
       return this.node.parentNode.nodeName === '#document'
         ? null
-        : adopt(this.node.parentNode)
+        : adopt( this.node.parentNode )
+
     }
 
-    return super.parent(type)
+    return super.parent( type )
+
   }
 
   clear () {
+
     // remove children
-    while (this.node.hasChildNodes()) {
-      this.node.removeChild(this.node.lastChild)
+    while ( this.node.hasChildNodes() ) {
+
+      this.node.removeChild( this.node.lastChild )
+
     }
     return this
+
   }
+
 }
 
-registerMethods({
+registerMethods( {
   Container: {
     // Create nested svg document
-    nested: wrapWithAttrCheck(function () {
-      return this.put(new Svg())
-    })
-  }
-})
+    nested: wrapWithAttrCheck( function () {
 
-register(Svg, 'Svg', true)
+      return this.put( new Svg() )
+
+    } )
+  }
+} )
+
+register( Svg, 'Svg', true )

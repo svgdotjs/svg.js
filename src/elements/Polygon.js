@@ -11,22 +11,28 @@ import * as pointed from '../modules/core/pointed.js'
 import * as poly from '../modules/core/poly.js'
 
 export default class Polygon extends Shape {
+
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('polygon', node), node)
+  constructor ( node ) {
+
+    super( nodeOrNew( 'polygon', node ), node )
+
   }
+
 }
 
-registerMethods({
+registerMethods( {
   Container: {
     // Create a wrapped polygon element
-    polygon: wrapWithAttrCheck(function (p) {
-      // make sure plot is called as a setter
-      return this.put(new Polygon()).plot(p || new PointArray())
-    })
-  }
-})
+    polygon: wrapWithAttrCheck( function ( p ) {
 
-extend(Polygon, pointed)
-extend(Polygon, poly)
-register(Polygon)
+      // make sure plot is called as a setter
+      return this.put( new Polygon() ).plot( p || new PointArray() )
+
+    } )
+  }
+} )
+
+extend( Polygon, pointed )
+extend( Polygon, poly )
+register( Polygon )

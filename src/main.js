@@ -116,50 +116,50 @@ export { default as TextPath } from './elements/TextPath.js'
 export { default as Tspan } from './elements/Tspan.js'
 export { default as Use } from './elements/Use.js'
 
-extend([
+extend( [
   Svg,
   Symbol,
   Image,
   Pattern,
   Marker
-], getMethodsFor('viewbox'))
+], getMethodsFor( 'viewbox' ) )
 
-extend([
+extend( [
   Line,
   Polyline,
   Polygon,
   Path
-], getMethodsFor('marker'))
+], getMethodsFor( 'marker' ) )
 
-extend(Text, getMethodsFor('Text'))
-extend(Path, getMethodsFor('Path'))
+extend( Text, getMethodsFor( 'Text' ) )
+extend( Path, getMethodsFor( 'Path' ) )
 
-extend(Defs, getMethodsFor('Defs'))
+extend( Defs, getMethodsFor( 'Defs' ) )
 
-extend([
+extend( [
   Text,
   Tspan
-], getMethodsFor('Tspan'))
+], getMethodsFor( 'Tspan' ) )
 
-extend([
+extend( [
   Rect,
   Ellipse,
   Circle,
   Gradient
-], getMethodsFor('radius'))
+], getMethodsFor( 'radius' ) )
 
-extend(EventTarget, getMethodsFor('EventTarget'))
-extend(Dom, getMethodsFor('Dom'))
-extend(Element, getMethodsFor('Element'))
-extend(Shape, getMethodsFor('Shape'))
+extend( EventTarget, getMethodsFor( 'EventTarget' ) )
+extend( Dom, getMethodsFor( 'Dom' ) )
+extend( Element, getMethodsFor( 'Element' ) )
+extend( Shape, getMethodsFor( 'Shape' ) )
 // extend(Element, getConstructor('Memory'))
-extend(Container, getMethodsFor('Container'))
+extend( Container, getMethodsFor( 'Container' ) )
 
-extend(Runner, getMethodsFor('Runner'))
+extend( Runner, getMethodsFor( 'Runner' ) )
 
-List.extend(getMethodNames())
+List.extend( getMethodNames() )
 
-registerMorphableType([
+registerMorphableType( [
   SVGNumber,
   Color,
   Box,
@@ -167,6 +167,6 @@ registerMorphableType([
   SVGArray,
   PointArray,
   PathArray
-])
+] )
 
 makeMorphable()

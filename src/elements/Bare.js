@@ -4,28 +4,38 @@ import Container from './Container.js'
 import { globals } from '../utils/window.js'
 
 export default class Bare extends Container {
-  constructor (node, attrs) {
-    super(nodeOrNew(node, typeof node === 'string' ? null : node), attrs)
+
+  constructor ( node, attrs ) {
+
+    super( nodeOrNew( node, typeof node === 'string' ? null : node ), attrs )
+
   }
 
-  words (text) {
+  words ( text ) {
+
     // remove contents
-    while (this.node.hasChildNodes()) {
-      this.node.removeChild(this.node.lastChild)
+    while ( this.node.hasChildNodes() ) {
+
+      this.node.removeChild( this.node.lastChild )
+
     }
 
     // create text node
-    this.node.appendChild(globals.document.createTextNode(text))
+    this.node.appendChild( globals.document.createTextNode( text ) )
 
     return this
+
   }
+
 }
 
-register(Bare)
+register( Bare )
 
-registerMethods('Container', {
+registerMethods( 'Container', {
   // Create an element that is not described by SVG.js
-  element: wrapWithAttrCheck(function (node) {
-    return this.put(new Bare(node))
-  })
-})
+  element: wrapWithAttrCheck( function ( node ) {
+
+    return this.put( new Bare( node ) )
+
+  } )
+} )

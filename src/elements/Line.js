@@ -11,58 +11,78 @@ import Shape from './Shape.js'
 import * as pointed from '../modules/core/pointed.js'
 
 export default class Line extends Shape {
+
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('line', node), node)
+  constructor ( node ) {
+
+    super( nodeOrNew( 'line', node ), node )
+
   }
 
   // Get array
   array () {
-    return new PointArray([
-      [ this.attr('x1'), this.attr('y1') ],
-      [ this.attr('x2'), this.attr('y2') ]
-    ])
+
+    return new PointArray( [
+      [ this.attr( 'x1' ), this.attr( 'y1' ) ],
+      [ this.attr( 'x2' ), this.attr( 'y2' ) ]
+    ] )
+
   }
 
   // Overwrite native plot() method
-  plot (x1, y1, x2, y2) {
-    if (x1 == null) {
+  plot ( x1, y1, x2, y2 ) {
+
+    if ( x1 == null ) {
+
       return this.array()
-    } else if (typeof y1 !== 'undefined') {
+
+    } else if ( typeof y1 !== 'undefined' ) {
+
       x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
+
     } else {
-      x1 = new PointArray(x1).toLine()
+
+      x1 = new PointArray( x1 ).toLine()
+
     }
 
-    return this.attr(x1)
+    return this.attr( x1 )
+
   }
 
   // Move by left top corner
-  move (x, y) {
-    return this.attr(this.array().move(x, y).toLine())
+  move ( x, y ) {
+
+    return this.attr( this.array().move( x, y ).toLine() )
+
   }
 
   // Set element size to given width and height
-  size (width, height) {
-    var p = proportionalSize(this, width, height)
-    return this.attr(this.array().size(p.width, p.height).toLine())
+  size ( width, height ) {
+
+    var p = proportionalSize( this, width, height )
+    return this.attr( this.array().size( p.width, p.height ).toLine() )
+
   }
+
 }
 
-extend(Line, pointed)
+extend( Line, pointed )
 
-registerMethods({
+registerMethods( {
   Container: {
     // Create a line element
-    line: wrapWithAttrCheck(function (...args) {
+    line: wrapWithAttrCheck( function ( ...args ) {
+
       // make sure plot is called as a setter
       // x1 is not necessarily a number, it can also be an array, a string and a PointArray
       return Line.prototype.plot.apply(
-        this.put(new Line())
-        , args[0] != null ? args : [0, 0, 0, 0]
+        this.put( new Line() )
+        , args[0] != null ? args : [ 0, 0, 0, 0 ]
       )
-    })
-  }
-})
 
-register(Line)
+    } )
+  }
+} )
+
+register( Line )

@@ -9,21 +9,27 @@ import { rx, ry } from '../modules/core/circled.js'
 import Shape from './Shape.js'
 
 export default class Rect extends Shape {
+
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('rect', node), node)
+  constructor ( node ) {
+
+    super( nodeOrNew( 'rect', node ), node )
+
   }
+
 }
 
-extend(Rect, { rx, ry })
+extend( Rect, { rx, ry } )
 
-registerMethods({
+registerMethods( {
   Container: {
     // Create a rect element
-    rect: wrapWithAttrCheck(function (width, height) {
-      return this.put(new Rect()).size(width, height)
-    })
-  }
-})
+    rect: wrapWithAttrCheck( function ( width, height ) {
 
-register(Rect)
+      return this.put( new Rect() ).size( width, height )
+
+    } )
+  }
+} )
+
+register( Rect )

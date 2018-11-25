@@ -4,38 +4,48 @@ import { globals } from '../../utils/window.js'
 
 let listenerId = 0
 
-function getEvents (node) {
-  const n = makeInstance(node).getEventHolder()
-  if (!n.events) n.events = {}
+function getEvents ( node ) {
+
+  const n = makeInstance( node ).getEventHolder()
+  if ( !n.events ) n.events = {}
   return n.events
+
 }
 
-function getEventTarget (node) {
-  return makeInstance(node).getEventTarget()
+function getEventTarget ( node ) {
+
+  return makeInstance( node ).getEventTarget()
+
 }
 
-function clearEvents (node) {
-  const n = makeInstance(node).getEventHolder()
-  if (n.events) n.events = {}
+function clearEvents ( node ) {
+
+  const n = makeInstance( node ).getEventHolder()
+  if ( n.events ) n.events = {}
+
 }
 
 // Add event binder in the SVG namespace
-export function on (node, events, listener, binding, options) {
-  var l = listener.bind(binding || node)
-  var bag = getEvents(node)
-  var n = getEventTarget(node)
+export function on ( node, events, listener, binding, options ) {
+
+  var l = listener.bind( binding || node )
+  var bag = getEvents( node )
+  var n = getEventTarget( node )
 
   // events can be an array of events or a string of events
-  events = Array.isArray(events) ? events : events.split(delimiter)
+  events = Array.isArray( events ) ? events : events.split( delimiter )
 
   // add id to listener
-  if (!listener._svgjsListenerId) {
+  if ( !listener._svgjsListenerId ) {
+
     listener._svgjsListenerId = ++listenerId
+
   }
 
-  events.forEach(function (event) {
-    var ev = event.split('.')[0]
-    var ns = event.split('.')[1] || '*'
+  events.forEach( function ( event ) {
+
+    var ev = event.split( '.' )[0]
+    var ns = event.split( '.' )[1] || '*'
 
     // ensure valid object
     bag[ev] = bag[ev] || {}
@@ -45,76 +55,126 @@ export function on (node, events, listener, binding, options) {
     bag[ev][ns][listener._svgjsListenerId] = l
 
     // add listener
-    n.addEventListener(ev, l, options || false)
-  })
+    n.addEventListener( ev, l, options || false )
+
+  } )
+
 }
 
 // Add event unbinder in the SVG namespace
-export function off (node, events, listener, options) {
-  var bag = getEvents(node)
-  var n = getEventTarget(node)
+export function off ( node, events, listener, options ) {
+
+  var bag = getEvents( node )
+  var n = getEventTarget( node )
 
   // listener can be a function or a number
-  if (typeof listener === 'function') {
+  if ( typeof listener === 'function' ) {
+
     listener = listener._svgjsListenerId
-    if (!listener) return
+    if ( !listener ) return
+
   }
 
   // events can be an array of events or a string or undefined
-  events = Array.isArray(events) ? events : (events || '').split(delimiter)
+  events = Array.isArray( events ) ? events : ( events || '' ).split( delimiter )
 
-  events.forEach(function (event) {
-    var ev = event && event.split('.')[0]
-    var ns = event && event.split('.')[1]
+  events.forEach( function ( event ) {
+
+    var ev = event && event.split( '.' )[0]
+    var ns = event && event.split( '.' )[1]
     var namespace, l
 
-    if (listener) {
+    if ( listener ) {
+
       // remove listener reference
-      if (bag[ev] && bag[ev][ns || '*']) {
+      if ( bag[ev] && bag[ev][ns || '*'] ) {
+
         // removeListener
-        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+        n.removeEventListener( ev, bag[ev][ns || '*'][listener], options || false )
 
         delete bag[ev][ns || '*'][listener]
+
       }
-    } else if (ev && ns) {
+
+    } else if ( ev && ns ) {
+
       // remove all listeners for a namespaced event
-      if (bag[ev] && bag[ev][ns]) {
-        for (l in bag[ev][ns]) { off(n, [ev, ns].join('.'), l) }
+      if ( bag[ev] && bag[ev][ns] ) {
+
+        for ( l in bag[ev][ns] ) {
+
+          off( n, [ ev, ns ].join( '.' ), l )
+
+        }
 
         delete bag[ev][ns]
+
       }
-    } else if (ns) {
+
+    } else if ( ns ) {
+
       // remove all listeners for a specific namespace
-      for (event in bag) {
-        for (namespace in bag[event]) {
-          if (ns === namespace) { off(n, [event, ns].join('.')) }
+      for ( event in bag ) {
+
+        for ( namespace in bag[event] ) {
+
+          if ( ns === namespace ) {
+
+            off( n, [ event, ns ].join( '.' ) )
+
+          }
+
         }
+
       }
-    } else if (ev) {
+
+    } else if ( ev ) {
+
       // remove all listeners for the event
-      if (bag[ev]) {
-        for (namespace in bag[ev]) { off(n, [ev, namespace].join('.')) }
+      if ( bag[ev] ) {
+
+        for ( namespace in bag[ev] ) {
+
+          off( n, [ ev, namespace ].join( '.' ) )
+
+        }
 
         delete bag[ev]
-      }
-    } else {
-      // remove all listeners on a given node
-      for (event in bag) { off(n, event) }
 
-      clearEvents(node)
+      }
+
+    } else {
+
+      // remove all listeners on a given node
+      for ( event in bag ) {
+
+        off( n, event )
+
+      }
+
+      clearEvents( node )
+
     }
-  })
+
+  } )
+
 }
 
-export function dispatch (node, event, data) {
-  var n = getEventTarget(node)
+export function dispatch ( node, event, data ) {
+
+  var n = getEventTarget( node )
 
   // Dispatch event
-  if (event instanceof globals.window.Event) {
-    n.dispatchEvent(event)
+  if ( event instanceof globals.window.Event ) {
+
+    n.dispatchEvent( event )
+
   } else {
-    event = new globals.window.CustomEvent(event, { detail: data, cancelable: true })
-    n.dispatchEvent(event)
+
+    event = new globals.window.CustomEvent( event, { detail: data, cancelable: true } )
+    n.dispatchEvent( event )
+
   }
   return event
+
 }

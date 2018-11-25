@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 19 2018 21:40:15 GMT+0100 (GMT+01:00)
+* BUILT: Sun Nov 25 2018 16:17:19 GMT+1300 (New Zealand Daylight Time)
 */;
 var SVG = (function () {
   'use strict';
@@ -110,6 +110,36 @@ var SVG = (function () {
     };
 
     return _setPrototypeOf(o, p);
+  }
+
+  function isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function _construct(Parent, args, Class) {
+    if (isNativeReflectConstruct()) {
+      _construct = Reflect.construct;
+    } else {
+      _construct = function _construct(Parent, args, Class) {
+        var a = [null];
+        a.push.apply(a, args);
+        var Constructor = Function.bind.apply(Parent, a);
+        var instance = new Constructor();
+        if (Class) _setPrototypeOf(instance, Class.prototype);
+        return instance;
+      };
+    }
+
+    return _construct.apply(null, arguments);
   }
 
   function _assertThisInitialized(self) {
@@ -974,99 +1004,599 @@ var SVG = (function () {
     return event;
   }
 
-  function fullHex(hex$$1) {
+  function sixDigitHex(hex$$1) {
     return hex$$1.length === 4 ? ['#', hex$$1.substring(1, 2), hex$$1.substring(1, 2), hex$$1.substring(2, 3), hex$$1.substring(2, 3), hex$$1.substring(3, 4), hex$$1.substring(3, 4)].join('') : hex$$1;
-  } // Component to hex value
+  }
 
-
-  function compToHex(comp) {
-    var hex$$1 = comp.toString(16);
+  function componentHex(component) {
+    var integer = Math.round(component);
+    var hex$$1 = integer.toString(16);
     return hex$$1.length === 1 ? '0' + hex$$1 : hex$$1;
+  }
+
+  function is(object, space) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = space[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var key = _step.value;
+
+        if (object[key] == null) {
+          return false;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  function getParameters(a) {
+    var params = is(a, 'rgb') ? {
+      _a: a.r,
+      _b: a.g,
+      _c: a.b,
+      space: 'rgb'
+    } : is(a, 'xyz') ? {
+      _a: a.x,
+      _b: a.y,
+      _c: a.z,
+      space: 'xyz'
+    } : is(a, 'hsl') ? {
+      _a: a.h,
+      _b: a.s,
+      _c: a.l,
+      space: 'hsl'
+    } : is(a, 'lab') ? {
+      _a: a.l,
+      _b: a.a,
+      _c: a.b,
+      space: 'lab'
+    } : is(a, 'lch') ? {
+      _a: a.l,
+      _b: a.c,
+      _c: a.h,
+      space: 'lch'
+    } : is(a, 'cmyk') ? {
+      _a: a.c,
+      _b: a.m,
+      _c: a.y,
+      _d: a.k,
+      space: 'cmyk'
+    } : {
+      _a: 0,
+      _b: 0,
+      _c: 0,
+      space: 'rgb'
+    };
+    return params;
+  }
+
+  function cieSpace(space) {
+    if (space === 'lab' || space === 'xyz' || space === 'lch') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function hueToRgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
   }
 
   var Color =
   /*#__PURE__*/
   function () {
     function Color() {
+      var a = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var b = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var c = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var d = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+      var space = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'rgb';
+
       _classCallCheck(this, Color);
 
-      this.init.apply(this, arguments);
+      // If the user gave us an array, make the color from it
+      if (typeof a === 'number') {
+        // Allow for the case that we don't need d...
+        space = typeof d === 'string' ? d : space;
+        d = typeof d === 'string' ? undefined : d; // Assign the values straight to the color
+
+        Object.assign(this, {
+          _a: a,
+          _b: b,
+          _c: c,
+          _d: d,
+          space: space
+        });
+      } else if (a instanceof Array) {
+        this.space = b || 'rgb';
+        Object.assign(this, {
+          _a: a[0],
+          _b: a[1],
+          _c: a[2],
+          _d: a[3]
+        });
+      } else if (a instanceof Object) {
+        // Set the object up and assign its values directly
+        var values = getParameters(a);
+        Object.assign(this, values);
+      } else if (typeof a === 'string') {
+        if (isRgb.test(a)) {
+          var noWhitespace = a.replace(whitespace, '');
+
+          var _rgb$exec$slice$map = rgb.exec(noWhitespace).slice(1, 4).map(function (v) {
+            return parseInt(v);
+          }),
+              _rgb$exec$slice$map2 = _slicedToArray(_rgb$exec$slice$map, 3),
+              _a2 = _rgb$exec$slice$map2[0],
+              _b2 = _rgb$exec$slice$map2[1],
+              _c2 = _rgb$exec$slice$map2[2];
+
+          Object.assign(this, {
+            _a: _a2,
+            _b: _b2,
+            _c: _c2,
+            space: 'rgb'
+          });
+        } else if (isHex.test(a)) {
+          var hexParse = function hexParse(v) {
+            return parseInt(v, 16);
+          };
+
+          var _hex$exec$map = hex.exec(sixDigitHex(a)).map(hexParse),
+              _hex$exec$map2 = _slicedToArray(_hex$exec$map, 4),
+              _a3 = _hex$exec$map2[1],
+              _b3 = _hex$exec$map2[2],
+              _c3 = _hex$exec$map2[3];
+
+          Object.assign(this, {
+            _a: _a3,
+            _b: _b3,
+            _c: _c3,
+            space: 'rgb'
+          });
+        } else throw Error("Unsupported string format, can't construct Color");
+      } // Now add the components as a convenience
+
+
+      var _a = this._a,
+          _b = this._b,
+          _c = this._c,
+          _d = this._d;
+      var components = this.space === 'rgb' ? {
+        r: _a,
+        g: _b,
+        b: _c
+      } : this.space === 'xyz' ? {
+        x: _a,
+        y: _b,
+        z: _c
+      } : this.space === 'hsl' ? {
+        h: _a,
+        s: _b,
+        l: _c
+      } : this.space === 'lab' ? {
+        l: _a,
+        a: _b,
+        b: _c
+      } : this.space === 'lch' ? {
+        l: _a,
+        c: _b,
+        h: _c
+      } : this.space === 'cmyk' ? {
+        c: _a,
+        y: _b,
+        m: _c,
+        k: _d
+      } : {};
+      Object.assign(this, components);
     }
 
     _createClass(Color, [{
-      key: "init",
-      value: function init(color, g, b) {
-        var match; // initialize defaults
+      key: "opacity",
+      value: function opacity() {
+        var _opacity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
-        this.r = 0;
-        this.g = 0;
-        this.b = 0;
-        if (!color) return; // parse color
-
-        if (typeof color === 'string') {
-          if (isRgb.test(color)) {
-            // get rgb values
-            match = rgb.exec(color.replace(whitespace, '')); // parse numeric values
-
-            this.r = parseInt(match[1]);
-            this.g = parseInt(match[2]);
-            this.b = parseInt(match[3]);
-          } else if (isHex.test(color)) {
-            // get hex values
-            match = hex.exec(fullHex(color)); // parse numeric values
-
-            this.r = parseInt(match[1], 16);
-            this.g = parseInt(match[2], 16);
-            this.b = parseInt(match[3], 16);
-          }
-        } else if (Array.isArray(color)) {
-          this.r = color[0];
-          this.g = color[1];
-          this.b = color[2];
-        } else if (_typeof(color) === 'object') {
-          this.r = color.r;
-          this.g = color.g;
-          this.b = color.b;
-        } else if (arguments.length === 3) {
-          this.r = color;
-          this.g = g;
-          this.b = b;
-        }
-
-        return this;
-      } // Default to hex conversion
-
-    }, {
-      key: "toString",
-      value: function toString() {
-        return this.toHex();
+        this.opacity = _opacity;
       }
-    }, {
-      key: "toArray",
-      value: function toArray() {
-        return [this.r, this.g, this.b];
-      } // Build hex value
-
-    }, {
-      key: "toHex",
-      value: function toHex() {
-        return '#' + compToHex(Math.round(this.r)) + compToHex(Math.round(this.g)) + compToHex(Math.round(this.b));
-      } // Build rgb value
-
-    }, {
-      key: "toRgb",
-      value: function toRgb() {
-        return 'rgb(' + [this.r, this.g, this.b].join() + ')';
-      } // Calculate true brightness
+      /*
+        */
 
     }, {
       key: "brightness",
       value: function brightness() {
-        return this.r / 255 * 0.30 + this.g / 255 * 0.59 + this.b / 255 * 0.11;
-      } // Testers
-      // Test if given value is a color string
+        var _this$rgb = this.rgb(),
+            r = _this$rgb._a,
+            g = _this$rgb._b,
+            b = _this$rgb._c;
 
+        var value = r / 255 * 0.30 + g / 255 * 0.59 + b / 255 * 0.11;
+        return value;
+      }
+      /*
+      Conversion Methods
+      */
+
+    }, {
+      key: "rgb",
+      value: function rgb$$1() {
+        if (this.space === 'rgb') {
+          return this;
+        } else if (cieSpace(this.space)) {
+          // Convert to the xyz color space
+          var x = this.x,
+              y = this.y,
+              z = this.z;
+
+          if (this.space === 'lab' || this.space === 'lch') {
+            // Get the values in the lab space
+            var l = this.l,
+                a = this.a,
+                _b4 = this.b;
+
+            if (this.space === 'lch') {
+              var c = this.c,
+                  h = this.h;
+              var dToR = Math.PI / 180;
+              a = c * Math.cos(dToR * h);
+              _b4 = c * Math.sin(dToR * h);
+            } // Undo the nonlinear function
+
+
+            var yL = (l + 16) / 116;
+            var xL = a / 500 + y;
+            var zL = y - _b4 / 200; // Get the xyz values
+
+            var ct = 16 / 116;
+            var mx = 0.008856;
+            var nm = 7.787;
+            x = 0.95047 * (Math.pow(xL, 3) > mx ? Math.pow(xL, 3) : (xL - ct) / nm);
+            y = 1.00000 * (Math.pow(yL, 3) > mx ? Math.pow(yL, 3) : (yL - ct) / nm);
+            z = 1.08883 * (Math.pow(zL, 3) > mx ? Math.pow(zL, 3) : (zL - ct) / nm);
+          } // Convert xyz to unbounded rgb values
+
+
+          var rU = x * 3.2406 + y * -1.5372 + z * -0.4986;
+          var gU = x * -0.9689 + y * 1.8758 + z * 0.0415;
+          var bU = x * 0.0557 + y * -0.2040 + z * 1.0570; // Convert the values to true rgb values
+
+          var pow = Math.pow;
+          var bd = 0.0031308;
+          var r = rU > bd ? 1.055 * pow(rU, 1 / 2.4) - 0.055 : 12.92 * rU;
+          var g = gU > bd ? 1.055 * pow(gU, 1 / 2.4) - 0.055 : 12.92 * gU;
+          var b = bU > bd ? 1.055 * pow(bU, 1 / 2.4) - 0.055 : 12.92 * bU; // Make and return the color
+
+          var color = new Color(r, g, b);
+          return color;
+        } else if (this.space === 'hsl') {
+          // stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+          // Get the current hsl values
+          var _h = this.h,
+              s = this.s,
+              _l = this.l; // If we are grey, then just make the color directly
+
+          if (s === 0) {
+            var _color2 = new Color(_l, _l, _l);
+
+            return _color2;
+          } // TODO I have no idea what this does :D If you figure it out, tell me!
+
+
+          var q = _l < 0.5 ? _l * (1 + s) : _l + s - _l * s;
+          var p = 2 * _l - q; // Get the rgb values
+
+          var _r = hueToRgb(p, q, _h + 1 / 3);
+
+          var _g = hueToRgb(p, q, _h);
+
+          var _b5 = hueToRgb(p, q, _h - 1 / 3); // Make a new color
+
+
+          var _color = new Color(_r, _g, _b5);
+
+          return _color;
+        } else if (this.space === 'cmyk') {
+          // https://gist.github.com/felipesabino/5066336
+          // Get the normalised cmyk values
+          var _a = this._a,
+              _b = this._b,
+              _c = this._c,
+              _d = this._d;
+
+          var _map = [_a, _b, _c, _d].map(function (v) {
+            return v / 100;
+          }),
+              _map2 = _slicedToArray(_map, 4),
+              _c4 = _map2[0],
+              m = _map2[1],
+              _y = _map2[2],
+              k = _map2[3]; // Get the rgb values
+
+
+          var _r2 = 1 - Math.min(1, _c4 * (1 - k) + k);
+
+          var _g2 = 1 - Math.min(1, m * (1 - k) + k);
+
+          var _b6 = 1 - Math.min(1, _y * (1 - k) + k); // Form the color and return it
+
+
+          var _color3 = new Color(_r2, _g2, _b6);
+
+          return _color3;
+        } else {
+          return this;
+        }
+      }
+    }, {
+      key: "lab",
+      value: function lab() {
+        // Get the xyz color
+        var _this$xyz = this.xyz(),
+            x = _this$xyz.x,
+            y = _this$xyz.y,
+            z = _this$xyz.z; // Get the lab components
+
+
+        var l = 116 * y - 16;
+        var a = 500 * (x - y);
+        var b = 200 * (y - z); // Construct and return a new color
+
+        var color = new Color(l, a, b, 'lab');
+        return color;
+      }
+    }, {
+      key: "xyz",
+      value: function xyz() {
+        // Normalise the red, green and blue values
+        var _this$rgb2 = this.rgb(),
+            r255 = _this$rgb2._a,
+            g255 = _this$rgb2._b,
+            b255 = _this$rgb2._c;
+
+        var _map3 = [r255, g255, b255].map(function (v) {
+          return v / 255;
+        }),
+            _map4 = _slicedToArray(_map3, 3),
+            r = _map4[0],
+            g = _map4[1],
+            b = _map4[2]; // Convert to the lab rgb space
+
+
+        var rL = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+        var gL = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+        var bL = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92; // Convert to the xyz color space without bounding the values
+
+        var xU = (rL * 0.4124 + gL * 0.3576 + bL * 0.1805) / 0.95047;
+        var yU = (rL * 0.2126 + gL * 0.7152 + bL * 0.0722) / 1.00000;
+        var zU = (rL * 0.0193 + gL * 0.1192 + bL * 0.9505) / 1.08883; // Get the proper xyz values by applying the bounding
+
+        var x = xU > 0.008856 ? Math.pow(xU, 1 / 3) : 7.787 * xU + 16 / 116;
+        var y = yU > 0.008856 ? Math.pow(yU, 1 / 3) : 7.787 * yU + 16 / 116;
+        var z = zU > 0.008856 ? Math.pow(zU, 1 / 3) : 7.787 * zU + 16 / 116; // Make and return the color
+
+        var color = new Color(x, y, z, 'xyz');
+        return color;
+      }
+    }, {
+      key: "lch",
+      value: function lch() {
+        // Get the lab color directly
+        var _this$lab = this.lab(),
+            l = _this$lab.l,
+            a = _this$lab.a,
+            b = _this$lab.b; // Get the chromaticity and the hue using polar coordinates
+
+
+        var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+        var h = 180 * Math.atan2(b, a) / Math.PI;
+
+        if (h < 0) {
+          h *= -1;
+          h = 360 - h;
+        } // Make a new color and return it
+
+
+        var color = new Color(l, c, h, 'lch');
+        return color;
+      }
+    }, {
+      key: "hsl",
+      value: function hsl() {
+        // Get the rgb values
+        var _this$rgb3 = this.rgb(),
+            _a = _this$rgb3._a,
+            _b = _this$rgb3._b,
+            _c = _this$rgb3._c;
+
+        var _map5 = [_a, _b, _c].map(function (v) {
+          return v / 255;
+        }),
+            _map6 = _slicedToArray(_map5, 3),
+            r = _map6[0],
+            g = _map6[1],
+            b = _map6[2]; // Find the maximum and minimum values to get the lightness
+
+
+        var max = Math.max(r, g, b);
+        var min = Math.min(r, g, b);
+        var l = (max + min) / 2; // If the r, g, v values are identical then we are grey
+
+        var isGrey = max === min; // Calculate the hue and saturation
+
+        var delta = max - min;
+        var s = isGrey ? 0 : l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+        var h = isGrey ? 0 : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6 : max === g ? ((b - r) / delta + 2) / 6 : max === b ? ((r - g) / delta + 4) / 6 : 0; // Construct and return the new color
+
+        var color = new Color(h, s, l, 'hsl');
+        return color;
+      }
+    }, {
+      key: "cmyk",
+      value: function cmyk() {
+        // Get the rgb values for the current color
+        var _this$rgb4 = this.rgb(),
+            _a = _this$rgb4._a,
+            _b = _this$rgb4._b,
+            _c = _this$rgb4._c;
+
+        var _map7 = [_a, _b, _c].map(function (v) {
+          return v / 255;
+        }),
+            _map8 = _slicedToArray(_map7, 3),
+            r = _map8[0],
+            g = _map8[1],
+            b = _map8[2]; // Get the cmyk values in an unbounded format
+
+
+        var k = 100 * Math.min(1 - r, 1 - g, 1 - b);
+        var c = 100 * (1 - r - k) / (1 - k);
+        var m = 100 * (1 - g - k) / (1 - k);
+        var y = 100 * (1 - b - k) / (1 - k); // Construct the new color
+
+        var color = new Color(c, m, y, k, 'cmyk');
+        return color;
+      }
+      /*
+      Modifying the color
+      */
+
+    }, {
+      key: "brighten",
+      value: function brighten() {
+      }
+    }, {
+      key: "darken",
+      value: function darken() {
+      }
+      /*
+      Mixing methods
+      */
+
+    }, {
+      key: "to",
+      value: function to(otherColor, space) {
+        // Force both colors to the color of this space (or let the user decide)
+        space = space || this.space; // Get the starting and ending colors
+        // let start = this[ space ]()
+        // let end = otherColor[ space ]()
+        // Return a function that blends between the two colors
+
+        return function (t) {};
+      }
+    }, {
+      key: "avearge",
+      value: function avearge(otherColor, space) {}
+      /*
+      Input and Output methods
+      */
+
+    }, {
+      key: "hex",
+      value: function hex$$1() {
+        var _this$rgb5 = this.rgb(),
+            _a = _this$rgb5._a,
+            _b = _this$rgb5._b,
+            _c = _this$rgb5._c;
+
+        var _map9 = [_a, _b, _c].map(componentHex),
+            _map10 = _slicedToArray(_map9, 3),
+            r = _map10[0],
+            g = _map10[1],
+            b = _map10[2];
+
+        return "#".concat(r).concat(g).concat(b);
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.hex();
+      }
+    }, {
+      key: "toRgb",
+      value: function toRgb() {
+        var _this$rgb6 = this.rgb(),
+            r = _this$rgb6.r,
+            g = _this$rgb6.g,
+            b = _this$rgb6.b;
+
+        var max = Math.max,
+            min = Math.min,
+            round = Math.round;
+
+        var format = function format(v) {
+          return max(0, min(round(v), 255));
+        };
+
+        var _map11 = [r, g, b].map(format),
+            _map12 = _slicedToArray(_map11, 3),
+            rV = _map12[0],
+            gV = _map12[1],
+            bV = _map12[2];
+
+        var string = "rgb(".concat(rV, ",").concat(gV, ",").concat(bV, ")");
+        return string;
+      }
+    }, {
+      key: "toArray",
+      value: function toArray() {
+        var _a = this._a,
+            _b = this._b,
+            _c = this._c,
+            _d = this._d,
+            space = this.space;
+        return [_a, _b, _c, _d, space];
+      }
     }], [{
+      key: "fromArray",
+      value: function fromArray(array) {
+        var newColor = _construct(Color, _toConsumableArray(array));
+
+        return newColor;
+      }
+      /*
+      Generating random colors
+      */
+
+    }, {
+      key: "random",
+      value: function random() {
+        'sine';
+        'pastel';
+        'vibrant';
+        'dark';
+        'rgb';
+        'lab';
+        'grey';
+      }
+      /*
+      Constructing colors
+      */
+
+    }, {
+      key: "temperature",
+      value: function temperature(kelvin) {} // Test if given value is a color string
+
+    }, {
       key: "test",
       value: function test(color) {
         color += '';
