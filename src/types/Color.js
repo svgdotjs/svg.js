@@ -1,100 +1,91 @@
 
 import { hex, isHex, isRgb, rgb, whitespace } from '../modules/core/regex.js'
 
-function sixDigitHex ( hex ) {
+function sixDigitHex (hex) {
   return hex.length === 4
     ? [ '#',
-      hex.substring( 1, 2 ), hex.substring( 1, 2 ),
-      hex.substring( 2, 3 ), hex.substring( 2, 3 ),
-      hex.substring( 3, 4 ), hex.substring( 3, 4 )
-    ].join( '' )
+      hex.substring(1, 2), hex.substring(1, 2),
+      hex.substring(2, 3), hex.substring(2, 3),
+      hex.substring(3, 4), hex.substring(3, 4)
+    ].join('')
     : hex
 }
 
-function componentHex ( component ) {
-  const integer = Math.round( component )
-  const hex = integer.toString( 16 )
+function componentHex (component) {
+  const integer = Math.round(component)
+  const hex = integer.toString(16)
   return hex.length === 1 ? '0' + hex : hex
 }
 
-function is ( object, space ) {
-  for ( const key of space ) {
-    if ( object[key] == null ) {
+function is (object, space) {
+  for (const key of space) {
+    if (object[key] == null) {
       return false
     }
   }
   return true
 }
 
-function getParameters ( a ) {
-  const params = is( a, 'rgb' ) ? { _a: a.r, _b: a.g, _c: a.b, space: 'rgb' }
-    : is( a, 'xyz' ) ? { _a: a.x, _b: a.y, _c: a.z, space: 'xyz' }
-    : is( a, 'hsl' ) ? { _a: a.h, _b: a.s, _c: a.l, space: 'hsl' }
-    : is( a, 'lab' ) ? { _a: a.l, _b: a.a, _c: a.b, space: 'lab' }
-    : is( a, 'lch' ) ? { _a: a.l, _b: a.c, _c: a.h, space: 'lch' }
-    : is( a, 'cmyk' ) ? { _a: a.c, _b: a.m, _c: a.y, _d: a.k, space: 'cmyk' }
+function getParameters (a) {
+  const params = is(a, 'rgb') ? { _a: a.r, _b: a.g, _c: a.b, space: 'rgb' }
+    : is(a, 'xyz') ? { _a: a.x, _b: a.y, _c: a.z, space: 'xyz' }
+    : is(a, 'hsl') ? { _a: a.h, _b: a.s, _c: a.l, space: 'hsl' }
+    : is(a, 'lab') ? { _a: a.l, _b: a.a, _c: a.b, space: 'lab' }
+    : is(a, 'lch') ? { _a: a.l, _b: a.c, _c: a.h, space: 'lch' }
+    : is(a, 'cmyk') ? { _a: a.c, _b: a.m, _c: a.y, _d: a.k, space: 'cmyk' }
     : { _a: 0, _b: 0, _c: 0, space: 'rgb' }
   return params
 }
 
-function cieSpace ( space ) {
-  if ( space === 'lab' || space === 'xyz' || space === 'lch' ) {
+function cieSpace (space) {
+  if (space === 'lab' || space === 'xyz' || space === 'lch') {
     return true
   } else {
     return false
   }
 }
 
-function hueToRgb ( p, q, t ) {
-  if ( t < 0 ) t += 1
-  if ( t > 1 ) t -= 1
-  if ( t < 1 / 6 ) return p + ( q - p ) * 6 * t
-  if ( t < 1 / 2 ) return q
-  if ( t < 2 / 3 ) return p + ( q - p ) * ( 2 / 3 - t ) * 6
+function hueToRgb (p, q, t) {
+  if (t < 0) t += 1
+  if (t > 1) t -= 1
+  if (t < 1 / 6) return p + (q - p) * 6 * t
+  if (t < 1 / 2) return q
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
   return p
 }
 
 export default class Color {
+  constructor (...inputs) {
+    this.init(...inputs)
+  }
 
-  constructor ( a = 0, b = 0, c = 0, d = 0, space = 'rgb' ) {
-
+  init (a = 0, b = 0, c = 0, d = 0, space = 'rgb') {
     // If the user gave us an array, make the color from it
-    if ( typeof a === 'number' ) {
-
+    if (typeof a === 'number') {
       // Allow for the case that we don't need d...
       space = typeof d === 'string' ? d : space
       d = typeof d === 'string' ? undefined : d
 
       // Assign the values straight to the color
-      Object.assign( this, { _a: a, _b: b, _c: c, _d: d, space } )
-
-    } else if ( a instanceof Array ) {
-
+      Object.assign(this, { _a: a, _b: b, _c: c, _d: d, space })
+    } else if (a instanceof Array) {
       this.space = b || 'rgb'
-      Object.assign( this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] } )
-
-    } else if ( a instanceof Object ) {
-
+      Object.assign(this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] })
+    } else if (a instanceof Object) {
       // Set the object up and assign its values directly
-      const values = getParameters( a )
-      Object.assign( this, values )
-
-    } else if ( typeof a === 'string' ) {
-
-      if ( isRgb.test( a ) ) {
-
-        const noWhitespace = a.replace( whitespace, '' )
-        const [ _a, _b, _c ] = rgb.exec( noWhitespace )
-          .slice( 1, 4 ).map( v => parseInt( v ) )
-        Object.assign( this, { _a, _b, _c, space: 'rgb' } )
-
-      } else if ( isHex.test( a ) ) {
-
-        const hexParse = v => parseInt( v, 16 )
-        const [ , _a, _b, _c ] = hex.exec( sixDigitHex( a ) ).map( hexParse )
-        Object.assign( this, { _a, _b, _c, space: 'rgb' } )
-
-      } else throw Error( `Unsupported string format, can't construct Color` )
+      const values = getParameters(a)
+      Object.assign(this, values)
+    } else if (typeof a === 'string') {
+      if (isRgb.test(a)) {
+        const noWhitespace = a.replace(whitespace, '')
+        const [ _a, _b, _c ] = rgb.exec(noWhitespace)
+          .slice(1, 4).map(v => parseInt(v))
+        Object.assign(this, { _a, _b, _c, space: 'rgb' })
+      } else if (isHex.test(a)) {
+        const hexParse = v => parseInt(v, 16)
+        const [ , _a, _b, _c ] = hex.exec(sixDigitHex(a)).map(hexParse)
+        Object.assign(this, { _a, _b, _c, space: 'rgb' })
+      } else throw Error(`Unsupported string format, can't construct Color`)
     }
 
     // Now add the components as a convenience
@@ -104,15 +95,13 @@ export default class Color {
       : this.space === 'hsl' ? { h: _a, s: _b, l: _c }
       : this.space === 'lab' ? { l: _a, a: _b, b: _c }
       : this.space === 'lch' ? { l: _a, c: _b, h: _c }
-      : this.space === 'cmyk' ? { c: _a, y: _b, m: _c, k: _d }
+      : this.space === 'cmyk' ? { c: _a, m: _b, y: _c, k: _d }
       : {}
-    Object.assign( this, components )
+    Object.assign(this, components)
   }
 
-  opacity ( opacity = 1 ) {
-
+  opacity (opacity = 1) {
     this.opacity = opacity
-
   }
 
   /*
@@ -121,7 +110,7 @@ export default class Color {
 
   brightness () {
     const { _a: r, _b: g, _c: b } = this.rgb()
-    const value = ( r / 255 * 0.30 ) + ( g / 255 * 0.59 ) + ( b / 255 * 0.11 )
+    const value = (r / 255 * 0.30) + (g / 255 * 0.59) + (b / 255 * 0.11)
     return value
   }
 
@@ -130,37 +119,33 @@ export default class Color {
   */
 
   rgb () {
-
-    if ( this.space === 'rgb' ) {
+    if (this.space === 'rgb') {
       return this
-
-    } else if ( cieSpace( this.space ) ) {
-
+    } else if (cieSpace(this.space)) {
       // Convert to the xyz color space
       let { x, y, z } = this
-      if ( this.space === 'lab' || this.space === 'lch' ) {
-
+      if (this.space === 'lab' || this.space === 'lch') {
         // Get the values in the lab space
         let { l, a, b } = this
-        if ( this.space === 'lch' ) {
+        if (this.space === 'lch') {
           let { c, h } = this
           const dToR = Math.PI / 180
-          a = c * Math.cos( dToR * h )
-          b = c * Math.sin( dToR * h )
+          a = c * Math.cos(dToR * h)
+          b = c * Math.sin(dToR * h)
         }
 
         // Undo the nonlinear function
-        const yL = ( l + 16 ) / 116
-        const xL = a / 500 + y
-        const zL = y - b / 200
+        const yL = (l + 16) / 116
+        const xL = a / 500 + yL
+        const zL = yL - b / 200
 
         // Get the xyz values
         const ct = 16 / 116
         const mx = 0.008856
         const nm = 7.787
-        x = 0.95047 * ( ( xL ** 3 > mx ) ? xL ** 3 : ( xL - ct ) / nm )
-        y = 1.00000 * ( ( yL ** 3 > mx ) ? yL ** 3 : ( yL - ct ) / nm )
-        z = 1.08883 * ( ( zL ** 3 > mx ) ? zL ** 3 : ( zL - ct ) / nm )
+        x = 0.95047 * ((xL ** 3 > mx) ? xL ** 3 : (xL - ct) / nm)
+        y = 1.00000 * ((yL ** 3 > mx) ? yL ** 3 : (yL - ct) / nm)
+        z = 1.08883 * ((zL ** 3 > mx) ? zL ** 3 : (zL - ct) / nm)
       }
 
       // Convert xyz to unbounded rgb values
@@ -171,72 +156,68 @@ export default class Color {
       // Convert the values to true rgb values
       let pow = Math.pow
       let bd = 0.0031308
-      const r = ( rU > bd ) ? ( 1.055 * pow( rU, 1 / 2.4 ) - 0.055 ) : 12.92 * rU
-      const g = ( gU > bd ) ? ( 1.055 * pow( gU, 1 / 2.4 ) - 0.055 ) : 12.92 * gU
-      const b = ( bU > bd ) ? ( 1.055 * pow( bU, 1 / 2.4 ) - 0.055 ) : 12.92 * bU
+      const r = (rU > bd) ? (1.055 * pow(rU, 1 / 2.4) - 0.055) : 12.92 * rU
+      const g = (gU > bd) ? (1.055 * pow(gU, 1 / 2.4) - 0.055) : 12.92 * gU
+      const b = (bU > bd) ? (1.055 * pow(bU, 1 / 2.4) - 0.055) : 12.92 * bU
 
       // Make and return the color
-      const color = new Color( r, g, b )
+      const color = new Color(255 * r, 255 * g, 255 * b)
       return color
-
-    } else if ( this.space === 'hsl' ) {
-
-      // stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+    } else if (this.space === 'hsl') {
+      // https://bgrins.github.io/TinyColor/docs/tinycolor.html
       // Get the current hsl values
-      const { h, s, l } = this
+      let { h, s, l } = this
+      h /= 360
+      s /= 100
+      l /= 100
 
       // If we are grey, then just make the color directly
-      if ( s === 0 ) {
-        let color = new Color( l, l, l )
+      if (s === 0) {
+        let color = new Color(l, l, l)
         return color
       }
 
       // TODO I have no idea what this does :D If you figure it out, tell me!
-      const q = l < 0.5 ? l * ( 1 + s ) : l + s - l * s
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s
       const p = 2 * l - q
 
       // Get the rgb values
-      const r = hueToRgb( p, q, h + 1 / 3 )
-      const g = hueToRgb( p, q, h )
-      const b = hueToRgb( p, q, h - 1 / 3 )
+      const r = 255 * hueToRgb(p, q, h + 1 / 3)
+      const g = 255 * hueToRgb(p, q, h)
+      const b = 255 * hueToRgb(p, q, h - 1 / 3)
 
       // Make a new color
-      const color = new Color( r, g, b )
+      const color = new Color(r, g, b)
       return color
-
-    } else if ( this.space === 'cmyk' ) {
-
+    } else if (this.space === 'cmyk') {
       // https://gist.github.com/felipesabino/5066336
       // Get the normalised cmyk values
-      const { _a, _b, _c, _d } = this
-      const [ c, m, y, k ] = [ _a, _b, _c, _d ].map( v => v / 100 )
+      const { c, m, y, k } = this
 
       // Get the rgb values
-      const r = 1 - Math.min( 1, c * ( 1 - k ) + k )
-      const g = 1 - Math.min( 1, m * ( 1 - k ) + k )
-      const b = 1 - Math.min( 1, y * ( 1 - k ) + k )
+      const r = 255 * (1 - Math.min(1, c * (1 - k) + k))
+      const g = 255 * (1 - Math.min(1, m * (1 - k) + k))
+      const b = 255 * (1 - Math.min(1, y * (1 - k) + k))
 
       // Form the color and return it
-      const color = new Color( r, g, b )
+      const color = new Color(r, g, b)
       return color
-
     } else {
       return this
     }
   }
 
   lab () {
-
     // Get the xyz color
     const { x, y, z } = this.xyz()
 
     // Get the lab components
-    const l = ( 116 * y ) - 16
-    const a = 500 * ( x - y )
-    const b = 200 * ( y - z )
+    const l = (116 * y) - 16
+    const a = 500 * (x - y)
+    const b = 200 * (y - z)
 
     // Construct and return a new color
-    const color = new Color( l, a, b, 'lab' )
+    const color = new Color(l, a, b, 'lab')
     return color
   }
 
@@ -244,25 +225,25 @@ export default class Color {
 
     // Normalise the red, green and blue values
     const { _a: r255, _b: g255, _c: b255 } = this.rgb()
-    const [ r, g, b ] = [ r255, g255, b255 ].map( v => v / 255 )
+    const [ r, g, b ] = [ r255, g255, b255 ].map(v => v / 255)
 
     // Convert to the lab rgb space
-    const rL = ( r > 0.04045 ) ? Math.pow( ( r + 0.055 ) / 1.055, 2.4 ) : r / 12.92
-    const gL = ( g > 0.04045 ) ? Math.pow( ( g + 0.055 ) / 1.055, 2.4 ) : g / 12.92
-    const bL = ( b > 0.04045 ) ? Math.pow( ( b + 0.055 ) / 1.055, 2.4 ) : b / 12.92
+    const rL = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92
+    const gL = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92
+    const bL = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92
 
     // Convert to the xyz color space without bounding the values
-    const xU = ( rL * 0.4124 + gL * 0.3576 + bL * 0.1805 ) / 0.95047
-    const yU = ( rL * 0.2126 + gL * 0.7152 + bL * 0.0722 ) / 1.00000
-    const zU = ( rL * 0.0193 + gL * 0.1192 + bL * 0.9505 ) / 1.08883
+    const xU = (rL * 0.4124 + gL * 0.3576 + bL * 0.1805) / 0.95047
+    const yU = (rL * 0.2126 + gL * 0.7152 + bL * 0.0722) / 1.00000
+    const zU = (rL * 0.0193 + gL * 0.1192 + bL * 0.9505) / 1.08883
 
     // Get the proper xyz values by applying the bounding
-    const x = ( xU > 0.008856 ) ? Math.pow( xU, 1 / 3 ) : ( 7.787 * xU ) + 16 / 116
-    const y = ( yU > 0.008856 ) ? Math.pow( yU, 1 / 3 ) : ( 7.787 * yU ) + 16 / 116
-    const z = ( zU > 0.008856 ) ? Math.pow( zU, 1 / 3 ) : ( 7.787 * zU ) + 16 / 116
+    const x = (xU > 0.008856) ? Math.pow(xU, 1 / 3) : (7.787 * xU) + 16 / 116
+    const y = (yU > 0.008856) ? Math.pow(yU, 1 / 3) : (7.787 * yU) + 16 / 116
+    const z = (zU > 0.008856) ? Math.pow(zU, 1 / 3) : (7.787 * zU) + 16 / 116
 
     // Make and return the color
-    const color = new Color( x, y, z, 'xyz' )
+    const color = new Color(x, y, z, 'xyz')
     return color
   }
 
@@ -272,15 +253,15 @@ export default class Color {
     const { l, a, b } = this.lab()
 
     // Get the chromaticity and the hue using polar coordinates
-    const c = Math.sqrt( a ** 2 + b ** 2 )
-    let h = 180 * Math.atan2( b, a ) / Math.PI
-    if ( h < 0 ) {
+    const c = Math.sqrt(a ** 2 + b ** 2)
+    let h = 180 * Math.atan2(b, a) / Math.PI
+    if (h < 0) {
       h *= -1
       h = 360 - h
     }
 
     // Make a new color and return it
-    const color = new Color( l, c, h, 'lch' )
+    const color = new Color(l, c, h, 'lch')
     return color
   }
 
@@ -288,12 +269,12 @@ export default class Color {
 
     // Get the rgb values
     const { _a, _b, _c } = this.rgb()
-    const [ r, g, b ] = [ _a, _b, _c ].map( v => v / 255 )
+    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
 
     // Find the maximum and minimum values to get the lightness
-    const max = Math.max( r, g, b )
-    const min = Math.min( r, g, b )
-    const l = ( max + min ) / 2
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b)
+    const l = (max + min) / 2
 
     // If the r, g, v values are identical then we are grey
     const isGrey = max === min
@@ -301,16 +282,16 @@ export default class Color {
     // Calculate the hue and saturation
     const delta = max - min
     const s = isGrey ? 0
-      : l > 0.5 ? delta / ( 2 - max - min )
-      : delta / ( max + min )
+      : l > 0.5 ? delta / (2 - max - min)
+      : delta / (max + min)
     const h = isGrey ? 0
-      : max === r ? ( ( g - b ) / delta + ( g < b ? 6 : 0 ) ) / 6
-      : max === g ? ( ( b - r ) / delta + 2 ) / 6
-      : max === b ? ( ( r - g ) / delta + 4 ) / 6
+      : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6
+      : max === g ? ((b - r) / delta + 2) / 6
+      : max === b ? ((r - g) / delta + 4) / 6
       : 0
 
     // Construct and return the new color
-    const color = new Color( h, s, l, 'hsl' )
+    const color = new Color(360 * h, 100 * s, 100 * l, 'hsl')
     return color
   }
 
@@ -318,53 +299,17 @@ export default class Color {
 
     // Get the rgb values for the current color
     const { _a, _b, _c } = this.rgb()
-    const [ r, g, b ] = [ _a, _b, _c ].map( v => v / 255 )
+    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
 
     // Get the cmyk values in an unbounded format
-    const k = 100 * Math.min( 1 - r, 1 - g, 1 - b )
-    const c = 100 * ( 1 - r - k ) / ( 1 - k )
-    const m = 100 * ( 1 - g - k ) / ( 1 - k )
-    const y = 100 * ( 1 - b - k ) / ( 1 - k )
+    const k = Math.min(1 - r, 1 - g, 1 - b)
+    const c = (1 - r - k) / (1 - k)
+    const m = (1 - g - k) / (1 - k)
+    const y = (1 - b - k) / (1 - k)
 
     // Construct the new color
-    const color = new Color( c, m, y, k, 'cmyk' )
+    const color = new Color(c, m, y, k, 'cmyk')
     return color
-  }
-
-  /*
-  Modifying the color
-  */
-
-  brighten ( amount = 0.1 ) {
-
-  }
-
-  darken ( amount = 0.1 ) {
-
-  }
-
-  /*
-  Mixing methods
-  */
-
-  to ( otherColor, space ) {
-
-    // Force both colors to the color of this space (or let the user decide)
-    space = space || this.space
-
-    // Get the starting and ending colors
-    // let start = this[ space ]()
-    // let end = otherColor[ space ]()
-
-    // Return a function that blends between the two colors
-    return function ( t ) {
-
-    }
-
-  }
-
-  avearge ( otherColor, space ) {
-
   }
 
   /*
@@ -373,7 +318,7 @@ export default class Color {
 
   hex () {
     let { _a, _b, _c } = this.rgb()
-    let [ r, g, b ] = [ _a, _b, _c ].map( componentHex )
+    let [ r, g, b ] = [ _a, _b, _c ].map(componentHex)
     return `#${r}${g}${b}`
   }
 
@@ -384,8 +329,8 @@ export default class Color {
   toRgb () {
     let { r, g, b } = this.rgb()
     let { max, min, round } = Math
-    let format = v => max( 0, min( round( v ), 255 ) )
-    let [ rV, gV, bV ] = [ r, g, b ].map( format )
+    let format = v => max(0, min(round(v), 255))
+    let [ rV, gV, bV ] = [ r, g, b ].map(format)
     let string = `rgb(${rV},${gV},${bV})`
     return string
   }
@@ -395,19 +340,11 @@ export default class Color {
     return [ _a, _b, _c, _d, space ]
   }
 
-  static fromArray ( array ) {
-
-    let newColor = new Color( ...array )
-    return newColor
-
-  }
-
   /*
   Generating random colors
   */
 
-  static random ( mode = 'vibrant' ) {
-
+  static random (mode = 'vibrant') {
     'sine'
     'pastel'
     'vibrant'
@@ -415,37 +352,27 @@ export default class Color {
     'rgb'
     'lab'
     'grey'
-
   }
 
   /*
   Constructing colors
   */
 
-  static temperature ( kelvin ) {}
-
   // Test if given value is a color string
-  static test ( color ) {
-
+  static test (color) {
     color += ''
-    return isHex.test( color ) || isRgb.test( color )
-
+    return isHex.test(color) || isRgb.test(color)
   }
 
   // Test if given value is a rgb object
-  static isRgb ( color ) {
-
+  static isRgb (color) {
     return color && typeof color.r === 'number'
       && typeof color.g === 'number'
       && typeof color.b === 'number'
-
   }
 
   // Test if given value is a color
-  static isColor ( color ) {
-
-    return this.isRgb( color ) || this.test( color )
-
+  static isColor (color) {
+    return this.isRgb(color) || this.test(color)
   }
-
 }
