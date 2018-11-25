@@ -5,92 +5,70 @@ import Matrix from '../../types/Matrix.js'
 
 // Reset all transformations
 export function untransform () {
-
-  return this.attr( 'transform', null )
-
+  return this.attr('transform', null)
 }
 
 // merge the whole transformation chain into one matrix and returns it
 export function matrixify () {
-
-  var matrix = ( this.attr( 'transform' ) || '' )
+  var matrix = (this.attr('transform') || '')
     // split transformations
-    .split( transforms ).slice( 0, -1 ).map( function ( str ) {
-
+    .split(transforms).slice(0, -1).map(function (str) {
       // generate key => value pairs
-      var kv = str.trim().split( '(' )
+      var kv = str.trim().split('(')
       return [ kv[0],
-        kv[1].split( delimiter )
-          .map( function ( str ) {
-
-            return parseFloat( str )
-
-          } )
+        kv[1].split(delimiter)
+          .map(function (str) {
+            return parseFloat(str)
+          })
       ]
-
-    } )
+    })
     .reverse()
     // merge every transformation into one matrix
-    .reduce( function ( matrix, transform ) {
-
-      if ( transform[0] === 'matrix' ) {
-
-        return matrix.lmultiply( Matrix.fromArray( transform[1] ) )
-
+    .reduce(function (matrix, transform) {
+      if (transform[0] === 'matrix') {
+        return matrix.lmultiply(Matrix.fromArray(transform[1]))
       }
-      return matrix[transform[0]].apply( matrix, transform[1] )
-
-    }, new Matrix() )
+      return matrix[transform[0]].apply(matrix, transform[1])
+    }, new Matrix())
 
   return matrix
-
 }
 
 // add an element to another parent without changing the visual representation on the screen
-export function toParent ( parent ) {
-
-  if ( this === parent ) return this
+export function toParent (parent) {
+  if (this === parent) return this
   var ctm = this.screenCTM()
   var pCtm = parent.screenCTM().inverse()
 
-  this.addTo( parent ).untransform().transform( pCtm.multiply( ctm ) )
+  this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
 
   return this
-
 }
 
 // same as above with parent equals root-svg
 export function toRoot () {
-
-  return this.toParent( this.root() )
-
+  return this.toParent(this.root())
 }
 
 // Add transformations
-export function transform ( o, relative ) {
-
+export function transform (o, relative) {
   // Act as a getter if no object was passed
-  if ( o == null || typeof o === 'string' ) {
-
-    var decomposed = new Matrix( this ).decompose()
+  if (o == null || typeof o === 'string') {
+    var decomposed = new Matrix(this).decompose()
     return decomposed[o] || decomposed
-
   }
 
-  if ( !Matrix.isMatrixLike( o ) ) {
-
+  if (!Matrix.isMatrixLike(o)) {
     // Set the origin according to the defined transform
-    o = { ...o, origin: getOrigin( o, this ) }
-
+    o = { ...o, origin: getOrigin(o, this) }
   }
 
   // The user can pass a boolean, an Element or an Matrix or nothing
-  var cleanRelative = relative === true ? this : ( relative || false )
-  var result = new Matrix( cleanRelative ).transform( o )
-  return this.attr( 'transform', result )
-
+  var cleanRelative = relative === true ? this : (relative || false)
+  var result = new Matrix(cleanRelative).transform(o)
+  return this.attr('transform', result)
 }
 
-registerMethods( 'Element', {
+registerMethods('Element', {
   untransform, matrixify, toParent, toRoot, transform
-} )
+})

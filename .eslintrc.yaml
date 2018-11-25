@@ -7,4 +7,3 @@ rules:
     flatTernaryExpressions: true
   }]
   padded-blocks: off
-  space-in-parens: [ error, always ]

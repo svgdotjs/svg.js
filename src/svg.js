@@ -3,13 +3,11 @@ import * as regex from './modules/core/regex.js'
 import { makeInstance } from './utils/adopter'
 
 // The main wrapping element
-export default function SVG ( element ) {
-
-  return makeInstance( element )
-
+export default function SVG (element) {
+  return makeInstance(element)
 }
 
-Object.assign( SVG, svgMembers )
+Object.assign(SVG, svgMembers)
 
 SVG.utils = SVG
 SVG.regex = regex

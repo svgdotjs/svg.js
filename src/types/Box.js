@@ -4,44 +4,32 @@ import { globals } from '../utils/window.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
-function isNulledBox ( box ) {
-
+function isNulledBox (box) {
   return !box.w && !box.h && !box.x && !box.y
-
 }
 
-function domContains ( node ) {
-
-  return ( globals.document.documentElement.contains || function ( node ) {
-
+function domContains (node) {
+  return (globals.document.documentElement.contains || function (node) {
     // This is IE - it does not support contains() for top-level SVGs
-    while ( node.parentNode ) {
-
+    while (node.parentNode) {
       node = node.parentNode
-
     }
     return node === document
-
-  } ).call( globals.document.documentElement, node )
-
+  }).call(globals.document.documentElement, node)
 }
 
 export default class Box {
-
-  constructor ( ...args ) {
-
-    this.init( ...args )
-
+  constructor (...args) {
+    this.init(...args)
   }
 
-  init ( source ) {
-
+  init (source) {
     var base = [ 0, 0, 0, 0 ]
-    source = typeof source === 'string' ? source.split( delimiter ).map( parseFloat )
-      : Array.isArray( source ) ? source
+    source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
+      : Array.isArray(source) ? source
       : typeof source === 'object' ? [ source.left != null ? source.left
       : source.x, source.top != null ? source.top : source.y, source.width, source.height ]
-      : arguments.length === 4 ? [].slice.call( arguments )
+      : arguments.length === 4 ? [].slice.call(arguments)
       : base
 
     this.x = source[0] || 0
@@ -56,139 +44,105 @@ export default class Box {
     this.cy = this.y + this.h / 2
 
     return this
-
   }
 
   // Merge rect box with another, return a new instance
-  merge ( box ) {
+  merge (box) {
+    let x = Math.min(this.x, box.x)
+    let y = Math.min(this.y, box.y)
+    let width = Math.max(this.x + this.width, box.x + box.width) - x
+    let height = Math.max(this.y + this.height, box.y + box.height) - y
 
-    let x = Math.min( this.x, box.x )
-    let y = Math.min( this.y, box.y )
-    let width = Math.max( this.x + this.width, box.x + box.width ) - x
-    let height = Math.max( this.y + this.height, box.y + box.height ) - y
-
-    return new Box( x, y, width, height )
-
+    return new Box(x, y, width, height)
   }
 
-  transform ( m ) {
-
+  transform (m) {
     let xMin = Infinity
     let xMax = -Infinity
     let yMin = Infinity
     let yMax = -Infinity
 
     let pts = [
-      new Point( this.x, this.y ),
-      new Point( this.x2, this.y ),
-      new Point( this.x, this.y2 ),
-      new Point( this.x2, this.y2 )
+      new Point(this.x, this.y),
+      new Point(this.x2, this.y),
+      new Point(this.x, this.y2),
+      new Point(this.x2, this.y2)
     ]
 
-    pts.forEach( function ( p ) {
-
-      p = p.transform( m )
-      xMin = Math.min( xMin, p.x )
-      xMax = Math.max( xMax, p.x )
-      yMin = Math.min( yMin, p.y )
-      yMax = Math.max( yMax, p.y )
-
-    } )
+    pts.forEach(function (p) {
+      p = p.transform(m)
+      xMin = Math.min(xMin, p.x)
+      xMax = Math.max(xMax, p.x)
+      yMin = Math.min(yMin, p.y)
+      yMax = Math.max(yMax, p.y)
+    })
 
     return new Box(
       xMin, yMin,
       xMax - xMin,
       yMax - yMin
     )
-
   }
 
   addOffset () {
-
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += globals.window.pageXOffset
     this.y += globals.window.pageYOffset
     return this
-
   }
 
   toString () {
-
     return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
-
   }
 
   toArray () {
-
     return [ this.x, this.y, this.width, this.height ]
-
   }
 
   isNulled () {
-
-    return isNulledBox( this )
-
+    return isNulledBox(this)
   }
-
 }
 
-function getBox ( cb ) {
-
+function getBox (cb) {
   let box
 
   try {
+    box = cb(this.node)
 
-    box = cb( this.node )
-
-    if ( isNulledBox( box ) && !domContains( this.node ) ) {
-
-      throw new Error( 'Element not in the dom' )
-
+    if (isNulledBox(box) && !domContains(this.node)) {
+      throw new Error('Element not in the dom')
     }
-
-  } catch ( e ) {
-
+  } catch (e) {
     try {
-
-      let clone = this.clone().addTo( parser().svg ).show()
-      box = cb( clone.node )
+      let clone = this.clone().addTo(parser().svg).show()
+      box = cb(clone.node)
       clone.remove()
-
-    } catch ( e ) {
-
-      throw new Error( 'Getting a bounding box of element "' + this.node.nodeName + '" is not possible' )
-
+    } catch (e) {
+      throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible')
     }
-
   }
   return box
-
 }
 
 export function bbox () {
-
-  return new Box( getBox.call( this, ( node ) => node.getBBox() ) )
-
+  return new Box(getBox.call(this, (node) => node.getBBox()))
 }
 
-export function rbox ( el ) {
-
-  let box = new Box( getBox.call( this, ( node ) => node.getBoundingClientRect() ) )
-  if ( el ) return box.transform( el.screenCTM().inverse() )
+export function rbox (el) {
+  let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect()))
+  if (el) return box.transform(el.screenCTM().inverse())
   return box.addOffset()
-
 }
 
-registerMethods( {
+registerMethods({
   viewbox: {
-    viewbox ( x, y, width, height ) {
-
+    viewbox (x, y, width, height) {
       // act as getter
-      if ( x == null ) return new Box( this.attr( 'viewBox' ) )
+      if (x == null) return new Box(this.attr('viewBox'))
 
       // act as setter
-      return this.attr( 'viewBox', new Box( x, y, width, height ) )
-
+      return this.attr('viewBox', new Box(x, y, width, height))
     }
   }
-} )
+})

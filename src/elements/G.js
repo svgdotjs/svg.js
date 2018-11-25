@@ -3,24 +3,18 @@ import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 
 export default class G extends Container {
-
-  constructor ( node ) {
-
-    super( nodeOrNew( 'g', node ), node )
-
+  constructor (node) {
+    super(nodeOrNew('g', node), node)
   }
-
 }
 
-registerMethods( {
+registerMethods({
   Element: {
     // Create a group element
-    group: wrapWithAttrCheck( function () {
-
-      return this.put( new G() )
-
-    } )
+    group: wrapWithAttrCheck(function () {
+      return this.put(new G())
+    })
   }
-} )
+})
 
-register( G )
+register(G)

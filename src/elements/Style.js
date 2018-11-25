@@ -3,69 +3,51 @@ import { registerMethods } from '../utils/methods.js'
 import { unCamelCase } from '../utils/utils.js'
 import Element from './Element.js'
 
-function cssRule ( selector, rule ) {
-
-  if ( !selector ) return ''
-  if ( !rule ) return selector
+function cssRule (selector, rule) {
+  if (!selector) return ''
+  if (!rule) return selector
 
   var ret = selector + '{'
 
-  for ( var i in rule ) {
-
-    ret += unCamelCase( i ) + ':' + rule[i] + ';'
-
+  for (var i in rule) {
+    ret += unCamelCase(i) + ':' + rule[i] + ';'
   }
 
   ret += '}'
 
   return ret
-
 }
 
 export default class Style extends Element {
-
-  constructor ( node ) {
-
-    super( nodeOrNew( 'style', node ), node )
-
+  constructor (node) {
+    super(nodeOrNew('style', node), node)
   }
 
-  words ( w ) {
-
-    this.node.textContent += ( w || '' )
+  words (w) {
+    this.node.textContent += (w || '')
     return this
-
   }
 
-  font ( name, src, params = {} ) {
-
-    return this.rule( '@font-face', {
+  font (name, src, params = {}) {
+    return this.rule('@font-face', {
       fontFamily: name,
       src: src,
       ...params
-    } )
-
+    })
   }
 
-  rule ( selector, obj ) {
-
-    return this.words( cssRule( selector, obj ) )
-
+  rule (selector, obj) {
+    return this.words(cssRule(selector, obj))
   }
-
 }
 
-registerMethods( 'Dom', {
-  style: wrapWithAttrCheck( function ( selector, obj ) {
+registerMethods('Dom', {
+  style: wrapWithAttrCheck(function (selector, obj) {
+    return this.put(new Style()).rule(selector, obj)
+  }),
+  fontface: wrapWithAttrCheck(function (name, src, params) {
+    return this.put(new Style()).font(name, src, params)
+  })
+})
 
-    return this.put( new Style() ).rule( selector, obj )
-
-  } ),
-  fontface: wrapWithAttrCheck( function ( name, src, params ) {
-
-    return this.put( new Style() ).font( name, src, params )
-
-  } )
-} )
-
-register( Style )
+register(Style)

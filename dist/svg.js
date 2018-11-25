@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Nov 25 2018 16:17:19 GMT+1300 (New Zealand Daylight Time)
+* BUILT: Mon Nov 26 2018 00:15:11 GMT+1300 (New Zealand Daylight Time)
 */;
 var SVG = (function () {
   'use strict';
@@ -110,36 +110,6 @@ var SVG = (function () {
     };
 
     return _setPrototypeOf(o, p);
-  }
-
-  function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-
-    try {
-      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
-      _construct = Reflect.construct;
-    } else {
-      _construct = function _construct(Parent, args, Class) {
-        var a = [null];
-        a.push.apply(a, args);
-        var Constructor = Function.bind.apply(Parent, a);
-        var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
-        return instance;
-      };
-    }
-
-    return _construct.apply(null, arguments);
   }
 
   function _assertThisInitialized(self) {
@@ -1107,112 +1077,117 @@ var SVG = (function () {
   /*#__PURE__*/
   function () {
     function Color() {
-      var a = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-      var b = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var c = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      var d = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-      var space = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'rgb';
-
       _classCallCheck(this, Color);
 
-      // If the user gave us an array, make the color from it
-      if (typeof a === 'number') {
-        // Allow for the case that we don't need d...
-        space = typeof d === 'string' ? d : space;
-        d = typeof d === 'string' ? undefined : d; // Assign the values straight to the color
-
-        Object.assign(this, {
-          _a: a,
-          _b: b,
-          _c: c,
-          _d: d,
-          space: space
-        });
-      } else if (a instanceof Array) {
-        this.space = b || 'rgb';
-        Object.assign(this, {
-          _a: a[0],
-          _b: a[1],
-          _c: a[2],
-          _d: a[3]
-        });
-      } else if (a instanceof Object) {
-        // Set the object up and assign its values directly
-        var values = getParameters(a);
-        Object.assign(this, values);
-      } else if (typeof a === 'string') {
-        if (isRgb.test(a)) {
-          var noWhitespace = a.replace(whitespace, '');
-
-          var _rgb$exec$slice$map = rgb.exec(noWhitespace).slice(1, 4).map(function (v) {
-            return parseInt(v);
-          }),
-              _rgb$exec$slice$map2 = _slicedToArray(_rgb$exec$slice$map, 3),
-              _a2 = _rgb$exec$slice$map2[0],
-              _b2 = _rgb$exec$slice$map2[1],
-              _c2 = _rgb$exec$slice$map2[2];
-
-          Object.assign(this, {
-            _a: _a2,
-            _b: _b2,
-            _c: _c2,
-            space: 'rgb'
-          });
-        } else if (isHex.test(a)) {
-          var hexParse = function hexParse(v) {
-            return parseInt(v, 16);
-          };
-
-          var _hex$exec$map = hex.exec(sixDigitHex(a)).map(hexParse),
-              _hex$exec$map2 = _slicedToArray(_hex$exec$map, 4),
-              _a3 = _hex$exec$map2[1],
-              _b3 = _hex$exec$map2[2],
-              _c3 = _hex$exec$map2[3];
-
-          Object.assign(this, {
-            _a: _a3,
-            _b: _b3,
-            _c: _c3,
-            space: 'rgb'
-          });
-        } else throw Error("Unsupported string format, can't construct Color");
-      } // Now add the components as a convenience
-
-
-      var _a = this._a,
-          _b = this._b,
-          _c = this._c,
-          _d = this._d;
-      var components = this.space === 'rgb' ? {
-        r: _a,
-        g: _b,
-        b: _c
-      } : this.space === 'xyz' ? {
-        x: _a,
-        y: _b,
-        z: _c
-      } : this.space === 'hsl' ? {
-        h: _a,
-        s: _b,
-        l: _c
-      } : this.space === 'lab' ? {
-        l: _a,
-        a: _b,
-        b: _c
-      } : this.space === 'lch' ? {
-        l: _a,
-        c: _b,
-        h: _c
-      } : this.space === 'cmyk' ? {
-        c: _a,
-        y: _b,
-        m: _c,
-        k: _d
-      } : {};
-      Object.assign(this, components);
+      this.init.apply(this, arguments);
     }
 
     _createClass(Color, [{
+      key: "init",
+      value: function init() {
+        var a = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var b = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        var c = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        var d = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+        var space = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'rgb';
+
+        // If the user gave us an array, make the color from it
+        if (typeof a === 'number') {
+          // Allow for the case that we don't need d...
+          space = typeof d === 'string' ? d : space;
+          d = typeof d === 'string' ? undefined : d; // Assign the values straight to the color
+
+          Object.assign(this, {
+            _a: a,
+            _b: b,
+            _c: c,
+            _d: d,
+            space: space
+          });
+        } else if (a instanceof Array) {
+          this.space = b || 'rgb';
+          Object.assign(this, {
+            _a: a[0],
+            _b: a[1],
+            _c: a[2],
+            _d: a[3]
+          });
+        } else if (a instanceof Object) {
+          // Set the object up and assign its values directly
+          var values = getParameters(a);
+          Object.assign(this, values);
+        } else if (typeof a === 'string') {
+          if (isRgb.test(a)) {
+            var noWhitespace = a.replace(whitespace, '');
+
+            var _rgb$exec$slice$map = rgb.exec(noWhitespace).slice(1, 4).map(function (v) {
+              return parseInt(v);
+            }),
+                _rgb$exec$slice$map2 = _slicedToArray(_rgb$exec$slice$map, 3),
+                _a2 = _rgb$exec$slice$map2[0],
+                _b2 = _rgb$exec$slice$map2[1],
+                _c2 = _rgb$exec$slice$map2[2];
+
+            Object.assign(this, {
+              _a: _a2,
+              _b: _b2,
+              _c: _c2,
+              space: 'rgb'
+            });
+          } else if (isHex.test(a)) {
+            var hexParse = function hexParse(v) {
+              return parseInt(v, 16);
+            };
+
+            var _hex$exec$map = hex.exec(sixDigitHex(a)).map(hexParse),
+                _hex$exec$map2 = _slicedToArray(_hex$exec$map, 4),
+                _a3 = _hex$exec$map2[1],
+                _b3 = _hex$exec$map2[2],
+                _c3 = _hex$exec$map2[3];
+
+            Object.assign(this, {
+              _a: _a3,
+              _b: _b3,
+              _c: _c3,
+              space: 'rgb'
+            });
+          } else throw Error("Unsupported string format, can't construct Color");
+        } // Now add the components as a convenience
+
+
+        var _a = this._a,
+            _b = this._b,
+            _c = this._c,
+            _d = this._d;
+        var components = this.space === 'rgb' ? {
+          r: _a,
+          g: _b,
+          b: _c
+        } : this.space === 'xyz' ? {
+          x: _a,
+          y: _b,
+          z: _c
+        } : this.space === 'hsl' ? {
+          h: _a,
+          s: _b,
+          l: _c
+        } : this.space === 'lab' ? {
+          l: _a,
+          a: _b,
+          b: _c
+        } : this.space === 'lch' ? {
+          l: _a,
+          c: _b,
+          h: _c
+        } : this.space === 'cmyk' ? {
+          c: _a,
+          m: _b,
+          y: _c,
+          k: _d
+        } : {};
+        Object.assign(this, components);
+      }
+    }, {
       key: "opacity",
       value: function opacity() {
         var _opacity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
@@ -1264,8 +1239,8 @@ var SVG = (function () {
 
 
             var yL = (l + 16) / 116;
-            var xL = a / 500 + y;
-            var zL = y - _b4 / 200; // Get the xyz values
+            var xL = a / 500 + yL;
+            var zL = yL - _b4 / 200; // Get the xyz values
 
             var ct = 16 / 116;
             var mx = 0.008856;
@@ -1286,14 +1261,17 @@ var SVG = (function () {
           var g = gU > bd ? 1.055 * pow(gU, 1 / 2.4) - 0.055 : 12.92 * gU;
           var b = bU > bd ? 1.055 * pow(bU, 1 / 2.4) - 0.055 : 12.92 * bU; // Make and return the color
 
-          var color = new Color(r, g, b);
+          var color = new Color(255 * r, 255 * g, 255 * b);
           return color;
         } else if (this.space === 'hsl') {
-          // stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+          // https://bgrins.github.io/TinyColor/docs/tinycolor.html
           // Get the current hsl values
           var _h = this.h,
               s = this.s,
-              _l = this.l; // If we are grey, then just make the color directly
+              _l = this.l;
+          _h /= 360;
+          s /= 100;
+          _l /= 100; // If we are grey, then just make the color directly
 
           if (s === 0) {
             var _color2 = new Color(_l, _l, _l);
@@ -1305,11 +1283,11 @@ var SVG = (function () {
           var q = _l < 0.5 ? _l * (1 + s) : _l + s - _l * s;
           var p = 2 * _l - q; // Get the rgb values
 
-          var _r = hueToRgb(p, q, _h + 1 / 3);
+          var _r = 255 * hueToRgb(p, q, _h + 1 / 3);
 
-          var _g = hueToRgb(p, q, _h);
+          var _g = 255 * hueToRgb(p, q, _h);
 
-          var _b5 = hueToRgb(p, q, _h - 1 / 3); // Make a new color
+          var _b5 = 255 * hueToRgb(p, q, _h - 1 / 3); // Make a new color
 
 
           var _color = new Color(_r, _g, _b5);
@@ -1318,26 +1296,16 @@ var SVG = (function () {
         } else if (this.space === 'cmyk') {
           // https://gist.github.com/felipesabino/5066336
           // Get the normalised cmyk values
-          var _a = this._a,
-              _b = this._b,
-              _c = this._c,
-              _d = this._d;
+          var _c4 = this.c,
+              m = this.m,
+              _y = this.y,
+              k = this.k; // Get the rgb values
 
-          var _map = [_a, _b, _c, _d].map(function (v) {
-            return v / 100;
-          }),
-              _map2 = _slicedToArray(_map, 4),
-              _c4 = _map2[0],
-              m = _map2[1],
-              _y = _map2[2],
-              k = _map2[3]; // Get the rgb values
+          var _r2 = 255 * (1 - Math.min(1, _c4 * (1 - k) + k));
 
+          var _g2 = 255 * (1 - Math.min(1, m * (1 - k) + k));
 
-          var _r2 = 1 - Math.min(1, _c4 * (1 - k) + k);
-
-          var _g2 = 1 - Math.min(1, m * (1 - k) + k);
-
-          var _b6 = 1 - Math.min(1, _y * (1 - k) + k); // Form the color and return it
+          var _b6 = 255 * (1 - Math.min(1, _y * (1 - k) + k)); // Form the color and return it
 
 
           var _color3 = new Color(_r2, _g2, _b6);
@@ -1373,13 +1341,13 @@ var SVG = (function () {
             g255 = _this$rgb2._b,
             b255 = _this$rgb2._c;
 
-        var _map3 = [r255, g255, b255].map(function (v) {
+        var _map = [r255, g255, b255].map(function (v) {
           return v / 255;
         }),
-            _map4 = _slicedToArray(_map3, 3),
-            r = _map4[0],
-            g = _map4[1],
-            b = _map4[2]; // Convert to the lab rgb space
+            _map2 = _slicedToArray(_map, 3),
+            r = _map2[0],
+            g = _map2[1],
+            b = _map2[2]; // Convert to the lab rgb space
 
 
         var rL = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
@@ -1428,13 +1396,13 @@ var SVG = (function () {
             _b = _this$rgb3._b,
             _c = _this$rgb3._c;
 
-        var _map5 = [_a, _b, _c].map(function (v) {
+        var _map3 = [_a, _b, _c].map(function (v) {
           return v / 255;
         }),
-            _map6 = _slicedToArray(_map5, 3),
-            r = _map6[0],
-            g = _map6[1],
-            b = _map6[2]; // Find the maximum and minimum values to get the lightness
+            _map4 = _slicedToArray(_map3, 3),
+            r = _map4[0],
+            g = _map4[1],
+            b = _map4[2]; // Find the maximum and minimum values to get the lightness
 
 
         var max = Math.max(r, g, b);
@@ -1447,7 +1415,7 @@ var SVG = (function () {
         var s = isGrey ? 0 : l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
         var h = isGrey ? 0 : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6 : max === g ? ((b - r) / delta + 2) / 6 : max === b ? ((r - g) / delta + 4) / 6 : 0; // Construct and return the new color
 
-        var color = new Color(h, s, l, 'hsl');
+        var color = new Color(360 * h, 100 * s, 100 * l, 'hsl');
         return color;
       }
     }, {
@@ -1459,53 +1427,23 @@ var SVG = (function () {
             _b = _this$rgb4._b,
             _c = _this$rgb4._c;
 
-        var _map7 = [_a, _b, _c].map(function (v) {
+        var _map5 = [_a, _b, _c].map(function (v) {
           return v / 255;
         }),
-            _map8 = _slicedToArray(_map7, 3),
-            r = _map8[0],
-            g = _map8[1],
-            b = _map8[2]; // Get the cmyk values in an unbounded format
+            _map6 = _slicedToArray(_map5, 3),
+            r = _map6[0],
+            g = _map6[1],
+            b = _map6[2]; // Get the cmyk values in an unbounded format
 
 
-        var k = 100 * Math.min(1 - r, 1 - g, 1 - b);
-        var c = 100 * (1 - r - k) / (1 - k);
-        var m = 100 * (1 - g - k) / (1 - k);
-        var y = 100 * (1 - b - k) / (1 - k); // Construct the new color
+        var k = Math.min(1 - r, 1 - g, 1 - b);
+        var c = (1 - r - k) / (1 - k);
+        var m = (1 - g - k) / (1 - k);
+        var y = (1 - b - k) / (1 - k); // Construct the new color
 
         var color = new Color(c, m, y, k, 'cmyk');
         return color;
       }
-      /*
-      Modifying the color
-      */
-
-    }, {
-      key: "brighten",
-      value: function brighten() {
-      }
-    }, {
-      key: "darken",
-      value: function darken() {
-      }
-      /*
-      Mixing methods
-      */
-
-    }, {
-      key: "to",
-      value: function to(otherColor, space) {
-        // Force both colors to the color of this space (or let the user decide)
-        space = space || this.space; // Get the starting and ending colors
-        // let start = this[ space ]()
-        // let end = otherColor[ space ]()
-        // Return a function that blends between the two colors
-
-        return function (t) {};
-      }
-    }, {
-      key: "avearge",
-      value: function avearge(otherColor, space) {}
       /*
       Input and Output methods
       */
@@ -1518,11 +1456,11 @@ var SVG = (function () {
             _b = _this$rgb5._b,
             _c = _this$rgb5._c;
 
-        var _map9 = [_a, _b, _c].map(componentHex),
-            _map10 = _slicedToArray(_map9, 3),
-            r = _map10[0],
-            g = _map10[1],
-            b = _map10[2];
+        var _map7 = [_a, _b, _c].map(componentHex),
+            _map8 = _slicedToArray(_map7, 3),
+            r = _map8[0],
+            g = _map8[1],
+            b = _map8[2];
 
         return "#".concat(r).concat(g).concat(b);
       }
@@ -1547,11 +1485,11 @@ var SVG = (function () {
           return max(0, min(round(v), 255));
         };
 
-        var _map11 = [r, g, b].map(format),
-            _map12 = _slicedToArray(_map11, 3),
-            rV = _map12[0],
-            gV = _map12[1],
-            bV = _map12[2];
+        var _map9 = [r, g, b].map(format),
+            _map10 = _slicedToArray(_map9, 3),
+            rV = _map10[0],
+            gV = _map10[1],
+            bV = _map10[2];
 
         var string = "rgb(".concat(rV, ",").concat(gV, ",").concat(bV, ")");
         return string;
@@ -1566,18 +1504,11 @@ var SVG = (function () {
             space = this.space;
         return [_a, _b, _c, _d, space];
       }
-    }], [{
-      key: "fromArray",
-      value: function fromArray(array) {
-        var newColor = _construct(Color, _toConsumableArray(array));
-
-        return newColor;
-      }
       /*
       Generating random colors
       */
 
-    }, {
+    }], [{
       key: "random",
       value: function random() {
         'sine';
@@ -1591,10 +1522,7 @@ var SVG = (function () {
       /*
       Constructing colors
       */
-
-    }, {
-      key: "temperature",
-      value: function temperature(kelvin) {} // Test if given value is a color string
+      // Test if given value is a color string
 
     }, {
       key: "test",

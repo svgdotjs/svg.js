@@ -4,72 +4,54 @@ import Container from './Container.js'
 import baseFind from '../modules/core/selector.js'
 
 export default class ClipPath extends Container {
-
-  constructor ( node ) {
-
-    super( nodeOrNew( 'clipPath', node ), node )
-
+  constructor (node) {
+    super(nodeOrNew('clipPath', node), node)
   }
 
   // Unclip all clipped elements and remove itself
   remove () {
-
     // unclip all targets
-    this.targets().forEach( function ( el ) {
-
+    this.targets().forEach(function (el) {
       el.unclip()
-
-    } )
+    })
 
     // remove clipPath from parent
     return super.remove()
-
   }
 
   targets () {
-
-    return baseFind( 'svg [clip-path*="' + this.id() + '"]' )
-
+    return baseFind('svg [clip-path*="' + this.id() + '"]')
   }
-
 }
 
-registerMethods( {
+registerMethods({
   Container: {
     // Create clipping element
-    clip: wrapWithAttrCheck( function () {
-
-      return this.defs().put( new ClipPath() )
-
-    } )
+    clip: wrapWithAttrCheck(function () {
+      return this.defs().put(new ClipPath())
+    })
   },
   Element: {
     // Distribute clipPath to svg element
-    clipWith ( element ) {
-
+    clipWith (element) {
       // use given clip or create a new one
       let clipper = element instanceof ClipPath
         ? element
-        : this.parent().clip().add( element )
+        : this.parent().clip().add(element)
 
       // apply mask
-      return this.attr( 'clip-path', 'url("#' + clipper.id() + '")' )
-
+      return this.attr('clip-path', 'url("#' + clipper.id() + '")')
     },
 
     // Unclip element
     unclip () {
-
-      return this.attr( 'clip-path', null )
-
+      return this.attr('clip-path', null)
     },
 
     clipper () {
-
-      return this.reference( 'clip-path' )
-
+      return this.reference('clip-path')
     }
   }
-} )
+})
 
-register( ClipPath )
+register(ClipPath)

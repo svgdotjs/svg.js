@@ -11,34 +11,26 @@ import Shape from './Shape.js'
 import * as circled from '../modules/core/circled.js'
 
 export default class Ellipse extends Shape {
-
-  constructor ( node ) {
-
-    super( nodeOrNew( 'ellipse', node ), node )
-
+  constructor (node) {
+    super(nodeOrNew('ellipse', node), node)
   }
 
-  size ( width, height ) {
-
-    var p = proportionalSize( this, width, height )
+  size (width, height) {
+    var p = proportionalSize(this, width, height)
 
     return this
-      .rx( new SVGNumber( p.width ).divide( 2 ) )
-      .ry( new SVGNumber( p.height ).divide( 2 ) )
-
+      .rx(new SVGNumber(p.width).divide(2))
+      .ry(new SVGNumber(p.height).divide(2))
   }
-
 }
 
-extend( Ellipse, circled )
+extend(Ellipse, circled)
 
-registerMethods( 'Container', {
+registerMethods('Container', {
   // Create an ellipse
-  ellipse: wrapWithAttrCheck( function ( width, height ) {
+  ellipse: wrapWithAttrCheck(function (width, height) {
+    return this.put(new Ellipse()).size(width, height).move(0, 0)
+  })
+})
 
-    return this.put( new Ellipse() ).size( width, height ).move( 0, 0 )
-
-  } )
-} )
-
-register( Ellipse )
+register(Ellipse)

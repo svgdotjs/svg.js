@@ -3,9 +3,7 @@ export const globals = {
   document: typeof document === 'undefined' ? null : document
 }
 
-export function registerWindow ( win = null, doc = null ) {
-
+export function registerWindow (win = null, doc = null) {
   globals.window = win
   globals.document = doc
-
 }
