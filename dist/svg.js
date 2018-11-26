@@ -1,12 +1,12 @@
 /*!
-* svg.js - A lightweight library for manipulating and animating SVG.
+* @svgdotjs/svg.js - A lightweight library for manipulating and animating SVG.
 * @version 3.0.0
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sat Nov 24 2018 14:31:28 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 26 2018 22:45:55 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -5364,7 +5364,7 @@ var SVG = (function () {
 
       _this.enabled = true;
       _this._time = 0;
-      _this._last = 0; // At creation, the runner is in reseted state
+      _this._lastTime = 0; // At creation, the runner is in reseted state
 
       _this._reseted = true; // Save transforms applied to this runner
 
@@ -5596,7 +5596,7 @@ var SVG = (function () {
         this._lastPosition = position; // Figure out if we just started
 
         var duration = this.duration();
-        var justStarted = this._lastTime < 0 && this._time > 0;
+        var justStarted = this._lastTime <= 0 && this._time > 0;
         var justFinished = this._lastTime < this._time && this.time > duration;
         this._lastTime = this._time;
 
@@ -5608,12 +5608,11 @@ var SVG = (function () {
 
 
         var declarative = this._isDeclarative;
-        this.done = !declarative && !justFinished && this._time >= duration; // Call initialise and the run function
+        this.done = !declarative && !justFinished && this._time >= duration; // Runner is running. So its not in reseted state anymore
+
+        this._reseted = false; // Call initialise and the run function
 
         if (running || declarative) {
-          // Runner is running. So its not in reseted state anymore
-          this._reseted = false;
-
           this._initialise(running); // clear the transforms on this runner so they dont get added again and again
 
 

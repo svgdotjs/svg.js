@@ -1,5 +1,5 @@
 import * as svgMembers from './main.js'
-import { makeInstance } from './utils/adopter'
+import { makeInstance } from './utils/adopter.js'
 
 // The main wrapping element
 export default function SVG (element) {

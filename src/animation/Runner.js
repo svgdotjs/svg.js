@@ -48,7 +48,7 @@ export default class Runner extends EventTarget {
     // Store the state of the runner
     this.enabled = true
     this._time = 0
-    this._last = 0
+    this._lastTime = 0
 
     // At creation, the runner is in reseted state
     this._reseted = true
@@ -264,7 +264,7 @@ export default class Runner extends EventTarget {
 
     // Figure out if we just started
     var duration = this.duration()
-    var justStarted = this._lastTime < 0 && this._time > 0
+    var justStarted = this._lastTime <= 0 && this._time > 0
     var justFinished = this._lastTime < this._time && this.time > duration
     this._lastTime = this._time
     if (justStarted) {
@@ -277,11 +277,11 @@ export default class Runner extends EventTarget {
     var declarative = this._isDeclarative
     this.done = !declarative && !justFinished && this._time >= duration
 
+    // Runner is running. So its not in reseted state anymore
+    this._reseted = false
+
     // Call initialise and the run function
     if (running || declarative) {
-      // Runner is running. So its not in reseted state anymore
-      this._reseted = false
-
       this._initialise(running)
 
       // clear the transforms on this runner so they dont get added again and again
