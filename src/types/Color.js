@@ -313,6 +313,12 @@ export default class Color {
 
     // Get the cmyk values in an unbounded format
     const k = Math.min(1 - r, 1 - g, 1 - b)
+
+    if (k === 1) {
+      // Catch the black case
+      return new Color(0, 0, 0, 1, 'cmyk')
+    }
+
     const c = (1 - r - k) / (1 - k)
     const m = (1 - g - k) / (1 - k)
     const y = (1 - b - k) / (1 - k)

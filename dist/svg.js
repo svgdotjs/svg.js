@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 26 2018 14:01:22 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 26 2018 14:15:16 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1452,6 +1452,12 @@ var SVG = (function () {
 
 
         var k = Math.min(1 - r, 1 - g, 1 - b);
+
+        if (k === 1) {
+          // Catch the black case
+          return new Color(0, 0, 0, 1, 'cmyk');
+        }
+
         var c = (1 - r - k) / (1 - k);
         var m = (1 - g - k) / (1 - k);
         var y = (1 - b - k) / (1 - k); // Construct the new color
