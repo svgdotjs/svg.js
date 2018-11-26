@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Sun Nov 25 2018 13:00:14 GMT+0100 (GMT+01:00)
+* BUILT: Mon Nov 26 2018 14:01:22 GMT+0100 (GMT+01:00)
 */;
 var SVG = (function () {
   'use strict';
@@ -1015,7 +1015,7 @@ var SVG = (function () {
     return true;
   }
 
-  function getParameters(a) {
+  function getParameters(a, b) {
     var params = is(a, 'rgb') ? {
       _a: a.r,
       _b: a.g,
@@ -1025,21 +1025,25 @@ var SVG = (function () {
       _a: a.x,
       _b: a.y,
       _c: a.z,
+      _d: 0,
       space: 'xyz'
     } : is(a, 'hsl') ? {
       _a: a.h,
       _b: a.s,
       _c: a.l,
+      _d: 0,
       space: 'hsl'
     } : is(a, 'lab') ? {
       _a: a.l,
       _b: a.a,
       _c: a.b,
+      _d: 0,
       space: 'lab'
     } : is(a, 'lch') ? {
       _a: a.l,
       _b: a.c,
       _c: a.h,
+      _d: 0,
       space: 'lch'
     } : is(a, 'cmyk') ? {
       _a: a.c,
@@ -1053,6 +1057,7 @@ var SVG = (function () {
       _c: 0,
       space: 'rgb'
     };
+    params.space = b || params.space;
     return params;
   }
 
@@ -1091,6 +1096,13 @@ var SVG = (function () {
         var d = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
         var space = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'rgb';
 
+        // Reset all values in case the init function is rerun with new color space
+        if (this.space) {
+          for (var component in this.space) {
+            delete this[this.space[component]];
+          }
+        }
+
         if (typeof a === 'number') {
           // Allow for the case that we don't need d...
           space = typeof d === 'string' ? d : space;
@@ -1104,16 +1116,16 @@ var SVG = (function () {
             space: space
           }); // If the user gave us an array, make the color from it
         } else if (a instanceof Array) {
-          this.space = b || 'rgb';
+          this.space = b || a[4] || 'rgb';
           Object.assign(this, {
             _a: a[0],
             _b: a[1],
             _c: a[2],
-            _d: a[3]
+            _d: a[3] || 0
           });
         } else if (a instanceof Object) {
           // Set the object up and assign its values directly
-          var values = getParameters(a);
+          var values = getParameters(a, b);
           Object.assign(this, values);
         } else if (typeof a === 'string') {
           if (isRgb.test(a)) {
@@ -1131,6 +1143,7 @@ var SVG = (function () {
               _a: _a2,
               _b: _b2,
               _c: _c2,
+              _d: 0,
               space: 'rgb'
             });
           } else if (isHex.test(a)) {
@@ -1148,6 +1161,7 @@ var SVG = (function () {
               _a: _a3,
               _b: _b3,
               _c: _c3,
+              _d: 0,
               space: 'rgb'
             });
           } else throw Error("Unsupported string format, can't construct Color");
@@ -1273,6 +1287,8 @@ var SVG = (function () {
           _l /= 100; // If we are grey, then just make the color directly
 
           if (s === 0) {
+            _l *= 255;
+
             var _color2 = new Color(_l, _l, _l);
 
             return _color2;
@@ -3226,7 +3242,7 @@ var SVG = (function () {
         return this.attr(m);
       }
 
-      if (typeof o === 'string' || Color.isRgb(o) || o instanceof Element) {
+      if (typeof o === 'string' || o instanceof Color || Color.isRgb(o) || o instanceof Element) {
         this.attr(m, o);
       } else {
         // set all attributes from sugar.fill and sugar.stroke list

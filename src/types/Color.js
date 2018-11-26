@@ -26,14 +26,16 @@ function is (object, space) {
   return true
 }
 
-function getParameters (a) {
+function getParameters (a, b) {
   const params = is(a, 'rgb') ? { _a: a.r, _b: a.g, _c: a.b, space: 'rgb' }
-    : is(a, 'xyz') ? { _a: a.x, _b: a.y, _c: a.z, space: 'xyz' }
-    : is(a, 'hsl') ? { _a: a.h, _b: a.s, _c: a.l, space: 'hsl' }
-    : is(a, 'lab') ? { _a: a.l, _b: a.a, _c: a.b, space: 'lab' }
-    : is(a, 'lch') ? { _a: a.l, _b: a.c, _c: a.h, space: 'lch' }
+    : is(a, 'xyz') ? { _a: a.x, _b: a.y, _c: a.z, _d: 0, space: 'xyz' }
+    : is(a, 'hsl') ? { _a: a.h, _b: a.s, _c: a.l, _d: 0, space: 'hsl' }
+    : is(a, 'lab') ? { _a: a.l, _b: a.a, _c: a.b, _d: 0, space: 'lab' }
+    : is(a, 'lch') ? { _a: a.l, _b: a.c, _c: a.h, _d: 0, space: 'lch' }
     : is(a, 'cmyk') ? { _a: a.c, _b: a.m, _c: a.y, _d: a.k, space: 'cmyk' }
     : { _a: 0, _b: 0, _c: 0, space: 'rgb' }
+
+  params.space = b || params.space
   return params
 }
 
@@ -60,6 +62,13 @@ export default class Color {
   }
 
   init (a = 0, b = 0, c = 0, d = 0, space = 'rgb') {
+    // Reset all values in case the init function is rerun with new color space
+    if (this.space) {
+      for (let component in this.space) {
+        delete this[this.space[component]]
+      }
+    }
+
     if (typeof a === 'number') {
       // Allow for the case that we don't need d...
       space = typeof d === 'string' ? d : space
@@ -69,22 +78,22 @@ export default class Color {
       Object.assign(this, { _a: a, _b: b, _c: c, _d: d, space })
     // If the user gave us an array, make the color from it
     } else if (a instanceof Array) {
-      this.space = b || 'rgb'
-      Object.assign(this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] })
+      this.space = b || a[4] || 'rgb'
+      Object.assign(this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] || 0 })
     } else if (a instanceof Object) {
       // Set the object up and assign its values directly
-      const values = getParameters(a)
+      const values = getParameters(a, b)
       Object.assign(this, values)
     } else if (typeof a === 'string') {
       if (isRgb.test(a)) {
         const noWhitespace = a.replace(whitespace, '')
         const [ _a, _b, _c ] = rgb.exec(noWhitespace)
           .slice(1, 4).map(v => parseInt(v))
-        Object.assign(this, { _a, _b, _c, space: 'rgb' })
+        Object.assign(this, { _a, _b, _c, _d: 0, space: 'rgb' })
       } else if (isHex.test(a)) {
         const hexParse = v => parseInt(v, 16)
         const [ , _a, _b, _c ] = hex.exec(sixDigitHex(a)).map(hexParse)
-        Object.assign(this, { _a, _b, _c, space: 'rgb' })
+        Object.assign(this, { _a, _b, _c, _d: 0, space: 'rgb' })
       } else throw Error(`Unsupported string format, can't construct Color`)
     }
 
@@ -173,6 +182,7 @@ export default class Color {
 
       // If we are grey, then just make the color directly
       if (s === 0) {
+        l *= 255
         let color = new Color(l, l, l)
         return color
       }

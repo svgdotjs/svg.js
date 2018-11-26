@@ -6,7 +6,7 @@ import {
   makeInstance,
   register
 } from '../utils/adopter.js'
-import { find } from '../modules/core/selector'
+import { find } from '../modules/core/selector.js'
 import { globals } from '../utils/window.js'
 import { map } from '../utils/utils.js'
 import { ns } from '../modules/core/namespaces.js'
