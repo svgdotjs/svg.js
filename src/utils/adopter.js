@@ -67,7 +67,7 @@ export function adopt (node) {
 
 let adopter = adopt
 
-export function mockAdopt(mock = adopt) {
+export function mockAdopt (mock = adopt) {
   adopter = mock
 }
 
