@@ -3,11 +3,12 @@ node_js:
     - "stable"
 script:
     - npm run build
-    - npm run test:ci
+    - npm run test
+#    - npm run test:ci
 #    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
 addons:
-#   firefox: "latest"
-#   chrome: "stable"
+   firefox: "latest"
+   chrome: "stable"
 #  hosts:
 #    - karmalocal.com
 before_install:

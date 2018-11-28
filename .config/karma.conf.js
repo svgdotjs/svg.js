@@ -23,7 +23,7 @@ module.exports = function (config) {
       // preprocess matching files before serving them to the browser
       // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
       preprocessors: {
-        'dist/svg.js': ['coverage']
+        'dist/svg.min.js': ['coverage']
       },
 
       // this specifies which plugins karma should load
@@ -35,7 +35,7 @@ module.exports = function (config) {
         'karma-chrome-launcher',
         'karma-coverage',
         'karma-firefox-launcher',
-        'karma-jasmine',
+        'karma-jasmine'
       ],
 
       // test results reporter to use
@@ -48,15 +48,15 @@ module.exports = function (config) {
         // Specify a reporter type.
         type: 'lcov',
         dir: 'coverage/',
-        subdir: function(browser) {
+        subdir: function (browser) {
           // normalization process to keep a consistent browser name accross different OS
-          return browser.toLowerCase().split(/[ /-]/)[0]; // output the results into: './coverage/firefox/'
+          return browser.toLowerCase().split(/[ /-]/)[0] // output the results into: './coverage/firefox/'
         }
       },
 
       // start these browsers
       // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-      browsers: [chromeBin, 'FirefoxHeadless'],
+      browsers: [chromeBin, 'FirefoxHeadless']
     })
   )
 }

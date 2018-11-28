@@ -1,20 +1,22 @@
-import { uglify } from "rollup-plugin-uglify"
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
+import { terser } from 'rollup-plugin-terser'
+import filesize from 'rollup-plugin-filesize'
 
-export default [
-  {
-    input: './.config/polyfillList.js',
-    output: {
-      file: 'dist/polyfills.js',
-      name: 'polyfills',
-      sourceMap: 'external',
-      format: 'iife'
-    },
-    plugins: [
-      resolve({browser: true}),
-      commonjs(),
-      uglify()
-    ]
-  }
-]
+// We dont need babel. All polyfills are compatible
+const config = (ie) => ({
+  input: ie ? './.config/polyfillListIE.js' : './.config/polyfillList.js',
+  output: {
+    file: ie ? 'dist/polyfillsIE.js' : 'dist/polyfills.js',
+    sourceMap: false,
+    format: 'iife'
+  },
+  plugins: [
+    resolve({ browser: true }),
+    commonjs(),
+    terser(),
+    filesize()
+  ]
+})
+
+export default [false, true].map(config)

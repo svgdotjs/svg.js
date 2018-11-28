@@ -9,8 +9,8 @@ const karmaCommon = require('./karma.conf.common.js')
 const SauceLabsLaunchers = {
   /** Real mobile devices are not available
    *  Your account does not have access to Android devices.
-   *  Please contact sales@saucelabs.com to add this feature to your account.*/
-  /*sl_android_chrome: {
+   *  Please contact sales@saucelabs.com to add this feature to your account. */
+  /* sl_android_chrome: {
     base: 'SauceLabs',
     appiumVersion: '1.5.3',
     deviceName: 'Samsung Galaxy S7 Device',
@@ -18,13 +18,13 @@ const SauceLabsLaunchers = {
     browserName: 'Chrome',
     platformVersion: '6.0',
     platformName: 'Android'
-  },*/
+  }, */
   /* sl_android: {
     base: 'SauceLabs',
     browserName: 'Android',
     deviceName: 'Android Emulator',
     deviceOrientation: 'portrait'
-  },*/
+  }, */
   SL_firefox_latest: {
     base: 'SauceLabs',
     browserName: 'firefox',
@@ -39,7 +39,7 @@ const SauceLabsLaunchers = {
     base: 'SauceLabs',
     browserName: 'internet explorer',
     version: '11.0'
-  },/*
+  }/*
   sl_windows_edge: {
     base: 'SauceLabs',
     browserName: 'MicrosoftEdge',
@@ -83,12 +83,10 @@ const SauceLabsLaunchers = {
   } */
 }
 
-
-module.exports = function(config) {
-
+module.exports = function (config) {
   if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
-    console.error("SAUCE_USERNAME and SAUCE_ACCESS_KEY must be provided as environment variables.")
-    console.warn("Aborting Sauce Labs test")
+    console.error('SAUCE_USERNAME and SAUCE_ACCESS_KEY must be provided as environment variables.')
+    console.warn('Aborting Sauce Labs test')
     process.exit(1)
   }
   const settings = Object.assign(karmaCommon(config), {
@@ -104,7 +102,7 @@ module.exports = function(config) {
     // get possible karma plugins by `ls node_modules | grep 'karma-*'`
     plugins: [
       'karma-jasmine',
-      'karma-sauce-launcher',
+      'karma-sauce-launcher'
     ],
 
     // logLevel: config.LOG_DEBUG,
@@ -119,15 +117,15 @@ module.exports = function(config) {
     // start these browsers
     browsers: Object.keys(SauceLabsLaunchers),
     sauceLabs: {
-        testName: 'SVG.js Unit Tests',
-        // connectOptions: {
-        //   noSslBumpDomains: "all"
-        // },
-        // connectOptions: {
-        //   port: 5757,
-        //   logfile: 'sauce_connect.log'
-        // },
-    },
+      testName: 'SVG.js Unit Tests'
+      // connectOptions: {
+      //   noSslBumpDomains: "all"
+      // },
+      // connectOptions: {
+      //   port: 5757,
+      //   logfile: 'sauce_connect.log'
+      // },
+    }
 
     // The number of disconnections tolerated.
     // browserDisconnectTolerance: 0, // well, sometimes it helps to just restart
@@ -144,5 +142,4 @@ module.exports = function(config) {
 
   console.log(settings)
   config.set(settings)
-
 }

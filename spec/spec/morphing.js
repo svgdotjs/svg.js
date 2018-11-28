@@ -29,7 +29,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).valueOf()).toEqual(jasmine.objectContaining({a: 7.5, b: 15}))
     })
 
-    it(`Creates a morphable out of an SVG.Number`, function () {
+    it('Creates a morphable out of an SVG.Number', function () {
       var morpher = new SVG.Number(5).to(10)
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -38,7 +38,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).valueOf()).toBe(7.5)
     })
 
-    it(`Creates a morphable out of an SVG.Color`, function () {
+    it('Creates a morphable out of an SVG.Color', function () {
       var morpher = new SVG.Color('#fff').to('#000')
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -47,7 +47,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).toHex()).toBe('#808080')
     })
 
-    it(`Creates a morphable out of an SVG.Box`, function () {
+    it('Creates a morphable out of an SVG.Box', function () {
       var morpher = new SVG.Box(1, 2, 3, 4).to([5, 6, 7, 8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -56,7 +56,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5)).toEqual(jasmine.objectContaining({x: 3, y: 4, width: 5, height: 6}))
     })
 
-    it(`Creates a morphable out of an SVG.Matrix`, function () {
+    it('Creates a morphable out of an SVG.Matrix', function () {
       var morpher = new SVG.Matrix(1, 2, 3, 4, 5, 6).to([3, 4, 5, 6, 7, 8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -65,7 +65,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5)).toEqual(jasmine.objectContaining(new SVG.Matrix(2, 3, 4, 5, 6, 7)))
     })
 
-    it(`Creates a morphable out of an SVG.Array`, function () {
+    it('Creates a morphable out of an SVG.Array', function () {
       var morpher = new SVG.Array([1,2,3,4,5,6]).to([3,4,5,6,7,8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -74,7 +74,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).toArray()).toEqual(jasmine.arrayContaining([2, 3, 4, 5, 6, 7]))
     })
 
-    it(`Creates a morphable out of an SVG.PointArray`, function () {
+    it('Creates a morphable out of an SVG.PointArray', function () {
       var morpher = new SVG.PointArray([1, 2, 3, 4, 5, 6]).to([3, 4, 5, 6, 7, 8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -83,7 +83,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).toArray()).toEqual(jasmine.arrayContaining([2, 3, 4, 5, 6, 7]))
     })
 
-    it(`Creates a morphable out of an SVG.PathArray`, function () {
+    it('Creates a morphable out of an SVG.PathArray', function () {
       var morpher = new SVG.PathArray(['M', 1, 2, 'L', 3, 4, 'L', 5, 6]).to(['M', 3, 4, 'L', 5, 6, 'L', 7, 8])
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -92,7 +92,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5).toArray()).toEqual(jasmine.arrayContaining(['M', 2, 3, 'L', 4, 5, 'L', 6, 7]))
     })
 
-    it(`Creates a morphable out of an SVG.NonMorphable`, function () {
+    it('Creates a morphable out of an SVG.NonMorphable', function () {
       var morpher = new SVG.NonMorphable('foo').to('bar')
 
       expect(morpher instanceof SVG.Morphable).toBe(true)
@@ -102,7 +102,7 @@ describe('Morphing', function () {
       expect(morpher.at(1).valueOf()).toBe('bar')
     })
 
-    it(`Creates a morphable out of an SVG.TransformBag`, function () {
+    it('Creates a morphable out of an SVG.TransformBag', function () {
       var morpher = new SVG.TransformBag({rotate: 0, translateX: 0})
         .to({rotate: 50, translateX: 20})
 
@@ -113,7 +113,7 @@ describe('Morphing', function () {
       expect(morpher.at(0.5)).toEqual(jasmine.objectContaining({rotate: 25, translateX: 10}))
     })
 
-    it(`Creates a morphable out of an SVG.ObjectBag`, function () {
+    it('Creates a morphable out of an SVG.ObjectBag', function () {
       var morpher = new SVG.ObjectBag({a:5, b: 10}).to({a: 10, b: 20})
 
       expect(morpher instanceof SVG.Morphable).toBe(true)

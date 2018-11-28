@@ -31,7 +31,7 @@ module.exports = function (config) {
         included: false,
         served: true
       },
-      'dist/svg.js',
+      'dist/svg.min.js',
       'spec/spec/*.js'
     ],
 
@@ -61,6 +61,6 @@ module.exports = function (config) {
     concurrency: cpuCount || Infinity,
 
     // list of files to exclude
-    exclude: [],
+    exclude: []
   }
 }

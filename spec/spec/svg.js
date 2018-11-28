@@ -62,8 +62,8 @@ describe('SVG', function() {
     })
 
     it('creates SVG.Shape from any shape string', function() {
-      var rect = SVG('<rect width="200" height="100">')
-        , circle = SVG('<circle r="200">')
+      var rect = SVG('<rect width="200" height="100" />')
+        , circle = SVG('<circle r="200" />')
 
       expect(rect instanceof SVG.Rect).toBe(true)
       expect(rect.node.nodeName).toBe('rect')

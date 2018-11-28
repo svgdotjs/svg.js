@@ -11,15 +11,11 @@
     "animation"
   ],
   "author": "Wout Fierens <wout@mick-wout.com>",
-  "main": "dist/svg.js",
-  "module": "dist/svg.esm.js",
-  "jam": {
-    "include": [
-      "dist/svg.js",
-      "README.md",
-      "LICENSE.txt"
-    ]
-  },
+  "main": "dist/svg.node.js",
+  "unpkg": "dist/svg.min.js",
+  "jsdelivr": "dist/svg.min.js",
+  "browser": "dist/svg.min.js",
+  "module": "dist/svg.js",
   "maintainers": [
     {
       "name": "Wout Fierens",
@@ -62,7 +58,9 @@
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
-    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js"
+    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
+    "postPublish": "echo Please upload a zip to the github release containing the dist, license and changelog"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -70,6 +68,8 @@
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/runtime": "^7.1.5",
+    "@babel/runtime-corejs2": "^7.1.5",
     "@target/custom-event-polyfill": "github:Adobe-Marketing-Cloud/custom-event-polyfill",
     "babel-eslint": "^10.0.1",
     "core-js": "^2.5.7",
@@ -82,6 +82,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "esm": "^3.0.84",
     "http-server": "^0.11.1",
+    "innersvg-polyfill": "0.0.2",
     "jasmine-core": "^3.3.0",
     "karma": "^3.1.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -98,5 +99,11 @@
     "rollup-plugin-uglify": "^6.0.0",
     "rollup-plugin-uglify-es": "0.0.1",
     "svgdom": "latest"
-  }
+  },
+  "browserslist": [
+    "last 1 version",
+    "> 0.25%",
+    "not maintained node versions",
+    "not dead"
+  ]
 }

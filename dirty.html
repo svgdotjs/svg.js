@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-  <script type="text/javascript" src="dist/svg.js"></script>
+  <script type="text/javascript" src="dist/polyfills.js"></script>
+  <script type="text/javascript" src="dist/polyfillsIE.js"></script>
+  <script type="text/javascript" src="dist/svg.min.js"></script>
 
 
 
@@ -29,27 +31,30 @@
 <button name="play">Play</button>
 <button name="reverse">Reverse</button>
 <span id="displayText"></span>
+<br>
 
 <!-- Making the svg -->
-<svg width=1000px height=1000px id="canvas" viewbox="-1000 -2000 5000 5000">
+<svg width=1000px height=500px id="canvas">
   <rect x=50 y=100 width=200 height=100 stroke=none stroke-width=2 />
 </svg>
 
 <!-- Modifying the svg -->
-<script type="module">
+<script type="text/javascript">
 
 // import SVG from './src/svg.js'
 //
 // window.SVG = SVG
 
-let rect = SVG('rect').hide()
-let {sin, PI: pi, round, sqrt} = Math
+var rect = SVG('rect').hide()
+var sin = Math.sin
+var pi = Math.PI
+var round = Math.round
 
 function getColor(t) {
-  let a = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
-  let b = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
-  let c = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
-  let color = `rgb(${a}, ${b}, ${c})`
+  var a = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
+  var b = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
+  var c = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
+  var color = 'rgb('+ a +','+ b +','+ c +')'
   return color
 }
 
@@ -115,7 +120,7 @@ function getColor(t) {
 //   }
 // }
 
-let canvas = SVG('#canvas')
+var canvas = SVG('#canvas')
 
 canvas.attr('viewBox', null)
 
@@ -133,7 +138,7 @@ r.schedule(t, 200)
 
 var schedule = t.schedule()
 
-schedule.forEach((s, i) => {
+schedule.forEach(function (s, i) {
   var rect = canvas.rect(s.duration / 10, 25)
     .move(100 + s.start/10, 100 + i*30)
     .attr('fill', '#000')
@@ -151,61 +156,63 @@ var mover = canvas.line(100, 100, 100, 300).attr('stroke', 'black')
 mover.clone().insertAfter(mover)
 canvas.line(100, 300, 800, 300).attr('stroke', 'black')
 
-const text = SVG('#displayText')
+var text = SVG('#displayText')
 
 t.on('time', function (e) {
   mover.x(100 + e.detail/10)
   text.node.textContent = e.detail
 })
 
-t.on('finished', () => {
+t.on('finished', function (e) {
   console.log('finished')
 })
 
-SVG('button[name="back100"]').on('click', () => {
+SVG('button[name="back100"]').on('click', function (e) {
   t.seek(-100)
 })
-SVG('button[name="back1000"]').on('click', () => {
+SVG('button[name="back1000"]').on('click', function (e) {
   t.seek(-1000)
 })
-SVG('button[name="forth100"]').on('click', () => {
+SVG('button[name="forth100"]').on('click', function (e) {
   t.seek(100)
 })
-SVG('button[name="forth1000"]').on('click', () => {
+SVG('button[name="forth1000"]').on('click', function (e) {
   t.seek(1000)
 })
 
-SVG('button[name="speed2"]').on('click', () => {
+SVG('button[name="speed2"]').on('click', function (e) {
   t.speed(2)
 })
 
-SVG('button[name="speed05"]').on('click', () => {
+SVG('button[name="speed05"]').on('click', function (e) {
   t.speed(0.5)
 })
 
-SVG('button[name="pause"]').on('click', () => {
+SVG('button[name="pause"]').on('click', function (e) {
   t.pause()
 })
 
-SVG('button[name="play"]').on('click', () => {
+SVG('button[name="play"]').on('click', function (e) {
   t.play()
 })
 
-SVG('button[name="stop"]').on('click', () => {
+SVG('button[name="stop"]').on('click', function (e) {
   t.stop()
 })
 
-SVG('button[name="finish"]').on('click', () => {
+SVG('button[name="finish"]').on('click', function (e) {
   t.finish()
 })
 
-SVG('button[name="reverse"]').on('click', () => {
+SVG('button[name="reverse"]').on('click', function (e) {
   t.reverse()
 })
 
 
-canvas.rect(100, 100).on('click', (e) => {
-  e.target.instance.animate().move(Math.random()*1000, Math.random()*750).timeline().on('finished', () => {
+canvas.rect(100, 100).on('click', function (e) {
+  e.target.instance.animate()
+    .move(Math.random()*1000, Math.random()*750)
+    .timeline().on('finished', function (e) {
     console.log('rect finished')
   })
 })

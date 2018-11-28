@@ -1,5 +1,4 @@
 const methods = {}
-const constructors = {}
 const names = []
 
 export function registerMethods (name, m) {
@@ -11,8 +10,8 @@ export function registerMethods (name, m) {
   }
 
   if (typeof name === 'object') {
-    for (let [_name, _m] of Object.entries(name)) {
-      registerMethods(_name, _m)
+    for (let _name in name) {
+      registerMethods(_name, name[_name])
     }
     return
   }
@@ -31,12 +30,4 @@ export function getMethodNames () {
 
 export function addMethodNames (_names) {
   names.push(..._names)
-}
-
-export function registerConstructor (name, setup) {
-  constructors[name] = setup
-}
-
-export function getConstructor (name) {
-  return constructors[name] ? { setup: constructors[name], name } : {}
 }

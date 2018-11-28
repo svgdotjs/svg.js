@@ -270,7 +270,8 @@ describe('Event', function() {
       rect.on('event', function(e) {
         e.preventDefault()
       })
-      expect(rect.dispatch('event').defaultPrevented).toBe(true)
+      var event = rect.dispatch('event')
+      expect(event.defaultPrevented).toBe(true)
     })
   })
 })

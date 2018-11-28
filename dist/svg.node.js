@@ -8,595 +8,9 @@
 *
 * BUILT: Wed Nov 28 2018 12:47:10 GMT+0100 (GMT+01:00)
 */;
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
+'use strict';
 
-var _core = createCommonjsModule(function (module) {
-var core = module.exports = { version: '2.5.7' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-});
-var _core_1 = _core.version;
-
-var _global = createCommonjsModule(function (module) {
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-});
-
-var _library = false;
-
-var _shared = createCommonjsModule(function (module) {
-var SHARED = '__core-js_shared__';
-var store = _global[SHARED] || (_global[SHARED] = {});
-
-(module.exports = function (key, value) {
-  return store[key] || (store[key] = value !== undefined ? value : {});
-})('versions', []).push({
-  version: _core.version,
-  mode: _library ? 'pure' : 'global',
-  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-});
-});
-
-var id = 0;
-var px = Math.random();
-var _uid = function (key) {
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-
-var _wks = createCommonjsModule(function (module) {
-var store = _shared('wks');
-
-var Symbol = _global.Symbol;
-var USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function (name) {
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-});
-
-var _isObject = function (it) {
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-var _anObject = function (it) {
-  if (!_isObject(it)) throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-var _fails = function (exec) {
-  try {
-    return !!exec();
-  } catch (e) {
-    return true;
-  }
-};
-
-// Thank's IE8 for his funny defineProperty
-var _descriptors = !_fails(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
-});
-
-var document$1 = _global.document;
-// typeof document.createElement is 'object' in old IE
-var is = _isObject(document$1) && _isObject(document$1.createElement);
-var _domCreate = function (it) {
-  return is ? document$1.createElement(it) : {};
-};
-
-var _ie8DomDefine = !_descriptors && !_fails(function () {
-  return Object.defineProperty(_domCreate('div'), 'a', { get: function () { return 7; } }).a != 7;
-});
-
-// 7.1.1 ToPrimitive(input [, PreferredType])
-
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-var _toPrimitive = function (it, S) {
-  if (!_isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-var dP = Object.defineProperty;
-
-var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
-  _anObject(O);
-  P = _toPrimitive(P, true);
-  _anObject(Attributes);
-  if (_ie8DomDefine) try {
-    return dP(O, P, Attributes);
-  } catch (e) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-  if ('value' in Attributes) O[P] = Attributes.value;
-  return O;
-};
-
-var _objectDp = {
-	f: f
-};
-
-var _propertyDesc = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-var _hide = _descriptors ? function (object, key, value) {
-  return _objectDp.f(object, key, _propertyDesc(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
-
-// 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = _wks('unscopables');
-var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
-var _addToUnscopables = function (key) {
-  ArrayProto[UNSCOPABLES][key] = true;
-};
-
-var _iterStep = function (done, value) {
-  return { value: value, done: !!done };
-};
-
-var _iterators = {};
-
-var toString = {}.toString;
-
-var _cof = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-// eslint-disable-next-line no-prototype-builtins
-var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-  return _cof(it) == 'String' ? it.split('') : Object(it);
-};
-
-// 7.2.1 RequireObjectCoercible(argument)
-var _defined = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-var _toIobject = function (it) {
-  return _iobject(_defined(it));
-};
-
-var hasOwnProperty = {}.hasOwnProperty;
-var _has = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
-
-var _redefine = createCommonjsModule(function (module) {
-var SRC = _uid('src');
-var TO_STRING = 'toString';
-var $toString = Function[TO_STRING];
-var TPL = ('' + $toString).split(TO_STRING);
-
-_core.inspectSource = function (it) {
-  return $toString.call(it);
-};
-
-(module.exports = function (O, key, val, safe) {
-  var isFunction = typeof val == 'function';
-  if (isFunction) _has(val, 'name') || _hide(val, 'name', key);
-  if (O[key] === val) return;
-  if (isFunction) _has(val, SRC) || _hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
-  if (O === _global) {
-    O[key] = val;
-  } else if (!safe) {
-    delete O[key];
-    _hide(O, key, val);
-  } else if (O[key]) {
-    O[key] = val;
-  } else {
-    _hide(O, key, val);
-  }
-// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-})(Function.prototype, TO_STRING, function toString() {
-  return typeof this == 'function' && this[SRC] || $toString.call(this);
-});
-});
-
-var _aFunction = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-  return it;
-};
-
-// optional / simple context binding
-
-var _ctx = function (fn, that, length) {
-  _aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
-  };
-};
-
-var PROTOTYPE = 'prototype';
-
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE];
-  var exports = IS_GLOBAL ? _core : _core[name] || (_core[name] = {});
-  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
-  var key, own, out, exp;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    // export native or passed
-    out = (own ? target : source)[key];
-    // bind timers to global for call from export context
-    exp = IS_BIND && own ? _ctx(out, _global) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
-    // extend global
-    if (target) _redefine(target, key, out, type & $export.U);
-    // export
-    if (exports[key] != out) _hide(exports, key, exp);
-    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
-  }
-};
-_global.core = _core;
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
-var _export = $export;
-
-// 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-var _toInteger = function (it) {
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-// 7.1.15 ToLength
-
-var min = Math.min;
-var _toLength = function (it) {
-  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-};
-
-var max = Math.max;
-var min$1 = Math.min;
-var _toAbsoluteIndex = function (index, length) {
-  index = _toInteger(index);
-  return index < 0 ? max(index + length, 0) : min$1(index, length);
-};
-
-// false -> Array#indexOf
-// true  -> Array#includes
-
-
-
-var _arrayIncludes = function (IS_INCLUDES) {
-  return function ($this, el, fromIndex) {
-    var O = _toIobject($this);
-    var length = _toLength(O.length);
-    var index = _toAbsoluteIndex(fromIndex, length);
-    var value;
-    // Array#includes uses SameValueZero equality algorithm
-    // eslint-disable-next-line no-self-compare
-    if (IS_INCLUDES && el != el) while (length > index) {
-      value = O[index++];
-      // eslint-disable-next-line no-self-compare
-      if (value != value) return true;
-    // Array#indexOf ignores holes, Array#includes - not
-    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
-      if (O[index] === el) return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
-  };
-};
-
-var shared = _shared('keys');
-
-var _sharedKey = function (key) {
-  return shared[key] || (shared[key] = _uid(key));
-};
-
-var arrayIndexOf = _arrayIncludes(false);
-var IE_PROTO = _sharedKey('IE_PROTO');
-
-var _objectKeysInternal = function (object, names) {
-  var O = _toIobject(object);
-  var i = 0;
-  var result = [];
-  var key;
-  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while (names.length > i) if (_has(O, key = names[i++])) {
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
-};
-
-// IE 8- don't enum bug keys
-var _enumBugKeys = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-
-
-
-var _objectKeys = Object.keys || function keys(O) {
-  return _objectKeysInternal(O, _enumBugKeys);
-};
-
-var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
-  _anObject(O);
-  var keys = _objectKeys(Properties);
-  var length = keys.length;
-  var i = 0;
-  var P;
-  while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
-  return O;
-};
-
-var document$2 = _global.document;
-var _html = document$2 && document$2.documentElement;
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-
-
-
-var IE_PROTO$1 = _sharedKey('IE_PROTO');
-var Empty = function () { /* empty */ };
-var PROTOTYPE$1 = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = _domCreate('iframe');
-  var i = _enumBugKeys.length;
-  var lt = '<';
-  var gt = '>';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  _html.appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
-  return createDict();
-};
-
-var _objectCreate = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    Empty[PROTOTYPE$1] = _anObject(O);
-    result = new Empty();
-    Empty[PROTOTYPE$1] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO$1] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : _objectDps(result, Properties);
-};
-
-var def = _objectDp.f;
-
-var TAG = _wks('toStringTag');
-
-var _setToStringTag = function (it, tag, stat) {
-  if (it && !_has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
-};
-
-var IteratorPrototype = {};
-
-// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
-
-var _iterCreate = function (Constructor, NAME, next) {
-  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
-  _setToStringTag(Constructor, NAME + ' Iterator');
-};
-
-// 7.1.13 ToObject(argument)
-
-var _toObject = function (it) {
-  return Object(_defined(it));
-};
-
-// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-
-
-var IE_PROTO$2 = _sharedKey('IE_PROTO');
-var ObjectProto = Object.prototype;
-
-var _objectGpo = Object.getPrototypeOf || function (O) {
-  O = _toObject(O);
-  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
-  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
-    return O.constructor.prototype;
-  } return O instanceof Object ? ObjectProto : null;
-};
-
-var ITERATOR = _wks('iterator');
-var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-var FF_ITERATOR = '@@iterator';
-var KEYS = 'keys';
-var VALUES = 'values';
-
-var returnThis = function () { return this; };
-
-var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
-  _iterCreate(Constructor, NAME, next);
-  var getMethod = function (kind) {
-    if (!BUGGY && kind in proto) return proto[kind];
-    switch (kind) {
-      case KEYS: return function keys() { return new Constructor(this, kind); };
-      case VALUES: return function values() { return new Constructor(this, kind); };
-    } return function entries() { return new Constructor(this, kind); };
-  };
-  var TAG = NAME + ' Iterator';
-  var DEF_VALUES = DEFAULT == VALUES;
-  var VALUES_BUG = false;
-  var proto = Base.prototype;
-  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
-  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-  var methods, key, IteratorPrototype;
-  // Fix native
-  if ($anyNative) {
-    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
-    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
-      // Set @@toStringTag to native iterators
-      _setToStringTag(IteratorPrototype, TAG, true);
-      // fix for some old engines
-      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
-    }
-  }
-  // fix Array#{values, @@iterator}.name in V8 / FF
-  if (DEF_VALUES && $native && $native.name !== VALUES) {
-    VALUES_BUG = true;
-    $default = function values() { return $native.call(this); };
-  }
-  // Define iterator
-  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
-    _hide(proto, ITERATOR, $default);
-  }
-  // Plug for library
-  _iterators[NAME] = $default;
-  _iterators[TAG] = returnThis;
-  if (DEFAULT) {
-    methods = {
-      values: DEF_VALUES ? $default : getMethod(VALUES),
-      keys: IS_SET ? $default : getMethod(KEYS),
-      entries: $entries
-    };
-    if (FORCED) for (key in methods) {
-      if (!(key in proto)) _redefine(proto, key, methods[key]);
-    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
-  }
-  return methods;
-};
-
-// 22.1.3.4 Array.prototype.entries()
-// 22.1.3.13 Array.prototype.keys()
-// 22.1.3.29 Array.prototype.values()
-// 22.1.3.30 Array.prototype[@@iterator]()
-var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
-  this._t = _toIobject(iterated); // target
-  this._i = 0;                   // next index
-  this._k = kind;                // kind
-// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-}, function () {
-  var O = this._t;
-  var kind = this._k;
-  var index = this._i++;
-  if (!O || index >= O.length) {
-    this._t = undefined;
-    return _iterStep(1);
-  }
-  if (kind == 'keys') return _iterStep(0, index);
-  if (kind == 'values') return _iterStep(0, O[index]);
-  return _iterStep(0, [index, O[index]]);
-}, 'values');
-
-// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-_iterators.Arguments = _iterators.Array;
-
-_addToUnscopables('keys');
-_addToUnscopables('values');
-_addToUnscopables('entries');
-
-var ITERATOR$1 = _wks('iterator');
-var TO_STRING_TAG = _wks('toStringTag');
-var ArrayValues = _iterators.Array;
-
-var DOMIterables = {
-  CSSRuleList: true, // TODO: Not spec compliant, should be false.
-  CSSStyleDeclaration: false,
-  CSSValueList: false,
-  ClientRectList: false,
-  DOMRectList: false,
-  DOMStringList: false,
-  DOMTokenList: true,
-  DataTransferItemList: false,
-  FileList: false,
-  HTMLAllCollection: false,
-  HTMLCollection: false,
-  HTMLFormElement: false,
-  HTMLSelectElement: false,
-  MediaList: true, // TODO: Not spec compliant, should be false.
-  MimeTypeArray: false,
-  NamedNodeMap: false,
-  NodeList: true,
-  PaintRequestList: false,
-  Plugin: false,
-  PluginArray: false,
-  SVGLengthList: false,
-  SVGNumberList: false,
-  SVGPathSegList: false,
-  SVGPointList: false,
-  SVGStringList: false,
-  SVGTransformList: false,
-  SourceBufferList: false,
-  StyleSheetList: true, // TODO: Not spec compliant, should be false.
-  TextTrackCueList: false,
-  TextTrackList: false,
-  TouchList: false
-};
-
-for (var collections = _objectKeys(DOMIterables), i = 0; i < collections.length; i++) {
-  var NAME = collections[i];
-  var explicit = DOMIterables[NAME];
-  var Collection = _global[NAME];
-  var proto = Collection && Collection.prototype;
-  var key;
-  if (proto) {
-    if (!proto[ITERATOR$1]) _hide(proto, ITERATOR$1, ArrayValues);
-    if (!proto[TO_STRING_TAG]) _hide(proto, TO_STRING_TAG, NAME);
-    _iterators[NAME] = ArrayValues;
-    if (explicit) for (key in es6_array_iterator) if (!proto[key]) _redefine(proto, key, es6_array_iterator[key], true);
-  }
-}
+Object.defineProperty(exports, '__esModule', { value: true });
 
 const methods = {};
 const names = [];
@@ -629,40 +43,6 @@ function getMethodNames() {
 function addMethodNames(_names) {
   names.push(..._names);
 }
-
-var _fixReWks = function (KEY, length, exec) {
-  var SYMBOL = _wks(KEY);
-  var fns = exec(_defined, SYMBOL, ''[KEY]);
-  var strfn = fns[0];
-  var rxfn = fns[1];
-  if (_fails(function () {
-    var O = {};
-    O[SYMBOL] = function () { return 7; };
-    return ''[KEY](O) != 7;
-  })) {
-    _redefine(String.prototype, KEY, strfn);
-    _hide(RegExp.prototype, SYMBOL, length == 2
-      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
-      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
-      ? function (string, arg) { return rxfn.call(string, this, arg); }
-      // 21.2.5.6 RegExp.prototype[@@match](string)
-      // 21.2.5.9 RegExp.prototype[@@search](string)
-      : function (string) { return rxfn.call(string, this); }
-    );
-  }
-};
-
-// @@replace logic
-_fixReWks('replace', 2, function (defined, REPLACE, $replace) {
-  // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
-  return [function replace(searchValue, replaceValue) {
-    var O = defined(this);
-    var fn = searchValue == undefined ? undefined : searchValue[REPLACE];
-    return fn !== undefined
-      ? fn.call(searchValue, O, replaceValue)
-      : $replace.call(String(O), searchValue, replaceValue);
-  }, $replace];
-});
 
 // Map function
 function map(array, block) {
@@ -740,13 +120,12 @@ function getOrigin(o, element) {
   if (typeof origin === 'string' || origin == null) {
     // Get the bounding box of the element with no transformations applied
     const string = (origin || 'center').toLowerCase().trim();
-
-    const _element$bbox = element.bbox(),
-          height = _element$bbox.height,
-          width = _element$bbox.width,
-          x = _element$bbox.x,
-          y = _element$bbox.y; // Calculate the transformed x and y coordinates
-
+    const {
+      height,
+      width,
+      x,
+      y
+    } = element.bbox(); // Calculate the transformed x and y coordinates
 
     let bx = string.includes('left') ? x : string.includes('right') ? x + width : x + width / 2;
     let by = string.includes('top') ? y : string.includes('bottom') ? y + height : y + height / 2; // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
@@ -763,15 +142,15 @@ function getOrigin(o, element) {
 }
 
 var utils = /*#__PURE__*/Object.freeze({
-	map: map,
-	filter: filter,
-	radians: radians,
-	degrees: degrees,
-	camelCase: camelCase,
-	unCamelCase: unCamelCase,
-	capitalize: capitalize,
-	proportionalSize: proportionalSize,
-	getOrigin: getOrigin
+  map: map,
+  filter: filter,
+  radians: radians,
+  degrees: degrees,
+  camelCase: camelCase,
+  unCamelCase: unCamelCase,
+  capitalize: capitalize,
+  proportionalSize: proportionalSize,
+  getOrigin: getOrigin
 });
 
 // Default namespaces
@@ -781,10 +160,10 @@ let xlink = 'http://www.w3.org/1999/xlink';
 let svgjs = 'http://svgjs.com/svgjs';
 
 var namespaces = /*#__PURE__*/Object.freeze({
-	ns: ns,
-	xmlns: xmlns,
-	xlink: xlink,
-	svgjs: svgjs
+  ns: ns,
+  xmlns: xmlns,
+  xlink: xlink,
+  svgjs: svgjs
 });
 
 const globals = {
@@ -1012,86 +391,6 @@ registerMethods('Dom', {
   insertAfter
 });
 
-// 7.2.8 IsRegExp(argument)
-
-
-var MATCH = _wks('match');
-var _isRegexp = function (it) {
-  var isRegExp;
-  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
-};
-
-// @@split logic
-_fixReWks('split', 2, function (defined, SPLIT, $split) {
-  var isRegExp = _isRegexp;
-  var _split = $split;
-  var $push = [].push;
-  var $SPLIT = 'split';
-  var LENGTH = 'length';
-  var LAST_INDEX = 'lastIndex';
-  if (
-    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
-    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
-    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
-    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
-    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
-    ''[$SPLIT](/.?/)[LENGTH]
-  ) {
-    var NPCG = /()??/.exec('')[1] === undefined; // nonparticipating capturing group
-    // based on es5-shim implementation, need to rework it
-    $split = function (separator, limit) {
-      var string = String(this);
-      if (separator === undefined && limit === 0) return [];
-      // If `separator` is not a regex, use native split
-      if (!isRegExp(separator)) return _split.call(string, separator, limit);
-      var output = [];
-      var flags = (separator.ignoreCase ? 'i' : '') +
-                  (separator.multiline ? 'm' : '') +
-                  (separator.unicode ? 'u' : '') +
-                  (separator.sticky ? 'y' : '');
-      var lastLastIndex = 0;
-      var splitLimit = limit === undefined ? 4294967295 : limit >>> 0;
-      // Make `global` and avoid `lastIndex` issues by working with a copy
-      var separatorCopy = new RegExp(separator.source, flags + 'g');
-      var separator2, match, lastIndex, lastLength, i;
-      // Doesn't need flags gy, but they don't hurt
-      if (!NPCG) separator2 = new RegExp('^' + separatorCopy.source + '$(?!\\s)', flags);
-      while (match = separatorCopy.exec(string)) {
-        // `separatorCopy.lastIndex` is not reliable cross-browser
-        lastIndex = match.index + match[0][LENGTH];
-        if (lastIndex > lastLastIndex) {
-          output.push(string.slice(lastLastIndex, match.index));
-          // Fix browsers whose `exec` methods don't consistently return `undefined` for NPCG
-          // eslint-disable-next-line no-loop-func
-          if (!NPCG && match[LENGTH] > 1) match[0].replace(separator2, function () {
-            for (i = 1; i < arguments[LENGTH] - 2; i++) if (arguments[i] === undefined) match[i] = undefined;
-          });
-          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
-          lastLength = match[0][LENGTH];
-          lastLastIndex = lastIndex;
-          if (output[LENGTH] >= splitLimit) break;
-        }
-        if (separatorCopy[LAST_INDEX] === match.index) separatorCopy[LAST_INDEX]++; // Avoid an infinite loop
-      }
-      if (lastLastIndex === string[LENGTH]) {
-        if (lastLength || !separatorCopy.test('')) output.push('');
-      } else output.push(string.slice(lastLastIndex));
-      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
-    };
-  // Chakra, V8
-  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
-    $split = function (separator, limit) {
-      return separator === undefined && limit === 0 ? [] : _split.call(this, separator, limit);
-    };
-  }
-  // 21.1.3.17 String.prototype.split(separator, limit)
-  return [function split(separator, limit) {
-    var O = defined(this);
-    var fn = separator == undefined ? undefined : separator[SPLIT];
-    return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
-  }, $split];
-});
-
 // Parse unit value
 let numberAndUnit = /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i; // Parse hex value
 
@@ -1133,25 +432,25 @@ let numbersWithDots = /((\d?\.\d+(?:e[+-]?\d+)?)((?:\.\d+(?:e[+-]?\d+)?)+))+/gi;
 let dots = /\./g;
 
 var regex = /*#__PURE__*/Object.freeze({
-	numberAndUnit: numberAndUnit,
-	hex: hex,
-	rgb: rgb,
-	reference: reference,
-	transforms: transforms,
-	whitespace: whitespace,
-	isHex: isHex,
-	isRgb: isRgb,
-	isCss: isCss,
-	isBlank: isBlank,
-	isNumber: isNumber,
-	isPercent: isPercent,
-	isImage: isImage,
-	delimiter: delimiter,
-	hyphen: hyphen,
-	pathLetters: pathLetters,
-	isPathLetter: isPathLetter,
-	numbersWithDots: numbersWithDots,
-	dots: dots
+  numberAndUnit: numberAndUnit,
+  hex: hex,
+  rgb: rgb,
+  reference: reference,
+  transforms: transforms,
+  whitespace: whitespace,
+  isHex: isHex,
+  isRgb: isRgb,
+  isCss: isCss,
+  isBlank: isBlank,
+  isNumber: isNumber,
+  isPercent: isPercent,
+  isImage: isImage,
+  delimiter: delimiter,
+  hyphen: hyphen,
+  pathLetters: pathLetters,
+  isPathLetter: isPathLetter,
+  numbersWithDots: numbersWithDots,
+  dots: dots
 });
 
 function classes() {
@@ -1438,45 +737,34 @@ function dispatch(node, event, data) {
   return event;
 }
 
-// 21.2.5.3 get RegExp.prototype.flags
+/*
 
-var _flags = function () {
-  var that = _anObject(this);
-  var result = '';
-  if (that.global) result += 'g';
-  if (that.ignoreCase) result += 'i';
-  if (that.multiline) result += 'm';
-  if (that.unicode) result += 'u';
-  if (that.sticky) result += 'y';
-  return result;
-};
+Color {
+  constructor (a, b, c, space) {
+    space: 'hsl'
+    a: 30
+    b: 20
+    c: 10
+  },
 
-// 21.2.5.3 get RegExp.prototype.flags()
-if (_descriptors && /./g.flags != 'g') _objectDp.f(RegExp.prototype, 'flags', {
-  configurable: true,
-  get: _flags
-});
+  toRgb () { return new Color in rgb space }
+  toHsl () { return new Color in hsl space }
+  toLab () { return new Color in lab space }
 
-var TO_STRING = 'toString';
-var $toString = /./[TO_STRING];
-
-var define = function (fn) {
-  _redefine(RegExp.prototype, TO_STRING, fn, true);
-};
-
-// 21.2.5.14 RegExp.prototype.toString()
-if (_fails(function () { return $toString.call({ source: 'a', flags: 'b' }) != '/a/b'; })) {
-  define(function toString() {
-    var R = _anObject(this);
-    return '/'.concat(R.source, '/',
-      'flags' in R ? R.flags : !_descriptors && R instanceof RegExp ? _flags.call(R) : undefined);
-  });
-// FF44- RegExp#toString has a wrong name
-} else if ($toString.name != TO_STRING) {
-  define(function toString() {
-    return $toString.call(this);
-  });
+  toArray () { [space, a, b, c] }
+  fromArray () { convert it back }
 }
+
+// Conversions aren't always exact because of monitor profiles etc...
+new Color(h, s, l, 'hsl') !== new Color(r, g, b).hsl()
+new Color(100, 100, 100, [space])
+new Color('hsl(30, 20, 10)')
+
+// Sugar
+SVG.rgb(30, 20, 50).lab()
+SVG.hsl()
+SVG.lab('rgb(100, 100, 100)')
+*/
 
 function fullHex(hex$$1) {
   return hex$$1.length === 4 ? ['#', hex$$1.substring(1, 2), hex$$1.substring(1, 2), hex$$1.substring(2, 3), hex$$1.substring(2, 3), hex$$1.substring(3, 4), hex$$1.substring(3, 4)].join('') : hex$$1;
@@ -1576,16 +864,6 @@ class Color {
   }
 
 }
-
-// @@match logic
-_fixReWks('match', 1, function (defined, MATCH, $match) {
-  // 21.1.3.11 String.prototype.match(regexp)
-  return [function match(regexp) {
-    var O = defined(this);
-    var fn = regexp == undefined ? undefined : regexp[MATCH];
-    return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
-  }, $match];
-});
 
 class Point {
   // Initialize
@@ -1822,11 +1100,10 @@ class Matrix {
 
     var t = Matrix.formatTransforms(o);
     var current = this;
-
-    let _transform = new Point(t.ox, t.oy).transform(current),
-        ox = _transform.x,
-        oy = _transform.y; // Construct the resulting matrix
-
+    let {
+      x: ox,
+      y: oy
+    } = new Point(t.ox, t.oy).transform(current); // Construct the resulting matrix
 
     var transformer = new Matrix().translateO(t.rx, t.ry).lmultiplyO(current).translateO(-ox, -oy).scaleO(t.scaleX, t.scaleY).skewO(t.skewX, t.skewY).shearO(t.shear).rotateO(t.theta).translateO(ox, oy); // If we want the origin at a particular place, we force it there
 
@@ -1991,12 +1268,14 @@ class Matrix {
       y = x;
     }
 
-    let a = this.a,
-        b = this.b,
-        c = this.c,
-        d = this.d,
-        e = this.e,
-        f = this.f;
+    let {
+      a,
+      b,
+      c,
+      d,
+      e,
+      f
+    } = this;
     this.a = a * x;
     this.b = b * y;
     this.c = c * x;
@@ -2016,12 +1295,14 @@ class Matrix {
     r = radians(r);
     let cos = Math.cos(r);
     let sin = Math.sin(r);
-    let a = this.a,
-        b = this.b,
-        c = this.c,
-        d = this.d,
-        e = this.e,
-        f = this.f;
+    let {
+      a,
+      b,
+      c,
+      d,
+      e,
+      f
+    } = this;
     this.a = a * cos - b * sin;
     this.b = b * cos + a * sin;
     this.c = c * cos - d * sin;
@@ -2046,12 +1327,14 @@ class Matrix {
   }
 
   shearO(lx, cx = 0, cy = 0) {
-    let a = this.a,
-        b = this.b,
-        c = this.c,
-        d = this.d,
-        e = this.e,
-        f = this.f;
+    let {
+      a,
+      b,
+      c,
+      d,
+      e,
+      f
+    } = this;
     this.a = a + b * lx;
     this.c = c + d * lx;
     this.e = e + f * lx - cy * lx;
@@ -2076,12 +1359,14 @@ class Matrix {
     y = radians(y);
     let lx = Math.tan(x);
     let ly = Math.tan(y);
-    let a = this.a,
-        b = this.b,
-        c = this.c,
-        d = this.d,
-        e = this.e,
-        f = this.f;
+    let {
+      a,
+      b,
+      c,
+      d,
+      e,
+      f
+    } = this;
     this.a = a + b * lx;
     this.b = b + a * ly;
     this.c = c + d * lx;
@@ -2249,7 +1534,7 @@ const subClassArray = function () {
   } catch (e) {
     // Use es5 approach
     return (name, baseClass = Array, _constructor) => {
-      const Arr = function Arr() {
+      const Arr = function () {
         baseClass.apply(this, arguments);
         _constructor && _constructor.apply(this, arguments);
       };
@@ -2415,9 +1700,9 @@ let attrs = {
 };
 
 var defaults = /*#__PURE__*/Object.freeze({
-	noop: noop,
-	timeline: timeline,
-	attrs: attrs
+  noop: noop,
+  timeline: timeline,
+  attrs: attrs
 });
 
 const SVGArray = subClassArray('SVGArray', Array, function (arr) {
@@ -2793,7 +2078,7 @@ class Dom extends EventTarget {
   }
 
   round(precision = 2, map$$1) {
-    const factor = 10 ** precision;
+    const factor = Math.pow(10, precision);
     const attrs = this.attr(); // If we have no map, build one from attrs
 
     if (!map$$1) {
@@ -3034,7 +2319,7 @@ register(Element);
 var sugar = {
   stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
   fill: ['color', 'opacity', 'rule'],
-  prefix: function prefix(t, a) {
+  prefix: function (t, a) {
     return a === 'color' ? t : t + '-' + a;
   } // Add sugar for fill and stroke
 
@@ -3066,7 +2351,7 @@ var sugar = {
 });
 registerMethods(['Element', 'Runner'], {
   // Let the user set the matrix directly
-  matrix: function matrix(mat, b, c, d, e, f) {
+  matrix: function (mat, b, c, d, e, f) {
     // Act as a getter
     if (mat == null) {
       return new Matrix(this);
@@ -3076,7 +2361,7 @@ registerMethods(['Element', 'Runner'], {
     return this.attr('transform', new Matrix(mat, b, c, d, e, f));
   },
   // Map rotation to transform
-  rotate: function rotate(angle, cx, cy) {
+  rotate: function (angle, cx, cy) {
     return this.transform({
       rotate: angle,
       ox: cx,
@@ -3084,7 +2369,7 @@ registerMethods(['Element', 'Runner'], {
     }, true);
   },
   // Map skew to transform
-  skew: function skew(x, y, cx, cy) {
+  skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3 ? this.transform({
       skew: x,
       ox: y,
@@ -3095,7 +2380,7 @@ registerMethods(['Element', 'Runner'], {
       oy: cy
     }, true);
   },
-  shear: function shear(lam, cx, cy) {
+  shear: function (lam, cx, cy) {
     return this.transform({
       shear: lam,
       ox: cx,
@@ -3103,7 +2388,7 @@ registerMethods(['Element', 'Runner'], {
     }, true);
   },
   // Map scale to transform
-  scale: function scale(x, y, cx, cy) {
+  scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3 ? this.transform({
       scale: x,
       ox: y,
@@ -3115,19 +2400,19 @@ registerMethods(['Element', 'Runner'], {
     }, true);
   },
   // Map translate to transform
-  translate: function translate(x, y) {
+  translate: function (x, y) {
     return this.transform({
       translate: [x, y]
     }, true);
   },
   // Map relative translations to transform
-  relative: function relative(x, y) {
+  relative: function (x, y) {
     return this.transform({
       relative: [x, y]
     }, true);
   },
   // Map flip to transform
-  flip: function flip(direction, around) {
+  flip: function (direction, around) {
     var directionString = typeof direction === 'string' ? direction : isFinite(direction) ? 'both' : 'both';
     var origin = direction === 'both' && isFinite(around) ? [around, around] : direction === 'x' ? [around, 0] : direction === 'y' ? [0, around] : isFinite(direction) ? [direction, direction] : [0, 0];
     this.transform({
@@ -3136,44 +2421,44 @@ registerMethods(['Element', 'Runner'], {
     }, true);
   },
   // Opacity
-  opacity: function opacity(value) {
+  opacity: function (value) {
     return this.attr('opacity', value);
   },
   // Relative move over x and y axes
-  dmove: function dmove(x, y) {
+  dmove: function (x, y) {
     return this.dx(x).dy(y);
   }
 });
 registerMethods('Element', {
   // Relative move over x axis
-  dx: function dx(x) {
+  dx: function (x) {
     return this.x(new SVGNumber(x).plus(this.x()));
   },
   // Relative move over y axis
-  dy: function dy(y) {
+  dy: function (y) {
     return this.y(new SVGNumber(y).plus(this.y()));
   }
 });
 registerMethods('radius', {
   // Add x and y radius
-  radius: function radius(x, y) {
+  radius: function (x, y) {
     var type = (this._element || this).type;
     return type === 'radialGradient' || type === 'radialGradient' ? this.attr('r', new SVGNumber(x)) : this.rx(x).ry(y == null ? x : y);
   }
 });
 registerMethods('Path', {
   // Get path length
-  length: function length() {
+  length: function () {
     return this.node.getTotalLength();
   },
   // Get point at length
-  pointAt: function pointAt(length) {
+  pointAt: function (length) {
     return new Point(this.node.getPointAtLength(length));
   }
 });
 registerMethods(['Element', 'Runner'], {
   // Set font
-  font: function font(a, v) {
+  font: function (a, v) {
     if (typeof a === 'object') {
       for (v in a) this.font(v, a[v]);
     }
@@ -3198,7 +2483,7 @@ registerMethods('Text', {
 
 const methods$1 = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mouseenter', 'mouseleave', 'touchstart', 'touchmove', 'touchleave', 'touchend', 'touchcancel'].reduce(function (last, event) {
   // add event to Element
-  const fn = function fn(f) {
+  const fn = function (f) {
     if (f === null) {
       off(this, event);
     } else {
@@ -3342,14 +2627,14 @@ function height(height) {
 }
 
 var circled = /*#__PURE__*/Object.freeze({
-	rx: rx,
-	ry: ry,
-	x: x,
-	y: y,
-	cx: cx,
-	cy: cy,
-	width: width,
-	height: height
+  rx: rx,
+  ry: ry,
+  x: x,
+  y: y,
+  cx: cx,
+  cy: cy,
+  width: width,
+  height: height
 });
 
 class Shape extends Element {}
@@ -3501,8 +2786,8 @@ function to(x, y) {
 }
 
 var gradiented = /*#__PURE__*/Object.freeze({
-	from: from,
-	to: to
+  from: from,
+  to: to
 });
 
 class Gradient extends Container {
@@ -3827,11 +3112,11 @@ function height$1(height) {
 }
 
 var pointed = /*#__PURE__*/Object.freeze({
-	MorphArray: MorphArray,
-	x: x$1,
-	y: y$1,
-	width: width$1,
-	height: height$1
+  MorphArray: MorphArray,
+  x: x$1,
+  y: y$1,
+  width: width$1,
+  height: height$1
 });
 
 class Line extends Shape {
@@ -3958,6 +3243,224 @@ registerMethods({
 });
 register(Marker);
 
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var _global = createCommonjsModule(function (module) {
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+});
+
+var _core = createCommonjsModule(function (module) {
+var core = module.exports = { version: '2.5.7' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+});
+var _core_1 = _core.version;
+
+var _isObject = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+var _anObject = function (it) {
+  if (!_isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+var _fails = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
+  }
+};
+
+// Thank's IE8 for his funny defineProperty
+var _descriptors = !_fails(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+});
+
+var document$1 = _global.document;
+// typeof document.createElement is 'object' in old IE
+var is = _isObject(document$1) && _isObject(document$1.createElement);
+var _domCreate = function (it) {
+  return is ? document$1.createElement(it) : {};
+};
+
+var _ie8DomDefine = !_descriptors && !_fails(function () {
+  return Object.defineProperty(_domCreate('div'), 'a', { get: function () { return 7; } }).a != 7;
+});
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+var _toPrimitive = function (it, S) {
+  if (!_isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+var dP = Object.defineProperty;
+
+var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+  _anObject(O);
+  P = _toPrimitive(P, true);
+  _anObject(Attributes);
+  if (_ie8DomDefine) try {
+    return dP(O, P, Attributes);
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+var _objectDp = {
+	f: f
+};
+
+var _propertyDesc = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+var _hide = _descriptors ? function (object, key, value) {
+  return _objectDp.f(object, key, _propertyDesc(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+var hasOwnProperty = {}.hasOwnProperty;
+var _has = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+var id = 0;
+var px = Math.random();
+var _uid = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+var _redefine = createCommonjsModule(function (module) {
+var SRC = _uid('src');
+var TO_STRING = 'toString';
+var $toString = Function[TO_STRING];
+var TPL = ('' + $toString).split(TO_STRING);
+
+_core.inspectSource = function (it) {
+  return $toString.call(it);
+};
+
+(module.exports = function (O, key, val, safe) {
+  var isFunction = typeof val == 'function';
+  if (isFunction) _has(val, 'name') || _hide(val, 'name', key);
+  if (O[key] === val) return;
+  if (isFunction) _has(val, SRC) || _hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if (O === _global) {
+    O[key] = val;
+  } else if (!safe) {
+    delete O[key];
+    _hide(O, key, val);
+  } else if (O[key]) {
+    O[key] = val;
+  } else {
+    _hide(O, key, val);
+  }
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+})(Function.prototype, TO_STRING, function toString() {
+  return typeof this == 'function' && this[SRC] || $toString.call(this);
+});
+});
+
+var _aFunction = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+// optional / simple context binding
+
+var _ctx = function (fn, that, length) {
+  _aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+var PROTOTYPE = 'prototype';
+
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE];
+  var exports = IS_GLOBAL ? _core : _core[name] || (_core[name] = {});
+  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
+  var key, own, out, exp;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    // export native or passed
+    out = (own ? target : source)[key];
+    // bind timers to global for call from export context
+    exp = IS_BIND && own ? _ctx(out, _global) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
+    // extend global
+    if (target) _redefine(target, key, out, type & $export.U);
+    // export
+    if (exports[key] != out) _hide(exports, key, exp);
+    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
+  }
+};
+_global.core = _core;
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library`
+var _export = $export;
+
+// 7.2.1 RequireObjectCoercible(argument)
+var _defined = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+// 7.1.13 ToObject(argument)
+
+var _toObject = function (it) {
+  return Object(_defined(it));
+};
+
 var _strictMethod = function (method, arg) {
   return !!method && _fails(function () {
     // eslint-disable-next-line no-useless-call
@@ -4000,19 +3503,19 @@ function makeSetterGetter(k, f) {
 }
 
 let easing = {
-  '-': function _(pos) {
+  '-': function (pos) {
     return pos;
   },
-  '<>': function _(pos) {
+  '<>': function (pos) {
     return -Math.cos(pos * Math.PI) / 2 + 0.5;
   },
-  '>': function _(pos) {
+  '>': function (pos) {
     return Math.sin(pos * Math.PI / 2);
   },
-  '<': function _(pos) {
+  '<': function (pos) {
     return -Math.cos(pos * Math.PI / 2) + 1;
   },
-  bezier: function bezier(x1, y1, x2, y2) {
+  bezier: function (x1, y1, x2, y2) {
     // see https://www.w3.org/TR/css-easing-1/#cubic-bezier-algo
     return function (t) {
       if (t < 0) {
@@ -4032,15 +3535,15 @@ let easing = {
           return 1;
         }
       } else {
-        return 3 * t * (1 - t) ** 2 * y1 + 3 * t ** 2 * (1 - t) * y2 + t ** 3;
+        return 3 * t * Math.pow(1 - t, 2) * y1 + 3 * Math.pow(t, 2) * (1 - t) * y2 + Math.pow(t, 3);
       }
     };
   },
   // see https://www.w3.org/TR/css-easing-1/#step-timing-function-algo
-  steps: function steps(_steps, stepPosition = 'end') {
+  steps: function (steps, stepPosition = 'end') {
     // deal with "jump-" prefix
     stepPosition = stepPosition.split('-').reverse()[0];
-    let jumps = _steps;
+    let jumps = steps;
 
     if (stepPosition === 'none') {
       --jumps;
@@ -4051,7 +3554,7 @@ let easing = {
 
     return (t, beforeFlag = false) => {
       // Step is called currentStep in referenced url
-      let step = Math.floor(t * _steps);
+      let step = Math.floor(t * steps);
       const jumping = t * step % 1 === 0;
 
       if (stepPosition === 'start' || stepPosition === 'both') {
@@ -4246,50 +3749,50 @@ function arrayToString(a) {
 }
 
 const pathHandlers = {
-  M: function M(c, p, p0) {
+  M: function (c, p, p0) {
     p.x = p0.x = c[0];
     p.y = p0.y = c[1];
     return ['M', p.x, p.y];
   },
-  L: function L(c, p) {
+  L: function (c, p) {
     p.x = c[0];
     p.y = c[1];
     return ['L', c[0], c[1]];
   },
-  H: function H(c, p) {
+  H: function (c, p) {
     p.x = c[0];
     return ['H', c[0]];
   },
-  V: function V(c, p) {
+  V: function (c, p) {
     p.y = c[0];
     return ['V', c[0]];
   },
-  C: function C(c, p) {
+  C: function (c, p) {
     p.x = c[4];
     p.y = c[5];
     return ['C', c[0], c[1], c[2], c[3], c[4], c[5]];
   },
-  S: function S(c, p) {
+  S: function (c, p) {
     p.x = c[2];
     p.y = c[3];
     return ['S', c[0], c[1], c[2], c[3]];
   },
-  Q: function Q(c, p) {
+  Q: function (c, p) {
     p.x = c[2];
     p.y = c[3];
     return ['Q', c[0], c[1], c[2], c[3]];
   },
-  T: function T(c, p) {
+  T: function (c, p) {
     p.x = c[0];
     p.y = c[1];
     return ['T', c[0], c[1]];
   },
-  Z: function Z(c, p, p0) {
+  Z: function (c, p, p0) {
     p.x = p0.x;
     p.y = p0.y;
     return ['Z'];
   },
-  A: function A(c, p) {
+  A: function (c, p) {
     p.x = c[5];
     p.y = c[6];
     return ['A', c[0], c[1], c[2], c[3], c[4], c[5], c[6]];
@@ -4297,8 +3800,8 @@ const pathHandlers = {
 };
 let mlhvqtcsaz = 'mlhvqtcsaz'.split('');
 
-for (var i$1 = 0, il = mlhvqtcsaz.length; i$1 < il; ++i$1) {
-  pathHandlers[mlhvqtcsaz[i$1]] = function (i) {
+for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
+  pathHandlers[mlhvqtcsaz[i]] = function (i) {
     return function (c, p, p0) {
       if (i === 'H') c[0] = c[0] + p.x;else if (i === 'V') c[0] = c[0] + p.y;else if (i === 'A') {
         c[5] = c[5] + p.x;
@@ -4310,7 +3813,7 @@ for (var i$1 = 0, il = mlhvqtcsaz.length; i$1 < il; ++i$1) {
       }
       return pathHandlers[i](c, p, p0);
     };
-  }(mlhvqtcsaz[i$1].toUpperCase());
+  }(mlhvqtcsaz[i].toUpperCase());
 }
 
 extend(PathArray, {
@@ -4831,11 +4334,11 @@ function size(width, height) {
 }
 
 var poly = /*#__PURE__*/Object.freeze({
-	array: array,
-	plot: plot,
-	clear: clear,
-	move: move,
-	size: size
+  array: array,
+  plot: plot,
+  clear: clear,
+  move: move,
+  size: size
 });
 
 class Polygon extends Shape {
@@ -5047,7 +4550,7 @@ const Animator = {
 
 };
 
-var makeSchedule = function makeSchedule(runnerInfo) {
+var makeSchedule = function (runnerInfo) {
   var start = runnerInfo.start;
   var duration = runnerInfo.runner.duration();
   var end = start + duration;
@@ -5059,7 +4562,7 @@ var makeSchedule = function makeSchedule(runnerInfo) {
   };
 };
 
-const defaultSource = function defaultSource() {
+const defaultSource = function () {
   let w = globals.window;
   return (w.performance || w.Date).now();
 };
@@ -5318,7 +4821,7 @@ class Timeline extends EventTarget {
 }
 registerMethods({
   Element: {
-    timeline: function timeline() {
+    timeline: function () {
       this._timeline = this._timeline || new Timeline();
       return this._timeline;
     }
@@ -5520,7 +5023,7 @@ class Runner extends EventTarget {
       The logic is slightly simplified here because we can use booleans
       */
       // Figure out the value without thinking about the start or end time
-      const f = function f(x$$1) {
+      const f = function (x$$1) {
         var swinging = s * Math.floor(x$$1 % (2 * (w + d)) / (w + d));
         var backwards = swinging && !r || !swinging && r;
         var uncliped = Math.pow(-1, backwards) * (x$$1 % (w + d)) / d + backwards;
@@ -5991,11 +5494,10 @@ extend(Runner, {
       // clear all other transforms before this in case something is saved
       // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform();
-
-      let _transform = new Point(origin).transform(element._currentTransform(this)),
-          x$$1 = _transform.x,
-          y$$1 = _transform.y;
-
+      let {
+        x: x$$1,
+        y: y$$1
+      } = new Point(origin).transform(element._currentTransform(this));
       let target = new Matrix(_objectSpread({}, transforms, {
         origin: [x$$1, y$$1]
       }));
@@ -6308,8 +5810,8 @@ function length() {
 }
 
 var textable = /*#__PURE__*/Object.freeze({
-	plain: plain,
-	length: length
+  plain: plain,
+  length: length
 });
 
 class Text extends Shape {
@@ -6620,7 +6122,7 @@ registerMethods({
   },
   Element: {
     // Create a hyperlink element
-    linkTo: function linkTo(url) {
+    linkTo: function (url) {
       var link = new A();
 
       if (typeof url === 'function') {
@@ -6849,5 +6351,80 @@ List.extend(getMethodNames());
 registerMorphableType([SVGNumber, Color, Box, Matrix, SVGArray, PointArray, PathArray]);
 makeMorphable();
 
-export { Morphable, registerMorphableType, makeMorphable, TransformBag, ObjectBag, NonMorphable, defaults, utils, namespaces, regex, SVG, parser, baseFind as find, registerWindow, Animator, Controller, Ease, PID, Spring, easing, Queue, Runner, Timeline, SVGArray as Array, Box, Color, EventTarget, Matrix, SVGNumber as Number, PathArray, Point, PointArray, List, Circle, ClipPath, Container, Defs, Dom, Element, Ellipse, Gradient, G, A, Image, Line, Marker, Mask, Path, Pattern, Polygon, Polyline, Rect, Shape, Stop, Style, Svg$1 as Svg, Symbol, Text, TextPath, Tspan, Use, on, off, dispatch, root, makeNode, makeInstance, nodeOrNew, adopt, register, getClass, eid, assignNewId, extend, extendWithAttrCheck, wrapWithAttrCheck };
-//# sourceMappingURL=svg.js.map
+exports.Morphable = Morphable;
+exports.registerMorphableType = registerMorphableType;
+exports.makeMorphable = makeMorphable;
+exports.TransformBag = TransformBag;
+exports.ObjectBag = ObjectBag;
+exports.NonMorphable = NonMorphable;
+exports.defaults = defaults;
+exports.utils = utils;
+exports.namespaces = namespaces;
+exports.regex = regex;
+exports.SVG = SVG;
+exports.parser = parser;
+exports.find = baseFind;
+exports.registerWindow = registerWindow;
+exports.Animator = Animator;
+exports.Controller = Controller;
+exports.Ease = Ease;
+exports.PID = PID;
+exports.Spring = Spring;
+exports.easing = easing;
+exports.Queue = Queue;
+exports.Runner = Runner;
+exports.Timeline = Timeline;
+exports.Array = SVGArray;
+exports.Box = Box;
+exports.Color = Color;
+exports.EventTarget = EventTarget;
+exports.Matrix = Matrix;
+exports.Number = SVGNumber;
+exports.PathArray = PathArray;
+exports.Point = Point;
+exports.PointArray = PointArray;
+exports.List = List;
+exports.Circle = Circle;
+exports.ClipPath = ClipPath;
+exports.Container = Container;
+exports.Defs = Defs;
+exports.Dom = Dom;
+exports.Element = Element;
+exports.Ellipse = Ellipse;
+exports.Gradient = Gradient;
+exports.G = G;
+exports.A = A;
+exports.Image = Image;
+exports.Line = Line;
+exports.Marker = Marker;
+exports.Mask = Mask;
+exports.Path = Path;
+exports.Pattern = Pattern;
+exports.Polygon = Polygon;
+exports.Polyline = Polyline;
+exports.Rect = Rect;
+exports.Shape = Shape;
+exports.Stop = Stop;
+exports.Style = Style;
+exports.Svg = Svg$1;
+exports.Symbol = Symbol;
+exports.Text = Text;
+exports.TextPath = TextPath;
+exports.Tspan = Tspan;
+exports.Use = Use;
+exports.on = on;
+exports.off = off;
+exports.dispatch = dispatch;
+exports.root = root;
+exports.makeNode = makeNode;
+exports.makeInstance = makeInstance;
+exports.nodeOrNew = nodeOrNew;
+exports.adopt = adopt;
+exports.register = register;
+exports.getClass = getClass;
+exports.eid = eid;
+exports.assignNewId = assignNewId;
+exports.extend = extend;
+exports.extendWithAttrCheck = extendWithAttrCheck;
+exports.wrapWithAttrCheck = wrapWithAttrCheck;
+//# sourceMappingURL=svg.node.js.map

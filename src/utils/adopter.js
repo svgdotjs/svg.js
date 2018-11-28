@@ -5,7 +5,7 @@ import { globals } from '../utils/window.js'
 import Base from '../types/Base.js'
 
 const elements = {}
-export const root = Symbol('root')
+export const root = '___SYMBOL___ROOT___'
 
 // Method for element creation
 export function makeNode (name) {

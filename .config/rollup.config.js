@@ -1,7 +1,10 @@
 import babel from 'rollup-plugin-babel'
 import * as pkg from '../package.json'
-// import filesize from 'rollup-plugin-filesize'
-import { terser } from 'rollup-plugin-terser'
+import filesize from 'rollup-plugin-filesize'
+// import { terser } from 'rollup-plugin-terser'
+import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import { uglify } from 'rollup-plugin-uglify'
 
 const buildDate = Date()
 
@@ -18,94 +21,97 @@ const headerLong = `/*!
 
 const headerShort = `/*! ${pkg.name} v${pkg.version} ${pkg.license}*/;`
 
+const getBabelConfig = (esm, targets = { esmodules: true }, corejs = false) => babel({
+  include: 'src/**',
+  runtimeHelpers: true,
+  babelrc: false,
+  presets: [['@babel/preset-env', {
+    modules: false,
+    targets: esm ? targets : pkg.browserslist,
+    useBuiltIns: 'usage'
+  }]],
+  plugins: [['@babel/plugin-transform-runtime', {
+    corejs: corejs,
+    helpers: true,
+    useESModules: true
+  }]]
+})
+
+// When few of these get mangled nothing works anymore
+// We loose literally nothing by let these unmangled
+const classes = [
+  'A',
+  'ClipPath',
+  'Defs',
+  'Element',
+  'G',
+  'Image',
+  'Marker',
+  'Path',
+  'Polygon',
+  'Rect',
+  'Stop',
+  'Svg',
+  'Text',
+  'Tspan',
+  'Circle',
+  'Container',
+  'Dom',
+  'Ellipse',
+  'Gradient',
+  'Line',
+  'Mask',
+  'Pattern',
+  'Polyline',
+  'Shape',
+  'Style',
+  'Symbol',
+  'TextPath',
+  'Use'
+]
+
 const config = esm => ({
-  input: './src/svg.js',
+  input: esm ? './src/main.js' : './src/svg.js',
   output: {
     file: esm ? './dist/svg.js' : './dist/svg.min.js',
     name: 'SVG',
-    sourceMap: !esm,
+    sourcemap: 'external',
     format: esm ? 'esm' : 'iife',
-    banner: esm ? headerShort : headerLong,
-    plugins:
-      esm
-        ? []
-        : [
-          babel({
-            include: 'src/**',
-            runtimeHelpers: true,
-            babelrc: false,
-            presets: [["@babel/preset-env", {
-              modules: false,
-              targets: {
-                ie: 9,
-                chrome: 49,
-                edge: 14,
-                firefox: 45,
-                safari: 10
-              },
-              useBuiltIns: 'usage'
-            }]]
-          }),
-          terser()
-        ]
-  }
+    banner: esm ? headerLong : headerShort
+  },
+  plugins: [
+    resolve({ browser: true }),
+    commonjs(),
+    getBabelConfig(esm),
+    filesize(),
+    esm ? {} : uglify({
+      mangle: {
+        reserved: classes
+      },
+      output: {
+        preamble: headerShort
+      }
+    })
+  ]
+})
+
+const nodeConfig = () => ({
+  input: './src/main.js',
+  output: {
+    file: './dist/svg.node.js',
+    name: 'SVG',
+    sourcemap: 'external',
+    format: 'cjs',
+    banner: headerLong
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    getBabelConfig(true, 'maintained node versions'),
+    filesize()
+  ]
 })
 
 const modes = [true, false]
 
-// console.log(modes.map(config))
-export default modes.map(config)
-
-// export default [
-//   {
-//     input: './src/svg.js',
-//     output: {
-//       file: 'dist/svg.js',
-//       name: 'SVG',
-//       sourceMap: true,
-//       format: 'iife',
-//       banner: headerLong
-//     },
-//     plugins: [
-//       // resolve({browser: true}),
-//       // commonjs(),
-//       babel({
-//         include: 'src/**',
-//         runtimeHelpers: true,
-//         babelrc: false,
-//         presets: [["@babel/preset-env", {
-//           modules: false,
-//           targets: {
-//             ie: "9"
-//           },
-//           useBuiltIns: 'usage'
-//         }]],
-//       }),
-//       filesize()
-//     ]
-//   },{
-//     input: './.config/polyfills.js',
-//     output: {
-//       file: 'dist/polyfills.js',
-//       name: 'SVG',
-//       sourceMap: true,
-//       format: 'umd',
-//       banner: headerLong
-//     },
-//     treeshake: false,
-//     plugins: [
-//       // babel({
-//       //   runtimeHelpers: true,
-//       //   babelrc: false,
-//       //   presets: [["@babel/preset-env", {
-//       //     modules: false,
-//       //     targets: {
-//       //       ie: "11"
-//       //     },
-//       //     useBuiltIns: 'usage'
-//       //   }]],
-//       // }),
-//       filesize()
-//     ]
-//   },
-// ]
+export default modes.map(config).concat(nodeConfig())
