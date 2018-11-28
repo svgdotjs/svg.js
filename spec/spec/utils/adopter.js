@@ -15,13 +15,17 @@ import {
   root
 } from '../../../src/main.js'
 
-import { getWindow } from '../../../src/utils/window.js'
 import { mockAdopt } from '../../../src/utils/adopter.js'
 import { buildFixtures } from '../../helpers.js'
-
-const Node = getWindow().Node
+import { globals } from '../../../src/utils/window.js'
 
 describe('Adopter.js', () => {
+  let Node
+
+  beforeEach(() => {
+    Node = globals.window.Node
+  })
+
   describe('makeNode()', () => {
     it('creates a node of the specified type', () => {
       let rect = makeNode('rect')
@@ -65,7 +69,7 @@ describe('Adopter.js', () => {
     it('searches for element in dom if selector given', () => {
       buildFixtures()
 
-      let path = getWindow().document.getElementById('lineAB')
+      let path = globals.window.document.getElementById('lineAB')
 
       makeInstance('#lineAB')
       makeInstance('#doesNotExist')
@@ -90,8 +94,11 @@ describe('Adopter.js', () => {
     })
 
     it('returns the node if one is passed', () => {
-      let div = document.createElement('div')
-      expect(nodeOrNew('something', div)).toBe(div)
+      let div = globals.window.document.createElement('div')
+      let node = nodeOrNew('something', div)
+
+      // jasmine chucks on this when using the node directly
+      expect(node.outerHTML).toBe(div.outerHTML)
     })
   })
 
