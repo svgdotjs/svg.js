@@ -12,4 +12,5 @@ node_modules/
 .vscode/
 coverage/
 fonts/
+spec/es5TestBundle.js
 .env

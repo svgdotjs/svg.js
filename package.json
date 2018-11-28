@@ -52,13 +52,16 @@
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "npm run fix && npm run rollup",
+    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "build:tests": "npx rollup -c rollup.tests.js",
     "fix": "npx eslint ./src --fix",
     "lint": "eslint ./src",
     "rollup": "rollup -c .config/rollup.config.js",
     "server": "npx http-server ./ -d",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
-    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "test:svgdom": "node -r esm ./spec/run.js || true",
+    "test:es6": "npx karma start .config/karma.es6.js --single-run",
     "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
     "postPublish": "echo Please upload a zip to the github release containing the dist, license and changelog"
   },
@@ -82,7 +85,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "esm": "^3.0.84",
     "http-server": "^0.11.1",
-    "innersvg-polyfill": "0.0.2",
+    "jasmine": "^3.3.0",
     "jasmine-core": "^3.3.0",
     "karma": "^3.1.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -94,11 +97,11 @@
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-filesize": "^5.0.1",
+    "rollup-plugin-multi-entry": "^2.0.2",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
-    "rollup-plugin-uglify-es": "0.0.1",
-    "svgdom": "latest"
+    "svgdom": "github:svgdotjs/svgdom"
   },
   "browserslist": [
     "last 1 version",

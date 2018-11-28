@@ -17,7 +17,7 @@ export function makeInstance (element) {
   if (element instanceof Base) return element
 
   if (typeof element === 'object') {
-    return adopt(element)
+    return adopter(element)
   }
 
   if (element == null) {
@@ -25,7 +25,7 @@ export function makeInstance (element) {
   }
 
   if (typeof element === 'string' && element.charAt(0) !== '<') {
-    return adopt(globals.document.querySelector(element))
+    return adopter(globals.document.querySelector(element))
   }
 
   var node = makeNode('svg')
@@ -33,7 +33,7 @@ export function makeInstance (element) {
 
   // We can use firstChild here because we know,
   // that the first char is < and thus an element
-  element = adopt(node.firstChild)
+  element = adopter(node.firstChild)
 
   return element
 }
@@ -63,6 +63,12 @@ export function adopt (node) {
   }
 
   return new elements[className](node)
+}
+
+let adopter = adopt
+
+export function mockAdopt (mock = adopt) {
+  adopter = mock
 }
 
 export function register (element, name = element.name, asRoot = false) {
@@ -117,9 +123,9 @@ export function extend (modules, methods, attrCheck) {
   }
 }
 
-export function extendWithAttrCheck (...args) {
-  extend(...args, true)
-}
+// export function extendWithAttrCheck (...args) {
+//   extend(...args, true)
+// }
 
 export function wrapWithAttrCheck (fn) {
   return function (...args) {

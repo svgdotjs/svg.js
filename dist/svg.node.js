@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Wed Nov 28 2018 12:47:10 GMT+0100 (GMT+01:00)
+* BUILT: Wed Nov 28 2018 13:48:04 GMT+0100 (GMT+01:00)
 */;
 'use strict';
 
@@ -196,7 +196,7 @@ function makeInstance(element) {
   if (element instanceof Base) return element;
 
   if (typeof element === 'object') {
-    return adopt(element);
+    return adopter(element);
   }
 
   if (element == null) {
@@ -204,14 +204,14 @@ function makeInstance(element) {
   }
 
   if (typeof element === 'string' && element.charAt(0) !== '<') {
-    return adopt(globals.document.querySelector(element));
+    return adopter(globals.document.querySelector(element));
   }
 
   var node = makeNode('svg');
   node.innerHTML = element; // We can use firstChild here because we know,
   // that the first char is < and thus an element
 
-  element = adopt(node.firstChild);
+  element = adopter(node.firstChild);
   return element;
 }
 function nodeOrNew(name, node) {
@@ -233,6 +233,10 @@ function adopt(node) {
   }
 
   return new elements[className](node);
+}
+let adopter = adopt;
+function mockAdopt(mock = adopt) {
+  adopter = mock;
 }
 function register(element, name = element.name, asRoot = false) {
   elements[name] = element;
@@ -278,10 +282,10 @@ function extend(modules, methods, attrCheck) {
       modules[i].prototype[key] = method;
     }
   }
-}
-function extendWithAttrCheck(...args) {
-  extend(...args, true);
-}
+} // export function extendWithAttrCheck (...args) {
+//   extend(...args, true)
+// }
+
 function wrapWithAttrCheck(fn) {
   return function (...args) {
     let o = args[args.length - 1];
@@ -1018,7 +1022,7 @@ class Box {
 
 }
 
-function getBox(cb) {
+function getBox(cb, retry) {
   let box;
 
   try {
@@ -1028,23 +1032,28 @@ function getBox(cb) {
       throw new Error('Element not in the dom');
     }
   } catch (e) {
-    try {
-      let clone = this.clone().addTo(parser().svg).show();
-      box = cb(clone.node);
-      clone.remove();
-    } catch (e) {
-      throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible');
-    }
+    box = retry(this);
   }
 
   return box;
 }
 
 function bbox() {
-  return new Box(getBox.call(this, node => node.getBBox()));
+  return new Box(getBox.call(this, node => node.getBBox(), el => {
+    try {
+      let clone = el.clone().addTo(parser().svg).show();
+      let box = clone.node.getBBox();
+      clone.remove();
+      return box;
+    } catch (e) {
+      throw new Error('Getting bbox of element "' + el.node.nodeName + '" is not possible');
+    }
+  }));
 }
 function rbox(el) {
-  let box = new Box(getBox.call(this, node => node.getBoundingClientRect()));
+  let box = new Box(getBox.call(this, node => node.getBoundingClientRect(), el => {
+    throw new Error('Getting rbox of element "' + el.node.nodeName + '" is not possible');
+  }));
   if (el) return box.transform(el.screenCTM().inverse());
   return box.addOffset();
 }
@@ -4469,7 +4478,7 @@ const Animator = {
   nextDraw: null,
   frames: new Queue(),
   timeouts: new Queue(),
-  timer: globals.window.performance || globals.window.Date,
+  timer: () => globals.window.performance || globals.window.Date,
   transforms: [],
 
   frame(fn) {
@@ -4493,7 +4502,7 @@ const Animator = {
   timeout(fn, delay) {
     delay = delay || 0; // Work out when the event should fire
 
-    var time = Animator.timer.now() + delay; // Add the timeout to the end of the queue
+    var time = Animator.timer().now() + delay; // Add the timeout to the end of the queue
 
     var node = Animator.timeouts.push({
       run: fn,
@@ -6420,11 +6429,11 @@ exports.makeNode = makeNode;
 exports.makeInstance = makeInstance;
 exports.nodeOrNew = nodeOrNew;
 exports.adopt = adopt;
+exports.mockAdopt = mockAdopt;
 exports.register = register;
 exports.getClass = getClass;
 exports.eid = eid;
 exports.assignNewId = assignNewId;
 exports.extend = extend;
-exports.extendWithAttrCheck = extendWithAttrCheck;
 exports.wrapWithAttrCheck = wrapWithAttrCheck;
 //# sourceMappingURL=svg.node.js.map

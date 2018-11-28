@@ -104,7 +104,7 @@ export default class Box {
   }
 }
 
-function getBox (cb) {
+function getBox (cb, retry) {
   let box
 
   try {
@@ -114,23 +114,29 @@ function getBox (cb) {
       throw new Error('Element not in the dom')
     }
   } catch (e) {
-    try {
-      let clone = this.clone().addTo(parser().svg).show()
-      box = cb(clone.node)
-      clone.remove()
-    } catch (e) {
-      throw new Error('Getting a bounding box of element "' + this.node.nodeName + '" is not possible')
-    }
+    box = retry(this)
   }
+
   return box
 }
 
 export function bbox () {
-  return new Box(getBox.call(this, (node) => node.getBBox()))
+  return new Box(getBox.call(this, (node) => node.getBBox(), (el) => {
+    try {
+      let clone = el.clone().addTo(parser().svg).show()
+      let box = clone.node.getBBox()
+      clone.remove()
+      return box
+    } catch (e) {
+      throw new Error('Getting bbox of element "' + el.node.nodeName + '" is not possible')
+    }
+  }))
 }
 
 export function rbox (el) {
-  let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect()))
+  let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect(), (el) => {
+    throw new Error('Getting rbox of element "' + el.node.nodeName + '" is not possible')
+  }))
   if (el) return box.transform(el.screenCTM().inverse())
   return box.addOffset()
 }
