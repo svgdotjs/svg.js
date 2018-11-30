@@ -2143,7 +2143,7 @@
 //     it('should be possible to animate numeric attributes', function () {
 //       var startValue = 0
 //         , endValue = 150
-//         , morph = new SVG.SVGNumber(startValue).morph(endValue)
+//         , morph = new SVG.Number(startValue).morph(endValue)
 //
 //       var text = draw.text(function(add) {
 //         add.tspan('We go ')
@@ -2213,7 +2213,7 @@
 //     it('should be possible to pass percentage strings to numeric attributes', function () {
 //       var startValue = '0%'
 //         , endValue = '80%'
-//         , morph = new SVG.SVGNumber(startValue).morph(endValue)
+//         , morph = new SVG.Number(startValue).morph(endValue)
 //
 //       var text = draw.text(function(add) {
 //         add.tspan('We go ')
@@ -2288,7 +2288,7 @@
 //     it('should be possible to animate numeric styles', function () {
 //       var startValue = 0
 //         , endValue = 5
-//         , morph = new SVG.SVGNumber(startValue).morph(endValue)
+//         , morph = new SVG.Number(startValue).morph(endValue)
 //
 //       rect.css('stroke-width', startValue)
 //       fx.css('stroke-width', endValue)
@@ -2352,7 +2352,7 @@
 //     it('should be possible to pass percentage strings to numeric styles', function () {
 //       var startValue = '0%'
 //         , endValue = '5%'
-//         , morph = new SVG.SVGNumber(startValue).morph(endValue)
+//         , morph = new SVG.Number(startValue).morph(endValue)
 //
 //       rect.css('stroke-width', startValue)
 //       fx.css('stroke-width', endValue)
@@ -2398,14 +2398,14 @@
 //
 //   describe('add()', function() {
 //     it('adds to animations obj by default', function() {
-//       fx.add('x', new SVG.SVGNumber(20))
+//       fx.add('x', new SVG.Number(20))
 //       expect(fx.situation.animations.x.value).toBe(20)
 //     })
 //
 //     it('adds to specified obj', function() {
-//       fx.add('x', new SVG.SVGNumber(20), 'animations')
-//       fx.add('x', new SVG.SVGNumber(20), 'attrs')
-//       fx.add('x', new SVG.SVGNumber(20), 'styles')
+//       fx.add('x', new SVG.Number(20), 'animations')
+//       fx.add('x', new SVG.Number(20), 'attrs')
+//       fx.add('x', new SVG.Number(20), 'styles')
 //       expect(fx.situation.animations.x.value).toBe(20)
 //       expect(fx.situation.attrs.x.value).toBe(20)
 //       expect(fx.situation.styles.x.value).toBe(20)
@@ -2836,12 +2836,12 @@
 //     expect(obj instanceof SVG.Color).toBeTruthy()
 //   })
 //
-//   it('accepts numbers and converts them to SVG.SVGNumber', function() {
+//   it('accepts numbers and converts them to SVG.Number', function() {
 //     var obj = new SVG.MorphObj('0', '10')
-//     expect(obj instanceof SVG.SVGNumber).toBeTruthy()
+//     expect(obj instanceof SVG.Number).toBeTruthy()
 //
 //     var obj = new SVG.MorphObj(0, 10)
-//     expect(obj instanceof SVG.SVGNumber).toBeTruthy()
+//     expect(obj instanceof SVG.Number).toBeTruthy()
 //   })
 //
 //   it('accepts any other values', function() {

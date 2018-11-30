@@ -78,7 +78,7 @@ export default class Color {
       Object.assign(this, { _a: a, _b: b, _c: c, _d: d, space })
     // If the user gave us an array, make the color from it
     } else if (a instanceof Array) {
-      this.space = b || a[4] || 'rgb'
+      this.space = b || (typeof a[3] === 'string' ? a[3] : a[4]) || 'rgb'
       Object.assign(this, { _a: a[0], _b: a[1], _c: a[2], _d: a[3] || 0 })
     } else if (a instanceof Object) {
       // Set the object up and assign its values directly
@@ -107,20 +107,6 @@ export default class Color {
       : this.space === 'cmyk' ? { c: _a, m: _b, y: _c, k: _d }
       : {}
     Object.assign(this, components)
-  }
-
-  opacity (opacity = 1) {
-    this.opacity = opacity
-  }
-
-  /*
-
-   */
-
-  brightness () {
-    const { _a: r, _b: g, _c: b } = this.rgb()
-    const value = (r / 255 * 0.30) + (g / 255 * 0.59) + (b / 255 * 0.11)
-    return value
   }
 
   /*
@@ -332,14 +318,14 @@ export default class Color {
   Input and Output methods
   */
 
-  hex () {
+  toHex () {
     let { _a, _b, _c } = this.rgb()
     let [ r, g, b ] = [ _a, _b, _c ].map(componentHex)
     return `#${r}${g}${b}`
   }
 
   toString () {
-    return this.hex()
+    return this.toHex()
   }
 
   toRgb () {

@@ -58,6 +58,7 @@ describe('Arrange', function() {
     it('keeps the defs on top of the stack', function() {
       draw.defs()
       e3.forward()
+
       expect(draw.node.childNodes[2+parserInDoc]).toBe(e3.node)
       expect(draw.node.childNodes[3+parserInDoc]).toBe(draw.defs().node)
     })
@@ -169,17 +170,3 @@ describe('Arrange', function() {
   })
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-

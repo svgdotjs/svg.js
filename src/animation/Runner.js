@@ -9,7 +9,7 @@ import Animator from './Animator.js'
 import Box from '../types/Box.js'
 import EventTarget from '../types/EventTarget.js'
 import Matrix from '../types/Matrix.js'
-import Morphable, { TransformBag } from '../types/Morphable.js'
+import Morphable, { TransformBag } from './Morphable.js'
 import Point from '../types/Point.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Timeline from './Timeline.js'
@@ -48,7 +48,10 @@ export default class Runner extends EventTarget {
     // Store the state of the runner
     this.enabled = true
     this._time = 0
-    this._last = 0
+    this._lastTime = 0
+
+    // At creation, the runner is in reseted state
+    this._reseted = true
 
     // Save transforms applied to this runner
     this.transforms = new Matrix()
@@ -261,7 +264,7 @@ export default class Runner extends EventTarget {
 
     // Figure out if we just started
     var duration = this.duration()
-    var justStarted = this._lastTime < 0 && this._time > 0
+    var justStarted = this._lastTime <= 0 && this._time > 0
     var justFinished = this._lastTime < this._time && this.time > duration
     this._lastTime = this._time
     if (justStarted) {
@@ -274,6 +277,9 @@ export default class Runner extends EventTarget {
     var declarative = this._isDeclarative
     this.done = !declarative && !justFinished && this._time >= duration
 
+    // Runner is running. So its not in reseted state anymore
+    this._reseted = false
+
     // Call initialise and the run function
     if (running || declarative) {
       this._initialise(running)
@@ -281,6 +287,7 @@ export default class Runner extends EventTarget {
       // clear the transforms on this runner so they dont get added again and again
       this.transforms = new Matrix()
       var converged = this._run(declarative ? dt : position)
+
       this.fire('step', this)
     }
     // correct the done flag here
@@ -289,6 +296,13 @@ export default class Runner extends EventTarget {
     if (this.done) {
       this.fire('finish', this)
     }
+    return this
+  }
+
+  reset () {
+    if (this._reseted) return this
+    this.loops(0)
+    this._reseted = true
     return this
   }
 
@@ -564,7 +578,7 @@ registerMethods({
       return new Runner(o.duration)
         .loop(o)
         .element(this)
-        .timeline(timeline)
+        .timeline(timeline.play())
         .schedule(delay, when)
     },
 

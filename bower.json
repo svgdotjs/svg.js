@@ -7,7 +7,7 @@
     "Jon Ege Ronnenberg <jon.ronnenberg+svgjs@gmail.com>"
   ],
   "description": "A lightweight library for manipulating and animating SVG",
-  "main": "dist/svg.js",
+  "main": "dist/svg.min.js",
   "keywords": [
     "svg", "vector", "graphics"
   ],

@@ -1,0 +1,8 @@
+import 'core-js/modules/es6.object.assign'
+import 'core-js/modules/es6.object.keys'
+import 'core-js/modules/es6.function.name'
+import 'core-js/modules/es6.symbol'
+import 'core-js/modules/es6.set'
+import 'core-js/modules/es7.array.includes'
+import 'core-js/modules/es6.string.includes'
+import 'core-js/modules/es6.array.from'

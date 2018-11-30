@@ -34,6 +34,22 @@ describe('Color', function() {
 			expect( color.space ).toBe('rgb')
 		})
 
+		it ('constructs a color from an array with space in array', () => {
+			let color = new SVG.Color([ 50, 50, 5, 'lab' ])
+			expect( color.l ).toBe( 50 )
+			expect( color.a ).toBe( 50 )
+			expect( color.b ).toBe( 5 )
+			expect( color.space ).toBe('lab')
+		})
+
+		it ('constructs a color from an array with space given', () => {
+			let color = new SVG.Color([ 50, 50, 5], 'lab' )
+			expect( color.l ).toBe( 50 )
+			expect( color.a ).toBe( 50 )
+			expect( color.b ).toBe( 5 )
+			expect( color.space ).toBe('lab')
+		})
+
 		it('correclty parses an rgb string', () => {
 			let color = new SVG.Color('rgb(255,0,128)')
 			expect(color.r).toBe(255)
@@ -58,21 +74,15 @@ describe('Color', function() {
 	})
 
 	describe ('input and output: Importing and exporting colors', () => {
-		describe('hex()', function() {
+		describe('toHex()', function() {
 			it('returns a hex color', function() {
-				expect(color.hex()).toBe('#0066ff')
+				expect(color.toHex()).toBe('#0066ff')
 			})
 		})
 
 		describe('toRgb()', function() {
 			it('returns a rgb string color', function() {
 				expect(color.toRgb()).toBe('rgb(0,102,255)')
-			})
-		})
-
-		describe('brightness()', function() {
-			it('returns the percieved brightness value of a color', function() {
-				expect(color.brightness()).toBe(0.346)
 			})
 		})
 	})
@@ -104,6 +114,20 @@ describe('Color', function() {
 				expect ( g ).toBeCloseTo( 0, 0 )
 				expect ( b ).toBeCloseTo( 128, 0 )
 			})
+
+			it('handles black', () => {
+				let {r, g, b} = new SVG.Color(0, 0, 0).lab().rgb()
+				expect( r ).toBeCloseTo(0, 0)
+				expect( g ).toBeCloseTo(0, 0)
+				expect( b ).toBeCloseTo(0, 0)
+			})
+
+			it('handles white', () => {
+				let {r, g, b} = new SVG.Color(255, 255, 255).lab().rgb()
+				expect( r ).toBeCloseTo(255, 0)
+				expect( g ).toBeCloseTo(255, 0)
+				expect( b ).toBeCloseTo(255, 0)
+			})
 		})
 
 		describe('lch()', () => {
@@ -130,6 +154,20 @@ describe('Color', function() {
 				expect ( r ).toBeCloseTo( 255, 0 )
 				expect ( g ).toBeCloseTo( 0, 0 )
 				expect ( b ).toBeCloseTo( 128, 0 )
+			})
+
+			it('handles black', () => {
+				let {r, g, b} = new SVG.Color(0, 0, 0).lch().rgb()
+				expect( r ).toBeCloseTo(0, 0)
+				expect( g ).toBeCloseTo(0, 0)
+				expect( b ).toBeCloseTo(0, 0)
+			})
+
+			it('handles white', () => {
+				let {r, g, b} = new SVG.Color(255, 255, 255).lch().rgb()
+				expect( r ).toBeCloseTo(255, 0)
+				expect( g ).toBeCloseTo(255, 0)
+				expect( b ).toBeCloseTo(255, 0)
 			})
 		})
 
@@ -159,6 +197,20 @@ describe('Color', function() {
 				expect ( g ).toBeCloseTo( 0, 0 )
 				expect ( b ).toBeCloseTo( 128, 0 )
 			})
+
+			it('handles black', () => {
+				let {r, g, b} = new SVG.Color(0, 0, 0).hsl().rgb()
+				expect( r ).toBeCloseTo(0, 0)
+				expect( g ).toBeCloseTo(0, 0)
+				expect( b ).toBeCloseTo(0, 0)
+			})
+
+			it('handles white', () => {
+				let {r, g, b} = new SVG.Color(255, 255, 255).hsl().rgb()
+				expect( r ).toBeCloseTo(255, 0)
+				expect( g ).toBeCloseTo(255, 0)
+				expect( b ).toBeCloseTo(255, 0)
+			})
 		})
 
 		describe('cmyk()', () => {
@@ -187,6 +239,20 @@ describe('Color', function() {
 				expect ( r ).toBeCloseTo( 255, 0 )
 				expect ( g ).toBeCloseTo( 0, 0 )
 				expect ( b ).toBeCloseTo( 128, 0 )
+			})
+
+			it('handles black', () => {
+				let {r, g, b} = new SVG.Color(0, 0, 0).cmyk().rgb()
+				expect( r ).toBeCloseTo(0, 0)
+				expect( g ).toBeCloseTo(0, 0)
+				expect( b ).toBeCloseTo(0, 0)
+			})
+
+			it('handles white', () => {
+				let {r, g, b} = new SVG.Color(255, 255, 255).cmyk().rgb()
+				expect( r ).toBeCloseTo(255, 0)
+				expect( g ).toBeCloseTo(255, 0)
+				expect( b ).toBeCloseTo(255, 0)
 			})
 
 		})

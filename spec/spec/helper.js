@@ -183,6 +183,6 @@ window.roundMatrix = function (mat) {
     +(mat.c.toFixed(5)),
     +(mat.d.toFixed(5)),
     +(mat.e.toFixed(5)),
-    +(mat.f.toFixed(5)),
+    +(mat.f.toFixed(5))
   )
 }

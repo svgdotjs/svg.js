@@ -100,7 +100,7 @@ describe('SVG.Runner', function () {
     //       return new orginalRunner()
     //     })
     //
-    //     var element = SVG('<rect>')
+    //     var element = SVG('<rect />')
     //     var runner = element.animate()
     //     expect(SVG.Runner).toHaveBeenCalled();
     //     expect(runner instanceof SVG.Runner)
@@ -111,7 +111,7 @@ describe('SVG.Runner', function () {
 
     describe('delay()', function () {
       it('calls animate with correct parameters', function () {
-        var element = SVG('<rect>')
+        var element = SVG('<rect />')
 
         spyOn(element, 'animate')
         element.delay(100, 'now')
@@ -662,14 +662,14 @@ describe('SVG.Runner', function () {
       var runner1 = new SVG.Runner()
       expect(runner1.element()).toBe(null)
 
-      var element = SVG('<rect>')
+      var element = SVG('<rect />')
       var runner2 = element.animate()
       expect(runner2.element()).toBe(element)
     })
 
     it('sets an element to be bound to the runner', function () {
       var runner = new SVG.Runner()
-      var element = SVG('<rect>')
+      var element = SVG('<rect />')
       expect(runner.element(element)).toBe(runner)
       expect(runner.element()).toBe(element)
     })
@@ -680,7 +680,7 @@ describe('SVG.Runner', function () {
       var runner1 = new SVG.Runner()
       expect(runner1.element()).toBe(null)
 
-      var element = SVG('<rect>')
+      var element = SVG('<rect />')
       var runner2 = element.animate()
       expect(runner2.timeline()).toBe(element.timeline())
     })
@@ -742,11 +742,11 @@ describe('SVG.Runner', function () {
       var t = timeline.time()
 
       expect(runner2.timeline()).toBe(timeline)
-      expect(runner2.time()).toBe(-1000)
+      expect(runner2.time()).toBe(0)
 
-      expect(timeline.schedule()).toEqual(jasmine.objectContaining([
+      expect(timeline.schedule()).toEqual(jasmine.arrayContaining([
         jasmine.objectContaining({start: t, duration: 1000, end: t+1000, runner: runner}),
-        jasmine.objectContaining({start: t+1000, duration: 500, end: t+1500, runner: runner2})
+        jasmine.objectContaining({start: t+2000, duration: 500, end: t+2500, runner: runner2})
       ]))
     })
   })

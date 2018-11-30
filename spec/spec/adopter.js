@@ -14,13 +14,13 @@ describe('Adopter', function() {
       expect(path.parent() instanceof SVG.Svg).toBeTruthy()
     })
     it('defines a xmlns attribute', function() {
-      expect(path.parent().node.getAttribute('xmlns')).toBe(SVG.ns)
+      expect(path.parent().node.getAttribute('xmlns')).toBe(SVG.namespaces.ns)
     })
     it('defines a version attribute', function() {
       expect(path.parent().node.getAttribute('version')).toBe('1.1')
     })
     it('defines a xmlns:xlink attribute', function() {
-      expect(path.parent().node.getAttribute('xmlns:xlink')).toBe(SVG.xlink)
+      expect(path.parent().node.getAttribute('xmlns:xlink')).toBe(SVG.namespaces.xlink)
     })
     it('initializes a defs node', function() {
       expect(path.defs() instanceof SVG.Defs).toBe(true)
@@ -71,11 +71,9 @@ describe('Adopter', function() {
   })
 
   describe('with node that has no matching svg.js class', function() {
-    it('wraps the node in the base SVG.Element class', function() {
+    it('wraps the node in the Dom class', function() {
       var desc = SVG('#inlineSVG').find('desc')[0]
-      expect(desc instanceof SVG.Element).toBeTruthy()
+      expect(desc instanceof SVG.Dom).toBeTruthy()
     })
   })
-
-
 })

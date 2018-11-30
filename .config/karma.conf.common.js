@@ -1,75 +1,56 @@
-// Karma configuration
-// Generated on Tue Oct 04 2016 13:53:46 GMT+0200 (CEST)
+// Karma shared configuration
 
-module.exports = function(config) {
-  config.set({
+const os = require('os')
+const cpuCount = os.cpus().length
 
+module.exports = function (config) {
+  return {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '../',
-
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine'],
 
-
     // list of files / patterns to load in the browser
     files: [
       '.config/pretest.js',
+      'spec/RAFPlugin.js',
       {
-        pattern: 'spec/fixture.css',
+        pattern: 'spec/fixtures/fixture.css',
         included: false,
         served: true
       },
       {
-        pattern: 'spec/fixture.svg',
+        pattern: 'spec/fixtures/fixture.svg',
         included: false,
         served: true
       },
-      'dist/svg.js',
+      {
+        pattern: 'spec/fixtures/pixel.png',
+        included: false,
+        served: true
+      },
+      'dist/svg.min.js',
       'spec/spec/*.js'
     ],
 
-
-    // list of files to exclude
-    exclude: [],
-
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {},
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
-
-
-    // configure the coverage reporter
-    coverageReporter: {},
-
+    proxies: {
+      '/fixtures/': '/base/spec/fixtures/'
+    },
 
     // web server port
-    port: 9875,
-
+    port: 9876,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
-
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_ERROR,
-
+    logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
-
-
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -77,6 +58,9 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: 1
-  })
+    concurrency: cpuCount || Infinity,
+
+    // list of files to exclude
+    exclude: []
+  }
 }
