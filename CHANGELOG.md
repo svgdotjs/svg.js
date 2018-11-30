@@ -29,6 +29,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 
+## [2.7.1] - 2018-11-30
+
+### Fixed
+- CustomEvent-polyfill was not used (needed in IE) (#938)
+
 ## [2.7.0] - 2018-11-13
 
 ### Fixed
@@ -653,6 +658,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[2.7.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.1
 [2.7.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.0
 [2.6.6]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.6
 [2.6.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.5

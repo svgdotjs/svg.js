@@ -1,12 +1,12 @@
 /*!
 * svg.js - A lightweight library for manipulating and animating SVG.
-* @version 2.7.0
+* @version 2.7.1
 * https://svgdotjs.github.io/
 *
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Tue Nov 13 2018 21:10:01 GMT+0100 (GMT+01:00)
+* BUILT: Fri Nov 30 2018 10:01:55 GMT+0100 (GMT+01:00)
 */;
 (function(root, factory) {
   /* istanbul ignore next */
@@ -3532,7 +3532,7 @@ SVG.extend(SVG.Element, {
     if (event instanceof window.Event) {
       this.node.dispatchEvent(event)
     } else {
-      this.node.dispatchEvent(event = new window.CustomEvent(event, {detail: data, cancelable: true}))
+      this.node.dispatchEvent(event = new SVG.CustomEvent(event, {detail: data, cancelable: true}))
     }
     this._event = event
     return this
