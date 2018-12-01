@@ -156,8 +156,9 @@ export default class Dom extends EventTarget {
     if (!type) return parent
 
     // loop trough ancestors if type is given
-    while (parent && parent.node instanceof globals.window.SVGElement) { // FIXME: That shouldnt be neccessary
+    while (parent) { // FIXME: That shouldnt be neccessary
       if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+      if (!parent.node.parentNode || parent.node.parentNode.nodeName === '#document' || parent.node.parentNode.nodeName === '#document-fragment') return null // #759, #720
       parent = adopt(parent.node.parentNode)
     }
   }

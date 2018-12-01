@@ -11,20 +11,25 @@ SVG.js is licensed under the terms of the MIT License.
 
 ## Installation
 
+#### Npm:
+
+`npm install svg.js`
+
+#### Yarn:
+
+`yarn add svg.js`
+
+
 #### Bower:
 
 `bower install svg.js`
-
-#### Node:
-
-`npm install svg.js`
 
 #### Cdnjs:
 
 [https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)
 
 ## Documentation
-Check [https://svgdotjs.github.io](https://svgdotjs.github.io/) to learn more.
+Check [svgjs.com](https://svgjs.com) to learn more.
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
 
@@ -40,12 +45,6 @@ You'll now have all the dev dependencies installed, and you'll be ready to build
 
 This will build svg.js and make a distribution in the `/dist` folder. While developing, this may not be so convenient as the build will fail if you have any linting errors, refer to the [standard coding styleguide](https://standardjs.com/) for style we use, linters are available for most popular text editors as well.
 
-However, because we were too nice to put you through the pain of always having to work with a linter, we added a gentle mode that you can use by running:
-
-    npm run build:dev
-
-This will only warn you about linting errors and give you useful feedback about possible errors you may have in your code (but this is no substitute for tests). Please make sure that **before making any pull requests**, you pass all of our tests and can build with `npm run build` first.
-
 ### Testing
 
 This will set up everything. While you are working, you should make sure your changes pass all of our tests, so just run:
@@ -60,7 +59,7 @@ You can run performance tests by making a new benchmarks, look in the `/bench` f
 
 ### Playgrounds
 
-If you would like a simple sandbox that you can use
+If you would like a simple sandbox that you can use, take a look into the sandbox folder.
 
 ## Pull Requests
 

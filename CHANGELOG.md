@@ -15,9 +15,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added `SVG.HTMLNode` which is the object wrapped around html nodes to put something in them
 - added `dispatch()` method on `SVG.Element` which returns the dispatched event for event cancelation (#550)
 - added `isRoot()` on `SVG.Doc` (#809)
-- added `random` option and `randomize()` method to `SVG.Color` -> __TODO!__
 - added a linter during the npm build process
-- added `npm build:dev` to let you develop without getting too annoyed
 - added `beziere()` and `steps()` to generate easing functions
 - added `insertAfter()` and `insertBefore`
 - added `SVG.Style` which can be created with `style()` or `fontface()` (#517)
@@ -89,9 +87,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `Image` callback passes normal `load` event instead of custom object (#931)
 - renamed `Doc` to `Svg` and `doc()` to `root` (and `toDoc()/toRoot()`) (#932)
 
-### Fixed
-- fixed a bug in clipping and masking where empty nodes persists after removal -> __TODO!__
-- fixed a bug in IE11 with `mouseenter` and `mouseleave` -> __TODO!__
 
 ## [2.6.2] - 2017-06-05
 
