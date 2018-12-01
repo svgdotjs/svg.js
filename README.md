@@ -13,22 +13,21 @@ SVG.js is licensed under the terms of the MIT License.
 
 #### Npm:
 
-`npm install svg.js`
+`npm install @svgdotjs/svg.js`
 
 #### Yarn:
 
-`yarn add svg.js`
-
+`yarn add @svgdotjs/svg.js`
 
 #### Bower:
 
-`bower install svg.js`
+`bower install svgdotjs.svg.js`
 
 #### Cdnjs:
 
 [https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)
 
 ## Documentation
-Check [svgjs.com](https://svgjs.com) to learn more.
+Check [svgjs.com](https://svgjs.com/docs/3.0/) to learn more.
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
