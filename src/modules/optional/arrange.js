@@ -107,5 +107,16 @@ export function insertAfter (element) {
 }
 
 registerMethods('Dom', {
-  siblings, position, next, prev, forward, backward, front, back, before, after
+  siblings,
+  position,
+  next,
+  prev,
+  forward,
+  backward,
+  front,
+  back,
+  before,
+  after,
+  insertBefore,
+  insertAfter
 })

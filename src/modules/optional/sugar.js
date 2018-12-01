@@ -24,7 +24,7 @@ var sugar = {
     if (typeof o === 'undefined') {
       return this.attr(m)
     }
-    if (typeof o === 'string' || Color.isRgb(o) || (o instanceof Element)) {
+    if (typeof o === 'string' || o instanceof Color || Color.isRgb(o) || (o instanceof Element)) {
       this.attr(m, o)
     } else {
       // set all attributes from sugar.fill and sugar.stroke list

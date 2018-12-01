@@ -5,7 +5,7 @@ import { globals } from '../utils/window.js'
 import Base from '../types/Base.js'
 
 const elements = {}
-export const root = Symbol('root')
+export const root = '___SYMBOL___ROOT___'
 
 // Method for element creation
 export function makeNode (name) {
@@ -17,7 +17,7 @@ export function makeInstance (element) {
   if (element instanceof Base) return element
 
   if (typeof element === 'object') {
-    return adopt(element)
+    return adopter(element)
   }
 
   if (element == null) {
@@ -25,7 +25,7 @@ export function makeInstance (element) {
   }
 
   if (typeof element === 'string' && element.charAt(0) !== '<') {
-    return adopt(globals.document.querySelector(element))
+    return adopter(globals.document.querySelector(element))
   }
 
   var node = makeNode('svg')
@@ -33,7 +33,7 @@ export function makeInstance (element) {
 
   // We can use firstChild here because we know,
   // that the first char is < and thus an element
-  element = adopt(node.firstChild)
+  element = adopter(node.firstChild)
 
   return element
 }
@@ -50,25 +50,25 @@ export function adopt (node) {
   // make sure a node isn't already adopted
   if (node.instance instanceof Base) return node.instance
 
-  if (!(node instanceof globals.window.SVGElement)) {
-    return new elements.HtmlNode(node)
-  }
-
   // initialize variables
-  var element
+  var className = capitalize(node.nodeName)
 
-  // adopt with element-specific settings
-  if (node.nodeName === 'svg') {
-    element = new elements[root](node)
-  } else if (node.nodeName === 'linearGradient' || node.nodeName === 'radialGradient') {
-    element = new elements.Gradient(node)
-  } else if (elements[capitalize(node.nodeName)]) {
-    element = new elements[capitalize(node.nodeName)](node)
-  } else {
-    element = new elements.Bare(node)
+  // Make sure that gradients are adopted correctly
+  if (className === 'LinearGradient' || className === 'RadialGradient') {
+    className = 'Gradient'
+
+  // Fallback to Dom if element is not known
+  } else if (!elements[className]) {
+    className = 'Dom'
   }
 
-  return element
+  return new elements[className](node)
+}
+
+let adopter = adopt
+
+export function mockAdopt (mock = adopt) {
+  adopter = mock
 }
 
 export function register (element, name = element.name, asRoot = false) {
@@ -123,9 +123,9 @@ export function extend (modules, methods, attrCheck) {
   }
 }
 
-export function extendWithAttrCheck (...args) {
-  extend(...args, true)
-}
+// export function extendWithAttrCheck (...args) {
+//   extend(...args, true)
+// }
 
 export function wrapWithAttrCheck (fn) {
   return function (...args) {

@@ -23,15 +23,15 @@ describe('SVG', function() {
       expect(SVG().node.nodeName).toBe('svg')
     })
 
-    it('creates an instanceof SVG.HtmlNode with html node', function() {
+    it('creates an instanceof SVG.Dom with html node', function() {
       var el = SVG(wrapperHTML)
-      expect(el instanceof SVG.HtmlNode).toBe(true)
+      expect(el instanceof SVG.Dom).toBe(true)
       expect(el.node).toBe(wrapperHTML)
     })
 
-    it('creates new SVG.HtmlNode when called with css selector pointing to html node', function() {
+    it('creates new SVG.Dom when called with css selector pointing to html node', function() {
       var el = SVG('#testDiv')
-      expect(el instanceof SVG.HtmlNode).toBe(true)
+      expect(el instanceof SVG.Dom).toBe(true)
       expect(el.node).toBe(wrapperHTML)
     })
 
@@ -62,8 +62,8 @@ describe('SVG', function() {
     })
 
     it('creates SVG.Shape from any shape string', function() {
-      var rect = SVG('<rect width="200" height="100">')
-        , circle = SVG('<circle r="200">')
+      var rect = SVG('<rect width="200" height="100" />')
+        , circle = SVG('<circle r="200" />')
 
       expect(rect instanceof SVG.Rect).toBe(true)
       expect(rect.node.nodeName).toBe('rect')

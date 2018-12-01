@@ -2,7 +2,7 @@ describe('Number', function() {
   var number
 
   beforeEach(function() {
-    number = new SVG.SVGNumber
+    number = new SVG.Number
   })
 
   describe('new', function() {
@@ -13,40 +13,40 @@ describe('Number', function() {
       expect(number.unit).toBe('')
     })
     it('accepts the unit as a second argument', function() {
-      number = new SVG.SVGNumber(30, '%')
+      number = new SVG.Number(30, '%')
       expect(number.value).toBe(30)
       expect(number.unit).toBe('%')
     })
     it('parses a pixel value', function() {
-      number = new SVG.SVGNumber('20px')
+      number = new SVG.Number('20px')
       expect(number.value).toBe(20)
       expect(number.unit).toBe('px')
     })
     it('parses a percent value', function() {
-      number = new SVG.SVGNumber('99%')
+      number = new SVG.Number('99%')
       expect(number.value).toBe(0.99)
       expect(number.unit).toBe('%')
     })
     it('parses a seconds value', function() {
-      number = new SVG.SVGNumber('2s')
+      number = new SVG.Number('2s')
       expect(number.value).toBe(2000)
       expect(number.unit).toBe('s')
     })
     it('parses a negative percent value', function() {
-      number = new SVG.SVGNumber('-89%')
+      number = new SVG.Number('-89%')
       expect(number.value).toBe(-0.89)
       expect(number.unit).toBe('%')
     })
     it('falls back to 0 if given value is NaN', function() {
-      number = new SVG.SVGNumber(NaN)
+      number = new SVG.Number(NaN)
       expect(number.value).toBe(0)
     })
     it('falls back to maximum value if given number is positive infinite', function() {
-      number = new SVG.SVGNumber(1.7976931348623157E+10308)
+      number = new SVG.Number(1.7976931348623157E+10308)
       expect(number.value).toBe(3.4e+38)
     })
     it('falls back to minimum value if given number is negative infinite', function() {
-      number = new SVG.SVGNumber(-1.7976931348623157E+10308)
+      number = new SVG.Number(-1.7976931348623157E+10308)
       expect(number.value).toBe(-3.4e+38)
     })
   })
@@ -75,17 +75,17 @@ describe('Number', function() {
   describe('valueOf()', function() {
     it('returns a numeric value for default units', function() {
       expect(typeof number.valueOf()).toBe('number')
-      number = new SVG.SVGNumber('12')
+      number = new SVG.Number('12')
       expect(typeof number.valueOf()).toBe('number')
-      number = new SVG.SVGNumber(13)
+      number = new SVG.Number(13)
       expect(typeof number.valueOf()).toBe('number')
     })
     it('returns a numeric value for pixel units', function() {
-      number = new SVG.SVGNumber('10px')
+      number = new SVG.Number('10px')
       expect(typeof number.valueOf()).toBe('number')
     })
     it('returns a numeric value for percent units', function() {
-      number = new SVG.SVGNumber('20%')
+      number = new SVG.Number('20%')
       expect(typeof number.valueOf()).toBe('number')
     })
     it('converts to a primitive when multiplying', function() {
@@ -97,7 +97,7 @@ describe('Number', function() {
   describe('plus()', function() {
     it('returns a new instance', function() {
       expect(number.plus(4.5)).not.toBe(number)
-      expect(number.plus(4.5) instanceof SVG.SVGNumber).toBeTruthy()
+      expect(number.plus(4.5) instanceof SVG.Number).toBeTruthy()
     })
     it('adds a given number', function() {
       expect(number.plus(3.5).valueOf()).toBe(3.5)
@@ -109,7 +109,7 @@ describe('Number', function() {
       expect(number.plus('83px').valueOf()).toBe(83)
     })
     it('use the unit of this number as the unit of the returned number by default', function (){
-      expect(new SVG.SVGNumber('12s').plus('3%').unit).toBe('s')
+      expect(new SVG.Number('12s').plus('3%').unit).toBe('s')
     })
     it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
       expect(number.plus('15%').unit).toBe('%')
@@ -127,7 +127,7 @@ describe('Number', function() {
       expect(number.minus('85px').valueOf()).toBe(-85)
     })
     it('use the unit of this number as the unit of the returned number by default', function (){
-      expect(new SVG.SVGNumber('12s').minus('3%').unit).toBe('s')
+      expect(new SVG.Number('12s').minus('3%').unit).toBe('s')
     })
     it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
       expect(number.minus('15%').unit).toBe('%')
@@ -148,7 +148,7 @@ describe('Number', function() {
       expect(number.times('85px').valueOf()).toBe(340)
     })
     it('use the unit of this number as the unit of the returned number by default', function (){
-      expect(new SVG.SVGNumber('12s').times('3%').unit).toBe('s')
+      expect(new SVG.Number('12s').times('3%').unit).toBe('s')
     })
     it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
       expect(number.times('15%').unit).toBe('%')
@@ -169,7 +169,7 @@ describe('Number', function() {
       expect(number.divide('45px').valueOf()).toBe(2)
     })
     it('use the unit of this number as the unit of the returned number by default', function (){
-      expect(new SVG.SVGNumber('12s').divide('3%').unit).toBe('s')
+      expect(new SVG.Number('12s').divide('3%').unit).toBe('s')
     })
     it('use the unit of the passed number as the unit of the returned number when this number as no unit', function() {
       expect(number.divide('15%').unit).toBe('%')

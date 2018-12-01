@@ -1,5 +1,5 @@
 {
-  "name": "svg.js",
+  "name": "@svgdotjs/svg.js",
   "version": "3.0.0",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgdotjs.github.io/",
@@ -11,14 +11,11 @@
     "animation"
   ],
   "author": "Wout Fierens <wout@mick-wout.com>",
-  "main": "dist/svg.js",
-  "jam": {
-    "include": [
-      "dist/svg.js",
-      "README.md",
-      "LICENSE.txt"
-    ]
-  },
+  "main": "dist/svg.node.js",
+  "unpkg": "dist/svg.min.js",
+  "jsdelivr": "dist/svg.min.js",
+  "browser": "dist/svg.min.js",
+  "module": "dist/svg.js",
   "maintainers": [
     {
       "name": "Wout Fierens",
@@ -54,26 +51,34 @@
   "license": "MIT",
   "typings": "./svg.js.d.ts",
   "scripts": {
-    "build": "npx eslint ./src --fix && npx rollup -c",
-    "rollup": "npx rollup -c",
-    "lint": "npx eslint ./src",
+    "build": "npm run fix && npm run rollup",
+    "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
+    "build:tests": "npx rollup -c rollup.tests.js",
     "fix": "npx eslint ./src --fix",
-    "test": "npx karma start .config/karma.conf.js --single-run",
-    "test:dots": "npx karma start .config/karma.conf.js --single-run --reporters dots",
-    "test:quick": "npx karma start .config/karma.quick.js",
+    "lint": "eslint ./src",
+    "rollup": "rollup -c .config/rollup.config.js",
     "server": "npx http-server ./ -d",
-    "demo": "run () { cd playgrounds; ../node_modules/.bin/webpack-dev-server --env=$1; }; run"
+    "demo": "run () { cd playgrounds; ../node_modules/.bin/webpack-dev-server --env=$1; }; run",
+    "test": "npx karma start .config/karma.conf.js",
+    "test:ci": "karma start .config/karma.conf.saucelabs.js",
+    "test:svgdom": "node -r esm ./spec/runSVGDomTest.js || true",
+    "test:es6": "npx karma start .config/karma.es6.js --single-run",
+    "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
+    "postPublish": "echo Please upload a zip to the github release containing the dist, license and changelog"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-external-helpers": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
-    "@babel/runtime": "^7.1.2",
+    "@babel/runtime": "^7.1.5",
+    "@babel/runtime-corejs2": "^7.1.5",
+    "@target/custom-event-polyfill": "github:Adobe-Marketing-Cloud/custom-event-polyfill",
     "babel-eslint": "^10.0.1",
-    "babel-polyfill": "^6.26.0",
+    "core-js": "^2.5.7",
     "coveralls": "^3.0.2",
-    "eslint": "^5.8.0",
+    "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
@@ -81,25 +86,33 @@
     "eslint-plugin-standard": "^4.0.0",
     "esm": "^3.0.84",
     "http-server": "^0.11.1",
+    "jasmine": "^3.3.0",
     "jasmine-core": "^3.3.0",
     "karma": "^3.1.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "^1.1.0",
-    "karma-jasmine": "^1.1.2",
+    "karma-jasmine": "^2.0.0",
+    "karma-sauce-launcher": "^1.2.0",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-filesize": "^5.0.1",
+    "rollup-plugin-multi-entry": "^2.0.2",
     "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
-    "rollup-plugin-uglify-es": "0.0.1",
     "svgdom": "latest",
+    "rollup-plugin-uglify-es": "0.0.1",
     "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10",
     "yargs": "^12.0.5"
   },
-  "dependencies": {},
-  "optionalDependencies": {}
+  "browserslist": [
+    "last 1 version",
+    "> 0.25%",
+    "not maintained node versions",
+    "not dead"
+  ]
 }

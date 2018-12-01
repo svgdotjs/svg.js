@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SVG.js - Jasmine Spec Runner</title>
+
+  <link rel="shortcut icon" type="image/png" href="../node_modules/jasmine-core/images/jasmine_favicon.png">
+  <link rel="stylesheet" href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+  <script src="RAFPlugin.js"></script>
+
+  <link rel="stylesheet" href="fixtures/fixture.css">
+
+</head>
+
+<body>
+
+  <!-- include spec files here... -->
+
+  <script type="module" src="setupBrowser.js"></script>
+  <script type="module" src="spec/types/ArrayPolyfill.js"></script>
+  <script type="module" src="spec/types/Base.js"></script>
+  <script type="module" src="spec/types/Box.js"></script>
+  <script type="module" src="spec/utils/adopter.js"></script>
+
+</body>
+</html>
