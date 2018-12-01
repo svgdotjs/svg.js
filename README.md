@@ -32,35 +32,3 @@ SVG.js is licensed under the terms of the MIT License.
 Check [svgjs.com](https://svgjs.com) to learn more.
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pay%40woutfierens.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
-
-## Development
-
-To develop svg.js, you have a few commands available to you. Firstly, you should clone this repo, then cd into the folder with this README and run:
-
-    npm install
-
-You'll now have all the dev dependencies installed, and you'll be ready to build the bundle. Once you've made your changes just run:
-
-    npm run build
-
-This will build svg.js and make a distribution in the `/dist` folder. While developing, this may not be so convenient as the build will fail if you have any linting errors, refer to the [standard coding styleguide](https://standardjs.com/) for style we use, linters are available for most popular text editors as well.
-
-### Testing
-
-This will set up everything. While you are working, you should make sure your changes pass all of our tests, so just run:
-
-    npm run test
-
-Or just launch the jasmine test runner from `/spec/SpecRunner.html`. Its good to try the spec runner on a few different browsers.
-
-### Performance
-
-You can run performance tests by making a new benchmarks, look in the `/bench` folder and just add a new js file with the test you want to make. We include a few examples in the repo to make it easy for you to make your own.
-
-### Playgrounds
-
-If you would like a simple sandbox that you can use, take a look into the sandbox folder.
-
-## Pull Requests
-
-We welcome any pull requests and will try our hardest to review them as soon as possible. If you need any help or would like to chat, check out our [gitter group](https://gitter.im/svgdotjs/svg.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge), we are always happy to see new users!
