@@ -8,7 +8,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ====
 
 
-## UNRELEASED 3.0.0
+## [3.0.0] - 2018-12-01
 
 ### Added
 - added `text()` method to `SVG.Path` to create a textPath from this path (#705)
@@ -86,6 +86,55 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - `parents()` now gives back all parents until the passed one or document
 - `Image` callback passes normal `load` event instead of custom object (#931)
 - renamed `Doc` to `Svg` and `doc()` to `root` (and `toDoc()/toRoot()`) (#932)
+
+## [2.7.1] - 2018-11-30
+
+### Fixed
+- CustomEvent-polyfill was not used (needed in IE) (#938)
+
+## [2.7.0] - 2018-11-13
+
+### Fixed
+- fixed calling `parent()` on `documentFragment`s children (#927)
+- parser is not focusable anymore (#908)
+- `SVG.Element.click(null)` correctly unbinds the event (#878)
+- fix memory leak (#905)
+
+### Added
+- `SVG.Set` now accepts another Set as input (#893)
+- `on()/off()` accepts multiple event names as input (backport from 3.0)
+
+
+## [2.6.6] - 2018-08-30
+
+### Added
+- added global reference to support 'window' in bundlers (#767)
+
+
+## [2.6.5] - 2018-05-26
+
+### Fixed
+- fixed `element.parent()` which sometimes failed when used on detached documents (#759)
+- fixed `SVG.Text.y()` which didnt work correctly with `SVG.Number` (#778)
+- fixed `SVG.Doc.clone()` which throwed an error (#782)
+- fixed `SVG.Mask.clone()` which throwed an error (#782)
+- fixed `SVG.PointArray` having a reference to outside array in some cases (#803)
+- fixed `reference()` which failed when trying to use a reference which does not exist in the attribuets (#840)
+- fixed `animate().attr()` method which doenst work for `d` attribute of paths (#847)
+- fixed problems with `CustomEvent` polyfill in IE11 (#852)
+
+### Added
+- added possibility to pass an array of point objects to SVG.PointArray (#803)
+
+## [2.6.4] - 2018-02-07
+
+### Fixed
+- fixed memory leak when creating images (#805)
+
+## [2.6.3] - 2017-07-21
+
+### Fixed
+- fixed error in parent method when hitting document node (#720)
 
 
 ## [2.6.2] - 2017-06-05
@@ -672,6 +721,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.0
+
+[2.7.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.1
+[2.7.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.0
+
+[2.6.6]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.6
+[2.6.5]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.5
+[2.6.4]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.4
+[2.6.3]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.3
 [2.6.2]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.2
 [2.6.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.1
 [2.6.0]: https://github.com/svgdotjs/svg.js/releases/tag/2.6.0
