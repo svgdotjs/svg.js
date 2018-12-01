@@ -13,7 +13,8 @@ function sixDigitHex (hex) {
 
 function componentHex (component) {
   const integer = Math.round(component)
-  const hex = integer.toString(16)
+  const bounded = Math.max(0, Math.min(255, integer))
+  const hex = bounded.toString(16)
   return hex.length === 1 ? '0' + hex : hex
 }
 
@@ -349,14 +350,68 @@ export default class Color {
   Generating random colors
   */
 
-  static random (mode = 'vibrant') {
-    'sine'
-    'pastel'
-    'vibrant'
-    'dark'
-    'rgb'
-    'lab'
-    'grey'
+  static random (mode = 'vibrant', t, u) {
+
+    // Get the math modules
+    const { random, round, sin, PI: pi } = Math
+
+    // Run the correct generator
+    if (mode === 'vibrant') {
+
+      const l = (81 - 57) * random() + 57
+      const c = (83 - 45) * random() + 45
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'sine') {
+
+      t = t == null ? random() : t
+      const r = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
+      const g = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
+      const b = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
+      const color = new Color(r, g, b)
+      return color
+
+    } else if (mode === 'pastel') {
+
+      const l = (94 - 86) * random() + 86
+      const c = (26 - 9) * random() + 9
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'dark') {
+
+      const l = 10 + 10 * random()
+      const c = (125 - 75) * random() + 86
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'rgb') {
+
+      const r = 255 * random()
+      const g = 255 * random()
+      const b = 255 * random()
+      const color = new Color(r, g, b)
+      return color
+
+    } else if (mode === 'lab') {
+
+      const l = 100 * random()
+      const a = 256 * random() - 128
+      const b = 256 * random() - 128
+      const color = new Color(l, a, b, 'lab')
+      return color
+
+    } else if (mode === 'grey') {
+
+      const grey = 255 * random()
+      const color = new Color(grey, grey, grey)
+      return color
+
+    }
   }
 
   /*

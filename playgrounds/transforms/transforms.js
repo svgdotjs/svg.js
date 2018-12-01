@@ -13,7 +13,6 @@ let a = canvas.rect(200, 400).move(200, 400)
   .addClass('pink')
   .transform({ px: 100, py: 500, origin: 'top-left' })
 
-debugger
   a.animate()
   .rotate({ rotate: 500, origin: 'top-right' })
 
