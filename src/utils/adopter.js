@@ -8,7 +8,7 @@ const elements = {}
 export const root = '___SYMBOL___ROOT___'
 
 // Method for element creation
-export function makeNode (name) {
+export function create (name) {
   // create element
   return globals.document.createElementNS(ns, name)
 }
@@ -28,7 +28,7 @@ export function makeInstance (element) {
     return adopter(globals.document.querySelector(element))
   }
 
-  var node = makeNode('svg')
+  var node = create('svg')
   node.innerHTML = element
 
   // We can use firstChild here because we know,
@@ -39,7 +39,7 @@ export function makeInstance (element) {
 }
 
 export function nodeOrNew (name, node) {
-  return node instanceof globals.window.Node ? node : makeNode(name)
+  return node instanceof globals.window.Node ? node : create(name)
 }
 
 // Adopt existing svg elements

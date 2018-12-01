@@ -14,9 +14,9 @@ export default {
       include: 'src/**',
       runtimeHelpers: true,
       babelrc: false,
-      presets: [["@babel/preset-env", {
-        modules: false,
-      }]],
+      presets: [['@babel/preset-env', {
+        modules: false
+      }]]
       // plugins: [["@babel/plugin-transform-runtime", {
       //   corejs: false,
       //   helpers: true,

@@ -1,16 +1,10 @@
 .DS_Store
 .idea
 .importjs.js
-public
-site/
-bleed/
-docs/
-obsolete/
 test/
-src/index.js
 node_modules/
 .vscode/
 coverage/
-fonts/
 spec/es5TestBundle.js
 .env
+dist

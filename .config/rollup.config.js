@@ -21,13 +21,13 @@ const headerLong = `/*!
 
 const headerShort = `/*! ${pkg.name} v${pkg.version} ${pkg.license}*/;`
 
-const getBabelConfig = (esm, targets = { esmodules: true }, corejs = false) => babel({
+const getBabelConfig = (targets, corejs = false) => babel({
   include: 'src/**',
   runtimeHelpers: true,
   babelrc: false,
   presets: [['@babel/preset-env', {
     modules: false,
-    targets: esm ? targets : pkg.browserslist,
+    targets: targets || pkg.browserslist,
     useBuiltIns: 'usage'
   }]],
   plugins: [['@babel/plugin-transform-runtime', {
@@ -70,21 +70,29 @@ const classes = [
   'Use'
 ]
 
-const config = esm => ({
-  input: esm ? './src/main.js' : './src/svg.js',
+const config = (node, min) => ({
+  input: node ? './src/main.js' : './src/svg.js',
   output: {
-    file: esm ? './dist/svg.js' : './dist/svg.min.js',
+    file: node ? './dist/svg.node.js'
+      : min ? './dist/svg.min.js'
+        : './dist/svg.js',
+    format: node ? 'cjs' : 'iife',
     name: 'SVG',
-    sourcemap: 'external',
-    format: esm ? 'esm' : 'iife',
-    banner: esm ? headerLong : headerShort
+    sourcemap: true,
+    banner: headerLong,
+    // remove Object.freeze
+    freeze: false
+  },
+  treeshake: {
+    // property getter have no sideeffects
+    propertyReadSideEffects: false
   },
   plugins: [
-    resolve({ browser: true }),
+    resolve({ browser: !node }),
     commonjs(),
-    getBabelConfig(esm),
+    getBabelConfig(node && 'maintained node versions'),
     filesize(),
-    esm ? {} : uglify({
+    !min ? {} : uglify({
       mangle: {
         reserved: classes
       },
@@ -95,23 +103,7 @@ const config = esm => ({
   ]
 })
 
-const nodeConfig = () => ({
-  input: './src/main.js',
-  output: {
-    file: './dist/svg.node.js',
-    name: 'SVG',
-    sourcemap: 'external',
-    format: 'cjs',
-    banner: headerLong
-  },
-  plugins: [
-    resolve(),
-    commonjs(),
-    getBabelConfig(true, 'maintained node versions'),
-    filesize()
-  ]
-})
+// [node, minified]
+const modes = [[false], [false, true], [true]]
 
-const modes = [true, false]
-
-export default modes.map(config).concat(nodeConfig())
+export default modes.map(m => config(...m))

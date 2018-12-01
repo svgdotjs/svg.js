@@ -1,7 +1,7 @@
 const { any, createSpy, objectContaining } = jasmine
 
 import {
-  makeNode,
+  create,
   makeInstance,
   nodeOrNew,
   register,
@@ -26,9 +26,9 @@ describe('Adopter.js', () => {
     Node = globals.window.Node
   })
 
-  describe('makeNode()', () => {
+  describe('create()', () => {
     it('creates a node of the specified type', () => {
-      let rect = makeNode('rect')
+      let rect = create('rect')
       expect(rect).toEqual(any(Node))
       expect(rect.nodeName).toBe('rect')
     })
@@ -79,7 +79,7 @@ describe('Adopter.js', () => {
     })
 
     it('calls adopt when passed a node', () => {
-      makeInstance(makeNode('rect'))
+      makeInstance(create('rect'))
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({nodeName: 'rect'}))

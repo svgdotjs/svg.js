@@ -4,7 +4,7 @@ import {
   eid,
   extend,
   makeInstance,
-  makeNode,
+  create,
   register
 } from '../utils/adopter.js'
 import { find } from '../modules/core/selector.js'
@@ -90,7 +90,7 @@ export default class Dom extends EventTarget {
   }
 
   element (nodeName) {
-    return this.put(new Dom(makeNode(nodeName)))
+    return this.put(new Dom(create(nodeName)))
   }
 
   // Get first child

@@ -80,9 +80,9 @@ describe('SVG', function() {
     })
   })
 
-  describe('makeNode()', function() {
+  describe('create()', function() {
     it('creates an element with given node name and return it', function() {
-      var element = SVG.makeNode('rect')
+      var element = SVG.create('rect')
 
       expect(element.nodeName).toBe('rect')
     })
