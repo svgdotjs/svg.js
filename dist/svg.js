@@ -6,7 +6,7 @@
 * @copyright Wout Fierens <wout@mick-wout.com>
 * @license MIT
 *
-* BUILT: Mon Nov 26 2018 00:15:11 GMT+1300 (New Zealand Daylight Time)
+* BUILT: Sun Dec 02 2018 00:17:26 GMT+1100 (Australian Eastern Daylight Time)
 */;
 var SVG = (function () {
   'use strict';
@@ -980,7 +980,8 @@ var SVG = (function () {
 
   function componentHex(component) {
     var integer = Math.round(component);
-    var hex$$1 = integer.toString(16);
+    var bounded = Math.max(0, Math.min(255, integer));
+    var hex$$1 = bounded.toString(16);
     return hex$$1.length === 1 ? '0' + hex$$1 : hex$$1;
   }
 
@@ -1511,13 +1512,76 @@ var SVG = (function () {
     }], [{
       key: "random",
       value: function random() {
-        'sine';
-        'pastel';
-        'vibrant';
-        'dark';
-        'rgb';
-        'lab';
-        'grey';
+        var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'vibrant';
+        var t = arguments.length > 1 ? arguments[1] : undefined;
+        // Get the math modules
+        var random = Math.random,
+            round = Math.round,
+            sin = Math.sin,
+            pi = Math.PI; // Run the correct generator
+
+        if (mode === 'vibrant') {
+          var l = (81 - 57) * random() + 57;
+          var c = (83 - 45) * random() + 45;
+          var h = 360 * random();
+          var color = new Color(l, c, h, 'lch');
+          return color;
+        } else if (mode === 'sine') {
+          t = t == null ? random() : t;
+          var r = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150);
+          var g = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200);
+          var b = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150);
+
+          var _color4 = new Color(r, g, b);
+
+          return _color4;
+        } else if (mode === 'pastel') {
+          var _l2 = (94 - 86) * random() + 86;
+
+          var _c5 = (26 - 9) * random() + 9;
+
+          var _h2 = 360 * random();
+
+          var _color5 = new Color(_l2, _c5, _h2, 'lch');
+
+          return _color5;
+        } else if (mode === 'dark') {
+          var _l3 = 10 + 10 * random();
+
+          var _c6 = (125 - 75) * random() + 86;
+
+          var _h3 = 360 * random();
+
+          var _color6 = new Color(_l3, _c6, _h3, 'lch');
+
+          return _color6;
+        } else if (mode === 'rgb') {
+          var _r3 = 255 * random();
+
+          var _g3 = 255 * random();
+
+          var _b7 = 255 * random();
+
+          var _color7 = new Color(_r3, _g3, _b7);
+
+          return _color7;
+        } else if (mode === 'lab') {
+          var _l4 = 100 * random();
+
+          var a = 256 * random() - 128;
+
+          var _b8 = 256 * random() - 128;
+
+          var _color8 = new Color(_l4, a, _b8, 'lab');
+
+          return _color8;
+        } else if (mode === 'grey') {
+          var grey = 255 * random();
+
+          var _color9 = new Color(grey, grey, grey);
+
+          return _color9;
+        }
       }
       /*
       Constructing colors
