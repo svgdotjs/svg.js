@@ -63,9 +63,9 @@
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
     "test:svgdom": "node -r esm ./spec/runSVGDomTest.js || true",
     "test:es6": "npx karma start .config/karma.es6.js --single-run",
-    "bower:copy": "cd ../svg.js-bower && git pull && cp ../svg.js/LICENSE.txt ../svg.js/README.md ../svg.js/dist/svg.js ../svg.js/dist/svg.min.js ../svg.js/dist/polyfills.js ../svg.js/dist/polyfillsIE.js . && cd ../svg.js",
-    "bower:tag": "cd ../svg.js-bower git add -- LICENSE README.md svg.js svg.min.js && git commit -m \"${npm_package_version}\" && git tag -am \"${npm_package_version}\" v${npm_package_version} && git push && git push --tags && cd ../svg.js",
-    "zip": "zip -j dist/svg.js.zip -- LICENSE.txt README.md CHANGELOG.md dist/svg.js dist/svg.min.js dist/polyfills.js dist/polyfillsIE.js",
+    "bower:copy": "cd ../svg.js-bower && git pull && cp ../svg.js/LICENSE.txt ../svg.js/README.md ../svg.js/dist/svg.js ../svg.js/dist/svg.js.map ../svg.js/dist/svg.min.js ../svg.js/dist/svg.min.js.map ../svg.js/dist/polyfills.js ../svg.js/dist/polyfillsIE.js .",
+    "bower:tag": "cd ../svg.js-bower git add -- LICENSE README.md svg.js svg.js.map svg.min.js svg.min.js.map && git commit -m \"${npm_package_version}\" && git tag -am \"${npm_package_version}\" ${npm_package_version} && git push && git push --tags",
+    "zip": "zip -j dist/svg.js.zip -- LICENSE.txt README.md CHANGELOG.md dist/svg.js dist/svg.js.map dist/svg.min.js dist/svg.min.js.map dist/polyfills.js dist/polyfillsIE.js",
     "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
     "postpublish": "git push && git push --tags && npm run bower:copy && npm run bower:tag && npm run zip"
   },
