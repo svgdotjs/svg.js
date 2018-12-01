@@ -18,8 +18,8 @@ function componentHex (component) {
 }
 
 function is (object, space) {
-  for (const key of space) {
-    if (object[key] == null) {
+  for (let i = space.length; i--;) {
+    if (object[space[i]] == null) {
       return false
     }
   }
@@ -318,9 +318,15 @@ export default class Color {
   Input and Output methods
   */
 
-  toHex () {
+  _clamped () {
     let { _a, _b, _c } = this.rgb()
-    let [ r, g, b ] = [ _a, _b, _c ].map(componentHex)
+    let { max, min, round } = Math
+    let format = v => max(0, min(round(v), 255))
+    return [ _a, _b, _c ].map(format)
+  }
+
+  toHex () {
+    let [ r, g, b ] = this._clamped().map(componentHex)
     return `#${r}${g}${b}`
   }
 
@@ -329,10 +335,7 @@ export default class Color {
   }
 
   toRgb () {
-    let { r, g, b } = this.rgb()
-    let { max, min, round } = Math
-    let format = v => max(0, min(round(v), 255))
-    let [ rV, gV, bV ] = [ r, g, b ].map(format)
+    let [ rV, gV, bV ] = this._clamped()
     let string = `rgb(${rV},${gV},${bV})`
     return string
   }

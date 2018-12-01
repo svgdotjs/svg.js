@@ -116,17 +116,19 @@ describe('Color', function() {
 			})
 
 			it('handles black', () => {
-				let {r, g, b} = new SVG.Color(0, 0, 0).lab().rgb()
-				expect( r ).toBeCloseTo(0, 0)
-				expect( g ).toBeCloseTo(0, 0)
-				expect( b ).toBeCloseTo(0, 0)
+				let color = new SVG.Color(0, 0, 0).lab().rgb()
+				expect( color.r ).toBeCloseTo(0, 0)
+				expect( color.g ).toBeCloseTo(0, 0)
+				expect( color.b ).toBeCloseTo(0, 0)
+				expect( color.toHex() ).toBe('#000000')
 			})
 
 			it('handles white', () => {
-				let {r, g, b} = new SVG.Color(255, 255, 255).lab().rgb()
-				expect( r ).toBeCloseTo(255, 0)
-				expect( g ).toBeCloseTo(255, 0)
-				expect( b ).toBeCloseTo(255, 0)
+				let color = new SVG.Color(255, 255, 255).lab().rgb()
+				expect( color.r ).toBeCloseTo(255, 0)
+				expect( color.g ).toBeCloseTo(255, 0)
+				expect( color.b ).toBeCloseTo(255, 0)
+				expect( color.toHex() ).toBe('#ffffff')
 			})
 		})
 
@@ -157,17 +159,19 @@ describe('Color', function() {
 			})
 
 			it('handles black', () => {
-				let {r, g, b} = new SVG.Color(0, 0, 0).lch().rgb()
-				expect( r ).toBeCloseTo(0, 0)
-				expect( g ).toBeCloseTo(0, 0)
-				expect( b ).toBeCloseTo(0, 0)
+				let color = new SVG.Color(0, 0, 0).lch().rgb()
+				expect( color.r ).toBeCloseTo(0, 0)
+				expect( color.g ).toBeCloseTo(0, 0)
+				expect( color.b ).toBeCloseTo(0, 0)
+				expect( color.toHex() ).toBe('#000000')
 			})
 
 			it('handles white', () => {
-				let {r, g, b} = new SVG.Color(255, 255, 255).lch().rgb()
-				expect( r ).toBeCloseTo(255, 0)
-				expect( g ).toBeCloseTo(255, 0)
-				expect( b ).toBeCloseTo(255, 0)
+				let color = new SVG.Color(255, 255, 255).lch().rgb()
+				expect( color.r ).toBeCloseTo(255, 0)
+				expect( color.g ).toBeCloseTo(255, 0)
+				expect( color.b ).toBeCloseTo(255, 0)
+				expect( color.toHex() ).toBe('#ffffff')
 			})
 		})
 
@@ -199,17 +203,19 @@ describe('Color', function() {
 			})
 
 			it('handles black', () => {
-				let {r, g, b} = new SVG.Color(0, 0, 0).hsl().rgb()
-				expect( r ).toBeCloseTo(0, 0)
-				expect( g ).toBeCloseTo(0, 0)
-				expect( b ).toBeCloseTo(0, 0)
+				let color = new SVG.Color(0, 0, 0).hsl().rgb()
+				expect( color.r ).toBeCloseTo(0, 0)
+				expect( color.g ).toBeCloseTo(0, 0)
+				expect( color.b ).toBeCloseTo(0, 0)
+				expect( color.toHex() ).toBe('#000000')
 			})
 
 			it('handles white', () => {
-				let {r, g, b} = new SVG.Color(255, 255, 255).hsl().rgb()
-				expect( r ).toBeCloseTo(255, 0)
-				expect( g ).toBeCloseTo(255, 0)
-				expect( b ).toBeCloseTo(255, 0)
+				let color = new SVG.Color(255, 255, 255).hsl().rgb()
+				expect( color.r ).toBeCloseTo(255, 0)
+				expect( color.g ).toBeCloseTo(255, 0)
+				expect( color.b ).toBeCloseTo(255, 0)
+				expect( color.toHex() ).toBe('#ffffff')
 			})
 		})
 
@@ -242,17 +248,19 @@ describe('Color', function() {
 			})
 
 			it('handles black', () => {
-				let {r, g, b} = new SVG.Color(0, 0, 0).cmyk().rgb()
-				expect( r ).toBeCloseTo(0, 0)
-				expect( g ).toBeCloseTo(0, 0)
-				expect( b ).toBeCloseTo(0, 0)
+				let color = new SVG.Color(0, 0, 0).cmyk().rgb()
+				expect( color.r ).toBeCloseTo(0, 0)
+				expect( color.g ).toBeCloseTo(0, 0)
+				expect( color.b ).toBeCloseTo(0, 0)
+				expect( color.toHex() ).toBe('#000000')
 			})
 
 			it('handles white', () => {
-				let {r, g, b} = new SVG.Color(255, 255, 255).cmyk().rgb()
-				expect( r ).toBeCloseTo(255, 0)
-				expect( g ).toBeCloseTo(255, 0)
-				expect( b ).toBeCloseTo(255, 0)
+				let color = new SVG.Color(255, 255, 255).cmyk().rgb()
+				expect( color.r ).toBeCloseTo(255, 0)
+				expect( color.g ).toBeCloseTo(255, 0)
+				expect( color.b ).toBeCloseTo(255, 0)
+				expect( color.toHex() ).toBe('#ffffff')
 			})
 
 		})
