@@ -35,7 +35,7 @@ function reactToDrag(element, onDrag, beforeDrag) {
   }
 
   // Bind the drag tracker to this element directly
-  let parent = element.doc()
+  let parent = element.root()
   let point = new SVG.Point()
   element.mousedown(startDrag).touchstart(startDrag)
 }

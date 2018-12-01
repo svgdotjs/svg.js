@@ -12,7 +12,7 @@ function rectangles ( method='Vibrant') {
 
   // Add the squares
   for ( let i = 0; i < 20; i++ ) {
-    let color = SVG.Color.random( method.toLowerCase() ).hex()
+    let color = SVG.Color.random( method.toLowerCase() ).toHex()
     let rect = group.rect(100, 100)
       .x( 20 + 100 * i )
       .fill( color )

@@ -3,27 +3,32 @@ import { makeInstance } from '../../utils/adopter.js'
 import { globals } from '../../utils/window.js'
 
 let listenerId = 0
+let windowEvents = {}
 
-function getEvents (node) {
-  const n = makeInstance(node).getEventHolder()
+function getEvents (instance) {
+  let n = instance.getEventHolder()
+
+  // We dont want to save events in global space
+  if (n === globals.window) n = windowEvents
   if (!n.events) n.events = {}
   return n.events
 }
 
-function getEventTarget (node) {
-  return makeInstance(node).getEventTarget()
+function getEventTarget (instance) {
+  return instance.getEventTarget()
 }
 
-function clearEvents (node) {
-  const n = makeInstance(node).getEventHolder()
+function clearEvents (instance) {
+  const n = instance.getEventHolder()
   if (n.events) n.events = {}
 }
 
 // Add event binder in the SVG namespace
 export function on (node, events, listener, binding, options) {
   var l = listener.bind(binding || node)
-  var bag = getEvents(node)
-  var n = getEventTarget(node)
+  var instance = makeInstance(node)
+  var bag = getEvents(instance)
+  var n = getEventTarget(instance)
 
   // events can be an array of events or a string of events
   events = Array.isArray(events) ? events : events.split(delimiter)
@@ -51,8 +56,9 @@ export function on (node, events, listener, binding, options) {
 
 // Add event unbinder in the SVG namespace
 export function off (node, events, listener, options) {
-  var bag = getEvents(node)
-  var n = getEventTarget(node)
+  var instance = makeInstance(node)
+  var bag = getEvents(instance)
+  var n = getEventTarget(instance)
 
   // listener can be a function or a number
   if (typeof listener === 'function') {
@@ -109,7 +115,7 @@ export function off (node, events, listener, options) {
         off(n, event)
       }
 
-      clearEvents(node)
+      clearEvents(instance)
     }
   })
 }

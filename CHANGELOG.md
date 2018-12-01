@@ -29,6 +29,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - added possibility to pass in additional attribues to element creators e.g. `canvas.rect({x:100})` or `canvas.rect(100, 100, {x:100})` (#796)
 - added `SVG.List` (#645)
 - added `words()` and `element()` to `Dom` because of (#935)
+- added lab, lch, hsl and cmyk color spaces (#790)
+- added `random()` method on `SVG.Color` to create random colors of different kinds (#939)
 
 ### Removed
 - removed `SVG.Array.split()` function
@@ -41,7 +43,6 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `SVG.Nested` (#809)
 - removed `show()` from `SVG.A` to avoid name clash (#802)
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
-- removed `move(), dmove()` etc for groups to avoid inconsistencies, we will expect users to use transforms to move around groups as they should (especially since they are much simpler now).
 - removed `native()` function
 - removed `Bare` in favour of `Dom` (#935)
 
