@@ -55,9 +55,10 @@
     "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
     "build:tests": "npx rollup -c .config/rollup.tests.js",
     "fix": "npx eslint ./src --fix",
-    "lint": "eslint ./src",
-    "rollup": "rollup -c .config/rollup.config.js",
+    "lint": "npx eslint ./src",
+    "rollup": "npx rollup -c .config/rollup.config.js",
     "server": "npx http-server ./ -d",
+    "demo": "run () { cd playgrounds; ../node_modules/.bin/webpack-dev-server --env=$1; }; run",
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
     "test:svgdom": "node -r esm ./spec/runSVGDomTest.js || true",
@@ -104,7 +105,12 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
-    "svgdom": "github:svgdotjs/svgdom"
+    "svgdom": "latest",
+    "rollup-plugin-uglify-es": "0.0.1",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10",
+    "yargs": "^12.0.5"
   },
   "browserslist": [
     "last 1 version",

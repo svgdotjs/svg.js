@@ -17,9 +17,9 @@ export default class Svg extends Container {
   }
 
   isRoot () {
-    return !this.node.parentNode ||
-      !(this.node.parentNode instanceof globals.window.SVGElement) ||
-      this.node.parentNode.nodeName === '#document'
+    return !this.node.parentNode
+      || !(this.node.parentNode instanceof globals.window.SVGElement)
+      || this.node.parentNode.nodeName === '#document'
   }
 
   // Check if this is a root svg
@@ -42,8 +42,8 @@ export default class Svg extends Container {
   defs () {
     if (!this.isRoot()) return this.root().defs()
 
-    return adopt(this.node.getElementsByTagName('defs')[0]) ||
-      this.put(new Defs())
+    return adopt(this.node.getElementsByTagName('defs')[0])
+      || this.put(new Defs())
   }
 
   // custom parent method

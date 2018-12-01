@@ -45,7 +45,7 @@ extend(PointArray, {
   },
 
   // Parse point string and flat array
-  parse (array = [[0, 0]]) {
+  parse (array = [ [ 0, 0 ] ]) {
     var points = []
 
     // if it is an array
@@ -82,7 +82,7 @@ extend(PointArray, {
     // move every point
     if (!isNaN(x) && !isNaN(y)) {
       for (var i = this.length - 1; i >= 0; i--) {
-        this[i] = [this[i][0] + x, this[i][1] + y]
+        this[i] = [ this[i][0] + x, this[i][1] + y ]
       }
     }
 

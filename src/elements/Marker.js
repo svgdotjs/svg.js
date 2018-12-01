@@ -29,7 +29,9 @@ export default class Marker extends Container {
     this.clear()
 
     // invoke passed block
-    if (typeof block === 'function') { block.call(this, this) }
+    if (typeof block === 'function') {
+      block.call(this, this)
+    }
 
     return this
   }
@@ -62,7 +64,7 @@ registerMethods({
   marker: {
     // Create and attach markers
     marker (marker, width, height, block) {
-      var attr = ['marker']
+      var attr = [ 'marker' ]
 
       // Build attribute name
       if (marker !== 'all') attr.push(marker)

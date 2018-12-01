@@ -8,7 +8,9 @@ export function css (style, val) {
   if (arguments.length === 0) {
     // get full style as object
     this.node.style.cssText.split(/\s*;\s*/)
-      .filter(function (el) { return !!el.length })
+      .filter(function (el) {
+        return !!el.length
+      })
       .forEach(function (el) {
         let t = el.split(/\s*:\s*/)
         ret[t[0]] = t[1]
@@ -35,16 +37,16 @@ export function css (style, val) {
     if (typeof style === 'object') {
       for (let name in style) {
         // set empty string if null/undefined/'' was given
-        this.node.style[camelCase(name)] =
-          (style[name] == null || isBlank.test(style[name])) ? '' : style[name]
+        this.node.style[camelCase(name)]
+          = (style[name] == null || isBlank.test(style[name])) ? '' : style[name]
       }
     }
   }
 
   // set style for property
   if (arguments.length === 2) {
-    this.node.style[camelCase(style)] =
-      (val == null || isBlank.test(val)) ? '' : val
+    this.node.style[camelCase(style)]
+      = (val == null || isBlank.test(val)) ? '' : val
   }
 
   return this

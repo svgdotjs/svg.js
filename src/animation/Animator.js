@@ -74,7 +74,9 @@ const Animator = {
       nextFrame.run()
     }
 
-    Animator.transforms.forEach(function (el) { el() })
+    Animator.transforms.forEach(function (el) {
+      el()
+    })
 
     // If we have remaining timeouts or frames, draw until we don't anymore
     Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first()

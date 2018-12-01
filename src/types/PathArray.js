@@ -61,50 +61,50 @@ const pathHandlers = {
     p.x = p0.x = c[0]
     p.y = p0.y = c[1]
 
-    return ['M', p.x, p.y]
+    return [ 'M', p.x, p.y ]
   },
   L: function (c, p) {
     p.x = c[0]
     p.y = c[1]
-    return ['L', c[0], c[1]]
+    return [ 'L', c[0], c[1] ]
   },
   H: function (c, p) {
     p.x = c[0]
-    return ['H', c[0]]
+    return [ 'H', c[0] ]
   },
   V: function (c, p) {
     p.y = c[0]
-    return ['V', c[0]]
+    return [ 'V', c[0] ]
   },
   C: function (c, p) {
     p.x = c[4]
     p.y = c[5]
-    return ['C', c[0], c[1], c[2], c[3], c[4], c[5]]
+    return [ 'C', c[0], c[1], c[2], c[3], c[4], c[5] ]
   },
   S: function (c, p) {
     p.x = c[2]
     p.y = c[3]
-    return ['S', c[0], c[1], c[2], c[3]]
+    return [ 'S', c[0], c[1], c[2], c[3] ]
   },
   Q: function (c, p) {
     p.x = c[2]
     p.y = c[3]
-    return ['Q', c[0], c[1], c[2], c[3]]
+    return [ 'Q', c[0], c[1], c[2], c[3] ]
   },
   T: function (c, p) {
     p.x = c[0]
     p.y = c[1]
-    return ['T', c[0], c[1]]
+    return [ 'T', c[0], c[1] ]
   },
   Z: function (c, p, p0) {
     p.x = p0.x
     p.y = p0.y
-    return ['Z']
+    return [ 'Z' ]
   },
   A: function (c, p) {
     p.x = c[5]
     p.y = c[6]
-    return ['A', c[0], c[1], c[2], c[3], c[4], c[5], c[6]]
+    return [ 'A', c[0], c[1], c[2], c[3], c[4], c[5], c[6] ]
   }
 }
 
@@ -258,7 +258,7 @@ extend(PathArray, {
     // Animate has specified in the SVG spec
     // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
     for (i = 0, il = sourceArray.length; i < il; i++) {
-      array[i] = [sourceArray[i][0]]
+      array[i] = [ sourceArray[i][0] ]
       for (j = 1, jl = sourceArray[i].length; j < jl; j++) {
         array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
       }
@@ -279,7 +279,7 @@ extend(PathArray, {
   },
 
   // Absolutize and parse path to array
-  parse (array = [['M', 0, 0]]) {
+  parse (array = [ [ 'M', 0, 0 ] ]) {
     // if it's already a patharray, no need to parse it
     if (array instanceof PathArray) return array
 
@@ -312,7 +312,7 @@ extend(PathArray, {
       if (isPathLetter.test(array[index])) {
         s = array[index]
         ++index
-      // If last letter was a move command and we got no new, it defaults to [L]ine
+        // If last letter was a move command and we got no new, it defaults to [L]ine
       } else if (s === 'M') {
         s = 'L'
       } else if (s === 'm') {

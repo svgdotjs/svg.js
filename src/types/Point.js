@@ -11,7 +11,7 @@ export default class Point {
     // ensure source as object
     source = Array.isArray(x) ? { x: x[0], y: x[1] }
       : typeof x === 'object' ? { x: x.x, y: x.y }
-        : { x: x, y: y }
+      : { x: x, y: y }
 
     // merge source
     this.x = source.x == null ? base.x : source.x
@@ -36,7 +36,7 @@ export default class Point {
   }
 
   toArray () {
-    return [this.x, this.y]
+    return [ this.x, this.y ]
   }
 }
 

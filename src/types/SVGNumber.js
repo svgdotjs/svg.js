@@ -27,7 +27,9 @@ export default class SVGNumber {
         this.value = parseFloat(unit[1])
 
         // normalize
-        if (unit[5] === '%') { this.value /= 100 } else if (unit[5] === 's') {
+        if (unit[5] === '%') {
+          this.value /= 100
+        } else if (unit[5] === 's') {
           this.value *= 1000
         }
 
@@ -47,7 +49,7 @@ export default class SVGNumber {
   toString () {
     return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6
       : this.unit === 's' ? this.value / 1e3
-        : this.value
+      : this.value
     ) + this.unit
   }
 
@@ -56,7 +58,7 @@ export default class SVGNumber {
   }
 
   toArray () {
-    return [this.value, this.unit]
+    return [ this.value, this.unit ]
   }
 
   valueOf () {

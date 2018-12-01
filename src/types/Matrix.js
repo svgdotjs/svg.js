@@ -14,16 +14,16 @@ export default class Matrix {
 
   // Initialize
   init (source) {
-    var base = Matrix.fromArray([1, 0, 0, 1, 0, 0])
+    var base = Matrix.fromArray([ 1, 0, 0, 1, 0, 0 ])
 
     // ensure source as object
     source = source instanceof Element ? source.matrixify()
       : typeof source === 'string' ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
-        : Array.isArray(source) ? Matrix.fromArray(source)
-          : (typeof source === 'object' && Matrix.isMatrixLike(source)) ? source
-            : (typeof source === 'object') ? new Matrix().transform(source)
-              : arguments.length === 6 ? Matrix.fromArray([].slice.call(arguments))
-                : base
+      : Array.isArray(source) ? Matrix.fromArray(source)
+      : (typeof source === 'object' && Matrix.isMatrixLike(source)) ? source
+      : (typeof source === 'object') ? new Matrix().transform(source)
+      : arguments.length === 6 ? Matrix.fromArray([].slice.call(arguments))
+      : base
 
     // Merge the source matrix with the base matrix
     this.a = source.a != null ? source.a : base.a
@@ -295,7 +295,7 @@ export default class Matrix {
   flipO (axis, around) {
     return axis === 'x' ? this.scaleO(-1, 1, around, 0)
       : axis === 'y' ? this.scaleO(1, -1, 0, around)
-        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+      : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
   }
 
   // Shear matrix
@@ -377,9 +377,9 @@ export default class Matrix {
   // Check if two matrices are equal
   equals (other) {
     var comp = new Matrix(other)
-    return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b) &&
-      closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d) &&
-      closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
+    return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b)
+      && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d)
+      && closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
   }
 
   // Convert matrix to string
@@ -388,7 +388,7 @@ export default class Matrix {
   }
 
   toArray () {
-    return [this.a, this.b, this.c, this.d, this.e, this.f]
+    return [ this.a, this.b, this.c, this.d, this.e, this.f ]
   }
 
   valueOf () {
@@ -408,12 +408,12 @@ export default class Matrix {
 
   static isMatrixLike (o) {
     return (
-      o.a != null ||
-      o.b != null ||
-      o.c != null ||
-      o.d != null ||
-      o.e != null ||
-      o.f != null
+      o.a != null
+      || o.b != null
+      || o.c != null
+      || o.d != null
+      || o.e != null
+      || o.f != null
     )
   }
 
@@ -424,20 +424,20 @@ export default class Matrix {
     var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
     var skewX = o.skew && o.skew.length ? o.skew[0]
       : isFinite(o.skew) ? o.skew
-        : isFinite(o.skewX) ? o.skewX
-          : 0
+      : isFinite(o.skewX) ? o.skewX
+      : 0
     var skewY = o.skew && o.skew.length ? o.skew[1]
       : isFinite(o.skew) ? o.skew
-        : isFinite(o.skewY) ? o.skewY
-          : 0
+      : isFinite(o.skewY) ? o.skewY
+      : 0
     var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
       : isFinite(o.scale) ? o.scale * flipX
-        : isFinite(o.scaleX) ? o.scaleX * flipX
-          : flipX
+      : isFinite(o.scaleX) ? o.scaleX * flipX
+      : flipX
     var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
       : isFinite(o.scale) ? o.scale * flipY
-        : isFinite(o.scaleY) ? o.scaleY * flipY
-          : flipY
+      : isFinite(o.scaleY) ? o.scaleY * flipY
+      : flipY
     var shear = o.shear || 0
     var theta = o.rotate || o.theta || 0
     var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)

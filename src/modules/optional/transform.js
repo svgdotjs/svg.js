@@ -15,9 +15,11 @@ export function matrixify () {
     .split(transforms).slice(0, -1).map(function (str) {
       // generate key => value pairs
       var kv = str.trim().split('(')
-      return [kv[0],
+      return [ kv[0],
         kv[1].split(delimiter)
-          .map(function (str) { return parseFloat(str) })
+          .map(function (str) {
+            return parseFloat(str)
+          })
       ]
     })
     .reverse()

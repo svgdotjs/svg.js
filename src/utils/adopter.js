@@ -110,7 +110,7 @@ export function assignNewId (node) {
 export function extend (modules, methods, attrCheck) {
   var key, i
 
-  modules = Array.isArray(modules) ? modules : [modules]
+  modules = Array.isArray(modules) ? modules : [ modules ]
 
   for (i = modules.length - 1; i >= 0; i--) {
     for (key in methods) {

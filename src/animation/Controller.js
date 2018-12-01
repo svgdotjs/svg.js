@@ -17,10 +17,18 @@ function makeSetterGetter (k, f) {
 }
 
 export let easing = {
-  '-': function (pos) { return pos },
-  '<>': function (pos) { return -Math.cos(pos * Math.PI) / 2 + 0.5 },
-  '>': function (pos) { return Math.sin(pos * Math.PI / 2) },
-  '<': function (pos) { return -Math.cos(pos * Math.PI / 2) + 1 },
+  '-': function (pos) {
+    return pos
+  },
+  '<>': function (pos) {
+    return -Math.cos(pos * Math.PI) / 2 + 0.5
+  },
+  '>': function (pos) {
+    return Math.sin(pos * Math.PI / 2)
+  },
+  '<': function (pos) {
+    return -Math.cos(pos * Math.PI / 2) + 1
+  },
   bezier: function (x1, y1, x2, y2) {
     // see https://www.w3.org/TR/css-easing-1/#cubic-bezier-algo
     return function (t) {
@@ -85,7 +93,9 @@ export let easing = {
 }
 
 export class Stepper {
-  done () { return false }
+  done () {
+    return false
+  }
 }
 
 /***
@@ -166,9 +176,9 @@ export class Spring extends Controller {
 
     // Apply the control to get the new position and store it
     var acceleration = -this.d * velocity - this.k * (current - target)
-    var newPosition = current +
-      velocity * dt +
-      acceleration * dt * dt / 2
+    var newPosition = current
+      + velocity * dt
+      + acceleration * dt * dt / 2
 
     // Store the velocity
     c.velocity = velocity + acceleration * dt

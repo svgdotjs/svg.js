@@ -8,15 +8,15 @@ import SVGNumber from '../../types/SVGNumber.js'
 
 // Define list of available attributes for stroke and fill
 var sugar = {
-  stroke: ['color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset'],
-  fill: ['color', 'opacity', 'rule'],
+  stroke: [ 'color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset' ],
+  fill: [ 'color', 'opacity', 'rule' ],
   prefix: function (t, a) {
     return a === 'color' ? t : t + '-' + a
   }
 }
 
 // Add sugar for fill and stroke
-;['fill', 'stroke'].forEach(function (m) {
+;[ 'fill', 'stroke' ].forEach(function (m) {
   var extension = {}
   var i
 
@@ -24,7 +24,7 @@ var sugar = {
     if (typeof o === 'undefined') {
       return this.attr(m)
     }
-    if (typeof o === 'string' || Color.isRgb(o) || (o instanceof Element)) {
+    if (typeof o === 'string' || o instanceof Color || Color.isRgb(o) || (o instanceof Element)) {
       this.attr(m, o)
     } else {
       // set all attributes from sugar.fill and sugar.stroke list
@@ -38,10 +38,10 @@ var sugar = {
     return this
   }
 
-  registerMethods(['Shape', 'Runner'], extension)
+  registerMethods([ 'Shape', 'Runner' ], extension)
 })
 
-registerMethods(['Element', 'Runner'], {
+registerMethods([ 'Element', 'Runner' ], {
   // Let the user set the matrix directly
   matrix: function (mat, b, c, d, e, f) {
     // Act as a getter
@@ -62,7 +62,7 @@ registerMethods(['Element', 'Runner'], {
   skew: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
       ? this.transform({ skew: x, ox: y, oy: cx }, true)
-      : this.transform({ skew: [x, y], ox: cx, oy: cy }, true)
+      : this.transform({ skew: [ x, y ], ox: cx, oy: cy }, true)
   },
 
   shear: function (lam, cx, cy) {
@@ -73,29 +73,29 @@ registerMethods(['Element', 'Runner'], {
   scale: function (x, y, cx, cy) {
     return arguments.length === 1 || arguments.length === 3
       ? this.transform({ scale: x, ox: y, oy: cx }, true)
-      : this.transform({ scale: [x, y], ox: cx, oy: cy }, true)
+      : this.transform({ scale: [ x, y ], ox: cx, oy: cy }, true)
   },
 
   // Map translate to transform
   translate: function (x, y) {
-    return this.transform({ translate: [x, y] }, true)
+    return this.transform({ translate: [ x, y ] }, true)
   },
 
   // Map relative translations to transform
   relative: function (x, y) {
-    return this.transform({ relative: [x, y] }, true)
+    return this.transform({ relative: [ x, y ] }, true)
   },
 
   // Map flip to transform
   flip: function (direction, around) {
     var directionString = typeof direction === 'string' ? direction
       : isFinite(direction) ? 'both'
-        : 'both'
-    var origin = (direction === 'both' && isFinite(around)) ? [around, around]
-      : (direction === 'x') ? [around, 0]
-        : (direction === 'y') ? [0, around]
-          : isFinite(direction) ? [direction, direction]
-            : [0, 0]
+      : 'both'
+    var origin = (direction === 'both' && isFinite(around)) ? [ around, around ]
+      : (direction === 'x') ? [ around, 0 ]
+      : (direction === 'y') ? [ 0, around ]
+      : isFinite(direction) ? [ direction, direction ]
+      : [ 0, 0 ]
     this.transform({ flip: directionString, origin: origin }, true)
   },
 
@@ -143,7 +143,7 @@ registerMethods('Path', {
   }
 })
 
-registerMethods(['Element', 'Runner'], {
+registerMethods([ 'Element', 'Runner' ], {
   // Set font
   font: function (a, v) {
     if (typeof a === 'object') {

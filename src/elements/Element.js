@@ -74,10 +74,10 @@ export default class Element extends Dom {
   inside (x, y) {
     let box = this.bbox()
 
-    return x > box.x &&
-      y > box.y &&
-      x < box.x + box.width &&
-      y < box.y + box.height
+    return x > box.x
+      && y > box.y
+      && x < box.x + box.width
+      && y < box.y + box.height
   }
 
   // Move element to given x and y values
@@ -92,9 +92,9 @@ export default class Element extends Dom {
     let parent = this
 
     while (
-      (parent = parent.parent()) &&
-      parent.node !== until.node &&
-      parent.node !== globals.document
+      (parent = parent.parent())
+      && parent.node !== until.node
+      && parent.node !== globals.document
     ) {
       parents.push(parent)
     }

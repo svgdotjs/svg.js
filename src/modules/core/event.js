@@ -79,7 +79,9 @@ export function off (node, events, listener, options) {
     } else if (ev && ns) {
       // remove all listeners for a namespaced event
       if (bag[ev] && bag[ev][ns]) {
-        for (l in bag[ev][ns]) { off(n, [ev, ns].join('.'), l) }
+        for (l in bag[ev][ns]) {
+          off(n, [ ev, ns ].join('.'), l)
+        }
 
         delete bag[ev][ns]
       }
@@ -87,19 +89,25 @@ export function off (node, events, listener, options) {
       // remove all listeners for a specific namespace
       for (event in bag) {
         for (namespace in bag[event]) {
-          if (ns === namespace) { off(n, [event, ns].join('.')) }
+          if (ns === namespace) {
+            off(n, [ event, ns ].join('.'))
+          }
         }
       }
     } else if (ev) {
       // remove all listeners for the event
       if (bag[ev]) {
-        for (namespace in bag[ev]) { off(n, [ev, namespace].join('.')) }
+        for (namespace in bag[ev]) {
+          off(n, [ ev, namespace ].join('.'))
+        }
 
         delete bag[ev]
       }
     } else {
       // remove all listeners on a given node
-      for (event in bag) { off(n, event) }
+      for (event in bag) {
+        off(n, event)
+      }
 
       clearEvents(node)
     }

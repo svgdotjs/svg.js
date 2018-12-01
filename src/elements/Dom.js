@@ -79,7 +79,7 @@ export default class Dom extends EventTarget {
     var i, il
 
     for (i = 0, il = children.length; i < il; i++) {
-      block.apply(children[i], [i, children])
+      block.apply(children[i], [ i, children ])
 
       if (deep) {
         children[i].each(block, deep)
@@ -260,7 +260,7 @@ export default class Dom extends EventTarget {
           if (result === false) {
             this.remove()
 
-          // If modifier returns new node, use it
+            // If modifier returns new node, use it
           } else if (result && this !== _this) {
             this.replace(_this)
           }

@@ -13,9 +13,13 @@ export default List
 extend(List, {
   each (fnOrMethodName, ...args) {
     if (typeof fnOrMethodName === 'function') {
-      this.forEach((el) => { fnOrMethodName.call(el, el) })
+      this.forEach((el) => {
+        fnOrMethodName.call(el, el)
+      })
     } else {
-      return this.map(el => { return el[fnOrMethodName](...args) })
+      return this.map(el => {
+        return el[fnOrMethodName](...args)
+      })
     }
 
     return this

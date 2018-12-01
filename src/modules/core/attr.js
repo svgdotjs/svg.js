@@ -41,7 +41,7 @@ export default function attr (attr, val, ns) {
     val = this.node.getAttribute(attr)
     return val == null ? defaults[attr]
       : isNumber.test(val) ? parseFloat(val)
-        : val
+      : val
   } else {
     // Loop through hooks and execute them to convert value
     val = hooks.reduce((_val, hook) => {

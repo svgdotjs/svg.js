@@ -6,8 +6,12 @@ export default class Defs extends Container {
     super(nodeOrNew('defs', node), node)
   }
 
-  flatten () { return this }
-  ungroup () { return this }
+  flatten () {
+    return this
+  }
+  ungroup () {
+    return this
+  }
 }
 
 register(Defs)

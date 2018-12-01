@@ -230,7 +230,7 @@ export default class Runner extends EventTarget {
       var endTime = t * (w + d) - w
       position = x <= 0 ? Math.round(f(1e-5))
         : x < endTime ? f(x)
-          : Math.round(f(endTime - 1e-5))
+        : Math.round(f(endTime - 1e-5))
       return position
     }
 
@@ -355,7 +355,7 @@ export default class Runner extends EventTarget {
       // which has access to the outer scope
       if (this._history[method].caller.retarget) {
         this._history[method].caller.retarget(target)
-      // for everything else a simple morpher change is sufficient
+        // for everything else a simple morpher change is sufficient
       } else {
         this._history[method].morpher.to(target)
       }
@@ -470,7 +470,7 @@ class FakeRunner {
   clearTransformsFromQueue () { }
 }
 
-extend([Runner, FakeRunner], {
+extend([ Runner, FakeRunner ], {
   mergeWith (runner) {
     return new FakeRunner(
       runner.transforms.lmultiply(this.transforms),
@@ -729,7 +729,7 @@ extend(Runner, {
 
       let { x, y } = new Point(origin).transform(element._currentTransform(this))
 
-      let target = new Matrix({ ...transforms, origin: [x, y] })
+      let target = new Matrix({ ...transforms, origin: [ x, y ] })
       let start = this._isDeclarative && current
         ? current
         : startTransform
@@ -743,7 +743,7 @@ extend(Runner, {
         const rCurrent = start.rotate
 
         // Figure out the shortest path to rotate directly
-        const possibilities = [rTarget - 360, rTarget, rTarget + 360]
+        const possibilities = [ rTarget - 360, rTarget, rTarget + 360 ]
         const distances = possibilities.map(a => Math.abs(a - rCurrent))
         const shortest = Math.min(...distances)
         const index = distances.indexOf(shortest)
@@ -775,8 +775,8 @@ extend(Runner, {
     function retarget (newTransforms) {
       // only get a new origin if it changed since the last call
       if (
-        (newTransforms.origin || 'center').toString() !==
-        (transforms.origin || 'center').toString()
+        (newTransforms.origin || 'center').toString()
+        !== (transforms.origin || 'center').toString()
       ) {
         origin = getOrigin(transforms, element)
       }
@@ -911,7 +911,7 @@ extend(Runner, {
   plot (a, b, c, d) {
     // Lines can be plotted with 4 arguments
     if (arguments.length === 4) {
-      return this.plot([a, b, c, d])
+      return this.plot([ a, b, c, d ])
     }
 
     var morpher = this._element.MorphArray().to(a)

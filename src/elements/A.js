@@ -31,7 +31,9 @@ registerMethods({
     linkTo: function (url) {
       var link = new A()
 
-      if (typeof url === 'function') { url.call(link, link) } else {
+      if (typeof url === 'function') {
+        url.call(link, link)
+      } else {
         link.to(url)
       }
 

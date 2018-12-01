@@ -18,7 +18,9 @@ export function filter (array, block) {
   var result = []
 
   for (i = 0; i < il; i++) {
-    if (block(array[i])) { result.push(array[i]) }
+    if (block(array[i])) {
+      result.push(array[i])
+    }
   }
 
   return result
@@ -85,10 +87,10 @@ export function getOrigin (o, element) {
     // Calculate the transformed x and y coordinates
     let bx = string.includes('left') ? x
       : string.includes('right') ? x + width
-        : x + width / 2
+      : x + width / 2
     let by = string.includes('top') ? y
       : string.includes('bottom') ? y + height
-        : y + height / 2
+      : y + height / 2
 
     // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
     ox = o.ox != null ? o.ox : bx

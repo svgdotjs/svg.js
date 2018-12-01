@@ -59,7 +59,7 @@ registerMethods({
       // x1 is not necessarily a number, it can also be an array, a string and a PointArray
       return Line.prototype.plot.apply(
         this.put(new Line())
-        , args[0] != null ? args : [0, 0, 0, 0]
+        , args[0] != null ? args : [ 0, 0, 0, 0 ]
       )
     })
   }

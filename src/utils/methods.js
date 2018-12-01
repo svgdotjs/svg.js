@@ -25,7 +25,7 @@ export function getMethodsFor (name) {
 }
 
 export function getMethodNames () {
-  return [...new Set(names)]
+  return [ ...new Set(names) ]
 }
 
 export function addMethodNames (_names) {
