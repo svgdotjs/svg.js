@@ -75,7 +75,7 @@ export function register (element, name = element.name, asRoot = false) {
   elements[name] = element
   if (asRoot) elements[root] = element
 
-  addMethodNames(Object.keys(element.prototype))
+  addMethodNames(Object.getOwnPropertyNames(element.prototype))
 
   return element
 }

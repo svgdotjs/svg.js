@@ -96,7 +96,7 @@ registerMethods([ 'Element', 'Runner' ], {
       : (direction === 'y') ? [ 0, around ]
       : isFinite(direction) ? [ direction, direction ]
       : [ 0, 0 ]
-    this.transform({ flip: directionString, origin: origin }, true)
+    return this.transform({ flip: directionString, origin: origin }, true)
   },
 
   // Opacity

@@ -99,11 +99,13 @@ export function after (element) {
 export function insertBefore (element) {
   element = makeInstance(element)
   element.before(this)
+  return this
 }
 
 export function insertAfter (element) {
   element = makeInstance(element)
   element.after(this)
+  return this
 }
 
 registerMethods('Dom', {

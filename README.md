@@ -19,10 +19,6 @@ SVG.js is licensed under the terms of the MIT License.
 
 `yarn add @svgdotjs/svg.js`
 
-#### Bower:
-
-`bower install svgdotjs.svg.js`
-
 #### Cdnjs:
 
 [https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)

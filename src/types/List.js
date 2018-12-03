@@ -30,8 +30,17 @@ extend(List, {
   }
 })
 
+const reserved = ['toArray', 'constructor', 'each']
+
 List.extend = function (methods) {
   methods = methods.reduce((obj, name) => {
+    // Don't overwrite own methods
+    if (reserved.includes(name)) return obj
+
+    // Don't add private methods
+    if (name[0] === '_') return obj
+
+    // Relay every call to each()
     obj[name] = function (...attrs) {
       return this.each(name, ...attrs)
     }

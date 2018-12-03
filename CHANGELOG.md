@@ -7,6 +7,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.1] - 2018-12-03
+
+### Fixed
+- fixed `insertBefore`, `insertAfter` and `flip` correctly returning `this`
+- fixed `List` which didnt have all method names it should have
 
 ## [3.0.0] - 2018-12-01
 
@@ -43,6 +48,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 - removed `size()` from `SVG.Text` to avoid name clash (#799)
 - removed `native()` function
 - removed `Bare` in favour of `Dom` (#935)
+- removed `bower` support because it is deprecated
 
 ### Changed
 - gradients now have there corresponding node as type and not only radial/linear
@@ -721,6 +727,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.1
 [3.0.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.0
 
 [2.7.1]: https://github.com/svgdotjs/svg.js/releases/tag/2.7.1

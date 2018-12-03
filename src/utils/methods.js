@@ -16,7 +16,7 @@ export function registerMethods (name, m) {
     return
   }
 
-  addMethodNames(Object.keys(m))
+  addMethodNames(Object.getOwnPropertyNames(m))
   methods[name] = Object.assign(methods[name] || {}, m)
 }
 
