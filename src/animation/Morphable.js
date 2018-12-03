@@ -90,7 +90,12 @@ export default class Morphable {
 
     this._morphObj = this._morphObj || new this._type()
     this._context = this._context
-      || Array.apply(null, Array(result.length)).map(Object)
+      || Array.apply(null, Array(result.length))
+        .map(Object)
+        .map(function (o) {
+          o.done = true
+          return o
+        })
     return result
   }
 

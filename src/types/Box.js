@@ -1,6 +1,7 @@
 import { delimiter } from '../modules/core/regex.js'
-import { registerMethods } from '../utils/methods.js'
 import { globals } from '../utils/window.js'
+import { register } from '../utils/adopter.js'
+import { registerMethods } from '../utils/methods.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
@@ -152,3 +153,5 @@ registerMethods({
     }
   }
 })
+
+register(Box)

@@ -80,11 +80,12 @@ export default class Timeline extends EventTarget {
     // Manage runner
     runner.unschedule()
     runner.timeline(this)
-    // runner.time(-delay)
+
+    const persist = runner.persist()
 
     // Save runnerInfo
     this._runners[runner.id] = {
-      persist: this.persist(),
+      persist: persist === null ? this._persist : persist,
       runner: runner,
       start: absoluteStartTime + delay
     }

@@ -63,6 +63,9 @@ export default class Color {
   }
 
   init (a = 0, b = 0, c = 0, d = 0, space = 'rgb') {
+    // This catches the case when a falsy value is passed like ''
+    a = !a ? 0 : a
+
     // Reset all values in case the init function is rerun with new color space
     if (this.space) {
       for (let component in this.space) {

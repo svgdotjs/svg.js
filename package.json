@@ -1,6 +1,6 @@
 {
   "name": "@svgdotjs/svg.js",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgdotjs.github.io/",
   "homepage": "https://svgdotjs.github.io/",
@@ -64,7 +64,7 @@
     "test:svgdom": "node -r esm ./spec/runSVGDomTest.js || true",
     "test:es6": "npx karma start .config/karma.es6.js --single-run",
     "zip": "zip -j dist/svg.js.zip -- LICENSE.txt README.md CHANGELOG.md dist/svg.js dist/svg.js.map dist/svg.min.js dist/svg.min.js.map dist/polyfills.js dist/polyfillsIE.js",
-    "prepublishOnly": "npm run build && npm run build:polyfills && npm test",
+    "prepublishOnly": "rm -r ./dist && npm run build && npm run build:polyfills && npm test",
     "postpublish": "npm run zip"
   },
   "devDependencies": {

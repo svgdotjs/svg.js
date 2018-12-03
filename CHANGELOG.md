@@ -7,11 +7,21 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.2] - 2018-12-03
+
+### Fixed
+- fixed `List` which still didn't have all method names it should have
+- fixed `Runner` which correctly handle retargeted controlled animations now
+- fixed `Runner` so that it is able to be persisted correctly
+- fixed `Color` which correctly handles empty strings now
+- fixed `attr` which correctly handles Objects of other kind now
+- fixed `Morphable` which correctly calculates the done flag now
+
 ## [3.0.1] - 2018-12-03
 
 ### Fixed
 - fixed `insertBefore`, `insertAfter` and `flip` correctly returning `this`
-- fixed `List` which didnt have all method names it should have
+- fixed `List` which didn't have all method names it should have
 
 ## [3.0.0] - 2018-12-01
 
@@ -727,6 +737,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.2
 [3.0.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.1
 [3.0.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.0
 

@@ -1,4 +1,5 @@
 import { dispatch, off, on } from '../modules/core/event.js'
+import { register } from '../utils/adopter.js'
 import Base from './Base.js'
 
 export default class EventTarget extends Base {
@@ -56,3 +57,5 @@ export default class EventTarget extends Base {
 
   removeEventListener () {}
 }
+
+register(EventTarget)

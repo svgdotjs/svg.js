@@ -1,5 +1,5 @@
 import { Controller, Ease, Stepper } from './Controller.js'
-import { extend } from '../utils/adopter.js'
+import { extend, register } from '../utils/adopter.js'
 import { from, to } from '../modules/core/gradiented.js'
 import { getOrigin } from '../utils/utils.js'
 import { noop, timeline } from '../modules/core/defaults.js'
@@ -64,6 +64,9 @@ export default class Runner extends EventTarget {
     this._swing = false
     this._wait = 0
     this._times = 1
+
+    // Stores how long a runner is stored after beeing done
+    this._persist = this._isDeclarative ? true : null
   }
 
   /*
@@ -197,6 +200,12 @@ export default class Runner extends EventTarget {
     var partial = p % 1
     var time = loopDuration * whole + this._duration * partial
     return this.time(time)
+  }
+
+  persist (dtOrForever) {
+    if (dtOrForever == null) return this._persist
+    this._persist = dtOrForever
+    return this
   }
 
   position (p) {
@@ -338,11 +347,22 @@ export default class Runner extends EventTarget {
       morpher: morpher,
       caller: this._queue[this._queue.length - 1]
     }
+
+    // We have to resume the timeline in case a controller
+    // is already done without beeing ever run
+    // This can happen when e.g. this is done:
+    //    anim = el.animate(new SVG.Spring)
+    // and later
+    //    anim.move(...)
+    if (this._isDeclarative) {
+      var timeline = this.timeline()
+      timeline && timeline.play()
+    }
   }
 
   // Try to set the target for a morpher if the morpher exists, otherwise
   // do nothing and return false
-  _tryRetarget (method, target) {
+  _tryRetarget (method, target, extra) {
     if (this._history[method]) {
       // if the last method wasnt even initialised, throw it away
       if (!this._history[method].caller.initialised) {
@@ -354,7 +374,7 @@ export default class Runner extends EventTarget {
       // for the case of transformations, we use the special retarget function
       // which has access to the outer scope
       if (this._history[method].caller.retarget) {
-        this._history[method].caller.retarget(target)
+        this._history[method].caller.retarget(target, extra)
         // for everything else a simple morpher change is sufficient
       } else {
         this._history[method].morpher.to(target)
@@ -362,7 +382,7 @@ export default class Runner extends EventTarget {
 
       this._history[method].caller.finished = false
       var timeline = this.timeline()
-      timeline && timeline._continue()
+      timeline && timeline.play()
       return true
     }
     return false
@@ -604,7 +624,7 @@ registerMethods({
         .reduce(lmultiply, new Matrix())
     },
 
-    addRunner (runner) {
+    _addRunner (runner) {
       this._transformationRunners.add(runner)
 
       Animator.transform_frame(
@@ -636,9 +656,10 @@ extend(Runner, {
   styleAttr (type, name, val) {
     // apply attributes individually
     if (typeof name === 'object') {
-      for (var key in val) {
-        this.styleAttr(type, key, val[key])
+      for (var key in name) {
+        this.styleAttr(type, key, name[key])
       }
+      return this
     }
 
     var morpher = new Morphable(this._stepper).to(val)
@@ -654,6 +675,8 @@ extend(Runner, {
   },
 
   zoom (level, point) {
+    if (this._tryRetarget('zoom', to, point)) return this
+
     var morpher = new Morphable(this._stepper).to(new SVGNumber(level))
 
     this.queue(function () {
@@ -661,6 +684,9 @@ extend(Runner, {
     }, function (pos) {
       this.element().zoom(morpher.at(pos), point)
       return morpher.done()
+    }, function (newLevel, newPoint) {
+      point = newPoint
+      morpher.to(newLevel)
     })
 
     return this
@@ -714,7 +740,7 @@ extend(Runner, {
       startTransform = new Matrix(relative ? undefined : element)
 
       // add the runner to the element so it can merge transformations
-      element.addRunner(this)
+      element._addRunner(this)
 
       // Deactivate all transforms that have run so far if we are absolute
       if (!relative) {
@@ -953,3 +979,4 @@ extend(Runner, {
 })
 
 extend(Runner, { rx, ry, from, to })
+register(Runner)

@@ -1,5 +1,6 @@
 import { delimiter } from '../modules/core/regex.js'
 import { radians } from '../utils/utils.js'
+import { register } from '../utils/adopter.js'
 import Element from '../elements/Element.js'
 import Point from './Point.js'
 
@@ -498,3 +499,5 @@ export function screenCTM () {
   }
   return new Matrix(this.node.getScreenCTM())
 }
+
+register(Matrix)

@@ -30,7 +30,7 @@ export default function attr (attr, val, ns) {
       last[curr] = this.attr(curr)
       return last
     }, {})
-  } else if (typeof attr === 'object') {
+  } else if (typeof attr === 'object' && attr.constructor === Object) {
     // apply every attribute individually if an object is passed
     for (val in attr) this.attr(val, attr[val])
   } else if (val === null) {
