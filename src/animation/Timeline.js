@@ -45,9 +45,7 @@ export default class Timeline extends EventTarget {
   // schedules a runner on the timeline
   schedule (runner, delay, when) {
     if (runner == null) {
-      return this._runners.map(makeSchedule).sort(function (a, b) {
-        return a.runner.id - b.runner.id
-      })
+      return this._order.map((id) => makeSchedule(this._runners[id]))
     }
 
     // The start time for the next animation can either be given explicitly,
@@ -218,7 +216,7 @@ export default class Timeline extends EventTarget {
       if (dtToStart <= 0) {
         runnersLeft = true
 
-        // This is for the case that teh timeline was seeked so that the time
+        // This is for the case that the timeline was seeked so that the time
         // is now before the startTime of the runner. Thats why we need to set
         // the runner to position 0
         runner.reset()
@@ -281,9 +279,14 @@ export default class Timeline extends EventTarget {
 
 registerMethods({
   Element: {
-    timeline: function () {
-      this._timeline = (this._timeline || new Timeline())
-      return this._timeline
+    timeline: function (timeline) {
+      if (timeline == null) {
+        this._timeline = (this._timeline || new Timeline())
+        return this._timeline
+      } else {
+        this._timeline = timeline
+        return this
+      }
     }
   }
 })

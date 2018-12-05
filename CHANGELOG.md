@@ -7,6 +7,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.3] - 2018-12-05
+
+### Fixed
+- fixed `Runner` which correctly retains transformations when it is still on a timeline
+- fixed `plot()` method of Runner
+- fixed `timeline()` so that one can set the timeline of an element now
+- fixed `G` and added missing `width/height`
+
 ## [3.0.2] - 2018-12-03
 
 ### Fixed
@@ -737,6 +745,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.3]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.3
 [3.0.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.2
 [3.0.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.1
 [3.0.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.0

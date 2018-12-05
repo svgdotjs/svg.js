@@ -65,6 +65,8 @@ export default class Runner extends EventTarget {
     this._wait = 0
     this._times = 1
 
+    this._frameId = null
+
     // Stores how long a runner is stored after beeing done
     this._persist = this._isDeclarative ? true : null
   }
@@ -441,7 +443,7 @@ export default class Runner extends EventTarget {
 
   // TODO: Keep track of all transformations so that deletion is faster
   clearTransformsFromQueue () {
-    if (!this.done) {
+    if (!this.done || !this._timeline || !this._timeline._order.includes(this)) {
       this._queue = this._queue.filter((item) => {
         return !item.isTransform
       })
@@ -558,7 +560,14 @@ class RunnerArray {
   merge () {
     let lastRunner = null
     this.runners.forEach((runner, i) => {
-      if (lastRunner && runner.done && lastRunner.done) {
+
+      const condition = lastRunner
+        && runner.done && lastRunner.done
+        // don't merge runner when persisted on timeline
+        && (!runner._timeline || !runner._timeline._order.includes(runner.id))
+        && (!lastRunner._timeline || !lastRunner._timeline._order.includes(lastRunner.id))
+
+      if (condition) {
         this.remove(runner.id)
         this.edit(lastRunner.id, runner.mergeWith(lastRunner))
       }
@@ -589,7 +598,6 @@ class RunnerArray {
   }
 }
 
-let frameId = 0
 registerMethods({
   Element: {
     animate (duration, delay, when) {
@@ -627,17 +635,18 @@ registerMethods({
     _addRunner (runner) {
       this._transformationRunners.add(runner)
 
-      Animator.transform_frame(
-        mergeTransforms.bind(this), this._frameId
-      )
+      // Make sure that the runner merge is executed at the very end of
+      // all Animator functions. Thats why we use setTimeout here
+      setTimeout(() => {
+        Animator.cancelFrame(this._frameId)
+        this._frameId = Animator.frame(mergeTransforms.bind(this))
+      }, 0)
     },
 
     _prepareRunner () {
       if (this._frameId == null) {
         this._transformationRunners = new RunnerArray()
           .add(new FakeRunner(new Matrix(this)))
-
-        this._frameId = frameId++
       }
     }
   }
@@ -689,6 +698,7 @@ extend(Runner, {
       morpher.to(newLevel)
     })
 
+    this._rememberMorpher('zoom', morpher)
     return this
   },
 
@@ -794,6 +804,7 @@ extend(Runner, {
       currentAngle = affineParameters.rotate
       current = new Matrix(affineParameters)
 
+      element._addRunner(this)
       this.addTransform(current)
       return morpher.done()
     }
@@ -940,14 +951,19 @@ extend(Runner, {
       return this.plot([ a, b, c, d ])
     }
 
-    var morpher = this._element.MorphArray().to(a)
+    if (this._tryRetarget('plot', a)) return this
+
+    var morpher = new Morphable(this._stepper)
+      .type(this._element.MorphArray).to(a)
 
     this.queue(function () {
       morpher.from(this._element.array())
     }, function (pos) {
       this._element.plot(morpher.at(pos))
+      return morpher.done()
     })
 
+    this._rememberMorpher('plot', morpher)
     return this
   },
 

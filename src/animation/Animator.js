@@ -21,10 +21,6 @@ const Animator = {
     return node
   },
 
-  transform_frame (fn, id) {
-    Animator.transforms[id] = fn
-  },
-
   timeout (fn, delay) {
     delay = delay || 0
 
@@ -73,10 +69,6 @@ const Animator = {
     while ((nextFrame !== lastFrame) && (nextFrame = Animator.frames.shift())) {
       nextFrame.run()
     }
-
-    Animator.transforms.forEach(function (el) {
-      el()
-    })
 
     // If we have remaining timeouts or frames, draw until we don't anymore
     Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first()

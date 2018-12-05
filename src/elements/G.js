@@ -32,6 +32,14 @@ export default class G extends Container {
   dmove (dx, dy) {
     return this.transform({ dx, dy }, true)
   }
+
+  width () {
+    return this.bbox().width
+  }
+
+  height () {
+    return this.bbox().height
+  }
 }
 
 registerMethods({
