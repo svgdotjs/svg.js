@@ -18,7 +18,7 @@ export default class Queue {
       this._first = item
     }
 
-    // Update the length and return the current item
+    // Return the current item
     return item
   }
 

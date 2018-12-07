@@ -8,7 +8,7 @@ import {
 import { getMethodsFor } from '../../../src/utils/methods.js'
 import { getWindow, withWindow } from '../../../src/utils/window.js'
 
-const viewbox = getMethodsFor('viewbox').viewbox
+const { zoom, viewbox} = getMethodsFor('viewbox')
 
 const { any, objectContaining, arrayContaining } = jasmine
 
@@ -173,6 +173,23 @@ describe('Box.js', () => {
         const canvas = viewbox.call(SVG().addTo(container), 10, 10, 200, 200)
         expect(viewbox.call(canvas)).toEqual(any(Box))
         expect(viewbox.call(canvas).toArray()).toEqual([10, 10, 200, 200])
+      })
+    })
+
+    describe('zoom()', () => {
+      it('zooms around the center by default', () => {
+        const canvas = zoom.call(SVG().size(100, 50).viewbox(0, 0, 100, 50).addTo(container), 2)
+        expect(canvas.attr('viewBox')).toEqual('25 12.5 50 25')
+      })
+
+      it('zooms around a point', () => {
+        const canvas = zoom.call(SVG().size(100, 50).viewbox(0, 0, 100, 50).addTo(container), 2, [0, 0])
+        expect(canvas.attr('viewBox')).toEqual('0 0 50 25')
+      })
+
+      it('gets the zoom', () => {
+        const canvas = zoom.call(SVG().size(100, 50).viewbox(0, 0, 100, 50).addTo(container), 2)
+        expect(zoom.call(canvas)).toEqual(2)
       })
     })
   })

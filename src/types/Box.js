@@ -2,6 +2,7 @@ import { delimiter } from '../modules/core/regex.js'
 import { globals } from '../utils/window.js'
 import { register } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
+import Matrix from './Matrix.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
@@ -150,6 +151,37 @@ registerMethods({
 
       // act as setter
       return this.attr('viewBox', new Box(x, y, width, height))
+    },
+
+    zoom (level, point) {
+      var style = window.getComputedStyle(this.node)
+
+      var width = parseFloat(style.getPropertyValue('width'))
+
+      var height = parseFloat(style.getPropertyValue('height'))
+
+      var v = this.viewbox()
+
+      var zoomX = width / v.width
+
+      var zoomY = height / v.height
+
+      var zoom = Math.min(zoomX, zoomY)
+
+      if (level == null) {
+        return zoom
+      }
+
+      var zoomAmount = zoom / level
+      if (zoomAmount === Infinity) zoomAmount = Number.MIN_VALUE
+
+      point = point || new Point(width / 2 / zoomX + v.x, height / 2 / zoomY + v.y)
+
+      var box = new Box(v).transform(
+        new Matrix({ scale: zoomAmount, origin: point })
+      )
+
+      return this.viewbox(box)
     }
   }
 })

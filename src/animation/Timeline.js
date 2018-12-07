@@ -33,7 +33,8 @@ export default class Timeline extends EventTarget {
     this._nextFrame = null
     this._paused = true
     this._runners = []
-    this._order = []
+    this._runnerIds = []
+    this._lastRunnerId = -1
     this._time = 0
     this._lastSourceTime = 0
     this._lastStepTime = 0
@@ -45,7 +46,7 @@ export default class Timeline extends EventTarget {
   // schedules a runner on the timeline
   schedule (runner, delay, when) {
     if (runner == null) {
-      return this._order.map((id) => makeSchedule(this._runners[id]))
+      return this._runners.map(makeSchedule)
     }
 
     // The start time for the next animation can either be given explicitly,
@@ -80,34 +81,37 @@ export default class Timeline extends EventTarget {
     runner.timeline(this)
 
     const persist = runner.persist()
-
-    // Save runnerInfo
-    this._runners[runner.id] = {
+    const runnerInfo = {
       persist: persist === null ? this._persist : persist,
-      runner: runner,
-      start: absoluteStartTime + delay
+      start: absoluteStartTime + delay,
+      runner
     }
 
-    // Save order, update Time if needed and continue
-    this._order.push(runner.id)
+    this._lastRunnerId = runner.id
+
+    this._runners.push(runnerInfo)
+    this._runners.sort((a, b) => a.start - b.start)
+    this._runnerIds = this._runners.map(info => info.runner.id)
+
     this.updateTime()._continue()
     return this
   }
 
   // Remove the runner from this timeline
   unschedule (runner) {
-    var index = this._order.indexOf(runner.id)
+    var index = this._runnerIds.indexOf(runner.id)
     if (index < 0) return this
 
-    delete this._runners[runner.id]
-    this._order.splice(index, 1)
+    this._runners.splice(index, 1)
+    this._runnerIds.splice(index, 1)
+
     runner.timeline(null)
     return this
   }
 
   // Calculates the end of the timeline
   getEndTime () {
-    var lastRunnerInfo = this._runners[this._order[this._order.length - 1]]
+    var lastRunnerInfo = this._runners[this._runnerIds.indexOf(this._lastRunnerId)]
     var lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
     var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : 0
     return lastStartTime + lastDuration
@@ -200,12 +204,39 @@ export default class Timeline extends EventTarget {
     this._lastStepTime = this._time
     this.fire('time', this._time)
 
+    // This is for the case that the timeline was seeked so that the time
+    // is now before the startTime of the runner. Thats why we need to set
+    // the runner to position 0
+
+    // FIXME:
+    // However, reseting in insertion order leads to bugs. Considering the case,
+    // where 2 runners change the same attriute but in different times,
+    // reseting both of them will lead to the case where the later defined
+    // runner always wins the reset even if the other runner started earlier
+    // and therefore should win the attribute battle
+    // this can be solved by reseting them backwards
+    for (var k = this._runners.length; k--;) {
+      // Get and run the current runner and ignore it if its inactive
+      let runnerInfo = this._runners[k]
+      let runner = runnerInfo.runner
+
+      // Make sure that we give the actual difference
+      // between runner start time and now
+      let dtToStart = this._time - runnerInfo.start
+
+      // Dont run runner if not started yet
+      // and try to reset it
+      if (dtToStart <= 0) {
+        runner.reset()
+      }
+    }
+
     // Run all of the runners directly
     var runnersLeft = false
-    for (var i = 0, len = this._order.length; i < len; i++) {
+    for (var i = 0, len = this._runners.length; i < len; i++) {
       // Get and run the current runner and ignore it if its inactive
-      var runnerInfo = this._runners[this._order[i]]
-      var runner = runnerInfo.runner
+      let runnerInfo = this._runners[i]
+      let runner = runnerInfo.runner
       let dt = dtTime
 
       // Make sure that we give the actual difference
@@ -215,11 +246,6 @@ export default class Timeline extends EventTarget {
       // Dont run runner if not started yet
       if (dtToStart <= 0) {
         runnersLeft = true
-
-        // This is for the case that the timeline was seeked so that the time
-        // is now before the startTime of the runner. Thats why we need to set
-        // the runner to position 0
-        runner.reset()
         continue
       } else if (dtToStart < dt) {
         // Adjust dt to make sure that animation is on point
@@ -236,21 +262,20 @@ export default class Timeline extends EventTarget {
         // continue
       } else if (runnerInfo.persist !== true) {
         // runner is finished. And runner might get removed
-
         var endTime = runner.duration() - runner.time() + this._time
 
-        if (endTime + this._persist < this._time) {
+        if (endTime + runnerInfo.persist < this._time) {
           // Delete runner and correct index
-          delete this._runners[this._order[i]]
-          this._order.splice(i--, 1) && --len
-          runner.timeline(null)
+          runner.unschedule()
+          --i
+          --len
         }
       }
     }
 
     // Basically: we continue when there are runners right from us in time
     // when -->, and when runners are left from us when <--
-    if ((runnersLeft && !(this._speed < 0 && this._time === 0)) || (this._order.length && this._speed < 0 && this._time > 0)) {
+    if ((runnersLeft && !(this._speed < 0 && this._time === 0)) || (this._runnerIds.length && this._speed < 0 && this._time > 0)) {
       this._continue()
     } else {
       this.fire('finished')

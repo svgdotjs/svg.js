@@ -168,7 +168,7 @@ export default class Runner extends EventTarget {
   }
 
   after (fn) {
-    return this.on('finish', fn)
+    return this.on('finished', fn)
   }
 
   /*
@@ -276,7 +276,8 @@ export default class Runner extends EventTarget {
     // Figure out if we just started
     var duration = this.duration()
     var justStarted = this._lastTime <= 0 && this._time > 0
-    var justFinished = this._lastTime < this._time && this.time > duration
+    var justFinished = this._lastTime < duration && this._time >= duration
+
     this._lastTime = this._time
     if (justStarted) {
       this.fire('start', this)
@@ -304,15 +305,15 @@ export default class Runner extends EventTarget {
     // correct the done flag here
     // declaritive animations itself know when they converged
     this.done = this.done || (converged && declarative)
-    if (this.done) {
-      this.fire('finish', this)
+    if (justFinished) {
+      this.fire('finished', this)
     }
     return this
   }
 
   reset () {
     if (this._reseted) return this
-    this.loops(0)
+    this.time(0)
     this._reseted = true
     return this
   }
@@ -443,7 +444,7 @@ export default class Runner extends EventTarget {
 
   // TODO: Keep track of all transformations so that deletion is faster
   clearTransformsFromQueue () {
-    if (!this.done || !this._timeline || !this._timeline._order.includes(this)) {
+    if (!this.done || !this._timeline || !this._timeline._runnerIds.includes(this.id)) {
       this._queue = this._queue.filter((item) => {
         return !item.isTransform
       })
@@ -530,18 +531,10 @@ class RunnerArray {
 
   add (runner) {
     if (this.runners.includes(runner)) return
-
     let id = runner.id + 1
 
-    let leftSibling = this.ids.reduce((last, curr) => {
-      if (curr > last && curr < id) return curr
-      return last
-    }, 0)
-
-    let index = this.ids.indexOf(leftSibling) + 1
-
-    this.ids.splice(index, 0, id)
-    this.runners.splice(index, 0, runner)
+    this.runners.push(runner)
+    this.ids.push(id)
 
     return this
   }
@@ -564,10 +557,11 @@ class RunnerArray {
       const condition = lastRunner
         && runner.done && lastRunner.done
         // don't merge runner when persisted on timeline
-        && (!runner._timeline || !runner._timeline._order.includes(runner.id))
-        && (!lastRunner._timeline || !lastRunner._timeline._order.includes(lastRunner.id))
+        && (!runner._timeline || !runner._timeline._runnerIds.includes(runner.id))
+        && (!lastRunner._timeline || !lastRunner._timeline._runnerIds.includes(lastRunner.id))
 
       if (condition) {
+        // the +1 happens in the function
         this.remove(runner.id)
         this.edit(lastRunner.id, runner.mergeWith(lastRunner))
       }
@@ -580,7 +574,7 @@ class RunnerArray {
 
   edit (id, newRunner) {
     let index = this.ids.indexOf(id + 1)
-    this.ids.splice(index, 1, id)
+    this.ids.splice(index, 1, id + 1)
     this.runners.splice(index, 1, newRunner)
     return this
   }
@@ -636,11 +630,10 @@ registerMethods({
       this._transformationRunners.add(runner)
 
       // Make sure that the runner merge is executed at the very end of
-      // all Animator functions. Thats why we use setTimeout here
-      setTimeout(() => {
-        Animator.cancelFrame(this._frameId)
-        this._frameId = Animator.frame(mergeTransforms.bind(this))
-      }, 0)
+      // all Animator functions. Thats why we use immediate here to execute
+      // the merge right after all frames are run
+      Animator.cancelImmediate(this._frameId)
+      this._frameId = Animator.immediate(mergeTransforms.bind(this))
     },
 
     _prepareRunner () {
@@ -689,7 +682,7 @@ extend(Runner, {
     var morpher = new Morphable(this._stepper).to(new SVGNumber(level))
 
     this.queue(function () {
-      morpher = morpher.from(this.zoom())
+      morpher = morpher.from(this.element().zoom())
     }, function (pos) {
       this.element().zoom(morpher.at(pos), point)
       return morpher.done()
@@ -804,8 +797,8 @@ extend(Runner, {
       currentAngle = affineParameters.rotate
       current = new Matrix(affineParameters)
 
-      element._addRunner(this)
       this.addTransform(current)
+      element._addRunner(this)
       return morpher.done()
     }
 

@@ -7,6 +7,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.4] - 2018-12-07
+
+### Fixed
+- fixed `zoom` which was added correctly and is animatable now
+- fixed `Runner` which merges transformations on the correct frame and in the correct way now
+- fixed condition on which transforms get deleted from an element when animating
+- fixed `Timeline` which executes Runner in the correct order now
+- fixed `Svg` which correctly deletes the defs reference on `clear()`
+
 ## [3.0.3] - 2018-12-05
 
 ### Fixed
@@ -745,6 +754,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.4]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.4
 [3.0.3]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.3
 [3.0.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.2
 [3.0.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.1

@@ -58,9 +58,6 @@ export default class Dom extends EventTarget {
       this.node.removeChild(this.node.lastChild)
     }
 
-    // remove defs reference
-    delete this._defs
-
     return this
   }
 

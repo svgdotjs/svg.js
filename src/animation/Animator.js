@@ -5,6 +5,7 @@ const Animator = {
   nextDraw: null,
   frames: new Queue(),
   timeouts: new Queue(),
+  immediates: new Queue(),
   timer: () => globals.window.performance || globals.window.Date,
   transforms: [],
 
@@ -38,12 +39,27 @@ const Animator = {
     return node
   },
 
+  immediate (fn) {
+    // Add the immediate fn to the end of the queue
+    var node = Animator.immediates.push(fn)
+    // Request another animation frame if we need one
+    if (Animator.nextDraw === null) {
+      Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw)
+    }
+
+    return node
+  },
+
   cancelFrame (node) {
     node != null && Animator.frames.remove(node)
   },
 
   clearTimeout (node) {
     node != null && Animator.timeouts.remove(node)
+  },
+
+  cancelImmediate (node) {
+    node != null && Animator.immediates.remove(node)
   },
 
   _draw (now) {
@@ -68,6 +84,11 @@ const Animator = {
     var lastFrame = Animator.frames.last()
     while ((nextFrame !== lastFrame) && (nextFrame = Animator.frames.shift())) {
       nextFrame.run()
+    }
+
+    var nextImmediate = null
+    while ((nextImmediate = Animator.immediates.shift())) {
+      nextImmediate()
     }
 
     // If we have remaining timeouts or frames, draw until we don't anymore
