@@ -40,7 +40,8 @@ export default class Timeline extends EventTarget {
     this._lastStepTime = 0
 
     // Make sure that step is always called in class context
-    this._step = this._step.bind(this)
+    this._step = this._stepFn.bind(this, false)
+    this._stepImmediate = this._stepFn.bind(this, true)
   }
 
   // schedules a runner on the timeline
@@ -184,7 +185,7 @@ export default class Timeline extends EventTarget {
     return this
   }
 
-  _step (immediateStep = false) {
+  _stepFn (immediateStep = false) {
     // Get the time delta from the last time and update the time
     var time = this._timeSource()
     var dtSource = time - this._lastSourceTime
@@ -278,8 +279,8 @@ export default class Timeline extends EventTarget {
     if ((runnersLeft && !(this._speed < 0 && this._time === 0)) || (this._runnerIds.length && this._speed < 0 && this._time > 0)) {
       this._continue()
     } else {
-      this.fire('finished')
       this.pause()
+      this.fire('finished')
     }
 
     return this
@@ -290,7 +291,7 @@ export default class Timeline extends EventTarget {
     Animator.cancelFrame(this._nextFrame)
     this._nextFrame = null
 
-    if (immediateStep) return this._step(true)
+    if (immediateStep) return this._stepImmediate()
     if (this._paused) return this
 
     this._nextFrame = Animator.frame(this._step)

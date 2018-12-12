@@ -83,7 +83,7 @@ const Animator = {
     var nextFrame = null
     var lastFrame = Animator.frames.last()
     while ((nextFrame !== lastFrame) && (nextFrame = Animator.frames.shift())) {
-      nextFrame.run()
+      nextFrame.run(now)
     }
 
     var nextImmediate = null

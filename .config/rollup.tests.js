@@ -2,7 +2,10 @@ import babel from 'rollup-plugin-babel'
 import multiEntry from 'rollup-plugin-multi-entry'
 
 export default {
-  input: ['spec/setupBrowser.js', 'spec/spec/types/*.js', 'spec/spec/utils/*.js'],
+  input: [
+    'spec/setupBrowser.js',
+    'spec/spec/*/*.js'
+  ],
   output: {
     file: 'spec/es5TestBundle.js',
     name: 'SVGTests',

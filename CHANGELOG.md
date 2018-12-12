@@ -7,6 +7,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.5] - 2018-12-12
+ - fixed `parser` which didnt have all reqired css rules and not focusable=false
+ - group `x(), y(), width(), height(), dx(), dy()` now correctly change the bbox of the group by moving/resizing all children
+ - fixed timeline which fired `finished` to early
+ - fixed `Animator.frame()`. The passed callback gets the current time now (same as RAF)
+ - allow `loop(true)` which is the same as `loop()`
+
 ## [3.0.4] - 2018-12-07
 
 ### Fixed
@@ -754,6 +761,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.5]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.5
 [3.0.4]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.4
 [3.0.3]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.3
 [3.0.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.2

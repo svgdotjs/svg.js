@@ -33,7 +33,7 @@ module.exports = function (config) {
           type: 'module'
         },
         {
-          pattern: 'spec/spec/types/*.js',
+          pattern: 'spec/spec/*/*.js',
           included: true,
           type: 'module'
         }

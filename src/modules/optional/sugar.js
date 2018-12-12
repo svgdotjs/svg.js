@@ -38,7 +38,7 @@ var sugar = {
     return this
   }
 
-  registerMethods([ 'Shape', 'Runner' ], extension)
+  registerMethods([ 'Element', 'Runner' ], extension)
 })
 
 registerMethods([ 'Element', 'Runner' ], {
@@ -107,18 +107,6 @@ registerMethods([ 'Element', 'Runner' ], {
   // Relative move over x and y axes
   dmove: function (x, y) {
     return this.dx(x).dy(y)
-  }
-})
-
-registerMethods('Element', {
-  // Relative move over x axis
-  dx: function (x) {
-    return this.x(new SVGNumber(x).plus(this.x()))
-  },
-
-  // Relative move over y axis
-  dy: function (y) {
-    return this.y(new SVGNumber(y).plus(this.y()))
   }
 })
 

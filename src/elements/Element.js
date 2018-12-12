@@ -55,6 +55,16 @@ export default class Element extends Dom {
     return this.root().defs()
   }
 
+  // Relative move over x axis
+  dx (x) {
+    return this.x(new SVGNumber(x).plus(this.x()))
+  }
+
+  // Relative move over y axis
+  dy (y) {
+    return this.y(new SVGNumber(y).plus(this.y()))
+  }
+
   // Get parent document
   root () {
     let p = this.parent(Svg)

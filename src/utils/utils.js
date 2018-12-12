@@ -56,9 +56,9 @@ export function capitalize (s) {
 }
 
 // Calculate proportional width and height values when necessary
-export function proportionalSize (element, width, height) {
+export function proportionalSize (element, width, height, box) {
   if (width == null || height == null) {
-    var box = element.bbox()
+    box = box || element.bbox()
 
     if (width == null) {
       width = box.width / box.height * height

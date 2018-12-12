@@ -136,6 +136,10 @@ export default class Runner extends EventTarget {
     this._times = times || Infinity
     this._swing = swing || false
     this._wait = wait || 0
+
+    // Allow true to be passed
+    if (this._times === true) { this._times = Infinity }
+
     return this
   }
 

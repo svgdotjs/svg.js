@@ -5,13 +5,15 @@ export default function parser () {
   // Reuse cached element if possible
   if (!parser.nodes) {
     let svg = makeInstance().size(2, 0)
-    svg.node.cssText = [
+    svg.node.style.cssText = [
       'opacity: 0',
       'position: absolute',
       'left: -100%',
       'top: -100%',
       'overflow: hidden'
     ].join(';')
+
+    svg.attr('focusable', 'false')
 
     let path = svg.path().node
 
