@@ -71,6 +71,20 @@ extend(PointArray, {
     return points
   },
 
+  // transform points with matrix (similar to Point.transform)
+  transform (m) {
+    let points = []
+
+    for (let point of this) {
+      // Perform the matrix multiplication
+      points.push([m.a * point.x + m.c * point.y + m.e,
+                   m.b * point.x + m.d * point.y + m.f])
+    }
+
+    // Return the required point
+    return new PointArray(points)
+  }
+
   // Move point string
   move (x, y) {
     var box = this.bbox()
