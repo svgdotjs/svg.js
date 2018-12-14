@@ -75,7 +75,8 @@ extend(PointArray, {
   transform (m) {
     const points = []
 
-    for (let point of this) {
+    for (let i = 0; i < this.length; i++) {
+      const point = this[i]
       // Perform the matrix multiplication
       points.push([
         m.a * point[0] + m.c * point[1] + m.e,
