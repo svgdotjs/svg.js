@@ -73,12 +73,14 @@ extend(PointArray, {
 
   // transform points with matrix (similar to Point.transform)
   transform (m) {
-    let points = []
+    const points = []
 
     for (let point of this) {
       // Perform the matrix multiplication
-      points.push([m.a * point.x + m.c * point.y + m.e,
-        m.b * point.x + m.d * point.y + m.f])
+      points.push([
+        m.a * point[0] + m.c * point[1] + m.e,
+        m.b * point[0] + m.d * point[1] + m.f
+      ])
     }
 
     // Return the required point
