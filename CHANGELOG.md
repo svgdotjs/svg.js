@@ -8,9 +8,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ====
 
 ## [3.0.5] - 2018-12-12
- - fixed `parser` which didnt have all reqired css rules and not focusable=false
+ - fixed `parser` which didnt have all required css rules and not focusable=false
  - group `x(), y(), width(), height(), dx(), dy()` now correctly change the bbox of the group by moving/resizing all children
- - fixed timeline which fired `finished` to early
+ - fixed timeline which fired `finished` too early
  - fixed `Animator.frame()`. The passed callback gets the current time now (same as RAF)
  - allow `loop(true)` which is the same as `loop()`
 
