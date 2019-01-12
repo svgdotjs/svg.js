@@ -5,7 +5,6 @@ import {
   register,
   wrapWithAttrCheck
 } from '../utils/adopter.js'
-import { attrs } from '../modules/core/defaults.js'
 import { registerMethods } from '../utils/methods.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
@@ -20,9 +19,6 @@ export default class Text extends Shape {
     this.dom.leading = new SVGNumber(1.3) // store leading value for rebuilding
     this._rebuild = true // enable automatic updating of dy values
     this._build = false // disable build mode for adding multiple lines
-
-    // set default font
-    this.attr('font-family', attrs['font-family'])
   }
 
   // Move over x-axis

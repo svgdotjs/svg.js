@@ -136,6 +136,7 @@ registerMethods([ 'Element', 'Runner' ], {
   font: function (a, v) {
     if (typeof a === 'object') {
       for (v in a) this.font(v, a[v])
+      return this
     }
 
     return a === 'leading'

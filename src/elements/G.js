@@ -2,7 +2,8 @@ import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
 import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
-import SVGNumber from '../types/SVGNumber.js'
+import Matrix from '../types/Matrix.js'
+import Point from '../types/Point.js'
 
 export default class G extends Container {
   constructor (node) {
@@ -11,70 +12,68 @@ export default class G extends Container {
 
   x (x, box = this.bbox()) {
     if (x == null) return box.x
-
-    this.children().dx(x - box.x)
-    return this
+    return this.move(x, box.y, box)
   }
 
   y (y, box = this.bbox()) {
     if (y == null) return box.y
-
-    this.children().dy(y - box.y)
-    return this
+    return this.move(box.x, y, box)
   }
 
-  move (x, y) {
-    const box = this.bbox()
-    return this.x(x, box).y(y, box)
+  move (x = 0, y = 0, box = this.bbox()) {
+    const dx = x - box.x
+    const dy = y - box.y
+
+    return this.dmove(dx, dy)
   }
 
   dx (dx) {
-    return this.children().dx(dx)
+    return this.dmove(dx, 0)
   }
 
   dy (dy) {
-    return this.children().dy(dy)
+    return this.dmove(0, dy)
+  }
+
+  dmove (dx, dy) {
+    this.children().forEach((child, i) => {
+      // Get the childs bbox
+      const bbox = child.bbox()
+      // Get childs matrix
+      const m = new Matrix(child)
+      // Translate childs matrix by amount and
+      // transform it back into parents space
+      const matrix = m.translate(dx, dy).transform(m.inverse())
+      // Calculate new x and y from old box
+      const p = new Point(bbox.x, bbox.y).transform(matrix)
+      // Move element
+      child.move(p.x, p.y)
+    })
+
+    return this
   }
 
   width (width, box = this.bbox()) {
     if (width == null) return box.width
-
-    const scale = width / box.width
-
-    this.each(function () {
-      const _width = this.width()
-      const _x = this.x()
-
-      this.width(_width * scale)
-      this.x((_x - box.x) * scale + box.x)
-    })
-
-    return this
+    return this.size(width, box.height, box)
   }
 
   height (height, box = this.bbox()) {
     if (height == null) return box.height
+    return this.size(box.width, height, box)
+  }
 
-    const scale = height / box.height
+  size (width, height, box = this.bbox()) {
+    const p = proportionalSize(this, width, height, box)
+    const scaleX = p.width / box.width
+    const scaleY = p.height / box.height
 
-    this.each(function () {
-      const _height = this.height()
-      const _y = this.y()
-
-      this.height(_height * scale)
-      this.y((_y - box.y) * scale + box.y)
+    this.children().forEach((child, i) => {
+      const o = new Point(box).transform(new Matrix(child).inverse())
+      child.scale(scaleX, scaleY, o.x, o.y)
     })
 
     return this
-  }
-
-  size (width, height) {
-    const box = this.bbox()
-    const p = proportionalSize(this, width, height, box)
-
-    return this
-      .width(new SVGNumber(p.width), box)
-      .height(new SVGNumber(p.height), box)
   }
 }
 

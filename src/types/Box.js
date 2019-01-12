@@ -59,6 +59,10 @@ export default class Box {
   }
 
   transform (m) {
+    if (!(m instanceof Matrix)) {
+      m = new Matrix(m)
+    }
+
     let xMin = Infinity
     let xMax = -Infinity
     let yMin = Infinity
@@ -130,7 +134,7 @@ export function bbox () {
       clone.remove()
       return box
     } catch (e) {
-      throw new Error('Getting bbox of element "' + el.node.nodeName + '" is not possible')
+      throw new Error('Getting bbox of element "' + el.node.nodeName + '" is not possible. ' + e.toString())
     }
   }))
 }

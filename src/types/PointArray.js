@@ -63,7 +63,7 @@ extend(PointArray, {
     // Odd number of coordinates is an error. In such cases, drop the last odd coordinate.
     if (array.length % 2 !== 0) array.pop()
 
-    // wrap points in two-tuples and parse points as floats
+    // wrap points in two-tuples
     for (var i = 0, len = array.length; i < len; i = i + 2) {
       points.push([ array[i], array[i + 1] ])
     }

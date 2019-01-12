@@ -7,7 +7,16 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.6]
+
+### Fixed
+ - fixed group move and size commands
+ - default font size is not set anymore because it mostly goes against what the user wants
+ - fix bug in `font()` which set wrong values
+
 ## [3.0.5] - 2018-12-12
+
+### Fixed
  - fixed `parser` which didnt have all required css rules and not focusable=false
  - group `x(), y(), width(), height(), dx(), dy()` now correctly change the bbox of the group by moving/resizing all children
  - fixed timeline which fired `finished` too early

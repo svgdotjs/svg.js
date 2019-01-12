@@ -28,7 +28,7 @@ extend(Ellipse, circled)
 
 registerMethods('Container', {
   // Create an ellipse
-  ellipse: wrapWithAttrCheck(function (width, height) {
+  ellipse: wrapWithAttrCheck(function (width = 0, height = width) {
     return this.put(new Ellipse()).size(width, height).move(0, 0)
   })
 })

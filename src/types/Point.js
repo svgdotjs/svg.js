@@ -1,3 +1,5 @@
+import Matrix from './Matrix.js'
+
 export default class Point {
   // Initialize
   constructor (...args) {
@@ -25,14 +27,23 @@ export default class Point {
     return new Point(this)
   }
 
-  // transform point with matrix
   transform (m) {
-    // Perform the matrix multiplication
-    var x = m.a * this.x + m.c * this.y + m.e
-    var y = m.b * this.x + m.d * this.y + m.f
+    return this.clone().transformO(m)
+  }
 
-    // Return the required point
-    return new Point(x, y)
+  // Transform point with matrix
+  transformO (m) {
+    if (!Matrix.isMatrixLike(m)) {
+      m = new Matrix(m)
+    }
+
+    let { x, y } = this
+
+    // Perform the matrix multiplication
+    this.x = m.a * x + m.c * y + m.e
+    this.y = m.b * x + m.d * y + m.f
+
+    return this
   }
 
   toArray () {

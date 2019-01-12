@@ -4,7 +4,9 @@ import {
   register,
   wrapWithAttrCheck
 } from '../utils/adopter.js'
+import { globals } from '../utils/window.js'
 import { registerMethods } from '../utils/methods.js'
+import SVGNumber from '../types/SVGNumber.js'
 import Text from './Text.js'
 import * as textable from '../modules/core/textable.js'
 
@@ -41,8 +43,12 @@ export default class Tspan extends Text {
     // mark new line
     this.dom.newLined = true
 
+    var fontSize = globals.window.getComputedStyle(this.node)
+      .getPropertyValue('font-size')
+    var dy = t.dom.leading * new SVGNumber(fontSize)
+
     // apply new position
-    return this.dy(t.dom.leading * t.attr('font-size')).attr('x', t.x())
+    return this.dy(dy).attr('x', t.x())
   }
 }
 
