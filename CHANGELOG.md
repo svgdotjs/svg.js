@@ -7,12 +7,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
-## [3.0.6]
+## [3.0.6] - 2018-01-12
 
 ### Fixed
  - fixed group move and size commands
  - default font size is not set anymore because it mostly goes against what the user wants
  - fix bug in `font()` which set wrong values
+
+### Added
+ - `PointArray.transform()` (#945)
 
 ## [3.0.5] - 2018-12-12
 
@@ -770,6 +773,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.6]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.6
 [3.0.5]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.5
 [3.0.4]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.4
 [3.0.3]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.3
