@@ -7,17 +7,18 @@ import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
 function isNulledBox (box) {
-  return !box.w && !box.h && !box.x && !box.y
+  return !box.width && !box.height && !box.x && !box.y
 }
 
 function domContains (node) {
-  return (globals.document.documentElement.contains || function (node) {
-    // This is IE - it does not support contains() for top-level SVGs
-    while (node.parentNode) {
-      node = node.parentNode
-    }
-    return node === document
-  }).call(globals.document.documentElement, node)
+  return node === globals.document
+    || (globals.document.documentElement.contains || function (node) {
+      // This is IE - it does not support contains() for top-level SVGs
+      while (node.parentNode) {
+        node = node.parentNode
+      }
+      return node === globals.document
+    }).call(globals.document.documentElement, node)
 }
 
 export default class Box {

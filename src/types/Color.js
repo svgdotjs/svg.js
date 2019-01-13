@@ -423,11 +423,11 @@ export default class Color {
 
   // Test if given value is a color string
   static test (color) {
-    color += ''
-    return isHex.test(color) || isRgb.test(color)
+    return (typeof color === 'string')
+      && (isHex.test(color) || isRgb.test(color))
   }
 
-  // Test if given value is a rgb object
+  // Test if given value is an rgb object
   static isRgb (color) {
     return color && typeof color.r === 'number'
       && typeof color.g === 'number'
@@ -436,6 +436,10 @@ export default class Color {
 
   // Test if given value is a color
   static isColor (color) {
-    return this.isRgb(color) || this.test(color)
+    return color && (
+      color instanceof Color
+      || this.isRgb(color)
+      || this.test(color)
+    )
   }
 }

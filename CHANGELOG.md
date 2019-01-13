@@ -7,6 +7,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.7] - 2018-01-12
+ - fixed a bug in `isNulledBox()` and `domContains()`
+ - performance changes:
+   - replace `getElementsByTagName` with `querySelector`
+   - make Color check in `attr` more restrictive to prevent expensive `toString`
+
 ## [3.0.6] - 2018-01-12
 
 ### Fixed
@@ -773,6 +779,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.7]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.7
 [3.0.6]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.6
 [3.0.5]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.5
 [3.0.4]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.4

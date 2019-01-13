@@ -42,7 +42,7 @@ export default class Svg extends Container {
   defs () {
     if (!this.isRoot()) return this.root().defs()
 
-    return adopt(this.node.getElementsByTagName('defs')[0])
+    return adopt(this.node.querySelector('defs'))
       || this.put(new Defs())
   }
 
