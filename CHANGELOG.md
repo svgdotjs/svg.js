@@ -7,7 +7,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
-## [3.0.7] - 2018-01-12
+## [3.0.8] - 2018-01-13
+
+### Fixed
+ - added back `to()` as `unit()` of `SVG.Number` which was removed accidentally
+
+## [3.0.7] - 2018-01-13
+
+### Fixed
  - fixed a bug in `isNulledBox()` and `domContains()`
  - performance changes:
    - replace `getElementsByTagName` with `querySelector`
