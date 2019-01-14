@@ -7,7 +7,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
-## [3.0.10] - 2018-01-14
+## [3.0.10] - 2019-01-14
 
 ### Fixed
  - fixed `textPath()`, `path().text()` and `text().path()`
@@ -17,17 +17,17 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Added
  - added `findOne()` for better performance
 
-## [3.0.9] - 2018-01-14
+## [3.0.9] - 2019-01-14
 
 ### Fixed
  - renamed `unit()` to `convert()` due to name collision
 
-## [3.0.8] - 2018-01-13
+## [3.0.8] - 2019-01-13
 
 ### Fixed
  - added back `to()` as `unit()` of `SVG.Number` which was removed accidentally
 
-## [3.0.7] - 2018-01-13
+## [3.0.7] - 2019-01-13
 
 ### Fixed
  - fixed a bug in `isNulledBox()` and `domContains()`
@@ -35,7 +35,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
    - replace `getElementsByTagName` with `querySelector`
    - make Color check in `attr` more restrictive to prevent expensive `toString`
 
-## [3.0.6] - 2018-01-12
+## [3.0.6] - 2019-01-12
 
 ### Fixed
  - fixed group move and size commands
@@ -45,7 +45,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Added
  - `PointArray.transform()` (#945)
 
-## [3.0.5] - 2018-12-12
+## [3.0.5] - 2019-12-12
 
 ### Fixed
  - fixed `parser` which didnt have all required css rules and not focusable=false
