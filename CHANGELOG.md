@@ -7,6 +7,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.10] - 2018-01-14
+
+### Fixed
+ - fixed `textPath()` and `path().text()`
+
 ## [3.0.9] - 2018-01-14
 
 ### Fixed
@@ -791,6 +796,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.10]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.10
+[3.0.9]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.9
+[3.0.8]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.8
 [3.0.7]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.7
 [3.0.6]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.6
 [3.0.5]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.5

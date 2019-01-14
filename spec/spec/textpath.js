@@ -13,6 +13,25 @@ describe('TextPath', function() {
     draw.clear()
   })
 
+  describe('textPath()', function () {
+    it ('creates a new textPath and uses text and path', function () {
+      expect(draw.textPath(txt, data)).toEqual(jasmine.any(SVG.TextPath))
+    })
+
+    it ('reuses text and path instances if possible', function () {
+      const textPath = draw.textPath(text, path)
+      expect(text.find('textPath')[0]).toBe(textPath)
+      expect(textPath.reference('href')).toBe(path)
+    })
+
+    it ('passes the text into textPath and not text', function () {
+      const tspan = text.first()
+      const textPath = draw.textPath(text, path)
+      expect(textPath.first()).toBe(tspan)
+      expect(text.first()).toBe(textPath)
+    })
+  })
+
   describe('text().path()', function() {
     it('returns an instance of TextPath', function() {
       expect(text.path(data) instanceof SVG.TextPath).toBe(true)
@@ -21,6 +40,10 @@ describe('TextPath', function() {
       text.path(data)
       expect(text.node.querySelector('textPath')).not.toBe(null)
     })
+    it('references the passed path', function () {
+      const textPath = text.path(path)
+      expect(textPath.reference('href')).toBe(path)
+    })
   })
 
   describe('path().text()', function() {
@@ -28,13 +51,19 @@ describe('TextPath', function() {
       expect(path.text(txt) instanceof SVG.TextPath).toBe(true)
     })
     it('creates a text with textPath node and inserts it after the path', function() {
-      var instance = path.text(txt)
-      expect(instance.parent() instanceof SVG.Text).toBe(true)
+      var textPath = path.text(txt)
+      expect(textPath.parent() instanceof SVG.Text).toBe(true)
       expect(SVG.adopt(path.node.nextSibling) instanceof SVG.Text).toBe(true)
+    })
+    it('transplants the node from text to textPath', function () {
+      let nodesInText = [].slice.call(text.node.childNodes)
+      var textPath = path.text(txt)
+      let nodesInTextPath = [].slice.call(textPath.node.childNodes)
+      expect(nodesInText).toEqual(nodesInTextPath)
     })
   })
 
-  describe('textPath()', function() {
+  describe('text.textPath()', function() {
     it('returns only the first textPath element in a text', function() {
       text.path(data)
       expect(text.textPath() instanceof SVG.TextPath).toBe(true)

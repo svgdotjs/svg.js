@@ -40,7 +40,18 @@ export default class TextPath extends Text {
 registerMethods({
   Container: {
     textPath: wrapWithAttrCheck(function (text, path) {
-      return this.defs().path(path).text(text).addTo(this)
+      // Convert to instance if needed
+      if (!(path instanceof Path)) {
+        path = this.defs().path(path)
+      }
+
+      // Create textPath
+      const textPath = path.text(text)
+
+      // Move text to correct container
+      textPath.parent().addTo(this)
+
+      return textPath
     })
   },
   Text: {
@@ -69,11 +80,22 @@ registerMethods({
   Path: {
     // creates a textPath from this path
     text: wrapWithAttrCheck(function (text) {
-      if (text instanceof Text) {
-        var txt = text.text()
-        return text.clear().path(this).text(txt)
+      // Convert text to instance if needed
+      if (!(text instanceof Text)) {
+        text = new Text().addTo(this.parent()).text(text)
       }
-      return this.parent().put(new Text()).path(this).text(text)
+
+      // Create textPath from text and path
+      const textPath = text.path(this)
+      textPath.remove()
+
+      // Transplant all nodes from text to textPath
+      let node
+      while ((node = text.node.firstChild)) {
+        textPath.node.appendChild(node)
+      }
+
+      return textPath.addTo(text)
     }),
 
     targets () {
