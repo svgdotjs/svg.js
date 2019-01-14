@@ -7,6 +7,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.9] - 2018-01-14
+
+### Fixed
+ - renamed `unit()` to `convert()` due to name collision
+
 ## [3.0.8] - 2018-01-13
 
 ### Fixed

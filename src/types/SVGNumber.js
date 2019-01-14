@@ -89,8 +89,7 @@ export default class SVGNumber {
     return new SVGNumber(this / number, this.unit || number.unit)
   }
 
-  unit (unit) {
-    if (unit == null) return this.unit
+  convert (unit) {
     return new SVGNumber(this.value, unit)
   }
 }
