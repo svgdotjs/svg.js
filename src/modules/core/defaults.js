@@ -42,7 +42,5 @@ export let attrs = {
   'stop-color': '#000000',
 
   // text
-  'font-size': 16,
-  'font-family': 'Helvetica, Arial, sans-serif',
   'text-anchor': 'start'
 }

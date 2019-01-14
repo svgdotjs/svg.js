@@ -44,7 +44,20 @@ describe('Selector', function() {
         , e4 = draw.rect(100, 100).addClass('unselectable-element')
         , e5 = group.rect(100, 100).addClass('selectable-element')
 
-      expect(group.find('rect.selectable-element').valueOf()).toEqual([e3, e5])
+      expect(group.find('rect.selectable-element')).toEqual([e3, e5])
+    })
+  })
+
+  describe('Parent#findOne()', function() {
+    it('gets all elements with a given class name inside a given element', function() {
+      var group = draw.group()
+        , e1 = draw.rect(100, 100).addClass('selectable-element')
+        , e2 = draw.rect(100, 100).addClass('unselectable-element')
+        , e3 = group.rect(100, 100).addClass('selectable-element')
+        , e4 = draw.rect(100, 100).addClass('unselectable-element')
+        , e5 = group.rect(100, 100).addClass('selectable-element')
+
+      expect(group.findOne('rect.selectable-element')).toBe(e3)
     })
   })
 

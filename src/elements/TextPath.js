@@ -40,41 +40,43 @@ export default class TextPath extends Text {
 registerMethods({
   Container: {
     textPath: wrapWithAttrCheck(function (text, path) {
-      // Convert to instance if needed
-      if (!(path instanceof Path)) {
-        path = this.defs().path(path)
+      // Convert text to instance if needed
+      if (!(text instanceof Text)) {
+        text = this.text(text)
       }
 
-      // Create textPath
-      const textPath = path.text(text)
-
-      // Move text to correct container
-      textPath.parent().addTo(this)
-
-      return textPath
+      return text.path(path)
     })
   },
   Text: {
     // Create path for text to run on
-    path: wrapWithAttrCheck(function (track) {
-      var path = new TextPath()
+    path: wrapWithAttrCheck(function (track, importNodes = true) {
+      var textPath = new TextPath()
 
       // if track is a path, reuse it
       if (!(track instanceof Path)) {
         // create path element
-        track = this.root().defs().path(track)
+        track = this.defs().path(track)
       }
 
       // link textPath to path and add content
-      path.attr('href', '#' + track, xlink)
+      textPath.attr('href', '#' + track, xlink)
+
+      // Transplant all nodes from text to textPath
+      let node
+      if (importNodes) {
+        while ((node = this.node.firstChild)) {
+          textPath.node.appendChild(node)
+        }
+      }
 
       // add textPath element as child node and return textPath
-      return this.put(path)
+      return this.put(textPath)
     }),
 
     // Get the textPath children
     textPath () {
-      return this.find('textPath')[0]
+      return this.findOne('textPath')
     }
   },
   Path: {
@@ -85,17 +87,8 @@ registerMethods({
         text = new Text().addTo(this.parent()).text(text)
       }
 
-      // Create textPath from text and path
-      const textPath = text.path(this)
-      textPath.remove()
-
-      // Transplant all nodes from text to textPath
-      let node
-      while ((node = text.node.firstChild)) {
-        textPath.node.appendChild(node)
-      }
-
-      return textPath.addTo(text)
+      // Create textPath from text and path and return
+      return text.path(this)
     }),
 
     targets () {

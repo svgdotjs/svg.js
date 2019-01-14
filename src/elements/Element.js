@@ -15,8 +15,6 @@ import Dom from './Dom.js'
 import List from '../types/List.js'
 import SVGNumber from '../types/SVGNumber.js'
 
-const Svg = getClass(root)
-
 export default class Element extends Dom {
   constructor (node, attrs) {
     super(node, attrs)
@@ -67,7 +65,7 @@ export default class Element extends Dom {
 
   // Get parent document
   root () {
-    let p = this.parent(Svg)
+    let p = this.parent(getClass(root))
     return p && p.root()
   }
 

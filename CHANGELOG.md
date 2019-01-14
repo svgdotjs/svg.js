@@ -10,7 +10,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## [3.0.10] - 2018-01-14
 
 ### Fixed
- - fixed `textPath()` and `path().text()`
+ - fixed `textPath()`, `path().text()` and `text().path()`
+ - fixed `root()` method
+ - fixed default values returned by `attr`. Can be missleading if present.
+
+### Added
+ - added `findOne()` for better performance
 
 ## [3.0.9] - 2018-01-14
 

@@ -13,3 +13,7 @@ export default function baseFind (query, parent) {
 export function find (query) {
   return baseFind(query, this.node)
 }
+
+export function findOne (query) {
+  return adopt(this.node.querySelector(query))
+}
