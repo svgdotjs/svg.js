@@ -148,15 +148,18 @@ describe('G.js', () => {
       expect(newBox.w).toBeCloseTo(100, 4)
       expect(newBox.h).toBeCloseTo(100, 4)
 
-      expect(g.children()[0].width()).toBeCloseTo(90.909, 3)
-      expect(g.children()[1].width()).toBeCloseTo(63.636, 3)
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
 
-      expect(g.children()[0].x()).toBeCloseTo(10, 3)
-      expect(g.children()[1].x()).toBeCloseTo(46.364, 3)
-      expect(g.children()[0].height()).toBeCloseTo(85.714, 3)
-      expect(g.children()[1].height()).toBeCloseTo(71.429, 3)
-      expect(g.children()[0].y()).toBeCloseTo(20, 3)
-      expect(g.children()[1].y()).toBeCloseTo(48.571, 3)
+      expect(rbox1.width).toBeCloseTo(90.9, 1)
+      expect(rbox2.width).toBeCloseTo(63.6, 1)
+
+      expect(rbox1.x).toBeCloseTo(10, 1)
+      expect(rbox2.x).toBeCloseTo(46.4, 1)
+      expect(rbox1.height).toBeCloseTo(85.7, 1)
+      expect(rbox2.height).toBeCloseTo(71.4, 1)
+      expect(rbox1.y).toBeCloseTo(20, 1)
+      expect(rbox2.y).toBeCloseTo(48.6, 1)
     })
 
     it('changes the dimensions of the bbox (2)', () => {
@@ -207,11 +210,15 @@ describe('G.js', () => {
 
       expect(g.width(100)).toBe(g)
       expect(g.bbox().width).toBe(100)
-      expect(g.children()[0].width()).toBeCloseTo(90.909, 3)
-      expect(g.children()[1].width()).toBeCloseTo(63.636, 3)
 
-      expect(g.children()[0].x()).toBeCloseTo(10, 3)
-      expect(g.children()[1].x()).toBeCloseTo(46.364, 3)
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
+
+      expect(rbox1.width).toBeCloseTo(90.9, 1)
+      expect(rbox2.width).toBeCloseTo(63.6, 1)
+
+      expect(rbox1.x).toBeCloseTo(10, 3)
+      expect(rbox2.x).toBeCloseTo(46.4, 1)
     })
   })
 
@@ -238,12 +245,16 @@ describe('G.js', () => {
       g.addTo(canvas)
 
       expect(g.height(100)).toBe(g)
-      expect(g.bbox().height).toBe(100)
-      expect(g.children()[0].height()).toBeCloseTo(85.714, 3)
-      expect(g.children()[1].height()).toBeCloseTo(71.429, 3)
+      expect(g.bbox().height).toBeCloseTo(100, 3)
 
-      expect(g.children()[0].y()).toBeCloseTo(20, 3)
-      expect(g.children()[1].y()).toBeCloseTo(48.571, 3)
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
+
+      expect(rbox1.height).toBeCloseTo(85.7, 1)
+      expect(rbox2.height).toBeCloseTo(71.4, 1)
+
+      expect(rbox1.y).toBeCloseTo(20, 3)
+      expect(rbox2.y).toBeCloseTo(48.6, 1)
     })
   })
 })

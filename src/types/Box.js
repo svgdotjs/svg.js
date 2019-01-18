@@ -159,30 +159,32 @@ registerMethods({
     },
 
     zoom (level, point) {
-      var style = window.getComputedStyle(this.node)
+      let width = this.node.clientWidth
+      let height = this.node.clientHeight
+      const v = this.viewbox()
 
-      var width = parseFloat(style.getPropertyValue('width'))
+      // Firefox does not support clientHeight and returns 0
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=874811
+      if (!width && !height) {
+        var style = window.getComputedStyle(this.node)
+        width = parseFloat(style.getPropertyValue('width'))
+        height = parseFloat(style.getPropertyValue('height'))
+      }
 
-      var height = parseFloat(style.getPropertyValue('height'))
-
-      var v = this.viewbox()
-
-      var zoomX = width / v.width
-
-      var zoomY = height / v.height
-
-      var zoom = Math.min(zoomX, zoomY)
+      const zoomX = width / v.width
+      const zoomY = height / v.height
+      const zoom = Math.min(zoomX, zoomY)
 
       if (level == null) {
         return zoom
       }
 
-      var zoomAmount = zoom / level
+      let zoomAmount = zoom / level
       if (zoomAmount === Infinity) zoomAmount = Number.MIN_VALUE
 
       point = point || new Point(width / 2 / zoomX + v.x, height / 2 / zoomY + v.y)
 
-      var box = new Box(v).transform(
+      const box = new Box(v).transform(
         new Matrix({ scale: zoomAmount, origin: point })
       )
 
