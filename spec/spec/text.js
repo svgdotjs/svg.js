@@ -39,51 +39,51 @@ describe('Text', function() {
 
   describe('x()', function() {
     it('returns the value of x without an argument', function() {
-      expect(text.x()).toBe(0)
+      expect(text.x(0).x()).toBe(0)
     })
-    it('sets the value of x with the first argument', function() {
+    it('sets the x value of the bbox with the first argument', function() {
       text.x(123)
-      expect(text.node.getAttribute('x')).toBeCloseTo(123)
+      expect(text.bbox().x).toBe(123)
     })
     it('sets the value of all lines', function() {
       text.x(200)
       text.each(function() {
-        expect(this.x()).toBe(200)
+        expect(this.x()).toBe(text.attr('x'))
       })
     })
-    it('sets the value of y with a percent value', function() {
-      text.x('40%')
+  })
+
+  describe('ax()', function () {
+    it('sets the value of x with a percent value', function() {
+      text.ax('40%')
       expect(text.node.getAttribute('x')).toBe('40%')
     })
     it('returns the value of x when x is a percentual value', function() {
-      expect(text.x('45%').x()).toBe('45%')
+      expect(text.ax('45%').ax()).toBe('45%')
     })
-    // Woow this test is old. The functionality not even implemented anymore
-    // Was a good feature. Maybe we add it back?
-    /*it('sets the value of x based on the anchor with the first argument', function() {
-      text.x(123, true)
-      var box = text.bbox()
-      expect(box.x).toBeCloseTo(123)
-    })*/
   })
 
   describe('y()', function() {
     it('returns the value of y without an argument', function() {
       expect(text.y(0).y()).toBeCloseTo(0)
     })
-    it('returns the value of y when y is a percentual value', function() {
-      expect(text.y('45%').y()).toBe('45%')
-    })
-    it('sets the value of y with the first argument', function() {
+    it('sets the y value of the bbox with the first argument', function() {
       text.y(345)
       var box = text.bbox()
       expect(box.y).toBe(345)
     })
+  })
+
+  describe('ay()', function () {
     it('sets the value of y with a percent value', function() {
-      text.y('40%')
+      text.ay('40%')
       expect(text.node.getAttribute('y')).toBe('40%')
     })
+    it('returns the value of y when y is a percentual value', function() {
+      expect(text.ay('45%').ay()).toBe('45%')
+    })
   })
+
 
   describe('cx()', function() {
     it('returns the value of cx without an argument', function() {
@@ -96,12 +96,6 @@ describe('Text', function() {
       // this is a hack. it should be exactly 123 since you set it. But bbox with text is a thing...
       expect(box.cx).toBeCloseTo(box.x + box.width/2)
     })
-    // not implemented anymore
-    /*it('sets the value of cx based on the anchor with the first argument', function() {
-      text.cx(123, true)
-      var box = text.bbox()
-      expect(box.cx).toBeCloseTo(123)
-    })*/
   })
 
   describe('cy()', function() {
@@ -119,8 +113,8 @@ describe('Text', function() {
   describe('move()', function() {
     it('sets the x and y position', function() {
       text.move(123,456)
-      expect(text.node.getAttribute('x')).toBe('123')
-      expect(text.y()).toBeCloseTo(456)
+      expect(text.bbox().x).toBe(123)
+      expect(text.bbox().y).toBe(456)
     })
   })
 
@@ -128,8 +122,8 @@ describe('Text', function() {
     it('sets the cx and cy position', function() {
       text.center(321, 567)
       var box = text.bbox()
-      expect(+text.node.getAttribute('x') + box.width / 2).toBeCloseTo(321, 1)
-      expect(text.y() + box.height / 2).toBeCloseTo(567, 0)
+      expect(text.bbox().cx).toBeCloseTo(321)
+      expect(text.bbox().cy).toBeCloseTo(567)
     })
   })
 

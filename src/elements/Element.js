@@ -53,6 +53,11 @@ export default class Element extends Dom {
     return this.root().defs()
   }
 
+  // Relative move over x and y axes
+  dmove (x, y) {
+    return this.dx(x).dy(y)
+  }
+
   // Relative move over x axis
   dx (x) {
     return this.x(new SVGNumber(x).plus(this.x()))

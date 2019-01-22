@@ -22,36 +22,49 @@ export default class Text extends Shape {
   }
 
   // Move over x-axis
-  x (x) {
-    // act as getter
+  // Text is moved its bounding box
+  // text-anchor does NOT matter
+  x (x, box = this.bbox()) {
     if (x == null) {
-      return this.attr('x')
+      return box.x
     }
 
-    return this.attr('x', x)
+    return this.attr('x', this.attr('x') + x - box.x)
   }
 
   // Move over y-axis
-  y (y) {
-    var oy = this.attr('y')
-    var o = typeof oy === 'number' ? oy - this.bbox().y : 0
-
-    // act as getter
+  y (y, box = this.bbox()) {
     if (y == null) {
-      return typeof oy === 'number' ? oy - o : oy
+      return box.y
     }
 
-    return this.attr('y', typeof y === 'number' ? y + o : y)
+    return this.attr('y', this.attr('y') + y - box.y)
+  }
+
+  move (x, y, box = this.bbox()) {
+    return this.x(x, box).y(y, box)
   }
 
   // Move center over x-axis
-  cx (x) {
-    return x == null ? this.bbox().cx : this.x(x - this.bbox().width / 2)
+  cx (x, box = this.bbox()) {
+    if (x == null) {
+      return box.cx
+    }
+
+    return this.attr('x', this.attr('x') + x - box.cx)
   }
 
   // Move center over y-axis
-  cy (y) {
-    return y == null ? this.bbox().cy : this.y(y - this.bbox().height / 2)
+  cy (y, box = this.bbox()) {
+    if (y == null) {
+      return box.cy
+    }
+
+    return this.attr('y', this.attr('y') + y - box.cy)
+  }
+
+  center (x, y, box = this.bbox()) {
+    return this.cx(x, box).cy(y, box)
   }
 
   // Set the text content

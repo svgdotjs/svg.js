@@ -35,6 +35,18 @@ export default class Tspan extends Text {
     return this.attr('dy', dy)
   }
 
+  x (x) {
+    return this.attr('x', x)
+  }
+
+  y (y) {
+    return this.attr('x', y)
+  }
+
+  move (x, y) {
+    return this.x(x).y(y)
+  }
+
   // Create new line
   newLine () {
     // fetch text parent

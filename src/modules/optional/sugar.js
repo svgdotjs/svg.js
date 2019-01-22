@@ -102,11 +102,6 @@ registerMethods([ 'Element', 'Runner' ], {
   // Opacity
   opacity: function (value) {
     return this.attr('opacity', value)
-  },
-
-  // Relative move over x and y axes
-  dmove: function (x, y) {
-    return this.dx(x).dy(y)
   }
 })
 
