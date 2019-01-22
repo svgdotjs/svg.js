@@ -122,8 +122,8 @@ describe('Text', function() {
     it('sets the cx and cy position', function() {
       text.center(321, 567)
       var box = text.bbox()
-      expect(text.bbox().cx).toBeCloseTo(321)
-      expect(text.bbox().cy).toBeCloseTo(567)
+      expect(text.bbox().cx).toBeCloseTo(321, 1)
+      expect(text.bbox().cy).toBeCloseTo(567, 1)
     })
   })
 
