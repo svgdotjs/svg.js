@@ -76,7 +76,7 @@ const config = (node, min) => ({
     file: node ? './dist/svg.node.js'
       : min ? './dist/svg.min.js'
         : './dist/svg.js',
-    format: node ? 'cjs' : 'iife',
+    format: node ? 'cjs' : 'umd',
     name: 'SVG',
     sourcemap: true,
     banner: headerLong,
