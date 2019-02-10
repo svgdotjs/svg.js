@@ -72,9 +72,9 @@ declare namespace svgjs {
 
     // bare.js
     export interface Dom {
-        new(element: string, inherit?: any): Bare;
+        new(element: string, inherit?: any): Dom;
         words(text: string): this;
-        element(element: string, inherit?: Object): Bare;
+        element(element: string, inherit?: Object): Dom;
         addTo(parent: Dom): this;
         putIn(parent: Dom): Dom;
         children(): Element[];
@@ -89,7 +89,7 @@ declare namespace svgjs {
         removeElement(element: Element): this;
         clear(): this;
     }
-    interface Library { Bare: Bare; }
+    interface Library { Dom: Dom; }
 
     // boxes.js
     interface Box {
