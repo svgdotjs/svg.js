@@ -71,12 +71,23 @@ declare namespace svgjs {
     }
 
     // bare.js
-    export interface Dom extends Element {
+    export interface Dom {
         new(element: string, inherit?: any): Bare;
         words(text: string): this;
-    }
-    interface Parent {
         element(element: string, inherit?: Object): Bare;
+        addTo(parent: Dom): this;
+        putIn(parent: Dom): Dom;
+        children(): Element[];
+        add(element: Element, i?: number): Element;
+        put(element: Element, i?: number): Element;
+        has(element: Element): boolean;
+        index(element: Element): number;
+        get(i: number): Element;
+        first(): Element;
+        last(): Element;
+        each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
+        removeElement(element: Element): this;
+        clear(): this;
     }
     interface Library { Bare: Bare; }
 
@@ -162,7 +173,7 @@ declare namespace svgjs {
         height: number;
     }
 
-    export interface Container extends Parent {
+    export interface Container extends Element {
         new(): Container;
     }
     interface Library { Container: Container }
@@ -226,7 +237,7 @@ declare namespace svgjs {
 
     type ParentTypeAlias = string | Svg | G;
     // element.js
-    export interface Element {
+    export interface Element extends Dom {
         new(): Element;
         node: LinkedHTMLElement;
         type: string;
@@ -243,52 +254,37 @@ declare namespace svgjs {
         cy(): number;
         move(x: NumberAlias, y: NumberAlias): this;
         center(x: number, y: number): this;
-
         width(width: NumberAlias): this;
         width(): number;
         height(height: NumberAlias): this;
         height(): number;
         size(width?: NumberAlias, height?: NumberAlias): this;
-
-        clone(parent?: Parent): Element;
+        clone(): this;
         remove(): this;
         replace(element: Element): Element;
-
-        addTo(parent: Parent): this;
-        putIn(parent: Parent): Parent;
-
         id(): string;
         id(id: string): this;
-
         inside(x: number, y: number): boolean;
-
         show(): this;
         hide(): this;
         visible(): boolean;
-
         toString(): string;
-
         classes(): string[];
         hasClass(name: string): boolean;
         addClass(name: string): this;
         removeClass(name: string): this;
         toggleClass(name: string): this;
-
         reference(type: string): Element;
         // Add HTMLElement for Svg inheritance
-        parent(type?: ParentTypeAlias): Parent | HTMLElement;
-        doc(): Parent;
-        parents(): Parent[];
-
+        parent(type?: ParentTypeAlias): Dom | HTMLElement;
+        root(): Svg;
+        parents(): Dom[];
         matches(selector: string): boolean;
         native(): LinkedHTMLElement;
-
         svg(svg: string): this;
         svg(): string;
-
         writeDataToDom(): this;
         setData(data: object): this;
-
         is(cls: any): boolean;
     }
     interface Library { Element: Element; }
@@ -299,7 +295,6 @@ declare namespace svgjs {
         rx(): this;
         ry(ry: number): this;
         ry(): this;
-
         radius(x: number, y?: number): this;
     }
     export interface Circle extends CircleMethods {
@@ -324,7 +319,6 @@ declare namespace svgjs {
         fire(event: string, data?: any): this;
         fire(event: Event): this;
         event(): Event | CustomEvent;
-
         click(cb: Function): this;
         dblclick(cb: Function): this;
         mousedown(cb: Function): this;
@@ -584,23 +578,6 @@ declare namespace svgjs {
 
     type NumberAlias = _Number | number | string;
 
-    // parent.js
-    export interface Parent extends Element {
-        new(): Parent;
-        children(): Element[];
-        add(element: Element, i?: number): this;
-        put(element: Element, i?: number): Element;
-        has(element: Element): boolean;
-        index(element: Element): number;
-        get(i: number): Element;
-        first(): Element;
-        last(): Element;
-        each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
-        removeElement(element: Element): this;
-        clear(): this;
-    }
-    interface Library { Parent: Parent }
-
     // path.js
     interface PathArrayPoint extends Array<number | string> { }
     type PathArrayAlias = PathArray | (string | number)[] | PathArrayPoint[] | string;
@@ -745,10 +722,6 @@ declare namespace svgjs {
     // selector.js
     interface Library {
         get(id: string): Element;
-        select(query: string, parent?: HTMLElement): Set;
-    }
-    interface Parent {
-        select(query: string): Set;
     }
 
     // set.js
@@ -772,9 +745,9 @@ declare namespace svgjs {
         css(style: string, value: any): this;
         css(style: Object[]): Object;
         css(): Object;
-        show (): this;
-        hide (): this;
-        visible (): boolean;
+        show(): this;
+        hide(): this;
+        visible(): boolean;
     }
 
     // sugar.js
@@ -821,9 +794,6 @@ declare namespace svgjs {
         weight?: string;
         style?: string
     }
-    interface Parent {
-        font(font: FontData): this;
-    }
     interface Text {
         font(font: FontData): this;
     }
@@ -869,7 +839,7 @@ declare namespace svgjs {
     interface Library { Tspan: Tspan; }
 
     // textpath.js
-    export interface TextPath extends Parent {
+    export interface TextPath extends Text {
         new(): TextPath;
     }
     interface Text {
@@ -885,7 +855,7 @@ declare namespace svgjs {
         transform(): Transform;
         untransform(): this;
         matrixify(): Matrix;
-        toParent(parent: Parent): this;
+        toParent(parent: Dom): this;
         toSvg(): this;
     }
     interface Transform {
@@ -925,10 +895,9 @@ declare namespace svgjs {
         Skew: Skew;
     }
 
-    // ungroup.js
-    interface Parent {
-        ungroup(parent: Parent, depth?: number): this;
-        flatten(parent: Parent, depth?: number): this;
+    interface Container {
+        ungroup(parent: Dom, depth?: number): this;
+        flatten(parent: Dom, depth?: number): this;
     }
 
     // use.js
