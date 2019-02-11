@@ -495,6 +495,7 @@ module "@svgdotjs/svg.js" {
     type MatrixAlias = MatrixLike | number[] | Element | string;
 
     class Matrix {
+        constructor();
         constructor(source: MatrixAlias): Matrix;
         constructor(a: number, b: number, c: number, d: number, e: number, f: number): Matrix;
         a: number;
@@ -558,6 +559,7 @@ module "@svgdotjs/svg.js" {
 
     // pathArray.js
     class PathArray extends _Array {
+        constructor();
         constructor(): PathArray;
         constructor(d: PathArrayAlias): PathArray;
         move(x: number, y: number): this;
