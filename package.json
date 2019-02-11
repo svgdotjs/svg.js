@@ -14,7 +14,7 @@
   "main": "dist/svg.node.js",
   "unpkg": "dist/svg.min.js",
   "jsdelivr": "dist/svg.min.js",
-  "browser": "dist/svg.min.js",
+  "browser": "src/main.js",
   "module": "src/main.js",
   "maintainers": [
     {
