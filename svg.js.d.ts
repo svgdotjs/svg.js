@@ -1,4 +1,4 @@
-module "@svgdotjs/svg.js" {
+declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
     function SVG(id: string): Svg;
@@ -560,7 +560,6 @@ module "@svgdotjs/svg.js" {
     // pathArray.js
     class PathArray extends _Array {
         constructor();
-        constructor(): PathArray;
         constructor(d: PathArrayAlias): PathArray;
         move(x: number, y: number): this;
         size(width?: number, height?: number): this;
