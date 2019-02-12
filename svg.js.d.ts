@@ -127,6 +127,7 @@ declare module "@svgdotjs/svg.js" {
         removeElement(element: Element): this;
         replace(element: Dom): Dom;
         svg(): string;
+        svg(svg: string): this;
         toString(): string;
         words(text: string): this;
         writeDataToDom(): this;
