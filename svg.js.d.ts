@@ -18,6 +18,8 @@ declare module "@svgdotjs/svg.js" {
     function invent(config: Object): any;
     function adopt(node: HTMLElement): Element;
     function prepare(element: HTMLElement): void;
+    function getClass(name: string): Element;
+
     let utils: {
         map(array: any[], block: Function): any;
         filter(array: any[], block: Function): any;
@@ -59,24 +61,25 @@ declare module "@svgdotjs/svg.js" {
         '<'(pos: number): number;
     }
     let regex: {
-        numberAndUnit: RegExp;
+        delimiter: RegExp;
+        dots: RegExp;
         hex: RegExp;
-        rgb: RegExp;
+        hyphen: RegExp;
+        isBlank: RegExp;
+        isCss: RegExp;
+        isHex: RegExp;
+        isImage: RegExp;
+        isNumber: RegExp;
+        isPathLetter: RegExp;
+        isPercent: RegExp;
+        isRgb: RegExp;
+        numberAndUnit: RegExp;
+        numbersWithDots: RegExp;
+        pathLetters: RegExp;
         reference: RegExp;
+        rgb: RegExp;
         transforms: RegExp;
         whitespace: RegExp;
-        isHex: RegExp;
-        isRgb: RegExp;
-        isCss: RegExp;
-        isBlank: RegExp;
-        isNumber: RegExp;
-        isPercent: RegExp;
-        isImage: RegExp;
-        delimiter: RegExp;
-        hyphen: RegExp;
-        pathLetters: RegExp;
-        isPathLetter: RegExp;
-        dots: RegExp;
     }
 
     interface LinkedHTMLElement extends HTMLElement {
@@ -84,38 +87,49 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // array.js
-    type ArrayAlias = _Array | number[] | string;
+    type ArrayAlias = SVGArray | number[] | string;
 
-    class _Array {
+    class SVGArray extends Array {
         constructor(array?: ArrayAlias, fallback?: number[]);
         value: number[];
         morph(array: number[]): this;
         settle(): number[];
-        at(pos: NumberAlias): _Array;
+        at(pos: NumberAlias): SVGArray;
         toString(): string;
         valueOf(): number[];
         parse(array: ArrayAlias): number[];
         reverse(): this;
-        clone(): _Array;
+        clone(): SVGArray;
     }
 
     class Dom {
         constructor(element: string, inherit?: any);
-        words(text: string): this;
-        element(element: string, inherit?: Object): this;
-        addTo(parent: Dom): this;
-        putIn(parent: Dom): Dom;
-        children(): Element[];
         add(element: Element, i?: number): Element;
-        put(element: Element, i?: number): Element;
-        has(element: Element): boolean;
-        index(element: Element): number;
-        get(i: number): Element;
-        first(): Element;
-        last(): Element;
-        each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
-        removeElement(element: Element): this;
+        addTo(parent: Dom): this;
+        children(): Element[];
         clear(): this;
+        clone(): this;
+        each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
+        element(element: string, inherit?: Object): this;
+        first(): Element;
+        get(i: number): Element;
+        getEventHolder(): LinkedHTMLElement;
+        getEventTarget(): LinkedHTMLElement;
+        has(element: Element): boolean;
+        id(id?: string): string;
+        index(element: Element): number;
+        last(): Element;
+        matches(selector: string): any;
+        parent(type?: ParentTypeAlias): Dom | HTMLElement;
+        put(element: Element, i?: number): Element;
+        putIn(parent: Dom): Dom;
+        remove(): this;
+        removeElement(element: Element): this;
+        replace(element: Dom): Dom;
+        svg(): string;
+        toString(): string;
+        words(text: string): this;
+        writeDataToDom(): this;
     }
 
     // boxes.js
@@ -132,10 +146,14 @@ declare module "@svgdotjs/svg.js" {
         y2: number;
         merge(box: Box): Box;
         transform(m: Matrix): Box
-        Box(source: string);
-        Box(source: []);
-        Box(source: object);
-        Box(x: number, y: number, width: number, height: number);
+        constructor(source: string);
+        constructor(source: []);
+        constructor(source: object);
+        constructor(x: number, y: number, width: number, height: number);
+        addOffset(): this;
+        toString(): string;
+        toArray(): number[];
+        isNulled(): boolean;
     }
 
     // clip.js
@@ -143,9 +161,6 @@ declare module "@svgdotjs/svg.js" {
         constructor();
         targets: Element[];
         remove(): this;
-    }
-    interface Container {
-        clip(): ClipPath;
     }
 
     // color.js
@@ -163,7 +178,6 @@ declare module "@svgdotjs/svg.js" {
         b: number;
         constructor();
         constructor(color: ColorAlias);
-
         toString(): string;
         toHex(): string;
         toRgb(): string;
@@ -180,9 +194,40 @@ declare module "@svgdotjs/svg.js" {
         height: number;
     }
 
-    class Container extends Element { }
+    class Container extends Element {
+        circle(size?: number): Circle;
+        clip(): ClipPath;
+        ellipse(width?: number, height?: number): Ellipse;
+        flatten(parent: Dom, depth?: number): this;
+        gradient(type: string, block?: (stop: Gradient) => void): Gradient;
+        group(): G;
+        image(): Image;
+        image(href: string, size?: number): Image;
+        image(href: string, width?: number, height?: number): Image;
+        line(points: PointArrayAlias): Line;
+        line(x1: number, y1: number, x2: number, y2: number): Line;
+        link(url: string): A;
+        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
+        mask(): Mask;
+        path(): Path;
+        path(d: PathArrayAlias): Path;
+        pattern(width?: number, height?: number, block?: (pattern: Pattern) => void): Pattern
+        plain(text: string): Text;
+        polygon(points: PointArrayAlias): Polygon;
+        polyline(points: PointArrayAlias): PolyLine;
+        rect(width?: number, height?: number): Rect;
+        text(block: (tspan: Tspan) => void): Text;
+        text(text: string): Text;
+        ungroup(parent: Dom, depth?: number): this;
+        use(element: Element | string, file?: string): Use;
+        viewbox(): ViewBox;
+        viewbox(viewbox: ViewBoxLike): this;
+        viewbox(x: number, y: number, width: number, height: number): this;
+    }
 
-    class Defs extends Container { }
+    class Defs extends Container {
+        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
+    }
 
     class Svg extends Container {
         constructor();
@@ -198,6 +243,8 @@ declare module "@svgdotjs/svg.js" {
 
     type ParentTypeAlias = string | Svg | G;
     class Element extends Dom {
+        clipper: ClipPath;
+        masker: Mask;
         node: LinkedHTMLElement;
         type: string;
 
@@ -217,7 +264,6 @@ declare module "@svgdotjs/svg.js" {
         center(x: number, y: number): this;
         classes(): string[];
         click(cb: Function): this;
-        clipper: ClipPath;
         clipWith(element: Element): this;
         clone(): this;
         css(): Object;
@@ -261,7 +307,6 @@ declare module "@svgdotjs/svg.js" {
         is(cls: any): boolean;
         linkTo(url: (link: A) => void): A;
         linkTo(url: string): A;
-        masker: Mask;
         maskWith(element: Element): this;
         maskWith(mask: Mask): this;
         matches(selector: string): boolean;
@@ -281,7 +326,6 @@ declare module "@svgdotjs/svg.js" {
         on(event: string, cb: Function, context?: Object): this;
         opacity(): number;
         opacity(o: number): this;
-        parent(type?: ParentTypeAlias): Dom | HTMLElement;
         parents(): Dom[];
         point(): Point;
         point(position: { x: number, y: number }): Point;
@@ -310,12 +354,9 @@ declare module "@svgdotjs/svg.js" {
         stop(jumpToEnd: boolean, clearQueue: boolean): Animation;
         stroke(color: string): this;
         stroke(stroke: StrokeData): this;
-        svg(): string;
-        svg(svg: string): this;
         tbox(): Box;
         toggleClass(name: string): this;
         toParent(parent: Dom): this;
-        toString(): string;
         toSvg(): this;
         touchcancel(cb: Function): this;
         touchend(cb: Function): this;
@@ -332,7 +373,6 @@ declare module "@svgdotjs/svg.js" {
         visible(): boolean;
         width(): number;
         width(width: NumberAlias): this;
-        writeDataToDom(): this;
         x(): number;
         x(x: NumberAlias): this;
         y(): number;
@@ -361,10 +401,6 @@ declare module "@svgdotjs/svg.js" {
         ry(): this;
         radius(x: number, y?: number): this;
     }
-    interface Container {
-        circle(size?: number): Circle;
-        ellipse(width?: number, height?: number): Ellipse;
-    }
 
     // TODO finishs FX
     interface StopProperties {
@@ -390,15 +426,11 @@ declare module "@svgdotjs/svg.js" {
         to(x: number, y: number): this;
         radius(x: number, y?: number): this;
     }
-    interface Container {
-        gradient(type: string, block?: (stop: Gradient) => void): Gradient;
-    }
 
     // group.js
     class G extends Container {
         gbox(): Box;
     }
-    interface Container { group(): G; }
 
     // hyperlink.js
     class A extends Container {
@@ -407,18 +439,10 @@ declare module "@svgdotjs/svg.js" {
         target(target: string): this;
         target(): string;
     }
-    interface Container {
-        link(url: string): A;
-    }
 
     // image.js
     class Image extends Shape {
         load(url?: string): this;
-    }
-    interface Container {
-        image(): Image;
-        image(href: string, size?: number): Image;
-        image(href: string, width?: number, height?: number): Image;
     }
 
     // line.js
@@ -431,10 +455,8 @@ declare module "@svgdotjs/svg.js" {
         plot(x1: number, y1: number, x2: number, y2: number): this;
         move(x: number, y: number): this;
         size(width?: number, height?: number): this;
-    }
-    interface Container {
-        line(points: PointArrayAlias): Line;
-        line(x1: number, y1: number, x2: number, y2: number): Line;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
+        marker(position: string, marker: Marker): Marker;
     }
 
     // marker.js
@@ -443,34 +465,10 @@ declare module "@svgdotjs/svg.js" {
         update(block: (marker: Marker) => void): this;
         toString(): string;
     }
-    interface Container {
-        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
-    }
-    interface Defs {
-        marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
-    }
-    interface Line {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
-        marker(position: string, marker: Marker): Marker;
-    }
-    interface Polyline {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
-        marker(position: string, marker: Marker): Marker;
-    }
-    interface Polygon {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
-        marker(position: string, marker: Marker): Marker;
-    }
-    interface Path {
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
-        marker(position: string, marker: Marker): Marker;
-    }
-
     // mask.js
     class Mask extends Container {
         targets: Element[];
     }
-    interface Container { mask(): Mask; }
 
     // matrix.js
     interface MatrixExtract {
@@ -503,7 +501,7 @@ declare module "@svgdotjs/svg.js" {
 
     type MatrixAlias = MatrixLike | number[] | Element | string;
 
-    class Matrix {
+    class Matrix implements MatrixLike {
         constructor();
         constructor(source: MatrixAlias);
         constructor(a: number, b: number, c: number, d: number, e: number, f: number);
@@ -533,24 +531,24 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // number.js
-    class _Number {
+    class SVGNumber {
         constructor();
-        constructor(value: _Number);
+        constructor(value: SVGNumber);
         constructor(value: string);
         constructor(value: number, unit?: any);
         toString(): string;
         toJSON(): Object;
         valueOf(): number;
-        plus(number: number): _Number;
-        minus(number: number): _Number;
-        times(number: number): _Number;
-        divide(number: number): _Number;
-        to(unit: string): _Number;
+        plus(number: number): SVGNumber;
+        minus(number: number): SVGNumber;
+        times(number: number): SVGNumber;
+        divide(number: number): SVGNumber;
+        to(unit: string): SVGNumber;
         morph(number: any): this;
-        at(pos: number): _Number;
+        at(pos: number): SVGNumber;
     }
 
-    type NumberAlias = _Number | number | string;
+    type NumberAlias = SVGNumber | number | string;
 
     // path.js
     interface PathArrayPoint extends Array<number | string> { }
@@ -560,14 +558,14 @@ declare module "@svgdotjs/svg.js" {
         morphArray: PathArray;
         array(): PathArray;
         plot(d: PathArrayAlias): this;
-    }
-    interface Container {
-        path(): Path;
-        path(d: PathArrayAlias): Path;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
+        marker(position: string, marker: Marker): Marker;
+        length(): number;
+        pointAt(length: number): { x: number, y: number };
     }
 
     // pathArray.js
-    class PathArray extends _Array {
+    class PathArray extends SVGArray {
         constructor();
         constructor(d: PathArrayAlias);
         move(x: number, y: number): this;
@@ -584,21 +582,16 @@ declare module "@svgdotjs/svg.js" {
         update(block: (pattern: Pattern) => void): this;
         toString(): string;
     }
-    interface Container {
-        pattern(width?: number, height?: number, block?: (pattern: Pattern) => void): Pattern
-    }
 
     // point.js
     class Point {
+        x: number;
+        y: number;
         constructor();
         constructor(position: ArrayPoint);
         constructor(point: Point);
         constructor(position: { x: number, y: number });
         constructor(x: number, y: number);
-
-        x: number;
-        y: number;
-
         clone(): Point;
         morph(point: Point): this;
         at(pos: number): Point;
@@ -607,7 +600,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // pointArray.js
-    class PointArray extends _Array {
+    class PointArray extends SVGArray {
         constructor();
         constructor(points: PointArrayAlias);
         toString(): string;
@@ -636,39 +629,31 @@ declare module "@svgdotjs/svg.js" {
         plot(p: PointArrayAlias): this;
         move(x: number, y: number): this;
         size(width: number, height: number): this;
-    }
-    interface Container {
-        polyline(points: PointArrayAlias): PolyLine;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
+        marker(position: string, marker: Marker): Marker;
     }
     class Polygon extends Shape implements poly {
         array(): PointArray;
         plot(p: PointArrayAlias): this;
         move(x: number, y: number): this;
         size(width: number, height: number): this;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
+        marker(position: string, marker: Marker): Marker;
     }
-    interface Container {
-        polygon(points: PointArrayAlias): Polygon;
-    }
-
     // rect.js
     class Rect extends Shape {
         radius(x: number, y?: number): this;
     }
-    interface Container {
-        rect(width?: number, height?: number): Rect;
-    }
 
     // set.js
-    class List extends _Array {
+    class List extends SVGArray {
         constructor(members?: Element[]);
         each(block: (index: number, members: Element[]) => void): this;
     }
-    interface Container { set(members?: Element[]); }
 
     // shape.js
     class Shape extends Element {
     }
-
 
     // sugar.js
     interface StrokeData {
@@ -681,10 +666,7 @@ declare module "@svgdotjs/svg.js" {
         dasharray?: string;
         dashoffset?: number;
     }
-    interface Path {
-        length(): number;
-        pointAt(length: number): { x: number, y: number };
-    }
+
     interface FontData {
         family?: string;
         size?: NumberAlias;
@@ -717,11 +699,6 @@ declare module "@svgdotjs/svg.js" {
         textPath(): Element;
     }
 
-    interface Container {
-        text(text: string): Text;
-        text(block: (tspan: Tspan) => void): Text;
-        plain(text: string): Text;
-    }
     class Tspan extends Shape {
         constructor();
         text(): string;
@@ -759,28 +736,10 @@ declare module "@svgdotjs/svg.js" {
         f?: number;
         scale?: number;
     }
-    class Transformation {
-        constructor(...transform: Transform[]);
-        constructor(source: Transform, inversed?: boolean);
-        at(pos: number): Matrix;
-        undo(transform: Transform): this
-    }
-    class Translate extends Transformation { constructor() }
-    class Rotate extends Transformation { constructor() }
-    class Scale extends Transformation { constructor() }
-    class Skew extends Transformation { constructor() }
-
-    interface Container {
-        ungroup(parent: Dom, depth?: number): this;
-        flatten(parent: Dom, depth?: number): this;
-    }
 
     // use.js
     class Use extends Shape {
         element(element: string, file?: string): this;
-    }
-    interface Container {
-        use(element: Element | string, file?: string): Use;
     }
 
     // viewbox.js
@@ -799,48 +758,35 @@ declare module "@svgdotjs/svg.js" {
         morph(x: number, y: number, width: number, height: number): ViewBox;
         at(pos: number): ViewBox;
     }
-    interface Container {
-        viewbox(): ViewBox;
-        viewbox(x: number, y: number, width: number, height: number): this;
-        viewbox(viewbox: ViewBoxLike): this;
-    }
 
     interface Animation {
-        stop(): Animation;
-        finish(): Animation;
-        pause(): Animation;
-        play(): Animation;
-        reverse(reversed?: boolean): Animation;
-
-        attr(name: string, value: any, namespace?: string): Animation;
-        attr(obj: Object): Animation;
-        attr(name: string): any;
+        after(cb: () => void): Animation;
         attr(): object;
-
-        viewbox(x: number, y: number, w: number, h: number): Animation;
-
-        move(x: number, y: number, anchor?: boolean): Animation;
-        dmove(x: number, y: number): Animation;
-        x(x: number, anchor?: boolean): Animation;
-        y(y: number, anchor?: boolean): Animation;
-
+        attr(name: string, value: any, namespace?: string): Animation;
+        attr(name: string): any;
+        attr(obj: Object): Animation;
         center(x: number, y: number, anchor?: boolean): Animation;
         cx(x: number, anchor?: boolean): Animation;
         cy(y: number, anchor?: boolean): Animation;
-
-        size(w: number, h: number, anchor?: boolean): Animation;
-        during(cb: (pos: number) => void): Animation;
-        to(value: number): Animation;
-        after(cb: () => void): Animation;
-
         delay(delayMS: number): Animation;
-
+        dmove(x: number, y: number): Animation;
+        during(cb: (pos: number) => void): Animation;
+        finish(): Animation;
+        move(x: number, y: number, anchor?: boolean): Animation;
+        pause(): Animation;
+        play(): Animation;
+        reverse(reversed?: boolean): Animation;
         rotate(degrees: number, cx?: number, cy?: number): Animation;
-        skew(skewX: number, skewY?: number, cx?: number, cy?: number): Animation;
         scale(scaleX: number, scaleY?: number, cx?: number, cy?: number): Animation;
-        translate(x: number, y: number): Animation;
+        size(w: number, h: number, anchor?: boolean): Animation;
+        skew(skewX: number, skewY?: number, cx?: number, cy?: number): Animation;
+        stop(): Animation;
+        to(value: number): Animation;
         transform(t: Transform, relative?: boolean): Animation;
-
+        translate(x: number, y: number): Animation;
+        viewbox(x: number, y: number, w: number, h: number): Animation;
+        x(x: number, anchor?: boolean): Animation;
+        y(y: number, anchor?: boolean): Animation;
         // TODO style, etc, bbox...
     }
 }
