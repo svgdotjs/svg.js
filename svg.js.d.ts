@@ -210,6 +210,7 @@ declare module "@svgdotjs/svg.js" {
         link(url: string): A;
         marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
         mask(): Mask;
+        nested(): Svg;
         path(): Path;
         path(d: PathArrayAlias): Path;
         pattern(width?: number, height?: number, block?: (pattern: Pattern) => void): Pattern
@@ -237,7 +238,6 @@ declare module "@svgdotjs/svg.js" {
         namespace(): this;
         defs(): Defs;
         parent(): HTMLElement;
-        spof(): this;
         remove(): this;
         isRoot(): boolean;
     }
