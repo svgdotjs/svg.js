@@ -841,9 +841,11 @@ declare namespace svgjs {
     }
     interface Parent {
         font(font: FontData): this;
+        font(key: string, value: any): this;
     }
     interface Text {
         font(font: FontData): this;
+        font(key: string, value: any): this;
     }
 
     // text.js
