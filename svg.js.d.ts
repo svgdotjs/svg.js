@@ -248,6 +248,7 @@ declare namespace svgjs {
         size(width?: NumberAlias, height?: NumberAlias): this;
 
         clone(): Element;
+        clone(parent: Parent): Element;
         remove(): this;
         replace(element: Element): Element;
 
