@@ -7,7 +7,7 @@
       "es6",
       "dom"
     ],
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": false,

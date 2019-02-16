@@ -3,14 +3,14 @@ import * as helpers from './helpers'
 
 
 describe('Matrix', function () {
-  let comp = { a: 2, b: 0, c: 0, d: 2, e: 100, f: 50 }
+  let comp = { a: 2, b: 0, c: 0, d: 2, e: 100, f: 50 } as SVGJS.Matrix
 
   describe('initialization', function () {
 
     it('creates a new matrix with default values', function () {
       let matrix = new SVGJS.Matrix()
       expect(matrix).toEqual(jasmine.objectContaining(
-        { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }
+        { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 } as SVGJS.Matrix
       ))
     })
 

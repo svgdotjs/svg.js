@@ -96,7 +96,7 @@ describe('SVG.Runner', function () {
   describe('constructors', function () {
     describe('delay()', function () {
       it('calls animate with correct parameters', function () {
-        var element = SVGJS.SVG('<rect />') as any
+        var element = SVGJS.SVG('<rect />') as SVGJS.Rect
 
         spyOn(element, 'animate')
         element.delay(100, 'now')

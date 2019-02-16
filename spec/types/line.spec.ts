@@ -241,7 +241,7 @@ describe('Line', function () {
       var attrs = line.attr() as SVGJS.LineAttr
         , pointArray = new SVGJS.PointArray([[attrs.x1, attrs.y1], [attrs.x2, attrs.y2]])
 
-      expect(line.plot()).toEqual(pointArray as any)
+      expect(line.plot()).toEqual(pointArray)
     })
   })
 })

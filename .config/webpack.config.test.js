@@ -6,6 +6,7 @@ module.exports = {
    output: {
       filename: 'bundle.js'
    },
+   bail: true,
    target: 'web',
    resolve: {
       extensions: ['.ts', '.js'],

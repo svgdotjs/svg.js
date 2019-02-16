@@ -48,7 +48,7 @@ describe('G.js', () => {
       const box = g.bbox()
       expect(box).toEqual(objectContaining({
         x: 20, y: 30, width: box.width, height: box.height
-      }))
+      } as SVGJS.Box))
     })
 
     it('moves the bbox of the group by a certain amount (2)', () => {

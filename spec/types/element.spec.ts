@@ -208,11 +208,10 @@ describe('Element', function () {
       const mxEx = {
         a: 1, b: 0, c: 0, d: 1, e: 0, f: 0,
         scaleX: 1, scaleY: 1, shear: 0, rotate: 0,
-        translateX: 0, translateY: 0,
+        translateX: 0, translateY: 0, originX: 0, originY: 0
       } as SVGJS.MatrixExtract
 
-      // TODO: >>>> fix this, typescript strict failed.
-      expect(mx).toEqual(jasmine.objectContaining(mxEx))
+      expect(mx).toEqual(mxEx)
     })
     it('sets the translation of and element', function () {
       rect.transform({ translate: [10, 11] })
@@ -590,7 +589,7 @@ describe('Element', function () {
     it('contains the parent which matches type', function () {
       var group = helpers.draw.group()
         , rect = group.rect(100, 100)
-      expect(rect.parent(SVGJS.Svg as any)).toBe(helpers.draw)
+      expect(rect.parent(SVGJS.Svg)).toBe(helpers.draw)
     })
     it('contains the parent which matches selector', function () {
       var group1 = helpers.draw.group().addClass('test')

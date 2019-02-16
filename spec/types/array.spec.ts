@@ -19,8 +19,8 @@ describe('Array', function () {
   })
   describe('reverse()', function () {
     it('reverses the array', function () {
-      array = new SVGJS.Array([1, 2, 3, 4, 5]).reverse() as any;
-      expect(array.valueOf()).toEqual([5, 4, 3, 2, 1])
+      const arrayNative = new SVGJS.Array([1, 2, 3, 4, 5]).reverse()
+      expect(arrayNative.valueOf()).toEqual([5, 4, 3, 2, 1])
     })
     it('returns itself', function () {
       array = new SVGJS.Array()
@@ -36,12 +36,12 @@ describe('Array', function () {
       expect(array).toEqual(clone)
       expect(array).not.toBe(clone)
 
-      array = new SVGJS.Array([[1, 2], [3, 4], [5]]) as any
-      clone = array.clone()
+      const array2Dim = new SVGJS.Array([[1, 2], [3, 4], [5]])
+      const clone2Dim = array2Dim.clone()
 
-      expect(array).toEqual(array)
-      for (var i = 0, len = array.length; i; ++i) {
-        expect(array[i]).not.toBe(clone[i])
+      expect(array2Dim).toEqual(clone2Dim)
+      for (var i = 0, len = array2Dim.length; i; ++i) {
+        expect(array2Dim[i]).not.toBe(clone2Dim[i])
       }
     })
     it('also works with PointArray', function () {

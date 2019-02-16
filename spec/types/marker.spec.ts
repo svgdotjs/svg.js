@@ -48,7 +48,7 @@ describe('Marker', function () {
         add.ref(5, 6)
       })
 
-      marker = path.marker('mid', 10, 10)
+      path.marker('mid', 10, 10)
     })
 
     it('creates an instance of SVG.Marker', function () {
@@ -57,7 +57,7 @@ describe('Marker', function () {
 
     describe('marker()', function () {
       it('returns the target element', function () {
-        expect(path.marker('start', 10, 12)).toBe(path as any)
+        expect(path.marker('start', 10, 12)).toBe(path)
       })
       it('creates a marker and applies it to the marker-start attribute', function () {
         path.marker('start', 10, 12)

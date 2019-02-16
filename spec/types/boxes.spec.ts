@@ -11,7 +11,7 @@ describe('Box', function () {
       expect(box instanceof SVGJS.Box).toBe(true)
       expect(box).toEqual(jasmine.objectContaining({
         x: 0, y: 0, cx: 0, cy: 0, width: 0, height: 0
-      }))
+      } as SVGJS.Box))
     })
 
     it('creates a new box from parsed string', function () {
@@ -90,7 +90,7 @@ describe('Box', function () {
 
       expect(merged).toEqual(jasmine.objectContaining({
         x: 50, y: 50, cx: 325, cy: 275, width: 550, height: 450
-      }))
+      } as SVGJS.Box))
     })
     it('returns a new instance', function () {
       var box1 = new SVGJS.Box(50, 50, 100, 100)
@@ -111,15 +111,15 @@ describe('Box', function () {
 
       expect(box1).toEqual(jasmine.objectContaining({
         x: 70, y: 70, cx: 120, cy: 120, width: 100, height: 100
-      }))
+      } as SVGJS.Box))
 
       expect(box2).toEqual(jasmine.objectContaining({
         x: 100, y: 100, cx: 200, cy: 200, width: 200, height: 200
-      }))
+      } as SVGJS.Box))
 
       expect(box3).toEqual(jasmine.objectContaining({
         x: -220, y: -220, cx: -170, cy: -170, width: 100, height: 100
-      }))
+      } as SVGJS.Box))
     })
   })
 })
@@ -147,7 +147,7 @@ describe('Boxes', function () {
 
       expect(box).toEqual(jasmine.objectContaining({
         x: 25, y: 90, cx: 50, cy: 180, width: 50, height: 180
-      }))
+      } as SVGJS.Box))
     })
     it('returns a box even if the element is not in the dom', function () {
       var line = new SVGJS.Line().plot(0, 0, 50, 50)
@@ -155,7 +155,7 @@ describe('Boxes', function () {
 
       expect(box).toEqual(jasmine.objectContaining({
         x: 0, y: 0, width: 50, height: 50
-      }))
+      } as SVGJS.Box))
 
       expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
     })
@@ -165,7 +165,7 @@ describe('Boxes', function () {
 
       expect(box).toEqual(jasmine.objectContaining({
         x: 0, y: 0, width: 50, height: 50
-      }))
+      } as SVGJS.Box))
 
       expect('Should not result into infinite loop').toBe('Should not result into infinite loop')
     })
@@ -190,7 +190,7 @@ describe('Boxes', function () {
 
       expect(helpers.roundBox(box)).toEqual(jasmine.objectContaining({
         x: 240, y: 500, width: 200, height: 720
-      }))
+      } as SVGJS.Box))
     })
 
     it('returns the elements box in coordinates of given element (nested)', function () {
@@ -198,7 +198,7 @@ describe('Boxes', function () {
 
       expect(helpers.roundBox(box)).toEqual(jasmine.objectContaining({
         x: 70, y: 200, width: 100, height: 360
-      }))
+      } as SVGJS.Box))
     })
   })
 

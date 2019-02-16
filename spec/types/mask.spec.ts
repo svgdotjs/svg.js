@@ -28,7 +28,7 @@ describe('Mask', function () {
   })
 
   it('references the mask element in the masked element', function () {
-    expect(rect.masker()).toBe(circle.parent() as any)
+    expect(rect.masker()).toBe(circle.parent() as SVGJS.Mask)
   })
 
   it('references the masked element in the mask target list', function () {
