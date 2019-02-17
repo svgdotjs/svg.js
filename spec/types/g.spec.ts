@@ -1,0 +1,269 @@
+import * as SVGJS from '@svgdotjs/svg.js'
+import * as helpers from './helpers'
+
+const { any, createSpy, objectContaining } = jasmine
+
+
+describe('G.js', () => {
+
+  beforeEach(function () {
+    document.getElementById("canvas").innerHTML = "";
+  })
+
+  afterEach(function () {
+    document.getElementById("canvas").innerHTML = "";
+  })
+
+  describe('()', () => {
+    it('creates a new object of type G', () => {
+      expect(new SVGJS.G()).toEqual(any(SVGJS.G))
+    })
+
+    it('sets passed attributes on the element', () => {
+      expect(new SVGJS.G({ id: 'foo' }).id()).toBe('foo')
+    })
+  })
+
+  describe('Container', () => {
+    describe('group()', () => {
+      it('creates a group in the container', () => {
+        const canvas = SVGJS.SVG().addTo('#canvas')
+        const g = canvas.group()
+        expect(g).toEqual(any(SVGJS.G))
+        expect(g.parent()).toBe(canvas)
+      })
+    })
+  })
+
+  describe('dmove()', () => {
+    it('moves the bbox of the group by a certain amount (1)', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.dmove(10, 10)
+
+      const box = g.bbox()
+      expect(box).toEqual(objectContaining({
+        x: 20, y: 30, width: box.width, height: box.height
+      }))
+    })
+
+    it('moves the bbox of the group by a certain amount (2)', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+
+      g.rect(400, 200).move(123, 312).rotate(34).skew(12)
+      g.rect(100, 50).move(11, 43).translate(123, 32).skew(-12)
+      g.rect(400, 200).rotate(90)
+      g.group().rotate(23).group().skew(32).rect(100, 40).skew(11).rotate(12)
+
+      const oldBox = g.bbox()
+
+      g.dmove(10, 10)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x + 10, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y + 10, 4)
+      expect(newBox.w).toBeCloseTo(oldBox.w, 4)
+      expect(newBox.h).toBeCloseTo(oldBox.h, 4)
+    })
+  })
+
+  describe('move()', () => {
+    it('calls dmove() with the correct difference', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+      g.rect(100, 200).move(111, 223)
+
+      spyOn(g, 'dmove')
+
+      g.move(100, 150)
+      expect(g.dmove).toHaveBeenCalledWith(-11, -73)
+    })
+  })
+
+  describe('x()', () => {
+    it('gets the x value of the bbox', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.x()).toBe(g.bbox().x)
+      expect(g.x()).toBe(10)
+    })
+    it('calls move with the paramater as x', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+      g.rect(100, 200).move(111, 223)
+
+      spyOn(g, 'move')
+
+      g.x(100)
+      expect(g.move).toHaveBeenCalledWith(100, g.bbox().y, any(SVGJS.Box))
+    })
+  })
+
+  describe('y()', () => {
+    it('gets the y value of the bbox', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.y()).toBe(g.bbox().y)
+      expect(g.y()).toBe(20)
+    })
+    it('calls move with the paramater as y', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+      g.rect(100, 200).move(111, 223)
+
+      spyOn(g, 'move')
+
+      g.y(100)
+      expect(g.move).toHaveBeenCalledWith(g.bbox().x, 100, any(SVGJS.Box))
+    })
+  })
+
+  describe('size()', () => {
+    it('changes the dimensions of the bbox (1)', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      const oldBox = g.bbox()
+
+      expect(g.size(100, 100)).toBe(g)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y, 4)
+      expect(newBox.w).toBeCloseTo(100, 4)
+      expect(newBox.h).toBeCloseTo(100, 4)
+
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
+
+      expect(rbox1.width).toBeCloseTo(90.9, 1)
+      expect(rbox2.width).toBeCloseTo(63.6, 1)
+
+      expect(rbox1.x).toBeCloseTo(10, 1)
+      expect(rbox2.x).toBeCloseTo(46.4, 1)
+      expect(rbox1.height).toBeCloseTo(85.7, 1)
+      expect(rbox2.height).toBeCloseTo(71.4, 1)
+      expect(rbox1.y).toBeCloseTo(20, 1)
+      expect(rbox2.y).toBeCloseTo(48.6, 1)
+    })
+
+    it('changes the dimensions of the bbox (2)', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+      const g = canvas.group()
+
+      g.rect(400, 200).move(123, 312).rotate(34).skew(12)
+      g.rect(100, 50).move(11, 43).translate(123, 32).skew(-12)
+      g.rect(400, 200).rotate(90)
+      g.group().rotate(23).group().skew(32).rect(100, 40).skew(11).rotate(12)
+
+      const oldBox = g.bbox()
+
+      g.size(100, 100)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y, 4)
+      expect(newBox.w).toBeCloseTo(100, 4)
+      expect(newBox.h).toBeCloseTo(100, 4)
+    })
+
+
+  })
+
+  describe('width()', () => {
+    it('gets the width value of the bbox', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.width()).toBe(g.bbox().width)
+      expect(g.width()).toBe(110)
+    })
+    it('sets the width value of the bbox by moving all children', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.width(100)).toBe(g)
+      expect(g.bbox().width).toBe(100)
+
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
+
+      expect(rbox1.width).toBeCloseTo(90.9, 1)
+      expect(rbox2.width).toBeCloseTo(63.6, 1)
+
+      expect(rbox1.x).toBeCloseTo(10, 3)
+      expect(rbox2.x).toBeCloseTo(46.4, 1)
+    })
+  })
+
+  describe('height()', () => {
+    it('gets the height value of the bbox', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.height()).toBe(g.bbox().height)
+      expect(g.height()).toBe(140)
+    })
+    it('sets the height value of the bbox by moving all children', () => {
+      const canvas = SVGJS.SVG().addTo('#canvas')
+
+      const g = new SVGJS.G()
+      g.add(new SVGJS.Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new SVGJS.Rect({ width: 70, height: 100, x: 50, y: 60 }))
+
+      g.addTo(canvas)
+
+      expect(g.height(100)).toBe(g)
+      expect(g.bbox().height).toBeCloseTo(100, 3)
+
+      const rbox1 = g.children()[0].rbox()
+      const rbox2 = g.children()[1].rbox()
+
+      expect(rbox1.height).toBeCloseTo(85.7, 1)
+      expect(rbox2.height).toBeCloseTo(71.4, 1)
+
+      expect(rbox1.y).toBeCloseTo(20, 3)
+      expect(rbox2.y).toBeCloseTo(48.6, 1)
+    })
+  })
+})
