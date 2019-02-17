@@ -3,7 +3,7 @@ declare class BuiltInArray<T> extends Array<T> { }
 declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
-    function SVG(selector: string): Element;
+    function SVG(selector: QuerySelector): Element;
     function SVG<T>(el: T): SVGTypeMapping<T>
 
     function SVG(domElement: HTMLElement): Element;
@@ -651,7 +651,7 @@ declare module "@svgdotjs/svg.js" {
         toArray(): Object[]
 
         to(a: Object): Morphable
-        fromArray(a: Object): this
+        fromArray(a: any[] | Object): this
     }
 
     class NonMorphable {
@@ -668,13 +668,10 @@ declare module "@svgdotjs/svg.js" {
         constructor()
         constructor(a: number[])
         constructor(a: TransformData)
-
         defaults: TransformData
-
         toArray(): number[]
-
         to(t: TransformData): Morphable
-        fromArray(t: TransformData): this
+        fromArray(t: number[] | Object ): this
     }
 
     interface Stepper {
@@ -929,9 +926,10 @@ declare module "@svgdotjs/svg.js" {
         replace<T extends Dom>(element: T): T;
         round(precision?: number, map?: string[]): this
         svg(): string;
-        svg(a: boolean, outer?: boolean): string
-        svg(a: null | Function, outer?: boolean): string
-        svg(a: string, outer?: boolean): string
+        svg(a: string, outer: true): Element;
+        svg(a: string, outer?: false): this;
+        svg(a: boolean, outer?: boolean): string;
+        svg(a: null | Function, outer?: boolean): string;
 
         toString(): string;
         words(text: string): this;
@@ -1455,22 +1453,23 @@ declare module "@svgdotjs/svg.js" {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
+
     class Polygon extends Shape implements poly {
         node: SVGPolygonElement;
-        _array: PointArray
+        _array: PointArray;
         array(): PointArray;
-        plot(): PointArray
+        plot(): PointArray;
         plot(p: PointArrayAlias): this;
         move(x: number, y: number): this;
         size(width: number, height?: number): this;
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
-    // rect.js
-    class Rect extends Shape {
-        constructor(val: { width: number, height: number, x: number, y: number })
-        node: SVGRectElement;
 
+    class Rect extends Shape {
+        constructor(val?: SVGRectElement);
+        constructor(val: Object);
+        node: SVGRectElement;
         radius(x: number, y?: number): this;
     }
 
