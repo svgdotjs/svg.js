@@ -3,7 +3,7 @@ declare class BuiltInArray<T> extends Array<T> { }
 declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
-    function SVG(id: string): Element;
+    function SVG(selector: string): Element;
     function SVG<T>(el: T): SVGTypeMapping<T>
 
     function SVG(domElement: HTMLElement): Element;
@@ -312,11 +312,10 @@ declare module "@svgdotjs/svg.js" {
         constructor();
         constructor(position: CoordinateXY);
         constructor(point: Point);
-        constructor(position: { x: number, y: number });
         constructor(x: number, y?: number);
         clone(): Point;
         transform(matrix: Matrix): this;
-        transform0(matrix: Matrix): this;
+        transformO(matrix: Matrix): this;
         toArray(): ArrayXY;
     }
 
@@ -382,10 +381,6 @@ declare module "@svgdotjs/svg.js" {
     class PathArray extends Array<PathCommand> {
         constructor();
         constructor(d: ArrayAlias<PathCommand> | PathArrayAlias);
-
-        // TODO: maybe typescript does not need to have such as direct access to this variable.
-        // SVG.JS required direct modify the value of a path array for performance
-        value: PathCommand[]
 
         move(x: number, y: number): this;
         size(width: number, height: number): this;
@@ -499,8 +494,8 @@ declare module "@svgdotjs/svg.js" {
 
     // List.js
     interface List<T> extends Array<T> {
-        // TODO: check whether each is necessary to expose if it useful to external usage.
-        // each(fn: Function, ...args: any[]): void
+        each(fn: Function): void
+        each(...args: any[]): void
         toArray(): T[]
     }
 
@@ -1133,8 +1128,8 @@ declare module "@svgdotjs/svg.js" {
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
-        attr(obj: Object): this;
         attr(obj: string[]): Object;
+        attr(obj: Object): this;
         back(): this;
         backward(): this;
         bbox(): Box;
