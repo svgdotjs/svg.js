@@ -1128,8 +1128,8 @@ declare module "@svgdotjs/svg.js" {
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
-        attr(obj: Object): this;
         attr(obj: string[]): Object;
+        attr(obj: Object): this;
         back(): this;
         backward(): this;
         bbox(): Box;
