@@ -651,7 +651,7 @@ declare module "@svgdotjs/svg.js" {
         toArray(): Object[]
 
         to(a: Object): Morphable
-        fromArray(a: any[] | Object): this
+        fromArray(a: any[]): this
     }
 
     class NonMorphable {
@@ -671,7 +671,7 @@ declare module "@svgdotjs/svg.js" {
         defaults: TransformData
         toArray(): number[]
         to(t: TransformData): Morphable
-        fromArray(t: number[] | Object ): this
+        fromArray(t: number[]): this
     }
 
     interface Stepper {
@@ -879,8 +879,7 @@ declare module "@svgdotjs/svg.js" {
         node: HTMLElement | SVGElement;
         type: string;
 
-        constructor();
-        constructor(node: HTMLElement, attr?: Object);
+        constructor(node?: HTMLElement, attr?: Object);
         constructor(id: { id: string });
         add(element: Element, i?: number): this;
         addTo(parent: Dom | HTMLElement | string): this
@@ -1017,7 +1016,7 @@ declare module "@svgdotjs/svg.js" {
 
     // clip.js
     class ClipPath extends Container {
-        constructor();
+        constructor(node?: SVGClipPathElement);
         node: SVGClipPathElement;
 
         targets(): List<Element>;
@@ -1067,14 +1066,14 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Defs extends Container {
+        constructor(node?: SVGDefsElement);
         node: SVGDefsElement;
         marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
     }
 
     class Svg extends Container {
-        constructor();
+        constructor(svgElement?: SVGSVGElement);
         constructor(id: string);
-        constructor(domElement: HTMLElement);
         node: SVGSVGElement;
         namespace(): this;
         defs(): Defs;
@@ -1109,12 +1108,13 @@ declare module "@svgdotjs/svg.js" {
 
     // Symbol.js
     class Symbol extends Container {
-        constructor()
+        constructor(svgElement?: SVGSymbolElement);
         constructor(attr: Object)
         node: SVGSymbolElement;
     }
 
     class Element extends Dom implements Sugar {
+        constructor(node?: SVGElement);
         node: HTMLElement | SVGElement;
         type: string;
         dom: any
@@ -1285,6 +1285,7 @@ declare module "@svgdotjs/svg.js" {
         radius(x: number, y?: number): this;
     }
     class Circle extends Shape implements CircleMethods {
+        constructor(node?: SVGCircleElement);
         node: SVGCircleElement;
 
         rx(rx: number): this;
@@ -1295,6 +1296,7 @@ declare module "@svgdotjs/svg.js" {
     }
     class Ellipse extends Shape implements CircleMethods {
         node: SVGEllipseElement;
+        constructor(node?: SVGEllipseElement);
 
         rx(rx: number): this;
         rx(): this;
@@ -1315,6 +1317,7 @@ declare module "@svgdotjs/svg.js" {
         update(opts: StopProperties): this;
     }
     class Gradient extends Container {
+        constructor(node?: SVGGradientElement);
         constructor(type: string);
         node: SVGGradientElement;
 
@@ -1333,13 +1336,14 @@ declare module "@svgdotjs/svg.js" {
 
     // group.js
     class G extends Container {
+        constructor(node?: SVGGElement);
         node: SVGGElement;
         gbox(): Box;
     }
 
     // hyperlink.js
     class A extends Container {
-        // TODO: add constructor with attribute optional
+        constructor(node?: SVGAElement);
         node: SVGAElement;
         to(url: string): this;
         to(): string;
@@ -1349,7 +1353,7 @@ declare module "@svgdotjs/svg.js" {
 
     // image.js
     class Image extends Shape {
-        constructor();
+        constructor(node?: SVGImageElement);
         node: SVGImageElement;
         load(url?: string): this;
     }
@@ -1358,6 +1362,7 @@ declare module "@svgdotjs/svg.js" {
     type PointArrayAlias = number[] | ArrayXY[] | PointArray | string;
 
     class Line extends Shape {
+        constructor(node?: SVGLineElement);
         node: SVGLineElement;
         array(): PointArray;
         plot(): PathArray
@@ -1377,6 +1382,7 @@ declare module "@svgdotjs/svg.js" {
     }
     // mask.js
     class Mask extends Container {
+        constructor(node?: SVGMaskElement);
         node: SVGMaskElement;
         remove(): this
         targets(): List<Element>;
@@ -1384,6 +1390,7 @@ declare module "@svgdotjs/svg.js" {
 
     // path.js
     class Path extends Shape {
+        constructor(node?: SVGPathElement);
         /**
          * DO NOT USE, it only for testing purpose
          */
@@ -1442,6 +1449,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Polyline extends Shape implements poly, pointed {
+        constructor(node?: SVGPolylineElement);
         node: SVGPolylineElement;
         _array: PointArray
 
@@ -1455,6 +1463,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Polygon extends Shape implements poly {
+        constructor(node?: SVGPolygonElement);
         node: SVGPolygonElement;
         _array: PointArray;
         array(): PointArray;
@@ -1467,7 +1476,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Rect extends Shape {
-        constructor(val?: SVGRectElement);
+        constructor(node?: SVGRectElement);
         constructor(val: Object);
         node: SVGRectElement;
         radius(x: number, y?: number): this;
