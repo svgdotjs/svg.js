@@ -184,7 +184,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     /**
-     * 
+     *
      */
     interface ShapeElementStyle {
 
@@ -279,8 +279,8 @@ declare module "@svgdotjs/svg.js" {
     // SVGArray.js
     /**
      * Type alias to native array.
-     * 
-     * **Caution**: If argument is a string, generic type must be a number or array of number and 
+     *
+     * **Caution**: If argument is a string, generic type must be a number or array of number and
      * the string is format as a concatenate of number separate by comma.
      * This is expensive to build runtime type check for such as case so please use it carefully.
      */
@@ -604,16 +604,16 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Box implements BoxLike {
-        height?: number;
-        width?: number;
-        y?: number;
-        x?: number;
-        cx?: number;
-        cy?: number;
-        w?: number;
-        h?: number;
-        x2?: number;
-        y2?: number;
+        height: number;
+        width: number;
+        y: number;
+        x: number;
+        cx: number;
+        cy: number;
+        w: number;
+        h: number;
+        x2: number;
+        y2: number;
 
         constructor();
         constructor(source: string);
@@ -894,7 +894,7 @@ declare module "@svgdotjs/svg.js" {
         type: string;
 
         add(element: Element, i?: number): this;
-        addTo(parent: Element | HTMLElement | string): this
+        addTo(parent: Dom | HTMLElement | string): this
         children(): List<Element>;
         clear(): this;
         clone(): this;
@@ -916,7 +916,7 @@ declare module "@svgdotjs/svg.js" {
          * 1. If The input is a string, the string value must be a valid HTML element tag name or svg tag name. e.g "svg" or "g" or "div"
          * 2. If the given input is an object type then only SVG.JS object type is accept. e.g Dom, Svg or G
          * 3. if the given input query is underfine then the element will return the closest parent in Dom hierarchy
-         * 
+         *
          * For more information see ParentQueryMapping.
          * @param type can be either string, object type or underfine.
          */
@@ -926,7 +926,7 @@ declare module "@svgdotjs/svg.js" {
          * Put the element into the given parent element. The input parent element can be vary base on the class implementation.
          * 1. If the current class is a Dom then parent input is only accept a valid HTML element or a valid string id of HTML element
          * 2. If the current class is an Svg then parent input can only Dom, Svg, G, A, a valid HTML element and a valid string id of HTML element
-         * 
+         *
          * For more information see PutInMapping.
          * @param parent an object of SVG.JS Dom or implement container or a string id or a valid HTML element object.
          */
