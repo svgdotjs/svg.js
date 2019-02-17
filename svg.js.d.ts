@@ -460,7 +460,7 @@ declare namespace svgjs {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
-    interface Polyline {
+    interface PolyLine {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
