@@ -460,7 +460,7 @@ declare namespace svgjs {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
-    interface PolyLine {
+    interface Polyline {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
@@ -703,12 +703,12 @@ declare namespace svgjs {
         move(x: number, y: number): this;
         size(width: number, height: number): this;
     }
-    export interface PolyLine extends poly {
-        new (): PolyLine;
+    export interface Polyline extends poly {
+        new (): Polyline;
     }
-    interface Library { PolyLine: PolyLine; }
+    interface Library { Polyline: Polyline; }
     interface Container {
-        polyline(points: PointArrayAlias): PolyLine;
+        polyline(points: PointArrayAlias): Polyline;
     }
     export interface Polygon extends poly {
         new (): Polygon;
