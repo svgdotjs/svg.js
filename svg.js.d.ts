@@ -214,7 +214,7 @@ declare module "@svgdotjs/svg.js" {
 
     /**
      * A generic Dom Box object.
-     * Notice: Object is still in experiment state and ducment is not complete (Draft)
+     * Notice: Object is still in experiment state and document is not complete (Draft)
      * See https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
      */
     interface DOMRect {
@@ -295,7 +295,7 @@ declare module "@svgdotjs/svg.js" {
          */
         toArray(): any[]
         /**
-         * return a concatenate string of each element seperated by space
+         * return a concatenated string of each element separated by space
          */
         toString(): string
         valueOf(): T[]
@@ -682,7 +682,6 @@ declare module "@svgdotjs/svg.js" {
         fromArray(t: TransformData): this
     }
 
-    // Constroller.js
     interface Stepper {
         done(c?: object): boolean
     }
@@ -861,7 +860,7 @@ declare module "@svgdotjs/svg.js" {
      */
     type QuerySelector = string
 
-    // cannot really avoid using anounymous any string as typescript does not provide
+    // cannot really avoid using anonymous any string as typescript does not provide
     // runtime type check for example, QuerySelector should contain . or # at least
     // Important: this type alias is provided an overview of how value look as a string
     type ParentQueryAlias = ParentElement | keyof HTMLElementTagNameMap | ParentTypeAlias | QuerySelector
@@ -884,15 +883,13 @@ declare module "@svgdotjs/svg.js" {
         T extends Svg ? ParentTypeAlias | Dom :
         T extends Element ? ParentTypeAlias : Dom
 
-
-
     class Dom implements EventTarget {
-        constructor();
-        constructor(node: HTMLElement, attr?: Object);
-        constructor(id: { id: string });
         node: HTMLElement | SVGElement;
         type: string;
 
+        constructor();
+        constructor(node: HTMLElement, attr?: Object);
+        constructor(id: { id: string });
         add(element: Element, i?: number): this;
         addTo(parent: Dom | HTMLElement | string): this
         children(): List<Element>;
@@ -911,14 +908,14 @@ declare module "@svgdotjs/svg.js" {
         last(): Element;
         matches(selector: string): boolean;
         /**
-         * Get the parent of current element. The input query can be given with string, object type or none (underfine).
+         * Get the parent of current element. The input query can be given with string, object type or none (undefined).
          * The input is vary based on the implement in hierarchy of SVG.JS element or dom.
          * 1. If The input is a string, the string value must be a valid HTML element tag name or svg tag name. e.g "svg" or "g" or "div"
          * 2. If the given input is an object type then only SVG.JS object type is accept. e.g Dom, Svg or G
-         * 3. if the given input query is underfine then the element will return the closest parent in Dom hierarchy
+         * 3. if the given input query is undefined then the element will return the closest parent in Dom hierarchy
          *
          * For more information see ParentQueryMapping.
-         * @param type can be either string, object type or underfine.
+         * @param type can be either string, object type or undefined.
          */
         parent<T extends this>(type?: ParentQueryMapping<T>): ParentQueryResultMapping<T>;
         put(element: Element, i?: number): Element;
@@ -945,7 +942,7 @@ declare module "@svgdotjs/svg.js" {
         words(text: string): this;
         writeDataToDom(): this;
 
-        // protoype extend Attribute in attr.js
+        // prototype extend Attribute in attr.js
         /**
          * Get the attribute object of SVG Element. The return object will be vary based on
          * the instance itself. For example, G element will only return GlobalAttr where Rect
@@ -1022,9 +1019,7 @@ declare module "@svgdotjs/svg.js" {
 
         on(events: string | Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): this;
         off(events?: string | Event[], cb?: EventListener | number): this;
-
         removeEventListener(): void
-
     }
 
     // clip.js
@@ -1088,7 +1083,6 @@ declare module "@svgdotjs/svg.js" {
         constructor(id: string);
         constructor(domElement: HTMLElement);
         node: SVGSVGElement;
-
         namespace(): this;
         defs(): Defs;
         remove(): this;
@@ -1132,9 +1126,6 @@ declare module "@svgdotjs/svg.js" {
         type: string;
         dom: any
 
-        shear(lam: Matrix, cx: number, cy: number): this
-        relative(x: number, y: number): this
-
         addClass(name: string): this;
         after(element: Element): Element;
         animate(duration?: number, ease?: string, delay?: number): Runner;
@@ -1142,18 +1133,17 @@ declare module "@svgdotjs/svg.js" {
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
-        attr(obj: string[]): Object;
         attr(obj: Object): this;
+        attr(obj: string[]): Object;
         back(): this;
         backward(): this;
         bbox(): Box;
-        toRoot(): Svg;
         before(element: Element): Element;
         center(x: number, y: number): this;
         classes(): string[];
         click(cb: Function): this;
-        clipWith(element: Element): this;
         clipper(): ClipPath;
+        clipWith(element: Element): this;
         clone(): this;
         css(): Object;
         css(style: Object[]): Object;
@@ -1183,12 +1173,12 @@ declare module "@svgdotjs/svg.js" {
         fire(event: string, data?: any): this;
         flip(a: string, offset?: number): this;
         flip(offset?: number): this;
+        font(a: Object): this
+        font(a: string, v: string | number): this
+        font(a: string): string
         forget(...keys: string[]): this;
         forget(): this;
         forward(): this;
-        font(a: string): string
-        font(a: string, v: string | number): this
-        font(a: Object): this
         front(): this;
         hasClass(name: string): boolean;
         height(): number;
@@ -1221,12 +1211,15 @@ declare module "@svgdotjs/svg.js" {
         on(event: string, cb: Function, context?: Object): this;
         opacity(): number;
         opacity(o: number): this;
+        relative(x: number, y: number): this
+        shear(lam: Matrix, cx: number, cy: number): this
+        toRoot(): Svg;
         /**
- * By default parents will return a list of element up until html Document.
- */
+         * By default parents will return a list of element up until html Document.
+         */
         parents(): List<Element>
         /**
-         * List the parent by heirarchy until the given parent type or object. If the given value is null
+         * List the parent by hierarchy until the given parent type or object. If the given value is null
          * then the result is only provided the list up until Svg root element which mean no Dom parent element is included.
          * @param util a parent type
          */
@@ -1282,7 +1275,6 @@ declare module "@svgdotjs/svg.js" {
         unmask(): this;
         untransform(): this;
         visible(): boolean;
-        visible(): boolean;
         width(): number;
         width(width: NumberAlias): this;
         x(): number;
@@ -1318,7 +1310,6 @@ declare module "@svgdotjs/svg.js" {
         radius(x: number, y?: number): this;
     }
 
-    // TODO finishs FX
     interface StopProperties {
         color?: ColorAlias;
         offset?: number | string;
