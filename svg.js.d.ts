@@ -465,19 +465,29 @@ declare module "@svgdotjs/svg.js" {
         compose(o: MatrixExtract): Matrix
         decompose(cx?: number, cy?: number): MatrixExtract
         multiply(m: MatrixAlias | Matrix): Matrix;
-        lmultiply(m: MatrixAlias | Matrix): Matrix
+        multiplyO(m: MatrixAlias | Matrix): this;
+        lmultiply(m: MatrixAlias | Matrix): Matrix;
+        lmultiplyO(m: MatrixAlias | Matrix): this;
         inverse(): Matrix;
+        inverseO(): this;
         translate(x?: number, y?: number): Matrix;
+        translateO(x?: number, y?: number): this;
         scale(x: number, y?: number, cx?: number, cy?: number): Matrix;
+        scaleO(x: number, y?: number, cx?: number, cy?: number): this;
         rotate(r: number, cx?: number, cy?: number): Matrix;
+        rotateO(r: number, cx?: number, cy?: number): this;
         flip(a: NumberAlias, offset?: number): Matrix;
+        flipO(a: NumberAlias, offset?: number): this;
         flip(offset?: number): Matrix;
-        shear(a: number, cx?: number, cy?: number): this
+        shear(a: number, cx?: number, cy?: number): Matrix;
+        shearO(a: number, cx?: number, cy?: number): this;
         skew(y?: number, cx?: number, cy?: number): Matrix;
+        skewO(y?: number, cx?: number, cy?: number): this;
         skew(x: number, y?: number, cx?: number, cy?: number): Matrix;
         skewX(x: number, cx?: number, cy?: number): Matrix;
         skewY(y: number, cx?: number, cy?: number): Matrix;
         around(cx?: number, cy?: number, matrix?: Matrix): Matrix;
+        aroundO(cx?: number, cy?: number, matrix?: Matrix): this;
         equals(m: Matrix): boolean
         toString(): string;
         toArray(): number[];
@@ -1081,6 +1091,7 @@ declare module "@svgdotjs/svg.js" {
         fill(color: string): this;
         fill(pattern: Element): this;
         fill(image: Image): this;
+        stroke(): any;
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
         matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
@@ -1243,6 +1254,7 @@ declare module "@svgdotjs/svg.js" {
         stop(jumpToEnd: boolean, clearQueue: boolean): Animation;
         stop(offset?: NumberAlias | string, color?: NumberAlias, opacity?: NumberAlias): Stop;
         stop(val: { offset?: NumberAlias | string, color?: NumberAlias, opacity?: NumberAlias }): Stop;
+        stroke(): any;
         stroke(color: string): this;
         stroke(stroke: StrokeData): this;
         tbox(): Box;
