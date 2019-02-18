@@ -7,6 +7,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.12]
+
+### Fixed
+ - fixed package.json which points to correct file for webpack now (browser keyword)
+ - fixed typescript types
+
+### Added
+ - added `ForeignObject` to the core
+
 ## [3.0.11] - 2019-01-22
 
 ### Fixed
