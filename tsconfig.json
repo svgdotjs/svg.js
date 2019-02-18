@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": [
+      "es2015",
+      "es6",
+      "dom"
+    ],
+    "strict": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": false,
+    "strictNullChecks": false,
+    "experimentalDecorators": true,
+    "traceResolution": false,
+    "allowJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@svgdotjs/svg.js": [
+        "."
+      ]
+    }
+  },
+  "include": [
+    "spec/types/**/*"
+  ],
+  "exclude": [
+    "svg.js.d.ts",
+    "dist",
+    "node_modules"
+  ]
+}
