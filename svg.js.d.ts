@@ -5,15 +5,8 @@ declare module "@svgdotjs/svg.js" {
     function SVG(): Svg;
     function SVG(selector: QuerySelector): Element;
     function SVG<T>(el: T): SVGTypeMapping<T>
-
     function SVG(domElement: HTMLElement): Element;
 
-    let ns: string;
-    let xmlns: string;
-    let xlink: string;
-    let svgjs: string;
-
-    let did: number;
     function eid(name: string): string;
     function get(id: string): Element;
 
@@ -1422,7 +1415,6 @@ declare module "@svgdotjs/svg.js" {
         targets(): List<Element>
 
     }
-
 
     // pattern.js
     class Pattern extends Container {
