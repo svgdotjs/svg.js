@@ -1258,7 +1258,6 @@ declare module "@svgdotjs/svg.js" {
         stroke(): any;
         stroke(color: string): this;
         stroke(stroke: StrokeData): this;
-        tbox(): Box;
         timeline(): Timeline
         timeline(tl: Timeline): this
         toggleClass(name: string): this;
