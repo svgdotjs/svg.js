@@ -1094,8 +1094,8 @@ declare module "@svgdotjs/svg.js" {
         stroke(): any;
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
-        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
-        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
+        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         rotate(degrees: number, cx?: number, cy?: number): this;
         skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this;
         scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this;
@@ -1194,8 +1194,9 @@ declare module "@svgdotjs/svg.js" {
         maskWith(element: Element): this;
         maskWith(mask: Mask): this;
         matches(selector: string): boolean;
-        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
-        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
+        matrix(): Matrix;
+        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         matrixify(): Matrix;
         memory(): Object;
         mousedown(cb: Function): this;
