@@ -118,6 +118,20 @@ export default class Timeline extends EventTarget {
     return lastStartTime + lastDuration
   }
 
+  getEndTimeOfTimeline () {
+    let lastEndTime = 0
+    for (var i = 0; i < this._runners.length; i++) {
+      let runnerInfo = this._runners[i]
+      var duration = runnerInfo ? runnerInfo.runner.duration() : 0
+      var startTime = runnerInfo ? runnerInfo.start : 0
+      let endTime = startTime + duration
+      if (endTime > lastEndTime) {
+        lastEndTime = endTime
+      }
+    }
+    return lastEndTime
+  }
+
   // Makes sure, that after pausing the time doesn't jump
   updateTime () {
     if (!this.active()) {
@@ -145,7 +159,7 @@ export default class Timeline extends EventTarget {
 
   finish () {
     // Go to end and pause
-    this.time(this.getEndTime() + 1)
+    this.time(this.getEndTimeOfTimeline() + 1)
     return this.pause()
   }
 
