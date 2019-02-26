@@ -7,17 +7,10 @@ declare class BuiltInArray<T> extends Array<T> { }
 declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
-    function SVG(selector: string): Element;
+    function SVG(selector: QuerySelector): Element;
     function SVG<T>(el: T): SVGTypeMapping<T>
-
     function SVG(domElement: HTMLElement): Element;
 
-    let ns: string;
-    let xmlns: string;
-    let xlink: string;
-    let svgjs: string;
-
-    let did: number;
     function eid(name: string): string;
     function get(id: string): Element;
 
@@ -373,8 +366,6 @@ declare module "@svgdotjs/svg.js" {
     class PointArray extends Array<ArrayXY> {
         constructor();
         constructor(array?: ArrayAlias<ArrayXY> | number[]);
-        // Note: override constructor from SVGArray to allow array of number
-        constructor(array?: ArrayAlias<ArrayXY> | number[]);
 
         toLine(): LineAttr;
         at(pos: number): PointArray;
@@ -525,19 +516,29 @@ declare module "@svgdotjs/svg.js" {
         compose(o: MatrixExtract): Matrix
         decompose(cx?: number, cy?: number): MatrixExtract
         multiply(m: MatrixAlias | Matrix): Matrix;
-        lmultiply(m: MatrixAlias | Matrix): Matrix
+        multiplyO(m: MatrixAlias | Matrix): this;
+        lmultiply(m: MatrixAlias | Matrix): Matrix;
+        lmultiplyO(m: MatrixAlias | Matrix): this;
         inverse(): Matrix;
+        inverseO(): this;
         translate(x?: number, y?: number): Matrix;
+        translateO(x?: number, y?: number): this;
         scale(x: number, y?: number, cx?: number, cy?: number): Matrix;
+        scaleO(x: number, y?: number, cx?: number, cy?: number): this;
         rotate(r: number, cx?: number, cy?: number): Matrix;
+        rotateO(r: number, cx?: number, cy?: number): this;
         flip(a: NumberAlias, offset?: number): Matrix;
+        flipO(a: NumberAlias, offset?: number): this;
         flip(offset?: number): Matrix;
-        shear(a: number, cx?: number, cy?: number): this
+        shear(a: number, cx?: number, cy?: number): Matrix;
+        shearO(a: number, cx?: number, cy?: number): this;
         skew(y?: number, cx?: number, cy?: number): Matrix;
+        skewO(y?: number, cx?: number, cy?: number): this;
         skew(x: number, y?: number, cx?: number, cy?: number): Matrix;
         skewX(x: number, cx?: number, cy?: number): Matrix;
         skewY(y: number, cx?: number, cy?: number): Matrix;
         around(cx?: number, cy?: number, matrix?: Matrix): Matrix;
+        aroundO(cx?: number, cy?: number, matrix?: Matrix): this;
         equals(m: Matrix): boolean
         toString(): string;
         toArray(): number[];
@@ -708,7 +709,7 @@ declare module "@svgdotjs/svg.js" {
         toArray(): Object[]
 
         to(a: Object): Morphable
-        fromArray(a: Object): this
+        fromArray(a: any[]): this
     }
 
     class NonMorphable {
@@ -725,13 +726,10 @@ declare module "@svgdotjs/svg.js" {
         constructor()
         constructor(a: number[])
         constructor(a: TransformData)
-
         defaults: TransformData
-
         toArray(): number[]
-
         to(t: TransformData): Morphable
-        fromArray(t: TransformData): this
+        fromArray(t: number[]): this
     }
 
     interface Stepper {
@@ -944,9 +942,8 @@ declare module "@svgdotjs/svg.js" {
         node: HTMLElement | SVGElement;
         type: string;
 
-        constructor();
-        constructor(node: HTMLElement, attr?: Object);
-        constructor(id: { id: string });
+        constructor(node?: HTMLElement, attr?: Object);
+        constructor(att: Object);
         add(element: Element, i?: number): this;
         addTo(parent: Dom | HTMLElement | string): this
         children(): List<Element>;
@@ -991,9 +988,10 @@ declare module "@svgdotjs/svg.js" {
         replace<T extends Dom>(element: T): T;
         round(precision?: number, map?: string[]): this
         svg(): string;
-        svg(a: boolean, outer?: boolean): string
-        svg(a: null | Function, outer?: boolean): string
-        svg(a: string, outer?: boolean): string
+        svg(a: string, outer: true): Element;
+        svg(a: string, outer?: false): this;
+        svg(a: boolean, outer?: boolean): string;
+        svg(a: null | Function, outer?: boolean): string;
 
         toString(): string;
         words(text: string): this;
@@ -1081,6 +1079,8 @@ declare module "@svgdotjs/svg.js" {
     // clip.js
     class ClipPath extends Container {
         constructor();
+        constructor(node?: SVGClipPathElement);
+        constructor(attr: Object);
         node: SVGClipPathElement;
 
         targets(): List<Element>;
@@ -1131,12 +1131,13 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Defs extends Container {
+        constructor(node?: SVGDefsElement);
         node: SVGDefsElement;
         marker(width?: number, height?: number, block?: (marker: Marker) => void): Marker
     }
 
     class Svg extends Container {
-        constructor();
+        constructor(svgElement?: SVGSVGElement);
         constructor(id: string);
         constructor(domElement: HTMLElement);
         node: SVGSVGElement;
@@ -1152,10 +1153,11 @@ declare module "@svgdotjs/svg.js" {
         fill(color: string): this;
         fill(pattern: Element): this;
         fill(image: Image): this;
+        stroke(): any;
         stroke(stroke: StrokeData): this;
         stroke(color: string): this;
-        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
-        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
+        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         rotate(degrees: number, cx?: number, cy?: number): this;
         skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this;
         scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this;
@@ -1173,12 +1175,14 @@ declare module "@svgdotjs/svg.js" {
 
     // Symbol.js
     class Symbol extends Container {
-        constructor()
+        constructor(svgElement?: SVGSymbolElement);
         constructor(attr: Object)
         node: SVGSymbolElement;
     }
 
     class Element extends Dom implements Sugar {
+        constructor(node?: SVGElement);
+        constructor(attr: Object);
         node: HTMLElement | SVGElement;
         type: string;
         dom: any
@@ -1248,8 +1252,9 @@ declare module "@svgdotjs/svg.js" {
         maskWith(element: Element): this;
         maskWith(mask: Mask): this;
         matches(selector: string): boolean;
-        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
-        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): Matrix
+        matrix(): Matrix;
+        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         matrixify(): Matrix;
         memory(): Object;
         mousedown(cb: Function): this;
@@ -1308,9 +1313,9 @@ declare module "@svgdotjs/svg.js" {
         stop(jumpToEnd: boolean, clearQueue: boolean): Animation;
         stop(offset?: NumberAlias | string, color?: NumberAlias, opacity?: NumberAlias): Stop;
         stop(val: { offset?: NumberAlias | string, color?: NumberAlias, opacity?: NumberAlias }): Stop;
+        stroke(): any;
         stroke(color: string): this;
         stroke(stroke: StrokeData): this;
-        tbox(): Box;
         timeline(): Timeline
         timeline(tl: Timeline): this
         toggleClass(name: string): this;
@@ -1347,6 +1352,7 @@ declare module "@svgdotjs/svg.js" {
     class Circle extends Shape implements CircleMethods {
         constructor()
         constructor(attr: CircleAttr)
+        constructor(node?: SVGCircleElement);
 
         node: SVGCircleElement;
 
@@ -1359,6 +1365,7 @@ declare module "@svgdotjs/svg.js" {
     class Ellipse extends Shape implements CircleMethods {
         constructor()
         constructor(attr: EllipseAttr)
+        constructor(node?: SVGEllipseElement);
 
         node: SVGEllipseElement;
 
@@ -1381,6 +1388,8 @@ declare module "@svgdotjs/svg.js" {
         update(opts: StopProperties): this;
     }
     class Gradient extends Container {
+        constructor(node?: SVGGradientElement);
+        constructor(attr: Object);
         constructor(type: string);
         node: SVGGradientElement;
 
@@ -1404,13 +1413,16 @@ declare module "@svgdotjs/svg.js" {
 
     // group.js
     class G extends Container {
+        constructor(node?: SVGGElement);
+        constructor(attr: Object);
         node: SVGGElement;
         gbox(): Box;
     }
 
     // hyperlink.js
     class A extends Container {
-        // TODO: add constructor with attribute optional
+        constructor(node?: SVGAElement);
+        constructor(attr: Object);
         node: SVGAElement;
         to(url: string): this;
         to(): string;
@@ -1420,7 +1432,8 @@ declare module "@svgdotjs/svg.js" {
 
     // image.js
     class Image extends Shape {
-        constructor();
+        constructor(node?: SVGImageElement);
+        constructor(attr: Object);
         node: SVGImageElement;
         load(url?: string): this;
     }
@@ -1431,8 +1444,10 @@ declare module "@svgdotjs/svg.js" {
     class Line extends Shape {
         constructor()
         constructor(attr: LineAttr)
+        constructor(node?: SVGLineElement);
 
         node: SVGLineElement;
+
         array(): PointArray;
         plot(): PointArray
         plot(points?: PointArrayAlias): this;
@@ -1456,6 +1471,8 @@ declare module "@svgdotjs/svg.js" {
     }
     // mask.js
     class Mask extends Container {
+        constructor(node?: SVGMaskElement);
+        constructor(attr: Object);
         node: SVGMaskElement;
         remove(): this
         targets(): List<Element>;
@@ -1463,8 +1480,8 @@ declare module "@svgdotjs/svg.js" {
 
     // path.js
     class Path extends Shape {
-        constructor()
         constructor(attr: PathAttr)
+        constructor(node?: SVGPathElement);
         /**
          * DO NOT USE, it only for testing purpose
          */
@@ -1525,8 +1542,8 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Polyline extends Shape implements poly, pointed {
-        constructor()
-        constructor(attr: PolyAttr)
+        constructor(node?: SVGPolylineElement);
+        constructor(attr: PolyAttr);
 
         node: SVGPolylineElement;
         _array: PointArray
@@ -1539,28 +1556,26 @@ declare module "@svgdotjs/svg.js" {
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
+
     class Polygon extends Shape implements poly {
-        constructor()
+        constructor(node?: SVGPolygonElement);
         constructor(attr: PolyAttr)
 
         node: SVGPolygonElement;
-        _array: PointArray
-
+        _array: PointArray;
         array(): PointArray;
-        plot(): PointArray
+        plot(): PointArray;
         plot(p: PointArrayAlias): this;
         move(x: number, y: number): this;
         size(width: number, height?: number): this;
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
-    // rect.js
+
     class Rect extends Shape {
-        constructor()
+        constructor(node?: SVGRectElement);
         constructor(attr: RectAttr)
-
         node: SVGRectElement;
-
         radius(x: number, y?: number): this;
     }
 
@@ -1602,9 +1617,8 @@ declare module "@svgdotjs/svg.js" {
 
     // text.js
     class Text extends Shape implements Textable {
-        constructor();
+        constructor(node?: SVGElement);
         constructor(attr: TextAttr)
-
         // for the purpose of testing only
         _rebuild: boolean
         _build: boolean
@@ -1637,9 +1651,8 @@ declare module "@svgdotjs/svg.js" {
     }
 
     class Tspan extends Text implements Textable {
-        constructor();
+        constructor(node?: SVGElement);
         constructor(attr: TextAttr);
-
         dx(): number;
         dx(x: NumberAlias): this;
         dy(): number;

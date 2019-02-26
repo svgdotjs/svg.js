@@ -78,7 +78,7 @@ export default class G extends Container {
 }
 
 registerMethods({
-  Element: {
+  Container: {
     // Create a group element
     group: wrapWithAttrCheck(function () {
       return this.put(new G())

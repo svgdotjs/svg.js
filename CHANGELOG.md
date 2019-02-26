@@ -7,6 +7,15 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.12] - 2019-02-19
+
+### Fixed
+ - fixed package.json which points to correct file for webpack now (browser keyword)
+ - fixed typescript types
+
+### Added
+ - added `ForeignObject` to the core
+
 ## [3.0.11] - 2019-01-22
 
 ### Fixed
@@ -807,6 +816,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.12]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.12
 [3.0.11]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.11
 [3.0.10]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.10
 [3.0.9]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.9
