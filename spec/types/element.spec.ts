@@ -167,30 +167,30 @@ describe('Element', function () {
       expect(helpers.stripped(rect.node.style.cssText)).toBe('cursor:crosshair')
     })
     it('sets multiple styles with an object as the first argument', function () {
-      var rect = helpers.draw.rect(100, 100).css({ cursor: 'help', display: 'block' })
+      var rect = helpers.draw.rect(100, 100).css({ cursor: 'help', display: 'block' } as CSSStyleDeclaration)
       expect(helpers.stripped(rect.node.style.cssText)).toMatch(/cursor:help/)
       expect(helpers.stripped(rect.node.style.cssText)).toMatch(/display:block/)
       expect(helpers.stripped(rect.node.style.cssText).length).toBe(('display:block;cursor:help').length)
     })
     it('gets a style with a string key as the first argument', function () {
-      var rect = helpers.draw.rect(100, 100).css({ cursor: 'progress', display: 'block' })
+      var rect = helpers.draw.rect(100, 100).css({ cursor: 'progress', display: 'block' } as CSSStyleDeclaration)
       expect(rect.css('cursor')).toBe('progress')
     })
     it('gets multiple sytyles with array as first argument', function () {
-      var rect = helpers.draw.rect(100, 100).css({ cursor: 'progress', display: 'block' })
-      expect(rect.css(['cursor', 'display'])).toEqual({ cursor: 'progress', display: 'block' })
+      var rect = helpers.draw.rect(100, 100).css({ cursor: 'progress', display: 'block' } as CSSStyleDeclaration)
+      expect(rect.css(['cursor', 'display'])).toEqual({ cursor: 'progress', display: 'block' } as CSSStyleDeclaration)
     })
     it('gets an object with all styles with zero arguments', function () {
-      var rect = helpers.draw.rect(100, 100).css({ cursor: 's-resize', display: 'none' })
-      expect(rect.css()).toEqual({ cursor: 's-resize', display: 'none' })
+      var rect = helpers.draw.rect(100, 100).css({ cursor: 's-resize', display: 'none' } as CSSStyleDeclaration)
+      expect(rect.css()).toEqual({ cursor: 's-resize', display: 'none' } as CSSStyleDeclaration)
     })
     it('removes a style if the value is an empty string', function () {
-      var rect = helpers.draw.rect(100, 100).css({ cursor: 'n-resize', display: '' })
+      var rect = helpers.draw.rect(100, 100).css({ cursor: 'n-resize', display: '' } as CSSStyleDeclaration)
       expect(rect.css('display')).toBe('')
     })
     it('removes a style if the value explicitly set to null', function () {
       var rect = helpers.draw.rect(100, 100).css('cursor', 'w-resize')
-      expect(rect.css()).toEqual({ cursor: 'w-resize' })
+      expect(rect.css()).toEqual({ cursor: 'w-resize' } as CSSStyleDeclaration)
       rect.css('cursor', null)
       expect(rect.css('cursor')).toBe('')
     })
