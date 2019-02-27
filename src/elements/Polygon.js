@@ -29,4 +29,4 @@ registerMethods({
 
 extend(Polygon, pointed)
 extend(Polygon, poly)
-register(Polygon)
+register(Polygon, 'Polygon')

@@ -54,4 +54,4 @@ registerMethods({
   }
 })
 
-register(Mask)
+register(Mask, 'Mask')

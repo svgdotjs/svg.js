@@ -68,4 +68,4 @@ registerMethods({
   }
 })
 
-register(Pattern)
+register(Pattern, 'Pattern')

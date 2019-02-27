@@ -193,4 +193,4 @@ registerMethods({
   }
 })
 
-register(Text)
+register(Text, 'Text')

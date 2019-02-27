@@ -992,4 +992,4 @@ extend(Runner, {
 })
 
 extend(Runner, { rx, ry, from, to })
-register(Runner)
+register(Runner, 'Runner')

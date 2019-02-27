@@ -33,4 +33,4 @@ registerMethods('Container', {
   })
 })
 
-register(Ellipse)
+register(Ellipse, 'Ellipse')

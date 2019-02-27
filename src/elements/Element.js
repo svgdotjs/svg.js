@@ -171,4 +171,4 @@ extend(Element, {
   bbox, rbox, point, ctm, screenCTM
 })
 
-register(Element)
+register(Element, 'Element')

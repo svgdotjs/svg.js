@@ -29,4 +29,4 @@ registerMethods({
 
 extend(Polyline, pointed)
 extend(Polyline, poly)
-register(Polyline)
+register(Polyline, 'Polyline')

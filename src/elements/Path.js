@@ -78,4 +78,4 @@ registerMethods({
   }
 })
 
-register(Path)
+register(Path, 'Path')

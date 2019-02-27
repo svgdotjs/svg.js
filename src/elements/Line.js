@@ -65,4 +65,4 @@ registerMethods({
   }
 })
 
-register(Line)
+register(Line, 'Line')

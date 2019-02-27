@@ -86,4 +86,4 @@ registerMethods({
   }
 })
 
-register(G)
+register(G, 'G')

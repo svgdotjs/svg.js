@@ -74,4 +74,4 @@ registerMethods({
   }
 })
 
-register(Image)
+register(Image, 'Image')

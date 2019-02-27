@@ -79,4 +79,4 @@ registerMethods({
   }
 })
 
-register(Gradient)
+register(Gradient, 'Gradient')

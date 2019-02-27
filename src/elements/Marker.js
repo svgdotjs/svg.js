@@ -80,4 +80,4 @@ registerMethods({
   }
 })
 
-register(Marker)
+register(Marker, 'Marker')

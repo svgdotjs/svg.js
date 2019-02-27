@@ -50,4 +50,4 @@ registerMethods('Dom', {
   })
 })
 
-register(Style)
+register(Style, 'Style')

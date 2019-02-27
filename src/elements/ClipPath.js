@@ -54,4 +54,4 @@ registerMethods({
   }
 })
 
-register(ClipPath)
+register(ClipPath, 'ClipPath')

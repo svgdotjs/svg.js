@@ -42,4 +42,4 @@ registerMethods({
   }
 })
 
-register(A)
+register(A, 'A')

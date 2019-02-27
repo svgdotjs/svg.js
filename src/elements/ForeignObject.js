@@ -16,4 +16,4 @@ registerMethods({
   }
 })
 
-register(ForeignObject)
+register(ForeignObject, 'ForeignObject')

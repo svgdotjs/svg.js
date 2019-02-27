@@ -26,4 +26,4 @@ export default class Stop extends Element {
   }
 }
 
-register(Stop)
+register(Stop, 'Stop')

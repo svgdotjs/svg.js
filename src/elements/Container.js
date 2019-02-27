@@ -27,4 +27,4 @@ export default class Container extends Element {
   }
 }
 
-register(Container)
+register(Container, 'Container')

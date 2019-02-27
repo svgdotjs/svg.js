@@ -84,4 +84,4 @@ registerMethods({
   }
 })
 
-register(Tspan)
+register(Tspan, 'Tspan')

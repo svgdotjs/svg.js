@@ -98,4 +98,4 @@ registerMethods({
 })
 
 TextPath.prototype.MorphArray = PathArray
-register(TextPath)
+register(TextPath, 'TextPath')

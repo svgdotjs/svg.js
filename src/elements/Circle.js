@@ -46,4 +46,4 @@ registerMethods({
   }
 })
 
-register(Circle)
+register(Circle, 'Circle')

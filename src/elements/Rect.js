@@ -26,4 +26,4 @@ registerMethods({
   }
 })
 
-register(Rect)
+register(Rect, 'Rect')

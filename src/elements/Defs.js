@@ -14,4 +14,4 @@ export default class Defs extends Container {
   }
 }
 
-register(Defs)
+register(Defs, 'Defs')

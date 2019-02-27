@@ -314,4 +314,4 @@ export default class Dom extends EventTarget {
 }
 
 extend(Dom, { attr, find, findOne })
-register(Dom)
+register(Dom, 'Dom')

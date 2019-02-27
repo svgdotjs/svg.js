@@ -500,4 +500,4 @@ export function screenCTM () {
   return new Matrix(this.node.getScreenCTM())
 }
 
-register(Matrix)
+register(Matrix, 'Matrix')

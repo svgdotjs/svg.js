@@ -17,4 +17,4 @@ registerMethods({
   }
 })
 
-register(Symbol)
+register(Symbol, 'Symbol')

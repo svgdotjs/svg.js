@@ -58,4 +58,4 @@ export default class EventTarget extends Base {
   removeEventListener () {}
 }
 
-register(EventTarget)
+register(EventTarget, 'EventTarget')

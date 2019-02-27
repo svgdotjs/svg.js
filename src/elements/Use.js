@@ -24,4 +24,4 @@ registerMethods({
   }
 })
 
-register(Use)
+register(Use, 'Use')

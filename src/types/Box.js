@@ -193,4 +193,4 @@ registerMethods({
   }
 })
 
-register(Box)
+register(Box, 'Box')
