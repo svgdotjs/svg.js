@@ -347,8 +347,8 @@ declare namespace svgjs {
         }
     }
     interface Element {
-        animate(duration?: number, ease?: string, delay?: number): Animation;
-        animate(info: { ease?: string; duration?: number; delay?: number }): Animation;
+        animate(duration?: number, ease?: string | ((pos: number) => number), delay?: number): Animation;
+        animate(info: { ease?: string | ((pos: number) => number); duration?: number; delay?: number }): Animation;
         stop(jumpToEnd:boolean,clearQueue:boolean): Animation;
     }
     // TODO finishs FX
