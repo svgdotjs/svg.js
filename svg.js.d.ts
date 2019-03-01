@@ -1,3 +1,7 @@
+// Type definitions for @svgdotjs version 3.x
+// Project: @svgdotjs/svg.js
+
+// trick to keep reference to Array build-in type
 declare class BuiltInArray<T> extends Array<T> { }
 
 declare module "@svgdotjs/svg.js" {
@@ -66,7 +70,9 @@ declare module "@svgdotjs/svg.js" {
             ease: string;
             delay: number;
         }
+
     }
+
     let easing: {
         '-'(pos: number): number;
         '<>'(pos: number): number;
@@ -109,7 +115,6 @@ declare module "@svgdotjs/svg.js" {
         instance: Element;
     }
 
-    // array.js
     // ************ Standard object/option/properties declaration ************
 
     type AttrNumberValue = number | "auto"
@@ -177,37 +182,74 @@ declare module "@svgdotjs/svg.js" {
     }
 
     /**
-     *
+     * SVG Circle attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle
      */
-    interface ShapeElementStyle {
-
+    interface CircleAttr extends PathBaseAttr, GlobalAttr {
+        cx?: number | string
+        cy?: number | string
+        r?: number | string
     }
 
-    interface PathLikeElementStyle {
-
+    /**
+     * SVG Ellipse attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse
+     */
+    interface EllipseAttr extends PathBaseAttr, GlobalAttr {
+        cx?: number | string
+        cy?: number | string
+        rx?: number | string
+        ry?: number | string
     }
 
-    interface TextElementStyle {
-
+    /**
+     * SVG Path attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path
+     */
+    interface PathAttr extends PathBaseAttr, GlobalAttr {
+        d?: string
     }
 
-    interface GraphicElementStyle {
-
+    /**
+     * SVG Path attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polygon
+     * or https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline
+     */
+    interface PolyAttr extends PathBaseAttr, GlobalAttr {
+        points?: string
     }
 
-    interface ContainerElementStyle {
-
+    /**
+     * SVG Text attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
+     */
+    interface TextAttr extends GlobalAttr {
+        x?: number | string
+        y?: number | string
+        dx?: number | string
+        dy?: number | string
+        lengthAdjust?: "spacing" | "spacingAndGlyphs"
+        textLength?: number | string
+        // see https://developer.mozilla.org/en-US/docs/Web/API/SVGNumberList
+        // or https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#List-of-Ts
+        // TODO: tbd
+        // rotate?: string
     }
 
-    interface CoordinateSystemElementStyle {
-
+    /**
+     * SVG TextPath attribute, more information see https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath
+     */
+    interface TextPathAttr extends GlobalAttr {
+        href?: string
+        lengthAdjust?: "spacing" | "spacingAndGlyphs"
+        method?: "align" | "stretch"
+        side?: "left" | "right"
+        spacing?: "auto" | "exact"
+        startOffset?: number | string
+        textLength?: number | string
+        // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath
+        // TODO: tbd as there is no reference to see the detail of how it would look like
+        // path?: string
     }
-
-    type SVGStyleDeclaration = ShapeElementStyle | PathLikeElementStyle | TextElementStyle | GraphicElementStyle | ContainerElementStyle | CoordinateSystemElementStyle
 
     /**
      * A generic Dom Box object.
-     * Notice: Object is still in experiment state and document is not complete (Draft)
+     * Notice: DOMRect is still in experiment state and document is not complete (Draft)
      * See https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
      */
     interface DOMRect {
@@ -257,9 +299,6 @@ declare module "@svgdotjs/svg.js" {
     type AttrTypeMapping<T> =
         T extends Rect ? RectAttr : GlobalAttr
 
-    type StyleTypeMapping<T> =
-        T extends Element ? SVGStyleDeclaration : CSSStyleDeclaration
-
     type ElementAlias = Dom | Svg | Rect | Line | Polygon | Polyline | Ellipse | ClipPath | Use |
         Text | Path | TextPath | Circle | G | Gradient | Image | Element
 
@@ -270,6 +309,10 @@ declare module "@svgdotjs/svg.js" {
     // ********** Locate in directory src/types **********
 
     // SVGArray.js
+    // Notice: below class is defined the name as `Array` rather than `SVGArray`.
+    // The purpose of giving the name as `Array` is to allow it to be aligned with SVG.JS export type
+    // as SVG.JS export it as `Array` (to be precise `SVG.Array`) so reading through JS documentation
+    // should be more straightforward.
     /**
      * Type alias to native array.
      *
@@ -316,8 +359,6 @@ declare module "@svgdotjs/svg.js" {
     class PointArray extends Array<ArrayXY> {
         constructor();
         constructor(array?: ArrayAlias<ArrayXY> | number[]);
-        // Note: override constructor from SVGArray to allow array of number
-        new(array?: ArrayAlias<ArrayXY> | number[]);
 
         toLine(): LineAttr;
         at(pos: number): PointArray;
@@ -460,6 +501,9 @@ declare module "@svgdotjs/svg.js" {
         e: number;
         f: number;
 
+        // *** To Be use by Test Only in restrict mode ***
+        [key: string]: any
+
         clone(): Matrix;
         transform(o: MatrixLike | MatrixTransformParam): Matrix
         compose(o: MatrixExtract): Matrix
@@ -502,9 +546,13 @@ declare module "@svgdotjs/svg.js" {
         toArray(): T[]
     }
 
+    class EventObject {
+        [key: string]: EventObject;
+    }
+
     // EventTarget.js
-    interface EventTarget {
-        events: Object
+    class EventTarget {
+        events: EventObject
 
         addEventListener(): void
         dispatch(event: Event | string, data?: object): Event
@@ -666,7 +714,6 @@ declare module "@svgdotjs/svg.js" {
         fromArray(a: Object): this
     }
 
-    // TODO: check & verify ??????
     class TransformBag {
         constructor()
         constructor(a: number[])
@@ -754,16 +801,6 @@ declare module "@svgdotjs/svg.js" {
         constructor(options: object);
         constructor(options: Controller);
 
-        /**
-         * DO NOT USE any of this, it only for testing purpose
-         */
-        _time: number
-        _duration: number
-        _wait: number
-        _times: number
-        _swing: boolean
-        _reverse: boolean
-
         static sanitise: (duration?: TimeLike, delay?: number, when?: string) => Object
 
         element(): Element
@@ -848,7 +885,11 @@ declare module "@svgdotjs/svg.js" {
         cancelImmediate(o: Object): void
     }
 
-    type ParentTypeAlias = Svg | G | A;
+    // use with parent query
+    type ParentTypeAlias = typeof Svg | typeof G | typeof A;
+
+    // use with putIn
+    type ParentClassAlias = Svg | G | A;
 
     /**
      * Just fancy type alias to refer to css query selector.
@@ -866,19 +907,20 @@ declare module "@svgdotjs/svg.js" {
         T extends Element ? ParentQueryAlias | Dom : keyof HTMLElementTagNameMap | Dom
 
     type ParentQueryResultMapping<T> =
-        T extends Tspan | TextPath ? ParentTypeAlias | Text | ClipPath | Dom :
-        T extends Shape ? ParentTypeAlias | ClipPath | Dom : ParentTypeAlias | Dom
+        T extends Tspan | TextPath ? ParentClassAlias | Text | ClipPath | Dom :
+        T extends Circle ? ParentClassAlias | Text | ClipPath | Mask | Dom :
+        T extends Shape ? ParentClassAlias | ClipPath | Dom : ParentClassAlias | Dom
 
     type PutInMapping<T> =
-        T extends Svg ? ParentTypeAlias | Dom | HTMLElement | string :
-        T extends Shape ? ParentTypeAlias | ClipPath | string :
-        T extends Element ? ParentTypeAlias | string : HTMLElement | string
+        T extends Svg ? ParentClassAlias | Dom | HTMLElement | string :
+        T extends Shape ? ParentClassAlias | ClipPath | string :
+        T extends Element ? ParentClassAlias | string : HTMLElement | string
 
     type PutInResultMapping<T> =
         T extends Svg ? ParentTypeAlias | Dom :
         T extends Element ? ParentTypeAlias : Dom
 
-    class Dom implements EventTarget {
+    class Dom extends EventTarget {
         node: HTMLElement | SVGElement;
         type: string;
 
@@ -943,7 +985,6 @@ declare module "@svgdotjs/svg.js" {
          * the instance itself. For example, G element will only return GlobalAttr where Rect
          * will return RectAttr instead.
          */
-        // attr<T extends this>(): AttrTypeMapping<T>;
         attr(): any;
         /**
          * Add or update the attribute from the SVG Element. To remove the attribute from the element set value to null
@@ -987,11 +1028,11 @@ declare module "@svgdotjs/svg.js" {
         toggleClass(name: string): this
 
         // prototype method register in css.js
-        css<T extends this>(): StyleTypeMapping<T>;
-        css<T extends this>(style: string[]): StyleTypeMapping<T>;
+        css(): CSSStyleDeclaration;
         css(style: string): string
-        css<T extends this>(style: StyleTypeMapping<T>): this
         css(style: string, val: any): this
+        css(style: CSSStyleDeclaration): this
+        css(style: string[]): CSSStyleDeclaration;
         show(): this
         hide(): this
         visible(): boolean
@@ -1003,7 +1044,6 @@ declare module "@svgdotjs/svg.js" {
         forget(...keys: string[]): this;
         forget(): this;
         memory(): Object;
-        events: Object
 
         addEventListener(): void
         dispatch(event: Event | string, data?: object): Event
@@ -1019,6 +1059,7 @@ declare module "@svgdotjs/svg.js" {
 
     // clip.js
     class ClipPath extends Container {
+        constructor();
         constructor(node?: SVGClipPathElement);
         constructor(attr: Object);
         node: SVGClipPathElement;
@@ -1043,6 +1084,7 @@ declare module "@svgdotjs/svg.js" {
         flatten(parent: Dom, depth?: number): this;
         gradient(type: string, block?: (stop: Gradient) => void): Gradient;
         group(): G;
+
         image(): Image;
         image(href?: string, callback?: (e: Event) => void): Image;
         line(points?: PointArrayAlias): Line;
@@ -1129,6 +1171,7 @@ declare module "@svgdotjs/svg.js" {
         after(element: Element): Element;
         animate(duration?: number, ease?: string, delay?: number): Runner;
         animate(info: { ease?: string; duration?: number; delay?: number }): Runner;
+        delay(by: number, when?: string): Runner
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
@@ -1144,11 +1187,6 @@ declare module "@svgdotjs/svg.js" {
         clipper(): ClipPath;
         clipWith(element: Element): this;
         clone(): this;
-        css(): Object;
-        css(style: Object[]): Object;
-        css(style: string, value: any): this;
-        css(style: string): any;
-        css(styles: Object): this;
         ctm(): Matrix;
         cx(): number;
         cx(x: number): this;
@@ -1165,8 +1203,8 @@ declare module "@svgdotjs/svg.js" {
         event(): Event | CustomEvent;
         fill(): any;
         fill(color: string): this;
-        fill(fill: { color?: string; opacity?: number, rule?: string }): this;
-        fill(image: Image): this;
+        fill(color: Color | ColorLike): this;
+        fill(color: FillData): this;
         fill(pattern: Element): this;
         fire(event: Event): this;
         fire(event: string, data?: any): this;
@@ -1293,7 +1331,8 @@ declare module "@svgdotjs/svg.js" {
     }
     class Circle extends Shape implements CircleMethods {
         constructor(node?: SVGCircleElement);
-        constructor(attr: Object);
+        constructor(attr: CircleAttr)
+        
         node: SVGCircleElement;
 
         rx(rx: number): this;
@@ -1304,8 +1343,8 @@ declare module "@svgdotjs/svg.js" {
     }
     class Ellipse extends Shape implements CircleMethods {
         node: SVGEllipseElement;
+        constructor(attr: EllipseAttr)
         constructor(node?: SVGEllipseElement);
-        constructor(attr: Object);
 
         rx(rx: number): this;
         rx(): this;
@@ -1334,10 +1373,15 @@ declare module "@svgdotjs/svg.js" {
         at(offset?: number, color?: ColorAlias, opacity?: number): Stop;
         at(opts: StopProperties): Stop;
         url(): string;
-        url(...params: any[]): never;
         toString(): string;
+        targets(): List<Element>
+        bbox(): Box
+
+        // gradiented.js
         from(x: number, y: number): this;
         to(x: number, y: number): this;
+
+        // TODO: check with main.js
         radius(x: number, y?: number): this;
         targets(): List<Element>
         bbox(): Box
@@ -1375,11 +1419,13 @@ declare module "@svgdotjs/svg.js" {
     type PointArrayAlias = number[] | ArrayXY[] | PointArray | string;
 
     class Line extends Shape {
+        constructor(attr: LineAttr)
         constructor(node?: SVGLineElement);
-        constructor(attr: Object);
+
         node: SVGLineElement;
+
         array(): PointArray;
-        plot(): PathArray
+        plot(): PointArray
         plot(points?: PointArrayAlias): this;
         plot(x1: number, y1: number, x2: number, y2: number): this;
         move(x: number, y: number): this;
@@ -1389,7 +1435,12 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // marker.js
+    // TODO: check register method marker
     class Marker extends Container {
+        constructor();
+
+        node: SVGMarkerElement;
+
         ref(x: string | number, y: string | number): this;
         update(block: (marker: Marker) => void): this;
         toString(): string;
@@ -1405,21 +1456,19 @@ declare module "@svgdotjs/svg.js" {
 
     // path.js
     class Path extends Shape {
+        constructor(attr: PathAttr)
         constructor(node?: SVGPathElement);
-        constructor(attr: Object);
-        /**
-         * DO NOT USE, it only for testing purpose
-         */
-        _array: PathArray
-
+        
         node: SVGPathElement;
 
         morphArray: PathArray;
         array(): PathArray;
         plot(): PathArray;
         plot(d: PathArrayAlias): this;
-        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
-        marker(position: string, marker: Marker): Marker;
+        marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): this;
+        marker(position: string, marker: Marker): this;
+
+        // sugar.js
         length(): number;
         pointAt(length: number): { x: number, y: number };
         text(text: string): TextPath
@@ -1427,6 +1476,7 @@ declare module "@svgdotjs/svg.js" {
         targets(): List<Element>
 
     }
+
 
     // pattern.js
     class Pattern extends Container {
@@ -1438,11 +1488,6 @@ declare module "@svgdotjs/svg.js" {
 
     // poly.js
     interface poly {
-        /**
-         * DO NOT USE THIS, it for test purpose only
-         */
-        _array: PointArray
-
         array(): PointArray;
         plot(): PointArray
         plot(p: PointArrayAlias): this;
@@ -1465,9 +1510,9 @@ declare module "@svgdotjs/svg.js" {
 
     class Polyline extends Shape implements poly, pointed {
         constructor(node?: SVGPolylineElement);
-        constructor(attr: Object);
+        constructor(attr: PolyAttr);
+
         node: SVGPolylineElement;
-        _array: PointArray
 
         array(): PointArray;
         plot(): PointArray
@@ -1480,9 +1525,9 @@ declare module "@svgdotjs/svg.js" {
 
     class Polygon extends Shape implements poly {
         constructor(node?: SVGPolygonElement);
-        constructor(attr: Object);
+        constructor(attr: PolyAttr)
+
         node: SVGPolygonElement;
-        _array: PointArray;
         array(): PointArray;
         plot(): PointArray;
         plot(p: PointArrayAlias): this;
@@ -1494,7 +1539,7 @@ declare module "@svgdotjs/svg.js" {
 
     class Rect extends Shape {
         constructor(node?: SVGRectElement);
-        constructor(attr: Object);
+        constructor(attr: RectAttr)
         node: SVGRectElement;
         radius(x: number, y?: number): this;
     }
@@ -1538,10 +1583,7 @@ declare module "@svgdotjs/svg.js" {
     // text.js
     class Text extends Shape implements Textable {
         constructor(node?: SVGElement);
-        constructor(attr: Object);
-        // for the purpose of testing only
-        _rebuild: boolean
-        _build: boolean
+        constructor(attr: TextAttr)
 
         clone(): this;
         text(): string;
@@ -1551,10 +1593,8 @@ declare module "@svgdotjs/svg.js" {
         leading(leading: NumberAlias): this;
         rebuild(enabled: boolean): this;
         build(enabled: boolean): this;
-        plain(text: string): this;
-        tspan(text: string): Tspan;
-        tspan(block: (tspan: Tspan) => void): this;
         clear(): this;
+        plain(text: string): this;
         length(): number;
         get(i: number): Tspan;
         path(): TextPath
@@ -1566,11 +1606,15 @@ declare module "@svgdotjs/svg.js" {
         ay(): string
         ay(y: string): this
         amove(x: number, y: number): this
+
+        // main.js, from extend/copy prototypes from Tspan
+        tspan(text: string): Tspan;
+        tspan(block: (tspan: Tspan) => void): this;
     }
 
-    class Tspan extends Shape implements Textable {
+    class Tspan extends Text implements Textable {
         constructor(node?: SVGElement);
-        constructor(attr: Object);
+        constructor(attr: TextAttr);
         dx(): number;
         dx(x: NumberAlias): this;
         dy(): number;
@@ -1581,12 +1625,15 @@ declare module "@svgdotjs/svg.js" {
         length(): number;
         text(): string;
         text(text: string): this;
+        text(block: (text: this) => void): this;
         plain(text: string): this;
     }
 
     // textpath.js
     class TextPath extends Text {
         constructor();
+        constructor(attr: TextPathAttr)
+
         array(): Array<any>
         plot(): PathArray
         plot(d: string): this
