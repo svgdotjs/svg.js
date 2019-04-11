@@ -60,7 +60,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Added
  - `PointArray.transform()` (#945)
 
-## [3.0.5] - 2019-12-12
+## [3.0.5] - 2018-12-12
 
 ### Fixed
  - fixed `parser` which didnt have all required css rules and not focusable=false
