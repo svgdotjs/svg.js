@@ -16,6 +16,11 @@
   "jsdelivr": "dist/svg.min.js",
   "browser": "src/main.js",
   "module": "src/main.js",
+  "files": [
+    "/dist",
+    "/src",
+    "/svg.js.d.ts"
+  ],
   "maintainers": [
     {
       "name": "Wout Fierens",

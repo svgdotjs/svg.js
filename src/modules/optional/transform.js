@@ -55,7 +55,7 @@ export function transform (o, relative) {
   // Act as a getter if no object was passed
   if (o == null || typeof o === 'string') {
     var decomposed = new Matrix(this).decompose()
-    return decomposed[o] || decomposed
+    return o == null ? decomposed : decomposed[o]
   }
 
   if (!Matrix.isMatrixLike(o)) {
