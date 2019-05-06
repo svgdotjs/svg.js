@@ -182,6 +182,11 @@ extend(PathArray, {
     var box = this.bbox()
     var i, l
 
+    // If the box width or height is 0 then we ignore
+    // transformations on the respective axis
+    box.width = box.width === 0 ? 1 : box.width
+    box.height = box.height === 0 ? 1 : box.height
+    
     // recalculate position of all points according to new size
     for (i = this.length - 1; i >= 0; i--) {
       l = this[i][0]
