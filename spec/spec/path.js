@@ -164,6 +164,15 @@ describe('Path', function() {
       expect(path.height()).toBe(525)
       expect(path.width() / path.height()).toBeCloseTo(box.width / box.height)
     })
+    it('doesn\'t scale width/height when their value is 0', function() {
+      path = draw.path('M0 0L0 100')
+      path.size(500, 500)
+      expect(path.attr('d')).toBe('M0 0L0 500 ')
+
+      path = draw.path('M0 0L100 0')
+      path.size(500, 500)
+      expect(path.attr('d')).toBe('M0 0L500 0 ')
+    })
   })
 
   describe('scale()', function() {
