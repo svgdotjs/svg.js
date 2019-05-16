@@ -55,6 +55,13 @@
   "github": "https://github.com/svgdotjs/svg.js",
   "license": "MIT",
   "typings": "./svg.js.d.ts",
+  "files": [
+    "/dist",
+    "README.md",
+    "LICENSE.txt",
+    "CHANGELOG.md",
+    "svg.js.d.ts"
+  ],
   "scripts": {
     "build": "npm run fix && npm run rollup",
     "build:polyfills": "npx rollup -c .config/rollup.polyfills.js",
