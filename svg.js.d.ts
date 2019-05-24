@@ -421,7 +421,7 @@ declare module "@svgdotjs/svg.js" {
         equalCommands(other: PathArray): boolean
         morph(pa: PathArray): this
         at(pos: number): PathArray
-        parse(array: ArrayAlias<PathCommand> | PathArrayAlias): PathCommand[];
+        parse(array?: ArrayAlias<PathCommand> | PathArrayAlias): PathCommand[];
         bbox(): Box;
         to(a: any): Morphable
     }
@@ -1183,7 +1183,7 @@ declare module "@svgdotjs/svg.js" {
         before(element: Element): Element;
         center(x: number, y: number): this;
         classes(): string[];
-        click(cb: Function): this;
+        click(cb: Function | null): this;
         clipper(): ClipPath;
         clipWith(element: Element): this;
         clone(): this;
@@ -1195,7 +1195,7 @@ declare module "@svgdotjs/svg.js" {
         data(name: string, value: any, sustain?: boolean): this;
         data(name: string): any;
         data(val: Object): this;
-        dblclick(cb: Function): this;
+        dblclick(cb: Function | null): this;
         defs(): Defs;
         dmove(x: NumberAlias, y: NumberAlias): this;
         dx(x: NumberAlias): this;
@@ -1237,11 +1237,11 @@ declare module "@svgdotjs/svg.js" {
         matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         matrixify(): Matrix;
         memory(): Object;
-        mousedown(cb: Function): this;
-        mousemove(cb: Function): this;
-        mouseout(cb: Function): this;
-        mouseover(cb: Function): this;
-        mouseup(cb: Function): this;
+        mousedown(cb: Function | null): this;
+        mousemove(cb: Function | null): this;
+        mouseout(cb: Function | null): this;
+        mouseover(cb: Function | null): this;
+        mouseup(cb: Function | null): this;
         move(x: NumberAlias, y: NumberAlias): this;
         native(): LinkedHTMLElement;
         next(): Element;
@@ -1301,11 +1301,11 @@ declare module "@svgdotjs/svg.js" {
         toggleClass(name: string): this;
         toParent(parent: Dom): this;
         toSvg(): this;
-        touchcancel(cb: Function): this;
-        touchend(cb: Function): this;
-        touchleave(cb: Function): this;
-        touchmove(cb: Function): this;
-        touchstart(cb: Function): this;
+        touchcancel(cb: Function | null): this;
+        touchend(cb: Function | null): this;
+        touchleave(cb: Function | null): this;
+        touchmove(cb: Function | null): this;
+        touchstart(cb: Function | null): this;
         transform(): MatrixExtract;
         transform(t: MatrixAlias, relative?: boolean): this;
         translate(x: number, y: number): this;
@@ -1332,7 +1332,7 @@ declare module "@svgdotjs/svg.js" {
     class Circle extends Shape implements CircleMethods {
         constructor(node?: SVGCircleElement);
         constructor(attr: CircleAttr)
-        
+
         node: SVGCircleElement;
 
         rx(rx: number): this;
@@ -1458,7 +1458,7 @@ declare module "@svgdotjs/svg.js" {
     class Path extends Shape {
         constructor(attr: PathAttr)
         constructor(node?: SVGPathElement);
-        
+
         node: SVGPathElement;
 
         morphArray: PathArray;
