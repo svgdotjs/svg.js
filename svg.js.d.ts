@@ -421,7 +421,7 @@ declare module "@svgdotjs/svg.js" {
         equalCommands(other: PathArray): boolean
         morph(pa: PathArray): this
         at(pos: number): PathArray
-        parse(array: ArrayAlias<PathCommand> | PathArrayAlias): PathCommand[];
+        parse(array?: ArrayAlias<PathCommand> | PathArrayAlias): PathCommand[];
         bbox(): Box;
         to(a: any): Morphable
     }
