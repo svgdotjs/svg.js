@@ -7,6 +7,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.13] - 2019-06-12
+
+### Fixed
+ - fixed a bug in Timeline.finish() (#964)
+ - fixed registration of classes with custom bundler
+ - fixed transform getter (e.g. `el.transform('scale')`)
+ - fixed typings (#1004)
+
 ## [3.0.12] - 2019-02-19
 
 ### Fixed
