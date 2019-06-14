@@ -843,7 +843,7 @@ declare module "@svgdotjs/svg.js" {
         css(s: string | Object, v?: string): this
         styleAttr(type: string, name: string | Object, val?: string): this
         zoom(level: NumberAlias, point: Point): this
-        transform(transforms: Matrix, relative?: boolean, affine?: boolean): this
+        transform(transforms: MatrixAlias, relative?: boolean, affine?: boolean): this
         x(x: number): this
         y(y: number): this
         dx(dx: number): this
