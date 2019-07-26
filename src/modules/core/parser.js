@@ -14,6 +14,7 @@ export default function parser () {
     ].join(';')
 
     svg.attr('focusable', 'false')
+    svg.attr('aria-hidden', 'true')
 
     let path = svg.path().node
 
