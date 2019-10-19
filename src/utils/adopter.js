@@ -52,9 +52,9 @@ export function adopt (node) {
 
   // fixed for https://github.com/svgdotjs/svg.js/issues/1040
   var nodeName = (node.nodeName || '').toUpperCase()
-	var upperCaseNodeName = ['LINEARGRADIENT', 'RADIALGRADIENT'].includes(nodeName) ? 'GRADIENT' : nodeName
-	var className = Object.keys(elements).find((key) => key.toUpperCase() === upperCaseNodeName)
-	className = className || 'Dom'
+  var upperCaseNodeName = ['LINEARGRADIENT', 'RADIALGRADIENT'].includes(nodeName) ? 'GRADIENT' : nodeName
+  var className = Object.keys(elements).find((key) => key.toUpperCase() === upperCaseNodeName)
+  className = className || 'Dom'
 
   return new elements[className](node)
 }
