@@ -50,17 +50,11 @@ export function adopt (node) {
   // make sure a node isn't already adopted
   if (node.instance instanceof Base) return node.instance
 
-  // initialize variables
-  var className = capitalize(node.nodeName || 'Dom')
-
-  // Make sure that gradients are adopted correctly
-  if (className === 'LinearGradient' || className === 'RadialGradient') {
-    className = 'Gradient'
-
-  // Fallback to Dom if element is not known
-  } else if (!elements[className]) {
-    className = 'Dom'
-  }
+  // fixed for https://github.com/svgdotjs/svg.js/issues/1040
+  var nodeName = (node.nodeName || '').toUpperCase()
+	var upperCaseNodeName = ['LINEARGRADIENT', 'RADIALGRADIENT'].includes(nodeName) ? 'GRADIENT' : nodeName
+	var className = Object.keys(elements).find((key) => key.toUpperCase() === upperCaseNodeName)
+	className = className || 'Dom'
 
   return new elements[className](node)
 }
