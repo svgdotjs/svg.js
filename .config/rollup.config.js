@@ -70,13 +70,14 @@ const classes = [
   'Use'
 ]
 
-const config = (node, min) => ({
-  input: node ? './src/main.js' : './src/svg.js',
+const config = (node, min, esm = false) => ({
+  input: (node || esm) ? './src/main.js' : './src/svg.js',
   output: {
-    file: node ? './dist/svg.node.js'
+    file: esm ? './dist/svg.esm.js'
+      : node ? './dist/svg.node.js'
       : min ? './dist/svg.min.js'
-        : './dist/svg.js',
-    format: node ? 'cjs' : 'iife',
+      : './dist/svg.js',
+    format: esm ? 'esm' : node ? 'cjs' : 'iife',
     name: 'SVG',
     sourcemap: true,
     banner: headerLong,
@@ -104,6 +105,6 @@ const config = (node, min) => ({
 })
 
 // [node, minified]
-const modes = [[false], [false, true], [true]]
+const modes = [[false], [false, true], [true], [false, false, true]]
 
 export default modes.map(m => config(...m))

@@ -7,6 +7,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.14] - 2019-10-31
+
+### Fixed
+- hide parser from screen readers (#1023)
+
+### Added
+- added transpiled esm bundle for webpack und co and faster import
+
 ## [3.0.13] - 2019-06-12
 
 ### Fixed
@@ -824,6 +832,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.14]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.14
+[3.0.13]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.13
 [3.0.12]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.12
 [3.0.11]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.11
 [3.0.10]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.10
