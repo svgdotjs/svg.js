@@ -70,7 +70,7 @@ export default class Element extends Dom {
 
   // Get parent document
   root () {
-    let p = this.parent(getClass(root))
+    const p = this.parent(getClass(root))
     return p && p.root()
   }
 
@@ -85,7 +85,7 @@ export default class Element extends Dom {
 
   // Checks whether the given point inside the bounding box of the element
   inside (x, y) {
-    let box = this.bbox()
+    const box = this.bbox()
 
     return x > box.x
       && y > box.y
@@ -101,7 +101,7 @@ export default class Element extends Dom {
   // return array of all ancestors of given type up to the root svg
   parents (until = globals.document) {
     until = makeInstance(until)
-    let parents = new List()
+    const parents = new List()
     let parent = this
 
     while (
@@ -132,7 +132,7 @@ export default class Element extends Dom {
 
   // Set element size to given width and height
   size (width, height) {
-    let p = proportionalSize(this, width, height)
+    const p = proportionalSize(this, width, height)
 
     return this
       .width(new SVGNumber(p.width))

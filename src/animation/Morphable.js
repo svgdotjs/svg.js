@@ -211,8 +211,8 @@ export class ObjectBag {
     objOrArr = objOrArr || {}
     var entries = []
 
-    for (let i in objOrArr) {
-      entries.push([i, objOrArr[i]])
+    for (const i in objOrArr) {
+      entries.push([ i, objOrArr[i] ])
     }
 
     entries.sort((a, b) => {

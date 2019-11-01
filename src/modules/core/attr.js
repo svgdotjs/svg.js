@@ -17,7 +17,7 @@ export default function attr (attr, val, ns) {
     attr = {}
     val = this.node.attributes
 
-    for (let node of val) {
+    for (const node of val) {
       attr[node.nodeName] = isNumber.test(node.nodeValue)
         ? parseFloat(node.nodeValue)
         : node.nodeValue

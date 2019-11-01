@@ -75,7 +75,7 @@ export function proportionalSize (element, width, height, box) {
 
 export function getOrigin (o, element) {
   // Allow origin or around as the names
-  let origin = o.origin // o.around == null ? o.origin : o.around
+  const origin = o.origin // o.around == null ? o.origin : o.around
   let ox, oy
 
   // Allow the user to pass a string to rotate around a given point
@@ -85,10 +85,10 @@ export function getOrigin (o, element) {
     const { height, width, x, y } = element.bbox()
 
     // Calculate the transformed x and y coordinates
-    let bx = string.includes('left') ? x
+    const bx = string.includes('left') ? x
       : string.includes('right') ? x + width
       : x + width / 2
-    let by = string.includes('top') ? y
+    const by = string.includes('top') ? y
       : string.includes('bottom') ? y + height
       : y + height / 2
 

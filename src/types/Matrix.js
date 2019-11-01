@@ -53,7 +53,7 @@ export default class Matrix {
     // Get the proposed transformations and the current transformations
     var t = Matrix.formatTransforms(o)
     var current = this
-    let { x: ox, y: oy } = new Point(t.ox, t.oy).transform(current)
+    const { x: ox, y: oy } = new Point(t.ox, t.oy).transform(current)
 
     // Construct the resulting matrix
     var transformer = new Matrix()
@@ -136,8 +136,8 @@ export default class Matrix {
     var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
 
     // Use the translations
-    let tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
-    let ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
+    const tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
+    const ty = f - cy + cx * st * sx + cy * (lam * st * sx + ct * sy)
 
     // Construct the decomposition and return it
     return {
@@ -252,7 +252,7 @@ export default class Matrix {
       y = x
     }
 
-    let { a, b, c, d, e, f } = this
+    const { a, b, c, d, e, f } = this
 
     this.a = a * x
     this.b = b * y
@@ -273,10 +273,10 @@ export default class Matrix {
     // Convert degrees to radians
     r = radians(r)
 
-    let cos = Math.cos(r)
-    let sin = Math.sin(r)
+    const cos = Math.cos(r)
+    const sin = Math.sin(r)
 
-    let { a, b, c, d, e, f } = this
+    const { a, b, c, d, e, f } = this
 
     this.a = a * cos - b * sin
     this.b = b * cos + a * sin
@@ -305,7 +305,7 @@ export default class Matrix {
   }
 
   shearO (lx, cx = 0, cy = 0) {
-    let { a, b, c, d, e, f } = this
+    const { a, b, c, d, e, f } = this
 
     this.a = a + b * lx
     this.c = c + d * lx
@@ -331,10 +331,10 @@ export default class Matrix {
     x = radians(x)
     y = radians(y)
 
-    let lx = Math.tan(x)
-    let ly = Math.tan(y)
+    const lx = Math.tan(x)
+    const ly = Math.tan(y)
 
-    let { a, b, c, d, e, f } = this
+    const { a, b, c, d, e, f } = this
 
     this.a = a + b * lx
     this.b = b + a * ly

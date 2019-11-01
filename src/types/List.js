@@ -28,7 +28,7 @@ extend(List, {
   }
 })
 
-const reserved = ['toArray', 'constructor', 'each']
+const reserved = [ 'toArray', 'constructor', 'each' ]
 
 List.extend = function (methods) {
   methods = methods.reduce((obj, name) => {

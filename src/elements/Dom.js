@@ -242,7 +242,7 @@ export default class Dom extends EventTarget {
 
         // If the user wants outerHTML we need to process this node, too
         if (outerHTML) {
-          let result = svgOrFn(current)
+          const result = svgOrFn(current)
           current = result || current
 
           // The user does not want this node? Well, then he gets nothing
@@ -251,8 +251,8 @@ export default class Dom extends EventTarget {
 
         // Deep loop through all children and apply modifier
         current.each(function () {
-          let result = svgOrFn(this)
-          let _this = result || this
+          const result = svgOrFn(this)
+          const _this = result || this
 
           // If modifier returns false, discard node
           if (result === false) {
@@ -288,7 +288,7 @@ export default class Dom extends EventTarget {
       fragment.appendChild(well.firstElementChild)
     }
 
-    let parent = this.parent()
+    const parent = this.parent()
 
     // Add the whole fragment at once
     return outerHTML

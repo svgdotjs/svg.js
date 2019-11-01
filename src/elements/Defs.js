@@ -9,6 +9,7 @@ export default class Defs extends Container {
   flatten () {
     return this
   }
+
   ungroup () {
     return this
   }

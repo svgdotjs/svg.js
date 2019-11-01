@@ -16,7 +16,7 @@ function makeSetterGetter (k, f) {
   }
 }
 
-export let easing = {
+export const easing = {
   '-': function (pos) {
     return pos
   },

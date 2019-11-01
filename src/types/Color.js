@@ -68,7 +68,7 @@ export default class Color {
 
     // Reset all values in case the init function is rerun with new color space
     if (this.space) {
-      for (let component in this.space) {
+      for (const component in this.space) {
         delete this[this.space[component]]
       }
     }
@@ -98,7 +98,7 @@ export default class Color {
         const hexParse = v => parseInt(v, 16)
         const [ , _a, _b, _c ] = hex.exec(sixDigitHex(a)).map(hexParse)
         Object.assign(this, { _a, _b, _c, _d: 0, space: 'rgb' })
-      } else throw Error(`Unsupported string format, can't construct Color`)
+      } else throw Error('Unsupported string format, can\'t construct Color')
     }
 
     // Now add the components as a convenience
@@ -127,7 +127,7 @@ export default class Color {
         // Get the values in the lab space
         let { l, a, b } = this
         if (this.space === 'lch') {
-          let { c, h } = this
+          const { c, h } = this
           const dToR = Math.PI / 180
           a = c * Math.cos(dToR * h)
           b = c * Math.sin(dToR * h)
@@ -153,8 +153,8 @@ export default class Color {
       const bU = x * 0.0557 + y * -0.2040 + z * 1.0570
 
       // Convert the values to true rgb values
-      let pow = Math.pow
-      let bd = 0.0031308
+      const pow = Math.pow
+      const bd = 0.0031308
       const r = (rU > bd) ? (1.055 * pow(rU, 1 / 2.4) - 0.055) : 12.92 * rU
       const g = (gU > bd) ? (1.055 * pow(gU, 1 / 2.4) - 0.055) : 12.92 * gU
       const b = (bU > bd) ? (1.055 * pow(bU, 1 / 2.4) - 0.055) : 12.92 * bU
@@ -173,7 +173,7 @@ export default class Color {
       // If we are grey, then just make the color directly
       if (s === 0) {
         l *= 255
-        let color = new Color(l, l, l)
+        const color = new Color(l, l, l)
         return color
       }
 
@@ -323,14 +323,14 @@ export default class Color {
   */
 
   _clamped () {
-    let { _a, _b, _c } = this.rgb()
-    let { max, min, round } = Math
-    let format = v => max(0, min(round(v), 255))
+    const { _a, _b, _c } = this.rgb()
+    const { max, min, round } = Math
+    const format = v => max(0, min(round(v), 255))
     return [ _a, _b, _c ].map(format)
   }
 
   toHex () {
-    let [ r, g, b ] = this._clamped().map(componentHex)
+    const [ r, g, b ] = this._clamped().map(componentHex)
     return `#${r}${g}${b}`
   }
 
@@ -339,13 +339,13 @@ export default class Color {
   }
 
   toRgb () {
-    let [ rV, gV, bV ] = this._clamped()
-    let string = `rgb(${rV},${gV},${bV})`
+    const [ rV, gV, bV ] = this._clamped()
+    const string = `rgb(${rV},${gV},${bV})`
     return string
   }
 
   toArray () {
-    let { _a, _b, _c, _d, space } = this
+    const { _a, _b, _c, _d, space } = this
     return [ _a, _b, _c, _d, space ]
   }
 

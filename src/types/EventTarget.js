@@ -20,8 +20,8 @@ export default class EventTarget extends Base {
 
     const events = bag[event.type]
 
-    for (let i in events) {
-      for (let j in events[i]) {
+    for (const i in events) {
+      for (const j in events[i]) {
         events[i][j](event)
       }
     }

@@ -28,7 +28,8 @@ const getBabelConfig = (targets, corejs = false) => babel({
   presets: [['@babel/preset-env', {
     modules: false,
     targets: targets || pkg.browserslist,
-    useBuiltIns: 'usage'
+    useBuiltIns: 'usage',
+    corejs: 3
   }]],
   plugins: [['@babel/plugin-transform-runtime', {
     corejs: corejs,

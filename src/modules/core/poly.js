@@ -26,6 +26,6 @@ export function move (x, y) {
 
 // Set element size to given width and height
 export function size (width, height) {
-  let p = proportionalSize(this, width, height)
+  const p = proportionalSize(this, width, height)
   return this.attr('points', this.array().size(p.width, p.height))
 }

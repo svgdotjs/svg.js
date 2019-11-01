@@ -185,7 +185,7 @@ export default class Runner extends EventTarget {
     if (time == null) {
       return this._time
     }
-    let dt = time - this._time
+    const dt = time - this._time
     this.step(dt)
     return this
   }
@@ -373,7 +373,7 @@ export default class Runner extends EventTarget {
     if (this._history[method]) {
       // if the last method wasnt even initialised, throw it away
       if (!this._history[method].caller.initialised) {
-        let index = this._queue.indexOf(this._history[method].caller)
+        const index = this._queue.indexOf(this._history[method].caller)
         this._queue.splice(index, 1)
         return false
       }
@@ -513,8 +513,8 @@ const getRunnerTransform = (runner) => runner.transforms
 
 function mergeTransforms () {
   // Find the matrix to apply to the element and apply it
-  let runners = this._transformationRunners.runners
-  let netTransform = runners
+  const runners = this._transformationRunners.runners
+  const netTransform = runners
     .map(getRunnerTransform)
     .reduce(lmultiply, new Matrix())
 
@@ -535,7 +535,7 @@ class RunnerArray {
 
   add (runner) {
     if (this.runners.includes(runner)) return
-    let id = runner.id + 1
+    const id = runner.id + 1
 
     this.runners.push(runner)
     this.ids.push(id)
@@ -548,7 +548,7 @@ class RunnerArray {
   }
 
   remove (id) {
-    let index = this.ids.indexOf(id + 1)
+    const index = this.ids.indexOf(id + 1)
     this.ids.splice(index, 1)
     this.runners.splice(index, 1)
     return this
@@ -577,7 +577,7 @@ class RunnerArray {
   }
 
   edit (id, newRunner) {
-    let index = this.ids.indexOf(id + 1)
+    const index = this.ids.indexOf(id + 1)
     this.ids.splice(index, 1, id + 1)
     this.runners.splice(index, 1, newRunner)
     return this
@@ -588,7 +588,7 @@ class RunnerArray {
   }
 
   clearBefore (id) {
-    let deleteCnt = this.ids.indexOf(id + 1) || 1
+    const deleteCnt = this.ids.indexOf(id + 1) || 1
     this.ids.splice(0, deleteCnt, 0)
     this.runners.splice(0, deleteCnt, new FakeRunner())
       .forEach((r) => r.clearTransformsFromQueue())
@@ -760,7 +760,7 @@ extend(Runner, {
       // on this runner. We are absolute. We dont need these!
       if (!relative) this.clearTransform()
 
-      let { x, y } = new Point(origin).transform(element._currentTransform(this))
+      const { x, y } = new Point(origin).transform(element._currentTransform(this))
 
       let target = new Matrix({ ...transforms, origin: [ x, y ] })
       let start = this._isDeclarative && current
@@ -797,7 +797,7 @@ extend(Runner, {
       morpher.from(start)
       morpher.to(target)
 
-      let affineParameters = morpher.at(pos)
+      const affineParameters = morpher.at(pos)
       currentAngle = affineParameters.rotate
       current = new Matrix(affineParameters)
 

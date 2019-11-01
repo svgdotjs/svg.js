@@ -3,7 +3,7 @@ import { makeInstance } from '../../utils/adopter.js'
 import { globals } from '../../utils/window.js'
 
 let listenerId = 0
-let windowEvents = {}
+const windowEvents = {}
 
 function getEvents (instance) {
   let n = instance.getEventHolder()

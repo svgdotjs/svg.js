@@ -3,14 +3,14 @@ const names = []
 
 export function registerMethods (name, m) {
   if (Array.isArray(name)) {
-    for (let _name of name) {
+    for (const _name of name) {
       registerMethods(_name, m)
     }
     return
   }
 
   if (typeof name === 'object') {
-    for (let _name in name) {
+    for (const _name in name) {
       registerMethods(_name, name[_name])
     }
     return

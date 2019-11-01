@@ -51,10 +51,10 @@ export default class Box {
 
   // Merge rect box with another, return a new instance
   merge (box) {
-    let x = Math.min(this.x, box.x)
-    let y = Math.min(this.y, box.y)
-    let width = Math.max(this.x + this.width, box.x + box.width) - x
-    let height = Math.max(this.y + this.height, box.y + box.height) - y
+    const x = Math.min(this.x, box.x)
+    const y = Math.min(this.y, box.y)
+    const width = Math.max(this.x + this.width, box.x + box.width) - x
+    const height = Math.max(this.y + this.height, box.y + box.height) - y
 
     return new Box(x, y, width, height)
   }
@@ -69,7 +69,7 @@ export default class Box {
     let yMin = Infinity
     let yMax = -Infinity
 
-    let pts = [
+    const pts = [
       new Point(this.x, this.y),
       new Point(this.x2, this.y),
       new Point(this.x, this.y2),
@@ -130,8 +130,8 @@ function getBox (cb, retry) {
 export function bbox () {
   return new Box(getBox.call(this, (node) => node.getBBox(), (el) => {
     try {
-      let clone = el.clone().addTo(parser().svg).show()
-      let box = clone.node.getBBox()
+      const clone = el.clone().addTo(parser().svg).show()
+      const box = clone.node.getBBox()
       clone.remove()
       return box
     } catch (e) {
@@ -141,7 +141,7 @@ export function bbox () {
 }
 
 export function rbox (el) {
-  let box = new Box(getBox.call(this, (node) => node.getBoundingClientRect(), (el) => {
+  const box = new Box(getBox.call(this, (node) => node.getBoundingClientRect(), (el) => {
     throw new Error('Getting rbox of element "' + el.node.nodeName + '" is not possible')
   }))
   if (el) return box.transform(el.screenCTM().inverse())

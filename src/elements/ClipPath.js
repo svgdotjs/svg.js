@@ -35,7 +35,7 @@ registerMethods({
     // Distribute clipPath to svg element
     clipWith (element) {
       // use given clip or create a new one
-      let clipper = element instanceof ClipPath
+      const clipper = element instanceof ClipPath
         ? element
         : this.parent().clip().add(element)
 

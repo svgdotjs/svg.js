@@ -4,7 +4,7 @@ import { makeInstance } from '../../utils/adopter.js'
 export default function parser () {
   // Reuse cached element if possible
   if (!parser.nodes) {
-    let svg = makeInstance().size(2, 0)
+    const svg = makeInstance().size(2, 0)
     svg.node.style.cssText = [
       'opacity: 0',
       'position: absolute',
@@ -16,13 +16,13 @@ export default function parser () {
     svg.attr('focusable', 'false')
     svg.attr('aria-hidden', 'true')
 
-    let path = svg.path().node
+    const path = svg.path().node
 
     parser.nodes = { svg, path }
   }
 
   if (!parser.nodes.svg.node.parentNode) {
-    let b = globals.document.body || globals.document.documentElement
+    const b = globals.document.body || globals.document.documentElement
     parser.nodes.svg.addTo(b)
   }
 

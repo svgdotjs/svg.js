@@ -129,7 +129,7 @@ export function extend (modules, methods, attrCheck) {
 
 export function wrapWithAttrCheck (fn) {
   return function (...args) {
-    let o = args[args.length - 1]
+    const o = args[args.length - 1]
 
     if (o && o.constructor === Object && !(o instanceof Array)) {
       return fn.apply(this, args.slice(0, -1)).attr(o)
@@ -158,7 +158,7 @@ export function invent (config) {
   if (config.extend) { extend(initializer, config.extend) }
 
   // Attach construct method to parent
-  if (config.construct) { extend(config.parent || elements['Container'], config.construct) }
+  if (config.construct) { extend(config.parent || elements.Container, config.construct) }
 
   return initializer
 }

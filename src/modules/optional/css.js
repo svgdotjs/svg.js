@@ -4,7 +4,7 @@ import { registerMethods } from '../../utils/methods.js'
 
 // Dynamic style generator
 export function css (style, val) {
-  let ret = {}
+  const ret = {}
   if (arguments.length === 0) {
     // get full style as object
     this.node.style.cssText.split(/\s*;\s*/)
@@ -12,7 +12,7 @@ export function css (style, val) {
         return !!el.length
       })
       .forEach(function (el) {
-        let t = el.split(/\s*:\s*/)
+        const t = el.split(/\s*:\s*/)
         ret[t[0]] = t[1]
       })
     return ret
@@ -21,8 +21,8 @@ export function css (style, val) {
   if (arguments.length < 2) {
     // get style properties in the array
     if (Array.isArray(style)) {
-      for (let name of style) {
-        let cased = camelCase(name)
+      for (const name of style) {
+        const cased = camelCase(name)
         ret[cased] = this.node.style[cased]
       }
       return ret
@@ -35,7 +35,7 @@ export function css (style, val) {
 
     // set styles in object
     if (typeof style === 'object') {
-      for (let name in style) {
+      for (const name in style) {
         // set empty string if null/undefined/'' was given
         this.node.style[camelCase(name)]
           = (style[name] == null || isBlank.test(style[name])) ? '' : style[name]

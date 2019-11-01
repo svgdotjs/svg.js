@@ -11,7 +11,7 @@ var makeSchedule = function (runnerInfo) {
 }
 
 const defaultSource = function () {
-  let w = globals.window
+  const w = globals.window
   return (w.performance || w.Date).now()
 }
 
@@ -68,7 +68,7 @@ export default class Timeline extends EventTarget {
     } else if (when === 'now') {
       absoluteStartTime = this._time
     } else if (when === 'relative') {
-      let runnerInfo = this._runners[runner.id]
+      const runnerInfo = this._runners[runner.id]
       if (runnerInfo) {
         absoluteStartTime = runnerInfo.start + delay
         delay = 0
@@ -121,10 +121,10 @@ export default class Timeline extends EventTarget {
   getEndTimeOfTimeline () {
     let lastEndTime = 0
     for (var i = 0; i < this._runners.length; i++) {
-      let runnerInfo = this._runners[i]
+      const runnerInfo = this._runners[i]
       var duration = runnerInfo ? runnerInfo.runner.duration() : 0
       var startTime = runnerInfo ? runnerInfo.start : 0
-      let endTime = startTime + duration
+      const endTime = startTime + duration
       if (endTime > lastEndTime) {
         lastEndTime = endTime
       }
@@ -232,12 +232,12 @@ export default class Timeline extends EventTarget {
     // this can be solved by reseting them backwards
     for (var k = this._runners.length; k--;) {
       // Get and run the current runner and ignore it if its inactive
-      let runnerInfo = this._runners[k]
-      let runner = runnerInfo.runner
+      const runnerInfo = this._runners[k]
+      const runner = runnerInfo.runner
 
       // Make sure that we give the actual difference
       // between runner start time and now
-      let dtToStart = this._time - runnerInfo.start
+      const dtToStart = this._time - runnerInfo.start
 
       // Dont run runner if not started yet
       // and try to reset it
@@ -250,13 +250,13 @@ export default class Timeline extends EventTarget {
     var runnersLeft = false
     for (var i = 0, len = this._runners.length; i < len; i++) {
       // Get and run the current runner and ignore it if its inactive
-      let runnerInfo = this._runners[i]
-      let runner = runnerInfo.runner
+      const runnerInfo = this._runners[i]
+      const runner = runnerInfo.runner
       let dt = dtTime
 
       // Make sure that we give the actual difference
       // between runner start time and now
-      let dtToStart = this._time - runnerInfo.start
+      const dtToStart = this._time - runnerInfo.start
 
       // Dont run runner if not started yet
       if (dtToStart <= 0) {

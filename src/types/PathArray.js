@@ -108,7 +108,7 @@ const pathHandlers = {
   }
 }
 
-let mlhvqtcsaz = 'mlhvqtcsaz'.split('')
+const mlhvqtcsaz = 'mlhvqtcsaz'.split('')
 
 for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
   pathHandlers[mlhvqtcsaz[i]] = (function (i) {
@@ -290,7 +290,7 @@ extend(PathArray, {
 
     // prepare for parsing
     var s
-    var paramCnt = { 'M': 2, 'L': 2, 'H': 1, 'V': 1, 'C': 6, 'S': 4, 'Q': 4, 'T': 2, 'A': 7, 'Z': 0 }
+    var paramCnt = { M: 2, L: 2, H: 1, V: 1, C: 6, S: 4, Q: 4, T: 2, A: 7, Z: 0 }
 
     if (typeof array === 'string') {
       array = array

@@ -2,14 +2,14 @@
 export function noop () {}
 
 // Default animation values
-export let timeline = {
+export const timeline = {
   duration: 400,
   ease: '>',
   delay: 0
 }
 
 // Default attribute values
-export let attrs = {
+export const attrs = {
 
   // fill and stroke
   'fill-opacity': 1,

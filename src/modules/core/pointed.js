@@ -1,6 +1,6 @@
 import PointArray from '../../types/PointArray.js'
 
-export let MorphArray = PointArray
+export const MorphArray = PointArray
 
 // Move by left top corner over x-axis
 export function x (x) {
@@ -14,12 +14,12 @@ export function y (y) {
 
 // Set width of element
 export function width (width) {
-  let b = this.bbox()
+  const b = this.bbox()
   return width == null ? b.width : this.size(width, b.height)
 }
 
 // Set height of element
 export function height (height) {
-  let b = this.bbox()
+  const b = this.bbox()
   return height == null ? b.height : this.size(b.width, height)
 }

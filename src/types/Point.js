@@ -7,11 +7,10 @@ export default class Point {
   }
 
   init (x, y) {
-    let source
-    let base = { x: 0, y: 0 }
+    const base = { x: 0, y: 0 }
 
     // ensure source as object
-    source = Array.isArray(x) ? { x: x[0], y: x[1] }
+    const source = Array.isArray(x) ? { x: x[0], y: x[1] }
       : typeof x === 'object' ? { x: x.x, y: x.y }
       : { x: x, y: y }
 
@@ -37,7 +36,7 @@ export default class Point {
       m = new Matrix(m)
     }
 
-    let { x, y } = this
+    const { x, y } = this
 
     // Perform the matrix multiplication
     this.x = m.a * x + m.c * y + m.e
