@@ -7,6 +7,14 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.15] - 2019-11-08
+
+### Fixed
+- allow object input of `when` and `delay` to `animate()`
+
+### Added
+- added missing dmove function to runner
+
 ## [3.0.14] - 2019-10-31
 
 ### Fixed
@@ -832,6 +840,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.15]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.15
 [3.0.14]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.14
 [3.0.13]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.13
 [3.0.12]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.12

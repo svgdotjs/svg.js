@@ -59,12 +59,12 @@ export default class Element extends Dom {
   }
 
   // Relative move over x axis
-  dx (x) {
+  dx (x = 0) {
     return this.x(new SVGNumber(x).plus(this.x()))
   }
 
   // Relative move over y axis
-  dy (y) {
+  dy (y = 0) {
     return this.y(new SVGNumber(y).plus(this.y()))
   }
 

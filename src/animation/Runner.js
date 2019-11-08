@@ -97,7 +97,7 @@ export default class Runner extends EventTarget {
     var runner = new Runner(o.duration)
     if (this._timeline) runner.timeline(this._timeline)
     if (this._element) runner.element(this._element)
-    return runner.loop(o).schedule(delay, when)
+    return runner.loop(o).schedule(o.delay, o.when)
   }
 
   schedule (timeline, delay, when) {
@@ -605,7 +605,7 @@ registerMethods({
         .loop(o)
         .element(this)
         .timeline(timeline.play())
-        .schedule(delay, when)
+        .schedule(o.delay, o.when)
     },
 
     delay (by, when) {
@@ -834,12 +834,16 @@ extend(Runner, {
     return this._queueNumber('y', y)
   },
 
-  dx (x) {
+  dx (x = 0) {
     return this._queueNumberDelta('x', x)
   },
 
-  dy (y) {
+  dy (y = 0) {
     return this._queueNumberDelta('y', y)
+  },
+
+  dmove (x, y) {
+    return this.dx(x).dy(y)
   },
 
   _queueNumberDelta (method, to) {
