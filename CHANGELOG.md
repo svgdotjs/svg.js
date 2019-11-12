@@ -7,6 +7,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.16] - 2019-11-12
+
+### Fixed
+- fixed build of polyfills which was broken because of core-js update
+
 ## [3.0.15] - 2019-11-08
 
 ### Fixed
@@ -840,6 +845,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.0.16]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.16
 [3.0.15]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.15
 [3.0.14]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.14
 [3.0.13]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.13
