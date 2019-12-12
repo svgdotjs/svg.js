@@ -1169,8 +1169,7 @@ declare module "@svgdotjs/svg.js" {
 
         addClass(name: string): this;
         after(element: Element): Element;
-        animate(duration?: number, ease?: string, delay?: number): Runner;
-        animate(info: { ease?: string; duration?: number; delay?: number }): Runner;
+        animate(duration?: number, delay?: number, when?: string): Runner;
         delay(by: number, when?: string): Runner
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
