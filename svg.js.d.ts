@@ -807,7 +807,7 @@ declare module "@svgdotjs/svg.js" {
         element(el: Element): this
         timeline(): Timeline
         timeline(timeline: Timeline): this
-        animate(duration: number, delay?: number, when?: string): this
+        animate(duration: TimeLike, delay?: number, when?: string): this
         schedule(delay: number, when?: string): this
         schedule(timeline: Timeline, delay?: number, when?: string): this
         unschedule(): this
@@ -1169,7 +1169,7 @@ declare module "@svgdotjs/svg.js" {
 
         addClass(name: string): this;
         after(element: Element): Element;
-        animate(duration?: number, delay?: number, when?: string): Runner;
+        animate(duration?: TimeLike, delay?: number, when?: string): Runner;
         delay(by: number, when?: string): Runner
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
