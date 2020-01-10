@@ -31,6 +31,8 @@ declare module "@svgdotjs/svg.js" {
 
     function find(query: QuerySelector): List<Element>
     function findOne(query: QuerySelector): Element
+	
+	function registerWindow(win: typeof window, doc: typeof document): void;
 
     let utils: {
         map(array: any[], block: Function): any;
