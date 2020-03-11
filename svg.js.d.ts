@@ -778,6 +778,8 @@ declare module "@svgdotjs/svg.js" {
         seek(dt: number): this
         time(): number
         time(time: number): this
+        persist(): boolean
+        persist(dtOrForever: boolean): this
         source(): Function
         source(fn: Function): this
     }
@@ -823,6 +825,8 @@ declare module "@svgdotjs/svg.js" {
         duration(): number
         loops(): number
         loops(p: number): this
+        persist(): boolean
+        persist(dtOrForever: boolean): this
         position(): number
         position(p: number): this
         progress(): number
