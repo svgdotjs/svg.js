@@ -1241,6 +1241,8 @@ declare module "@svgdotjs/svg.js" {
         mouseout(cb: Function | null): this;
         mouseover(cb: Function | null): this;
         mouseup(cb: Function | null): this;
+        mouseenter(cb: Function | null): this;
+        mouseleave(cb: Function | null): this;
         move(x: NumberAlias, y: NumberAlias): this;
         native(): LinkedHTMLElement;
         next(): Element;
