@@ -1,20 +1,14 @@
 language: node_js
 node_js:
-    - "stable"
-script:
-    - npm run build
-    - npm run test
-#    - npm run test:ci
-#    - cat coverage/firefox/lcov.info | node_modules/.bin/coveralls
+  - "stable"
+services:
+  - xvfb
 addons:
-   firefox: "latest"
-   chrome: "stable"
-#  hosts:
-#    - karmalocal.com
-before_install:
-    # Start a display server where all graphical operations happens in memory
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-#cache:
-#  directories:
-#    - node_modules
+    firefox: latest
+    chrome: stable
+install:
+  - npm install
+  - npm run build
+script:
+  - npm run test
+  - npm run test:es6
