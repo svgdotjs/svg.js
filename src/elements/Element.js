@@ -38,7 +38,9 @@ export default class Element extends Dom {
 
   // Move by center over x-axis
   cx (x) {
-    return x == null ? this.x() + this.width() / 2 : this.x(x - this.width() / 2)
+    return x == null
+      ? this.x() + this.width() / 2
+      : this.x(x - this.width() / 2)
   }
 
   // Move by center over y-axis
@@ -99,17 +101,16 @@ export default class Element extends Dom {
   }
 
   // return array of all ancestors of given type up to the root svg
-  parents (until = globals.document) {
+  parents (until = this.root()) {
     until = makeInstance(until)
     const parents = new List()
     let parent = this
 
-    while (
-      (parent = parent.parent())
-      && parent.node !== until.node
-      && parent.node !== globals.document
-    ) {
+    while ((parent = parent.parent()) && parent.node !== globals.document) {
       parents.push(parent)
+      if (parent.node === until.node) {
+        break
+      }
     }
 
     return parents

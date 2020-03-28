@@ -6,8 +6,8 @@ import baseFind from '../modules/core/selector.js'
 
 export default class Pattern extends Container {
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('pattern', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('pattern', node), attrs)
   }
 
   // Return the fill id

@@ -1,21 +1,22 @@
+/* globals describe, expect, it, jasmine, container */
+
 import {
   Box,
-  Gradient,
   Matrix,
   Rect,
   makeInstance as SVG
 } from '../../../src/main.js'
 import { getMethodsFor } from '../../../src/utils/methods.js'
-import { getWindow, withWindow } from '../../../src/utils/window.js'
+import { withWindow } from '../../../src/utils/window.js'
 
-const { zoom, viewbox} = getMethodsFor('viewbox')
+const { zoom, viewbox } = getMethodsFor('viewbox')
 
-const { any, objectContaining, arrayContaining } = jasmine
+const { any, objectContaining } = jasmine
 
-const getBody = () => {
-  let win = getWindow()
-  return win.document.body || win.document.documentElement
-}
+// const getBody = () => {
+//   const win = getWindow()
+//   return win.document.body || win.document.documentElement
+// }
 
 describe('Box.js', () => {
   describe('()', () => {
@@ -30,29 +31,29 @@ describe('Box.js', () => {
 
   describe('init()', () => {
     it('inits or reinits the box according to input', () => {
-      expect(new Box().init(1,2,3,4).toArray()).toEqual([1,2,3,4])
+      expect(new Box().init(1, 2, 3, 4).toArray()).toEqual([ 1, 2, 3, 4 ])
     })
 
     it('works with array input', () => {
-      expect(new Box().init([1,2,3,4]).toArray()).toEqual([1,2,3,4])
+      expect(new Box().init([ 1, 2, 3, 4 ]).toArray()).toEqual([ 1, 2, 3, 4 ])
     })
 
     it('works with 3 arguments as input', () => {
-      expect(new Box().init(1,2,3,4).toArray()).toEqual([1,2,3,4])
+      expect(new Box().init(1, 2, 3, 4).toArray()).toEqual([ 1, 2, 3, 4 ])
     })
 
     it('works with string input', () => {
-      expect(new Box().init('1,2,3,4').toArray()).toEqual([1,2,3,4])
+      expect(new Box().init('1,2,3,4').toArray()).toEqual([ 1, 2, 3, 4 ])
     })
 
-    it('creates a new box from parsed string with exponential values', function() {
+    it('creates a new box from parsed string with exponential values', function () {
       expect(new Box().init('-1.12e1 1e-2 +2e2 +.3e+4').toArray())
-        .toEqual([-11.2, 0.01, 200, 3000])
+        .toEqual([ -11.2, 0.01, 200, 3000 ])
     })
 
     it('works with object input', () => {
-      expect(new Box().init({x: 1, y: 2, width: 3, height: 4}).toArray())
-        .toEqual([1,2,3,4])
+      expect(new Box().init({ x: 1, y: 2, width: 3, height: 4 }).toArray())
+        .toEqual([ 1, 2, 3, 4 ])
     })
 
     it('calculates all derived values correctly', () => {
@@ -62,8 +63,8 @@ describe('Box.js', () => {
     })
 
     it('can handle input with left instead of x and top instead of y', () => {
-      expect(new Box().init({left: 1, top: 2, width: 3, height: 4}).toArray())
-        .toEqual([1,2,3,4])
+      expect(new Box().init({ left: 1, top: 2, width: 3, height: 4 }).toArray())
+        .toEqual([ 1, 2, 3, 4 ])
     })
   })
 
@@ -74,7 +75,7 @@ describe('Box.js', () => {
       var box3 = new Box(500, 100, 100, 100)
       var merged = box1.merge(box2).merge(box3)
 
-      expect(merged.toArray()).toEqual([50, 50, 550, 450])
+      expect(merged.toArray()).toEqual([ 50, 50, 550, 450 ])
     })
 
     it('returns a new instance', () => {
@@ -88,42 +89,52 @@ describe('Box.js', () => {
 
   describe('transform()', () => {
     it('transforms the box with given matrix', () => {
-      var box1 = new Box(50, 50, 100, 100).transform(new Matrix(1,0,0,1,20,20))
-      var box2 = new Box(50, 50, 100, 100).transform(new Matrix(2,0,0,2,0,0))
-      var box3 = new Box(-200, -200, 100, 100).transform(new Matrix(1,0,0,1,-20,-20))
+      var box1 = new Box(50, 50, 100, 100).transform(new Matrix(1, 0, 0, 1, 20, 20))
+      var box2 = new Box(50, 50, 100, 100).transform(new Matrix(2, 0, 0, 2, 0, 0))
+      var box3 = new Box(-200, -200, 100, 100).transform(new Matrix(1, 0, 0, 1, -20, -20))
 
-      expect(box1.toArray()).toEqual([70, 70, 100, 100])
-      expect(box2.toArray()).toEqual([100, 100, 200, 200])
-      expect(box3.toArray()).toEqual([-220, -220, 100, 100])
+      expect(box1.toArray()).toEqual([ 70, 70, 100, 100 ])
+      expect(box2.toArray()).toEqual([ 100, 100, 200, 200 ])
+      expect(box3.toArray()).toEqual([ -220, -220, 100, 100 ])
     })
   })
 
   describe('addOffset()', () => {
+    it('returns a new instance', () => {
+      withWindow({ pageXOffset: 50, pageYOffset: 25 }, () => {
+        const box = new Box(100, 100, 100, 100)
+        const box2 = box.addOffset()
+
+        expect(box2).toEqual(any(Box))
+        expect(box2).not.toBe(box)
+      })
+    })
+
     it('adds the current page offset to the box', () => {
-      withWindow({pageXOffset: 50, pageYOffset: 25}, () => {
+      withWindow({ pageXOffset: 50, pageYOffset: 25 }, () => {
         const box = new Box(100, 100, 100, 100).addOffset()
 
-        expect(box.toArray()).toEqual([150, 125, 100, 100])
+        expect(box.toArray()).toEqual([ 150, 125, 100, 100 ])
       })
     })
   })
 
   describe('toString()', () => {
     it('returns a string representation of the box', () => {
-      expect(new Box(1,2,3,4).toString()).toBe('1 2 3 4')
+      expect(new Box(1, 2, 3, 4).toString()).toBe('1 2 3 4')
     })
   })
 
   describe('toArray()', () => {
     it('returns an array representation of the box', () => {
-      expect(new Box(1,2,3,4).toArray()).toEqual([1,2,3,4])
+      expect(new Box(1, 2, 3, 4).toArray()).toEqual([ 1, 2, 3, 4 ])
     })
   })
 
   describe('isNulled()', () => {
     it('checks if the box consists of only zeros', () => {
       expect(new Box().isNulled()).toBe(true)
-      expect(new Box(1,2,3,4).isNulled()).toBe(false)
+      expect(new Box(1, 2, 3, 4).isNulled()).toBe(false)
     })
   })
 
@@ -134,12 +145,12 @@ describe('Box.js', () => {
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
 
         expect(rect.bbox()).toEqual(any(Box))
-        expect(rect.bbox().toArray()).toEqual([20, 30, 100, 200])
+        expect(rect.bbox().toArray()).toEqual([ 20, 30, 100, 200 ])
       })
 
       it('returns the bounding box of the element even if the node is not in the dom', () => {
         const rect = new Rect().size(100, 200).move(20, 30)
-        expect(rect.bbox().toArray()).toEqual([20, 30, 100, 200])
+        expect(rect.bbox().toArray()).toEqual([ 20, 30, 100, 200 ])
       })
 
       // it('throws when it is not possible to get a bbox', () => {
@@ -152,10 +163,10 @@ describe('Box.js', () => {
       it('returns the BoundingClientRect of the element', () => {
         const canvas = SVG().addTo(container)
         const rect = new Rect().size(100, 200).move(20, 30).addTo(canvas)
-          .attr('transform', new Matrix({scale: 2, translate:[40, 50]}))
+          .attr('transform', new Matrix({ scale: 2, translate: [ 40, 50 ] }))
 
         expect(rect.rbox()).toEqual(any(Box))
-        expect(rect.rbox().toArray()).toEqual([80, 110, 200, 400])
+        expect(rect.rbox().toArray()).toEqual([ 80, 110, 200, 400 ])
       })
 
       it('throws when element is not in dom', () => {
@@ -172,7 +183,7 @@ describe('Box.js', () => {
       it('gets the viewbox of the element', () => {
         const canvas = viewbox.call(SVG().addTo(container), 10, 10, 200, 200)
         expect(viewbox.call(canvas)).toEqual(any(Box))
-        expect(viewbox.call(canvas).toArray()).toEqual([10, 10, 200, 200])
+        expect(viewbox.call(canvas).toArray()).toEqual([ 10, 10, 200, 200 ])
       })
     })
 
@@ -183,7 +194,7 @@ describe('Box.js', () => {
       })
 
       it('zooms around a point', () => {
-        const canvas = zoom.call(SVG().size(100, 50).viewbox(0, 0, 100, 50).addTo(container), 2, [0, 0])
+        const canvas = zoom.call(SVG().size(100, 50).viewbox(0, 0, 100, 50).addTo(container), 2, [ 0, 0 ])
         expect(canvas.attr('viewBox')).toEqual('0 0 50 25')
       })
 

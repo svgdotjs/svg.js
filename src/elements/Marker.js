@@ -4,8 +4,8 @@ import Container from './Container.js'
 
 export default class Marker extends Container {
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('marker', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('marker', node), attrs)
   }
 
   // Set width of element
@@ -16,6 +16,10 @@ export default class Marker extends Container {
   // Set height of element
   height (height) {
     return this.attr('markerHeight', height)
+  }
+
+  orient (orient) {
+    return this.attr('orient', orient)
   }
 
   // Set marker refX and refY

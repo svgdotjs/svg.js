@@ -13,7 +13,7 @@ export function create (name) {
   return globals.document.createElementNS(ns, name)
 }
 
-export function makeInstance (element) {
+export function makeInstance (element, isHTML = false) {
   if (element instanceof Base) return element
 
   if (typeof element === 'object') {
@@ -28,7 +28,8 @@ export function makeInstance (element) {
     return adopter(globals.document.querySelector(element))
   }
 
-  var node = create('svg')
+  // Make sure, that HTML elements are created with the correct namespace
+  var node = isHTML ? globals.document.createElement('div') : create('svg')
   node.innerHTML = element
 
   // We can use firstChild here because we know,

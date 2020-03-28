@@ -9,8 +9,8 @@ import Shape from './Shape.js'
 import { globals } from '../utils/window.js'
 
 export default class Image extends Shape {
-  constructor (node) {
-    super(nodeOrNew('image', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('image', node), attrs)
   }
 
   // (re)load image

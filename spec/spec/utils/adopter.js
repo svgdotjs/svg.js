@@ -1,4 +1,4 @@
-const { any, createSpy, objectContaining } = jasmine
+/* globals describe, expect, it, beforeEach, afterEach, jasmine */
 
 import {
   create,
@@ -11,15 +11,19 @@ import {
   wrapWithAttrCheck,
   Rect,
   Element,
-  adopt,
-  root
+  root,
+  G,
+  Gradient,
+  Dom
 } from '../../../src/main.js'
 
-import { mockAdopt } from '../../../src/utils/adopter.js'
+import { mockAdopt, assignNewId, adopt } from '../../../src/utils/adopter.js'
 import { buildFixtures } from '../../helpers.js'
 import { globals } from '../../../src/utils/window.js'
 
-describe('Adopter.js', () => {
+const { any, createSpy, objectContaining } = jasmine
+
+describe('adopter.js', () => {
   let Node
 
   beforeEach(() => {
@@ -28,7 +32,7 @@ describe('Adopter.js', () => {
 
   describe('create()', () => {
     it('creates a node of the specified type', () => {
-      let rect = create('rect')
+      const rect = create('rect')
       expect(rect).toEqual(any(Node))
       expect(rect.nodeName).toBe('rect')
     })
@@ -47,15 +51,15 @@ describe('Adopter.js', () => {
     })
 
     it('creates a root-object when no argument given', () => {
-      let doc = makeInstance()
+      const doc = makeInstance()
 
       expect(doc).toEqual(any(getClass(root)))
       expect(doc).toEqual(any(Element))
     })
 
     it('returns a given svg.js object directly', () => {
-      let rect = new Rect()
-      let samerect = makeInstance(rect)
+      const rect = new Rect()
+      const samerect = makeInstance(rect)
       expect(rect).toBe(samerect)
     })
 
@@ -63,13 +67,19 @@ describe('Adopter.js', () => {
       makeInstance('<rect width="200px">')
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
-      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({nodeName: 'rect'}))
+      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+    })
+
+    it('creates an element in the html namespace from passed html string', () => {
+      makeInstance('<div>', true)
+      expect(adoptSpy).toHaveBeenCalledWith(any(Node))
+      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'DIV', namespaceURI: 'http://www.w3.org/1999/xhtml' }))
     })
 
     it('searches for element in dom if selector given', () => {
       buildFixtures()
 
-      let path = globals.window.document.getElementById('lineAB')
+      const path = globals.window.document.getElementById('lineAB')
 
       makeInstance('#lineAB')
       makeInstance('#doesNotExist')
@@ -82,20 +92,53 @@ describe('Adopter.js', () => {
       makeInstance(create('rect'))
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
-      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({nodeName: 'rect'}))
+      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+    })
+  })
+
+  describe('adopt()', () => {
+    it('returns null of passed node is null', () => {
+      expect(adopt(null)).toBe(null)
+    })
+
+    it('returns instance from node if present', () => {
+      const rect = new Rect()
+      expect(adopt(rect.node)).toBe(rect)
+    })
+
+    it('creates instance when node without instance is passed', () => {
+      const rect = new Rect()
+      const node = rect.node
+      delete node.instance
+      expect(adopt(node)).toEqual(any(Rect))
+      expect(adopt(node)).not.toBe(rect)
+    })
+
+    it('creates instance when node without instance is passed with gradients', () => {
+      const gradient = new Gradient('linear')
+      const node = gradient.node
+      delete node.instance
+      expect(adopt(node)).toEqual(any(Gradient))
+      expect(adopt(node).type).toBe('linearGradient')
+      expect(adopt(node)).not.toBe(gradient)
+    })
+
+    it('creates Dom instances for unknown nodes', () => {
+      const div = document.createElement('div')
+      expect(adopt(div)).toEqual(any(Dom))
     })
   })
 
   describe('nodeOrNew()', () => {
     it('creates a node of node argument is null', () => {
-      let rect = nodeOrNew('rect', null)
+      const rect = nodeOrNew('rect', null)
       expect(rect).toEqual(any(Node))
       expect(rect.nodeName).toBe('rect')
     })
 
     it('returns the node if one is passed', () => {
-      let div = globals.window.document.createElement('div')
-      let node = nodeOrNew('something', div)
+      const div = globals.window.document.createElement('div')
+      const node = nodeOrNew('something', div)
 
       // jasmine chucks on this when using the node directly
       expect(node.outerHTML).toBe(div.outerHTML)
@@ -104,9 +147,9 @@ describe('Adopter.js', () => {
 
   describe('register()/getClass()', () => {
     it('sets and gets a class from the class register', () => {
-      const a = class {}
-      register(a)
-      expect(getClass('a')).toBe(a)
+      const A = class {}
+      register(A)
+      expect(getClass('A')).toBe(A)
     })
   })
 
@@ -116,41 +159,63 @@ describe('Adopter.js', () => {
     })
   })
 
+  describe('assignNewId()', () => {
+    it('assigns a new id if id is present on element', () => {
+      const rect = new Rect().id('foo')
+      assignNewId(rect.node)
+      expect(rect.id()).not.toBe('foo')
+    })
+
+    it('does not set id if no id is present on element', () => {
+      const rect = new Rect()
+      assignNewId(rect.node)
+      expect(rect.attr('id')).toBe(undefined)
+    })
+
+    it('recursively sets new ids on children', () => {
+      const group = new G().id('foo')
+      const rect = group.rect(100, 100).id('bar')
+      assignNewId(group.node)
+      expect(group.id()).not.toBe('foo')
+      expect(rect.id()).not.toBe('bar')
+    })
+  })
+
   describe('extend()', () => {
     it('adds all functions in the given object to the target object', () => {
-      const a = class {}
+      const A = class {}
 
-      extend(a, {
+      extend(A, {
         test () { this.prop = 'test'; return this }
       })
 
-      expect(typeof a.prototype.test).toBe('function')
-      expect(new a().test().prop).toBe('test')
+      expect(typeof A.prototype.test).toBe('function')
+      expect(new A().test().prop).toBe('test')
     })
     it('accepts and extend multiple modules at once', () => {
-      const a = class {}
-      const b = class {}
-      const c = class {}
+      const A = class {}
+      const B = class {}
+      const C = class {}
 
-      extend([a, b, c], {
+      extend([ A, B, C ], {
         test () { this.prop = 'test'; return this }
       })
 
-      expect(typeof a.prototype.test).toBe('function')
-      expect(new a().test().prop).toBe('test')
-      expect(typeof b.prototype.test).toBe('function')
-      expect(new b().test().prop).toBe('test')
-      expect(typeof c.prototype.test).toBe('function')
-      expect(new c().test().prop).toBe('test')
+      expect(typeof A.prototype.test).toBe('function')
+      expect(new A().test().prop).toBe('test')
+      expect(typeof B.prototype.test).toBe('function')
+      expect(new B().test().prop).toBe('test')
+      expect(typeof C.prototype.test).toBe('function')
+      expect(new C().test().prop).toBe('test')
     })
   })
 
   describe('wrapWithAttrCheck()', () => {
-    it('wraps a function so that it calles an attr function if an object is passed', () => {
+    it('wraps a function so that it calls an attr function if an object is passed', () => {
       const attrSpy = createSpy('attr')
 
-      const a = class {}
-      extend(a, {
+      const A = class {}
+      extend(A, {
         test: wrapWithAttrCheck(function () {
           this.prop = 'test'; return this
         }),
@@ -159,9 +224,9 @@ describe('Adopter.js', () => {
 
       const obj = {}
 
-      expect(new a().test().prop).toBe('test')
+      expect(new A().test().prop).toBe('test')
       expect(attrSpy).not.toHaveBeenCalled()
-      new a().test(obj)
+      new A().test(obj)
       expect(attrSpy).toHaveBeenCalledWith(obj)
     })
   })

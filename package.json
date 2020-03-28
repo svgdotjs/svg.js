@@ -67,7 +67,7 @@
     "test": "npx karma start .config/karma.conf.js",
     "test:ci": "karma start .config/karma.conf.saucelabs.js",
     "test:svgdom": "node -r esm ./spec/runSVGDomTest.js || true",
-    "test:es6": "npx karma start .config/karma.es6.js --single-run",
+    "test:es6": "npx karma start .config/karma.es6.js --single-run || true",
     "zip": "zip -j dist/svg.js.zip -- LICENSE.txt README.md CHANGELOG.md dist/svg.js dist/svg.js.map dist/svg.min.js dist/svg.min.js.map dist/polyfills.js dist/polyfillsIE.js",
     "prepublishOnly": "rm -rf ./dist && npm run build && npm run build:polyfills && npm test",
     "postpublish": "npm run zip"
@@ -110,6 +110,7 @@
     "rollup-plugin-uglify": "^6.0.3",
     "rollup-plugin-uglify-es": "0.0.1",
     "svgdom": "0.0.21",
+    "typescript": "^3.8.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",

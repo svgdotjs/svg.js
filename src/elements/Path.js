@@ -7,8 +7,8 @@ import baseFind from '../modules/core/selector.js'
 
 export default class Path extends Shape {
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('path', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('path', node), attrs)
   }
 
   // Get array

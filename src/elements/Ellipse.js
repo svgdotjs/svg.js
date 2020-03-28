@@ -11,8 +11,8 @@ import Shape from './Shape.js'
 import * as circled from '../modules/core/circled.js'
 
 export default class Ellipse extends Shape {
-  constructor (node) {
-    super(nodeOrNew('ellipse', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('ellipse', node), attrs)
   }
 
   size (width, height) {

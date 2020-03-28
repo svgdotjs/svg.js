@@ -43,7 +43,7 @@ export function camelCase (s) {
   })
 }
 
-// Convert camel cased string to string seperated
+// Convert camel cased string to dash seperated
 export function unCamelCase (s) {
   return s.replace(/([A-Z])/g, function (m, g) {
     return '-' + g.toLowerCase()
@@ -73,31 +73,46 @@ export function proportionalSize (element, width, height, box) {
   }
 }
 
+/**
+ * This function adds support for string origins.
+ * It searches for an origin in o.origin o.ox and o.originX.
+ * This way, origin: {x: 'center', y: 50} can be passed as well as ox: 'center', oy: 50
+**/
 export function getOrigin (o, element) {
-  // Allow origin or around as the names
-  const origin = o.origin // o.around == null ? o.origin : o.around
-  let ox, oy
+  const origin = o.origin
+  // First check if origin is in ox or originX
+  let ox = o.ox != null ? o.ox
+    : o.originX != null ? o.originX
+    : 'center'
+  let oy = o.oy != null ? o.oy
+    : o.originY != null ? o.originY
+    : 'center'
 
-  // Allow the user to pass a string to rotate around a given point
-  if (typeof origin === 'string' || origin == null) {
-    // Get the bounding box of the element with no transformations applied
-    const string = (origin || 'center').toLowerCase().trim()
+  // Then check if origin was used and overwrite in that case
+  if (origin != null) {
+    [ ox, oy ] = Array.isArray(origin) ? origin
+      : typeof origin === 'object' ? [ origin.x, origin.y ]
+      : [ origin, origin ]
+  }
+
+  // Make sure to only call bbox when actually needed
+  const condX = typeof ox === 'string'
+  const condY = typeof oy === 'string'
+  if (condX || condY) {
     const { height, width, x, y } = element.bbox()
 
-    // Calculate the transformed x and y coordinates
-    const bx = string.includes('left') ? x
-      : string.includes('right') ? x + width
-      : x + width / 2
-    const by = string.includes('top') ? y
-      : string.includes('bottom') ? y + height
-      : y + height / 2
+    // And only overwrite if string was passed for this specific axis
+    if (condX) {
+      ox = ox.includes('left') ? x
+        : ox.includes('right') ? x + width
+        : x + width / 2
+    }
 
-    // Set the bounds eg : "bottom-left", "Top right", "middle" etc...
-    ox = o.ox != null ? o.ox : bx
-    oy = o.oy != null ? o.oy : by
-  } else {
-    ox = origin[0]
-    oy = origin[1]
+    if (condY) {
+      oy = oy.includes('top') ? y
+        : oy.includes('bottom') ? y + height
+        : y + height / 2
+    }
   }
 
   // Return the origin as it is if it wasn't a string

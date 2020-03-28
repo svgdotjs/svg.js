@@ -95,7 +95,7 @@ export default class Box {
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += globals.window.pageXOffset
     this.y += globals.window.pageYOffset
-    return this
+    return new Box(this)
   }
 
   toString () {
@@ -166,7 +166,7 @@ registerMethods({
       // Firefox does not support clientHeight and returns 0
       // https://bugzilla.mozilla.org/show_bug.cgi?id=874811
       if (!width && !height) {
-        var style = window.getComputedStyle(this.node)
+        var style = globals.window.getComputedStyle(this.node)
         width = parseFloat(style.getPropertyValue('width'))
         height = parseFloat(style.getPropertyValue('height'))
       }

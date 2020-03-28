@@ -3,8 +3,8 @@ import Element from './Element.js'
 import SVGNumber from '../types/SVGNumber.js'
 
 export default class Stop extends Element {
-  constructor (node) {
-    super(nodeOrNew('stop', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('stop', node), attrs)
   }
 
   // add color stops

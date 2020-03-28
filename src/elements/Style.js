@@ -19,8 +19,8 @@ function cssRule (selector, rule) {
 }
 
 export default class Style extends Element {
-  constructor (node) {
-    super(nodeOrNew('style', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('style', node), attrs)
   }
 
   addText (w = '') {

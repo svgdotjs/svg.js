@@ -15,30 +15,37 @@ declare module "@svgdotjs/svg.js" {
     function get(id: string): Element;
 
     function create(name: string): any;
-    function extend(parent: Object, obj: Object): void;
-    function invent(config: Object): any;
+    function extend(parent: object, obj: object): void;
+    function invent(config: object): any;
     function adopt(node: HTMLElement): Element;
     function prepare(element: HTMLElement): void;
     function getClass(name: string): Element;
 
-    function on(el: Node, events: string, cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
-    function on(el: Node, events: Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
+    function on(el: Node | Window, events: string, cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
+    function on(el: Node | Window, events: Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
 
-    function off(el: Node, events?: string, cb?: EventListener | number): void;
-    function off(el: Node, events?: Event[], cb?: EventListener | number): void;
+    function off(el: Node | Window, events?: string, cb?: EventListener | number): void;
+    function off(el: Node | Window, events?: Event[], cb?: EventListener | number): void;
 
-    function dispatch(node: Node, event: Event, data?: Object): Event
+    function dispatch(node: Node | Window, event: Event, data?: object, options?: object): Event
 
     function find(query: QuerySelector): List<Element>
     function findOne(query: QuerySelector): Element
+
+    function registerWindow(win: Window, doc: Document): void;
 
     let utils: {
         map(array: any[], block: Function): any;
         filter(array: any[], block: Function): any;
         radians(d: number): number;
         degrees(r: number): number;
-        filterSVGElements: HTMLElement[]
+        camelCase(s: string): string;
+        unCamelCase(s: string): string;
+        capitalize(s: string): string;
+        // proportionalSize
+        // getOrigin
     }
+
     let defaults: {
         attrs: {
             'fill-opacity': number;
@@ -79,7 +86,7 @@ declare module "@svgdotjs/svg.js" {
         '>'(pos: number): number;
         '<'(pos: number): number;
         bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number;
-        steps(steps: number, stepPosition?: string): (t: number, beforeFlag?: boolean) => number;
+        steps(steps: number, stepPosition?: "jump-start"|"jump-end"|"jump-none"|"jump-both"|"start"|"end"): (t: number, beforeFlag?: boolean) => number;
     }
 
     let regex: {
@@ -117,7 +124,7 @@ declare module "@svgdotjs/svg.js" {
 
     // ************ Standard object/option/properties declaration ************
 
-    type AttrNumberValue = number | "auto"
+    type AttrNumberValue = number | "auto";
 
     /**
      * The SVG core attributes are all the common attributes that can be specified on any SVG element.
@@ -384,7 +391,7 @@ declare module "@svgdotjs/svg.js" {
         unit: any
 
         toString(): string;
-        toJSON(): Object;  // same as toString
+        toJSON(): object;  // same as toString
         toArray(): NumberUnit
         valueOf(): number;
         plus(number: NumberAlias): Number;
@@ -540,19 +547,22 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // List.js
-    interface List<T> extends Array<T> {
+    interface List<T> extends BuiltInArray<T> {
+        // I have no clue how to deal with this
+        // [key: string]: (...arg0: any[]) => List<T>
+        // [key: string]: () => List<any>
         each(fn: Function): void
         each(...args: any[]): void
         toArray(): T[]
     }
 
-    class EventObject {
-        [key: string]: EventObject;
+    class Eventobject {
+        [key: string]: Eventobject;
     }
 
     // EventTarget.js
     class EventTarget {
-        events: EventObject
+        events: Eventobject
 
         addEventListener(): void
         dispatch(event: Event | string, data?: object): Event
@@ -616,10 +626,6 @@ declare module "@svgdotjs/svg.js" {
         constructor(a: number, b: number, c: number, d: number, space?: string)
         constructor(a: number[], space?: string)
 
-        brightness(): number;
-        morph(color: ColorAlias): Color;
-        at(pos: number): Color;
-
         rgb(): Color
         lab(): Color
         xyz(): Color
@@ -633,14 +639,17 @@ declare module "@svgdotjs/svg.js" {
 
         to(a: any): Morphable
         fromArray(a: any): this
+
+        static random(mode: 'sine', time?: number): Color
+        static random(mode?: string): Color
     }
 
     // Box.js
     interface BoxLike {
-        height?: number;
-        width?: number;
-        y?: number;
-        x?: number;
+        height: number;
+        width: number;
+        y: number;
+        x: number;
         cx?: number;
         cy?: number;
         w?: number;
@@ -667,7 +676,7 @@ declare module "@svgdotjs/svg.js" {
         constructor(source: DOMRect);
         constructor(x: number, y: number, width: number, height: number);
 
-        merge(box: Box): Box;
+        merge(box: BoxLike): Box;
         transform(m: Matrix): Box
         addOffset(): this;
         toString(): string;
@@ -677,7 +686,7 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // Morphable.js
-    type MorphValueLike = string | number | ObjectBag | NonMorphable | MatrixExtract | Array<any> | any[]
+    type MorphValueLike = string | number | objectBag | NonMorphable | MatrixExtract | Array<any> | any[]
 
     class Morphable {
         constructor();
@@ -695,23 +704,23 @@ declare module "@svgdotjs/svg.js" {
         at(pos: number): any
     }
 
-    class ObjectBag {
+    class objectBag {
         constructor();
-        constructor(a: Object);
-        valueOf(): Object
-        toArray(): Object[]
+        constructor(a: object);
+        valueOf(): object
+        toArray(): object[]
 
-        to(a: Object): Morphable
+        to(a: object): Morphable
         fromArray(a: any[]): this
     }
 
     class NonMorphable {
-        constructor(a: Object)
-        valueOf(): Object
-        toArray(): Object[]
+        constructor(a: object)
+        valueOf(): object
+        toArray(): object[]
 
-        to(a: Object): Morphable
-        fromArray(a: Object): this
+        to(a: object): Morphable
+        fromArray(a: object): this
     }
 
     class TransformBag {
@@ -769,6 +778,7 @@ declare module "@svgdotjs/svg.js" {
         unschedule(runner: Runner): this
         getEndTime(): number
         updateTime(): this
+        persist(dtOrForever?: number | boolean): this
         play(): this
         pause(): this
         stop(): this
@@ -801,7 +811,7 @@ declare module "@svgdotjs/svg.js" {
         constructor(options: object);
         constructor(options: Controller);
 
-        static sanitise: (duration?: TimeLike, delay?: number, when?: string) => Object
+        static sanitise: (duration?: TimeLike, delay?: number, when?: string) => object
 
         element(): Element
         element(el: Element): this
@@ -823,6 +833,7 @@ declare module "@svgdotjs/svg.js" {
         duration(): number
         loops(): number
         loops(p: number): this
+        persist(dtOrForever?: number | boolean): this
         position(): number
         position(p: number): this
         progress(): number
@@ -839,10 +850,10 @@ declare module "@svgdotjs/svg.js" {
         clearTransformsFromQueue(): void
 
         // extends prototypes
-        attr(a: string | Object, v?: string): this
-        css(s: string | Object, v?: string): this
-        styleAttr(type: string, name: string | Object, val?: string): this
-        zoom(level: NumberAlias, point: Point): this
+        attr(a: string | object, v?: string): this
+        css(s: string | object, v?: string): this
+        styleAttr(type: string, name: string | object, val?: string): this
+        zoom(level: NumberAlias, point?: Point): this
         transform(transforms: MatrixTransformParam, relative?: boolean, affine?: boolean): this
         x(x: number): this
         y(y: number): this
@@ -855,7 +866,7 @@ declare module "@svgdotjs/svg.js" {
         size(width: number, height: number): this
         width(width: number): this
         height(height: number): this
-        plot(a: Object): this
+        plot(a: object): this
         plot(a: number, b: number, c: number, d: number): this
         leading(value: number): this
         viewbox(x: number, y: number, width: number, height: number): this
@@ -877,12 +888,12 @@ declare module "@svgdotjs/svg.js" {
         immediates: Queue
 
         timer(): boolean
-        frame(fn: Function): Object
-        timeout(fn: Function, delay?: number): Object
-        immediate(fn: Function): Object
-        cancelFrame(o: Object): void
-        clearTimeout(o: Object): void
-        cancelImmediate(o: Object): void
+        frame(fn: Function): object
+        timeout(fn: Function, delay?: number): object
+        immediate(fn: Function): object
+        cancelFrame(o: object): void
+        clearTimeout(o: object): void
+        cancelImmediate(o: object): void
     }
 
     // use with parent query
@@ -924,15 +935,15 @@ declare module "@svgdotjs/svg.js" {
         node: HTMLElement | SVGElement;
         type: string;
 
-        constructor(node?: HTMLElement, attr?: Object);
-        constructor(att: Object);
+        constructor(node?: HTMLElement, attr?: object);
+        constructor(att: object);
         add(element: Element, i?: number): this;
         addTo(parent: Dom | HTMLElement | string): this
         children(): List<Element>;
         clear(): this;
         clone(): this;
         each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
-        element(element: string, inherit?: Object): this;
+        element(element: string, inherit?: object): this;
         first(): Element;
         get(i: number): Element;
         getEventHolder(): LinkedHTMLElement;
@@ -994,17 +1005,17 @@ declare module "@svgdotjs/svg.js" {
          */
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
-        attr(obj: Object): this;
-        attr(obj: Object[]): Object;
+        attr(obj: object): this;
+        attr(obj: object[]): object;
 
         // prototype extend Selector in selector.js
         find(query: string): List<Element>
         findOne(query: string): Dom
 
         // prototype method register in data.js
-        data(a: string): Object | string | number
-        data(a: string, v: Object, substain?: boolean): this
-        data(a: Object): this
+        data(a: string): object | string | number
+        data(a: string, v: object, substain?: boolean): this
+        data(a: object): this
 
         // prototype method register in arrange.js
         siblings(): List<Element>
@@ -1028,11 +1039,11 @@ declare module "@svgdotjs/svg.js" {
         toggleClass(name: string): this
 
         // prototype method register in css.js
-        css(): CSSStyleDeclaration;
+        css(): object;
         css(style: string): string
+        css(style: string[]): object;
         css(style: string, val: any): this
-        css(style: CSSStyleDeclaration): this
-        css(style: string[]): CSSStyleDeclaration;
+        css(style: object): this
         show(): this
         hide(): this
         visible(): boolean
@@ -1040,10 +1051,10 @@ declare module "@svgdotjs/svg.js" {
         // memory.js
         remember(name: string, value: any): this;
         remember(name: string): any;
-        remember(obj: Object): this;
+        remember(obj: object): this;
         forget(...keys: string[]): this;
         forget(): this;
-        memory(): Object;
+        memory(): object;
 
         addEventListener(): void
         dispatch(event: Event | string, data?: object): Event
@@ -1052,8 +1063,8 @@ declare module "@svgdotjs/svg.js" {
         getEventHolder(): this | Node
         getEventTarget(): this | Node
 
-        on(events: string | Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): this;
-        off(events?: string | Event[], cb?: EventListener | number): this;
+        // on(events: string | Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): this;
+        // off(events?: string | Event[], cb?: EventListener | number): this;
         removeEventListener(): void
     }
 
@@ -1061,7 +1072,7 @@ declare module "@svgdotjs/svg.js" {
     class ClipPath extends Container {
         constructor();
         constructor(node?: SVGClipPathElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         node: SVGClipPathElement;
 
         targets(): List<Element>;
@@ -1109,6 +1120,7 @@ declare module "@svgdotjs/svg.js" {
         viewbox(x: number, y: number, width: number, height: number): this;
         textPath(text: string | Text, path: string | Path): TextPath
         symbol(): Symbol
+        zoom(level: NumberAlias, point?: Point)
     }
 
     class Defs extends Container {
@@ -1150,20 +1162,20 @@ declare module "@svgdotjs/svg.js" {
         opacity(value: number): this
         font(a: string): string
         font(a: string, v: string | number): this
-        font(a: Object): this
+        font(a: object): this
     }
 
     // Symbol.js
     class Symbol extends Container {
         constructor(svgElement?: SVGSymbolElement);
-        constructor(attr: Object)
+        constructor(attr: object)
         node: SVGSymbolElement;
     }
 
     class Element extends Dom implements Sugar {
         constructor(node?: SVGElement);
-        constructor(attr: Object);
-        node: HTMLElement | SVGElement;
+        constructor(attr: object);
+        node: SVGElement;
         type: string;
         dom: any
 
@@ -1174,8 +1186,8 @@ declare module "@svgdotjs/svg.js" {
         attr(): any;
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
-        attr(obj: string[]): Object;
-        attr(obj: Object): this;
+        attr(obj: string[]): object;
+        attr(obj: object): this;
         back(): this;
         backward(): this;
         bbox(): Box;
@@ -1193,7 +1205,7 @@ declare module "@svgdotjs/svg.js" {
         cy(y: number): this;
         data(name: string, value: any, sustain?: boolean): this;
         data(name: string): any;
-        data(val: Object): this;
+        data(val: object): this;
         dblclick(cb: Function | null): this;
         defs(): Defs;
         dmove(x: NumberAlias, y: NumberAlias): this;
@@ -1209,7 +1221,7 @@ declare module "@svgdotjs/svg.js" {
         fire(event: string, data?: any): this;
         flip(a: string, offset?: number): this;
         flip(offset?: number): this;
-        font(a: Object): this
+        font(a: object): this
         font(a: string, v: string | number): this
         font(a: string): string
         forget(...keys: string[]): this;
@@ -1217,7 +1229,7 @@ declare module "@svgdotjs/svg.js" {
         forward(): this;
         front(): this;
         hasClass(name: string): boolean;
-        height(): number;
+        height(): NumberAlias;
         height(height: NumberAlias): this;
         hide(): this;
         hide(): this;
@@ -1235,7 +1247,7 @@ declare module "@svgdotjs/svg.js" {
         matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
         matrixify(): Matrix;
-        memory(): Object;
+        memory(): object;
         mousedown(cb: Function | null): this;
         mousemove(cb: Function | null): this;
         mouseout(cb: Function | null): this;
@@ -1246,23 +1258,23 @@ declare module "@svgdotjs/svg.js" {
         move(x: NumberAlias, y: NumberAlias): this;
         native(): LinkedHTMLElement;
         next(): Element;
-        off(events?: string | Event[], cb?: EventListener | number): this;
-        on(event: string, cb: Function, context?: Object): this;
+        // off(events?: string | Event[], cb?: EventListener | number): this;
+        // on(event: string, cb: Function, context?: object): this;
         opacity(): number;
         opacity(o: number): this;
         relative(x: number, y: number): this
         shear(lam: Matrix, cx: number, cy: number): this
         toRoot(): Svg;
         /**
-         * By default parents will return a list of element up until html Document.
+         * By default parents will return a list of elements up until the root svg.
          */
         parents(): List<Element>
         /**
-         * List the parent by hierarchy until the given parent type or object. If the given value is null
+         * List the parent by hierarchy until the given parent type or matcher. If the given value is null
          * then the result is only provided the list up until Svg root element which mean no Dom parent element is included.
          * @param util a parent type
          */
-        parents<T extends Dom>(util: string | null | T | HTMLElement): List<Element>
+        parents<T extends Dom>(util: QuerySelector | T | null ): List<Element>
         /**
          * Get reference svg element based on the given attribute.
          * @param attr a svg attribute
@@ -1279,7 +1291,7 @@ declare module "@svgdotjs/svg.js" {
         reference(type: string): Element;
         remember(name: string, value: any): this;
         remember(name: string): any;
-        remember(obj: Object): this;
+        remember(obj: object): this;
         remove(): this;
         removeClass(name: string): this;
         root(): Svg;
@@ -1314,11 +1326,11 @@ declare module "@svgdotjs/svg.js" {
         unmask(): this;
         untransform(): this;
         visible(): boolean;
-        width(): number;
+        width(): NumberAlias;
         width(width: NumberAlias): this;
-        x(): number;
+        x(): NumberAlias;
         x(x: NumberAlias): this;
-        y(): number;
+        y(): NumberAlias;
         y(y: NumberAlias): this;
     }
 
@@ -1367,7 +1379,7 @@ declare module "@svgdotjs/svg.js" {
     }
     class Gradient extends Container {
         constructor(node?: SVGGradientElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         constructor(type: string);
         node: SVGGradientElement;
 
@@ -1392,7 +1404,7 @@ declare module "@svgdotjs/svg.js" {
     // group.js
     class G extends Container {
         constructor(node?: SVGGElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         node: SVGGElement;
         gbox(): Box;
     }
@@ -1400,7 +1412,7 @@ declare module "@svgdotjs/svg.js" {
     // hyperlink.js
     class A extends Container {
         constructor(node?: SVGAElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         node: SVGAElement;
         to(url: string): this;
         to(): string;
@@ -1411,9 +1423,9 @@ declare module "@svgdotjs/svg.js" {
     // image.js
     class Image extends Shape {
         constructor(node?: SVGImageElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         node: SVGImageElement;
-        load(url?: string): this;
+        load(url?: string, callback?: (event: Event) => void): this;
     }
 
     // line.js
@@ -1449,7 +1461,7 @@ declare module "@svgdotjs/svg.js" {
     // mask.js
     class Mask extends Container {
         constructor(node?: SVGMaskElement);
-        constructor(attr: Object);
+        constructor(attr: object);
         node: SVGMaskElement;
         remove(): this
         targets(): List<Element>;
@@ -1493,7 +1505,7 @@ declare module "@svgdotjs/svg.js" {
         plot(): PointArray
         plot(p: PointArrayAlias): this;
         clear(): this;
-        move(x: NumberAlias, y: NumberAlias): this;
+        move(x: number, y: number): this;
         size(width: number, height?: number): this;
     }
 
@@ -1518,13 +1530,21 @@ declare module "@svgdotjs/svg.js" {
         array(): PointArray;
         plot(): PointArray
         plot(p: PointArrayAlias): this;
+        x(): number;
+        x(x: number): this
+        y(): number;
+        y(y: number): this
+        height(): number
+        height(h: number): this
+        width(): number
+        width(w: number): this
         move(x: number, y: number): this;
         size(width: number, height?: number): this;
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
         marker(position: string, marker: Marker): Marker;
     }
 
-    class Polygon extends Shape implements poly {
+    class Polygon extends Shape implements poly, pointed {
         constructor(node?: SVGPolygonElement);
         constructor(attr: PolyAttr)
 
@@ -1532,6 +1552,14 @@ declare module "@svgdotjs/svg.js" {
         array(): PointArray;
         plot(): PointArray;
         plot(p: PointArrayAlias): this;
+        x(): number;
+        x(x: number): this
+        y(): number;
+        y(y: number): this
+        height(): number
+        height(h: number): this
+        width(): number
+        width(w: number): this
         move(x: number, y: number): this;
         size(width: number, height?: number): this;
         marker(position: string, width?: number, height?: number, block?: (marker: Marker) => void): Marker;
@@ -1601,12 +1629,12 @@ declare module "@svgdotjs/svg.js" {
         path(): TextPath
         path(d: PathArrayAlias | Path): TextPath;
         track(): Element;
-        textPath(): Element;
         ax(): string
         ax(x: string): this
         ay(): string
         ay(y: string): this
         amove(x: number, y: number): this
+        textPath(): TextPath
 
         // main.js, from extend/copy prototypes from Tspan
         tspan(text: string): Tspan;
@@ -1643,7 +1671,7 @@ declare module "@svgdotjs/svg.js" {
 
     // use.js
     class Use extends Shape {
-        element(element: string, file?: string): this;
+        use(element: string, file?: string): this;
     }
 
     // viewbox.js
@@ -1654,10 +1682,7 @@ declare module "@svgdotjs/svg.js" {
         y: number;
         width: number;
         height: number;
-        zoom?: number;
         toString(): string;
-        morph(source: ViewBoxAlias): ViewBox;
-        morph(x: number, y: number, width: number, height: number): ViewBox;
         at(pos: number): ViewBox;
     }
 }

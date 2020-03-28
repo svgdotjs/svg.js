@@ -11,8 +11,8 @@ import Defs from './Defs.js'
 import { globals } from '../utils/window.js'
 
 export default class Svg extends Container {
-  constructor (node) {
-    super(nodeOrNew('svg', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('svg', node), attrs)
     this.namespace()
   }
 

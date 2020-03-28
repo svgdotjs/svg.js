@@ -10,8 +10,8 @@ import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
 
 export default class Circle extends Shape {
-  constructor (node) {
-    super(nodeOrNew('circle', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('circle', node), attrs)
   }
 
   radius (r) {

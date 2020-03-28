@@ -1,7 +1,8 @@
-import { buildCanvas, buildFixtures, clear } from './helpers.js'
+/* globals beforeEach, afterEach */
+import { buildCanvas, clear } from './helpers.js'
 
 beforeEach(() => {
-  //buildFixtures()
+  // buildFixtures()
   buildCanvas()
   window.container = document.getElementById('canvas')
 })

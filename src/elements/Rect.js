@@ -10,8 +10,8 @@ import Shape from './Shape.js'
 
 export default class Rect extends Shape {
   // Initialize node
-  constructor (node) {
-    super(nodeOrNew('rect', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('rect', node), attrs)
   }
 }
 

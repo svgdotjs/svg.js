@@ -681,7 +681,7 @@ extend(Runner, {
   },
 
   zoom (level, point) {
-    if (this._tryRetarget('zoom', to, point)) return this
+    if (this._tryRetarget('zoom', level, point)) return this
 
     var morpher = new Morphable(this._stepper).to(new SVGNumber(level))
 

@@ -1,7 +1,8 @@
-import { Box, G, Rect, makeInstance } from '../../../src/main.js';
+/* globals describe, expect, it, jasmine, spyOn */
 
-const { any, createSpy, objectContaining } = jasmine
+import { Box, G, Rect, makeInstance } from '../../../src/main.js'
 
+const { any, objectContaining } = jasmine
 
 describe('G.js', () => {
 
@@ -11,7 +12,7 @@ describe('G.js', () => {
     })
 
     it('sets passed attributes on the element', () => {
-      expect(new G({id:'foo'}).id()).toBe('foo')
+      expect(new G({ id: 'foo' }).id()).toBe('foo')
     })
   })
 
@@ -31,8 +32,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
       const g = canvas.group()
 
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.dmove(10, 10)
 
@@ -82,8 +83,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -107,8 +108,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -132,8 +133,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -152,7 +153,7 @@ describe('G.js', () => {
       const rbox2 = g.children()[1].rbox()
 
       expect(rbox1.width).toBeCloseTo(90.9, 1)
-      expect(rbox2.width).toBeCloseTo(63.6, 1)
+      expect(Math.floor(rbox2.width * 10) / 10).toBeCloseTo(63.6, 1) // Browsers have different opinion on this one (chrome: 63.6, ff: 63.7)
 
       expect(rbox1.x).toBeCloseTo(10, 1)
       expect(rbox2.x).toBeCloseTo(46.4, 1)
@@ -183,7 +184,6 @@ describe('G.js', () => {
       expect(newBox.h).toBeCloseTo(100, 4)
     })
 
-
   })
 
   describe('width()', () => {
@@ -191,8 +191,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -203,8 +203,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -215,7 +215,7 @@ describe('G.js', () => {
       const rbox2 = g.children()[1].rbox()
 
       expect(rbox1.width).toBeCloseTo(90.9, 1)
-      expect(rbox2.width).toBeCloseTo(63.6, 1)
+      expect(Math.floor(rbox2.width * 10) / 10).toBeCloseTo(63.6, 1) // Browsers have different opinion on this one (chrome: 63.6, ff: 63.7)
 
       expect(rbox1.x).toBeCloseTo(10, 3)
       expect(rbox2.x).toBeCloseTo(46.4, 1)
@@ -227,8 +227,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 
@@ -239,8 +239,8 @@ describe('G.js', () => {
       const canvas = makeInstance().addTo('#canvas')
 
       const g = new G()
-      g.add(new Rect({width:100, height:120, x:10, y:20}))
-      g.add(new Rect({width:70, height:100, x:50, y:60}))
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
 
       g.addTo(canvas)
 

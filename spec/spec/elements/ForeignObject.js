@@ -1,7 +1,8 @@
-import { makeInstance, ForeignObject } from '../../../src/main.js';
+/* globals describe, expect, it, jasmine */
 
-const { any, createSpy, objectContaining } = jasmine
+import { makeInstance, ForeignObject } from '../../../src/main.js'
 
+const { any } = jasmine
 
 describe('ForeignObject.js', () => {
 
@@ -11,7 +12,7 @@ describe('ForeignObject.js', () => {
     })
 
     it('sets passed attributes on the element', () => {
-      expect(new ForeignObject({id:'foo'}).id()).toBe('foo')
+      expect(new ForeignObject({ id: 'foo' }).id()).toBe('foo')
     })
   })
 

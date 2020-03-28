@@ -4,8 +4,8 @@ import { xlink } from '../modules/core/namespaces.js'
 import Container from './Container.js'
 
 export default class A extends Container {
-  constructor (node) {
-    super(nodeOrNew('a', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('a', node), attrs)
   }
 
   // Link url
@@ -27,9 +27,31 @@ registerMethods({
     })
   },
   Element: {
-    // Create a hyperlink element
-    linkTo: function (url) {
-      var link = new A()
+    unlink () {
+      var link = this.linker()
+
+      if (!link) return this
+
+      var parent = link.parent()
+
+      if (!parent) {
+        return this.remove()
+      }
+
+      var index = parent.index(link)
+      parent.add(this, index)
+
+      link.remove()
+      return this
+    },
+    linkTo (url) {
+      // reuse old link if possible
+      var link = this.linker()
+
+      if (!link) {
+        link = new A()
+        this.wrap(link)
+      }
 
       if (typeof url === 'function') {
         url.call(link, link)
@@ -37,7 +59,15 @@ registerMethods({
         link.to(url)
       }
 
-      return this.parent().put(link).put(this)
+      return this
+    },
+    linker () {
+      var link = this.parent()
+      if (link && link.node.nodeName.toLowerCase() === 'a') {
+        return link
+      }
+
+      return null
     }
   }
 })

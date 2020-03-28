@@ -87,16 +87,13 @@ registerMethods([ 'Element', 'Runner' ], {
   },
 
   // Map flip to transform
-  flip: function (direction, around) {
-    var directionString = typeof direction === 'string' ? direction
-      : isFinite(direction) ? 'both'
-      : 'both'
-    var origin = (direction === 'both' && isFinite(around)) ? [ around, around ]
-      : (direction === 'x') ? [ around, 0 ]
-      : (direction === 'y') ? [ 0, around ]
-      : isFinite(direction) ? [ direction, direction ]
-      : [ 0, 0 ]
-    return this.transform({ flip: directionString, origin: origin }, true)
+  flip: function (direction = 'both', origin = 'center') {
+    if ('xybothtrue'.indexOf(direction) === -1) {
+      origin = direction
+      direction = 'both'
+    }
+
+    return this.transform({ flip: direction, origin: origin }, true)
   },
 
   // Opacity
@@ -141,18 +138,6 @@ registerMethods([ 'Element', 'Runner' ], {
         : a === 'size' || a === 'family' || a === 'weight' || a === 'stretch' || a === 'variant' || a === 'style'
           ? this.attr('font-' + a, v)
           : this.attr(a, v)
-  }
-})
-
-registerMethods('Text', {
-  ax (x) {
-    return this.attr('x', x)
-  },
-  ay (y) {
-    return this.attr('y', y)
-  },
-  amove (x, y) {
-    return this.ax(x).ay(y)
   }
 })
 

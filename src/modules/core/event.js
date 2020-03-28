@@ -3,9 +3,9 @@ import { makeInstance } from '../../utils/adopter.js'
 import { globals } from '../../utils/window.js'
 
 let listenerId = 0
-const windowEvents = {}
+export const windowEvents = {}
 
-function getEvents (instance) {
+export function getEvents (instance) {
   let n = instance.getEventHolder()
 
   // We dont want to save events in global space
@@ -14,12 +14,13 @@ function getEvents (instance) {
   return n.events
 }
 
-function getEventTarget (instance) {
+export function getEventTarget (instance) {
   return instance.getEventTarget()
 }
 
-function clearEvents (instance) {
-  const n = instance.getEventHolder()
+export function clearEvents (instance) {
+  let n = instance.getEventHolder()
+  if (n === globals.window) n = windowEvents
   if (n.events) n.events = {}
 }
 
@@ -120,14 +121,14 @@ export function off (node, events, listener, options) {
   })
 }
 
-export function dispatch (node, event, data) {
+export function dispatch (node, event, data, options) {
   var n = getEventTarget(node)
 
   // Dispatch event
   if (event instanceof globals.window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new globals.window.CustomEvent(event, { detail: data, cancelable: true })
+    event = new globals.window.CustomEvent(event, { detail: data, cancelable: true, ...options })
     n.dispatchEvent(event)
   }
   return event

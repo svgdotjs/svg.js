@@ -31,7 +31,7 @@ module.exports = function (config) {
         included: false,
         served: true
       },
-      'dist/svg.min.js',
+      'dist/svg.js',
       'spec/spec/*.js'
     ],
 

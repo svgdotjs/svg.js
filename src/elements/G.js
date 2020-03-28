@@ -6,8 +6,8 @@ import Matrix from '../types/Matrix.js'
 import Point from '../types/Point.js'
 
 export default class G extends Container {
-  constructor (node) {
-    super(nodeOrNew('g', node), node)
+  constructor (node, attrs = node) {
+    super(nodeOrNew('g', node), attrs)
   }
 
   x (x, box = this.bbox()) {

@@ -7,6 +7,26 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.0.17]
+
+### Fixed
+ - fixed `zoom()` method of runner which was passed a wrong parameter
+ - fixed positioning methods of `TSpan` to position them by its bounding box
+ - fixed `flip()` method which flips correctly by center by default now and accepts correct arguments
+ - fixed a case in `rbox()` where not always all values of the box were updated
+ - fixed `getOrigin()` function used by `transform()` so that all origin (#1085) popssibilities specified in the docs are working
+ - fixed positioning of text by its baseline when using `amove()`
+ - fixed tons of typings in the svg.d.ts file
+
+### Added
+ - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
+ - added `unlink()` and `linker()` to hyperlinked elements to remove or access the underling `<a>` element
+ - added `wrap()` method to `Dom` which lets you wrap an element by another one
+ - added `orient()` method to `Marker`
+ - added `options` parameter to `dispatch()` and `fire()` to allow for more special needs
+ - added `newLine()` constructor to `Text` to create a tspan marked as new line (#1088)
+ - added lots of tests in es6 format
+
 ## [3.0.16] - 2019-11-12
 
 ### Fixed

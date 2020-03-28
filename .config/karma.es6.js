@@ -33,13 +33,31 @@ module.exports = function (config) {
           type: 'module'
         },
         {
-          pattern: 'spec/spec/*/*.js',
+          pattern: 'spec/spec/*/**/*.js',
           included: true,
           type: 'module'
         }
       ],
 
-      reporters: ['progress'],
+      preprocessors: {
+        'src/**/*.js': ['coverage']
+      },
+
+      reporters: ['progress', 'coverage'],
+      coverageReporter: {
+        // Specify a reporter type.
+        type: 'lcov',
+        dir: 'coverage/',
+        subdir: function (browser) {
+          // normalization process to keep a consistent browser name accross different OS
+          return browser.toLowerCase().split(/[ /-]/)[0] // output the results into: './coverage/firefox/'
+        },
+        instrumenterOptions: {
+          istanbul: {
+              esModules: true
+          }
+        }
+      },
       browsers: ['ChromeHeadless', 'FirefoxHeadless'],
       singleRun: false,
       concurrency: Infinity
