@@ -162,6 +162,7 @@ export default class Dom extends EventTarget {
 
   // Basically does the same as `add()` but returns the added element instead
   put (element, i) {
+    element = makeInstance(element)
     this.add(element, i)
     return element
   }
@@ -299,7 +300,7 @@ export default class Dom extends EventTarget {
     const parent = this.parent()
 
     if (!parent) {
-      return node.put(this)
+      return this.addTo(node)
     }
 
     const position = parent.index(this)

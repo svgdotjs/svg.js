@@ -1,16 +1,17 @@
 import { getWindow } from '../src/utils/window.js'
+import { ns } from '../src/modules/core/namespaces.js'
 
-function tag(name, attrs, children) {
-  let doc = getWindow().document
-  var el = doc.createElement(name)
+function tag (name, attrs, children) {
+  const doc = getWindow().document
+  const el = doc.createElementNS(ns, name)
+  let i
 
-  for(var i in attrs){
+  for (i in attrs) {
     el.setAttribute(i, attrs[i])
   }
 
-  for(var i in children){
-    if(typeof children[i] == 'string')
-      children[i] = doc.createTextNode(children[i])
+  for (i in children) {
+    if (typeof children[i] === 'string') { children[i] = doc.createTextNode(children[i]) }
 
     el.appendChild(children[i])
   }
@@ -20,21 +21,21 @@ function tag(name, attrs, children) {
 
 export function fixtures () {
   return tag('svg', {
-    height:0,
-    width:0,
-    id:'inlineSVG'
-  },[
+    height: 0,
+    width: 0,
+    id: 'inlineSVG'
+  }, [
     tag('defs', {}, [
       tag('linearGradient', {}, [
-        tag('stop', {offset: '5%',  'stop-color': 'green'}),
-        tag('stop', {offset: '95%', 'stop-color': 'gold'}),
+        tag('stop', { offset: '5%', 'stop-color': 'green' }),
+        tag('stop', { offset: '95%', 'stop-color': 'gold' })
       ]),
       tag('radialGradient', {}, [
-        tag('stop', {offset: '5%',  'stop-color': 'green'}),
-        tag('stop', {offset: '95%', 'stop-color': 'gold'}),
+        tag('stop', { offset: '5%', 'stop-color': 'green' }),
+        tag('stop', { offset: '95%', 'stop-color': 'gold' })
       ])
     ]),
-    tag('desc', {}, ['Some description']),
+    tag('desc', {}, [ 'Some description' ]),
     tag('path', {
       id: 'lineAB',
       d: 'M 100 350 l 150 -300',
@@ -66,24 +67,24 @@ export function fixtures () {
       'stroke-width': '2',
       fill: 'black',
       id: 'pointGroup'
-    },[
+    }, [
       tag('circle', {
         id: 'pointA',
         cx: '100',
         cy: '350',
-        r: '3',
+        r: '3'
       }),
       tag('circle', {
         id: 'pointB',
         cx: '250',
         cy: '50',
-        r: '50',
+        r: '50'
       }),
       tag('circle', {
         id: 'pointC',
         cx: '400',
         cy: '350',
-        r: '50',
+        r: '50'
       })
     ]),
     tag('g', {
@@ -93,33 +94,33 @@ export function fixtures () {
       stroke: 'none',
       'text-anchor': 'middle',
       id: 'labelGroup'
-    },[
+    }, [
       tag('text', {
         x: '100',
         y: '350',
-        dy: '-30',
-      }, ['A']),
+        dy: '-30'
+      }, [ 'A' ]),
       tag('text', {
         x: '250',
         y: '50',
-        dy: '-10',
-      }, ['B']),
+        dy: '-10'
+      }, [ 'B' ]),
       tag('text', {
         x: '400',
         y: '350',
-        dx: '30',
-      }, ['C'])
+        dx: '30'
+      }, [ 'C' ])
     ]),
-    tag('polygon', {points: '200,10 250,190 160,210'}),
-    tag('polyline', {points: '20,20 40,25 60,40 80,120 120,140 200,180'})
+    tag('polygon', { points: '200,10 250,190 160,210' }),
+    tag('polyline', { points: '20,20 40,25 60,40 80,120 120,140 200,180' })
   ])
 }
 
 export function buildFixtures () {
-  let doc = getWindow().document
-  let body = doc.body || doc.documentElement
+  const doc = getWindow().document
+  const body = doc.body || doc.documentElement
 
-  let div = doc.createElement('div')
+  const div = doc.createElement('div')
   div.id = 'fixtures'
 
   try {
@@ -134,10 +135,10 @@ export function buildFixtures () {
 }
 
 export function buildCanvas () {
-  let doc = getWindow().document
-  let body = doc.body || doc.documentElement
+  const doc = getWindow().document
+  const body = doc.body || doc.documentElement
 
-  let div = doc.createElement('div')
+  const div = doc.createElement('div')
   div.id = 'canvas'
 
   try {
@@ -150,9 +151,9 @@ export function buildCanvas () {
 }
 
 export function clear () {
-  let doc = getWindow().document
-  let canvas = doc.getElementById('canvas')
-  let fixtures = doc.getElementById('fixtures')
+  const doc = getWindow().document
+  const canvas = doc.getElementById('canvas')
+  const fixtures = doc.getElementById('fixtures')
 
   // remove if present
   fixtures && fixtures.parentNode.removeChild(fixtures)

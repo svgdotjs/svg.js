@@ -1,6 +1,7 @@
-/* globals describe, expect, it, beforeEach */
+/* globals describe, expect, it, beforeEach, jasmine */
 
 import { SVG, G, Rect } from '../../../src/main.js'
+const { any } = jasmine
 
 describe('Dom.js', function () {
   describe('wrap()', function () {
@@ -35,6 +36,36 @@ describe('Dom.js', function () {
       var position = rect.position()
       var g = new G()
       expect(rect.wrap(g).parent().position()).toBe(position)
+    })
+
+    it('allows to pass an svg string as element', () => {
+      rect.wrap('<g>')
+      expect(rect.parent()).toEqual(any(G))
+      expect(rect.parent().parent()).toBe(canvas)
+    })
+
+    it('allows to pass an svg string as element', () => {
+      rect.wrap('<g>')
+      expect(rect.parent()).toEqual(any(G))
+      expect(rect.parent().parent()).toBe(canvas)
+    })
+
+    it('allows to pass an svg string as element when element not in the dom', () => {
+      var rect = new Rect()
+      rect.wrap(SVG('<g>'))
+      expect(rect.parent()).toEqual(any(G))
+      expect(rect.parent().parent()).toBe(null)
+    })
+
+    it('allows to pass an svg node as element', () => {
+      var g = new G()
+      const node = g.node
+      delete node.instance
+      rect.wrap(node)
+      expect(rect.parent()).toEqual(any(G))
+      expect(rect.parent().node).toBe(node)
+      expect(rect.parent()).not.toBe(g)
+      expect(rect.parent().parent()).toBe(canvas)
     })
   })
 })

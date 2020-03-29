@@ -14,12 +14,13 @@ import {
   root,
   G,
   Gradient,
-  Dom
+  Dom,
+  Path
 } from '../../../src/main.js'
 
 import { mockAdopt, assignNewId, adopt } from '../../../src/utils/adopter.js'
 import { buildFixtures } from '../../helpers.js'
-import { globals } from '../../../src/utils/window.js'
+import { globals, getWindow } from '../../../src/utils/window.js'
 
 const { any, createSpy, objectContaining } = jasmine
 
@@ -39,7 +40,7 @@ describe('adopter.js', () => {
   })
 
   describe('makeInstance()', () => {
-    const adoptSpy = createSpy('adopt')
+    const adoptSpy = createSpy('adopt', adopt).and.callThrough()
 
     beforeEach(() => {
       adoptSpy.calls.reset()
@@ -64,16 +65,26 @@ describe('adopter.js', () => {
     })
 
     it('creates an element from passed svg string', () => {
-      makeInstance('<rect width="200px">')
+      const rect = makeInstance('<rect width="200px">')
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+      expect(rect).toEqual(any(Rect))
+      expect(rect.parent()).toBe(null)
     })
 
     it('creates an element in the html namespace from passed html string', () => {
-      makeInstance('<div>', true)
+      const div = makeInstance('<div>', true)
+
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'DIV', namespaceURI: 'http://www.w3.org/1999/xhtml' }))
+      expect(div).toEqual(any(Dom))
+      expect(div.parent()).toBe(null)
+    })
+
+    it('does not have its wrapper attached', () => {
+      const rect = makeInstance('<rect width="200px">')
+      expect(rect.parent()).toBe(null)
     })
 
     it('searches for element in dom if selector given', () => {
@@ -81,18 +92,21 @@ describe('adopter.js', () => {
 
       const path = globals.window.document.getElementById('lineAB')
 
-      makeInstance('#lineAB')
-      makeInstance('#doesNotExist')
+      const pathInst = makeInstance('#lineAB')
+      const noEl = makeInstance('#doesNotExist')
 
       expect(adoptSpy).toHaveBeenCalledWith(path)
       expect(adoptSpy).toHaveBeenCalledWith(null)
+      expect(pathInst).toEqual(any(Path))
+      expect(noEl).toBe(null)
     })
 
     it('calls adopt when passed a node', () => {
-      makeInstance(create('rect'))
+      const rect = makeInstance(create('rect'))
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+      expect(rect).toEqual(any(Rect))
     })
   })
 
@@ -124,7 +138,7 @@ describe('adopter.js', () => {
     })
 
     it('creates Dom instances for unknown nodes', () => {
-      const div = document.createElement('div')
+      const div = getWindow().document.createElement('div')
       expect(adopt(div)).toEqual(any(Dom))
     })
   })

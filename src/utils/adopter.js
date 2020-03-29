@@ -29,13 +29,15 @@ export function makeInstance (element, isHTML = false) {
   }
 
   // Make sure, that HTML elements are created with the correct namespace
-  var node = isHTML ? globals.document.createElement('div') : create('svg')
-  node.innerHTML = element
+  var wrapper = isHTML ? globals.document.createElement('div') : create('svg')
+  wrapper.innerHTML = element
 
   // We can use firstChild here because we know,
   // that the first char is < and thus an element
-  element = adopter(node.firstChild)
+  element = adopter(wrapper.firstChild)
 
+  // make sure, that element doesnt have its wrapper attached
+  wrapper.removeChild(wrapper.firstChild)
   return element
 }
 

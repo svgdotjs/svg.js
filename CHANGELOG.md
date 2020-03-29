@@ -17,6 +17,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `getOrigin()` function used by `transform()` so that all origin (#1085) popssibilities specified in the docs are working
  - fixed positioning of text by its baseline when using `amove()`
  - fixed tons of typings in the svg.d.ts file
+ - fixed adopter when adopting an svg/html string. It had still its wrapper as parentNode attached
+ - fixed `put()` which correctly creates an svgjs object from the passed element now before returning
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
