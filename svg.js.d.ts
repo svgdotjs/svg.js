@@ -309,6 +309,10 @@ declare module "@svgdotjs/svg.js" {
     type ElementAlias = Dom | Svg | Rect | Line | Polygon | Polyline | Ellipse | ClipPath | Use |
         Text | Path | TextPath | Circle | G | Gradient | Image | Element
 
+    type ElementTypeAlias = typeof Dom | typeof Svg | typeof Rect | typeof Line | typeof Polygon |
+        typeof Polyline | typeof Ellipse | typeof ClipPath | typeof Use | typeof Text | typeof Path |
+        typeof TextPath | typeof Circle | typeof G | typeof Gradient | typeof Image | typeof Element
+
     type AttributeReference = "href" | "marker-start" | "marker-mid" | "marker-end" | "mask" |
         "clip-path" | "filter" | "fill"
 
@@ -896,40 +900,10 @@ declare module "@svgdotjs/svg.js" {
         cancelImmediate(o: object): void
     }
 
-    // use with parent query
-    type ParentTypeAlias = typeof Svg | typeof G | typeof A;
-
-    // use with putIn
-    type ParentClassAlias = Svg | G | A;
-
     /**
      * Just fancy type alias to refer to css query selector.
      */
     type QuerySelector = string
-
-    // cannot really avoid using anonymous any string as typescript does not provide
-    // runtime type check for example, QuerySelector should contain . or # at least
-    // Important: this type alias is provided an overview of how value look as a string
-    type ParentQueryAlias = ParentElement | keyof HTMLElementTagNameMap | ParentTypeAlias | QuerySelector
-
-    type ParentQueryMapping<T> =
-        T extends Tspan | TextPath ? ParentQueryAlias | TextType | ClipPathType | Text | ClipPath | Dom :
-        T extends Shape ? ParentQueryAlias | ClipPathType | ClipPath | Dom :
-        T extends Element ? ParentQueryAlias | Dom : keyof HTMLElementTagNameMap | Dom
-
-    type ParentQueryResultMapping<T> =
-        T extends Tspan | TextPath ? ParentClassAlias | Text | ClipPath | Dom :
-        T extends Circle ? ParentClassAlias | Text | ClipPath | Mask | Dom :
-        T extends Shape ? ParentClassAlias | ClipPath | Dom : ParentClassAlias | Dom
-
-    type PutInMapping<T> =
-        T extends Svg ? ParentClassAlias | Dom | HTMLElement | string :
-        T extends Shape ? ParentClassAlias | ClipPath | string :
-        T extends Element ? ParentClassAlias | string : HTMLElement | string
-
-    type PutInResultMapping<T> =
-        T extends Svg ? ParentTypeAlias | Dom :
-        T extends Element ? ParentTypeAlias : Dom
 
     class Dom extends EventTarget {
         node: HTMLElement | SVGElement;
@@ -955,26 +929,16 @@ declare module "@svgdotjs/svg.js" {
         last(): Element;
         matches(selector: string): boolean;
         /**
-         * Get the parent of current element. The input query can be given with string, object type or none (undefined).
-         * The input is vary based on the implement in hierarchy of SVG.JS element or dom.
-         * 1. If The input is a string, the string value must be a valid HTML element tag name or svg tag name. e.g "svg" or "g" or "div"
-         * 2. If the given input is an object type then only SVG.JS object type is accept. e.g Dom, Svg or G
-         * 3. if the given input query is undefined then the element will return the closest parent in Dom hierarchy
-         *
-         * For more information see ParentQueryMapping.
-         * @param type can be either string, object type or undefined.
+         * Finds the closest ancestor which matches the string or is of passed type. If nothing is passed, the parent is returned
+         * @param type can be either string, svg.js object or undefined.
          */
-        parent<T extends this>(type?: ParentQueryMapping<T>): ParentQueryResultMapping<T>;
+        parent(type?: ElementTypeAlias | QuerySelector): Dom | null;
         put(element: Element, i?: number): Element;
         /**
-         * Put the element into the given parent element. The input parent element can be vary base on the class implementation.
-         * 1. If the current class is a Dom then parent input is only accept a valid HTML element or a valid string id of HTML element
-         * 2. If the current class is an Svg then parent input can only Dom, Svg, G, A, a valid HTML element and a valid string id of HTML element
-         *
-         * For more information see PutInMapping.
-         * @param parent an object of SVG.JS Dom or implement container or a string id or a valid HTML element object.
+         * Put the element into the given parent element and returns the parent element
+         * @param parent The parent in which the current element is inserted
          */
-        putIn<T extends this>(parent: PutInMapping<T>): PutInResultMapping<T>;
+        putIn(parent: ElementAlias | Node | QuerySelector): Dom;
 
         remove(): this;
         removeElement(element: Element): this;
@@ -1457,6 +1421,8 @@ declare module "@svgdotjs/svg.js" {
         ref(x: string | number, y: string | number): this;
         update(block: (marker: Marker) => void): this;
         toString(): string;
+        orient(orientation: 'auto' | 'auto-start-reverse' | number | Number): this;
+        orient(): string;
     }
     // mask.js
     class Mask extends Container {

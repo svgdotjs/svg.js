@@ -1,6 +1,6 @@
-/* globals describe, expect, it, jasmine, spyOn */
+/* globals describe, expect, it, jasmine, spyOn, container */
 
-import { Box, G, Rect, makeInstance } from '../../../src/main.js'
+import { Box, G, Rect, SVG } from '../../../src/main.js'
 
 const { any, objectContaining } = jasmine
 
@@ -19,7 +19,7 @@ describe('G.js', () => {
   describe('Container', () => {
     describe('group()', () => {
       it('creates a group in the container', () => {
-        const canvas = makeInstance().addTo('#canvas')
+        const canvas = SVG().addTo(container)
         const g = canvas.group()
         expect(g).toEqual(any(G))
         expect(g.parent()).toBe(canvas)
@@ -29,7 +29,7 @@ describe('G.js', () => {
 
   describe('dmove()', () => {
     it('moves the bbox of the group by a certain amount (1)', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
 
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -44,7 +44,7 @@ describe('G.js', () => {
     })
 
     it('moves the bbox of the group by a certain amount (2)', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
 
       g.rect(400, 200).move(123, 312).rotate(34).skew(12)
@@ -67,7 +67,7 @@ describe('G.js', () => {
 
   describe('move()', () => {
     it('calls dmove() with the correct difference', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
       g.rect(100, 200).move(111, 223)
 
@@ -80,7 +80,7 @@ describe('G.js', () => {
 
   describe('x()', () => {
     it('gets the x value of the bbox', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -92,7 +92,7 @@ describe('G.js', () => {
       expect(g.x()).toBe(10)
     })
     it('calls move with the paramater as x', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
       g.rect(100, 200).move(111, 223)
 
@@ -105,7 +105,7 @@ describe('G.js', () => {
 
   describe('y()', () => {
     it('gets the y value of the bbox', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -117,7 +117,7 @@ describe('G.js', () => {
       expect(g.y()).toBe(20)
     })
     it('calls move with the paramater as y', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
       g.rect(100, 200).move(111, 223)
 
@@ -130,7 +130,7 @@ describe('G.js', () => {
 
   describe('size()', () => {
     it('changes the dimensions of the bbox (1)', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -164,7 +164,7 @@ describe('G.js', () => {
     })
 
     it('changes the dimensions of the bbox (2)', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
       const g = canvas.group()
 
       g.rect(400, 200).move(123, 312).rotate(34).skew(12)
@@ -188,7 +188,7 @@ describe('G.js', () => {
 
   describe('width()', () => {
     it('gets the width value of the bbox', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -200,7 +200,7 @@ describe('G.js', () => {
       expect(g.width()).toBe(110)
     })
     it('sets the width value of the bbox by moving all children', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -224,7 +224,7 @@ describe('G.js', () => {
 
   describe('height()', () => {
     it('gets the height value of the bbox', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
@@ -236,7 +236,7 @@ describe('G.js', () => {
       expect(g.height()).toBe(140)
     })
     it('sets the height value of the bbox by moving all children', () => {
-      const canvas = makeInstance().addTo('#canvas')
+      const canvas = SVG().addTo(container)
 
       const g = new G()
       g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))

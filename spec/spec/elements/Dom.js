@@ -1,15 +1,64 @@
-/* globals describe, expect, it, beforeEach, jasmine */
+/* globals describe, expect, it, beforeEach, jasmine, container */
 
-import { SVG, G, Rect } from '../../../src/main.js'
+import { SVG, G, Rect, Svg } from '../../../src/main.js'
+import { getWindow } from '../../../src/utils/window.js'
 const { any } = jasmine
 
 describe('Dom.js', function () {
+  describe('parent()', () => {
+    var canvas, rect, group1, group2
+
+    beforeEach(function () {
+      canvas = SVG().addTo(container)
+      group1 = canvas.group().addClass('test')
+      group2 = group1.group()
+      rect = group2.rect(100, 100)
+    })
+
+    it('returns the svg parent with no argument given', () => {
+      expect(rect.parent()).toBe(group2)
+    })
+
+    it('returns the closest parent with the correct type', () => {
+      expect(rect.parent(Svg)).toBe(canvas)
+    })
+
+    it('returns the closest parent matching the selector', () => {
+      expect(rect.parent('.test')).toBe(group1)
+    })
+
+    it('returns null if it cannot find a parent matching the argument', () => {
+      expect(rect.parent('.not-there')).toBe(null)
+    })
+
+    it('returns null if it cannot find a parent matching the argument in a #document-fragment', () => {
+      const fragment = getWindow().document.createDocumentFragment()
+      const svg = new Svg().addTo(fragment)
+      const rect = svg.rect(100, 100)
+      expect(rect.parent('.not-there')).toBe(null)
+    })
+
+    it('returns null if parent is #document', () => {
+      // cant test that here
+    })
+
+    it('returns null if parent is #document-fragment', () => {
+      const fragment = getWindow().document.createDocumentFragment()
+      const svg = new Svg().addTo(fragment)
+      expect(svg.parent()).toBe(null)
+    })
+
+    it('returns html parents, too', () => {
+      expect(canvas.parent().node).toBe(container)
+    })
+  })
+
   describe('wrap()', function () {
     var canvas
     var rect
 
     beforeEach(function () {
-      canvas = new SVG()
+      canvas = SVG()
       rect = canvas.rect(100, 100)
     })
 

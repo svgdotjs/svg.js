@@ -7,7 +7,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
-## [3.0.17]
+## [3.1.0]
 
 ### Fixed
  - fixed `zoom()` method of runner which was passed a wrong parameter
@@ -16,9 +16,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed a case in `rbox()` where not always all values of the box were updated
  - fixed `getOrigin()` function used by `transform()` so that all origin (#1085) popssibilities specified in the docs are working
  - fixed positioning of text by its baseline when using `amove()`
- - fixed tons of typings in the svg.d.ts file
+ - fixed tons of typings in the svg.d.ts file and relaxed type requirements for `put()` and `parent()`
  - fixed adopter when adopting an svg/html string. It had still its wrapper as parentNode attached
  - fixed `put()` which correctly creates an svgjs object from the passed element now before returning
+ - fixed `parent()` which correctly returns null if direct parent is the document or a document-fragment
+ - fixed `add()` which correctly removes namespaces of non-root svg elements now when added to another svg element
+ - fixed `isRoot()` which correctly returns false, if the element is in a document-fragment (#1081)
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)

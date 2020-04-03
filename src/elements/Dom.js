@@ -30,6 +30,11 @@ export default class Dom extends EventTarget {
   add (element, i) {
     element = makeInstance(element)
 
+    // If non-root svg nodes are added we have to remove their namespaces
+    if (element.removeNamespaces && this.node instanceof globals.window.SVGElement) {
+      element.removeNamespaces()
+    }
+
     if (i == null) {
       this.node.appendChild(element.node)
     } else if (element.node !== this.node.childNodes[i]) {
@@ -146,6 +151,7 @@ export default class Dom extends EventTarget {
 
     // check for parent
     if (!parent.node.parentNode) return null
+    if (parent.node.parentNode.nodeName === '#document' || parent.node.parentNode.nodeName === '#document-fragment') return null
 
     // get parent element
     parent = adopt(parent.node.parentNode)

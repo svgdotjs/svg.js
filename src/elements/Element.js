@@ -106,8 +106,13 @@ export default class Element extends Dom {
     const parents = new List()
     let parent = this
 
-    while ((parent = parent.parent()) && parent.node !== globals.document) {
+    while (
+      (parent = parent.parent())
+      && parent.node !== globals.document
+      && parent.nodeName !== '#document-fragment') {
+
       parents.push(parent)
+
       if (parent.node === until.node) {
         break
       }

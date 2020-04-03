@@ -16,17 +16,19 @@ export default class Svg extends Container {
     this.namespace()
   }
 
-  isRoot () {
-    return !this.node.parentNode
-      || !(this.node.parentNode instanceof globals.window.SVGElement)
-      || this.node.parentNode.nodeName === '#document'
+  // Creates and returns defs element
+  defs () {
+    if (!this.isRoot()) return this.root().defs()
+
+    return adopt(this.node.querySelector('defs'))
+      || this.put(new Defs())
   }
 
-  // Check if this is a root svg
-  // If not, call docs from this element
-  root () {
-    if (this.isRoot()) return this
-    return super.root()
+  isRoot () {
+
+    return !this.node.parentNode
+      || (!(this.node.parentNode instanceof globals.window.SVGElement) && this.node.parentNode.nodeName !== '#document-fragment')
+      // || this.node.parentNode.nodeName === '#document'
   }
 
   // Add namespaces
@@ -38,36 +40,19 @@ export default class Svg extends Container {
       .attr('xmlns:svgjs', svgjs, xmlns)
   }
 
-  // Creates and returns defs element
-  defs () {
-    if (!this.isRoot()) return this.root().defs()
-
-    return adopt(this.node.querySelector('defs'))
-      || this.put(new Defs())
+  removeNamespaces () {
+    return this.attr({ xmlns: null, version: null })
+      .attr('xmlns:xlink', null, xmlns)
+      .attr('xmlns:svgjs', null, xmlns)
   }
 
-  // custom parent method
-  parent (type) {
-    if (this.isRoot()) {
-      return this.node.parentNode.nodeName === '#document'
-        ? null
-        : adopt(this.node.parentNode)
-    }
-
-    return super.parent(type)
+  // Check if this is a root svg
+  // If not, call root() from this element
+  root () {
+    if (this.isRoot()) return this
+    return super.root()
   }
 
-  clear () {
-    // remove children
-    while (this.node.hasChildNodes()) {
-      this.node.removeChild(this.node.lastChild)
-    }
-
-    // remove defs reference
-    delete this._defs
-
-    return this
-  }
 }
 
 registerMethods({
