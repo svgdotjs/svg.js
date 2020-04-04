@@ -100,10 +100,10 @@ describe('Svg.js', () => {
     })
   })
 
-  describe('removeNamespaces()', () => {
+  describe('removeNamespace()', () => {
     it('returns itself', () => {
       const svg = new Svg()
-      expect(svg.removeNamespaces()).toBe(svg)
+      expect(svg.removeNamespace()).toBe(svg)
     })
 
     it('removes the namespace attributes from the svg element', () => {
@@ -111,7 +111,7 @@ describe('Svg.js', () => {
 
       expect(svg.attr('xmlns')).toBe(ns)
 
-      svg.removeNamespaces()
+      svg.removeNamespace()
 
       expect(svg.attr('xmlns')).toBe(undefined)
       expect(svg.attr('version')).toBe(undefined)

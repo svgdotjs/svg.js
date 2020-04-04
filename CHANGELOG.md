@@ -20,8 +20,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed adopter when adopting an svg/html string. It had still its wrapper as parentNode attached
  - fixed `put()` which correctly creates an svgjs object from the passed element now before returning
  - fixed `parent()` which correctly returns null if direct parent is the document or a document-fragment
- - fixed `add()` which correctly removes namespaces of non-root svg elements now when added to another svg element
- - fixed `isRoot()` which correctly returns false, if the element is in a document-fragment (#1081)
+ - fixed `add()` which correctly removes namespaces of non-root svg elements now when added to another svg element (#1086)
+ - fixed `isRoot()` which correctly returns false, if the element is in a document-fragment
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)

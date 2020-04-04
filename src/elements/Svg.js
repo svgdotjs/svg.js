@@ -40,7 +40,7 @@ export default class Svg extends Container {
       .attr('xmlns:svgjs', svgjs, xmlns)
   }
 
-  removeNamespaces () {
+  removeNamespace () {
     return this.attr({ xmlns: null, version: null })
       .attr('xmlns:xlink', null, xmlns)
       .attr('xmlns:svgjs', null, xmlns)

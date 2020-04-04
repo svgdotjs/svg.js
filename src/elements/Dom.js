@@ -31,8 +31,8 @@ export default class Dom extends EventTarget {
     element = makeInstance(element)
 
     // If non-root svg nodes are added we have to remove their namespaces
-    if (element.removeNamespaces && this.node instanceof globals.window.SVGElement) {
-      element.removeNamespaces()
+    if (element.removeNamespace && this.node instanceof globals.window.SVGElement) {
+      element.removeNamespace()
     }
 
     if (i == null) {
