@@ -45,8 +45,8 @@ export default class Dom extends EventTarget {
   }
 
   // Add element to given container and return self
-  addTo (parent) {
-    return makeInstance(parent).put(this)
+  addTo (parent, i) {
+    return makeInstance(parent).put(this, i)
   }
 
   // Returns all child elements
@@ -67,12 +67,12 @@ export default class Dom extends EventTarget {
   }
 
   // Clone element
-  clone () {
+  clone (deep = true) {
     // write dom data to the dom so the clone can pickup the data
     this.writeDataToDom()
 
     // clone element and assign new id
-    return assignNewId(this.node.cloneNode(true))
+    return assignNewId(this.node.cloneNode(deep))
   }
 
   // Iterates over all children and invokes a given block
@@ -91,8 +91,8 @@ export default class Dom extends EventTarget {
     return this
   }
 
-  element (nodeName) {
-    return this.put(new Dom(create(nodeName)))
+  element (nodeName, attrs) {
+    return this.put(new Dom(create(nodeName), attrs))
   }
 
   // Get first child
@@ -125,7 +125,7 @@ export default class Dom extends EventTarget {
       this.node.id = eid(this.type)
     }
 
-    // dont't set directly width this.node.id to make `null` work correctly
+    // dont't set directly with this.node.id to make `null` work correctly
     return this.attr('id', id)
   }
 
@@ -174,8 +174,8 @@ export default class Dom extends EventTarget {
   }
 
   // Add element to given container and return container
-  putIn (parent) {
-    return makeInstance(parent).add(this)
+  putIn (parent, i) {
+    return makeInstance(parent).add(this, i)
   }
 
   // Remove element
@@ -211,11 +211,6 @@ export default class Dom extends EventTarget {
 
     this.attr(attrs)
     return this
-  }
-
-  // Return id on string conversion
-  toString () {
-    return this.id()
   }
 
   // Import raw svg
@@ -294,6 +289,11 @@ export default class Dom extends EventTarget {
     return outerHTML
       ? this.replace(fragment) && parent
       : this.add(fragment)
+  }
+
+  // Return id on string conversion
+  toString () {
+    return this.id()
   }
 
   words (text) {
