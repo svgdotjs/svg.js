@@ -17,7 +17,7 @@ import attr from '../modules/core/attr.js'
 
 export default class Dom extends EventTarget {
   constructor (node, attrs) {
-    super(node)
+    super()
     this.node = node
     this.type = node.nodeName
 

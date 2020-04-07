@@ -3,15 +3,10 @@ import { register } from '../utils/adopter.js'
 import Base from './Base.js'
 
 export default class EventTarget extends Base {
-  constructor ({ events = {} } = {}) {
-    super()
-    this.events = events
-  }
-
   addEventListener () {}
 
-  dispatch (event, data) {
-    return dispatch(this, event, data)
+  dispatch (event, data, options) {
+    return dispatch(this, event, data, options)
   }
 
   dispatchEvent (event) {
@@ -30,8 +25,8 @@ export default class EventTarget extends Base {
   }
 
   // Fire given event
-  fire (event, data) {
-    this.dispatch(event, data)
+  fire (event, data, options) {
+    this.dispatch(event, data, options)
     return this
   }
 
