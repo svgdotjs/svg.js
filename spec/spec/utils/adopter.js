@@ -15,7 +15,8 @@ import {
   G,
   Gradient,
   Dom,
-  Path
+  Path,
+  Fragment
 } from '../../../src/main.js'
 
 import { mockAdopt, assignNewId, adopt } from '../../../src/utils/adopter.js'
@@ -118,6 +119,11 @@ describe('adopter.js', () => {
     it('returns instance from node if present', () => {
       const rect = new Rect()
       expect(adopt(rect.node)).toBe(rect)
+    })
+
+    it('creates Fragment when document fragment is passed', () => {
+      const frag = getWindow().document.createDocumentFragment()
+      expect(adopt(frag)).toEqual(any(Fragment))
     })
 
     it('creates instance when node without instance is passed', () => {

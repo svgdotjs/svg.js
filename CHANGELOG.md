@@ -19,9 +19,10 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed tons of typings in the svg.d.ts file and relaxed type requirements for `put()` and `parent()`
  - fixed adopter when adopting an svg/html string. It had still its wrapper as parentNode attached
  - fixed `put()` which correctly creates an svgjs object from the passed element now before returning
- - fixed `parent()` which correctly returns null if direct parent is the document or a document-fragment
+ - fixed `parent()` which correctly returns a Dom instance when parent is the document or document-fragment
  - fixed `add()` which correctly removes namespaces of non-root svg elements now when added to another svg element (#1086)
  - fixed `isRoot()` which correctly returns false, if the element is in a document-fragment
+ - fixed `replace()` which works without a parent now, too
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
@@ -31,6 +32,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added `options` parameter to `dispatch()` and `fire()` to allow for more special needs
  - added `newLine()` constructor to `Text` to create a tspan marked as new line (#1088)
  - added lots of tests in es6 format
+ - added `Fragment` as a wrapper for document-fragment
 
 ## [3.0.16] - 2019-11-12
 

@@ -970,7 +970,7 @@ declare module "@svgdotjs/svg.js" {
         attr(name: string, value: any, namespace?: string): this;
         attr(name: string): any;
         attr(obj: object): this;
-        attr(obj: object[]): object;
+        attr(obj: string[]): object;
 
         // prototype extend Selector in selector.js
         find(query: string): List<Element>

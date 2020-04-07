@@ -18,6 +18,7 @@ import Dom from './elements/Dom.js'
 import Element from './elements/Element.js'
 import Ellipse from './elements/Ellipse.js'
 import EventTarget from './types/EventTarget.js'
+import Fragment from './elements/Fragment.js'
 import Gradient from './elements/Gradient.js'
 import Image from './elements/Image.js'
 import Line from './elements/Line.js'
@@ -96,6 +97,7 @@ export { default as Dom } from './elements/Dom.js'
 export { default as Element } from './elements/Element.js'
 export { default as Ellipse } from './elements/Ellipse.js'
 export { default as ForeignObject } from './elements/ForeignObject.js'
+export { default as Fragment } from './elements/Fragment.js'
 export { default as Gradient } from './elements/Gradient.js'
 export { default as G } from './elements/G.js'
 export { default as A } from './elements/A.js'
@@ -154,8 +156,7 @@ extend(EventTarget, getMethodsFor('EventTarget'))
 extend(Dom, getMethodsFor('Dom'))
 extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
-// extend(Element, getConstructor('Memory'))
-extend(Container, getMethodsFor('Container'))
+extend([ Container, Fragment ], getMethodsFor('Container'))
 
 extend(Runner, getMethodsFor('Runner'))
 

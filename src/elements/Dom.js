@@ -142,7 +142,8 @@ export default class Dom extends EventTarget {
   // matches the element vs a css selector
   matches (selector) {
     const el = this.node
-    return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector)
+    const matcher = el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector || null
+    return matcher && matcher.call(el, selector)
   }
 
   // Returns the parent element instance
@@ -151,7 +152,6 @@ export default class Dom extends EventTarget {
 
     // check for parent
     if (!parent.node.parentNode) return null
-    if (parent.node.parentNode.nodeName === '#document' || parent.node.parentNode.nodeName === '#document-fragment') return null
 
     // get parent element
     parent = adopt(parent.node.parentNode)
@@ -159,11 +159,11 @@ export default class Dom extends EventTarget {
     if (!type) return parent
 
     // loop trough ancestors if type is given
-    while (parent) {
+    do {
       if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
-      if (!parent.node.parentNode || parent.node.parentNode.nodeName === '#document' || parent.node.parentNode.nodeName === '#document-fragment') return null // #759, #720
-      parent = adopt(parent.node.parentNode)
-    }
+    } while ((parent = adopt(parent.node.parentNode)))
+
+    return parent
   }
 
   // Basically does the same as `add()` but returns the added element instead
@@ -197,7 +197,11 @@ export default class Dom extends EventTarget {
   // Replace this with element
   replace (element) {
     element = makeInstance(element)
-    this.node.parentNode.replaceChild(element.node, this.node)
+
+    if (this.node.parentNode) {
+      this.node.parentNode.replaceChild(element.node, this.node)
+    }
+
     return element
   }
 
@@ -206,14 +210,16 @@ export default class Dom extends EventTarget {
     const attrs = this.attr(map)
 
     for (const i in attrs) {
-      attrs[i] = Math.round(attrs[i] * factor) / factor
+      if (typeof attrs[i] === 'number') {
+        attrs[i] = Math.round(attrs[i] * factor) / factor
+      }
     }
 
     this.attr(attrs)
     return this
   }
 
-  // Import raw svg
+  // Import / Export raw svg
   svg (svgOrFn, outerHTML) {
     var well, len, fragment
 
