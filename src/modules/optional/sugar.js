@@ -104,11 +104,11 @@ registerMethods([ 'Element', 'Runner' ], {
 
 registerMethods('radius', {
   // Add x and y radius
-  radius: function (x, y) {
+  radius: function (x, y = x) {
     var type = (this._element || this).type
     return type === 'radialGradient' || type === 'radialGradient'
       ? this.attr('r', new SVGNumber(x))
-      : this.rx(x).ry(y == null ? x : y)
+      : this.rx(x).ry(y)
   }
 })
 

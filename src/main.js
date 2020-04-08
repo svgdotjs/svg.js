@@ -10,7 +10,6 @@ import './modules/optional/transform.js'
 import { extend, makeInstance } from './utils/adopter.js'
 import { getMethodNames, getMethodsFor } from './utils/methods.js'
 import Box from './types/Box.js'
-import Circle from './elements/Circle.js'
 import Color from './types/Color.js'
 import Container from './elements/Container.js'
 import Defs from './elements/Defs.js'
@@ -148,8 +147,8 @@ extend([
 extend([
   Rect,
   Ellipse,
-  Circle,
-  Gradient
+  Gradient,
+  Runner
 ], getMethodsFor('radius'))
 
 extend(EventTarget, getMethodsFor('EventTarget'))
