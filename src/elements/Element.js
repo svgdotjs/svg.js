@@ -1,4 +1,4 @@
-import { bbox, rbox } from '../types/Box.js'
+import { bbox, rbox, inside } from '../types/Box.js'
 import { ctm, screenCTM } from '../types/Matrix.js'
 import {
   extend,
@@ -52,7 +52,8 @@ export default class Element extends Dom {
 
   // Get defs
   defs () {
-    return this.root().defs()
+    const root = this.root()
+    return root && root.defs()
   }
 
   // Relative move over x and y axes
@@ -83,16 +84,6 @@ export default class Element extends Dom {
   // Set height of element
   height (height) {
     return this.attr('height', height)
-  }
-
-  // Checks whether the given point inside the bounding box of the element
-  inside (x, y) {
-    const box = this.bbox()
-
-    return x > box.x
-      && y > box.y
-      && x < box.x + box.width
-      && y < box.y + box.height
   }
 
   // Move element to given x and y values
@@ -126,7 +117,7 @@ export default class Element extends Dom {
     attr = this.attr(attr)
     if (!attr) return null
 
-    const m = attr.match(reference)
+    const m = (attr + '').match(reference)
     return m ? makeInstance(m[1]) : null
   }
 
@@ -174,7 +165,7 @@ export default class Element extends Dom {
 }
 
 extend(Element, {
-  bbox, rbox, point, ctm, screenCTM
+  bbox, rbox, inside, point, ctm, screenCTM
 })
 
 register(Element, 'Element')

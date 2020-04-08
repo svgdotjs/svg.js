@@ -23,6 +23,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `add()` which correctly removes namespaces of non-root svg elements now when added to another svg element (#1086)
  - fixed `isRoot()` which correctly returns false, if the element is in a document-fragment
  - fixed `replace()` which works without a parent now, too
+ - fixed `defs()` which correctly returns `null` when called on a detached node that is not a root node
+ - fixed `reference()` which correctly returns `null` instead of throwing when specifying an attribute which holds a number
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)

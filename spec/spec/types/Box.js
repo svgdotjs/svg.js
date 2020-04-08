@@ -174,6 +174,15 @@ describe('Box.js', () => {
       })
     })
 
+    describe('inside()', () => {
+      it('checks if a point is in the elements borders', () => {
+        const canvas = SVG().addTo(container)
+        const rect = canvas.rect(100, 100)
+        expect(rect.inside(50, 50)).toBe(true)
+        expect(rect.inside(101, 101)).toBe(false)
+      })
+    })
+
     describe('viewbox()', () => {
       it('sets the viewbox of the element', () => {
         const canvas = viewbox.call(SVG().addTo(container), 10, 10, 200, 200)

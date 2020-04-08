@@ -148,6 +148,16 @@ export function rbox (el) {
   return box.addOffset()
 }
 
+// Checks whether the given point is inside the bounding box
+export function inside (x, y) {
+  const box = this.bbox()
+
+  return x > box.x
+    && y > box.y
+    && x < box.x + box.width
+    && y < box.y + box.height
+}
+
 registerMethods({
   viewbox: {
     viewbox (x, y, width, height) {
