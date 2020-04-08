@@ -33,6 +33,10 @@ registerMethods({
   },
   Element: {
     // Distribute clipPath to svg element
+    clipper () {
+      return this.reference('clip-path')
+    },
+
     clipWith (element) {
       // use given clip or create a new one
       const clipper = element instanceof ClipPath
@@ -46,10 +50,6 @@ registerMethods({
     // Unclip element
     unclip () {
       return this.attr('clip-path', null)
-    },
-
-    clipper () {
-      return this.reference('clip-path')
     }
   }
 })
