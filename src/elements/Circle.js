@@ -38,7 +38,7 @@ extend(Circle, { x, y, cx, cy, width, height })
 registerMethods({
   Container: {
     // Create circle element
-    circle: wrapWithAttrCheck(function (size) {
+    circle: wrapWithAttrCheck(function (size = 0) {
       return this.put(new Circle())
         .size(size)
         .move(0, 0)
