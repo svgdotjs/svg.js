@@ -457,7 +457,7 @@ describe('Element', function () {
 
     it('redirects to toParent(root)', function () {
       rect.toRoot()
-      expect(rect.toParent).toHaveBeenCalledWith(rect.root())
+      expect(rect.toParent).toHaveBeenCalledWith(rect.root(), undefined)
     })
   })
 

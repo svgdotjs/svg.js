@@ -1,6 +1,6 @@
 /* globals describe, expect, it, beforeEach, spyOn, jasmine, container */
 
-import { SVG, G, Rect, Svg, Dom, List, Fragment, Circle, Tspan } from '../../../src/main.js'
+import { SVG, G, Rect, Svg, Dom, List, Fragment, Circle, Tspan, create } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 const { any, createSpy, objectContaining } = jasmine
 
@@ -66,9 +66,7 @@ describe('Dom.js', function () {
 
     it('handles a node', () => {
       const g = new G()
-      const rect = new Rect()
-      const node = rect.node
-      delete rect.instance
+      const node = create('rect')
       g.add(node)
       expect(g.children().length).toBe(1)
       expect(g.get(0)).toEqual(any(Rect))
@@ -219,6 +217,10 @@ describe('Dom.js', function () {
       g.circle(100, 100)
       expect(g.first()).toBe(rect)
     })
+
+    it('returns null if no first child exists', () => {
+      expect(new G().first()).toBe(null)
+    })
   })
 
   describe('get()', () => {
@@ -289,6 +291,12 @@ describe('Dom.js', function () {
       const rect = g.rect(100, 100)
       expect(g.index(rect)).toBe(1)
     })
+
+    it('returns -1 if element is no child', () => {
+      const g = new G()
+      const rect = new Rect()
+      expect(g.index(rect)).toBe(-1)
+    })
   })
 
   describe('last()', () => {
@@ -297,6 +305,10 @@ describe('Dom.js', function () {
       g.rect(100, 100)
       const rect = g.rect(100, 100)
       expect(g.last()).toBe(rect)
+    })
+
+    it('returns null if no last child exists', () => {
+      expect(new G().last()).toBe(null)
     })
   })
 
@@ -528,7 +540,13 @@ describe('Dom.js', function () {
       it('returns the parent when outerHtml = true', () => {
         const canvas = new Svg()
         const g = canvas.group()
-        expect(g.svg('<rect><circle>', true)).toBe(canvas)
+        expect(g.svg('<rect /><circle />', true)).toBe(canvas)
+        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
+      })
+
+      it('works without a parent', () => {
+        const canvas = new Svg()
+        expect(canvas.svg('<rect><circle>')).toBe(canvas)
       })
     })
 
@@ -655,13 +673,10 @@ describe('Dom.js', function () {
     })
 
     it('allows to pass an svg node as element', () => {
-      var g = new G()
-      const node = g.node
-      delete node.instance
+      const node = create('g')
       rect.wrap(node)
       expect(rect.parent()).toEqual(any(G))
       expect(rect.parent().node).toBe(node)
-      expect(rect.parent()).not.toBe(g)
       expect(rect.parent().parent()).toBe(canvas)
     })
   })

@@ -25,10 +25,8 @@ export default class Svg extends Container {
   }
 
   isRoot () {
-
     return !this.node.parentNode
       || (!(this.node.parentNode instanceof globals.window.SVGElement) && this.node.parentNode.nodeName !== '#document-fragment')
-      // || this.node.parentNode.nodeName === '#document'
   }
 
   // Add namespaces

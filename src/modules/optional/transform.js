@@ -35,19 +35,19 @@ export function matrixify () {
 }
 
 // add an element to another parent without changing the visual representation on the screen
-export function toParent (parent) {
+export function toParent (parent, i) {
   if (this === parent) return this
   var ctm = this.screenCTM()
   var pCtm = parent.screenCTM().inverse()
 
-  this.addTo(parent).untransform().transform(pCtm.multiply(ctm))
+  this.addTo(parent, i).untransform().transform(pCtm.multiply(ctm))
 
   return this
 }
 
 // same as above with parent equals root-svg
-export function toRoot () {
-  return this.toParent(this.root())
+export function toRoot (i) {
+  return this.toParent(this.root(), i)
 }
 
 // Add transformations

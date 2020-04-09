@@ -25,6 +25,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `replace()` which works without a parent now, too
  - fixed `defs()` which correctly returns `null` when called on a detached node that is not a root node
  - fixed `reference()` which correctly returns `null` instead of throwing when specifying an attribute which holds a number
+ - fixed `flatten()` which correctly flattens now but doesnt accept parameters anymore (makes no sense)
+ - fixed `ungroup()` which now inserts the elements at the correct position in the correct order and has position as second argument now
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
@@ -34,6 +36,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added `options` parameter to `dispatch()` and `fire()` to allow for more special needs
  - added `newLine()` constructor to `Text` to create a tspan marked as new line (#1088)
  - added `Fragment` as a wrapper for document-fragment
+ - added position argument for `toParent()`
+ - added position argument for `toRoot()`
  - added lots of tests in es6 format
 
 ## [3.0.16] - 2019-11-12
