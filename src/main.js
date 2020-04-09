@@ -156,6 +156,7 @@ extend(Dom, getMethodsFor('Dom'))
 extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
 extend([ Container, Fragment ], getMethodsFor('Container'))
+extend(Gradient, getMethodsFor('Gradient'))
 
 extend(Runner, getMethodsFor('Runner'))
 

@@ -32,7 +32,7 @@ describe('ClipPath.js', () => {
     })
   })
 
-  describe('target()', () => {
+  describe('targets()', () => {
     it('gets all targets of this clipPath', () => {
       const canvas = SVG().addTo(container)
       const clip = canvas.clip()

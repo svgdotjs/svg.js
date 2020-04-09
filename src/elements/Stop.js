@@ -1,6 +1,7 @@
 import { nodeOrNew, register } from '../utils/adopter.js'
 import Element from './Element.js'
 import SVGNumber from '../types/SVGNumber.js'
+import { registerMethods } from '../utils/methods.js'
 
 export default class Stop extends Element {
   constructor (node, attrs = node) {
@@ -25,5 +26,14 @@ export default class Stop extends Element {
     return this
   }
 }
+
+registerMethods({
+  Gradient: {
+    // Add a color stop
+    stop: function (offset, color, opacity) {
+      return this.put(new Stop()).update(offset, color, opacity)
+    }
+  }
+})
 
 register(Stop, 'Stop')

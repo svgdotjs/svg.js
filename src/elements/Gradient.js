@@ -7,7 +7,6 @@ import {
 import { registerMethods } from '../utils/methods.js'
 import Box from '../types/Box.js'
 import Container from './Container.js'
-import Stop from './Stop.js'
 import baseFind from '../modules/core/selector.js'
 import * as gradiented from '../modules/core/gradiented.js'
 
@@ -19,9 +18,23 @@ export default class Gradient extends Container {
     )
   }
 
-  // Add a color stop
-  stop (offset, color, opacity) {
-    return this.put(new Stop()).update(offset, color, opacity)
+  // custom attr to handle transform
+  attr (a, b, c) {
+    if (a === 'transform') a = 'gradientTransform'
+    return super.attr(a, b, c)
+  }
+
+  bbox () {
+    return new Box()
+  }
+
+  targets () {
+    return baseFind('svg [fill*="' + this.id() + '"]')
+  }
+
+  // Alias string conversion to fill
+  toString () {
+    return this.url()
   }
 
   // Update gradient
@@ -39,26 +52,7 @@ export default class Gradient extends Container {
 
   // Return the fill id
   url () {
-    return 'url(#' + this.id() + ')'
-  }
-
-  // Alias string convertion to fill
-  toString () {
-    return this.url()
-  }
-
-  // custom attr to handle transform
-  attr (a, b, c) {
-    if (a === 'transform') a = 'gradientTransform'
-    return super.attr(a, b, c)
-  }
-
-  targets () {
-    return baseFind('svg [fill*="' + this.id() + '"]')
-  }
-
-  bbox () {
-    return new Box()
+    return 'url("#' + this.id() + '")'
   }
 }
 
