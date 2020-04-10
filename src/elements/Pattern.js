@@ -10,9 +10,23 @@ export default class Pattern extends Container {
     super(nodeOrNew('pattern', node), attrs)
   }
 
-  // Return the fill id
-  url () {
-    return 'url(#' + this.id() + ')'
+  // custom attr to handle transform
+  attr (a, b, c) {
+    if (a === 'transform') a = 'patternTransform'
+    return super.attr(a, b, c)
+  }
+
+  bbox () {
+    return new Box()
+  }
+
+  targets () {
+    return baseFind('svg [fill*="' + this.id() + '"]')
+  }
+
+  // Alias string convertion to fill
+  toString () {
+    return this.url()
   }
 
   // Update pattern by rebuilding
@@ -28,24 +42,11 @@ export default class Pattern extends Container {
     return this
   }
 
-  // Alias string convertion to fill
-  toString () {
-    return this.url()
+  // Return the fill id
+  url () {
+    return 'url("#' + this.id() + '")'
   }
 
-  // custom attr to handle transform
-  attr (a, b, c) {
-    if (a === 'transform') a = 'patternTransform'
-    return super.attr(a, b, c)
-  }
-
-  targets () {
-    return baseFind('svg [fill*="' + this.id() + '"]')
-  }
-
-  bbox () {
-    return new Box()
-  }
 }
 
 registerMethods({
