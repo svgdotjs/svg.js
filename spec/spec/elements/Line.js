@@ -29,6 +29,21 @@ describe('Line.js', () => {
     })
   })
 
+  describe('move()', () => {
+    it('returns itself', () => {
+      expect(line.move(0, 0)).toBe(line)
+    })
+
+    it('moves the line along x and y axis', () => {
+      const canvas = SVG().addTo(container)
+      const line = canvas.line(1, 2, 3, 4)
+      line.move(50, 50)
+      expect(line.bbox()).toEqual(objectContaining({
+        x: 50, y: 50, width: 2, height: 2
+      }))
+    })
+  })
+
   describe('plot()', () => {
     it('relays to array() as getter', () => {
       const spy = spyOn(line, 'array')
@@ -39,6 +54,12 @@ describe('Line.js', () => {
     it('calls attr with line attributes when 4 parameters given', () => {
       const spy = spyOn(line, 'attr')
       line.plot(1, 2, 3, 4)
+      expect(spy).toHaveBeenCalledWith({ x1: 1, y1: 2, x2: 3, y2: 4 })
+    })
+
+    it('calls attr with line attributes when string given', () => {
+      const spy = spyOn(line, 'attr')
+      line.plot('1, 2, 3, 4')
       expect(spy).toHaveBeenCalledWith({ x1: 1, y1: 2, x2: 3, y2: 4 })
     })
 
@@ -61,21 +82,6 @@ describe('Line.js', () => {
     })
   })
 
-  describe('move()', () => {
-    it('returns itself', () => {
-      expect(line.move(0, 0)).toBe(line)
-    })
-
-    it('moves the line along x and y axis', () => {
-      const canvas = SVG().addTo(container)
-      const line = canvas.line(1, 2, 3, 4)
-      line.move(50, 50)
-      expect(line.bbox()).toEqual(objectContaining({
-        x: 50, y: 50, width: 2, height: 2
-      }))
-    })
-  })
-
   describe('size()', () => {
     it('returns itself', () => {
       expect(line.size(50, 50)).toBe(line)
@@ -85,6 +91,24 @@ describe('Line.js', () => {
       const canvas = SVG().addTo(container)
       const line = canvas.line(1, 2, 3, 4)
       line.size(50, 50)
+      expect(line.bbox()).toEqual(objectContaining({
+        width: 50, height: 50, x: 1, y: 2
+      }))
+    })
+
+    it('changes height proportionally', () => {
+      const canvas = SVG().addTo(container)
+      const line = canvas.line(1, 2, 3, 4)
+      line.size(50, null)
+      expect(line.bbox()).toEqual(objectContaining({
+        width: 50, height: 50, x: 1, y: 2
+      }))
+    })
+
+    it('changes width proportionally', () => {
+      const canvas = SVG().addTo(container)
+      const line = canvas.line(1, 2, 3, 4)
+      line.size(null, 50)
       expect(line.bbox()).toEqual(objectContaining({
         width: 50, height: 50, x: 1, y: 2
       }))

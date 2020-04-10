@@ -24,6 +24,11 @@ export default class Line extends Shape {
     ])
   }
 
+  // Move by left top corner
+  move (x, y) {
+    return this.attr(this.array().move(x, y).toLine())
+  }
+
   // Overwrite native plot() method
   plot (x1, y1, x2, y2) {
     if (x1 == null) {
@@ -35,11 +40,6 @@ export default class Line extends Shape {
     }
 
     return this.attr(x1)
-  }
-
-  // Move by left top corner
-  move (x, y) {
-    return this.attr(this.array().move(x, y).toLine())
   }
 
   // Set element size to given width and height
