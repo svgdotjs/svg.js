@@ -93,7 +93,25 @@ describe('Marker.js', function () {
     })
   })
 
-  describe('Path', () => {
+  describe('Defs', () => {
+    describe('marker()', () => {
+      it('creates a marker in the defs and sets all attributes', () => {
+        const canvas = SVG()
+        const defs = canvas.defs()
+        const marker = defs.marker(10, 12)
+        expect(marker.attr('refX')).toBe(5)
+        expect(marker.attr('refY')).toBe(6)
+        expect(marker.attr('markerWidth')).toBe(10)
+        expect(marker.attr('markerHeight')).toBe(12)
+        expect(marker.attr('viewBox')).toBe('0 0 10 12')
+        expect(marker.attr('orient')).toBe('auto')
+        expect(marker).toEqual(any(Marker))
+        expect(defs.children()).toEqual([ marker ])
+      })
+    })
+  })
+
+  describe('marker', () => {
     var path, marker, canvas
 
     beforeEach(() => {
@@ -138,6 +156,13 @@ describe('Marker.js', function () {
         marker = path.reference('marker-end')
 
         expect(path.node.getAttribute('marker-end')).toBe(marker.toString())
+      })
+
+      it('creates a marker and applies it to the marker-end attribute', () => {
+        path.marker('all', 10, 12)
+        marker = path.reference('marker')
+
+        expect(path.node.getAttribute('marker')).toBe(marker.toString())
       })
 
       it('accepts an instance of an existing marker element as the second argument', () => {

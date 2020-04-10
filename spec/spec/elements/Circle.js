@@ -61,6 +61,13 @@ describe('Circle.js', () => {
         expect(circle.attr('r')).toBe(25)
         expect(circle).toEqual(any(Circle))
       })
+
+      it('defaults to zero size', () => {
+        const group = new G()
+        const circle = group.circle()
+        expect(circle.attr('r')).toBe(0)
+        expect(circle).toEqual(any(Circle))
+      })
     })
   })
 })

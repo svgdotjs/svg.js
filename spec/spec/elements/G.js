@@ -96,6 +96,17 @@ describe('G.js', () => {
       g.move(100, 150)
       expect(g.dmove).toHaveBeenCalledWith(-11, -73)
     })
+
+    it('defaults to x=0 and y=0', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      g.rect(100, 200).move(111, 223)
+
+      spyOn(g, 'dmove')
+
+      g.move()
+      expect(g.dmove).toHaveBeenCalledWith(-111, -223)
+    })
   })
 
   describe('x()', () => {

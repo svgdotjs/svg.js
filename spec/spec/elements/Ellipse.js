@@ -55,6 +55,22 @@ describe('Ellipse.js', () => {
         expect(ellipse.attr('ry')).toBe(25)
         expect(ellipse).toEqual(any(Ellipse))
       })
+
+      it('defaults to same radius with one argument', () => {
+        const group = new G()
+        const ellipse = group.ellipse(50)
+        expect(ellipse.attr('rx')).toBe(25)
+        expect(ellipse.attr('ry')).toBe(25)
+        expect(ellipse).toEqual(any(Ellipse))
+      })
+
+      it('defaults to zero radius with no argument', () => {
+        const group = new G()
+        const ellipse = group.ellipse()
+        expect(ellipse.attr('rx')).toBe(0)
+        expect(ellipse.attr('ry')).toBe(0)
+        expect(ellipse).toEqual(any(Ellipse))
+      })
     })
   })
 })

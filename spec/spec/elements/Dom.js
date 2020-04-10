@@ -48,6 +48,14 @@ describe('Dom.js', function () {
       expect(g.get(1)).toBe(rect)
     })
 
+    it('does nothing if element is already the element at that position', () => {
+      const g = new G()
+      g.rect(100, 100)
+      const rect = g.rect(100, 100)
+      g.add(rect, 1)
+      expect(g.get(1)).toBe(rect)
+    })
+
     it('handles svg strings', () => {
       const g = new G()
       g.add('<rect>')

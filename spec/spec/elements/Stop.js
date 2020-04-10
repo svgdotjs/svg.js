@@ -31,6 +31,26 @@ describe('Stop.js', () => {
       expect(stop.attr('stop-color')).toBe('#ffffff')
       expect(stop.attr('stop-opacity')).toBe(0.5)
     })
+
+    it('sets efault values if not all supplied', () => {
+      let stop = new Stop()
+      stop.update({ offset: 0.1 })
+      expect(stop.attr('offset')).toBe(0.1)
+      expect(stop.attr('stop-color')).toBe('#000000')
+      expect(stop.attr('stop-opacity')).toBe(1)
+
+      stop = new Stop()
+      stop.update({ color: '#ffffff' })
+      expect(stop.attr('offset')).toBe(0)
+      expect(stop.attr('stop-color')).toBe('#ffffff')
+      expect(stop.attr('stop-opacity')).toBe(1)
+
+      stop = new Stop()
+      stop.update({ opacity: 0.5 })
+      expect(stop.attr('offset')).toBe(0)
+      expect(stop.attr('stop-color')).toBe('#000000')
+      expect(stop.attr('stop-opacity')).toBe(0.5)
+    })
   })
 
   describe('Gradient', () => {

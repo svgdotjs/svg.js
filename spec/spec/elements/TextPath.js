@@ -53,6 +53,11 @@ describe('TextPath.js', () => {
       expect(textPath.plot()).toBe(textPath.array())
       expect(textPath.plot()).not.toBe(null)
     })
+
+    it('does nothingif no path is attached as track', () => {
+      const textPath = Object.freeze(new TextPath())
+      expect(textPath.plot('M0 0')).toBe(textPath)
+    })
   })
 
   describe('Container', () => {
@@ -94,6 +99,17 @@ describe('TextPath.js', () => {
       it('references the passed path', () => {
         const textPath = text.path(path)
         expect(textPath.reference('href')).toBe(path)
+      })
+
+      it('imports all nodes from the text by default', () => {
+        const children = text.children()
+        const textPath = text.path(path)
+        expect(textPath.children()).toEqual(children)
+      })
+
+      it('does not import all nodes from the text when second parameter false', () => {
+        const textPath = text.path(path, false)
+        expect(textPath.children()).toEqual([])
       })
     })
 

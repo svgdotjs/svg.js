@@ -125,6 +125,13 @@ describe('Text.js', () => {
       expect(text.dom.leading.value).toBe(3)
       expect(text.dom.leading.unit).toBe('px')
     })
+
+    it('uses a leading of 1.3 when no leading is set or 0', () => {
+      const text = new Text()
+      text.setData({ leading: 0 })
+
+      expect(text.dom.leading.value).toBe(1.3)
+    })
   })
 
   describe('Container', () => {
@@ -135,6 +142,13 @@ describe('Text.js', () => {
         expect(text).toEqual(any(Text))
         expect(text.text()).toBe('Hello World\nHow is it\ngoing')
       })
+
+      it('defaults to empty string', () => {
+        const group = new G()
+        const text = group.text()
+        expect(text).toEqual(any(Text))
+        expect(text.text()).toBe('')
+      })
     })
 
     describe('plain()', () => {
@@ -143,6 +157,13 @@ describe('Text.js', () => {
         const text = group.plain('A piece')
         expect(text).toEqual(any(Text))
         expect(text.node.childNodes[0].data).toBe('A piece')
+      })
+
+      it('defaults to empty string', () => {
+        const group = new G()
+        const text = group.plain()
+        expect(text).toEqual(any(Text))
+        expect(text.node.childNodes[0].data).toBe('')
       })
     })
   })

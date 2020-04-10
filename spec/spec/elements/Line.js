@@ -123,6 +123,13 @@ describe('Line.js', () => {
         expect(line.array()).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
         expect(line).toEqual(any(Line))
       })
+
+      it('defaults to zero line', () => {
+        const group = new G()
+        const line = group.line()
+        expect(line.array()).toEqual([ [ 0, 0 ], [ 0, 0 ] ])
+        expect(line).toEqual(any(Line))
+      })
     })
   })
 })
