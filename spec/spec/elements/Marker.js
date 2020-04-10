@@ -32,8 +32,8 @@ describe('Marker.js', function () {
 
   describe('orient()', () => {
     it('sets the orient attribute', () => {
-      const marker = new Marker().orient('start')
-      expect(marker.attr('orient')).toBe('start')
+      const marker = new Marker().orient('auto')
+      expect(marker.attr('orient')).toBe('auto')
     })
   })
 

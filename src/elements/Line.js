@@ -29,7 +29,7 @@ export default class Line extends Shape {
     if (x1 == null) {
       return this.array()
     } else if (typeof y1 !== 'undefined') {
-      x1 = { x1: x1, y1: y1, x2: x2, y2: y2 }
+      x1 = { x1, y1, x2, y2 }
     } else {
       x1 = new PointArray(x1).toLine()
     }
