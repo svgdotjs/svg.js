@@ -132,15 +132,6 @@ describe('Path.js', () => {
     })
   })
 
-  describe('targets()', () => {
-    it('gets all targets of this path', () => {
-      const canvas = SVG().addTo(container)
-      const path = canvas.path('M0 0 50, 50')
-      const textPath = canvas.text('Hello World').path(path)
-      expect(path.targets()).toEqual([ textPath ])
-    })
-  })
-
   describe('width()', () => {
     it('gets the width of the path', () => {
       const canvas = SVG().addTo(container)

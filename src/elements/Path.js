@@ -3,7 +3,6 @@ import { proportionalSize } from '../utils/utils.js'
 import { registerMethods } from '../utils/methods.js'
 import PathArray from '../types/PathArray.js'
 import Shape from './Shape.js'
-import baseFind from '../modules/core/selector.js'
 
 export default class Path extends Shape {
   // Initialize node
@@ -42,10 +41,6 @@ export default class Path extends Shape {
   size (width, height) {
     var p = proportionalSize(this, width, height)
     return this.attr('d', this.array().size(p.width, p.height))
-  }
-
-  targets () {
-    return baseFind('svg textpath [href*="' + this.id() + '"]')
   }
 
   // Set width of element

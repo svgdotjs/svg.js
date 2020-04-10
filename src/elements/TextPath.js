@@ -92,7 +92,7 @@ registerMethods({
     }),
 
     targets () {
-      return baseFind('svg [*|href*="' + this.id() + '"]')
+      return baseFind('svg textPath[*|href*="' + this.id() + '"]')
     }
   }
 })
