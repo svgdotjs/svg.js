@@ -42,7 +42,7 @@ describe('ClipPath.js', () => {
   })
 
   describe('Container', () => {
-    describe('circle()', () => {
+    describe('clip()', () => {
       it('creates a clipPath in the defs', () => {
         const canvas = SVG()
         const clip = canvas.clip()
