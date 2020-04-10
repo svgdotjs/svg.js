@@ -1,4 +1,4 @@
-import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
+import { nodeOrNew, register } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { unCamelCase } from '../utils/utils.js'
 import Element from './Element.js'
@@ -42,12 +42,12 @@ export default class Style extends Element {
 }
 
 registerMethods('Dom', {
-  style: wrapWithAttrCheck(function (selector, obj) {
+  style (selector, obj) {
     return this.put(new Style()).rule(selector, obj)
-  }),
-  fontface: wrapWithAttrCheck(function (name, src, params) {
+  },
+  fontface  (name, src, params) {
     return this.put(new Style()).font(name, src, params)
-  })
+  }
 })
 
 register(Style, 'Style')

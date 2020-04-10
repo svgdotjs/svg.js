@@ -73,4 +73,30 @@ describe('Pattern.js', () => {
       expect(pattern.url()).toBe('url("#foo")')
     })
   })
+
+  describe('Container', () => {
+    it('relays the call to defs', () => {
+      const canvas = new SVG()
+      const defs = canvas.defs()
+      const spy = spyOn(defs, 'pattern').and.callThrough()
+      const spy2 = createSpy('pattern')
+
+      canvas.pattern(100, 100, spy2)
+      expect(spy).toHaveBeenCalledWith(100, 100, spy2)
+      expect(spy2).toHaveBeenCalled()
+    })
+  })
+
+  describe('Defs', () => {
+    it('creates a pattern in the defs and sets its size and position', () => {
+      const canvas = new SVG()
+      const defs = canvas.defs()
+      const spy = createSpy('pattern')
+      const pattern = defs.pattern(100, 100, spy)
+      expect(pattern).toEqual(any(Pattern))
+      expect(defs.children()).toEqual([ pattern ])
+      expect(spy).toHaveBeenCalled()
+      expect(pattern.attr([ 'x', 'y', 'width', 'height' ])).toEqual({ x: 0, y: 0, width: 100, height: 100 })
+    })
+  })
 })

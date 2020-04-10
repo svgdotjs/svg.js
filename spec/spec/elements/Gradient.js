@@ -80,4 +80,30 @@ describe('Gradient.js', () => {
       expect(gradient.url()).toBe('url("#foo")')
     })
   })
+
+  describe('Container', () => {
+    it('relays the call to defs', () => {
+      const canvas = new SVG()
+      const defs = canvas.defs()
+      const spy = spyOn(defs, 'gradient').and.callThrough()
+      const spy2 = createSpy('gradient')
+
+      canvas.gradient('linear', spy2)
+      expect(spy).toHaveBeenCalledWith('linear', spy2)
+      expect(spy2).toHaveBeenCalled()
+    })
+  })
+
+  describe('Defs', () => {
+    it('creates a pattern in the defs', () => {
+      const canvas = new SVG()
+      const defs = canvas.defs()
+      const spy = createSpy('gradient')
+      const gradient = defs.gradient('linear', spy)
+      expect(gradient).toEqual(any(Gradient))
+      expect(gradient.type).toBe('linearGradient')
+      expect(defs.children()).toEqual([ gradient ])
+      expect(spy).toHaveBeenCalled()
+    })
+  })
 })

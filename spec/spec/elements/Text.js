@@ -1,6 +1,6 @@
 /* globals describe, expect, it, spyOn jasmine, container */
 
-import { Text, Number as SVGNumber, SVG, G } from '../../../src/main.js'
+import { Text, Number as SVGNumber, SVG, G, Path, TextPath } from '../../../src/main.js'
 
 const { any } = jasmine
 
@@ -30,8 +30,28 @@ describe('Text.js', () => {
       expect(text.get(2).node.textContent).toBe('going')
     })
 
+    it('increases dy after empty line', () => {
+      const canvas = SVG().addTo(container)
+      const text = canvas.text('Hello World\n\nHow is it\ngoing')
+      expect(text.children().length).toBe(4)
+      expect(text.get(0).node.textContent).toBe('Hello World')
+      expect(text.get(1).node.textContent).toBe('')
+      expect(text.get(2).node.textContent).toBe('How is it')
+      expect(text.get(3).node.textContent).toBe('going')
+      expect(text.get(2).dy()).toBe(text.get(3).dy() * 2)
+    })
+
     it('returns the correct text with newlines', () => {
       const text = new Text().text('Hello World\nHow is it\ngoing')
+      expect(text.text()).toBe('Hello World\nHow is it\ngoing')
+    })
+
+    it('returns the correct text with newlines and skips textPaths', () => {
+      const path = new Path()
+      const text = new Text()
+      const textPath = text.text('Hello World\nHow is it\ngoing').path(path)
+      textPath.children().addTo(text)
+      text.add(new TextPath(), 3)
       expect(text.text()).toBe('Hello World\nHow is it\ngoing')
     })
 

@@ -65,6 +65,26 @@ describe('G.js', () => {
     })
   })
 
+  describe('dx()', () => {
+    it('calls dmove with dy=0 and returns itself', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      const spy = spyOn(g, 'dmove').and.callThrough()
+      expect(g.dx(10)).toBe(g)
+      expect(spy).toHaveBeenCalledWith(10, 0)
+    })
+  })
+
+  describe('dy()', () => {
+    it('calls dmove with dx=0 and returns itself', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      const spy = spyOn(g, 'dmove').and.callThrough()
+      expect(g.dy(10)).toBe(g)
+      expect(spy).toHaveBeenCalledWith(0, 10)
+    })
+  })
+
   describe('move()', () => {
     it('calls dmove() with the correct difference', () => {
       const canvas = SVG().addTo(container)

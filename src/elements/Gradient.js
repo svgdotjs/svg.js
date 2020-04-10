@@ -61,9 +61,9 @@ extend(Gradient, gradiented)
 registerMethods({
   Container: {
     // Create gradient element in defs
-    gradient: wrapWithAttrCheck(function (type, block) {
-      return this.defs().gradient(type, block)
-    })
+    gradient (...args) {
+      return this.defs().gradient(...args)
+    }
   },
   // define gradient
   Defs: {
