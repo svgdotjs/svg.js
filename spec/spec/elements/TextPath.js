@@ -54,7 +54,7 @@ describe('TextPath.js', () => {
       expect(textPath.plot()).not.toBe(null)
     })
 
-    it('does nothingif no path is attached as track', () => {
+    it('does nothing if no path is attached as track', () => {
       const textPath = Object.freeze(new TextPath())
       expect(textPath.plot('M0 0')).toBe(textPath)
     })
