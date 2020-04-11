@@ -26,16 +26,12 @@ export function y (y) {
 
 // Move by center over x-axis
 export function cx (x) {
-  return x == null
-    ? this.attr('cx')
-    : this.attr('cx', x)
+  return this.attr('cx', x)
 }
 
 // Move by center over y-axis
 export function cy (y) {
-  return y == null
-    ? this.attr('cy')
-    : this.attr('cy', y)
+  return this.attr('cy', y)
 }
 
 // Set width of element
