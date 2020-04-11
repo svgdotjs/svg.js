@@ -6,13 +6,6 @@ export function array () {
   return this._array || (this._array = new PointArray(this.attr('points')))
 }
 
-// Plot new path
-export function plot (p) {
-  return (p == null) ? this.array()
-    : this.clear().attr('points', typeof p === 'string' ? p
-    : (this._array = new PointArray(p)))
-}
-
 // Clear array cache
 export function clear () {
   delete this._array
@@ -22,6 +15,13 @@ export function clear () {
 // Move by left top corner
 export function move (x, y) {
   return this.attr('points', this.array().move(x, y))
+}
+
+// Plot new path
+export function plot (p) {
+  return (p == null) ? this.array()
+    : this.clear().attr('points', typeof p === 'string' ? p
+    : (this._array = new PointArray(p)))
 }
 
 // Set element size to given width and height

@@ -70,7 +70,8 @@
     "test:es6": "npx karma start .config/karma.es6.js --single-run || true",
     "zip": "zip -j dist/svg.js.zip -- LICENSE.txt README.md CHANGELOG.md dist/svg.js dist/svg.js.map dist/svg.min.js dist/svg.min.js.map dist/polyfills.js dist/polyfillsIE.js",
     "prepublishOnly": "rm -rf ./dist && npm run build && npm run build:polyfills && npm test",
-    "postpublish": "npm run zip"
+    "postpublish": "npm run zip",
+    "checkTests": "node spec/checkForAllTests.js"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
