@@ -37,7 +37,7 @@ describe('Pattern.js', () => {
   describe('targets()', () => {
     it('gets all targets of this pattern', () => {
       const canvas = SVG().addTo(container)
-      const pattern = canvas.pattern('linear')
+      const pattern = canvas.pattern()
       const rect = canvas.rect(100, 100).fill(pattern)
       expect(pattern.targets()).toEqual([ rect ])
     })

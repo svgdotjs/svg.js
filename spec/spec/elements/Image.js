@@ -5,7 +5,7 @@ import { getWindow } from '../../../src/utils/window.js'
 
 const { any, objectContaining, createSpy } = jasmine
 
-const url = 'fixtures/pixel.png'
+const url = 'spec/fixtures/pixel.png'
 describe('Image.js', () => {
 
   describe('()', () => {

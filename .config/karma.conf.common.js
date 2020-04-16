@@ -36,7 +36,8 @@ module.exports = function (config) {
     ],
 
     proxies: {
-      '/fixtures/': '/base/spec/fixtures/'
+      '/fixtures/': '/base/spec/fixtures/',
+      '/spec/': '/base/spec/'
     },
 
     // web server port

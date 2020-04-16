@@ -68,7 +68,7 @@ describe('Tspan.js', () => {
     })
   })
 
-  describe('newLine', () => {
+  describe('newLine()', () => {
     it('works without text parent', () => {
       // should not fail
       const tspan = new Tspan().newLine()
@@ -98,7 +98,7 @@ describe('Tspan.js', () => {
       text.tspan('Second Line').newLine()
       const third = text.tspan('Third Line').newLine()
 
-      const fontSize = getWindow().window.getComputedStyle(third.node).getPropertyValue('font-size')
+      const fontSize = getWindow().getComputedStyle(third.node).getPropertyValue('font-size')
       const dy = 2 * new SVGNumber(fontSize)
       expect(third.dy()).toBe(dy)
     })
