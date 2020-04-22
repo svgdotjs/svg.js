@@ -10,7 +10,7 @@ import {
 import { find, findOne } from '../modules/core/selector.js'
 import { globals } from '../utils/window.js'
 import { map } from '../utils/utils.js'
-import { ns } from '../modules/core/namespaces.js'
+import { svg, html } from '../modules/core/namespaces.js'
 import EventTarget from '../types/EventTarget.js'
 import List from '../types/List.js'
 import attr from '../modules/core/attr.js'
@@ -118,6 +118,10 @@ export default class Dom extends EventTarget {
     return this.index(element) >= 0
   }
 
+  html (htmlOrFn, outerHTML) {
+    return this.xml(htmlOrFn, outerHTML, html)
+  }
+
   // Get / set id
   id (id) {
     // generate new id if no id set
@@ -220,81 +224,8 @@ export default class Dom extends EventTarget {
   }
 
   // Import / Export raw svg
-  svg (svgOrFn, outerHTML) {
-    var well, len, fragment
-
-    if (svgOrFn === false) {
-      outerHTML = false
-      svgOrFn = null
-    }
-
-    // act as getter if no svg string is given
-    if (svgOrFn == null || typeof svgOrFn === 'function') {
-      // The default for exports is, that the outerNode is included
-      outerHTML = outerHTML == null ? true : outerHTML
-
-      // write svgjs data to the dom
-      this.writeDataToDom()
-      let current = this
-
-      // An export modifier was passed
-      if (svgOrFn != null) {
-        current = adopt(current.node.cloneNode(true))
-
-        // If the user wants outerHTML we need to process this node, too
-        if (outerHTML) {
-          const result = svgOrFn(current)
-          current = result || current
-
-          // The user does not want this node? Well, then he gets nothing
-          if (result === false) return ''
-        }
-
-        // Deep loop through all children and apply modifier
-        current.each(function () {
-          const result = svgOrFn(this)
-          const _this = result || this
-
-          // If modifier returns false, discard node
-          if (result === false) {
-            this.remove()
-
-            // If modifier returns new node, use it
-          } else if (result && this !== _this) {
-            this.replace(_this)
-          }
-        }, true)
-      }
-
-      // Return outer or inner content
-      return outerHTML
-        ? current.node.outerHTML
-        : current.node.innerHTML
-    }
-
-    // Act as setter if we got a string
-
-    // The default for import is, that the current node is not replaced
-    outerHTML = outerHTML == null ? false : outerHTML
-
-    // Create temporary holder
-    well = globals.document.createElementNS(ns, 'svg')
-    fragment = globals.document.createDocumentFragment()
-
-    // Dump raw svg
-    well.innerHTML = svgOrFn
-
-    // Transplant nodes into the fragment
-    for (len = well.children.length; len--;) {
-      fragment.appendChild(well.firstElementChild)
-    }
-
-    const parent = this.parent()
-
-    // Add the whole fragment at once
-    return outerHTML
-      ? this.replace(fragment) && parent
-      : this.add(fragment)
+  svg (svgOrFn, outerSVG) {
+    return this.xml(svgOrFn, outerSVG, svg)
   }
 
   // Return id on string conversion
@@ -327,6 +258,84 @@ export default class Dom extends EventTarget {
     })
 
     return this
+  }
+
+  // Import / Export raw svg
+  xml (xmlOrFn, outerXML, ns) {
+    var well, len, fragment
+
+    if (xmlOrFn === false) {
+      outerXML = false
+      xmlOrFn = null
+    }
+
+    // act as getter if no svg string is given
+    if (xmlOrFn == null || typeof xmlOrFn === 'function') {
+      // The default for exports is, that the outerNode is included
+      outerXML = outerXML == null ? true : outerXML
+
+      // write svgjs data to the dom
+      this.writeDataToDom()
+      let current = this
+
+      // An export modifier was passed
+      if (xmlOrFn != null) {
+        current = adopt(current.node.cloneNode(true))
+
+        // If the user wants outerHTML we need to process this node, too
+        if (outerXML) {
+          const result = xmlOrFn(current)
+          current = result || current
+
+          // The user does not want this node? Well, then he gets nothing
+          if (result === false) return ''
+        }
+
+        // Deep loop through all children and apply modifier
+        current.each(function () {
+          const result = xmlOrFn(this)
+          const _this = result || this
+
+          // If modifier returns false, discard node
+          if (result === false) {
+            this.remove()
+
+            // If modifier returns new node, use it
+          } else if (result && this !== _this) {
+            this.replace(_this)
+          }
+        }, true)
+      }
+
+      // Return outer or inner content
+      return outerXML
+        ? current.node.outerHTML
+        : current.node.innerHTML
+    }
+
+    // Act as setter if we got a string
+
+    // The default for import is, that the current node is not replaced
+    outerXML = outerXML == null ? false : outerXML
+
+    // Create temporary holder
+    well = globals.document.createElementNS(ns, 'svg')
+    fragment = globals.document.createDocumentFragment()
+
+    // Dump raw svg
+    well.innerHTML = xmlOrFn
+
+    // Transplant nodes into the fragment
+    for (len = well.children.length; len--;) {
+      fragment.appendChild(well.firstElementChild)
+    }
+
+    const parent = this.parent()
+
+    // Add the whole fragment at once
+    return outerXML
+      ? this.replace(fragment) && parent
+      : this.add(fragment)
   }
 }
 

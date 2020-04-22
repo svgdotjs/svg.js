@@ -1,6 +1,6 @@
 import { addMethodNames } from './methods.js'
 import { capitalize } from './utils.js'
-import { ns } from '../modules/core/namespaces.js'
+import { svg } from '../modules/core/namespaces.js'
 import { globals } from '../utils/window.js'
 import Base from '../types/Base.js'
 
@@ -10,7 +10,7 @@ export const root = '___SYMBOL___ROOT___'
 // Method for element creation
 export function create (name) {
   // create element
-  return globals.document.createElementNS(ns, name)
+  return globals.document.createElementNS(svg, name)
 }
 
 export function makeInstance (element, isHTML = false) {
