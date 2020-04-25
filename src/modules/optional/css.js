@@ -19,7 +19,7 @@ export function css (style, val) {
   }
 
   if (arguments.length < 2) {
-    // get style properties in the array
+    // get style properties as array
     if (Array.isArray(style)) {
       for (const name of style) {
         const cased = camelCase(name)
