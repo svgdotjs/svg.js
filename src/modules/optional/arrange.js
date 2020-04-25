@@ -53,21 +53,17 @@ export function front () {
   var p = this.parent()
 
   // Move node forward
-  p.node.appendChild(this.node)
-
-  // Make sure defs node is always at the top
-  if (typeof p.isRoot === 'function' && p.isRoot()) {
-    p.node.appendChild(p.defs().node)
-  }
+  p.add(this.remove())
 
   return this
 }
 
 // Send given element all the way to the back
 export function back () {
-  if (this.position() > 0) {
-    this.parent().removeElement(this).add(this, 0)
-  }
+  var p = this.parent()
+
+  // Move node back
+  p.add(this.remove(), 0)
 
   return this
 }
