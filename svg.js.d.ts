@@ -95,12 +95,10 @@ declare module "@svgdotjs/svg.js" {
         hex: RegExp;
         hyphen: RegExp;
         isBlank: RegExp;
-        isCss: RegExp;
         isHex: RegExp;
         isImage: RegExp;
         isNumber: RegExp;
         isPathLetter: RegExp;
-        isPercent: RegExp;
         isRgb: RegExp;
         numberAndUnit: RegExp;
         numbersWithDots: RegExp;

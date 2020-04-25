@@ -1,4 +1,4 @@
-import { createSVGWindow } from 'svgdom'
+import { createHTMLWindow } from 'svgdom'
 
 /* globals beforeEach, afterEach, jasmine */
 import { buildCanvas, clear } from './helpers.js'
@@ -7,7 +7,7 @@ import { registerWindow } from '../src/main.js'
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 200
 
 function setup () {
-  const win = createSVGWindow()
+  const win = createHTMLWindow()
   registerWindow(win, win.document)
   buildCanvas()
   // buildFixtures()

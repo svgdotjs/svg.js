@@ -8,7 +8,7 @@ export const hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
 export const rgb = /rgb\((\d+),(\d+),(\d+)\)/
 
 // Parse reference id
-export const reference = /(#[a-z0-9\-_]+)/i
+export const reference = /(#[a-z_][a-z0-9\-_]*)/i
 
 // splits a transformation chain
 export const transforms = /\)\s*,?\s*/
@@ -22,17 +22,11 @@ export const isHex = /^#[a-f0-9]{3,6}$/i
 // Test rgb value
 export const isRgb = /^rgb\(/
 
-// Test css declaration
-export const isCss = /[^:]+:[^;]+;?/
-
 // Test for blank string
 export const isBlank = /^(\s+)?$/
 
 // Test for numeric string
 export const isNumber = /^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i
-
-// Test for percent value
-export const isPercent = /^-?[\d.]+%$/
 
 // Test for image url
 export const isImage = /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
@@ -42,7 +36,7 @@ export const delimiter = /[\s,]+/
 
 // The following regex are used to parse the d attribute of a path
 
-// Matches all hyphens which are not after an exponent
+// Matches all hyphens which are preceeded by something but not an exponent
 export const hyphen = /([^e])-/gi
 
 // Replaces and tests for all path letters

@@ -1,9 +1,9 @@
 import { getWindow } from '../src/utils/window.js'
-import { ns } from '../src/modules/core/namespaces.js'
+import { svg } from '../src/modules/core/namespaces.js'
 
 function tag (name, attrs, children) {
   const doc = getWindow().document
-  const el = doc.createElementNS(ns, name)
+  const el = doc.createElementNS(svg, name)
   let i
 
   for (i in attrs) {
@@ -158,4 +158,6 @@ export function clear () {
   // remove if present
   fixtures && fixtures.parentNode.removeChild(fixtures)
   canvas.parentNode.removeChild(canvas)
+
+  ;[ ...doc.querySelectorAll('svg') ].forEach((el) => el.parentNode.removeChild(el))
 }

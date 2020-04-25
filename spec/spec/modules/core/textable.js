@@ -7,7 +7,7 @@ describe('textable.js', () => {
 
   beforeEach(() => {
     canvas = SVG().addTo(container)
-    text = canvas.text('Hello World')
+    text = canvas.text('Hello World\nIn two lines')
     tspan = text.get(0)
   })
 
@@ -39,27 +39,25 @@ describe('textable.js', () => {
   })
 
   describe('y()', () => {
-    it('returns the value of x without an argument on a text', () => {
+    it('returns the value of y without an argument on a text', () => {
       expect(text.y(0).y()).toBe(0)
     })
 
-    it('sets the x value of the bbox with the first argument on a text', () => {
+    it('sets the y value of the bbox with the first argument on a text', () => {
       text.y(123)
       expect(text.bbox().y).toBe(123)
     })
 
-    it('sets the value of all lines', () => {
+    it('sets the y position of first line', () => {
       text.y(200)
-      text.each(function () {
-        expect(this.y()).toBe(text.y())
-      })
+      expect(text.first().y()).toBe(text.y())
     })
 
-    it('returns the value of x without an argument on a tspan', () => {
+    it('returns the value of y without an argument on a tspan', () => {
       expect(tspan.y(10).y()).toBe(10)
     })
 
-    it('sets the x value of the bbox with the first argument on a tspan', () => {
+    it('sets the y value of the bbox with the first argument on a tspan', () => {
       tspan.y(123)
       expect(tspan.bbox().y).toBe(123)
     })
