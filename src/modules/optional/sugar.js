@@ -1,4 +1,3 @@
-import { on, off } from '../core/event.js'
 import { registerMethods } from '../../utils/methods.js'
 import Color from '../../types/Color.js'
 import Element from '../../elements/Element.js'
@@ -106,7 +105,7 @@ registerMethods('radius', {
   // Add x and y radius
   radius: function (x, y = x) {
     var type = (this._element || this).type
-    return type === 'radialGradient' || type === 'radialGradient'
+    return type === 'radialGradient'
       ? this.attr('r', new SVGNumber(x))
       : this.rx(x).ry(y)
   }
@@ -159,9 +158,9 @@ const methods = [ 'click',
   // add event to Element
   const fn = function (f) {
     if (f === null) {
-      off(this, event)
+      this.off(event)
     } else {
-      on(this, event, f)
+      this.on(event, f)
     }
     return this
   }

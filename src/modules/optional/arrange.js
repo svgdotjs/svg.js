@@ -23,16 +23,11 @@ export function prev () {
 
 // Send given element one step forward
 export function forward () {
-  var i = this.position() + 1
+  var i = this.position()
   var p = this.parent()
 
   // move node one step forward
-  p.removeElement(this).add(this, i)
-
-  // make sure defs node is always at the top
-  if (typeof p.isRoot === 'function' && p.isRoot()) {
-    p.node.appendChild(p.defs().node)
-  }
+  p.add(this.remove(), i + 1)
 
   return this
 }
@@ -40,10 +35,9 @@ export function forward () {
 // Send given element one step backward
 export function backward () {
   var i = this.position()
+  var p = this.parent()
 
-  if (i > 0) {
-    this.parent().removeElement(this).add(this, i - 1)
-  }
+  p.add(this.remove(), i ? i - 1 : 0)
 
   return this
 }
