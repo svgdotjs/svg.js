@@ -1,8 +1,19 @@
 import { registerMethods } from '../../utils/methods.js'
+import { isNumber } from '../core/regex.js'
+import { filter, map } from '../../utils/utils.js'
 
 // Store data values on svg nodes
 export function data (a, v, r) {
-  if (typeof a === 'object') {
+  if (a == null) {
+    // get an object of attributes
+    return this.data(map(filter(this.node.attributes, (el) => el.nodeName.indexOf('data-') === 0), (el) => el.nodeName.slice(5)))
+  } else if (a instanceof Array) {
+    const data = {}
+    for (const key of a) {
+      data[key] = this.data(key)
+    }
+    return data
+  } else if (typeof a === 'object') {
     for (v in a) {
       this.data(v, a[v])
     }

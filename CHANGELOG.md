@@ -38,6 +38,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added `Fragment` as a wrapper for document-fragment
  - added position argument for `toParent()`
  - added position argument for `toRoot()`
+ - added attr syntax for `data()` method
  - added lots of tests in es6 format
 
 ## [3.0.16] - 2019-11-12

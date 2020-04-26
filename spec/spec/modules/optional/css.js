@@ -7,16 +7,16 @@ describe('css.js', () => {
     describe('css()', () => {
       describe('as getter', () => {
         it('returns all css as object', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css()).toEqual({
             fill: 'none',
-            outline: '1px solid black',
+            'outline-width': '1px',
             stroke: 'none'
           })
         })
 
         it('returns an object with selected css properries', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css([ 'fill', 'stroke' ])).toEqual({
             fill: 'none',
             stroke: 'none'
@@ -24,29 +24,29 @@ describe('css.js', () => {
         })
 
         it('returns a single property with property name given', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css('fill')).toBe('none')
         })
 
         it('returns undefined if css property is not set', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
-          expect(rect.css('something')).toBe('')
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
+          expect(rect.css('outline-color')).toBe('')
         })
       })
 
       describe('as setter', () => {
         it('returns itself', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css('fill', 'black')).toBe(rect)
         })
 
         it('adds a css property', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
-          expect(rect.css('stroke-width', 2).css('stroke-width')).toBe('2')
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
+          expect(rect.css('stroke-width', '2px').css('stroke-width')).toBe('2px')
         })
 
         it('changes a css property', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css('fill', 'black').css('fill')).toBe('black')
         })
 
@@ -56,13 +56,18 @@ describe('css.js', () => {
         })
 
         it('removes property if empty string is passed as value', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css('fill', '').css('fill')).toBe('')
         })
 
         it('removes property if null is passed as value', () => {
-          const rect = new Rect({ style: 'fill: none; outline: 1px solid black; stroke: none' })
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css('fill', null).css('fill')).toBe('')
+        })
+
+        it('removes property if null is passed as part of object', () => {
+          const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
+          expect(rect.css({ fill: null, stroke: 'black' }).css('fill')).toBe('')
         })
       })
     })
