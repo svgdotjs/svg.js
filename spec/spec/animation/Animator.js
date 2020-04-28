@@ -1,21 +1,26 @@
-describe('SVG.Animator', function () {
+/* globals describe, expect, it, beforeEach, afterEach, jasmine */
+
+import { Animator, Queue } from '../../../src/main.js'
+import { getWindow } from '../../../src/utils/window.js'
+
+describe('Animator.js', function () {
 
   beforeEach(function () {
-    jasmine.RequestAnimationFrame.install()
-    SVG.Animator.timeouts = new SVG.Queue()
-    SVG.Animator.frames = new SVG.Queue()
-    SVG.Animator.nextDraw = null
+    jasmine.RequestAnimationFrame.install(getWindow())
+    Animator.timeouts = new Queue()
+    Animator.frames = new Queue()
+    Animator.nextDraw = null
   })
 
   afterEach(function () {
-    jasmine.RequestAnimationFrame.uninstall()
+    jasmine.RequestAnimationFrame.uninstall(getWindow())
   })
 
   describe('timeout()', function () {
     it('calls a function after a specific time', function () {
 
       var spy = jasmine.createSpy('tester')
-      var id = SVG.Animator.timeout(spy, 100)
+      Animator.timeout(spy, 100)
 
       jasmine.RequestAnimationFrame.tick(99)
       expect(spy).not.toHaveBeenCalled()
@@ -27,8 +32,8 @@ describe('SVG.Animator', function () {
   describe('cancelTimeout()', function () {
     it('cancels a timeout which was created with timeout()', function () {
       var spy = jasmine.createSpy('tester')
-      var id = SVG.Animator.timeout(spy, 100)
-      SVG.Animator.clearTimeout(id)
+      var id = Animator.timeout(spy, 100)
+      Animator.clearTimeout(id)
 
       expect(spy).not.toHaveBeenCalled()
       jasmine.RequestAnimationFrame.tick(100)
@@ -40,7 +45,7 @@ describe('SVG.Animator', function () {
     it('calls a function at the next animationFrame', function () {
       var spy = jasmine.createSpy('tester')
 
-      SVG.Animator.frame(spy)
+      Animator.frame(spy)
       expect(spy).not.toHaveBeenCalled()
       jasmine.RequestAnimationFrame.tick()
       expect(spy).toHaveBeenCalled()

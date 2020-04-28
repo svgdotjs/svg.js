@@ -1,8 +1,6 @@
 /* globals describe, expect, it, spyOn, jasmine */
 
-import {
-  EventTarget
-} from '../../../src/main.js'
+import { EventTarget } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 
 const { any, objectContaining, createSpy } = jasmine

@@ -2,22 +2,19 @@
  * Jasmine RequestAnimationFrame: a set of helpers for testing funcionality
  * that uses requestAnimationFrame under the Jasmine BDD framework for JavaScript.
  */
-;(function () {
+function RAFPlugin (jasmine) {
 
   var index = 0
   var callbacks = []
 
-  function MockRAF (global) {
-    this.realRAF = global.requestAnimationFrame
-    this.realCAF = global.cancelAnimationFrame
-    this.realPerf = global.performance
+  function MockRAF () {
     this.nextTime = 0
 
     var _this = this
 
     /**
-         * Mock for window.requestAnimationFrame
-         */
+    * Mock for window.requestAnimationFrame
+    */
     this.mockRAF = function (fn) {
       if (typeof fn !== 'function') {
         throw new Error('You should pass a function to requestAnimationFrame')
@@ -29,8 +26,8 @@
     }
 
     /**
-         * Mock for window.cancelAnimationFrame
-         */
+    * Mock for window.cancelAnimationFrame
+    */
     this.mockCAF = function (requestID) {
       callbacks.splice(requestID, 1)
     }
@@ -42,18 +39,21 @@
     }
 
     /**
-         * Install request animation frame mocks.
-         */
-    this.install = function () {
+    * Install request animation frame mocks.
+    */
+    this.install = function (global) {
+      _this.realRAF = global.requestAnimationFrame
+      _this.realCAF = global.cancelAnimationFrame
+      _this.realPerf = global.performance
       global.requestAnimationFrame = _this.mockRAF
       global.cancelAnimationFrame = _this.mockCAF
       global.performance = _this.mockPerf
     }
 
     /**
-         * Uninstall request animation frame mocks.
-         */
-    this.uninstall = function () {
+    * Uninstall request animation frame mocks.
+    */
+    this.uninstall = function (global) {
       global.requestAnimationFrame = _this.realRAF
       global.cancelAnimationFrame = _this.realCAF
       global.performance = _this.realPerf
@@ -62,8 +62,8 @@
     }
 
     /**
-         * Simulate animation frame readiness.
-         */
+    * Simulate animation frame readiness.
+    */
     this.tick = function (dt) {
       _this.nextTime += (dt || 1)
 
@@ -79,5 +79,12 @@
     }
   }
 
-  jasmine.RequestAnimationFrame = new MockRAF(window)
-}())
+  jasmine.RequestAnimationFrame = new MockRAF()
+}
+
+// if (!module) {
+RAFPlugin(jasmine)
+// } else {
+//   module.exports.RAFPlugin = RAFPlugin
+
+// }

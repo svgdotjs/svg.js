@@ -1,15 +1,18 @@
+/* globals describe, expect, it */
 
-describe ('SVG.Queue()', function () {
+import { Queue } from '../../../src/main.js'
+
+describe('Queue.js', function () {
 
   describe('first ()', function () {
 
     it('returns null if no item in the queue', function () {
-      var queue = new SVG.Queue()
+      var queue = new Queue()
       expect(queue.first()).toEqual(null)
     })
 
-    it ('returns the first value in the queue', function () {
-      var queue = new SVG.Queue()
+    it('returns the first value in the queue', function () {
+      var queue = new Queue()
       queue.push(1)
       expect(queue.first()).toBe(1)
       queue.push(2)
@@ -19,13 +22,13 @@ describe ('SVG.Queue()', function () {
 
   describe('last ()', function () {
 
-    it ('returns null if no item in the queue', function () {
-      var queue = new SVG.Queue()
+    it('returns null if no item in the queue', function () {
+      var queue = new Queue()
       expect(queue.last()).toEqual(null)
     })
 
-    it ('returns the last value added', function () {
-      var queue = new SVG.Queue()
+    it('returns the last value added', function () {
+      var queue = new Queue()
       queue.push(1)
       expect(queue.last()).toBe(1)
       queue.push(2)
@@ -35,8 +38,8 @@ describe ('SVG.Queue()', function () {
 
   describe('push ()', function () {
 
-    it ('adds an element to the end of the queue', function () {
-      var queue = new SVG.Queue()
+    it('adds an element to the end of the queue', function () {
+      var queue = new Queue()
       queue.push(1)
       queue.push(2)
       queue.push(3)
@@ -48,7 +51,7 @@ describe ('SVG.Queue()', function () {
 
   describe('remove ()', function () {
     it('removes the given item from the queue', function () {
-      var queue = new SVG.Queue()
+      var queue = new Queue()
       queue.push(1)
       queue.push(2)
       var item = queue.push(3)
@@ -62,13 +65,13 @@ describe ('SVG.Queue()', function () {
 
   describe('shift ()', function () {
     it('returns nothing if queue is empty', function () {
-      var queue = new SVG.Queue()
+      var queue = new Queue()
       var val = queue.shift()
       expect(val).toBeFalsy()
     })
 
     it('returns the first item of the queue and removes it', function () {
-      var queue = new SVG.Queue()
+      var queue = new Queue()
       queue.push(1)
       queue.push(2)
       queue.push(3)

@@ -1,3 +1,4 @@
+import './RAFPlugin.js'
 import { createHTMLWindow } from 'svgdom'
 
 /* globals beforeEach, afterEach, jasmine */
