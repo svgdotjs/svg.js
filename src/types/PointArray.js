@@ -2,6 +2,8 @@ import { delimiter } from '../modules/core/regex.js'
 import { extend } from '../utils/adopter.js'
 import { subClassArray } from './ArrayPolyfill.js'
 import SVGArray from './SVGArray.js'
+import { Matrix } from '../main.js'
+import Box from './Box.js'
 
 const PointArray = subClassArray('PointArray', SVGArray)
 
@@ -28,32 +30,13 @@ extend(PointArray, {
     }
   },
 
-  // Get morphed array at given position
-  at (pos) {
-    // make sure a destination is defined
-    if (!this.destination) return this
-
-    // generate morphed point string
-    for (var i = 0, il = this.length, array = []; i < il; i++) {
-      array.push([
-        this[i][0] + (this.destination[i][0] - this[i][0]) * pos,
-        this[i][1] + (this.destination[i][1] - this[i][1]) * pos
-      ])
-    }
-
-    return new PointArray(array)
-  },
-
   // Parse point string and flat array
-  parse (array = [ [ 0, 0 ] ]) {
+  parse (array = [ 0, 0 ]) {
     var points = []
 
-    // if it is an array
+    // if it is an array, we flatten it and therefore clone it to 1 depths
     if (array instanceof Array) {
-      // and it is not flat, there is no need to parse it
-      if (array[0] instanceof Array) {
-        return array
-      }
+      array = Array.prototype.concat.apply([], array)
     } else { // Else, it is considered as a string
       // parse points
       array = array.trim().split(delimiter).map(parseFloat)
@@ -71,21 +54,24 @@ extend(PointArray, {
     return points
   },
 
-  // transform points with matrix (similar to Point.transform)
   transform (m) {
-    const points = []
+    return this.clone().transformO(m)
+  },
 
-    for (let i = 0; i < this.length; i++) {
-      const point = this[i]
-      // Perform the matrix multiplication
-      points.push([
-        m.a * point[0] + m.c * point[1] + m.e,
-        m.b * point[0] + m.d * point[1] + m.f
-      ])
+  // transform points with matrix (similar to Point.transform)
+  transformO (m) {
+    if (!Matrix.isMatrixLike(m)) {
+      m = new Matrix(m)
     }
 
-    // Return the required point
-    return new PointArray(points)
+    for (let i = this.length; i--;) {
+      // Perform the matrix multiplication
+      const [ x, y ] = this[i]
+      this[i][0] = m.a * x + m.c * y + m.e
+      this[i][1] = m.b * x + m.d * y + m.f
+    }
+
+    return this
   },
 
   // Move point string
@@ -132,6 +118,6 @@ extend(PointArray, {
       minX = Math.min(el[0], minX)
       minY = Math.min(el[1], minY)
     })
-    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
+    return new Box(minX, minY, maxX - minX, maxY - minY)
   }
 })

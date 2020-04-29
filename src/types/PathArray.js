@@ -11,6 +11,7 @@ import { subClassArray } from './ArrayPolyfill.js'
 import Point from './Point.js'
 import SVGArray from './SVGArray.js'
 import parser from '../modules/core/parser.js'
+import Box from './Box.js'
 
 const PathArray = subClassArray('PathArray', SVGArray)
 
@@ -222,72 +223,8 @@ extend(PathArray, {
     return this
   },
 
-  // Test if the passed path array use the same path data commands as this path array
-  equalCommands (pathArray) {
-    var i, il, equalCommands
-
-    pathArray = new PathArray(pathArray)
-
-    equalCommands = this.length === pathArray.length
-    for (i = 0, il = this.length; equalCommands && i < il; i++) {
-      equalCommands = this[i][0] === pathArray[i][0]
-    }
-
-    return equalCommands
-  },
-
-  // Make path array morphable
-  morph (pathArray) {
-    pathArray = new PathArray(pathArray)
-
-    if (this.equalCommands(pathArray)) {
-      this.destination = pathArray
-    } else {
-      this.destination = null
-    }
-
-    return this
-  },
-
-  // Get morphed path array at given position
-  at (pos) {
-    // make sure a destination is defined
-    if (!this.destination) return this
-
-    var sourceArray = this
-    var destinationArray = this.destination.value
-    var array = []
-    var pathArray = new PathArray()
-    var i, il, j, jl
-
-    // Animate has specified in the SVG spec
-    // See: https://www.w3.org/TR/SVG11/paths.html#PathElement
-    for (i = 0, il = sourceArray.length; i < il; i++) {
-      array[i] = [ sourceArray[i][0] ]
-      for (j = 1, jl = sourceArray[i].length; j < jl; j++) {
-        array[i][j] = sourceArray[i][j] + (destinationArray[i][j] - sourceArray[i][j]) * pos
-      }
-      // For the two flags of the elliptical arc command, the SVG spec say:
-      // Flags and booleans are interpolated as fractions between zero and one, with any non-zero value considered to be a value of one/true
-      // Elliptical arc command as an array followed by corresponding indexes:
-      // ['A', rx, ry, x-axis-rotation, large-arc-flag, sweep-flag, x, y]
-      //   0    1   2        3                 4             5      6  7
-      if (array[i][0] === 'A') {
-        array[i][4] = +(array[i][4] !== 0)
-        array[i][5] = +(array[i][5] !== 0)
-      }
-    }
-
-    // Directly modify the value of a path array, this is done this way for performance
-    pathArray.value = array
-    return pathArray
-  },
-
   // Absolutize and parse path to array
-  parse (array = [ [ 'M', 0, 0 ] ]) {
-    // if it's already a patharray, no need to parse it
-    if (array instanceof PathArray) return array
-
+  parse (array = [ 'M', 0, 0 ]) {
     // prepare for parsing
     var s
     var paramCnt = { M: 2, L: 2, H: 1, V: 1, C: 6, S: 4, Q: 4, T: 2, A: 7, Z: 0 }
@@ -300,9 +237,8 @@ extend(PathArray, {
         .trim() // trim
         .split(delimiter) // split into array
     } else {
-      array = array.reduce(function (prev, curr) {
-        return [].concat.call(prev, curr)
-      }, [])
+      // Flatten array
+      array = Array.prototype.concat.apply([], array)
     }
 
     // array now is an array containing all parts of a path e.g. ['M', '0', '0', 'L', '30', '30' ...]
@@ -337,6 +273,6 @@ extend(PathArray, {
   // Get bounding box of path
   bbox () {
     parser().path.setAttribute('d', this.toString())
-    return parser.nodes.path.getBBox()
+    return new Box(parser.nodes.path.getBBox())
   }
 })

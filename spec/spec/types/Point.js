@@ -1,6 +1,6 @@
-/* globals describe, expect, it, beforeEach */
+/* globals describe, expect, it, beforeEach, spyOn */
 
-import { Point } from '../../../src/main.js'
+import { Point, Rect, Matrix } from '../../../src/main.js'
 
 describe('Point.js', () => {
   var point
@@ -66,6 +66,16 @@ describe('Point.js', () => {
     })
   })
 
+  describe('transform()', () => {
+    it('transforms a point with a matrix', () => {
+      expect(new Point().transform(new Matrix({ translate: [ 10, 10 ] }))).toEqual(new Point(10, 10))
+    })
+
+    it('transforms a point with a transformation object', () => {
+      expect(new Point().transform({ translate: [ 10, 10 ] })).toEqual(new Point(10, 10))
+    })
+  })
+
   describe('clone()', () => {
     it('returns cloned point', () => {
       var point1 = new Point(1, 1)
@@ -73,6 +83,23 @@ describe('Point.js', () => {
 
       expect(point1).toEqual(point2)
       expect(point1).not.toBe(point2)
+    })
+  })
+
+  describe('toArray()', () => {
+    it('creates an array representation of Point', () => {
+      const p = new Point(1, 2)
+      expect(p.toArray()).toEqual([ 1, 2 ])
+    })
+  })
+
+  describe('Element', () => {
+    describe('point()', () => {
+      it('transforms a screen point into the coordinate system of the element', () => {
+        const rect = new Rect()
+        spyOn(rect, 'screenCTM').and.callFake(() => new Matrix(1, 0, 0, 1, 20, 20))
+        expect(rect.point({ x: 10, y: 10 })).toEqual(new Point(-10, -10))
+      })
     })
   })
 })

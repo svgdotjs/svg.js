@@ -28,6 +28,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `flatten()` which correctly flattens now but doesnt accept parameters anymore (makes no sense)
  - fixed `ungroup()` which now inserts the elements at the correct position in the correct order and has position as second argument now
  - fixed `position` for `transform()` to also allow a position of 0
+ - fixed `bbox()` of `PathArray` and `PointArray` which returns an instance of `Box` now
+ - fixed bug in creation of PointArray which had still references to source arrays in it
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
@@ -41,10 +43,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added position argument for `toRoot()`
  - added attr syntax for `data()` method
  - added index and array parameter when passing a function to `List.each()` so that it mostly behaves like map
+ - added possibility to pass transform object to `PointArray.transform()` ----- to Point
  - added lots of tests in es6 format
 
 ### Deleted
   - deleted undocumented `Matrix.compose()` method which did the same as `new Matrix()` or `Matrix.transform()`
+  - deleted undocumented `Path.morph()` and `Path.at()` which was replaced with Morphables in v3
 
 ## [3.0.16] - 2019-11-12
 
