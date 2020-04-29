@@ -39,6 +39,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added position argument for `toParent()`
  - added position argument for `toRoot()`
  - added attr syntax for `data()` method
+ - added index and array parameter when passing a function to `List.each()` so that it mostly behaves like map
  - added lots of tests in es6 format
 
 ## [3.0.16] - 2019-11-12

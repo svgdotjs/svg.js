@@ -13,8 +13,8 @@ export default List
 extend(List, {
   each (fnOrMethodName, ...args) {
     if (typeof fnOrMethodName === 'function') {
-      return this.map((el) => {
-        return fnOrMethodName.call(el, el)
+      return this.map((el, i, arr) => {
+        return fnOrMethodName.call(el, el, i, arr)
       })
     } else {
       return this.map(el => {
