@@ -1,5 +1,4 @@
 import { registerMethods } from '../../utils/methods.js'
-import { isNumber } from '../core/regex.js'
 import { filter, map } from '../../utils/utils.js'
 
 // Store data values on svg nodes

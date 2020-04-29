@@ -6,11 +6,11 @@ import Matrix from './Matrix.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
-function isNulledBox (box) {
+export function isNulledBox (box) {
   return !box.width && !box.height && !box.x && !box.y
 }
 
-function domContains (node) {
+export function domContains (node) {
   return node === globals.document
     || (globals.document.documentElement.contains || function (node) {
       // This is IE - it does not support contains() for top-level SVGs
@@ -111,41 +111,69 @@ export default class Box {
   }
 }
 
-function getBox (cb, retry) {
+function getBox (el, getBBoxFn, retry) {
   let box
 
   try {
-    box = cb(this.node)
+    // Try to get the box with the provided function
+    box = getBBoxFn(el.node)
 
-    if (isNulledBox(box) && !domContains(this.node)) {
+    // If the box is worthless and not even in the dom, retry
+    // by throwing an error here...
+    if (isNulledBox(box) && !domContains(el.node)) {
       throw new Error('Element not in the dom')
     }
   } catch (e) {
-    box = retry(this)
+    // ... and calling the retry handler here
+    box = retry(el)
   }
 
   return box
 }
 
 export function bbox () {
-  return new Box(getBox.call(this, (node) => node.getBBox(), (el) => {
+  // Function to get bbox is getBBox()
+  const getBBox = (node) => node.getBBox()
+
+  // Take all measures so that a stupid browser renders the element
+  // so we can get the bbox from it when we try again
+  const retry = (el) => {
     try {
       const clone = el.clone().addTo(parser().svg).show()
       const box = clone.node.getBBox()
       clone.remove()
       return box
     } catch (e) {
-      throw new Error('Getting bbox of element "' + el.node.nodeName + '" is not possible. ' + e.toString())
+      // We give up...
+      throw new Error(`Getting bbox of element "${el.node.nodeName}" is not possible: ${e.toString()}`)
     }
-  }))
+  }
+
+  const box = getBox(this, getBBox, retry)
+  const bbox = new Box(box)
+
+  return bbox
 }
 
 export function rbox (el) {
-  const box = new Box(getBox.call(this, (node) => node.getBoundingClientRect(), (el) => {
-    throw new Error('Getting rbox of element "' + el.node.nodeName + '" is not possible')
-  }))
-  if (el) return box.transform(el.screenCTM().inverse())
-  return box.addOffset()
+  const getRBox = (node) => node.getBoundingClientRect()
+  const retry = (el) => {
+    // There is no point in trying tricks here because if we insert the element into the dom ourselfes
+    // it obviously will be at the wrong position
+    throw new Error(`Getting rbox of element "${el.node.nodeName}" is not possible`)
+  }
+
+  const box = getBox(this, getRBox, retry)
+  const rbox = new Box(box)
+
+  // If an element was passed, we want the bbox in the coordinate system of that element
+  if (el) {
+    return rbox.transform(el.screenCTM().inverseO())
+  }
+
+  // Else we want it in absolute screen coordinates
+  // Therefore we need to add the scrollOffset
+  return rbox.addOffset()
 }
 
 // Checks whether the given point is inside the bounding box
@@ -169,17 +197,28 @@ registerMethods({
     },
 
     zoom (level, point) {
-      let width = this.node.clientWidth
-      let height = this.node.clientHeight
-      const v = this.viewbox()
+      // Its best to rely on the attributes here and here is why:
+      // clientXYZ: Doesn't work on non-root svgs because they dont have a CSSBox (silly!)
+      // getBoundingClinetRect: Doesn't work because Chrome just ignores width and height of nested svgs completely
+      //                        that means, their clientRect is always as big as the content.
+      //                        Furthermore this size is incorrect if the element is further transformed by its parents
+      // computedStyle: Only returns meaningful values if css was used with px. We dont go this route here!
+      // getBBox: returns the bounding box of its content - that doesnt help!
+      let { width, height } = this.attr([ 'width', 'height' ])
 
-      // Firefox does not support clientHeight and returns 0
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=874811
-      if (!width && !height) {
-        var style = globals.window.getComputedStyle(this.node)
-        width = parseFloat(style.getPropertyValue('width'))
-        height = parseFloat(style.getPropertyValue('height'))
+      // Width and height is a string when a number with a unit is present which we can't use
+      // So we try clientXYZ
+      if ((!width && !height) || (typeof width === 'string' || typeof height === 'string')) {
+        width = this.node.clientWidth
+        height = this.node.clientHeight
       }
+
+      // Giving up...
+      if (!width || !height) {
+        throw new Error('Impossible to get absolute width and height. Please provide an absolute width and height attribute on the zooming element')
+      }
+
+      const v = this.viewbox()
 
       const zoomX = width / v.width
       const zoomY = height / v.height
@@ -190,7 +229,10 @@ registerMethods({
       }
 
       let zoomAmount = zoom / level
-      if (zoomAmount === Infinity) zoomAmount = Number.MIN_VALUE
+
+      // Set the zoomAmount to the highest value which is safe to process and recover from
+      // The * 100 is a bit of wiggle room for the matrix transformation
+      if (zoomAmount === Infinity) zoomAmount = Number.MAX_SAFE_INTEGER / 100
 
       point = point || new Point(width / 2 / zoomX + v.x, height / 2 / zoomY + v.y)
 
