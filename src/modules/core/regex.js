@@ -17,7 +17,7 @@ export const transforms = /\)\s*,?\s*/
 export const whitespace = /\s/g
 
 // Test hex value
-export const isHex = /^#[a-f0-9]{3,6}$/i
+export const isHex = /^#[a-f0-9]{3}$|^#[a-f0-9]{6}$/i
 
 // Test rgb value
 export const isRgb = /^rgb\(/

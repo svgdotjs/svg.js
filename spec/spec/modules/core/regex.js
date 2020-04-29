@@ -121,6 +121,7 @@ describe('regex.js', () => {
       expect(regex.isHex.test('abc')).toBe(false)
       expect(regex.isHex.test('#1234563')).toBe(false)
       expect(regex.isHex.test('#kasdhs')).toBe(false)
+      expect(regex.isHex.test('#abcd')).toBe(false)
     })
   })
 

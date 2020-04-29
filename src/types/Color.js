@@ -414,6 +414,10 @@ export default class Color {
       const color = new Color(grey, grey, grey)
       return color
 
+    } else {
+
+      throw new Error('Unsupported random color mode')
+
     }
   }
 
