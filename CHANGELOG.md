@@ -27,6 +27,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `reference()` which correctly returns `null` instead of throwing when specifying an attribute which holds a number
  - fixed `flatten()` which correctly flattens now but doesnt accept parameters anymore (makes no sense)
  - fixed `ungroup()` which now inserts the elements at the correct position in the correct order and has position as second argument now
+ - fixed `position` for `transform()` to also allow a position of 0
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
@@ -41,6 +42,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added attr syntax for `data()` method
  - added index and array parameter when passing a function to `List.each()` so that it mostly behaves like map
  - added lots of tests in es6 format
+
+### Deleted
+  - deleted undocumented `Matrix.compose()` method which did the same as `new Matrix()` or `Matrix.transform()`
 
 ## [3.0.16] - 2019-11-12
 

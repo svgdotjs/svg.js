@@ -70,42 +70,15 @@ export default class Matrix {
     if (isFinite(t.px) || isFinite(t.py)) {
       const origin = new Point(ox, oy).transform(transformer)
       // TODO: Replace t.px with isFinite(t.px)
-      const dx = t.px ? t.px - origin.x : 0
-      const dy = t.py ? t.py - origin.y : 0
+      // Doesnt work because t.px is also 0 if it wasnt passed
+      const dx = isFinite(t.px) ? t.px - origin.x : 0
+      const dy = isFinite(t.py) ? t.py - origin.y : 0
       transformer.translateO(dx, dy)
     }
 
     // Translate now after positioning
     transformer.translateO(t.tx, t.ty)
     return transformer
-  }
-
-  // Applies a matrix defined by its affine parameters
-  compose (o) {
-    if (o.origin) {
-      o.originX = o.origin[0]
-      o.originY = o.origin[1]
-    }
-    // Get the parameters
-    var ox = o.originX || 0
-    var oy = o.originY || 0
-    var sx = o.scaleX || 1
-    var sy = o.scaleY || 1
-    var lam = o.shear || 0
-    var theta = o.rotate || 0
-    var tx = o.translateX || 0
-    var ty = o.translateY || 0
-
-    // Apply the standard matrix
-    var result = new Matrix()
-      .translateO(-ox, -oy)
-      .scaleO(sx, sy)
-      .shearO(lam)
-      .rotateO(theta)
-      .translateO(tx, ty)
-      .lmultiplyO(this)
-      .translateO(ox, oy)
-    return result
   }
 
   // Decomposes this matrix into its affine parameters
@@ -351,17 +324,9 @@ export default class Matrix {
     return this.skew(x, 0, cx, cy)
   }
 
-  skewXO (x, cx, cy) {
-    return this.skewO(x, 0, cx, cy)
-  }
-
   // SkewY
   skewY (y, cx, cy) {
     return this.skew(0, y, cx, cy)
-  }
-
-  skewYO (y, cx, cy) {
-    return this.skewO(0, y, cx, cy)
   }
 
   // Transform around a center point
@@ -377,6 +342,7 @@ export default class Matrix {
 
   // Check if two matrices are equal
   equals (other) {
+    if (other === this) return true
     var comp = new Matrix(other)
     return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b)
       && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d)
@@ -444,7 +410,8 @@ export default class Matrix {
     var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
     var ox = origin.x
     var oy = origin.y
-    var position = new Point(o.position || o.px || o.positionX, o.py || o.positionY)
+    // We need Point to be invalid if nothing was passed because we cannot default to 0 here. Thats why NaN
+    var position = new Point(o.position || o.px || o.positionX || NaN, o.py || o.positionY || NaN)
     var px = position.x
     var py = position.y
     var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
