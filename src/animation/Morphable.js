@@ -195,6 +195,10 @@ TransformBag.defaults = {
   originY: 0
 }
 
+const sortByKey = (a, b) => {
+  return (a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0))
+}
+
 export class ObjectBag {
   constructor (...args) {
     this.init(...args)
@@ -215,9 +219,7 @@ export class ObjectBag {
       entries.push([ i, objOrArr[i] ])
     }
 
-    entries.sort((a, b) => {
-      return a[0] - b[0]
-    })
+    entries.sort(sortByKey)
 
     this.values = entries.reduce((last, curr) => last.concat(curr), [])
     return this

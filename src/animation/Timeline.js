@@ -68,11 +68,15 @@ export default class Timeline extends EventTarget {
     } else if (when === 'now') {
       absoluteStartTime = this._time
     } else if (when === 'relative') {
-      const runnerInfo = this._runners[runner.id]
+      const runnerInfo = this.getRunnerInfoById(runner.id)
       if (runnerInfo) {
         absoluteStartTime = runnerInfo.start + delay
         delay = 0
       }
+    } else if (when === 'with-last') {
+      const lastRunnerInfo = this.getLastRunnerInfo()
+      const lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : this._time
+      absoluteStartTime = lastStartTime
     } else {
       throw new Error('Invalid value for the "when" parameter')
     }
@@ -110,26 +114,25 @@ export default class Timeline extends EventTarget {
     return this
   }
 
+  getRunnerInfoById (id) {
+    return this._runners[this._runnerIds.indexOf(id)] || null
+  }
+
+  getLastRunnerInfo () {
+    return this.getRunnerInfoById(this._lastRunnerId)
+  }
+
   // Calculates the end of the timeline
   getEndTime () {
-    var lastRunnerInfo = this._runners[this._runnerIds.indexOf(this._lastRunnerId)]
+    var lastRunnerInfo = this.getLastRunnerInfo()
     var lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
-    var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : 0
+    var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : this._time
     return lastStartTime + lastDuration
   }
 
   getEndTimeOfTimeline () {
-    let lastEndTime = 0
-    for (var i = 0; i < this._runners.length; i++) {
-      const runnerInfo = this._runners[i]
-      var duration = runnerInfo ? runnerInfo.runner.duration() : 0
-      var startTime = runnerInfo ? runnerInfo.start : 0
-      const endTime = startTime + duration
-      if (endTime > lastEndTime) {
-        lastEndTime = endTime
-      }
-    }
-    return lastEndTime
+    const endTimes = this._runners.map((i) => i.start + i.runner.duration())
+    return Math.max(0, ...endTimes)
   }
 
   // Makes sure, that after pausing the time doesn't jump
@@ -174,7 +177,7 @@ export default class Timeline extends EventTarget {
     if (yes == null) return this.speed(-currentSpeed)
 
     var positive = Math.abs(currentSpeed)
-    return this.speed(yes ? positive : -positive)
+    return this.speed(yes ? -positive : positive)
   }
 
   seek (dt) {

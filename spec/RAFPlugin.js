@@ -20,9 +20,10 @@ function RAFPlugin (jasmine) {
         throw new Error('You should pass a function to requestAnimationFrame')
       }
 
-      callbacks[index++] = fn
+      const i = index++
+      callbacks[i] = fn
 
-      return index
+      return i
     }
 
     /**

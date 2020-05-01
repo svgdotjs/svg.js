@@ -30,6 +30,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `position` for `transform()` to also allow a position of 0
  - fixed `bbox()` of `PathArray` and `PointArray` which returns an instance of `Box` now
  - fixed bug in creation of PointArray which had still references to source arrays in it
+ - fixed `PID` controller and makeSetterGetter function
+ - fixed `Queue.push` which didnt let you push queue items
+ - fixed `Timeline.reverse()` which did exactly the opposite of what you would expect when passing `true/false`
+ - fixed cancelAnimationFrame-mock for tests
+ - fixed animate when=after to be really "now" when no runner is on the timeline
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)
@@ -43,7 +48,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added position argument for `toRoot()`
  - added attr syntax for `data()` method
  - added index and array parameter when passing a function to `List.each()` so that it mostly behaves like map
- - added possibility to pass transform object to `PointArray.transform()` ----- to Point
+ - added possibility to pass a transform object to `PointArray.transform()` similar to Point
+ - added `with-last` as `when` to `animate` and `schedule` to let an animation start with the start of the last one in the timeline
  - added lots of tests in es6 format
 
 ### Deleted

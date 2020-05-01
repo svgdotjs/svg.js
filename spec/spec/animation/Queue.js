@@ -47,6 +47,18 @@ describe('Queue.js', function () {
       expect(queue.first()).toBe(1)
       expect(queue.last()).toBe(3)
     })
+
+    it('adds an item to the end of the queue', function () {
+      var queue = new Queue()
+      queue.push(1)
+      const item = queue.push(2)
+      queue.push(3)
+      queue.remove(item)
+      queue.push(item)
+
+      expect(queue.first()).toBe(1)
+      expect(queue.last()).toBe(2)
+    })
   })
 
   describe('remove ()', function () {
@@ -60,6 +72,18 @@ describe('Queue.js', function () {
 
       expect(queue.last()).toBe(2)
       expect(queue.first()).toBe(1)
+    })
+
+    it('removes the given item from the queue', function () {
+      var queue = new Queue()
+      var item = queue.push(1)
+      queue.push(2)
+      queue.push(3)
+
+      queue.remove(item)
+
+      expect(queue.last()).toBe(3)
+      expect(queue.first()).toBe(2)
     })
   })
 

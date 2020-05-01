@@ -9,7 +9,7 @@ The base stepper class that will be
 
 function makeSetterGetter (k, f) {
   return function (v) {
-    if (v == null) return this[v]
+    if (v == null) return this[k]
     this[k] = v
     if (f) f.call(this)
     return this
@@ -104,9 +104,9 @@ Easing Functions
 ***/
 
 export class Ease extends Stepper {
-  constructor (fn) {
+  constructor (fn = timeline.ease) {
     super()
-    this.ease = easing[fn || timeline.ease] || fn
+    this.ease = easing[fn] || fn
   }
 
   step (from, to, pos) {
@@ -155,10 +155,10 @@ function recalculate () {
 }
 
 export class Spring extends Controller {
-  constructor (duration, overshoot) {
+  constructor (duration = 500, overshoot = 0) {
     super()
-    this.duration(duration || 500)
-      .overshoot(overshoot || 0)
+    this.duration(duration)
+      .overshoot(overshoot)
   }
 
   step (current, target, dt, c) {
@@ -195,13 +195,8 @@ extend(Spring, {
 })
 
 export class PID extends Controller {
-  constructor (p, i, d, windup) {
+  constructor (p = 0.1, i = 0.01, d = 0, windup = 1000) {
     super()
-
-    p = p == null ? 0.1 : p
-    i = i == null ? 0.01 : i
-    d = d == null ? 0 : d
-    windup = windup == null ? 1000 : windup
     this.p(p).i(i).d(d).windup(windup)
   }
 
@@ -215,7 +210,7 @@ export class PID extends Controller {
     var p = target - current
     var i = (c.integral || 0) + p * dt
     var d = (p - (c.error || 0)) / dt
-    var windup = this.windup
+    var windup = this._windup
 
     // antiwindup
     if (windup !== false) {
@@ -232,7 +227,7 @@ export class PID extends Controller {
 }
 
 extend(PID, {
-  windup: makeSetterGetter('windup'),
+  windup: makeSetterGetter('_windup'),
   p: makeSetterGetter('P'),
   i: makeSetterGetter('I'),
   d: makeSetterGetter('D')
