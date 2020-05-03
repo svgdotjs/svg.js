@@ -13,6 +13,7 @@ import Morphable, { TransformBag } from './Morphable.js'
 import Point from '../types/Point.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Timeline from './Timeline.js'
+import { ObjectBag } from '../main.js'
 
 export default class Runner extends EventTarget {
   constructor (options) {
@@ -381,7 +382,7 @@ export default class Runner extends EventTarget {
       // for the case of transformations, we use the special retarget function
       // which has access to the outer scope
       if (this._history[method].caller.retarget) {
-        this._history[method].caller.retarget(target, extra)
+        this._history[method].caller.retarget.call(this, target, extra)
         // for everything else a simple morpher change is sufficient
       } else {
         this._history[method].morpher.to(target)
@@ -487,7 +488,7 @@ export default class Runner extends EventTarget {
 
 Runner.id = 0
 
-class FakeRunner {
+export class FakeRunner {
   constructor (transforms = new Matrix(), id = -1, done = true) {
     this.transforms = transforms
     this.id = id
@@ -527,7 +528,7 @@ function mergeTransforms () {
   }
 }
 
-class RunnerArray {
+export class RunnerArray {
   constructor () {
     this.runners = []
     this.ids = []
@@ -556,7 +557,8 @@ class RunnerArray {
 
   merge () {
     let lastRunner = null
-    this.runners.forEach((runner, i) => {
+    for (let i = 0; i < this.runners.length; ++i) {
+      const runner = this.runners[i]
 
       const condition = lastRunner
         && runner.done && lastRunner.done
@@ -567,11 +569,14 @@ class RunnerArray {
       if (condition) {
         // the +1 happens in the function
         this.remove(runner.id)
-        this.edit(lastRunner.id, runner.mergeWith(lastRunner))
+        const newRunner = runner.mergeWith(lastRunner)
+        this.edit(lastRunner.id, newRunner)
+        lastRunner = newRunner
+        --i
+      } else {
+        lastRunner = runner
       }
-
-      lastRunner = runner
-    })
+    }
 
     return this
   }
@@ -649,6 +654,14 @@ registerMethods({
   }
 })
 
+const intersect = (a, b) => {
+  var setB = new Set(b)
+  return [ ...new Set(a) ].filter(x => setB.has(x))
+}
+
+// Will output the elements from array A that are not in the array B
+const difference = (a, b) => a.filter(x => !b.includes(x))
+
 extend(Runner, {
   attr (a, v) {
     return this.styleAttr('attr', a, v)
@@ -659,24 +672,56 @@ extend(Runner, {
     return this.styleAttr('css', s, v)
   },
 
-  styleAttr (type, name, val) {
-    // apply attributes individually
-    if (typeof name === 'object') {
-      for (var key in name) {
-        this.styleAttr(type, key, name[key])
-      }
-      return this
+  styleAttr (type, nameOrAttrs, val) {
+    if (typeof nameOrAttrs === 'string') {
+      return this.styleAttr(type, { [nameOrAttrs]: val })
     }
 
-    var morpher = new Morphable(this._stepper).to(val)
+    let attrs = nameOrAttrs
+    if (this._tryRetarget(type, attrs)) return this
+
+    var morpher = new Morphable(this._stepper).to(attrs)
+    let keys = Object.keys(attrs)
 
     this.queue(function () {
-      morpher = morpher.from(this.element()[type](name))
+      morpher = morpher.from(this.element()[type](keys))
     }, function (pos) {
-      this.element()[type](name, morpher.at(pos))
+      this.element()[type](morpher.at(pos).valueOf())
       return morpher.done()
+    }, function (newToAttrs) {
+
+      // Check if any new keys were added
+      const newKeys = Object.keys(newToAttrs)
+      const differences = difference(newKeys, keys)
+
+      // If their are new keys, initialize them and add them to morpher
+      if (differences.length) {
+        // Get the values
+        const addedFromAttrs = this.element()[type](differences)
+
+        // Get the already initialized values
+        const oldFromAttrs = new ObjectBag(morpher.from()).valueOf()
+
+        // Merge old and new
+        Object.assign(oldFromAttrs, addedFromAttrs)
+        morpher.from(oldFromAttrs)
+      }
+
+      // Get the object from the morpher
+      const oldToAttrs = new ObjectBag(morpher.to()).valueOf()
+
+      // Merge in new attributes
+      Object.assign(oldToAttrs, newToAttrs)
+
+      // Change morpher target
+      morpher.to(oldToAttrs)
+
+      // Make sure that we save the work we did so we don't need it to do again
+      keys = newKeys
+      attrs = newToAttrs
     })
 
+    this._rememberMorpher(type, morpher)
     return this
   },
 
@@ -812,7 +857,7 @@ extend(Runner, {
         (newTransforms.origin || 'center').toString()
         !== (transforms.origin || 'center').toString()
       ) {
-        origin = getOrigin(transforms, element)
+        origin = getOrigin(newTransforms, element)
       }
 
       // overwrite the old transformations with the new ones

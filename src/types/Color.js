@@ -28,7 +28,7 @@ function is (object, space) {
 }
 
 function getParameters (a, b) {
-  const params = is(a, 'rgb') ? { _a: a.r, _b: a.g, _c: a.b, space: 'rgb' }
+  const params = is(a, 'rgb') ? { _a: a.r, _b: a.g, _c: a.b, _d: 0, space: 'rgb' }
     : is(a, 'xyz') ? { _a: a.x, _b: a.y, _c: a.z, _d: 0, space: 'xyz' }
     : is(a, 'hsl') ? { _a: a.h, _b: a.s, _c: a.l, _d: 0, space: 'hsl' }
     : is(a, 'lab') ? { _a: a.l, _b: a.a, _c: a.b, _d: 0, space: 'lab' }

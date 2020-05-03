@@ -35,6 +35,9 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `Timeline.reverse()` which did exactly the opposite of what you would expect when passing `true/false`
  - fixed cancelAnimationFrame-mock for tests
  - fixed animate when=after to be really "now" when no runner is on the timeline
+ - fixed animate attr which is also retargetable now
+ - fixed internals of ObjectBag which can hold other Morphable values now
+ - fixed animate transform which didnt change its origin on retarget for declaritive animations
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)

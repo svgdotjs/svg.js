@@ -313,20 +313,39 @@ describe('Morphable.js', () => {
   describe('ObjectBag', () => {
     describe('()', () => {
       it('wraps an object into a morphable object by passing an array', () => {
-        const bag = new ObjectBag([ 'foo', 1, 'bar', 2, 'baz', 3 ])
-        expect(bag.values).toEqual([ 'foo', 1, 'bar', 2, 'baz', 3 ])
+        const bag = new ObjectBag([ 'foo', SVGNumber, 2, 1, '', 'bar', SVGNumber, 2, 2, '', 'baz', SVGNumber, 2, 3, '' ])
+        expect(bag.values).toEqual([ 'foo', SVGNumber, 2, 1, '', 'bar', SVGNumber, 2, 2, '', 'baz', SVGNumber, 2, 3, '' ])
       })
 
       it('wraps an object into a morphable object by passing an object', () => {
         const bag = new ObjectBag({ foo: 1, bar: 2, baz: 3 })
-        expect(bag.values).toEqual([ 'bar', 2, 'baz', 3, 'foo', 1 ])
+        expect(bag.values).toEqual([ 'bar', SVGNumber, 2, 2, '', 'baz', SVGNumber, 2, 3, '', 'foo', SVGNumber, 2, 1, '' ])
+      })
+
+      it('wraps an object with morphable values in an ObjectBag', () => {
+        const bag = new ObjectBag({ fill: new Color(), bar: 2 })
+        expect(bag.values).toEqual([ 'bar', SVGNumber, 2, 2, '', 'fill', Color, 5, 0, 0, 0, 0, 'rgb' ])
+      })
+
+      it('wraps an array with morphable representation in an ObjectBag', () => {
+        const bag = new ObjectBag([ 'bar', SVGNumber, 2, 2, '', 'fill', Color, 5, 0, 0, 0, 0, 'rgb' ])
+        expect(bag.toArray()).toEqual([ 'bar', SVGNumber, 2, 2, '', 'fill', Color, 5, 0, 0, 0, 0, 'rgb' ])
       })
     })
 
     describe('toArray()', () => {
       it('creates an array out of the object', () => {
         const bag = new ObjectBag({ foo: 1, bar: 2, baz: 3 })
-        expect(bag.toArray()).toEqual([ 'bar', 2, 'baz', 3, 'foo', 1 ])
+        expect(bag.toArray()).toEqual(
+          [ 'bar', SVGNumber, 2, 2, '', 'baz', SVGNumber, 2, 3, '', 'foo', SVGNumber, 2, 1, '' ]
+        )
+      })
+
+      it('creates a flattened array out of the object with morphable values', () => {
+        const bag = new ObjectBag({ fill: new Color(), bar: 2 })
+        expect(bag.toArray()).toEqual(
+          [ 'bar', SVGNumber, 2, 2, '', 'fill', Color, 5, 0, 0, 0, 0, 'rgb' ]
+        )
       })
     })
 
@@ -334,6 +353,11 @@ describe('Morphable.js', () => {
       it('create an object from the stored values', () => {
         const bag = new ObjectBag({ foo: 1, bar: 2, baz: 3 })
         expect(bag.valueOf()).toEqual({ foo: 1, bar: 2, baz: 3 })
+      })
+
+      it('creates also morphable objects from the stored values', () => {
+        const bag = new ObjectBag({ fill: new Color(), bar: 2 })
+        expect(bag.valueOf()).toEqual({ fill: objectContaining(new Color()), bar: 2 })
       })
     })
   })
