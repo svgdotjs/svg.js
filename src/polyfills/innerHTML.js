@@ -13,18 +13,18 @@
       output.push('<', node.tagName)
       if (node.hasAttributes()) {
         [].forEach.call(node.attributes, function (attrNode) {
-          output.push(' ', attrNode.name, '=\'', attrNode.value, '\'')
+          output.push(' ', attrNode.name, '="', attrNode.value, '"')
         })
       }
+      output.push('>')
       if (node.hasChildNodes()) {
-        output.push('>');
         [].forEach.call(node.childNodes, function (childNode) {
           serializeXML(childNode, output)
         })
-        output.push('</', node.tagName, '>')
       } else {
-        output.push('/>')
+        // output.push('/>')
       }
+      output.push('</', node.tagName, '>')
     } else if (nodeType === 8) {
       output.push('<!--', node.nodeValue, '-->')
     }

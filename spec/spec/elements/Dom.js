@@ -2,6 +2,7 @@
 
 import { SVG, G, Rect, Svg, Dom, List, Fragment, Circle, Tspan, create } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
+import { svg, html } from '../../../src/modules/core/namespaces.js'
 const { any, createSpy, objectContaining } = jasmine
 
 describe('Dom.js', function () {
@@ -58,7 +59,7 @@ describe('Dom.js', function () {
 
     it('handles svg strings', () => {
       const g = new G()
-      g.add('<rect>')
+      g.add('<rect />')
       expect(g.children().length).toBe(1)
       expect(g.get(0)).toEqual(any(Rect))
     })
@@ -98,7 +99,7 @@ describe('Dom.js', function () {
 
     it('works with svg strings', () => {
       const rect = new Rect()
-      rect.addTo('<g>')
+      rect.addTo('<g />')
       expect(rect.parent()).toEqual(any(G))
     })
 
@@ -269,6 +270,15 @@ describe('Dom.js', function () {
     })
   })
 
+  describe('html()', () => {
+    it('calls xml with the html namespace', () => {
+      const group = new G()
+      const spy = spyOn(group, 'xml')
+      group.html('<foo>')
+      expect(spy).toHaveBeenCalledWith('<foo>', undefined, html)
+    })
+  })
+
   describe('id()', () => {
     it('returns current element when called as setter', () => {
       const g = new G()
@@ -375,7 +385,7 @@ describe('Dom.js', function () {
 
     it('creates object from svg string', () => {
       const g = new G()
-      const rect = '<rect>'
+      const rect = '<rect />'
       const spy = spyOn(g, 'add').and.callThrough()
       const ret = g.put(rect, 0)
       expect(ret).toEqual(any(Rect))
@@ -409,7 +419,7 @@ describe('Dom.js', function () {
     })
 
     it('returns an instance when svg string given', () => {
-      const g = '<g>'
+      const g = '<g />'
       const rect = new Rect()
       const ret = rect.putIn(g)
       expect(ret).toEqual(any(G))
@@ -522,93 +532,12 @@ describe('Dom.js', function () {
   })
 
   describe('svg()', () => {
-    describe('as setter', () => {
-      it('returns itself', () => {
-        const g = new G()
-        expect(g.svg('<rect>')).toBe(g)
-      })
-
-      it('imports a single element', () => {
-        const g = new G().svg('<rect>')
-        expect(g.children()).toEqual([ any(Rect) ])
-      })
-
-      it('imports multiple elements', () => {
-        const g = new G().svg('<rect /><circle />')
-        expect(g.children()).toEqual([ any(Rect), any(Circle) ])
-      })
-
-      it('replaces the current element with the imported elements with outerHtml = true', () => {
-        const canvas = new Svg()
-        const g = canvas.group()
-        g.svg('<rect /><circle />', true)
-        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
-      })
-
-      it('returns the parent when outerHtml = true', () => {
-        const canvas = new Svg()
-        const g = canvas.group()
-        expect(g.svg('<rect /><circle />', true)).toBe(canvas)
-        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
-      })
-
-      it('works without a parent', () => {
-        const canvas = new Svg()
-        expect(canvas.svg('<rect><circle>')).toBe(canvas)
-      })
+    it('calls xml with the svg namespace', () => {
+      const group = new G()
+      const spy = spyOn(group, 'xml')
+      group.svg('<foo>')
+      expect(spy).toHaveBeenCalledWith('<foo>', undefined, svg)
     })
-
-    describe('as getter', () => {
-      let canvas, group, rect
-
-      beforeEach(() => {
-        canvas = new Svg().removeNamespace()
-        group = canvas.group()
-        rect = group.rect(123.456, 234.567)
-      })
-
-      it('returns the svg string of the element by default', () => {
-        expect(rect.svg()).toBe('<rect width="123.456" height="234.567"></rect>')
-        expect(canvas.svg()).toBe('<svg><g><rect width="123.456" height="234.567"></rect></g></svg>')
-      })
-
-      it('returns the innerHtml when outerHtml = false', () => {
-        expect(rect.svg(false)).toBe('')
-        expect(canvas.svg(false)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
-      })
-
-      it('runs a function on every exported node', () => {
-        expect(rect.svg((el) => el.round(1))).toBe('<rect width="123.5" height="234.6"></rect>')
-      })
-
-      it('runs a function on every exported node and replaces node with returned node if return value is not falsy', () => {
-        expect(rect.svg((el) => new Circle())).toBe('<circle></circle>')
-        expect(canvas.svg((el) => new G())).toBe('<g></g>') // outer <svg> was replaced by an empty g
-        expect(canvas.svg((el) => {
-          if (el instanceof Rect) return new Circle()
-          if (el instanceof Svg) el.removeNamespace()
-        })).toBe('<svg><g><circle></circle></g></svg>')
-      })
-
-      it('runs a function on every exported node and removes node if return value is false', () => {
-        expect(group.svg(() => false)).toBe('')
-        expect(canvas.svg(() => false)).toBe('')
-        expect(canvas.svg((el) => {
-          if (el instanceof Svg) {
-            el.removeNamespace()
-          } else {
-            return false
-          }
-        })).toBe('<svg></svg>')
-      })
-
-      it('runs a function on every inner node and exports it when outerHtml = false', () => {
-        expect(canvas.svg(() => false), false).toBe('')
-        expect(canvas.svg(() => undefined, false)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
-      })
-
-    })
-
   })
 
   describe('toString()', () => {
@@ -662,20 +591,20 @@ describe('Dom.js', function () {
     })
 
     it('allows to pass an svg string as element', () => {
-      rect.wrap('<g>')
+      rect.wrap('<g />')
       expect(rect.parent()).toEqual(any(G))
       expect(rect.parent().parent()).toBe(canvas)
     })
 
     it('allows to pass an svg string as element', () => {
-      rect.wrap('<g>')
+      rect.wrap('<g />')
       expect(rect.parent()).toEqual(any(G))
       expect(rect.parent().parent()).toBe(canvas)
     })
 
     it('allows to pass an svg string as element when element not in the dom', () => {
       var rect = new Rect()
-      rect.wrap(SVG('<g>'))
+      rect.wrap(SVG('<g />'))
       expect(rect.parent()).toEqual(any(G))
       expect(rect.parent().parent()).toBe(null)
     })
@@ -691,5 +620,96 @@ describe('Dom.js', function () {
 
   describe('writeDataToDom()', () => {
     // not really testable
+  })
+
+  describe('xml()', () => {
+    describe('as setter', () => {
+      it('returns itself', () => {
+        const g = new G()
+        expect(g.xml('<rect />', undefined, svg)).toBe(g)
+      })
+
+      it('imports a single element', () => {
+        const g = new G().xml('<rect />', undefined, svg)
+        expect(g.children()).toEqual([ any(Rect) ])
+        expect(g.children()[0].node.namespaceURI).toBe(svg)
+      })
+
+      it('imports multiple elements', () => {
+        const g = new G().xml('<rect /><circle />', undefined, svg)
+        expect(g.children()).toEqual([ any(Rect), any(Circle) ])
+      })
+
+      it('replaces the current element with the imported elements with outerHtml = true', () => {
+        const canvas = new Svg()
+        const g = canvas.group()
+        g.xml('<rect /><circle />', true, svg)
+        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
+      })
+
+      it('returns the parent when outerHtml = true', () => {
+        const canvas = new Svg()
+        const g = canvas.group()
+        expect(g.xml('<rect /><circle />', true, svg)).toBe(canvas)
+        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
+      })
+
+      it('works without a parent', () => {
+        const canvas = new Svg()
+        expect(canvas.xml('<rect /><circle>', undefined, svg)).toBe(canvas)
+      })
+    })
+
+    describe('as getter', () => {
+      let canvas, group, rect
+
+      beforeEach(() => {
+        canvas = new Svg().removeNamespace()
+        group = canvas.group()
+        rect = group.rect(123.456, 234.567)
+      })
+
+      it('returns the svg string of the element by default', () => {
+        expect(rect.xml(), svg).toBe('<rect width="123.456" height="234.567"></rect>')
+        expect(canvas.xml(), svg).toBe('<svg><g><rect width="123.456" height="234.567"></rect></g></svg>')
+      })
+
+      it('returns the innerHtml when outerHtml = false', () => {
+        expect(rect.xml(false, svg)).toBe('')
+        expect(canvas.xml(false, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+      })
+
+      it('runs a function on every exported node', () => {
+        expect(rect.xml((el) => el.round(1))).toBe('<rect width="123.5" height="234.6"></rect>')
+      })
+
+      it('runs a function on every exported node and replaces node with returned node if return value is not falsy', () => {
+        expect(rect.xml((el) => new Circle(), svg)).toBe('<circle></circle>')
+        expect(canvas.xml((el) => new G(), svg)).toBe('<g></g>') // outer <svg> was replaced by an empty g
+        expect(canvas.xml((el) => {
+          if (el instanceof Rect) return new Circle()
+          if (el instanceof Svg) el.removeNamespace()
+        }, svg)).toBe('<svg><g><circle></circle></g></svg>')
+      })
+
+      it('runs a function on every exported node and removes node if return value is false', () => {
+        expect(group.xml(() => false, svg)).toBe('')
+        expect(canvas.xml(() => false, svg)).toBe('')
+        expect(canvas.xml((el) => {
+          if (el instanceof Svg) {
+            el.removeNamespace()
+          } else {
+            return false
+          }
+        }, svg)).toBe('<svg></svg>')
+      })
+
+      it('runs a function on every inner node and exports it when outerHtml = false', () => {
+        expect(canvas.xml(() => false, false, svg)).toBe('')
+        expect(canvas.xml(() => undefined, false, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+      })
+
+    })
+
   })
 })

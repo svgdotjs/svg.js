@@ -1,15 +1,9 @@
 import { delimiter } from '../modules/core/regex.js'
-import { extend } from '../utils/adopter.js'
-import { subClassArray } from './ArrayPolyfill.js'
 import SVGArray from './SVGArray.js'
-import { Matrix } from '../main.js'
 import Box from './Box.js'
+import Matrix from './Matrix.js'
 
-const PointArray = subClassArray('PointArray', SVGArray)
-
-export default PointArray
-
-extend(PointArray, {
+export default class PointArray extends SVGArray {
   // Convert array to string
   toString () {
     // convert to a poly point string
@@ -18,7 +12,7 @@ extend(PointArray, {
     }
 
     return array.join(' ')
-  },
+  }
 
   // Convert array to line object
   toLine () {
@@ -28,7 +22,7 @@ extend(PointArray, {
       x2: this[1][0],
       y2: this[1][1]
     }
-  },
+  }
 
   // Parse point string and flat array
   parse (array = [ 0, 0 ]) {
@@ -52,11 +46,11 @@ extend(PointArray, {
     }
 
     return points
-  },
+  }
 
   transform (m) {
     return this.clone().transformO(m)
-  },
+  }
 
   // transform points with matrix (similar to Point.transform)
   transformO (m) {
@@ -72,7 +66,7 @@ extend(PointArray, {
     }
 
     return this
-  },
+  }
 
   // Move point string
   move (x, y) {
@@ -90,7 +84,7 @@ extend(PointArray, {
     }
 
     return this
-  },
+  }
 
   // Resize poly string
   size (width, height) {
@@ -104,7 +98,7 @@ extend(PointArray, {
     }
 
     return this
-  },
+  }
 
   // Get bounding box of points
   bbox () {
@@ -120,4 +114,4 @@ extend(PointArray, {
     })
     return new Box(minX, minY, maxX - minX, maxY - minY)
   }
-})
+}

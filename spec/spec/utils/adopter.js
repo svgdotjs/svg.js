@@ -66,7 +66,7 @@ describe('adopter.js', () => {
     })
 
     it('creates an element from passed svg string', () => {
-      const rect = makeInstance('<rect width="200px">')
+      const rect = makeInstance('<rect width="200px" />')
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
@@ -84,7 +84,7 @@ describe('adopter.js', () => {
     })
 
     it('does not have its wrapper attached', () => {
-      const rect = makeInstance('<rect width="200px">')
+      const rect = makeInstance('<rect width="200px" />')
       expect(rect.parent()).toBe(null)
     })
 
@@ -212,6 +212,7 @@ describe('adopter.js', () => {
       expect(typeof A.prototype.test).toBe('function')
       expect(new A().test().prop).toBe('test')
     })
+
     it('accepts and extend multiple modules at once', () => {
       const A = class {}
       const B = class {}

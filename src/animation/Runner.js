@@ -9,11 +9,10 @@ import Animator from './Animator.js'
 import Box from '../types/Box.js'
 import EventTarget from '../types/EventTarget.js'
 import Matrix from '../types/Matrix.js'
-import Morphable, { TransformBag } from './Morphable.js'
+import Morphable, { TransformBag, ObjectBag } from './Morphable.js'
 import Point from '../types/Point.js'
 import SVGNumber from '../types/SVGNumber.js'
 import Timeline from './Timeline.js'
-import { ObjectBag } from '../main.js'
 
 export default class Runner extends EventTarget {
   constructor (options) {
@@ -653,11 +652,6 @@ registerMethods({
     }
   }
 })
-
-const intersect = (a, b) => {
-  var setB = new Set(b)
-  return [ ...new Set(a) ].filter(x => setB.has(x))
-}
 
 // Will output the elements from array A that are not in the array B
 const difference = (a, b) => a.filter(x => !b.includes(x))

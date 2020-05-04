@@ -1,3 +1,4 @@
+/* globals jasmine */
 /**
  * Jasmine RequestAnimationFrame: a set of helpers for testing funcionality
  * that uses requestAnimationFrame under the Jasmine BDD framework for JavaScript.
@@ -83,9 +84,4 @@ function RAFPlugin (jasmine) {
   jasmine.RequestAnimationFrame = new MockRAF()
 }
 
-// if (!module) {
 RAFPlugin(jasmine)
-// } else {
-//   module.exports.RAFPlugin = RAFPlugin
-
-// }

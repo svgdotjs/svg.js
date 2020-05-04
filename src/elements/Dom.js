@@ -264,8 +264,9 @@ export default class Dom extends EventTarget {
   xml (xmlOrFn, outerXML, ns) {
     var well, len, fragment
 
-    if (xmlOrFn === false) {
-      outerXML = false
+    if (typeof xmlOrFn === 'boolean') {
+      ns = outerXML
+      outerXML = xmlOrFn
       xmlOrFn = null
     }
 
@@ -319,7 +320,7 @@ export default class Dom extends EventTarget {
     outerXML = outerXML == null ? false : outerXML
 
     // Create temporary holder
-    well = globals.document.createElementNS(ns, 'svg')
+    well = create('wrapper', ns)
     fragment = globals.document.createDocumentFragment()
 
     // Dump raw svg

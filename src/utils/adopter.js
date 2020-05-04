@@ -8,9 +8,9 @@ const elements = {}
 export const root = '___SYMBOL___ROOT___'
 
 // Method for element creation
-export function create (name) {
+export function create (name, ns = svg) {
   // create element
-  return globals.document.createElementNS(svg, name)
+  return globals.document.createElementNS(ns, name)
 }
 
 export function makeInstance (element, isHTML = false) {
@@ -114,25 +114,17 @@ export function assignNewId (node) {
 }
 
 // Method for extending objects
-export function extend (modules, methods, attrCheck) {
+export function extend (modules, methods) {
   var key, i
 
   modules = Array.isArray(modules) ? modules : [ modules ]
 
   for (i = modules.length - 1; i >= 0; i--) {
     for (key in methods) {
-      let method = methods[key]
-      if (attrCheck) {
-        method = wrapWithAttrCheck(methods[key])
-      }
-      modules[i].prototype[key] = method
+      modules[i].prototype[key] = methods[key]
     }
   }
 }
-
-// export function extendWithAttrCheck (...args) {
-//   extend(...args, true)
-// }
 
 export function wrapWithAttrCheck (fn) {
   return function (...args) {
@@ -144,28 +136,4 @@ export function wrapWithAttrCheck (fn) {
       return fn.apply(this, args)
     }
   }
-}
-
-export function invent (config) {
-  // Create element initializer
-  var initializer = typeof config.create === 'function'
-    ? config.create
-    : function (node) {
-      this.constructor(node || create(config.create))
-    }
-
-  // Inherit prototype
-  if (config.inherit) {
-    /* eslint new-cap: off */
-    initializer.prototype = new config.inherit()
-    initializer.prototype.constructor = initializer
-  }
-
-  // Extend with methods
-  if (config.extend) { extend(initializer, config.extend) }
-
-  // Attach construct method to parent
-  if (config.construct) { extend(config.parent || elements.Container, config.construct) }
-
-  return initializer
 }

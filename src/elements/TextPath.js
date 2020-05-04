@@ -92,7 +92,12 @@ registerMethods({
     }),
 
     targets () {
-      return baseFind('svg textPath[*|href*="' + this.id() + '"]')
+      return baseFind('svg textPath').filter((node) => {
+        return node.attr('href').includes(this.id())
+      })
+
+      // Does not work in IE11. Use when IE support is dropped
+      // return baseFind('svg textPath[*|href*="' + this.id() + '"]')
     }
   }
 })

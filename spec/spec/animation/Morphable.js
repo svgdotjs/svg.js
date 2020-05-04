@@ -360,5 +360,14 @@ describe('Morphable.js', () => {
         expect(bag.valueOf()).toEqual({ fill: objectContaining(new Color()), bar: 2 })
       })
     })
+
+    describe('align()', () => {
+      it('aligns color spaces between two object bags', () => {
+        const bag1 = new ObjectBag({ x: 1, y: '#fff' })
+        const bag2 = new ObjectBag({ x: 2, y: new Color().hsl() })
+        bag1.align(bag2.toArray())
+        expect(bag1.toArray()).toEqual([ 'x', SVGNumber, 2, 1, '', 'y', Color, 5, 0, 0, 100, 0, 'hsl' ])
+      })
+    })
   })
 })

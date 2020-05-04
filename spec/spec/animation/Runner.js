@@ -1,6 +1,6 @@
 /* globals describe, expect, it, beforeEach, afterEach, spyOn, jasmine */
 
-import { Runner, defaults, Ease, Controller, SVG, Timeline, Rect, Morphable, Animator, Queue, Matrix, Color, Box, Polygon, PathArray, PointArray } from '../../../src/main.js'
+import { Runner, defaults, Ease, Controller, SVG, Timeline, Rect, Morphable, Animator, Queue, Matrix, Color, Box, Polygon, PointArray } from '../../../src/main.js'
 import { FakeRunner, RunnerArray } from '../../../src/animation/Runner.js'
 import { getWindow } from '../../../src/utils/window.js'
 import SVGNumber from '../../../src/types/SVGNumber.js'

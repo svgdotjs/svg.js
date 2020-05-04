@@ -6,16 +6,10 @@ import {
   numbersWithDots,
   pathLetters
 } from '../modules/core/regex.js'
-import { extend } from '../utils/adopter.js'
-import { subClassArray } from './ArrayPolyfill.js'
 import Point from './Point.js'
 import SVGArray from './SVGArray.js'
 import parser from '../modules/core/parser.js'
 import Box from './Box.js'
-
-const PathArray = subClassArray('PathArray', SVGArray)
-
-export default PathArray
 
 export function pathRegReplace (a, b, c, d) {
   return c + d.replace(dots, ' .')
@@ -130,11 +124,11 @@ for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
   })(mlhvqtcsaz[i].toUpperCase())
 }
 
-extend(PathArray, {
+export default class PathArray extends SVGArray {
   // Convert array to string
   toString () {
     return arrayToString(this)
-  },
+  }
 
   // Move path string
   move (x, y) {
@@ -175,7 +169,7 @@ extend(PathArray, {
     }
 
     return this
-  },
+  }
 
   // Resize path string
   size (width, height) {
@@ -221,7 +215,7 @@ extend(PathArray, {
     }
 
     return this
-  },
+  }
 
   // Absolutize and parse path to array
   parse (array = [ 'M', 0, 0 ]) {
@@ -268,11 +262,11 @@ extend(PathArray, {
     } while (len > index)
 
     return result
-  },
+  }
 
   // Get bounding box of path
   bbox () {
     parser().path.setAttribute('d', this.toString())
     return new Box(parser.nodes.path.getBBox())
   }
-})
+}

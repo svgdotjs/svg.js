@@ -54,12 +54,12 @@ describe('Svg.js', () => {
 
   describe('namespace()', () => {
     it('returns itself', () => {
-      const svg = SVG('<svg>')
+      const svg = SVG('<svg />')
       expect(svg.namespace()).toBe(svg)
     })
 
     it('creates the namespace attributes on the svg', () => {
-      const svg = SVG('<svg>')
+      const svg = SVG('<svg />')
 
       expect(svg.attr('xmlns')).toBe(undefined)
 

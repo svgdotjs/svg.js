@@ -147,6 +147,7 @@ describe('G.js', () => {
       expect(g.y()).toBe(g.bbox().y)
       expect(g.y()).toBe(20)
     })
+
     it('calls move with the paramater as y', () => {
       const canvas = SVG().addTo(container)
       const g = canvas.group()

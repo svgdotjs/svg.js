@@ -1,10 +1,9 @@
-import babel from 'rollup-plugin-babel'
 import * as pkg from '../package.json'
+import babel from '@rollup/plugin-babel'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 import filesize from 'rollup-plugin-filesize'
-// import { terser } from 'rollup-plugin-terser'
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
-import { uglify } from 'rollup-plugin-uglify'
+import { terser } from 'rollup-plugin-terser'
 
 const buildDate = Date()
 
@@ -21,22 +20,41 @@ const headerLong = `/*!
 
 const headerShort = `/*! ${pkg.name} v${pkg.version} ${pkg.license}*/;`
 
-const getBabelConfig = (targets, corejs = false) => babel({
-  include: 'src/**',
-  runtimeHelpers: true,
-  babelrc: false,
-  presets: [['@babel/preset-env', {
-    modules: false,
-    targets: targets || pkg.browserslist,
-    useBuiltIns: 'usage',
-    corejs: 3
-  }]],
-  plugins: [['@babel/plugin-transform-runtime', {
-    corejs: corejs,
-    helpers: true,
-    useESModules: true
-  }]]
-})
+const getBabelConfig = (node = false) => {
+  
+  let targets = pkg.browserslist
+  const plugins = [
+    ['@babel/plugin-transform-classes'],
+    ['@babel/plugin-transform-runtime', {
+      corejs: 3,
+      helpers: true,
+      useESModules: true,
+      version: "^7.9.6",
+      regenerator: false
+    }]
+  ]
+
+  if (node) {
+    plugins.shift()
+    targets = 'maintained node versions'
+  }
+
+  return babel({
+    include: 'src/**',
+    babelHelpers: 'runtime',
+    babelrc: false,
+    presets: [['@babel/preset-env', {
+      modules: false,
+      targets: targets || pkg.browserslist,
+      // useBuildins and plugin-transform-runtime are mutually exclusive
+      // https://github.com/babel/babel/issues/10271#issuecomment-528379505
+      // use babel-polyfills when released
+      useBuiltIns: false,
+      bugfixes: true
+    }]],
+    plugins
+  })
+}
 
 // When few of these get mangled nothing works anymore
 // We loose literally nothing by let these unmangled
@@ -94,7 +112,7 @@ const config = (node, min, esm = false) => ({
     commonjs(),
     getBabelConfig(node && 'maintained node versions'),
     filesize(),
-    !min ? {} : uglify({
+    !min ? {} : terser({
       mangle: {
         reserved: classes
       },
@@ -102,10 +120,11 @@ const config = (node, min, esm = false) => ({
         preamble: headerShort
       }
     })
-  ]
+  ],
+  //external: ['@babel/runtime', '@babel/runtime-corejs3']
 })
 
-// [node, minified]
+// [node, minified, esm]
 const modes = [[false], [false, true], [true], [false, false, true]]
 
 export default modes.map(m => config(...m))

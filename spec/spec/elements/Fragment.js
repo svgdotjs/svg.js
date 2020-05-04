@@ -2,6 +2,7 @@
 
 import { Fragment, Dom } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
+import { svg } from '../../../src/modules/core/namespaces.js'
 
 const { any } = jasmine
 
@@ -25,13 +26,13 @@ describe('Fragment.js', () => {
     })
   })
 
-  describe('svg()', () => {
+  describe('xml()', () => {
     describe('as setter', () => {
       it('calls parent method with outerHtml = false', () => {
         const frag = new Fragment()
-        const spy = spyOn(Dom.prototype, 'svg').and.callThrough()
-        frag.svg('<rect>', true)
-        expect(spy).toHaveBeenCalledWith('<rect>', false)
+        const spy = spyOn(Dom.prototype, 'xml').and.callThrough()
+        frag.xml('<rect />', true, svg)
+        expect(spy).toHaveBeenCalledWith('<rect />', false, svg)
       })
     })
 
@@ -40,20 +41,20 @@ describe('Fragment.js', () => {
         const frag = new Fragment()
         const group = frag.group()
         group.rect(123.456, 234.567)
-        const spy = spyOn(Dom.prototype, 'svg').and.callThrough()
+        const spy = spyOn(Dom.prototype, 'xml').and.callThrough()
 
-        expect(frag.svg(false)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
-        expect(spy).toHaveBeenCalledWith(null, false)
+        expect(frag.xml(false, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+        expect(spy).toHaveBeenCalledWith(false, svg)
       })
 
       it('calls parent method with outerHtml = false - 2', () => {
         const frag = new Fragment()
         const group = frag.group()
         group.rect(123.456, 234.567)
-        const spy = spyOn(Dom.prototype, 'svg').and.callThrough()
+        const spy = spyOn(Dom.prototype, 'xml').and.callThrough()
 
-        expect(frag.svg(null, true)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
-        expect(spy).toHaveBeenCalledWith(null, false)
+        expect(frag.xml(true, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+        expect(spy).toHaveBeenCalledWith(false, svg)
       })
     })
 
