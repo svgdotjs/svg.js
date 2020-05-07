@@ -783,8 +783,8 @@ declare module "@svgdotjs/svg.js" {
         constructor()
         constructor(fn: Function)
 
-        getSchedule(): ScheduledRunnerInfo[]
-        schedule(runner?: Runner, delay?: number, when?: string): ( this | ScheduledRunnerInfo[] )
+        schedule(runner: Runner, delay?: number, when?: string): this
+        schedule(): ScheduledRunnerInfo[]
         unschedule(runner: Runner): this
         getEndTime(): number
         updateTime(): this

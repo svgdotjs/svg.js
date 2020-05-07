@@ -44,17 +44,10 @@ export default class Timeline extends EventTarget {
     this._stepImmediate = this._stepFn.bind(this, true)
   }
 
-  // returns information on each runner in the timeline.
-  // (start, duration, end, and runner)
-
-  getSchedule () {
-    return this._runners.map(makeSchedule)
-  }
-
   // schedules a runner on the timeline
   schedule (runner, delay, when) {
     if (runner == null) {
-      return this.getSchedule()
+      return this._runners.map(makeSchedule)
     }
 
     // The start time for the next animation can either be given explicitly,
