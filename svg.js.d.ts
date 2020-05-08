@@ -772,11 +772,19 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // Timeline.js
+    interface ScheduledRunnerInfo {
+        start: number
+        duration: number
+        end: number
+        runner: Runner
+    }
+
     class Timeline extends EventTarget {
         constructor()
         constructor(fn: Function)
 
-        schedule(runner?: Runner, delay?: number, when?: string): this
+        schedule(runner: Runner, delay?: number, when?: string): this
+        schedule(): ScheduledRunnerInfo[]
         unschedule(runner: Runner): this
         getEndTime(): number
         updateTime(): this
