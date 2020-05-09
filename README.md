@@ -26,4 +26,4 @@ SVG.js is licensed under the terms of the MIT License.
 ## Documentation
 Check [svgjs.com](https://svgjs.com/docs/3.0/) to learn more.
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ulima.ums%40googlemail.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ulima.ums%40googlemail.com&lc=US&item_name=SVG.JS&currency_code=EUR&bn=PP-DonationsBF%3Abtn_donate_74x21.png%3ANonHostedGuest) or [![Sponsor](https://img.shields.io/badge/Sponsor-svg.js-green.svg)](https://github.com/sponsors/Fuzzyma)
