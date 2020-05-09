@@ -75,7 +75,7 @@ describe('adopter.js', () => {
     })
 
     it('creates an element in the html namespace from passed html string', () => {
-      const div = makeInstance('<div>', true)
+      const div = makeInstance('<div />', true)
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
       expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'DIV', namespaceURI: 'http://www.w3.org/1999/xhtml' }))

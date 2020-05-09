@@ -8,7 +8,7 @@ describe('circled.js', () => {
   let element
 
   beforeEach(() => {
-    element = new Ellipse(50, 50)
+    element = new Ellipse().move(50, 50)
   })
 
   describe('rx()', () => {
