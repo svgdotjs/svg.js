@@ -2,8 +2,12 @@
 
 [![Build Status](https://travis-ci.org/svgdotjs/svg.js.svg?branch=master)](https://travis-ci.org/svgdotjs/svg.js)
 [![Coverage Status](https://coveralls.io/repos/github/svgdotjs/svg.js/badge.svg?branch=master)](https://coveralls.io/github/svgdotjs/svg.js?branch=master)
-[![CDNJS](https://img.shields.io/cdnjs/v/svg.js.svg)](https://cdnjs.com/libraries/svg.js)
+[![Cdnjs](https://img.shields.io/cdnjs/v/svg.js.svg)](https://cdnjs.com/libraries/svg.js)
+[![jsdelivr](https://badgen.net/jsdelivr/v/npm/@svgdotjs/svg.js)](https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js)
 [![Join the chat at https://gitter.im/svgdotjs/svg.js](https://badges.gitter.im/svgdotjs/svg.js.svg)](https://gitter.im/svgdotjs/svg.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Twitter](https://img.shields.io/badge/Twitter-@svg__js-green.svg)](https://twitter.com/svg_js)
+
+
 
 __A lightweight library for manipulating and animating SVG, without any dependencies.__
 
@@ -19,9 +23,11 @@ SVG.js is licensed under the terms of the MIT License.
 
 `yarn add @svgdotjs/svg.js`
 
-#### Cdnjs:
+#### CDNs:
 
-[https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)
+[https://cdnjs.com/libraries/svg.js](https://cdnjs.com/libraries/svg.js)  
+[https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js](https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js)  
+[https://unpkg.com/@svgdotjs/svg.js](https://unpkg.com/@svgdotjs/svg.js)
 
 ## Documentation
 Check [svgjs.com](https://svgjs.com/docs/3.0/) to learn more.
