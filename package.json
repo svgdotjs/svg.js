@@ -55,6 +55,10 @@
   },
   "github": "https://github.com/svgdotjs/svg.js",
   "license": "MIT",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Fuzzyma"
+  },
   "typings": "./svg.js.d.ts",
   "scripts": {
     "build": "npm run fix && npm run rollup",
