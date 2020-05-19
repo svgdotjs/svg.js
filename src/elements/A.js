@@ -1,7 +1,8 @@
-import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck, extend } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Container from './Container.js'
+import * as containerGeometry from '../modules/core/containerGeometry.js'
 
 export default class A extends Container {
   constructor (node, attrs = node) {
@@ -19,6 +20,8 @@ export default class A extends Container {
   }
 
 }
+
+extend(A, containerGeometry)
 
 registerMethods({
   Container: {
