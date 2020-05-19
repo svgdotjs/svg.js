@@ -10,31 +10,6 @@ export default class G extends Container {
     super(nodeOrNew('g', node), attrs)
   }
 
-  x (x, box = this.bbox()) {
-    if (x == null) return box.x
-    return this.move(x, box.y, box)
-  }
-
-  y (y, box = this.bbox()) {
-    if (y == null) return box.y
-    return this.move(box.x, y, box)
-  }
-
-  move (x = 0, y = 0, box = this.bbox()) {
-    const dx = x - box.x
-    const dy = y - box.y
-
-    return this.dmove(dx, dy)
-  }
-
-  dx (dx) {
-    return this.dmove(dx, 0)
-  }
-
-  dy (dy) {
-    return this.dmove(0, dy)
-  }
-
   dmove (dx, dy) {
     this.children().forEach((child, i) => {
       // Get the childs bbox
@@ -53,14 +28,24 @@ export default class G extends Container {
     return this
   }
 
-  width (width, box = this.bbox()) {
-    if (width == null) return box.width
-    return this.size(width, box.height, box)
+  dx (dx) {
+    return this.dmove(dx, 0)
+  }
+
+  dy (dy) {
+    return this.dmove(0, dy)
   }
 
   height (height, box = this.bbox()) {
     if (height == null) return box.height
     return this.size(box.width, height, box)
+  }
+
+  move (x = 0, y = 0, box = this.bbox()) {
+    const dx = x - box.x
+    const dy = y - box.y
+
+    return this.dmove(dx, dy)
   }
 
   size (width, height, box = this.bbox()) {
@@ -75,6 +60,22 @@ export default class G extends Container {
 
     return this
   }
+
+  width (width, box = this.bbox()) {
+    if (width == null) return box.width
+    return this.size(width, box.height, box)
+  }
+
+  x (x, box = this.bbox()) {
+    if (x == null) return box.x
+    return this.move(x, box.y, box)
+  }
+
+  y (y, box = this.bbox()) {
+    if (y == null) return box.y
+    return this.move(box.x, y, box)
+  }
+
 }
 
 registerMethods({

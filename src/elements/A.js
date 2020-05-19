@@ -8,15 +8,16 @@ export default class A extends Container {
     super(nodeOrNew('a', node), attrs)
   }
 
+  // Link target attribute
+  target (target) {
+    return this.attr('target', target)
+  }
+
   // Link url
   to (url) {
     return this.attr('href', url, xlink)
   }
 
-  // Link target attribute
-  target (target) {
-    return this.attr('target', target)
-  }
 }
 
 registerMethods({

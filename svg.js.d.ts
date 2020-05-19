@@ -818,7 +818,6 @@ declare module "@svgdotjs/svg.js" {
         constructor();
         constructor(options: Function);
         constructor(options: number);
-        constructor(options: object);
         constructor(options: Controller);
 
         static sanitise: (duration?: TimeLike, delay?: number, when?: string) => object

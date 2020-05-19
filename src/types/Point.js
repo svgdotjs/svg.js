@@ -6,6 +6,11 @@ export default class Point {
     this.init(...args)
   }
 
+  // Clone point
+  clone () {
+    return new Point(this)
+  }
+
   init (x, y) {
     const base = { x: 0, y: 0 }
 
@@ -21,9 +26,8 @@ export default class Point {
     return this
   }
 
-  // Clone point
-  clone () {
-    return new Point(this)
+  toArray () {
+    return [ this.x, this.y ]
   }
 
   transform (m) {
@@ -45,9 +49,6 @@ export default class Point {
     return this
   }
 
-  toArray () {
-    return [ this.x, this.y ]
-  }
 }
 
 export function point (x, y) {

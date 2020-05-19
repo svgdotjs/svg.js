@@ -128,13 +128,14 @@ export class Controller extends Stepper {
     this.stepper = fn
   }
 
+  done (c) {
+    return c.done
+  }
+
   step (current, target, dt, c) {
     return this.stepper(current, target, dt, c)
   }
 
-  done (c) {
-    return c.done
-  }
 }
 
 function recalculate () {

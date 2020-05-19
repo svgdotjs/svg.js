@@ -71,12 +71,6 @@ export default class Element extends Dom {
     return this.y(new SVGNumber(y).plus(this.y()))
   }
 
-  // Get parent document
-  root () {
-    const p = this.parent(getClass(root))
-    return p && p.root()
-  }
-
   getEventHolder () {
     return this
   }
@@ -119,6 +113,12 @@ export default class Element extends Dom {
 
     const m = (attr + '').match(reference)
     return m ? makeInstance(m[1]) : null
+  }
+
+  // Get parent document
+  root () {
+    const p = this.parent(getClass(root))
+    return p && p.root()
   }
 
   // set given data to the elements data property

@@ -4,24 +4,37 @@ import Box from './Box.js'
 import Matrix from './Matrix.js'
 
 export default class PointArray extends SVGArray {
-  // Convert array to string
-  toString () {
-    // convert to a poly point string
-    for (var i = 0, il = this.length, array = []; i < il; i++) {
-      array.push(this[i].join(','))
-    }
-
-    return array.join(' ')
+  // Get bounding box of points
+  bbox () {
+    var maxX = -Infinity
+    var maxY = -Infinity
+    var minX = Infinity
+    var minY = Infinity
+    this.forEach(function (el) {
+      maxX = Math.max(el[0], maxX)
+      maxY = Math.max(el[1], maxY)
+      minX = Math.min(el[0], minX)
+      minY = Math.min(el[1], minY)
+    })
+    return new Box(minX, minY, maxX - minX, maxY - minY)
   }
 
-  // Convert array to line object
-  toLine () {
-    return {
-      x1: this[0][0],
-      y1: this[0][1],
-      x2: this[1][0],
-      y2: this[1][1]
+  // Move point string
+  move (x, y) {
+    var box = this.bbox()
+
+    // get relative offset
+    x -= box.x
+    y -= box.y
+
+    // move every point
+    if (!isNaN(x) && !isNaN(y)) {
+      for (var i = this.length - 1; i >= 0; i--) {
+        this[i] = [ this[i][0] + x, this[i][1] + y ]
+      }
     }
+
+    return this
   }
 
   // Parse point string and flat array
@@ -48,6 +61,40 @@ export default class PointArray extends SVGArray {
     return points
   }
 
+  // Resize poly string
+  size (width, height) {
+    var i
+    var box = this.bbox()
+
+    // recalculate position of all points according to new size
+    for (i = this.length - 1; i >= 0; i--) {
+      if (box.width) this[i][0] = ((this[i][0] - box.x) * width) / box.width + box.x
+      if (box.height) this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
+    }
+
+    return this
+  }
+
+  // Convert array to line object
+  toLine () {
+    return {
+      x1: this[0][0],
+      y1: this[0][1],
+      x2: this[1][0],
+      y2: this[1][1]
+    }
+  }
+
+  // Convert array to string
+  toString () {
+    // convert to a poly point string
+    for (var i = 0, il = this.length, array = []; i < il; i++) {
+      array.push(this[i].join(','))
+    }
+
+    return array.join(' ')
+  }
+
   transform (m) {
     return this.clone().transformO(m)
   }
@@ -68,50 +115,4 @@ export default class PointArray extends SVGArray {
     return this
   }
 
-  // Move point string
-  move (x, y) {
-    var box = this.bbox()
-
-    // get relative offset
-    x -= box.x
-    y -= box.y
-
-    // move every point
-    if (!isNaN(x) && !isNaN(y)) {
-      for (var i = this.length - 1; i >= 0; i--) {
-        this[i] = [ this[i][0] + x, this[i][1] + y ]
-      }
-    }
-
-    return this
-  }
-
-  // Resize poly string
-  size (width, height) {
-    var i
-    var box = this.bbox()
-
-    // recalculate position of all points according to new size
-    for (i = this.length - 1; i >= 0; i--) {
-      if (box.width) this[i][0] = ((this[i][0] - box.x) * width) / box.width + box.x
-      if (box.height) this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
-    }
-
-    return this
-  }
-
-  // Get bounding box of points
-  bbox () {
-    var maxX = -Infinity
-    var maxY = -Infinity
-    var minX = Infinity
-    var minY = Infinity
-    this.forEach(function (el) {
-      maxX = Math.max(el[0], maxX)
-      maxY = Math.max(el[1], maxY)
-      minX = Math.min(el[0], minX)
-      minY = Math.min(el[1], minY)
-    })
-    return new Box(minX, minY, maxX - minX, maxY - minY)
-  }
 }
