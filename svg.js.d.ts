@@ -851,7 +851,7 @@ declare module "@svgdotjs/svg.js" {
         reset(): this
         finish(): this
         reverse(r?: boolean): this
-        ease(fn: Function): this
+        ease(fn: Function | string): this
         active(): boolean
         active(a: boolean): this
         addTransform(m: Matrix): this
