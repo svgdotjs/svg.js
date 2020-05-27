@@ -4,6 +4,9 @@
 // trick to keep reference to Array build-in type
 declare class BuiltInArray<T> extends Array<T> { }
 
+// trick to have nice attribute list for CSS
+declare type CSSStyleName = Exclude<keyof CSSStyleDeclaration, "parentRule" | "length" >
+
 declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
@@ -1008,11 +1011,11 @@ declare module "@svgdotjs/svg.js" {
         toggleClass(name: string): this
 
         // prototype method register in css.js
-        css(): object;
-        css(style: string): string
-        css(style: string[]): object;
-        css(style: string, val: any): this
-        css(style: object): this
+        css(): Partial<CSSStyleDeclaration>
+        css<T extends CSSStyleName>(style: T): CSSStyleDeclaration[T]
+        css<T extends CSSStyleName[]>(style: T): Partial<CSSStyleDeclaration>
+        css<T extends CSSStyleName>(style: T, val: CSSStyleDeclaration[T]): this
+        css(style: Partial<CSSStyleDeclaration>): this
         show(): this
         hide(): this
         visible(): boolean
