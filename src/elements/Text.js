@@ -36,9 +36,10 @@ export default class Text extends Shape {
           continue
         }
 
-        // add newline if its not the first child and newLined is set to true
-        if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
-          text += '\n'
+        // maybe add newlines if its not the first child
+        if (i !== firstLine && children[i].nodeType !== 3) {
+          const count = adopt(children[i]).dom.newLinesAfter
+          text += '\n'.repeat(count)
         }
 
         // add content of this node
@@ -98,9 +99,9 @@ export default class Text extends Shape {
         var fontSize = globals.window.getComputedStyle(this.node)
           .getPropertyValue('font-size')
 
-        var dy = leading * new SVGNumber(fontSize)
+        if (this.dom.newLinesAfter) {
+          var dy = leading * new SVGNumber(fontSize) * this.dom.newLinesAfter
 
-        if (this.dom.newLined) {
           this.attr('x', self.attr('x'))
 
           if (this.text() === '\n') {

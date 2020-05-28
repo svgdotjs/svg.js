@@ -20,7 +20,7 @@ export default class Tspan extends Shape {
 
   // Set text content
   text (text) {
-    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+    if (text == null) return this.node.textContent + '\n'.repeat(this.dom.newLinesAfter || 0)
 
     if (typeof text === 'function') {
       this.clear().build(true)
@@ -44,9 +44,9 @@ export default class Tspan extends Shape {
   }
 
   // Create new line
-  newLine () {
+  newLine (count = 1) {
     // mark new line
-    this.dom.newLined = true
+    this.dom.newLinesAfter = count
 
     // fetch parent
     var text = this.parent()
@@ -60,7 +60,7 @@ export default class Tspan extends Shape {
 
     var fontSize = globals.window.getComputedStyle(this.node)
       .getPropertyValue('font-size')
-    var dy = text.dom.leading * new SVGNumber(fontSize)
+    var dy = text.dom.leading * new SVGNumber(fontSize) * count
 
     // apply new position
     return this.dy(i ? dy : 0).attr('x', text.x())

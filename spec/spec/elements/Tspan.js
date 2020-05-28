@@ -72,7 +72,7 @@ describe('Tspan.js', () => {
     it('works without text parent', () => {
       // should not fail
       const tspan = new Tspan().newLine()
-      expect(tspan.dom.newLined).toBeTrue()
+      expect(tspan.dom.newLinesAfter).toBe(1)
     })
 
     it('returns itself', () => {
@@ -82,7 +82,7 @@ describe('Tspan.js', () => {
 
     it('marks the tspan as a newline', () => {
       const tspan = new Tspan().wrap(new Text()).newLine()
-      expect(tspan.dom.newLined).toBeTrue()
+      expect(tspan.dom.newLinesAfter).toBe(1)
     })
 
     it('sets dy to zero of first line', () => {
@@ -103,6 +103,15 @@ describe('Tspan.js', () => {
       expect(third.dy()).toBe(dy)
     })
 
+
+    it('honors the factor', () => {
+      const canvas = SVG().addTo(container)
+      const text = new Text().build(true).addTo(canvas)
+               text.tspan('Zeroth Line')
+      let t1 = text.tspan('First Line').newLine(1)
+      let t2 = text.tspan('Second Line').newLine(2)
+      expect(t2.dy()).toBe(2*t1.dy())
+    })
   })
 
   describe('Tspan', () => {
@@ -125,12 +134,12 @@ describe('Tspan.js', () => {
 
   describe('Text', () => {
     describe('newLine()', () => {
-      it('creates a tspan and calles newLine() on it', () => {
+      it('creates a tspan and calls newLine() on it', () => {
         const text = new Text()
         const tspan = text.newLine()
         expect(tspan).toEqual(any(Tspan))
         expect(tspan.parent()).toBe(text)
-        expect(tspan.dom.newLined).toBeTrue()
+        expect(tspan.dom.newLinesAfter).toBe(1)
       })
     })
   })
