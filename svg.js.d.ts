@@ -1612,7 +1612,7 @@ declare module "@svgdotjs/svg.js" {
         dx(x: NumberAlias): this;
         dy(): number;
         dy(y: NumberAlias): this;
-        newLine(): this;
+        newLine(count = 1): this;
         tspan(text: string): Tspan;
         tspan(block: (tspan: Tspan) => void): this;
         length(): number;
