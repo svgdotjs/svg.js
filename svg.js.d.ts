@@ -817,7 +817,7 @@ declare module "@svgdotjs/svg.js" {
 
     type TimeLike = number | TimesParam | Stepper
 
-    class Runner {
+    class Runner implements Sugar {
         constructor();
         constructor(options: Function);
         constructor(options: number);
@@ -890,6 +890,31 @@ declare module "@svgdotjs/svg.js" {
         ry(ry: number): this
         from(x: NumberAlias, y: NumberAlias): this
         to(x: NumberAlias, y: NumberAlias): this
+
+        // Sugar
+        fill(): any
+        fill(fill: FillData): this;
+        fill(color: string): this;
+        fill(pattern: Element): this;
+        fill(image: Image): this;
+        stroke(): any;
+        stroke(stroke: StrokeData): this;
+        stroke(color: string): this;
+        matrix(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        matrix(mat: MatrixAlias, b?: number, c?: number, d?: number, e?: number, f?: number): this;
+        rotate(degrees: number, cx?: number, cy?: number): this;
+        skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this;
+        scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this;
+        translate(x: number, y: number): this;
+        shear(lam: Matrix, cx: number, cy: number): this
+        relative(x: number, y: number): this
+        flip(direction?: string, around?: number): this
+        flip(around: number): this
+        opacity(): number
+        opacity(value: number): this
+        font(a: string): string
+        font(a: string, v: string | number): this
+        font(a: object): this
     }
 
     // Animator.js
