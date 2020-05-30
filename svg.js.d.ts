@@ -548,13 +548,15 @@ declare module "@svgdotjs/svg.js" {
         to(a: any): Morphable;
     }
 
+    type ListEachCallback<T> = (el: T, index: number, list: T[]) => T
+
     // List.js
-    interface List<T> extends BuiltInArray<T> {
+    class List<T> extends BuiltInArray<T> {
         // I have no clue how to deal with this
         // [key: string]: (...arg0: any[]) => List<T>
         // [key: string]: () => List<any>
-        each(fn: Function): void
-        each(...args: any[]): void
+        each(fn: ListEachCallback<T>): T[]
+        each(...args: any[]): T[]
         toArray(): T[]
     }
 
@@ -1055,6 +1057,7 @@ declare module "@svgdotjs/svg.js" {
         clip(): ClipPath;
         ellipse(width?: number, height?: number): Ellipse;
         flatten(parent: Dom, depth?: number): this;
+        foreignObject(width: number, height: number) : ForeignObject
         gradient(type: string, block?: (stop: Gradient) => void): Gradient;
         group(): G;
 
@@ -1380,6 +1383,13 @@ declare module "@svgdotjs/svg.js" {
         to(): string;
         target(target: string): this;
         target(): string;
+    }
+
+
+    // ForeignObject.js
+    class ForeignObject extends Element {
+        constructor(node: HTMLElement, attrs?: any)
+        add(element: Dom) : ForeignObject
     }
 
     // image.js
