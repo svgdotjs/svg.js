@@ -80,14 +80,14 @@ declare module "@svgdotjs/svg.js" {
 
     }
 
-    let easing: {
-        '-'(pos: number): number;
-        '<>'(pos: number): number;
-        '>'(pos: number): number;
-        '<'(pos: number): number;
-        bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number;
-        steps(steps: number, stepPosition?: "jump-start"|"jump-end"|"jump-none"|"jump-both"|"start"|"end"): (t: number, beforeFlag?: boolean) => number;
-    }
+    // let easing: {
+    //     '-'(pos: number): number;
+    //     '<>'(pos: number): number;
+    //     '>'(pos: number): number;
+    //     '<'(pos: number): number;
+    //     bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number;
+    //     steps(steps: number, stepPosition?: "jump-start"|"jump-end"|"jump-none"|"jump-both"|"start"|"end"): (t: number, beforeFlag?: boolean) => number;
+    // }
 
     let regex: {
         delimiter: RegExp;
@@ -805,6 +805,9 @@ declare module "@svgdotjs/svg.js" {
 
     type TimeLike = number | TimesParam | Stepper
 
+    type EasingCallback = (...any) => number
+    type EasingLiteral = "<>" | "-" | "<" | ">"
+
     class Runner {
         constructor();
         constructor(options: Function);
@@ -826,6 +829,8 @@ declare module "@svgdotjs/svg.js" {
         loop(times: TimesParam): this
         delay(delay: number): this
 
+
+
         during(fn: Function): this
         queue(initFn: Function, runFn: Function, retargetFn?: boolean | Function, isTransform?: boolean): this
         after(fn: EventListener): this
@@ -843,7 +848,8 @@ declare module "@svgdotjs/svg.js" {
         reset(): this
         finish(): this
         reverse(r?: boolean): this
-        ease(fn: Function): this
+        ease(fn: EasingCallback) : this
+        ease(kind: EasingLiteral) : this
         active(): boolean
         active(a: boolean): this
         addTransform(m: Matrix): this
