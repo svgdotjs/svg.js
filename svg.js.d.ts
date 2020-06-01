@@ -83,14 +83,14 @@ declare module "@svgdotjs/svg.js" {
 
     }
 
-    let easing: {
-        '-'(pos: number): number;
-        '<>'(pos: number): number;
-        '>'(pos: number): number;
-        '<'(pos: number): number;
-        bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number;
-        steps(steps: number, stepPosition?: "jump-start"|"jump-end"|"jump-none"|"jump-both"|"start"|"end"): (t: number, beforeFlag?: boolean) => number;
-    }
+    // let easing: {
+    //     '-'(pos: number): number;
+    //     '<>'(pos: number): number;
+    //     '>'(pos: number): number;
+    //     '<'(pos: number): number;
+    //     bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number;
+    //     steps(steps: number, stepPosition?: "jump-start"|"jump-end"|"jump-none"|"jump-both"|"start"|"end"): (t: number, beforeFlag?: boolean) => number;
+    // }
 
     let regex: {
         delimiter: RegExp;
@@ -551,13 +551,12 @@ declare module "@svgdotjs/svg.js" {
         to(a: any): Morphable;
     }
 
+    type ListEachCallback<T> = (el: T, index: number, list: List<T>) => any
+
     // List.js
-    interface List<T> extends BuiltInArray<T> {
-        // I have no clue how to deal with this
-        // [key: string]: (...arg0: any[]) => List<T>
-        // [key: string]: () => List<any>
-        each(fn: Function): void
-        each(...args: any[]): void
+    class List<T> extends BuiltInArray<T> implements ElementAlias {
+        each(fn: ListEachCallback<T>): List<any>
+        each(name: string, ...args: any[]): List<any>
         toArray(): T[]
     }
 
@@ -817,6 +816,9 @@ declare module "@svgdotjs/svg.js" {
 
     type TimeLike = number | TimesParam | Stepper
 
+    type EasingCallback = (...any) => number
+    type EasingLiteral = "<>" | "-" | "<" | ">"
+
     class Runner {
         constructor();
         constructor(options: Function);
@@ -837,6 +839,8 @@ declare module "@svgdotjs/svg.js" {
         loop(times: TimesParam): this
         delay(delay: number): this
 
+
+
         during(fn: Function): this
         queue(initFn: Function, runFn: Function, retargetFn?: boolean | Function, isTransform?: boolean): this
         after(fn: EventListener): this
@@ -854,7 +858,8 @@ declare module "@svgdotjs/svg.js" {
         reset(): this
         finish(): this
         reverse(r?: boolean): this
-        ease(fn: Function | string): this
+        ease(fn: EasingCallback) : this
+        ease(kind: EasingLiteral) : this
         active(): boolean
         active(a: boolean): this
         addTransform(m: Matrix): this
@@ -1065,6 +1070,7 @@ declare module "@svgdotjs/svg.js" {
         clip(): ClipPath;
         ellipse(width?: number, height?: number): Ellipse;
         flatten(parent: Dom, depth?: number): this;
+        foreignObject(width: number, height: number) : ForeignObject
         gradient(type: string, block?: (stop: Gradient) => void): Gradient;
         group(): G;
 
@@ -1390,6 +1396,14 @@ declare module "@svgdotjs/svg.js" {
         to(): string;
         target(target: string): this;
         target(): string;
+    }
+
+
+    // ForeignObject.js
+    class ForeignObject extends Element {
+        constructor(node?: SVGForeignObjectElement, attrs?: object)
+        constructor(attrs?: object)
+        add(element: Dom, i?: number): ForeignObject
     }
 
     // image.js
