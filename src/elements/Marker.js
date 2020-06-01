@@ -8,11 +8,6 @@ export default class Marker extends Container {
     super(nodeOrNew('marker', node), attrs)
   }
 
-  // Set width of element
-  width (width) {
-    return this.attr('markerWidth', width)
-  }
-
   // Set height of element
   height (height) {
     return this.attr('markerHeight', height)
@@ -25,6 +20,11 @@ export default class Marker extends Container {
   // Set marker refX and refY
   ref (x, y) {
     return this.attr('refX', x).attr('refY', y)
+  }
+
+  // Return the fill id
+  toString () {
+    return 'url(#' + this.id() + ')'
   }
 
   // Update marker
@@ -40,10 +40,11 @@ export default class Marker extends Container {
     return this
   }
 
-  // Return the fill id
-  toString () {
-    return 'url(#' + this.id() + ')'
+  // Set width of element
+  width (width) {
+    return this.attr('markerWidth', width)
   }
+
 }
 
 registerMethods({

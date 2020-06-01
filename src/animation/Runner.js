@@ -71,6 +71,93 @@ export default class Runner extends EventTarget {
     this._persist = this._isDeclarative ? true : null
   }
 
+  static sanitise (duration, delay, when) {
+    // Initialise the default parameters
+    var times = 1
+    var swing = false
+    var wait = 0
+    duration = duration || timeline.duration
+    delay = delay || timeline.delay
+    when = when || 'last'
+
+    // If we have an object, unpack the values
+    if (typeof duration === 'object' && !(duration instanceof Stepper)) {
+      delay = duration.delay || delay
+      when = duration.when || when
+      swing = duration.swing || swing
+      times = duration.times || times
+      wait = duration.wait || wait
+      duration = duration.duration || timeline.duration
+    }
+
+    return {
+      duration: duration,
+      delay: delay,
+      swing: swing,
+      times: times,
+      wait: wait,
+      when: when
+    }
+  }
+
+  active (enabled) {
+    if (enabled == null) return this.enabled
+    this.enabled = enabled
+    return this
+  }
+
+  /*
+  Private Methods
+  ===============
+  Methods that shouldn't be used externally
+  */
+  addTransform (transform, index) {
+    this.transforms.lmultiplyO(transform)
+    return this
+  }
+
+  after (fn) {
+    return this.on('finished', fn)
+  }
+
+  animate (duration, delay, when) {
+    var o = Runner.sanitise(duration, delay, when)
+    var runner = new Runner(o.duration)
+    if (this._timeline) runner.timeline(this._timeline)
+    if (this._element) runner.element(this._element)
+    return runner.loop(o).schedule(o.delay, o.when)
+  }
+
+  clearTransform () {
+    this.transforms = new Matrix()
+    return this
+  }
+
+  // TODO: Keep track of all transformations so that deletion is faster
+  clearTransformsFromQueue () {
+    if (!this.done || !this._timeline || !this._timeline._runnerIds.includes(this.id)) {
+      this._queue = this._queue.filter((item) => {
+        return !item.isTransform
+      })
+    }
+  }
+
+  delay (delay) {
+    return this.animate(0, delay)
+  }
+
+  duration () {
+    return this._times * (this._wait + this._duration) - this._wait
+  }
+
+  during (fn) {
+    return this.queue(null, fn)
+  }
+
+  ease (fn) {
+    this._stepper = new Ease(fn)
+    return this
+  }
   /*
   Runner Definitions
   ==================
@@ -85,43 +172,8 @@ export default class Runner extends EventTarget {
     return this
   }
 
-  timeline (timeline) {
-    // check explicitly for undefined so we can set the timeline to null
-    if (typeof timeline === 'undefined') return this._timeline
-    this._timeline = timeline
-    return this
-  }
-
-  animate (duration, delay, when) {
-    var o = Runner.sanitise(duration, delay, when)
-    var runner = new Runner(o.duration)
-    if (this._timeline) runner.timeline(this._timeline)
-    if (this._element) runner.element(this._element)
-    return runner.loop(o).schedule(o.delay, o.when)
-  }
-
-  schedule (timeline, delay, when) {
-    // The user doesn't need to pass a timeline if we already have one
-    if (!(timeline instanceof Timeline)) {
-      when = delay
-      delay = timeline
-      timeline = this.timeline()
-    }
-
-    // If there is no timeline, yell at the user...
-    if (!timeline) {
-      throw Error('Runner cannot be scheduled without timeline')
-    }
-
-    // Schedule the runner on the timeline provided
-    timeline.schedule(this, delay, when)
-    return this
-  }
-
-  unschedule () {
-    var timeline = this.timeline()
-    timeline && timeline.unschedule(this)
-    return this
+  finish () {
+    return this.step(Infinity)
   }
 
   loop (times, swing, wait) {
@@ -141,57 +193,6 @@ export default class Runner extends EventTarget {
     if (this._times === true) { this._times = Infinity }
 
     return this
-  }
-
-  delay (delay) {
-    return this.animate(0, delay)
-  }
-
-  /*
-  Basic Functionality
-  ===================
-  These methods allow us to attach basic functions to the runner directly
-  */
-
-  queue (initFn, runFn, retargetFn, isTransform) {
-    this._queue.push({
-      initialiser: initFn || noop,
-      runner: runFn || noop,
-      retarget: retargetFn,
-      isTransform: isTransform,
-      initialised: false,
-      finished: false
-    })
-    var timeline = this.timeline()
-    timeline && this.timeline()._continue()
-    return this
-  }
-
-  during (fn) {
-    return this.queue(null, fn)
-  }
-
-  after (fn) {
-    return this.on('finished', fn)
-  }
-
-  /*
-  Runner animation methods
-  ========================
-  Control how the animation plays
-  */
-
-  time (time) {
-    if (time == null) {
-      return this._time
-    }
-    const dt = time - this._time
-    this.step(dt)
-    return this
-  }
-
-  duration () {
-    return this._times * (this._wait + this._duration) - this._wait
   }
 
   loops (p) {
@@ -264,6 +265,55 @@ export default class Runner extends EventTarget {
     return this.time(p * this.duration())
   }
 
+  /*
+  Basic Functionality
+  ===================
+  These methods allow us to attach basic functions to the runner directly
+  */
+  queue (initFn, runFn, retargetFn, isTransform) {
+    this._queue.push({
+      initialiser: initFn || noop,
+      runner: runFn || noop,
+      retarget: retargetFn,
+      isTransform: isTransform,
+      initialised: false,
+      finished: false
+    })
+    var timeline = this.timeline()
+    timeline && this.timeline()._continue()
+    return this
+  }
+
+  reset () {
+    if (this._reseted) return this
+    this.time(0)
+    this._reseted = true
+    return this
+  }
+
+  reverse (reverse) {
+    this._reverse = reverse == null ? !this._reverse : reverse
+    return this
+  }
+
+  schedule (timeline, delay, when) {
+    // The user doesn't need to pass a timeline if we already have one
+    if (!(timeline instanceof Timeline)) {
+      when = delay
+      delay = timeline
+      timeline = this.timeline()
+    }
+
+    // If there is no timeline, yell at the user...
+    if (!timeline) {
+      throw Error('Runner cannot be scheduled without timeline')
+    }
+
+    // Schedule the runner on the timeline provided
+    timeline.schedule(this, delay, when)
+    return this
+  }
+
   step (dt) {
     // If we are inactive, this stepper just gets skipped
     if (!this.enabled) return this
@@ -315,38 +365,54 @@ export default class Runner extends EventTarget {
     return this
   }
 
-  reset () {
-    if (this._reseted) return this
-    this.time(0)
-    this._reseted = true
-    return this
-  }
-
-  finish () {
-    return this.step(Infinity)
-  }
-
-  reverse (reverse) {
-    this._reverse = reverse == null ? !this._reverse : reverse
-    return this
-  }
-
-  ease (fn) {
-    this._stepper = new Ease(fn)
-    return this
-  }
-
-  active (enabled) {
-    if (enabled == null) return this.enabled
-    this.enabled = enabled
-    return this
-  }
-
   /*
-  Private Methods
-  ===============
-  Methods that shouldn't be used externally
+  Runner animation methods
+  ========================
+  Control how the animation plays
   */
+  time (time) {
+    if (time == null) {
+      return this._time
+    }
+    const dt = time - this._time
+    this.step(dt)
+    return this
+  }
+
+  timeline (timeline) {
+    // check explicitly for undefined so we can set the timeline to null
+    if (typeof timeline === 'undefined') return this._timeline
+    this._timeline = timeline
+    return this
+  }
+
+  unschedule () {
+    var timeline = this.timeline()
+    timeline && timeline.unschedule(this)
+    return this
+  }
+
+  // Run each initialise function in the runner if required
+  _initialise (running) {
+    // If we aren't running, we shouldn't initialise when not declarative
+    if (!running && !this._isDeclarative) return
+
+    // Loop through all of the initialisers
+    for (var i = 0, len = this._queue.length; i < len; ++i) {
+      // Get the current initialiser
+      var current = this._queue[i]
+
+      // Determine whether we need to initialise
+      var needsIt = this._isDeclarative || (!current.initialised && running)
+      running = !current.finished
+
+      // Call the initialiser if we need to
+      if (needsIt && running) {
+        current.initialiser.call(this)
+        current.initialised = true
+      }
+    }
+  }
 
   // Save a morpher to the morpher list so that we can retarget it later
   _rememberMorpher (method, morpher) {
@@ -368,6 +434,25 @@ export default class Runner extends EventTarget {
   }
 
   // Try to set the target for a morpher if the morpher exists, otherwise
+  // Run each run function for the position or dt given
+  _run (positionOrDt) {
+    // Run all of the _queue directly
+    var allfinished = true
+    for (var i = 0, len = this._queue.length; i < len; ++i) {
+      // Get the current function to run
+      var current = this._queue[i]
+
+      // Run the function if its not finished, we keep track of the finished
+      // flag for the sake of declarative _queue
+      var converged = current.runner.call(this, positionOrDt)
+      current.finished = current.finished || (converged === true)
+      allfinished = allfinished && current.finished
+    }
+
+    // We report when all of the constructors are finished
+    return allfinished
+  }
+
   // do nothing and return false
   _tryRetarget (method, target, extra) {
     if (this._history[method]) {
@@ -395,94 +480,6 @@ export default class Runner extends EventTarget {
     return false
   }
 
-  // Run each initialise function in the runner if required
-  _initialise (running) {
-    // If we aren't running, we shouldn't initialise when not declarative
-    if (!running && !this._isDeclarative) return
-
-    // Loop through all of the initialisers
-    for (var i = 0, len = this._queue.length; i < len; ++i) {
-      // Get the current initialiser
-      var current = this._queue[i]
-
-      // Determine whether we need to initialise
-      var needsIt = this._isDeclarative || (!current.initialised && running)
-      running = !current.finished
-
-      // Call the initialiser if we need to
-      if (needsIt && running) {
-        current.initialiser.call(this)
-        current.initialised = true
-      }
-    }
-  }
-
-  // Run each run function for the position or dt given
-  _run (positionOrDt) {
-    // Run all of the _queue directly
-    var allfinished = true
-    for (var i = 0, len = this._queue.length; i < len; ++i) {
-      // Get the current function to run
-      var current = this._queue[i]
-
-      // Run the function if its not finished, we keep track of the finished
-      // flag for the sake of declarative _queue
-      var converged = current.runner.call(this, positionOrDt)
-      current.finished = current.finished || (converged === true)
-      allfinished = allfinished && current.finished
-    }
-
-    // We report when all of the constructors are finished
-    return allfinished
-  }
-
-  addTransform (transform, index) {
-    this.transforms.lmultiplyO(transform)
-    return this
-  }
-
-  clearTransform () {
-    this.transforms = new Matrix()
-    return this
-  }
-
-  // TODO: Keep track of all transformations so that deletion is faster
-  clearTransformsFromQueue () {
-    if (!this.done || !this._timeline || !this._timeline._runnerIds.includes(this.id)) {
-      this._queue = this._queue.filter((item) => {
-        return !item.isTransform
-      })
-    }
-  }
-
-  static sanitise (duration, delay, when) {
-    // Initialise the default parameters
-    var times = 1
-    var swing = false
-    var wait = 0
-    duration = duration || timeline.duration
-    delay = delay || timeline.delay
-    when = when || 'last'
-
-    // If we have an object, unpack the values
-    if (typeof duration === 'object' && !(duration instanceof Stepper)) {
-      delay = duration.delay || delay
-      when = duration.when || when
-      swing = duration.swing || swing
-      times = duration.times || times
-      wait = duration.wait || wait
-      duration = duration.duration || timeline.duration
-    }
-
-    return {
-      duration: duration,
-      delay: delay,
-      swing: swing,
-      times: times,
-      wait: wait,
-      when: when
-    }
-  }
 }
 
 Runner.id = 0
@@ -543,15 +540,27 @@ export class RunnerArray {
     return this
   }
 
+  clearBefore (id) {
+    const deleteCnt = this.ids.indexOf(id + 1) || 1
+    this.ids.splice(0, deleteCnt, 0)
+    this.runners.splice(0, deleteCnt, new FakeRunner())
+      .forEach((r) => r.clearTransformsFromQueue())
+    return this
+  }
+
+  edit (id, newRunner) {
+    const index = this.ids.indexOf(id + 1)
+    this.ids.splice(index, 1, id + 1)
+    this.runners.splice(index, 1, newRunner)
+    return this
+  }
+
   getByID (id) {
     return this.runners[this.ids.indexOf(id + 1)]
   }
 
-  remove (id) {
-    const index = this.ids.indexOf(id + 1)
-    this.ids.splice(index, 1)
-    this.runners.splice(index, 1)
-    return this
+  length () {
+    return this.ids.length
   }
 
   merge () {
@@ -580,24 +589,13 @@ export class RunnerArray {
     return this
   }
 
-  edit (id, newRunner) {
+  remove (id) {
     const index = this.ids.indexOf(id + 1)
-    this.ids.splice(index, 1, id + 1)
-    this.runners.splice(index, 1, newRunner)
+    this.ids.splice(index, 1)
+    this.runners.splice(index, 1)
     return this
   }
 
-  length () {
-    return this.ids.length
-  }
-
-  clearBefore (id) {
-    const deleteCnt = this.ids.indexOf(id + 1) || 1
-    this.ids.splice(0, deleteCnt, 0)
-    this.runners.splice(0, deleteCnt, new FakeRunner())
-      .forEach((r) => r.clearTransformsFromQueue())
-    return this
-  }
 }
 
 registerMethods({

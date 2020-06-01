@@ -656,7 +656,7 @@ describe('Dom.js', function () {
 
       it('works without a parent', () => {
         const canvas = new Svg()
-        expect(canvas.xml('<rect /><circle>', undefined, svg)).toBe(canvas)
+        expect(canvas.xml('<rect /><circle />', undefined, svg)).toBe(canvas)
       })
     })
 

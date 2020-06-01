@@ -49,12 +49,37 @@ export default class Morphable {
     this._morphObj = null
   }
 
+  at (pos) {
+    var _this = this
+
+    return this._morphObj.fromArray(
+      this._from.map(function (i, index) {
+        return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
+      })
+    )
+  }
+
+  done () {
+    var complete = this._context
+      .map(this._stepper.done)
+      .reduce(function (last, curr) {
+        return last && curr
+      }, true)
+    return complete
+  }
+
   from (val) {
     if (val == null) {
       return this._from
     }
 
     this._from = this._set(val)
+    return this
+  }
+
+  stepper (stepper) {
+    if (stepper == null) return this._stepper
+    this._stepper = stepper
     return this
   }
 
@@ -109,30 +134,6 @@ export default class Morphable {
     return result
   }
 
-  stepper (stepper) {
-    if (stepper == null) return this._stepper
-    this._stepper = stepper
-    return this
-  }
-
-  done () {
-    var complete = this._context
-      .map(this._stepper.done)
-      .reduce(function (last, curr) {
-        return last && curr
-      }, true)
-    return complete
-  }
-
-  at (pos) {
-    var _this = this
-
-    return this._morphObj.fromArray(
-      this._from.map(function (i, index) {
-        return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
-      })
-    )
-  }
 }
 
 export class NonMorphable {
@@ -146,13 +147,14 @@ export class NonMorphable {
     return this
   }
 
+  toArray () {
+    return [ this.value ]
+  }
+
   valueOf () {
     return this.value
   }
 
-  toArray () {
-    return [ this.value ]
-  }
 }
 
 export class TransformBag {
@@ -214,6 +216,17 @@ export class ObjectBag {
     this.init(...args)
   }
 
+  align (other) {
+    for (let i = 0, il = this.values.length; i < il; ++i) {
+      if (this.values[i] === Color) {
+        const space = other[i + 6]
+        const color = new Color(this.values.splice(i + 2, 5))[space]().toArray()
+        this.values.splice(i + 2, 0, ...color)
+      }
+    }
+    return this
+  }
+
   init (objOrArr) {
     this.values = []
 
@@ -237,6 +250,10 @@ export class ObjectBag {
     return this
   }
 
+  toArray () {
+    return this.values
+  }
+
   valueOf () {
     var obj = {}
     var arr = this.values
@@ -253,20 +270,6 @@ export class ObjectBag {
     return obj
   }
 
-  toArray () {
-    return this.values
-  }
-
-  align (other) {
-    for (let i = 0, il = this.values.length; i < il; ++i) {
-      if (this.values[i] === Color) {
-        const space = other[i + 6]
-        const color = new Color(this.values.splice(i + 2, 5))[space]().toArray()
-        this.values.splice(i + 2, 0, ...color)
-      }
-    }
-    return this
-  }
 }
 
 const morphableTypes = [

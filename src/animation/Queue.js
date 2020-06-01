@@ -4,6 +4,16 @@ export default class Queue {
     this._last = null
   }
 
+  // Shows us the first item in the list
+  first () {
+    return this._first && this._first.value
+  }
+
+  // Shows us the last item in the list
+  last () {
+    return this._last && this._last.value
+  }
+
   push (value) {
     // An item stores an id and the provided value
     var item = typeof value.next !== 'undefined' ? value : { value: value, next: null, prev: null }
@@ -22,28 +32,6 @@ export default class Queue {
     return item
   }
 
-  shift () {
-    // Check if we have a value
-    var remove = this._first
-    if (!remove) return null
-
-    // If we do, remove it and relink things
-    this._first = remove.next
-    if (this._first) this._first.prev = null
-    this._last = this._first ? this._last : null
-    return remove.value
-  }
-
-  // Shows us the first item in the list
-  first () {
-    return this._first && this._first.value
-  }
-
-  // Shows us the last item in the list
-  last () {
-    return this._last && this._last.value
-  }
-
   // Removes the item that was returned from the push
   remove (item) {
     // Relink the previous item
@@ -56,4 +44,17 @@ export default class Queue {
     item.prev = null
     item.next = null
   }
+
+  shift () {
+    // Check if we have a value
+    var remove = this._first
+    if (!remove) return null
+
+    // If we do, remove it and relink things
+    this._first = remove.next
+    if (this._first) this._first.prev = null
+    this._last = this._first ? this._last : null
+    return remove.value
+  }
+
 }

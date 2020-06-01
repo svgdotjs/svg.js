@@ -21,53 +21,6 @@ export default class Text extends Shape {
     this._build = false // disable build mode for adding multiple lines
   }
 
-  // Set the text content
-  text (text) {
-    // act as getter
-    if (text === undefined) {
-      var children = this.node.childNodes
-      var firstLine = 0
-      text = ''
-
-      for (var i = 0, len = children.length; i < len; ++i) {
-        // skip textPaths - they are no lines
-        if (children[i].nodeName === 'textPath') {
-          if (i === 0) firstLine = 1
-          continue
-        }
-
-        // add newline if its not the first child and newLined is set to true
-        if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
-          text += '\n'
-        }
-
-        // add content of this node
-        text += children[i].textContent
-      }
-
-      return text
-    }
-
-    // remove existing content
-    this.clear().build(true)
-
-    if (typeof text === 'function') {
-      // call block
-      text.call(this, this)
-    } else {
-      // store text and make sure text is not blank
-      text = (text + '').split('\n')
-
-      // build new lines
-      for (var j = 0, jl = text.length; j < jl; j++) {
-        this.newLine(text[j])
-      }
-    }
-
-    // disable build mode and rebuild lines
-    return this.build(false).rebuild()
-  }
-
   // Set / get leading
   leading (value) {
     // act as getter
@@ -124,6 +77,54 @@ export default class Text extends Shape {
     this.dom.leading = new SVGNumber(o.leading || 1.3)
     return this
   }
+
+  // Set the text content
+  text (text) {
+    // act as getter
+    if (text === undefined) {
+      var children = this.node.childNodes
+      var firstLine = 0
+      text = ''
+
+      for (var i = 0, len = children.length; i < len; ++i) {
+        // skip textPaths - they are no lines
+        if (children[i].nodeName === 'textPath') {
+          if (i === 0) firstLine = 1
+          continue
+        }
+
+        // add newline if its not the first child and newLined is set to true
+        if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
+          text += '\n'
+        }
+
+        // add content of this node
+        text += children[i].textContent
+      }
+
+      return text
+    }
+
+    // remove existing content
+    this.clear().build(true)
+
+    if (typeof text === 'function') {
+      // call block
+      text.call(this, this)
+    } else {
+      // store text and make sure text is not blank
+      text = (text + '').split('\n')
+
+      // build new lines
+      for (var j = 0, jl = text.length; j < jl; j++) {
+        this.newLine(text[j])
+      }
+    }
+
+    // disable build mode and rebuild lines
+    return this.build(false).rebuild()
+  }
+
 }
 
 extend(Text, textable)

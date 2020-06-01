@@ -6,9 +6,9 @@ import { getWindow } from '../../../../src/utils/window.js'
 describe('selector.js', () => {
   describe('baseFind()', () => {
     it('finds all elements of a selector in the document', () => {
-      const div = SVG('<div>', true).id('foo').addTo(container)
-      const span = SVG('<span>', true).addClass('bar').addTo(div)
-      const span2 = SVG('<span>', true).addTo(div)
+      const div = SVG('<div />', true).id('foo').addTo(container)
+      const span = SVG('<span />', true).addClass('bar').addTo(div)
+      const span2 = SVG('<span />', true).addTo(div)
 
       expect(find('#canvas').map(el => el.node)).toEqual([ container ])
       expect(find('span')).toEqual([ span, span2 ])
@@ -17,7 +17,7 @@ describe('selector.js', () => {
     })
 
     it('finds all elements of a selector scoped to an element', () => {
-      const div = SVG('<div>', true).id('foo').addTo(container)
+      const div = SVG('<div />', true).id('foo').addTo(container)
 
       expect(find('#canvas', getWindow().document)[0].node).toBe(container)
       expect(find('#foo', container)).toEqual([ div ])

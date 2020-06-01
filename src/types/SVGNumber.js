@@ -7,6 +7,16 @@ export default class SVGNumber {
     this.init(...args)
   }
 
+  convert (unit) {
+    return new SVGNumber(this.value, unit)
+  }
+
+  // Divide number
+  divide (number) {
+    number = new SVGNumber(number)
+    return new SVGNumber(this / number, this.unit || number.unit)
+  }
+
   init (value, unit) {
     unit = Array.isArray(value) ? value[1] : unit
     value = Array.isArray(value) ? value[0] : value
@@ -46,23 +56,10 @@ export default class SVGNumber {
     return this
   }
 
-  toString () {
-    return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6
-      : this.unit === 's' ? this.value / 1e3
-      : this.value
-    ) + this.unit
-  }
-
-  toJSON () {
-    return this.toString()
-  }
-
-  toArray () {
-    return [ this.value, this.unit ]
-  }
-
-  valueOf () {
-    return this.value
+  // Subtract number
+  minus (number) {
+    number = new SVGNumber(number)
+    return new SVGNumber(this - number, this.unit || number.unit)
   }
 
   // Add number
@@ -71,25 +68,29 @@ export default class SVGNumber {
     return new SVGNumber(this + number, this.unit || number.unit)
   }
 
-  // Subtract number
-  minus (number) {
-    number = new SVGNumber(number)
-    return new SVGNumber(this - number, this.unit || number.unit)
-  }
-
   // Multiply number
   times (number) {
     number = new SVGNumber(number)
     return new SVGNumber(this * number, this.unit || number.unit)
   }
 
-  // Divide number
-  divide (number) {
-    number = new SVGNumber(number)
-    return new SVGNumber(this / number, this.unit || number.unit)
+  toArray () {
+    return [ this.value, this.unit ]
   }
 
-  convert (unit) {
-    return new SVGNumber(this.value, unit)
+  toJSON () {
+    return this.toString()
   }
+
+  toString () {
+    return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6
+      : this.unit === 's' ? this.value / 1e3
+      : this.value
+    ) + this.unit
+  }
+
+  valueOf () {
+    return this.value
+  }
+
 }

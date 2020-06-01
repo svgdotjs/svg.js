@@ -62,6 +62,152 @@ export default class Color {
     this.init(...inputs)
   }
 
+  // Test if given value is a color
+  static isColor (color) {
+    return color && (
+      color instanceof Color
+      || this.isRgb(color)
+      || this.test(color)
+    )
+  }
+
+  // Test if given value is an rgb object
+  static isRgb (color) {
+    return color && typeof color.r === 'number'
+      && typeof color.g === 'number'
+      && typeof color.b === 'number'
+  }
+
+  /*
+  Generating random colors
+  */
+  static random (mode = 'vibrant', t, u) {
+
+    // Get the math modules
+    const { random, round, sin, PI: pi } = Math
+
+    // Run the correct generator
+    if (mode === 'vibrant') {
+
+      const l = (81 - 57) * random() + 57
+      const c = (83 - 45) * random() + 45
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'sine') {
+
+      t = t == null ? random() : t
+      const r = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
+      const g = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
+      const b = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
+      const color = new Color(r, g, b)
+      return color
+
+    } else if (mode === 'pastel') {
+
+      const l = (94 - 86) * random() + 86
+      const c = (26 - 9) * random() + 9
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'dark') {
+
+      const l = 10 + 10 * random()
+      const c = (125 - 75) * random() + 86
+      const h = 360 * random()
+      const color = new Color(l, c, h, 'lch')
+      return color
+
+    } else if (mode === 'rgb') {
+
+      const r = 255 * random()
+      const g = 255 * random()
+      const b = 255 * random()
+      const color = new Color(r, g, b)
+      return color
+
+    } else if (mode === 'lab') {
+
+      const l = 100 * random()
+      const a = 256 * random() - 128
+      const b = 256 * random() - 128
+      const color = new Color(l, a, b, 'lab')
+      return color
+
+    } else if (mode === 'grey') {
+
+      const grey = 255 * random()
+      const color = new Color(grey, grey, grey)
+      return color
+
+    } else {
+
+      throw new Error('Unsupported random color mode')
+
+    }
+  }
+
+  // Test if given value is a color string
+  static test (color) {
+    return (typeof color === 'string')
+      && (isHex.test(color) || isRgb.test(color))
+  }
+
+  cmyk () {
+
+    // Get the rgb values for the current color
+    const { _a, _b, _c } = this.rgb()
+    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
+
+    // Get the cmyk values in an unbounded format
+    const k = Math.min(1 - r, 1 - g, 1 - b)
+
+    if (k === 1) {
+      // Catch the black case
+      return new Color(0, 0, 0, 1, 'cmyk')
+    }
+
+    const c = (1 - r - k) / (1 - k)
+    const m = (1 - g - k) / (1 - k)
+    const y = (1 - b - k) / (1 - k)
+
+    // Construct the new color
+    const color = new Color(c, m, y, k, 'cmyk')
+    return color
+  }
+
+  hsl () {
+
+    // Get the rgb values
+    const { _a, _b, _c } = this.rgb()
+    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
+
+    // Find the maximum and minimum values to get the lightness
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b)
+    const l = (max + min) / 2
+
+    // If the r, g, v values are identical then we are grey
+    const isGrey = max === min
+
+    // Calculate the hue and saturation
+    const delta = max - min
+    const s = isGrey ? 0
+      : l > 0.5 ? delta / (2 - max - min)
+      : delta / (max + min)
+    const h = isGrey ? 0
+      : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6
+      : max === g ? ((b - r) / delta + 2) / 6
+      : max === b ? ((r - g) / delta + 4) / 6
+      : 0
+
+    // Construct and return the new color
+    const color = new Color(360 * h, 100 * s, 100 * l, 'hsl')
+    return color
+  }
+
   init (a = 0, b = 0, c = 0, d = 0, space = 'rgb') {
     // This catches the case when a falsy value is passed like ''
     a = !a ? 0 : a
@@ -113,6 +259,37 @@ export default class Color {
     Object.assign(this, components)
   }
 
+  lab () {
+    // Get the xyz color
+    const { x, y, z } = this.xyz()
+
+    // Get the lab components
+    const l = (116 * y) - 16
+    const a = 500 * (x - y)
+    const b = 200 * (y - z)
+
+    // Construct and return a new color
+    const color = new Color(l, a, b, 'lab')
+    return color
+  }
+
+  lch () {
+
+    // Get the lab color directly
+    const { l, a, b } = this.lab()
+
+    // Get the chromaticity and the hue using polar coordinates
+    const c = Math.sqrt(a ** 2 + b ** 2)
+    let h = 180 * Math.atan2(b, a) / Math.PI
+    if (h < 0) {
+      h *= -1
+      h = 360 - h
+    }
+
+    // Make a new color and return it
+    const color = new Color(l, c, h, 'lch')
+    return color
+  }
   /*
   Conversion Methods
   */
@@ -207,18 +384,24 @@ export default class Color {
     }
   }
 
-  lab () {
-    // Get the xyz color
-    const { x, y, z } = this.xyz()
+  toArray () {
+    const { _a, _b, _c, _d, space } = this
+    return [ _a, _b, _c, _d, space ]
+  }
 
-    // Get the lab components
-    const l = (116 * y) - 16
-    const a = 500 * (x - y)
-    const b = 200 * (y - z)
+  toHex () {
+    const [ r, g, b ] = this._clamped().map(componentHex)
+    return `#${r}${g}${b}`
+  }
 
-    // Construct and return a new color
-    const color = new Color(l, a, b, 'lab')
-    return color
+  toRgb () {
+    const [ rV, gV, bV ] = this._clamped()
+    const string = `rgb(${rV},${gV},${bV})`
+    return string
+  }
+
+  toString () {
+    return this.toHex()
   }
 
   xyz () {
@@ -247,77 +430,6 @@ export default class Color {
     return color
   }
 
-  lch () {
-
-    // Get the lab color directly
-    const { l, a, b } = this.lab()
-
-    // Get the chromaticity and the hue using polar coordinates
-    const c = Math.sqrt(a ** 2 + b ** 2)
-    let h = 180 * Math.atan2(b, a) / Math.PI
-    if (h < 0) {
-      h *= -1
-      h = 360 - h
-    }
-
-    // Make a new color and return it
-    const color = new Color(l, c, h, 'lch')
-    return color
-  }
-
-  hsl () {
-
-    // Get the rgb values
-    const { _a, _b, _c } = this.rgb()
-    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
-
-    // Find the maximum and minimum values to get the lightness
-    const max = Math.max(r, g, b)
-    const min = Math.min(r, g, b)
-    const l = (max + min) / 2
-
-    // If the r, g, v values are identical then we are grey
-    const isGrey = max === min
-
-    // Calculate the hue and saturation
-    const delta = max - min
-    const s = isGrey ? 0
-      : l > 0.5 ? delta / (2 - max - min)
-      : delta / (max + min)
-    const h = isGrey ? 0
-      : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6
-      : max === g ? ((b - r) / delta + 2) / 6
-      : max === b ? ((r - g) / delta + 4) / 6
-      : 0
-
-    // Construct and return the new color
-    const color = new Color(360 * h, 100 * s, 100 * l, 'hsl')
-    return color
-  }
-
-  cmyk () {
-
-    // Get the rgb values for the current color
-    const { _a, _b, _c } = this.rgb()
-    const [ r, g, b ] = [ _a, _b, _c ].map(v => v / 255)
-
-    // Get the cmyk values in an unbounded format
-    const k = Math.min(1 - r, 1 - g, 1 - b)
-
-    if (k === 1) {
-      // Catch the black case
-      return new Color(0, 0, 0, 1, 'cmyk')
-    }
-
-    const c = (1 - r - k) / (1 - k)
-    const m = (1 - g - k) / (1 - k)
-    const y = (1 - b - k) / (1 - k)
-
-    // Construct the new color
-    const color = new Color(c, m, y, k, 'cmyk')
-    return color
-  }
-
   /*
   Input and Output methods
   */
@@ -329,121 +441,8 @@ export default class Color {
     return [ _a, _b, _c ].map(format)
   }
 
-  toHex () {
-    const [ r, g, b ] = this._clamped().map(componentHex)
-    return `#${r}${g}${b}`
-  }
-
-  toString () {
-    return this.toHex()
-  }
-
-  toRgb () {
-    const [ rV, gV, bV ] = this._clamped()
-    const string = `rgb(${rV},${gV},${bV})`
-    return string
-  }
-
-  toArray () {
-    const { _a, _b, _c, _d, space } = this
-    return [ _a, _b, _c, _d, space ]
-  }
-
-  /*
-  Generating random colors
-  */
-
-  static random (mode = 'vibrant', t, u) {
-
-    // Get the math modules
-    const { random, round, sin, PI: pi } = Math
-
-    // Run the correct generator
-    if (mode === 'vibrant') {
-
-      const l = (81 - 57) * random() + 57
-      const c = (83 - 45) * random() + 45
-      const h = 360 * random()
-      const color = new Color(l, c, h, 'lch')
-      return color
-
-    } else if (mode === 'sine') {
-
-      t = t == null ? random() : t
-      const r = round(80 * sin(2 * pi * t / 0.5 + 0.01) + 150)
-      const g = round(50 * sin(2 * pi * t / 0.5 + 4.6) + 200)
-      const b = round(100 * sin(2 * pi * t / 0.5 + 2.3) + 150)
-      const color = new Color(r, g, b)
-      return color
-
-    } else if (mode === 'pastel') {
-
-      const l = (94 - 86) * random() + 86
-      const c = (26 - 9) * random() + 9
-      const h = 360 * random()
-      const color = new Color(l, c, h, 'lch')
-      return color
-
-    } else if (mode === 'dark') {
-
-      const l = 10 + 10 * random()
-      const c = (125 - 75) * random() + 86
-      const h = 360 * random()
-      const color = new Color(l, c, h, 'lch')
-      return color
-
-    } else if (mode === 'rgb') {
-
-      const r = 255 * random()
-      const g = 255 * random()
-      const b = 255 * random()
-      const color = new Color(r, g, b)
-      return color
-
-    } else if (mode === 'lab') {
-
-      const l = 100 * random()
-      const a = 256 * random() - 128
-      const b = 256 * random() - 128
-      const color = new Color(l, a, b, 'lab')
-      return color
-
-    } else if (mode === 'grey') {
-
-      const grey = 255 * random()
-      const color = new Color(grey, grey, grey)
-      return color
-
-    } else {
-
-      throw new Error('Unsupported random color mode')
-
-    }
-  }
-
   /*
   Constructing colors
   */
 
-  // Test if given value is a color string
-  static test (color) {
-    return (typeof color === 'string')
-      && (isHex.test(color) || isRgb.test(color))
-  }
-
-  // Test if given value is an rgb object
-  static isRgb (color) {
-    return color && typeof color.r === 'number'
-      && typeof color.g === 'number'
-      && typeof color.b === 'number'
-  }
-
-  // Test if given value is a color
-  static isColor (color) {
-    return color && (
-      color instanceof Color
-      || this.isRgb(color)
-      || this.test(color)
-    )
-  }
 }

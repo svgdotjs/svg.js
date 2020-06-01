@@ -18,21 +18,6 @@ export default class Tspan extends Shape {
     this._build = false // disable build mode for adding multiple lines
   }
 
-  // Set text content
-  text (text) {
-    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
-
-    if (typeof text === 'function') {
-      this.clear().build(true)
-      text.call(this, this)
-      this.build(false)
-    } else {
-      this.plain(text)
-    }
-
-    return this
-  }
-
   // Shortcut dx
   dx (dx) {
     return this.attr('dx', dx)
@@ -65,6 +50,22 @@ export default class Tspan extends Shape {
     // apply new position
     return this.dy(i ? dy : 0).attr('x', text.x())
   }
+
+  // Set text content
+  text (text) {
+    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+
+    if (typeof text === 'function') {
+      this.clear().build(true)
+      text.call(this, this)
+      this.build(false)
+    } else {
+      this.plain(text)
+    }
+
+    return this
+  }
+
 }
 
 extend(Tspan, textable)

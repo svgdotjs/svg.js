@@ -54,6 +54,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - added possibility to pass a transform object to `PointArray.transform()` similar to Point
  - added `with-last` as `when` to `animate` and `schedule` to let an animation start with the start of the last one in the timeline
  - added lots of tests in es6 format
+ - added geometry and positioning methods to `A` (#1110)
 
 ### Deleted
   - deleted undocumented `Matrix.compose()` method which did the same as `new Matrix()` or `Matrix.transform()`

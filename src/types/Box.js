@@ -26,6 +26,13 @@ export default class Box {
     this.init(...args)
   }
 
+  addOffset () {
+    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
+    this.x += globals.window.pageXOffset
+    this.y += globals.window.pageYOffset
+    return new Box(this)
+  }
+
   init (source) {
     var base = [ 0, 0, 0, 0 ]
     source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
@@ -49,6 +56,10 @@ export default class Box {
     return this
   }
 
+  isNulled () {
+    return isNulledBox(this)
+  }
+
   // Merge rect box with another, return a new instance
   merge (box) {
     const x = Math.min(this.x, box.x)
@@ -57,6 +68,14 @@ export default class Box {
     const height = Math.max(this.y + this.height, box.y + box.height) - y
 
     return new Box(x, y, width, height)
+  }
+
+  toArray () {
+    return [ this.x, this.y, this.width, this.height ]
+  }
+
+  toString () {
+    return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
   }
 
   transform (m) {
@@ -91,24 +110,6 @@ export default class Box {
     )
   }
 
-  addOffset () {
-    // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
-    this.x += globals.window.pageXOffset
-    this.y += globals.window.pageYOffset
-    return new Box(this)
-  }
-
-  toString () {
-    return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
-  }
-
-  toArray () {
-    return [ this.x, this.y, this.width, this.height ]
-  }
-
-  isNulled () {
-    return isNulledBox(this)
-  }
 }
 
 function getBox (el, getBBoxFn, retry) {

@@ -1,11 +1,17 @@
-import { nodeOrNew, register, wrapWithAttrCheck } from '../utils/adopter.js'
+import { nodeOrNew, register, wrapWithAttrCheck, extend } from '../utils/adopter.js'
 import { registerMethods } from '../utils/methods.js'
 import { xlink } from '../modules/core/namespaces.js'
 import Container from './Container.js'
+import * as containerGeometry from '../modules/core/containerGeometry.js'
 
 export default class A extends Container {
   constructor (node, attrs = node) {
     super(nodeOrNew('a', node), attrs)
+  }
+
+  // Link target attribute
+  target (target) {
+    return this.attr('target', target)
   }
 
   // Link url
@@ -13,11 +19,9 @@ export default class A extends Container {
     return this.attr('href', url, xlink)
   }
 
-  // Link target attribute
-  target (target) {
-    return this.attr('target', target)
-  }
 }
+
+extend(A, containerGeometry)
 
 registerMethods({
   Container: {

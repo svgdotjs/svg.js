@@ -93,7 +93,7 @@ registerMethods({
 
     targets () {
       return baseFind('svg textPath').filter((node) => {
-        return node.attr('href').includes(this.id())
+        return (node.attr('href') || '').includes(this.id())
       })
 
       // Does not work in IE11. Use when IE support is dropped

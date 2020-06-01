@@ -4,6 +4,9 @@
 // trick to keep reference to Array build-in type
 declare class BuiltInArray<T> extends Array<T> { }
 
+// trick to have nice attribute list for CSS
+declare type CSSStyleName = Exclude<keyof CSSStyleDeclaration, "parentRule" | "length" >
+
 declare module "@svgdotjs/svg.js" {
 
     function SVG(): Svg;
@@ -771,11 +774,19 @@ declare module "@svgdotjs/svg.js" {
     }
 
     // Timeline.js
+    interface ScheduledRunnerInfo {
+        start: number
+        duration: number
+        end: number
+        runner: Runner
+    }
+
     class Timeline extends EventTarget {
         constructor()
         constructor(fn: Function)
 
-        schedule(runner?: Runner, delay?: number, when?: string): this
+        schedule(runner: Runner, delay?: number, when?: string): this
+        schedule(): ScheduledRunnerInfo[]
         unschedule(runner: Runner): this
         getEndTime(): number
         updateTime(): this
@@ -812,7 +823,6 @@ declare module "@svgdotjs/svg.js" {
         constructor();
         constructor(options: Function);
         constructor(options: number);
-        constructor(options: object);
         constructor(options: Controller);
 
         static sanitise: (duration?: TimeLike, delay?: number, when?: string) => object
@@ -1006,11 +1016,11 @@ declare module "@svgdotjs/svg.js" {
         toggleClass(name: string): this
 
         // prototype method register in css.js
-        css(): object;
-        css(style: string): string
-        css(style: string[]): object;
-        css(style: string, val: any): this
-        css(style: object): this
+        css(): Partial<CSSStyleDeclaration>
+        css<T extends CSSStyleName>(style: T): CSSStyleDeclaration[T]
+        css<T extends CSSStyleName[]>(style: T): Partial<CSSStyleDeclaration>
+        css<T extends CSSStyleName>(style: T, val: CSSStyleDeclaration[T]): this
+        css(style: Partial<CSSStyleDeclaration>): this
         show(): this
         hide(): this
         visible(): boolean
