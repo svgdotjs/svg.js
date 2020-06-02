@@ -66,7 +66,13 @@ export { default as parser } from './modules/core/parser.js'
 export { default as find } from './modules/core/selector.js'
 export * from './modules/core/event.js'
 export * from './utils/adopter.js'
-export { registerWindow } from './utils/window.js'
+export {
+  getWindow,
+  registerWindow,
+  restoreWindow,
+  saveWindow,
+  withWindow
+} from './utils/window.js'
 
 /* Animation Modules */
 export { default as Animator } from './animation/Animator.js'
