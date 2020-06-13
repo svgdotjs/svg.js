@@ -558,7 +558,7 @@ declare module "@svgdotjs/svg.js" {
     type ListEachCallback<T> = (el: T, index: number, list: List<T>) => any
 
     // List.js
-    class List<T> extends BuiltInArray<T> implements ElementAlias {
+    class List<T> extends BuiltInArray<T> {
         each(fn: ListEachCallback<T>): List<any>
         each(name: string, ...args: any[]): List<any>
         toArray(): T[]
