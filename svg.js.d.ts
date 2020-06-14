@@ -555,11 +555,10 @@ declare module "@svgdotjs/svg.js" {
         to(a: any): Morphable;
     }
 
-    type ListEachCallback<T extends ElementAlias> =
-        (el: T, index: number, list: List<T>) => any;
+    type ListEachCallback<T> = (el: T, index: number, list: List<T>) => any;
 
     // List.js
-    class List<T extends ElementAlias> extends BuiltInArray<T> {
+    class List<T> extends BuiltInArray<T> {
         each(fn: ListEachCallback<T>): List<any>;
         each(name: string, ...args: any[]): List<any>;
         toArray(): T[];
