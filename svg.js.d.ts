@@ -555,13 +555,13 @@ declare module "@svgdotjs/svg.js" {
         to(a: any): Morphable;
     }
 
-    type ListEachCallback<T> = (el: T, index: number, list: List<T>) => any
+    type ListEachCallback<T> = (el: T, index: number, list: List<T>) => any;
 
     // List.js
     class List<T> extends BuiltInArray<T> {
-        each(fn: ListEachCallback<T>): List<any>
-        each(name: string, ...args: any[]): List<any>
-        toArray(): T[]
+        each(fn: ListEachCallback<T>): List<any>;
+        each(name: string, ...args: any[]): List<any>;
+        toArray(): T[];
     }
 
     class Eventobject {
@@ -1405,9 +1405,9 @@ declare module "@svgdotjs/svg.js" {
 
     // ForeignObject.js
     class ForeignObject extends Element {
-        constructor(node?: SVGForeignObjectElement, attrs?: object)
-        constructor(attrs?: object)
-        add(element: Dom, i?: number): ForeignObject
+        constructor(node?: SVGForeignObjectElement, attrs?: object);
+        constructor(attrs?: object);
+        add(element: Dom, i?: number): this;
     }
 
     // image.js
