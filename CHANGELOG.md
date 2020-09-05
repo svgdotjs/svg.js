@@ -38,6 +38,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed animate attr which is also retargetable now
  - fixed internals of ObjectBag which can hold other Morphable values now
  - fixed animate transform which didnt change its origin on retarget for declaritive animations
+ - fixed path parsing (#1145)
 
 ### Added
  - added second Parameter to `SVG(el, isHTML)` which allows to explicitely create elements in the HTML namespace (#1058)

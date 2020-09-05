@@ -3,29 +3,12 @@
 import { PathArray, Box } from '../../../src/main.js'
 
 describe('PathArray.js', () => {
-  let p1, p2, p3, p4, p5, p6, p7
+  let p1, p2, p3
 
   beforeEach(() => {
     p1 = new PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')
     p2 = new PathArray('m10 80 c 40 10 65 10 95 80 s 150 150 180 80 t 300 300 q 52 10 95 80 z')
     p3 = new PathArray('m80 80 A 45 45, 0, 0, 0, 125 125 L 125 80 z')
-    p4 = new PathArray('M215.458,245.23c0,0,77.403,0,94.274,0S405,216.451,405,138.054S329.581,15,287.9,15c-41.68,0-139.924,0-170.688,0C86.45,15,15,60.65,15,134.084c0,73.434,96.259,112.137,114.122,112.137C146.984,246.221,215.458,245.23,215.458,245.23z')
-    p5 = new PathArray('M10 10-45-30.5.5 .89L2e-2.5.5.5-.5C.5.5.5.5.5.5L-3-4z')
-    p6 = new PathArray('m 0,0 0,3189 2209,0 0,-3189 -2209,0 z m 154,154 1901,0 0,2881 -1901,0 0,-2881 z')
-    p7 = new PathArray('m 0,0 a 45 45, 0, 0, 0, 125 125')
-  })
-
-  it('converts to absolute values', () => {
-    expect(p1.toString()).toBe('M10 10H90V90H10L310 490Z ')
-    expect(p2.toString()).toBe('M10 80C50 90 75 90 105 160S255 310 285 240T585 540Q637 550 680 620Z ')
-    expect(p3.toString()).toBe('M80 80A45 45 0 0 0 125 125L125 80Z ')
-    expect(p4.toString()).toBe('M215.458 245.23C215.458 245.23 292.861 245.23 309.73199999999997 245.23S405 216.451 405 138.054S329.581 15 287.9 15C246.21999999999997 15 147.97599999999997 15 117.21199999999999 15C86.45 15 15 60.65 15 134.084C15 207.518 111.259 246.221 129.122 246.221C146.984 246.221 215.458 245.23 215.458 245.23Z ')
-    expect(p6.toString()).toBe('M0 0L0 3189L2209 3189L2209 0L0 0ZM154 154L2055 154L2055 3035L154 3035L154 154Z ')
-    expect(p7.toString()).toBe('M0 0A45 45 0 0 0 125 125 ')
-  })
-
-  it('parses difficult syntax correctly', () => {
-    expect(p5.toString()).toBe('M10 10L-45 -30.5L0.5 0.89L0.02 0.5L0.5 -0.5C0.5 0.5 0.5 0.5 0.5 0.5L-3 -4Z ')
   })
 
   it('parses flat arrays correctly', () => {
@@ -43,14 +26,6 @@ describe('PathArray.js', () => {
     const p = new PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')
 
     expect((new PathArray(p))).toEqual(p)
-  })
-
-  it('can handle all formats which can be used', () => {
-    // when no command is specified after move, line is used automatically (specs say so)
-    expect(new PathArray('M10 10 80 80 30 30 Z').toString()).toBe('M10 10L80 80L30 30Z ')
-
-    // parsing can handle 0.5.3.3.2 stuff
-    expect(new PathArray('M10 10L.5.5.3.3Z').toString()).toBe('M10 10L0.5 0.5L0.3 0.3Z ')
   })
 
   describe('move()', () => {

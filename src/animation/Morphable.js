@@ -2,7 +2,7 @@ import { Ease } from './Controller.js'
 import {
   delimiter,
   numberAndUnit,
-  pathLetters
+  isPathLetter
 } from '../modules/core/regex.js'
 import { extend } from '../utils/adopter.js'
 import Color from '../types/Color.js'
@@ -19,7 +19,7 @@ const getClassForType = (value) => {
     if (Color.isColor(value)) {
       return Color
     } else if (delimiter.test(value)) {
-      return pathLetters.test(value)
+      return isPathLetter.test(value)
         ? PathArray
         : SVGArray
     } else if (numberAndUnit.test(value)) {

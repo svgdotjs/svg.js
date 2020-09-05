@@ -34,19 +34,5 @@ export const isImage = /\.(jpg|jpeg|png|gif|svg)(\?[^=]+.*)?/i
 // split at whitespace and comma
 export const delimiter = /[\s,]+/
 
-// The following regex are used to parse the d attribute of a path
-
-// Matches all hyphens which are preceeded by something but not an exponent
-export const hyphen = /([^e])-/gi
-
-// Replaces and tests for all path letters
-export const pathLetters = /[MLHVCSQTAZ]/gi
-
-// yes we need this one, too
+// Test for path letter
 export const isPathLetter = /[MLHVCSQTAZ]/i
-
-// matches 0.154.23.45
-export const numbersWithDots = /((\d?\.\d+(?:e[+-]?\d+)?)((?:\.\d+(?:e[+-]?\d+)?)+))+/gi
-
-// matches .
-export const dots = /\./g

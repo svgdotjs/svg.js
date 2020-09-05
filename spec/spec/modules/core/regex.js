@@ -200,23 +200,6 @@ describe('regex.js', () => {
     })
   })
 
-  describe('hyphen', () => {
-    it('matches all hyphens which are preceeded by something but not an exponent', () => {
-      expect(regex.hyphen.test('a-')).toBe(true)
-      expect(regex.hyphen.test('e-')).toBe(false)
-    })
-
-    it('replaces all hyphens and their preceeding char which is not an exponent', () => {
-      expect('   -  e- ---E-'.replace(regex.hyphen, '.')).toBe('  .  e-..E-')
-    })
-  })
-
-  describe('pathLetters', () => {
-    it('replaces all path letters', () => {
-      expect('MLHVCSQTAZBImlhvcsqtazbi'.replace(regex.pathLetters, '.')).toBe('..........BI..........bi')
-    })
-  })
-
   describe('isPathLetter', () => {
     it('returns true if something is a path letter', () => {
       'MLHVCSQTAZmlhvcsqtaz'.split('').forEach((l) => {
@@ -228,19 +211,6 @@ describe('regex.js', () => {
       '123biuBIU$%&'.split('').forEach((l) => {
         expect(regex.isPathLetter.test(l)).toBe(false)
       })
-    })
-  })
-
-  describe('numbersWithDots', () => {
-    it('matches numbers of the form 3.13.123', () => {
-      const match = '-123.23.45 +123.324 43.43.54.65 123 33 .24 .34.34 -.54 .54-.65 123.34e34.21'.match(regex.numbersWithDots)
-      expect(match).toEqual([ '3.23.45', '3.43.54.65', '.34.34', '3.34e34.21' ])
-    })
-  })
-
-  describe('dots', () => {
-    it('replaces all dots', () => {
-      expect('..asd..'.replace(regex.dots, 'a')).toBe('aaasdaa')
     })
   })
 })
