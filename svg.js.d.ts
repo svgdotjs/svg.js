@@ -471,7 +471,7 @@ declare module "@svgdotjs/svg.js" {
     type CoordinateXY = ArrayXY | { x: number, y: number }
 
     interface MatrixTransformParam {
-      rotate?: number
+        rotate?: number
         flip?: FlipType
         skew?: ArrayXY | number
         skewX?: number
