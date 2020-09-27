@@ -172,6 +172,12 @@ describe('Dom.js', function () {
       expect(clone.get(0).id()).not.toBe(rect.id())
       expect(clone.id()).not.toBe(group.id())
     })
+
+    it('returns an instance of the same class the method was called on', () => {
+      const rect = new Dom(create('rect'))
+      expect(rect.constructor).toBe(Dom)
+      expect(rect.clone().constructor).toBe(Dom)
+    })
   })
 
   describe('each()', () => {

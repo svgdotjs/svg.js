@@ -107,10 +107,11 @@ export function assignNewId (node) {
   }
 
   if (node.id) {
-    return adopt(node).id(eid(node.nodeName))
+    node.id = eid(node.nodeName)
+    return node
   }
 
-  return adopt(node)
+  return node
 }
 
 // Method for extending objects

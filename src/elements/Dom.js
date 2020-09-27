@@ -72,7 +72,7 @@ export default class Dom extends EventTarget {
     this.writeDataToDom()
 
     // clone element and assign new id
-    return assignNewId(this.node.cloneNode(deep))
+    return new this.constructor(assignNewId(this.node.cloneNode(deep)))
   }
 
   // Iterates over all children and invokes a given block
