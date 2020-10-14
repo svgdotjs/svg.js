@@ -933,7 +933,7 @@ declare module "@svgdotjs/svg.js" {
         addTo(parent: Dom | HTMLElement | string): this
         children(): List<Element>;
         clear(): this;
-        clone(): this;
+        clone(deep?: boolean, assignNewIds?: boolean): this;
         each(block: (index: number, children: Element[]) => void, deep?: boolean): this;
         element(element: string, inherit?: object): this;
         first(): Element;
@@ -1180,7 +1180,7 @@ declare module "@svgdotjs/svg.js" {
         click(cb: Function | null): this;
         clipper(): ClipPath;
         clipWith(element: Element): this;
-        clone(): this;
+        clone(deep?: boolean, assignNewIds?: boolean): this;
         ctm(): Matrix;
         cx(): number;
         cx(x: number): this;
