@@ -58,7 +58,7 @@ export default class Runner extends EventTarget {
     this.transformId = 1
 
     // Looping variables
-    this._haveReversed = false
+    // *not used??** this._haveReversed = false
     this._reverse = false
     this._loopsDone = 0
     this._swing = false
@@ -1028,6 +1028,59 @@ extend(Runner, {
     if (o.color != null) this.attr('stop-color', o.color)
     if (o.offset != null) this.attr('offset', o.offset)
 
+    return this
+  },
+
+  // animate text by simply swapping the old content for the new
+  // at 50% of the duration. Along to way we fade down to 20% and then
+  // back up to make it a little less jarring
+  text (toText) {
+    const el = this.element()
+    const MID_OPACITY = 0.2
+
+    if (el.constructor.name !== 'Text') {
+      throw Error('You can only animate the text of Text() objects')
+    }
+
+    const from = new SVGNumber(0)
+    const to = new SVGNumber(1)
+    const fromText = el.text()
+
+    const opacity = (pos, dir) => MID_OPACITY + 2 * dir * (1 - MID_OPACITY) * (pos - 0.5)
+
+    // Try to change the target if we have this method already registerd
+    if (this._tryRetarget('text', to)) return this
+
+    // Make a morpher and queue the animation
+    var morpher = new Morphable(this._stepper).to(to)
+    this.queue(function () {
+      morpher.from(from)
+    },
+    function (pos) {
+      let mpos = morpher.at(pos)
+      const currentText = el.text()
+      if ('value' in mpos) { mpos = mpos.value }
+
+      if (mpos < 0.5) {
+        if (currentText !== fromText) {
+          el.text(fromText)
+        }
+        el.opacity(opacity(mpos, -1)) // 1 .. MID_OPACITY
+      } else {
+        // mpos >= 0.5
+        if (currentText !== toText) {
+          el.text(toText)
+        }
+        el.opacity(opacity(mpos, 1)) // MID_OPACITY .. 1
+      }
+      return morpher.done()
+    },
+    function (newTo) {
+      toText = newTo
+    })
+
+    // Register the morpher so that if it is changed again, we can retarget it
+    this._rememberMorpher('text', morpher)
     return this
   }
 })

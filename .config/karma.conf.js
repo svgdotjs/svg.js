@@ -10,10 +10,13 @@ if (process.platform === 'linux') {
   // in which case karma-chrome-launcher will output an error.
   // If `which` finds nothing it will throw an error.
   const { execSync } = require('child_process')
-
   try {
     if (execSync('which chromium-browser')) chromeBin = 'ChromiumHeadless'
-  } catch (e) {}
+  } catch (e) {
+    try {
+      if (execSync('which chromium')) chromeBin = 'ChromiumHeadless'
+    } catch (e) {}
+  }
 }
 
 module.exports = function (config) {
@@ -54,7 +57,6 @@ module.exports = function (config) {
           type: 'module'
         }
       ],
-
       // preprocess matching files before serving them to the browser
       // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
       preprocessors: {
