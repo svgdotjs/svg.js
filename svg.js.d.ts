@@ -1094,6 +1094,7 @@ declare module "@svgdotjs/svg.js" {
         polygon(points?: PointArrayAlias): Polygon;
         polyline(points?: PointArrayAlias): Polyline;
         rect(width?: number, height?: number): Rect;
+        style(): Style;
         text(block: (tspan: Tspan) => void): Text;
         text(text: string): Text;
         ungroup(parent: Dom, depth?: number): this;
