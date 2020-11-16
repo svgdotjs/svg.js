@@ -481,7 +481,7 @@ declare module "@svgdotjs/svg.js" {
         scaleY?: number
         shear?: number
         theta?: number
-        origin?: CoordinateXY
+        origin?: CoordinateXY | string
         around?: CoordinateXY
         ox?: number
         originX?: number
