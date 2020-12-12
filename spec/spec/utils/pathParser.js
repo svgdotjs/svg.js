@@ -103,7 +103,7 @@ describe('pathParser.js', () => {
         [ 'Z' ]
       ])
 
-      // "a" commands without optional whitespace around the flag params
+      // "a" commands without optional whitespace around the flag params and ending coordinate pair
       expect(pathParser('a32 32 0 00.03-45.22', false)).toEqual([
         [ 'a', 32.0, 32.0, 0.0, 0.0, 0.0, 0.03, -45.22 ],
       ])
@@ -122,6 +122,14 @@ describe('pathParser.js', () => {
 
       expect(pathParser('a2.51 2.51 0 01.25.32', false)).toEqual([
         [ 'a', 2.51, 2.51, 0, 0, 1, 0.25, 0.32 ],
+      ])
+
+      expect(pathParser('a2.51 2.51 0 00.25.32', false)).toEqual([
+        [ 'a', 2.51, 2.51, 0, 0, 0, 0.25, 0.32 ],
+      ])
+
+      expect(pathParser('a2.51 2.51 0 000.25.32', false)).toEqual([
+        [ 'a', 2.51, 2.51, 0, 0, 0, 0.25, 0.32 ],
       ])
 
       expect(pathParser('a48 48 0 1148-48 48 48 0 01-48 48', false)).toEqual([
