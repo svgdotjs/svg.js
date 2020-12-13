@@ -176,8 +176,11 @@ export function pathParser (d, toAbsolute = true) {
 
     if (!isNaN(parseInt(token))) {
 
-      if (parser.number === '0' || (parser.inNumber && isArcFlag(parser))) {
+      if (parser.number === '0' || isArcFlag(parser)) {
+        parser.inNumber = true
+        parser.number = token
         finalizeNumber(parser, true)
+        continue
       }
 
       parser.inNumber = true
