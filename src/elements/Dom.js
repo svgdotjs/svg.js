@@ -129,7 +129,7 @@ export default class Dom extends EventTarget {
       this.node.id = eid(this.type)
     }
 
-    // dont't set directly with this.node.id to make `null` work correctly
+    // don't set directly with this.node.id to make `null` work correctly
     return this.attr('id', id)
   }
 
