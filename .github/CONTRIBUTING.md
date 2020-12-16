@@ -6,7 +6,7 @@ When contributing to this repository, please first discuss the change you wish t
 
 ## Pull Request Process
 
-When you want to make contriubtions to the project, the process is pretty simple:
+When you want to make contributions to the project, the process is pretty simple:
 
 1. Discuss in an issue or on gitter what you'd like to change
 2. Fork the repository to make your own local copy
