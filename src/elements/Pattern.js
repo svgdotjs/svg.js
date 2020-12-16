@@ -24,7 +24,7 @@ export default class Pattern extends Container {
     return baseFind('svg [fill*="' + this.id() + '"]')
   }
 
-  // Alias string convertion to fill
+  // Alias string conversion to fill
   toString () {
     return this.url()
   }
