@@ -159,7 +159,7 @@ export function bbox () {
 export function rbox (el) {
   const getRBox = (node) => node.getBoundingClientRect()
   const retry = (el) => {
-    // There is no point in trying tricks here because if we insert the element into the dom ourselfes
+    // There is no point in trying tricks here because if we insert the element into the dom ourselves
     // it obviously will be at the wrong position
     throw new Error(`Getting rbox of element "${el.node.nodeName}" is not possible`)
   }
@@ -200,7 +200,7 @@ registerMethods({
     zoom (level, point) {
       // Its best to rely on the attributes here and here is why:
       // clientXYZ: Doesn't work on non-root svgs because they dont have a CSSBox (silly!)
-      // getBoundingClinetRect: Doesn't work because Chrome just ignores width and height of nested svgs completely
+      // getBoundingClientRect: Doesn't work because Chrome just ignores width and height of nested svgs completely
       //                        that means, their clientRect is always as big as the content.
       //                        Furthermore this size is incorrect if the element is further transformed by its parents
       // computedStyle: Only returns meaningful values if css was used with px. We dont go this route here!
