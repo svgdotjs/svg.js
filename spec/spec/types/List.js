@@ -43,7 +43,7 @@ describe('List.js', () => {
       }))
     })
 
-    it('calls a method on every element in the list and passes aguments when a string is passed', () => {
+    it('calls a method on every element in the list and passes arguments when a string is passed', () => {
       const list = new List([ 10, 11, 12 ])
       expect(list.each('toString', 16)).toEqual([ 'a', 'b', 'c' ])
     })
