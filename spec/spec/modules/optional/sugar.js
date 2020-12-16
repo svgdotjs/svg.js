@@ -268,7 +268,7 @@ describe('sugar.js', () => {
         expect(spy).toHaveBeenCalledWith({ flip: 'both', origin: 'center' }, true)
       })
 
-      // this works because only x and y are valid flip values. Evereything else flips on both axis
+      // this works because only x and y are valid flip values. Everything else flips on both axis
       it('sets flip to both and origin to number when called with origin only', function () {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
