@@ -886,7 +886,7 @@ describe('Runner.js', () => {
 
     describe('private Methods', () => {
       describe('_rememberMorpher()', () => {
-        it('adds a morper for a method to the runner', () => {
+        it('adds a morpher for a method to the runner', () => {
           const runner = new Runner()
           const morpher = new Morphable()
           runner._rememberMorpher('move', morpher)
@@ -1078,7 +1078,7 @@ describe('Runner.js', () => {
       })
 
       describe('_addRunner()', () => {
-        it('adds a runenr to the runner array of this element', () => {
+        it('adds a runner to the runner array of this element', () => {
           const rect = new Rect()
           rect._prepareRunner()
           const spy = spyOn(rect._transformationRunners, 'add')
@@ -1569,7 +1569,7 @@ describe('Runner.js', () => {
           expect(element.x()).toBe(15)
         })
 
-        it('retargets corectly', () => {
+        it('retargets correctly', () => {
           const element = new Rect().x(10)
           const runner = new Runner(100).ease('-').element(element)
           runner._queueNumberDelta('x', 10)
@@ -1606,7 +1606,7 @@ describe('Runner.js', () => {
           expect(element.fill()).toBe('#808080')
         })
 
-        it('retargets corectly', () => {
+        it('retargets correctly', () => {
           const element = new Rect().x(10)
           const runner = new Runner(100).ease('-').element(element)
           runner._queueObject('x', 20)
