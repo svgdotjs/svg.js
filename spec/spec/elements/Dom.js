@@ -89,7 +89,7 @@ describe('Dom.js', function () {
       expect(rect.addTo(g)).toBe(rect)
     })
 
-    it('puts an element innto another element', () => {
+    it('puts an element into another element', () => {
       const g = new G()
       const rect = new Rect()
       const spy = spyOn(g, 'put')
@@ -531,7 +531,7 @@ describe('Dom.js', function () {
       expect(rect.round(1).attr()).toEqual({ id: 'foo', x: 10.7, y: 3, width: 123.5 })
     })
 
-    it('rounds the given attribues whose values are numbers to the passed precision', () => {
+    it('rounds the given attributes whose values are numbers to the passed precision', () => {
       const rect = new Rect({ id: 'foo', x: 10.678, y: 3, width: 123.456 })
       expect(rect.round(1, [ 'id', 'x' ]).attr()).toEqual({ id: 'foo', x: 10.7, y: 3, width: 123.456 })
     })
