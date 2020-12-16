@@ -38,7 +38,7 @@ describe('Marker.js', function () {
   })
 
   describe('ref()', () => {
-    it('sets refX and refY attriute', () => {
+    it('sets refX and refY attribute', () => {
       const marker = new Marker().ref(10, 20)
       expect(marker.attr('refX')).toBe(10)
       expect(marker.attr('refY')).toBe(20)
