@@ -385,7 +385,7 @@ describe('Timeline.js', () => {
     it('does a step in the timeline and runs all runners', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000)
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(16)
       expect(runner.time()).toBe(16)
     })
@@ -393,7 +393,7 @@ describe('Timeline.js', () => {
     it('doenst run runners which start later', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000)
-      timeline.schedule(runner, 100).play() // we have to play because its syncronous here
+      timeline.schedule(runner, 100).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(16)
       expect(runner.time()).toBe(0)
     })
@@ -412,7 +412,7 @@ describe('Timeline.js', () => {
     it('doesnt run runners if they are not active', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000).active(false)
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(16)
       expect(runner.time()).toBe(0)
     })
@@ -420,7 +420,7 @@ describe('Timeline.js', () => {
     it('unschedules runner if its finished', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000)
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1000)
       jasmine.RequestAnimationFrame.tick(1)
       expect(runner.time()).toBe(1001)
@@ -430,7 +430,7 @@ describe('Timeline.js', () => {
     it('does not unschedule if runner is persistent forever', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000).persist(true)
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1000)
       jasmine.RequestAnimationFrame.tick(1)
       expect(runner.time()).toBe(1001)
@@ -440,7 +440,7 @@ describe('Timeline.js', () => {
     it('does not unschedule if runner is persistent for a certain time', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000).persist(100)
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1000)
       jasmine.RequestAnimationFrame.tick(1)
       expect(runner.time()).toBe(1001)
@@ -452,7 +452,7 @@ describe('Timeline.js', () => {
       const timeline = new Timeline().on('finished', spy)
       const runner = new Runner(1000)
       spy.calls.reset()
-      timeline.schedule(runner).play() // we have to play because its syncronous here
+      timeline.schedule(runner).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1000)
       jasmine.RequestAnimationFrame.tick(1)
       expect(spy).toHaveBeenCalled()
@@ -463,7 +463,7 @@ describe('Timeline.js', () => {
       const timeline = new Timeline().on('finished', spy).time(1200).reverse(true)
       const runner = new Runner(1000)
       spy.calls.reset()
-      timeline.schedule(runner, 0).play() // we have to play because its syncronous here
+      timeline.schedule(runner, 0).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1)
       expect(spy).not.toHaveBeenCalled()
     })
@@ -473,7 +473,7 @@ describe('Timeline.js', () => {
       const timeline = new Timeline().on('finished', spy).reverse(true)
       const runner = new Runner(1000)
       spy.calls.reset()
-      timeline.schedule(runner, 0).play() // we have to play because its syncronous here
+      timeline.schedule(runner, 0).play() // we have to play because its synchronous here
       jasmine.RequestAnimationFrame.tick(1)
       expect(spy).toHaveBeenCalled()
     })
