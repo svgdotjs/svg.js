@@ -55,7 +55,7 @@ describe('event.js', () => {
       expect(spy).toHaveBeenCalledWith(any(getWindow().CustomEvent))
     })
 
-    it('binds to multiple events with space or comma seperated string', () => {
+    it('binds to multiple events with space or comma separated string', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
       on(eventTarget, 'event1 event2, event3', spy)
@@ -95,7 +95,7 @@ describe('event.js', () => {
       expect(spy).toHaveBeenCalledTimes(1)
     })
 
-    it('unbinds multiple events with space or comma seperated string', () => {
+    it('unbinds multiple events with space or comma separated string', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
       on(eventTarget, 'event1 event2, event3', spy)
@@ -109,7 +109,7 @@ describe('event.js', () => {
       expect(spy).toHaveBeenCalledTimes(3)
     })
 
-    it('unbinds multiple events with space or comma seperated string', () => {
+    it('unbinds multiple events with space or comma separated string', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
       on(eventTarget, [ 'event1', 'event2', 'event3' ], spy)
@@ -133,7 +133,7 @@ describe('event.js', () => {
       expect(spy).toHaveBeenCalledTimes(1)
     })
 
-    it('unbinds all events incuding namespaced ones when only event is passed', () => {
+    it('unbinds all events including namespaced ones when only event is passed', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
       on(eventTarget, [ 'event1.ns1', 'event2.ns2', 'event3' ], spy)
