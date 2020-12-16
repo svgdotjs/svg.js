@@ -70,7 +70,7 @@ describe('utils.js', function () {
   })
 
   describe('degrees()', function () {
-    it('converts radians to degreens', function () {
+    it('converts radians to degrees', function () {
       expect(degrees(1.5 * Math.PI)).toBe(270)
       expect(degrees(Math.PI / 2)).toBe(90)
     })
