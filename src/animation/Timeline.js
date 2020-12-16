@@ -108,7 +108,7 @@ export default class Timeline extends EventTarget {
 
     // The start time for the next animation can either be given explicitly,
     // derived from the current timeline time or it can be relative to the
-    // last start time to chain animations direclty
+    // last start time to chain animations directly
 
     var absoluteStartTime = 0
     var endTime = this.getEndTime()
@@ -244,7 +244,7 @@ export default class Timeline extends EventTarget {
 
     // FIXME:
     // However, reseting in insertion order leads to bugs. Considering the case,
-    // where 2 runners change the same attriute but in different times,
+    // where 2 runners change the same attribute but in different times,
     // reseting both of them will lead to the case where the later defined
     // runner always wins the reset even if the other runner started earlier
     // and therefore should win the attribute battle
