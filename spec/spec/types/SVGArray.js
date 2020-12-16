@@ -23,11 +23,11 @@ describe('SVGArray.js', () => {
       expect(array + '').toBe('0.343 0.669 0.119 0 0 0.249 -0.626 0.13 0 0 0.172 0.334 0.111 0 0 0 0 0 1 0')
     })
 
-    it('parses space seperated string and converts it to array', () => {
+    it('parses space separated string and converts it to array', () => {
       expect((new SVGArray('1 2 3 4')).valueOf()).toEqual([ 1, 2, 3, 4 ])
     })
 
-    it('parses comma seperated string and converts it to array', () => {
+    it('parses comma separated string and converts it to array', () => {
       expect((new SVGArray('1,2,3,4')).valueOf()).toEqual([ 1, 2, 3, 4 ])
     })
 
