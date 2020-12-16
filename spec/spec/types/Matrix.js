@@ -148,7 +148,7 @@ describe('Matrix.js', () => {
       }
     })
 
-    it('throws if matrix is not inversable', () => {
+    it('throws if matrix is not invertible', () => {
       const matrix = new Matrix(0, 0, 0, 0, 0, 0)
       expect(() => matrix.inverse()).toThrowError('Cannot invert matrix(0,0,0,0,0,0)')
     })
