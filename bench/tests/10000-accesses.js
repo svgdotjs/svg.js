@@ -1,5 +1,5 @@
 
-SVG.bench.describe('Access a dom attribues vs dom properties vs object properties', function(bench) {
+SVG.bench.describe('Access a dom attributes vs dom properties vs object properties', function(bench) {
   bench.test('using an object', function() {
     var sum = 0
     var obj = {x: "30"}
@@ -13,7 +13,7 @@ SVG.bench.describe('Access a dom attribues vs dom properties vs object propertie
     var obj = bench.draw.rect(100, 100).move(0, 0)
   })
 
-  bench.test('using dom attriutes', function () {
+  bench.test('using dom attributes', function () {
     var sum = 0
     var obj = bench.draw.rect(100, 100).move(0, 0)
     var node = obj.node
