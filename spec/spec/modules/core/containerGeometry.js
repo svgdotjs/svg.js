@@ -101,7 +101,7 @@ describe('containerGeometry.js', () => {
       expect(g.x()).toBe(g.bbox().x)
       expect(g.x()).toBe(10)
     })
-    it('calls move with the paramater as x', () => {
+    it('calls move with the parameter as x', () => {
       const canvas = SVG().addTo(container)
       const g = canvas.group()
       g.rect(100, 200).move(111, 223)
@@ -127,7 +127,7 @@ describe('containerGeometry.js', () => {
       expect(g.y()).toBe(20)
     })
 
-    it('calls move with the paramater as y', () => {
+    it('calls move with the parameter as y', () => {
       const canvas = SVG().addTo(container)
       const g = canvas.group()
       g.rect(100, 200).move(111, 223)
