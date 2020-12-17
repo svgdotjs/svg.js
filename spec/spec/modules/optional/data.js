@@ -15,7 +15,7 @@ describe('data.js', () => {
           })
         })
 
-        it('returns an object with selected data properries', () => {
+        it('returns an object with selected data properties', () => {
           const rect = new Rect({ 'data-fill': 'none', 'data-outline-width': '1px', 'data-stroke': 'none' })
           expect(rect.data([ 'fill', 'stroke' ])).toEqual({
             fill: 'none',

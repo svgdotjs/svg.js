@@ -26,7 +26,7 @@ describe('EventTarget.js', () => {
   })
 
   describe('dispatch()', () => {
-    it('evemtually calls dispatchEvent on the target and returns the event', () => {
+    it('eventually calls dispatchEvent on the target and returns the event', () => {
       const target = new EventTarget()
       const spy = spyOn(target, 'dispatchEvent').and.callThrough()
       const options = { cancelable: false }

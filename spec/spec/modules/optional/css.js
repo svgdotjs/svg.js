@@ -15,7 +15,7 @@ describe('css.js', () => {
           })
         })
 
-        it('returns an object with selected css properries', () => {
+        it('returns an object with selected css properties', () => {
           const rect = new Rect({ style: 'fill: none; outline-width: 1px; stroke: none' })
           expect(rect.css([ 'fill', 'stroke' ])).toEqual({
             fill: 'none',

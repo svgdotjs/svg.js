@@ -55,7 +55,7 @@ describe('Mask.js', () => {
 
   describe('Element', () => {
     describe('masker()', () => {
-      it('returns the instance of Mask the current element is maskped with', () => {
+      it('returns the instance of Mask the current element is masked with', () => {
         const canvas = SVG().addTo(container)
         const mask = canvas.mask()
         const rect = canvas.rect(100, 100).maskWith(mask)

@@ -1,6 +1,6 @@
 import { numberAndUnit } from '../modules/core/regex.js'
 
-// Module for unit convertions
+// Module for unit conversions
 export default class SVGNumber {
   // Initialize
   constructor (...args) {

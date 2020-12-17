@@ -43,7 +43,7 @@ export function camelCase (s) {
   })
 }
 
-// Convert camel cased string to dash seperated
+// Convert camel cased string to dash separated
 export function unCamelCase (s) {
   return s.replace(/([A-Z])/g, function (m, g) {
     return '-' + g.toLowerCase()

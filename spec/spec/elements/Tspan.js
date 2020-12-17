@@ -125,7 +125,7 @@ describe('Tspan.js', () => {
 
   describe('Text', () => {
     describe('newLine()', () => {
-      it('creates a tspan and calles newLine() on it', () => {
+      it('creates a tspan and calls newLine() on it', () => {
         const text = new Text()
         const tspan = text.newLine()
         expect(tspan).toEqual(any(Tspan))

@@ -1,6 +1,6 @@
 /* globals jasmine */
 /**
- * Jasmine RequestAnimationFrame: a set of helpers for testing funcionality
+ * Jasmine RequestAnimationFrame: a set of helpers for testing functionality
  * that uses requestAnimationFrame under the Jasmine BDD framework for JavaScript.
  */
 function RAFPlugin (jasmine) {

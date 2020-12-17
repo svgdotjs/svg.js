@@ -2,7 +2,7 @@
 
 let canvas = SVG('#canvas')
 
-// Make the green rectange
+// Make the green rectangle
 canvas.rect(200, 400).move(200, 400)
   .attr('opacity', 0.3)
   .addClass('green')

@@ -422,7 +422,7 @@ export default class Runner extends EventTarget {
     }
 
     // We have to resume the timeline in case a controller
-    // is already done without beeing ever run
+    // is already done without being ever run
     // This can happen when e.g. this is done:
     //    anim = el.animate(new SVG.Spring)
     // and later

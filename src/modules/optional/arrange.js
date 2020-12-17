@@ -6,7 +6,7 @@ export function siblings () {
   return this.parent().children()
 }
 
-// Get the curent position siblings
+// Get the current position siblings
 export function position () {
   return this.parent().index(this)
 }

@@ -384,7 +384,7 @@ describe('Controller.js', () => {
         expect(pid.done(context)).toBe(true)
       })
 
-      it('caculates a new value', () => {
+      it('calculates a new value', () => {
         const pid = new PID()
         expect(pid.step(0, 100, 16, {})).toBe(20)
       })
