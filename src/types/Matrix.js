@@ -15,40 +15,52 @@ export default class Matrix {
 
   static formatTransforms (o) {
     // Get all of the parameters required to form the matrix
-    var flipBoth = o.flip === 'both' || o.flip === true
-    var flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
-    var flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
-    var skewX = o.skew && o.skew.length ? o.skew[0]
-      : isFinite(o.skew) ? o.skew
-      : isFinite(o.skewX) ? o.skewX
-      : 0
-    var skewY = o.skew && o.skew.length ? o.skew[1]
-      : isFinite(o.skew) ? o.skew
-      : isFinite(o.skewY) ? o.skewY
-      : 0
-    var scaleX = o.scale && o.scale.length ? o.scale[0] * flipX
-      : isFinite(o.scale) ? o.scale * flipX
-      : isFinite(o.scaleX) ? o.scaleX * flipX
-      : flipX
-    var scaleY = o.scale && o.scale.length ? o.scale[1] * flipY
-      : isFinite(o.scale) ? o.scale * flipY
-      : isFinite(o.scaleY) ? o.scaleY * flipY
-      : flipY
-    var shear = o.shear || 0
-    var theta = o.rotate || o.theta || 0
-    var origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
-    var ox = origin.x
-    var oy = origin.y
+    const flipBoth = o.flip === 'both' || o.flip === true
+    const flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
+    const flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
+    const skewX = o.skew && o.skew.length
+      ? o.skew[0]
+      : isFinite(o.skew)
+        ? o.skew
+        : isFinite(o.skewX)
+          ? o.skewX
+          : 0
+    const skewY = o.skew && o.skew.length
+      ? o.skew[1]
+      : isFinite(o.skew)
+        ? o.skew
+        : isFinite(o.skewY)
+          ? o.skewY
+          : 0
+    const scaleX = o.scale && o.scale.length
+      ? o.scale[0] * flipX
+      : isFinite(o.scale)
+        ? o.scale * flipX
+        : isFinite(o.scaleX)
+          ? o.scaleX * flipX
+          : flipX
+    const scaleY = o.scale && o.scale.length
+      ? o.scale[1] * flipY
+      : isFinite(o.scale)
+        ? o.scale * flipY
+        : isFinite(o.scaleY)
+          ? o.scaleY * flipY
+          : flipY
+    const shear = o.shear || 0
+    const theta = o.rotate || o.theta || 0
+    const origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
+    const ox = origin.x
+    const oy = origin.y
     // We need Point to be invalid if nothing was passed because we cannot default to 0 here. Thats why NaN
-    var position = new Point(o.position || o.px || o.positionX || NaN, o.py || o.positionY || NaN)
-    var px = position.x
-    var py = position.y
-    var translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
-    var tx = translate.x
-    var ty = translate.y
-    var relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
-    var rx = relative.x
-    var ry = relative.y
+    const position = new Point(o.position || o.px || o.positionX || NaN, o.py || o.positionY || NaN)
+    const px = position.x
+    const py = position.y
+    const translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
+    const tx = translate.x
+    const ty = translate.y
+    const relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
+    const rx = relative.x
+    const ry = relative.y
 
     // Populate all of the values
     return {
@@ -74,12 +86,12 @@ export default class Matrix {
   // left matrix, right matrix, target matrix which is overwritten
   static matrixMultiply (l, r, o) {
     // Work out the product directly
-    var a = l.a * r.a + l.c * r.b
-    var b = l.b * r.a + l.d * r.b
-    var c = l.a * r.c + l.c * r.d
-    var d = l.b * r.c + l.d * r.d
-    var e = l.e + l.a * r.e + l.c * r.f
-    var f = l.f + l.b * r.e + l.d * r.f
+    const a = l.a * r.a + l.c * r.b
+    const b = l.b * r.a + l.d * r.b
+    const c = l.a * r.c + l.c * r.d
+    const d = l.b * r.c + l.d * r.d
+    const e = l.e + l.a * r.e + l.c * r.f
+    const f = l.f + l.b * r.e + l.d * r.f
 
     // make sure to use local variables because l/r and o could be the same
     o.a = a
@@ -98,8 +110,8 @@ export default class Matrix {
 
   // Transform around a center point
   aroundO (cx, cy, matrix) {
-    var dx = cx || 0
-    var dy = cy || 0
+    const dx = cx || 0
+    const dy = cy || 0
     return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy)
   }
 
@@ -111,29 +123,29 @@ export default class Matrix {
   // Decomposes this matrix into its affine parameters
   decompose (cx = 0, cy = 0) {
     // Get the parameters from the matrix
-    var a = this.a
-    var b = this.b
-    var c = this.c
-    var d = this.d
-    var e = this.e
-    var f = this.f
+    const a = this.a
+    const b = this.b
+    const c = this.c
+    const d = this.d
+    const e = this.e
+    const f = this.f
 
     // Figure out if the winding direction is clockwise or counterclockwise
-    var determinant = a * d - b * c
-    var ccw = determinant > 0 ? 1 : -1
+    const determinant = a * d - b * c
+    const ccw = determinant > 0 ? 1 : -1
 
     // Since we only shear in x, we can use the x basis to get the x scale
     // and the rotation of the resulting matrix
-    var sx = ccw * Math.sqrt(a * a + b * b)
-    var thetaRad = Math.atan2(ccw * b, ccw * a)
-    var theta = 180 / Math.PI * thetaRad
-    var ct = Math.cos(thetaRad)
-    var st = Math.sin(thetaRad)
+    const sx = ccw * Math.sqrt(a * a + b * b)
+    const thetaRad = Math.atan2(ccw * b, ccw * a)
+    const theta = 180 / Math.PI * thetaRad
+    const ct = Math.cos(thetaRad)
+    const st = Math.sin(thetaRad)
 
     // We can then solve the y basis vector simultaneously to get the other
     // two affine parameters directly from these parameters
-    var lam = (a * c + b * d) / determinant
-    var sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
+    const lam = (a * c + b * d) / determinant
+    const sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
 
     // Use the translations
     const tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
@@ -164,7 +176,7 @@ export default class Matrix {
   // Check if two matrices are equal
   equals (other) {
     if (other === this) return true
-    var comp = new Matrix(other)
+    const comp = new Matrix(other)
     return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b)
       && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d)
       && closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
@@ -176,23 +188,31 @@ export default class Matrix {
   }
 
   flipO (axis, around) {
-    return axis === 'x' ? this.scaleO(-1, 1, around, 0)
-      : axis === 'y' ? this.scaleO(1, -1, 0, around)
-      : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+    return axis === 'x'
+      ? this.scaleO(-1, 1, around, 0)
+      : axis === 'y'
+        ? this.scaleO(1, -1, 0, around)
+        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
   }
 
   // Initialize
   init (source) {
-    var base = Matrix.fromArray([ 1, 0, 0, 1, 0, 0 ])
+    const base = Matrix.fromArray([ 1, 0, 0, 1, 0, 0 ])
 
     // ensure source as object
-    source = source instanceof Element ? source.matrixify()
-      : typeof source === 'string' ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
-      : Array.isArray(source) ? Matrix.fromArray(source)
-      : (typeof source === 'object' && Matrix.isMatrixLike(source)) ? source
-      : (typeof source === 'object') ? new Matrix().transform(source)
-      : arguments.length === 6 ? Matrix.fromArray([].slice.call(arguments))
-      : base
+    source = source instanceof Element
+      ? source.matrixify()
+      : typeof source === 'string'
+        ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
+        : Array.isArray(source)
+          ? Matrix.fromArray(source)
+          : (typeof source === 'object' && Matrix.isMatrixLike(source))
+            ? source
+            : (typeof source === 'object')
+              ? new Matrix().transform(source)
+              : arguments.length === 6
+                ? Matrix.fromArray([].slice.call(arguments))
+                : base
 
     // Merge the source matrix with the base matrix
     this.a = source.a != null ? source.a : base.a
@@ -212,26 +232,26 @@ export default class Matrix {
   // Inverses matrix
   inverseO () {
     // Get the current parameters out of the matrix
-    var a = this.a
-    var b = this.b
-    var c = this.c
-    var d = this.d
-    var e = this.e
-    var f = this.f
+    const a = this.a
+    const b = this.b
+    const c = this.c
+    const d = this.d
+    const e = this.e
+    const f = this.f
 
     // Invert the 2x2 matrix in the top left
-    var det = a * d - b * c
+    const det = a * d - b * c
     if (!det) throw new Error('Cannot invert ' + this)
 
     // Calculate the top 2x2 matrix
-    var na = d / det
-    var nb = -b / det
-    var nc = -c / det
-    var nd = a / det
+    const na = d / det
+    const nb = -b / det
+    const nc = -c / det
+    const nd = a / det
 
     // Apply the inverted matrix to the top right
-    var ne = -(na * e + nc * f)
-    var nf = -(nb * e + nd * f)
+    const ne = -(na * e + nc * f)
+    const nf = -(nb * e + nd * f)
 
     // Construct the inverted matrix
     this.a = na
@@ -249,8 +269,8 @@ export default class Matrix {
   }
 
   lmultiplyO (matrix) {
-    var r = this
-    var l = matrix instanceof Matrix
+    const r = this
+    const l = matrix instanceof Matrix
       ? matrix
       : new Matrix(matrix)
 
@@ -264,8 +284,8 @@ export default class Matrix {
 
   multiplyO (matrix) {
     // Get the matrices
-    var l = this
-    var r = matrix instanceof Matrix
+    const l = this
+    const r = matrix instanceof Matrix
       ? matrix
       : new Matrix(matrix)
 
@@ -391,17 +411,17 @@ export default class Matrix {
   transform (o) {
     // Check if o is a matrix and then left multiply it directly
     if (Matrix.isMatrixLike(o)) {
-      var matrix = new Matrix(o)
+      const matrix = new Matrix(o)
       return matrix.multiplyO(this)
     }
 
     // Get the proposed transformations and the current transformations
-    var t = Matrix.formatTransforms(o)
-    var current = this
+    const t = Matrix.formatTransforms(o)
+    const current = this
     const { x: ox, y: oy } = new Point(t.ox, t.oy).transform(current)
 
     // Construct the resulting matrix
-    var transformer = new Matrix()
+    const transformer = new Matrix()
       .translateO(t.rx, t.ry)
       .lmultiplyO(current)
       .translateO(-ox, -oy)
@@ -460,8 +480,8 @@ export function screenCTM () {
      for the inner coordinate system when getScreenCTM() is called on nested svgs.
      However all other Browsers do that */
   if (typeof this.isRoot === 'function' && !this.isRoot()) {
-    var rect = this.rect(1, 1)
-    var m = rect.node.getScreenCTM()
+    const rect = this.rect(1, 1)
+    const m = rect.node.getScreenCTM()
     rect.remove()
     return new Matrix(m)
   }

@@ -1,8 +1,8 @@
 // Map function
 export function map (array, block) {
-  var i
-  var il = array.length
-  var result = []
+  let i
+  const il = array.length
+  const result = []
 
   for (i = 0; i < il; i++) {
     result.push(block(array[i]))
@@ -13,9 +13,9 @@ export function map (array, block) {
 
 // Filter function
 export function filter (array, block) {
-  var i
-  var il = array.length
-  var result = []
+  let i
+  const il = array.length
+  const result = []
 
   for (i = 0; i < il; i++) {
     if (block(array[i])) {
@@ -81,18 +81,24 @@ export function proportionalSize (element, width, height, box) {
 export function getOrigin (o, element) {
   const origin = o.origin
   // First check if origin is in ox or originX
-  let ox = o.ox != null ? o.ox
-    : o.originX != null ? o.originX
-    : 'center'
-  let oy = o.oy != null ? o.oy
-    : o.originY != null ? o.originY
-    : 'center'
+  let ox = o.ox != null
+    ? o.ox
+    : o.originX != null
+      ? o.originX
+      : 'center'
+  let oy = o.oy != null
+    ? o.oy
+    : o.originY != null
+      ? o.originY
+      : 'center'
 
   // Then check if origin was used and overwrite in that case
   if (origin != null) {
-    [ ox, oy ] = Array.isArray(origin) ? origin
-      : typeof origin === 'object' ? [ origin.x, origin.y ]
-      : [ origin, origin ]
+    [ ox, oy ] = Array.isArray(origin)
+      ? origin
+      : typeof origin === 'object'
+        ? [ origin.x, origin.y ]
+        : [ origin, origin ]
   }
 
   // Make sure to only call bbox when actually needed
@@ -103,15 +109,19 @@ export function getOrigin (o, element) {
 
     // And only overwrite if string was passed for this specific axis
     if (condX) {
-      ox = ox.includes('left') ? x
-        : ox.includes('right') ? x + width
-        : x + width / 2
+      ox = ox.includes('left')
+        ? x
+        : ox.includes('right')
+          ? x + width
+          : x + width / 2
     }
 
     if (condY) {
-      oy = oy.includes('top') ? y
-        : oy.includes('bottom') ? y + height
-        : y + height / 2
+      oy = oy.includes('top')
+        ? y
+        : oy.includes('bottom')
+          ? y + height
+          : y + height / 2
     }
   }
 

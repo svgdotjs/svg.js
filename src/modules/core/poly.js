@@ -19,9 +19,11 @@ export function move (x, y) {
 
 // Plot new path
 export function plot (p) {
-  return (p == null) ? this.array()
-    : this.clear().attr('points', typeof p === 'string' ? p
-    : (this._array = new PointArray(p)))
+  return (p == null)
+    ? this.array()
+    : this.clear().attr('points', typeof p === 'string'
+      ? p
+      : (this._array = new PointArray(p)))
 }
 
 // Set element size to given width and height

@@ -43,15 +43,15 @@ export default class Text extends Shape {
 
     // define position of all lines
     if (this._rebuild) {
-      var self = this
-      var blankLineOffset = 0
-      var leading = this.dom.leading
+      const self = this
+      let blankLineOffset = 0
+      const leading = this.dom.leading
 
       this.each(function (i) {
-        var fontSize = globals.window.getComputedStyle(this.node)
+        const fontSize = globals.window.getComputedStyle(this.node)
           .getPropertyValue('font-size')
 
-        var dy = leading * new SVGNumber(fontSize)
+        const dy = leading * new SVGNumber(fontSize)
 
         if (this.dom.newLined) {
           this.attr('x', self.attr('x'))
@@ -82,11 +82,11 @@ export default class Text extends Shape {
   text (text) {
     // act as getter
     if (text === undefined) {
-      var children = this.node.childNodes
-      var firstLine = 0
+      const children = this.node.childNodes
+      let firstLine = 0
       text = ''
 
-      for (var i = 0, len = children.length; i < len; ++i) {
+      for (let i = 0, len = children.length; i < len; ++i) {
         // skip textPaths - they are no lines
         if (children[i].nodeName === 'textPath') {
           if (i === 0) firstLine = 1
@@ -116,7 +116,7 @@ export default class Text extends Shape {
       text = (text + '').split('\n')
 
       // build new lines
-      for (var j = 0, jl = text.length; j < jl; j++) {
+      for (let j = 0, jl = text.length; j < jl; j++) {
         this.newLine(text[j])
       }
     }

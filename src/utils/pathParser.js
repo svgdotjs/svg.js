@@ -57,7 +57,7 @@ const pathHandlers = {
 
 const mlhvqtcsaz = 'mlhvqtcsaz'.split('')
 
-for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
+for (let i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
   pathHandlers[mlhvqtcsaz[i]] = (function (i) {
     return function (c, p, p0) {
       if (i === 'H') c[0] = c[0] + p.x
@@ -66,7 +66,7 @@ for (var i = 0, il = mlhvqtcsaz.length; i < il; ++i) {
         c[5] = c[5] + p.x
         c[6] = c[6] + p.y
       } else {
-        for (var j = 0, jl = c.length; j < jl; ++j) {
+        for (let j = 0, jl = c.length; j < jl; ++j) {
           c[j] = c[j] + (j % 2 ? p.y : p.x)
         }
       }

@@ -14,15 +14,15 @@ export default class TextPath extends Text {
 
   // return the array of the path track element
   array () {
-    var track = this.track()
+    const track = this.track()
 
     return track ? track.array() : null
   }
 
   // Plot path if any
   plot (d) {
-    var track = this.track()
-    var pathArray = null
+    const track = this.track()
+    let pathArray = null
 
     if (track) {
       pathArray = track.plot(d)
@@ -51,7 +51,7 @@ registerMethods({
   Text: {
     // Create path for text to run on
     path: wrapWithAttrCheck(function (track, importNodes = true) {
-      var textPath = new TextPath()
+      const textPath = new TextPath()
 
       // if track is a path, reuse it
       if (!(track instanceof Path)) {

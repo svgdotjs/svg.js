@@ -6,7 +6,7 @@ import Point from '../../types/Point.js'
 import SVGNumber from '../../types/SVGNumber.js'
 
 // Define list of available attributes for stroke and fill
-var sugar = {
+const sugar = {
   stroke: [ 'color', 'width', 'opacity', 'linecap', 'linejoin', 'miterlimit', 'dasharray', 'dashoffset' ],
   fill: [ 'color', 'opacity', 'rule' ],
   prefix: function (t, a) {
@@ -16,8 +16,8 @@ var sugar = {
 
 // Add sugar for fill and stroke
 ;[ 'fill', 'stroke' ].forEach(function (m) {
-  var extension = {}
-  var i
+  const extension = {}
+  let i
 
   extension[m] = function (o) {
     if (typeof o === 'undefined') {
@@ -104,7 +104,7 @@ registerMethods([ 'Element', 'Runner' ], {
 registerMethods('radius', {
   // Add x and y radius
   radius: function (x, y = x) {
-    var type = (this._element || this).type
+    const type = (this._element || this).type
     return type === 'radialGradient'
       ? this.attr('r', new SVGNumber(x))
       : this.rx(x).ry(y)

@@ -69,7 +69,7 @@ registerMethods({
   marker: {
     // Create and attach markers
     marker (marker, width, height, block) {
-      var attr = [ 'marker' ]
+      let attr = [ 'marker' ]
 
       // Build attribute name
       if (marker !== 'all') attr.push(marker)

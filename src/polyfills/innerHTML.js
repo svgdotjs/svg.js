@@ -5,8 +5,8 @@
     if (SVGElement.prototype.innerHTML) return
   } catch (e) { return }
 
-  var serializeXML = function (node, output) {
-    var nodeType = node.nodeType
+  const serializeXML = function (node, output) {
+    const nodeType = node.nodeType
     if (nodeType === 3) {
       output.push(node.textContent.replace(/&/, '&amp;').replace(/</, '&lt;').replace('>', '&gt;'))
     } else if (nodeType === 1) {
@@ -32,8 +32,8 @@
 
   Object.defineProperty(SVGElement.prototype, 'innerHTML', {
     get: function () {
-      var output = []
-      var childNode = this.firstChild
+      const output = []
+      let childNode = this.firstChild
       while (childNode) {
         serializeXML(childNode, output)
         childNode = childNode.nextSibling
@@ -46,13 +46,13 @@
       }
 
       try {
-        var dXML = new DOMParser()
+        const dXML = new DOMParser()
         dXML.async = false
 
-        var sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
-        var svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
+        const sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
+        const svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
 
-        var childNode = svgDocElement.firstChild
+        let childNode = svgDocElement.firstChild
         while (childNode) {
           this.appendChild(this.ownerDocument.importNode(childNode, true))
           childNode = childNode.nextSibling
@@ -65,7 +65,7 @@
 
   Object.defineProperty(SVGElement.prototype, 'outerHTML', {
     get: function () {
-      var output = []
+      const output = []
       serializeXML(this, output)
       return output.join('')
     },
@@ -75,13 +75,13 @@
       }
 
       try {
-        var dXML = new DOMParser()
+        const dXML = new DOMParser()
         dXML.async = false
 
-        var sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
-        var svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
+        const sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
+        const svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
 
-        var childNode = svgDocElement.firstChild
+        let childNode = svgDocElement.firstChild
         while (childNode) {
           this.parentNode.insertBefore(this.ownerDocument.importNode(childNode, true), this)
           // this.appendChild(this.ownerDocument.importNode(childNode, true));

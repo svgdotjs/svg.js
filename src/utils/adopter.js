@@ -29,7 +29,7 @@ export function makeInstance (element, isHTML = false) {
   }
 
   // Make sure, that HTML elements are created with the correct namespace
-  var wrapper = isHTML ? globals.document.createElement('div') : create('svg')
+  const wrapper = isHTML ? globals.document.createElement('div') : create('svg')
   wrapper.innerHTML = element
 
   // We can use firstChild here because we know,
@@ -58,7 +58,7 @@ export function adopt (node) {
   }
 
   // initialize variables
-  var className = capitalize(node.nodeName || 'Dom')
+  let className = capitalize(node.nodeName || 'Dom')
 
   // Make sure that gradients are adopted correctly
   if (className === 'LinearGradient' || className === 'RadialGradient') {
@@ -102,7 +102,7 @@ export function eid (name) {
 // Deep new id assignment
 export function assignNewId (node) {
   // do the same for SVG child nodes as well
-  for (var i = node.children.length - 1; i >= 0; i--) {
+  for (let i = node.children.length - 1; i >= 0; i--) {
     assignNewId(node.children[i])
   }
 
@@ -116,7 +116,7 @@ export function assignNewId (node) {
 
 // Method for extending objects
 export function extend (modules, methods) {
-  var key, i
+  let key, i
 
   modules = Array.isArray(modules) ? modules : [ modules ]
 

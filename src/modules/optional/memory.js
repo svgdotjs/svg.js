@@ -4,7 +4,7 @@ import { registerMethods } from '../../utils/methods.js'
 export function remember (k, v) {
   // remember every item in an object individually
   if (typeof arguments[0] === 'object') {
-    for (var key in k) {
+    for (const key in k) {
       this.remember(key, k[key])
     }
   } else if (arguments.length === 1) {
@@ -23,7 +23,7 @@ export function forget () {
   if (arguments.length === 0) {
     this._memory = {}
   } else {
-    for (var i = arguments.length - 1; i >= 0; i--) {
+    for (let i = arguments.length - 1; i >= 0; i--) {
       delete this.memory()[arguments[i]]
     }
   }

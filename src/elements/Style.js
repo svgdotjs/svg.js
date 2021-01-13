@@ -7,9 +7,9 @@ function cssRule (selector, rule) {
   if (!selector) return ''
   if (!rule) return selector
 
-  var ret = selector + '{'
+  let ret = selector + '{'
 
-  for (var i in rule) {
+  for (const i in rule) {
     ret += unCamelCase(i) + ':' + rule[i] + ';'
   }
 

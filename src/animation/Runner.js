@@ -73,9 +73,9 @@ export default class Runner extends EventTarget {
 
   static sanitise (duration, delay, when) {
     // Initialise the default parameters
-    var times = 1
-    var swing = false
-    var wait = 0
+    let times = 1
+    let swing = false
+    let wait = 0
     duration = duration || timeline.duration
     delay = delay || timeline.delay
     when = when || 'last'
@@ -121,8 +121,8 @@ export default class Runner extends EventTarget {
   }
 
   animate (duration, delay, when) {
-    var o = Runner.sanitise(duration, delay, when)
-    var runner = new Runner(o.duration)
+    const o = Runner.sanitise(duration, delay, when)
+    const runner = new Runner(o.duration)
     if (this._timeline) runner.timeline(this._timeline)
     if (this._element) runner.element(this._element)
     return runner.loop(o).schedule(o.delay, o.when)
@@ -196,16 +196,16 @@ export default class Runner extends EventTarget {
   }
 
   loops (p) {
-    var loopDuration = this._duration + this._wait
+    const loopDuration = this._duration + this._wait
     if (p == null) {
-      var loopsDone = Math.floor(this._time / loopDuration)
-      var relativeTime = (this._time - loopsDone * loopDuration)
-      var position = relativeTime / this._duration
+      const loopsDone = Math.floor(this._time / loopDuration)
+      const relativeTime = (this._time - loopsDone * loopDuration)
+      const position = relativeTime / this._duration
       return Math.min(loopsDone + position, this._times)
     }
-    var whole = Math.floor(p)
-    var partial = p % 1
-    var time = loopDuration * whole + this._duration * partial
+    const whole = Math.floor(p)
+    const partial = p % 1
+    const time = loopDuration * whole + this._duration * partial
     return this.time(time)
   }
 
@@ -217,13 +217,13 @@ export default class Runner extends EventTarget {
 
   position (p) {
     // Get all of the variables we need
-    var x = this._time
-    var d = this._duration
-    var w = this._wait
-    var t = this._times
-    var s = this._swing
-    var r = this._reverse
-    var position
+    const x = this._time
+    const d = this._duration
+    const w = this._wait
+    const t = this._times
+    const s = this._swing
+    const r = this._reverse
+    let position
 
     if (p == null) {
       /*
@@ -235,25 +235,27 @@ export default class Runner extends EventTarget {
 
       // Figure out the value without thinking about the start or end time
       const f = function (x) {
-        var swinging = s * Math.floor(x % (2 * (w + d)) / (w + d))
-        var backwards = (swinging && !r) || (!swinging && r)
-        var uncliped = Math.pow(-1, backwards) * (x % (w + d)) / d + backwards
-        var clipped = Math.max(Math.min(uncliped, 1), 0)
+        const swinging = s * Math.floor(x % (2 * (w + d)) / (w + d))
+        const backwards = (swinging && !r) || (!swinging && r)
+        const uncliped = Math.pow(-1, backwards) * (x % (w + d)) / d + backwards
+        const clipped = Math.max(Math.min(uncliped, 1), 0)
         return clipped
       }
 
       // Figure out the value by incorporating the start time
-      var endTime = t * (w + d) - w
-      position = x <= 0 ? Math.round(f(1e-5))
-        : x < endTime ? f(x)
-        : Math.round(f(endTime - 1e-5))
+      const endTime = t * (w + d) - w
+      position = x <= 0
+        ? Math.round(f(1e-5))
+        : x < endTime
+          ? f(x)
+          : Math.round(f(endTime - 1e-5))
       return position
     }
 
     // Work out the loops done and add the position to the loops done
-    var loopsDone = Math.floor(this.loops())
-    var swingForward = s && (loopsDone % 2 === 0)
-    var forwards = (swingForward && !r) || (r && swingForward)
+    const loopsDone = Math.floor(this.loops())
+    const swingForward = s && (loopsDone % 2 === 0)
+    const forwards = (swingForward && !r) || (r && swingForward)
     position = loopsDone + (forwards ? p : 1 - p)
     return this.loops(position)
   }
@@ -279,7 +281,7 @@ export default class Runner extends EventTarget {
       initialised: false,
       finished: false
     })
-    var timeline = this.timeline()
+    const timeline = this.timeline()
     timeline && this.timeline()._continue()
     return this
   }
@@ -321,16 +323,16 @@ export default class Runner extends EventTarget {
     // Update the time and get the new position
     dt = dt == null ? 16 : dt
     this._time += dt
-    var position = this.position()
+    const position = this.position()
 
     // Figure out if we need to run the stepper in this frame
-    var running = this._lastPosition !== position && this._time >= 0
+    const running = this._lastPosition !== position && this._time >= 0
     this._lastPosition = position
 
     // Figure out if we just started
-    var duration = this.duration()
-    var justStarted = this._lastTime <= 0 && this._time > 0
-    var justFinished = this._lastTime < duration && this._time >= duration
+    const duration = this.duration()
+    const justStarted = this._lastTime <= 0 && this._time > 0
+    const justFinished = this._lastTime < duration && this._time >= duration
 
     this._lastTime = this._time
     if (justStarted) {
@@ -340,19 +342,20 @@ export default class Runner extends EventTarget {
     // Work out if the runner is finished set the done flag here so animations
     // know, that they are running in the last step (this is good for
     // transformations which can be merged)
-    var declarative = this._isDeclarative
+    const declarative = this._isDeclarative
     this.done = !declarative && !justFinished && this._time >= duration
 
     // Runner is running. So its not in reseted state anymore
     this._reseted = false
 
+    let converged = false
     // Call initialise and the run function
     if (running || declarative) {
       this._initialise(running)
 
       // clear the transforms on this runner so they dont get added again and again
       this.transforms = new Matrix()
-      var converged = this._run(declarative ? dt : position)
+      converged = this._run(declarative ? dt : position)
 
       this.fire('step', this)
     }
@@ -387,7 +390,7 @@ export default class Runner extends EventTarget {
   }
 
   unschedule () {
-    var timeline = this.timeline()
+    const timeline = this.timeline()
     timeline && timeline.unschedule(this)
     return this
   }
@@ -398,12 +401,12 @@ export default class Runner extends EventTarget {
     if (!running && !this._isDeclarative) return
 
     // Loop through all of the initialisers
-    for (var i = 0, len = this._queue.length; i < len; ++i) {
+    for (let i = 0, len = this._queue.length; i < len; ++i) {
       // Get the current initialiser
-      var current = this._queue[i]
+      const current = this._queue[i]
 
       // Determine whether we need to initialise
-      var needsIt = this._isDeclarative || (!current.initialised && running)
+      const needsIt = this._isDeclarative || (!current.initialised && running)
       running = !current.finished
 
       // Call the initialiser if we need to
@@ -428,7 +431,7 @@ export default class Runner extends EventTarget {
     // and later
     //    anim.move(...)
     if (this._isDeclarative) {
-      var timeline = this.timeline()
+      const timeline = this.timeline()
       timeline && timeline.play()
     }
   }
@@ -437,14 +440,14 @@ export default class Runner extends EventTarget {
   // Run each run function for the position or dt given
   _run (positionOrDt) {
     // Run all of the _queue directly
-    var allfinished = true
-    for (var i = 0, len = this._queue.length; i < len; ++i) {
+    let allfinished = true
+    for (let i = 0, len = this._queue.length; i < len; ++i) {
       // Get the current function to run
-      var current = this._queue[i]
+      const current = this._queue[i]
 
       // Run the function if its not finished, we keep track of the finished
       // flag for the sake of declarative _queue
-      var converged = current.runner.call(this, positionOrDt)
+      const converged = current.runner.call(this, positionOrDt)
       current.finished = current.finished || (converged === true)
       allfinished = allfinished && current.finished
     }
@@ -473,7 +476,7 @@ export default class Runner extends EventTarget {
       }
 
       this._history[method].caller.finished = false
-      var timeline = this.timeline()
+      const timeline = this.timeline()
       timeline && timeline.play()
       return true
     }
@@ -601,8 +604,8 @@ export class RunnerArray {
 registerMethods({
   Element: {
     animate (duration, delay, when) {
-      var o = Runner.sanitise(duration, delay, when)
-      var timeline = this.timeline()
+      const o = Runner.sanitise(duration, delay, when)
+      const timeline = this.timeline()
       return new Runner(o.duration)
         .loop(o)
         .element(this)
@@ -672,7 +675,7 @@ extend(Runner, {
     let attrs = nameOrAttrs
     if (this._tryRetarget(type, attrs)) return this
 
-    var morpher = new Morphable(this._stepper).to(attrs)
+    let morpher = new Morphable(this._stepper).to(attrs)
     let keys = Object.keys(attrs)
 
     this.queue(function () {
@@ -720,7 +723,7 @@ extend(Runner, {
   zoom (level, point) {
     if (this._tryRetarget('zoom', level, point)) return this
 
-    var morpher = new Morphable(this._stepper).to(new SVGNumber(level))
+    let morpher = new Morphable(this._stepper).to(new SVGNumber(level))
 
     this.queue(function () {
       morpher = morpher.from(this.element().zoom())
@@ -761,7 +764,7 @@ extend(Runner, {
     }
 
     // Parse the parameters
-    var isMatrix = Matrix.isMatrixLike(transforms)
+    const isMatrix = Matrix.isMatrixLike(transforms)
     affine = transforms.affine != null
       ? transforms.affine
       : (affine != null ? affine : !isMatrix)
@@ -890,8 +893,8 @@ extend(Runner, {
     if (this._tryRetarget(method, to)) return this
 
     // Make a morpher and queue the animation
-    var morpher = new Morphable(this._stepper).to(to)
-    var from = null
+    const morpher = new Morphable(this._stepper).to(to)
+    let from = null
     this.queue(function () {
       from = this.element()[method]()
       morpher.from(from)
@@ -913,7 +916,7 @@ extend(Runner, {
     if (this._tryRetarget(method, to)) return this
 
     // Make a morpher and queue the animation
-    var morpher = new Morphable(this._stepper).to(to)
+    const morpher = new Morphable(this._stepper).to(to)
     this.queue(function () {
       morpher.from(this.element()[method]())
     }, function (pos) {
@@ -953,7 +956,7 @@ extend(Runner, {
   // Add animatable size
   size (width, height) {
     // animate bbox based size for all other elements
-    var box
+    let box
 
     if (!width || !height) {
       box = this._element.bbox()
@@ -991,7 +994,7 @@ extend(Runner, {
 
     if (this._tryRetarget('plot', a)) return this
 
-    var morpher = new Morphable(this._stepper)
+    const morpher = new Morphable(this._stepper)
       .type(this._element.MorphArray).to(a)
 
     this.queue(function () {

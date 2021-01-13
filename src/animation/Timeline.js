@@ -3,10 +3,10 @@ import { registerMethods } from '../utils/methods.js'
 import Animator from './Animator.js'
 import EventTarget from '../types/EventTarget.js'
 
-var makeSchedule = function (runnerInfo) {
-  var start = runnerInfo.start
-  var duration = runnerInfo.runner.duration()
-  var end = start + duration
+const makeSchedule = function (runnerInfo) {
+  const start = runnerInfo.start
+  const duration = runnerInfo.runner.duration()
+  const end = start + duration
   return { start: start, duration: duration, end: end, runner: runnerInfo.runner }
 }
 
@@ -56,9 +56,9 @@ export default class Timeline extends EventTarget {
 
   // Calculates the end of the timeline
   getEndTime () {
-    var lastRunnerInfo = this.getLastRunnerInfo()
-    var lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
-    var lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : this._time
+    const lastRunnerInfo = this.getLastRunnerInfo()
+    const lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
+    const lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : this._time
     return lastStartTime + lastDuration
   }
 
@@ -93,10 +93,10 @@ export default class Timeline extends EventTarget {
   }
 
   reverse (yes) {
-    var currentSpeed = this.speed()
+    const currentSpeed = this.speed()
     if (yes == null) return this.speed(-currentSpeed)
 
-    var positive = Math.abs(currentSpeed)
+    const positive = Math.abs(currentSpeed)
     return this.speed(yes ? -positive : positive)
   }
 
@@ -110,8 +110,8 @@ export default class Timeline extends EventTarget {
     // derived from the current timeline time or it can be relative to the
     // last start time to chain animations directly
 
-    var absoluteStartTime = 0
-    var endTime = this.getEndTime()
+    let absoluteStartTime = 0
+    const endTime = this.getEndTime()
     delay = delay || 0
 
     // Work out when to start the animation
@@ -188,7 +188,7 @@ export default class Timeline extends EventTarget {
 
   // Remove the runner from this timeline
   unschedule (runner) {
-    var index = this._runnerIds.indexOf(runner.id)
+    const index = this._runnerIds.indexOf(runner.id)
     if (index < 0) return this
 
     this._runners.splice(index, 1)
@@ -220,12 +220,12 @@ export default class Timeline extends EventTarget {
 
   _stepFn (immediateStep = false) {
     // Get the time delta from the last time and update the time
-    var time = this._timeSource()
-    var dtSource = time - this._lastSourceTime
+    const time = this._timeSource()
+    let dtSource = time - this._lastSourceTime
 
     if (immediateStep) dtSource = 0
 
-    var dtTime = this._speed * dtSource + (this._time - this._lastStepTime)
+    const dtTime = this._speed * dtSource + (this._time - this._lastStepTime)
     this._lastSourceTime = time
 
     // Only update the time if we use the timeSource.
@@ -249,7 +249,7 @@ export default class Timeline extends EventTarget {
     // runner always wins the reset even if the other runner started earlier
     // and therefore should win the attribute battle
     // this can be solved by reseting them backwards
-    for (var k = this._runners.length; k--;) {
+    for (let k = this._runners.length; k--;) {
       // Get and run the current runner and ignore it if its inactive
       const runnerInfo = this._runners[k]
       const runner = runnerInfo.runner
@@ -266,8 +266,8 @@ export default class Timeline extends EventTarget {
     }
 
     // Run all of the runners directly
-    var runnersLeft = false
-    for (var i = 0, len = this._runners.length; i < len; i++) {
+    let runnersLeft = false
+    for (let i = 0, len = this._runners.length; i < len; i++) {
       // Get and run the current runner and ignore it if its inactive
       const runnerInfo = this._runners[i]
       const runner = runnerInfo.runner
@@ -290,13 +290,13 @@ export default class Timeline extends EventTarget {
 
       // If this runner is still going, signal that we need another animation
       // frame, otherwise, remove the completed runner
-      var finished = runner.step(dt).done
+      const finished = runner.step(dt).done
       if (!finished) {
         runnersLeft = true
         // continue
       } else if (runnerInfo.persist !== true) {
         // runner is finished. And runner might get removed
-        var endTime = runner.duration() - runner.time() + this._time
+        const endTime = runner.duration() - runner.time() + this._time
 
         if (endTime + runnerInfo.persist < this._time) {
           // Delete runner and correct index

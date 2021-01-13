@@ -39,9 +39,11 @@ export default function attr (attr, val, ns) {
   } else if (val == null) {
     // act as a getter if the first and only argument is not an object
     val = this.node.getAttribute(attr)
-    return val == null ? defaults[attr]
-      : isNumber.test(val) ? parseFloat(val)
-      : val
+    return val == null
+      ? defaults[attr]
+      : isNumber.test(val)
+        ? parseFloat(val)
+        : val
   } else {
     // Loop through hooks and execute them to convert value
     val = hooks.reduce((_val, hook) => {
@@ -67,7 +69,8 @@ export default function attr (attr, val, ns) {
       }
     } else {
       // set given attribute on node
-      typeof ns === 'string' ? this.node.setAttributeNS(ns, attr, val.toString())
+      typeof ns === 'string'
+        ? this.node.setAttributeNS(ns, attr, val.toString())
         : this.node.setAttribute(attr, val.toString())
     }
 

@@ -32,17 +32,17 @@ registerMethods({
   },
   Element: {
     unlink () {
-      var link = this.linker()
+      const link = this.linker()
 
       if (!link) return this
 
-      var parent = link.parent()
+      const parent = link.parent()
 
       if (!parent) {
         return this.remove()
       }
 
-      var index = parent.index(link)
+      const index = parent.index(link)
       parent.add(this, index)
 
       link.remove()
@@ -50,7 +50,7 @@ registerMethods({
     },
     linkTo (url) {
       // reuse old link if possible
-      var link = this.linker()
+      let link = this.linker()
 
       if (!link) {
         link = new A()
@@ -66,7 +66,7 @@ registerMethods({
       return this
     },
     linker () {
-      var link = this.parent()
+      const link = this.parent()
       if (link && link.node.nodeName.toLowerCase() === 'a') {
         return link
       }

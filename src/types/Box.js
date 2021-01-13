@@ -34,13 +34,18 @@ export default class Box {
   }
 
   init (source) {
-    var base = [ 0, 0, 0, 0 ]
-    source = typeof source === 'string' ? source.split(delimiter).map(parseFloat)
-      : Array.isArray(source) ? source
-      : typeof source === 'object' ? [ source.left != null ? source.left
-      : source.x, source.top != null ? source.top : source.y, source.width, source.height ]
-      : arguments.length === 4 ? [].slice.call(arguments)
-      : base
+    const base = [ 0, 0, 0, 0 ]
+    source = typeof source === 'string'
+      ? source.split(delimiter).map(parseFloat)
+      : Array.isArray(source)
+        ? source
+        : typeof source === 'object'
+          ? [ source.left != null
+            ? source.left
+            : source.x, source.top != null ? source.top : source.y, source.width, source.height ]
+          : arguments.length === 4
+            ? [].slice.call(arguments)
+            : base
 
     this.x = source[0] || 0
     this.y = source[1] || 0

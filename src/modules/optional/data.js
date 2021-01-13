@@ -24,9 +24,11 @@ export function data (a, v, r) {
     }
   } else {
     this.attr('data-' + a,
-      v === null ? null
-      : r === true || typeof v === 'string' || typeof v === 'number' ? v
-      : JSON.stringify(v)
+      v === null
+        ? null
+        : r === true || typeof v === 'string' || typeof v === 'number'
+          ? v
+          : JSON.stringify(v)
     )
   }
 

@@ -33,13 +33,14 @@ export default class Path extends Shape {
 
   // Plot new path
   plot (d) {
-    return (d == null) ? this.array()
+    return (d == null)
+      ? this.array()
       : this.clear().attr('d', typeof d === 'string' ? d : (this._array = new PathArray(d)))
   }
 
   // Set element size to given width and height
   size (width, height) {
-    var p = proportionalSize(this, width, height)
+    const p = proportionalSize(this, width, height)
     return this.attr('d', this.array().size(p.width, p.height))
   }
 

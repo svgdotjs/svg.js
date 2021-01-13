@@ -3,7 +3,7 @@ import { registerMethods } from '../../utils/methods.js'
 
 // Return array of classes on the node
 export function classes () {
-  var attr = this.attr('class')
+  const attr = this.attr('class')
   return attr == null ? [] : attr.trim().split(delimiter)
 }
 
@@ -15,7 +15,7 @@ export function hasClass (name) {
 // Add class to the node
 export function addClass (name) {
   if (!this.hasClass(name)) {
-    var array = this.classes()
+    const array = this.classes()
     array.push(name)
     this.attr('class', array.join(' '))
   }

@@ -44,7 +44,7 @@ export default class Line extends Shape {
 
   // Set element size to given width and height
   size (width, height) {
-    var p = proportionalSize(this, width, height)
+    const p = proportionalSize(this, width, height)
     return this.attr(this.array().size(p.width, p.height).toLine())
   }
 }

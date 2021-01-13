@@ -11,7 +11,7 @@ const Animator = {
 
   frame (fn) {
     // Store the node
-    var node = Animator.frames.push({ run: fn })
+    const node = Animator.frames.push({ run: fn })
 
     // Request an animation frame if we don't have one
     if (Animator.nextDraw === null) {
@@ -26,10 +26,10 @@ const Animator = {
     delay = delay || 0
 
     // Work out when the event should fire
-    var time = Animator.timer().now() + delay
+    const time = Animator.timer().now() + delay
 
     // Add the timeout to the end of the queue
-    var node = Animator.timeouts.push({ run: fn, time: time })
+    const node = Animator.timeouts.push({ run: fn, time: time })
 
     // Request another animation frame if we need one
     if (Animator.nextDraw === null) {
@@ -41,7 +41,7 @@ const Animator = {
 
   immediate (fn) {
     // Add the immediate fn to the end of the queue
-    var node = Animator.immediates.push(fn)
+    const node = Animator.immediates.push(fn)
     // Request another animation frame if we need one
     if (Animator.nextDraw === null) {
       Animator.nextDraw = globals.window.requestAnimationFrame(Animator._draw)
@@ -65,8 +65,8 @@ const Animator = {
   _draw (now) {
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-    var nextTimeout = null
-    var lastTimeout = Animator.timeouts.last()
+    let nextTimeout = null
+    const lastTimeout = Animator.timeouts.last()
     while ((nextTimeout = Animator.timeouts.shift())) {
       // Run the timeout if its time, or push it to the end
       if (now >= nextTimeout.time) {
@@ -80,13 +80,13 @@ const Animator = {
     }
 
     // Run all of the animation frames
-    var nextFrame = null
-    var lastFrame = Animator.frames.last()
+    let nextFrame = null
+    const lastFrame = Animator.frames.last()
     while ((nextFrame !== lastFrame) && (nextFrame = Animator.frames.shift())) {
       nextFrame.run(now)
     }
 
-    var nextImmediate = null
+    let nextImmediate = null
     while ((nextImmediate = Animator.immediates.shift())) {
       nextImmediate()
     }

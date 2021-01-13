@@ -16,7 +16,7 @@ export default class Queue {
 
   push (value) {
     // An item stores an id and the provided value
-    var item = typeof value.next !== 'undefined' ? value : { value: value, next: null, prev: null }
+    const item = typeof value.next !== 'undefined' ? value : { value: value, next: null, prev: null }
 
     // Deal with the queue being empty or populated
     if (this._last) {
@@ -47,7 +47,7 @@ export default class Queue {
 
   shift () {
     // Check if we have a value
-    var remove = this._first
+    const remove = this._first
     if (!remove) return null
 
     // If we do, remove it and relink things

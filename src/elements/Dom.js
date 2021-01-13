@@ -77,8 +77,8 @@ export default class Dom extends EventTarget {
 
   // Iterates over all children and invokes a given block
   each (block, deep) {
-    var children = this.children()
-    var i, il
+    const children = this.children()
+    let i, il
 
     for (i = 0, il = children.length; i < il; i++) {
       block.apply(children[i], [ i, children ])
@@ -152,7 +152,7 @@ export default class Dom extends EventTarget {
 
   // Returns the parent element instance
   parent (type) {
-    var parent = this
+    let parent = this
 
     // check for parent
     if (!parent.node.parentNode) return null
@@ -262,8 +262,6 @@ export default class Dom extends EventTarget {
 
   // Import / Export raw svg
   xml (xmlOrFn, outerXML, ns) {
-    var well, len, fragment
-
     if (typeof xmlOrFn === 'boolean') {
       ns = outerXML
       outerXML = xmlOrFn
@@ -320,14 +318,14 @@ export default class Dom extends EventTarget {
     outerXML = outerXML == null ? false : outerXML
 
     // Create temporary holder
-    well = create('wrapper', ns)
-    fragment = globals.document.createDocumentFragment()
+    const well = create('wrapper', ns)
+    const fragment = globals.document.createDocumentFragment()
 
     // Dump raw svg
     well.innerHTML = xmlOrFn
 
     // Transplant nodes into the fragment
-    for (len = well.children.length; len--;) {
+    for (let len = well.children.length; len--;) {
       fragment.appendChild(well.firstElementChild)
     }
 

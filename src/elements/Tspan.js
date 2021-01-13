@@ -34,18 +34,18 @@ export default class Tspan extends Shape {
     this.dom.newLined = true
 
     // fetch parent
-    var text = this.parent()
+    const text = this.parent()
 
     // early return in case we are not in a text element
     if (!(text instanceof Text)) {
       return this
     }
 
-    var i = text.index(this)
+    const i = text.index(this)
 
-    var fontSize = globals.window.getComputedStyle(this.node)
+    const fontSize = globals.window.getComputedStyle(this.node)
       .getPropertyValue('font-size')
-    var dy = text.dom.leading * new SVGNumber(fontSize)
+    const dy = text.dom.leading * new SVGNumber(fontSize)
 
     // apply new position
     return this.dy(i ? dy : 0).attr('x', text.x())
@@ -73,7 +73,7 @@ extend(Tspan, textable)
 registerMethods({
   Tspan: {
     tspan: wrapWithAttrCheck(function (text = '') {
-      var tspan = new Tspan()
+      const tspan = new Tspan()
 
       // clear if build mode is disabled
       if (!this._build) {

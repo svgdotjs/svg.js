@@ -15,9 +15,11 @@ export default class Point {
     const base = { x: 0, y: 0 }
 
     // ensure source as object
-    const source = Array.isArray(x) ? { x: x[0], y: x[1] }
-      : typeof x === 'object' ? { x: x.x, y: x.y }
-      : { x: x, y: y }
+    const source = Array.isArray(x)
+      ? { x: x[0], y: x[1] }
+      : typeof x === 'object'
+        ? { x: x.x, y: x.y }
+        : { x: x, y: y }
 
     // merge source
     this.x = source.x == null ? base.x : source.x

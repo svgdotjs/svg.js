@@ -50,7 +50,7 @@ export default class Morphable {
   }
 
   at (pos) {
-    var _this = this
+    const _this = this
 
     return this._morphObj.fromArray(
       this._from.map(function (i, index) {
@@ -60,7 +60,7 @@ export default class Morphable {
   }
 
   done () {
-    var complete = this._context
+    const complete = this._context
       .map(this._stepper.done)
       .reduce(function (last, curr) {
         return last && curr
@@ -108,17 +108,21 @@ export default class Morphable {
       this.type(getClassForType(value))
     }
 
-    var result = (new this._type(value))
+    let result = (new this._type(value))
     if (this._type === Color) {
-      result = this._to ? result[this._to[4]]()
-        : this._from ? result[this._from[4]]()
-        : result
+      result = this._to
+        ? result[this._to[4]]()
+        : this._from
+          ? result[this._from[4]]()
+          : result
     }
 
     if (this._type === ObjectBag) {
-      result = this._to ? result.align(this._to)
-        : this._from ? result.align(this._from)
-        : result
+      result = this._to
+        ? result.align(this._to)
+        : this._from
+          ? result.align(this._from)
+          : result
     }
 
     result = result.toArray()
@@ -181,7 +185,7 @@ export class TransformBag {
   }
 
   toArray () {
-    var v = this
+    const v = this
 
     return [
       v.scaleX,
@@ -236,7 +240,7 @@ export class ObjectBag {
     }
 
     objOrArr = objOrArr || {}
-    var entries = []
+    const entries = []
 
     for (const i in objOrArr) {
       const Type = getClassForType(objOrArr[i])
@@ -255,8 +259,8 @@ export class ObjectBag {
   }
 
   valueOf () {
-    var obj = {}
-    var arr = this.values
+    const obj = {}
+    const arr = this.values
 
     // for (var i = 0, len = arr.length; i < len; i += 2) {
     while (arr.length) {

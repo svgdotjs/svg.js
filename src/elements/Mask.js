@@ -39,7 +39,7 @@ registerMethods({
 
     maskWith (element) {
       // use given mask or create a new one
-      var masker = element instanceof Mask
+      const masker = element instanceof Mask
         ? element
         : this.parent().mask().add(element)
 

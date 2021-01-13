@@ -23,8 +23,8 @@ export function prev () {
 
 // Send given element one step forward
 export function forward () {
-  var i = this.position()
-  var p = this.parent()
+  const i = this.position()
+  const p = this.parent()
 
   // move node one step forward
   p.add(this.remove(), i + 1)
@@ -34,8 +34,8 @@ export function forward () {
 
 // Send given element one step backward
 export function backward () {
-  var i = this.position()
-  var p = this.parent()
+  const i = this.position()
+  const p = this.parent()
 
   p.add(this.remove(), i ? i - 1 : 0)
 
@@ -44,7 +44,7 @@ export function backward () {
 
 // Send given element all the way to the front
 export function front () {
-  var p = this.parent()
+  const p = this.parent()
 
   // Move node forward
   p.add(this.remove())
@@ -54,7 +54,7 @@ export function front () {
 
 // Send given element all the way to the back
 export function back () {
-  var p = this.parent()
+  const p = this.parent()
 
   // Move node back
   p.add(this.remove(), 0)
@@ -67,7 +67,7 @@ export function before (element) {
   element = makeInstance(element)
   element.remove()
 
-  var i = this.position()
+  const i = this.position()
 
   this.parent().add(element, i)
 
@@ -79,7 +79,7 @@ export function after (element) {
   element = makeInstance(element)
   element.remove()
 
-  var i = this.position()
+  const i = this.position()
 
   this.parent().add(element, i + 1)
 

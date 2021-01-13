@@ -10,11 +10,11 @@ export function untransform () {
 
 // merge the whole transformation chain into one matrix and returns it
 export function matrixify () {
-  var matrix = (this.attr('transform') || '')
+  const matrix = (this.attr('transform') || '')
     // split transformations
     .split(transforms).slice(0, -1).map(function (str) {
       // generate key => value pairs
-      var kv = str.trim().split('(')
+      const kv = str.trim().split('(')
       return [ kv[0],
         kv[1].split(delimiter)
           .map(function (str) {
@@ -37,8 +37,8 @@ export function matrixify () {
 // add an element to another parent without changing the visual representation on the screen
 export function toParent (parent, i) {
   if (this === parent) return this
-  var ctm = this.screenCTM()
-  var pCtm = parent.screenCTM().inverse()
+  const ctm = this.screenCTM()
+  const pCtm = parent.screenCTM().inverse()
 
   this.addTo(parent, i).untransform().transform(pCtm.multiply(ctm))
 
@@ -54,7 +54,7 @@ export function toRoot (i) {
 export function transform (o, relative) {
   // Act as a getter if no object was passed
   if (o == null || typeof o === 'string') {
-    var decomposed = new Matrix(this).decompose()
+    const decomposed = new Matrix(this).decompose()
     return o == null ? decomposed : decomposed[o]
   }
 
@@ -64,8 +64,8 @@ export function transform (o, relative) {
   }
 
   // The user can pass a boolean, an Element or an Matrix or nothing
-  var cleanRelative = relative === true ? this : (relative || false)
-  var result = new Matrix(cleanRelative).transform(o)
+  const cleanRelative = relative === true ? this : (relative || false)
+  const result = new Matrix(cleanRelative).transform(o)
   return this.attr('transform', result)
 }
 

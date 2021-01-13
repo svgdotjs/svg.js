@@ -4,7 +4,8 @@ import Box from './Box.js'
 import { pathParser } from '../utils/pathParser.js'
 
 function arrayToString (a) {
-  for (var i = 0, il = a.length, s = ''; i < il; i++) {
+  let s = ''
+  for (let i = 0, il = a.length; i < il; i++) {
     s += a[i][0]
 
     if (a[i][1] != null) {
@@ -49,7 +50,7 @@ export default class PathArray extends SVGArray {
   // Move path string
   move (x, y) {
     // get bounding box of current situation
-    var box = this.bbox()
+    const box = this.bbox()
 
     // get relative offset
     x -= box.x
@@ -99,8 +100,8 @@ export default class PathArray extends SVGArray {
   // Resize path string
   size (width, height) {
     // get bounding box of current situation
-    var box = this.bbox()
-    var i, l
+    const box = this.bbox()
+    let i, l
 
     // If the box width or height is 0 then we ignore
     // transformations on the respective axis

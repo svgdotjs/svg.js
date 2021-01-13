@@ -16,7 +16,7 @@ export default class Ellipse extends Shape {
   }
 
   size (width, height) {
-    var p = proportionalSize(this, width, height)
+    const p = proportionalSize(this, width, height)
 
     return this
       .rx(new SVGNumber(p.width).divide(2))

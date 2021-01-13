@@ -6,10 +6,10 @@ import Matrix from './Matrix.js'
 export default class PointArray extends SVGArray {
   // Get bounding box of points
   bbox () {
-    var maxX = -Infinity
-    var maxY = -Infinity
-    var minX = Infinity
-    var minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+    let minX = Infinity
+    let minY = Infinity
     this.forEach(function (el) {
       maxX = Math.max(el[0], maxX)
       maxY = Math.max(el[1], maxY)
@@ -21,7 +21,7 @@ export default class PointArray extends SVGArray {
 
   // Move point string
   move (x, y) {
-    var box = this.bbox()
+    const box = this.bbox()
 
     // get relative offset
     x -= box.x
@@ -29,7 +29,7 @@ export default class PointArray extends SVGArray {
 
     // move every point
     if (!isNaN(x) && !isNaN(y)) {
-      for (var i = this.length - 1; i >= 0; i--) {
+      for (let i = this.length - 1; i >= 0; i--) {
         this[i] = [ this[i][0] + x, this[i][1] + y ]
       }
     }
@@ -39,7 +39,7 @@ export default class PointArray extends SVGArray {
 
   // Parse point string and flat array
   parse (array = [ 0, 0 ]) {
-    var points = []
+    const points = []
 
     // if it is an array, we flatten it and therefore clone it to 1 depths
     if (array instanceof Array) {
@@ -54,7 +54,7 @@ export default class PointArray extends SVGArray {
     if (array.length % 2 !== 0) array.pop()
 
     // wrap points in two-tuples
-    for (var i = 0, len = array.length; i < len; i = i + 2) {
+    for (let i = 0, len = array.length; i < len; i = i + 2) {
       points.push([ array[i], array[i + 1] ])
     }
 
@@ -63,8 +63,8 @@ export default class PointArray extends SVGArray {
 
   // Resize poly string
   size (width, height) {
-    var i
-    var box = this.bbox()
+    let i
+    const box = this.bbox()
 
     // recalculate position of all points according to new size
     for (i = this.length - 1; i >= 0; i--) {
@@ -87,8 +87,9 @@ export default class PointArray extends SVGArray {
 
   // Convert array to string
   toString () {
+    const array = []
     // convert to a poly point string
-    for (var i = 0, il = this.length, array = []; i < il; i++) {
+    for (let i = 0, il = this.length; i < il; i++) {
       array.push(this[i].join(','))
     }
 

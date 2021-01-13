@@ -17,10 +17,10 @@ export default class Image extends Shape {
   load (url, callback) {
     if (!url) return this
 
-    var img = new globals.window.Image()
+    const img = new globals.window.Image()
 
     on(img, 'load', function (e) {
-      var p = this.parent(Pattern)
+      const p = this.parent(Pattern)
 
       // ensure image size
       if (this.width() === 0 && this.height() === 0) {

@@ -28,13 +28,19 @@ function is (object, space) {
 }
 
 function getParameters (a, b) {
-  const params = is(a, 'rgb') ? { _a: a.r, _b: a.g, _c: a.b, _d: 0, space: 'rgb' }
-    : is(a, 'xyz') ? { _a: a.x, _b: a.y, _c: a.z, _d: 0, space: 'xyz' }
-    : is(a, 'hsl') ? { _a: a.h, _b: a.s, _c: a.l, _d: 0, space: 'hsl' }
-    : is(a, 'lab') ? { _a: a.l, _b: a.a, _c: a.b, _d: 0, space: 'lab' }
-    : is(a, 'lch') ? { _a: a.l, _b: a.c, _c: a.h, _d: 0, space: 'lch' }
-    : is(a, 'cmyk') ? { _a: a.c, _b: a.m, _c: a.y, _d: a.k, space: 'cmyk' }
-    : { _a: 0, _b: 0, _c: 0, space: 'rgb' }
+  const params = is(a, 'rgb')
+    ? { _a: a.r, _b: a.g, _c: a.b, _d: 0, space: 'rgb' }
+    : is(a, 'xyz')
+      ? { _a: a.x, _b: a.y, _c: a.z, _d: 0, space: 'xyz' }
+      : is(a, 'hsl')
+        ? { _a: a.h, _b: a.s, _c: a.l, _d: 0, space: 'hsl' }
+        : is(a, 'lab')
+          ? { _a: a.l, _b: a.a, _c: a.b, _d: 0, space: 'lab' }
+          : is(a, 'lch')
+            ? { _a: a.l, _b: a.c, _c: a.h, _d: 0, space: 'lch' }
+            : is(a, 'cmyk')
+              ? { _a: a.c, _b: a.m, _c: a.y, _d: a.k, space: 'cmyk' }
+              : { _a: 0, _b: 0, _c: 0, space: 'rgb' }
 
   params.space = b || params.space
   return params
@@ -194,14 +200,20 @@ export default class Color {
 
     // Calculate the hue and saturation
     const delta = max - min
-    const s = isGrey ? 0
-      : l > 0.5 ? delta / (2 - max - min)
-      : delta / (max + min)
-    const h = isGrey ? 0
-      : max === r ? ((g - b) / delta + (g < b ? 6 : 0)) / 6
-      : max === g ? ((b - r) / delta + 2) / 6
-      : max === b ? ((r - g) / delta + 4) / 6
-      : 0
+    const s = isGrey
+      ? 0
+      : l > 0.5
+        ? delta / (2 - max - min)
+        : delta / (max + min)
+    const h = isGrey
+      ? 0
+      : max === r
+        ? ((g - b) / delta + (g < b ? 6 : 0)) / 6
+        : max === g
+          ? ((b - r) / delta + 2) / 6
+          : max === b
+            ? ((r - g) / delta + 4) / 6
+            : 0
 
     // Construct and return the new color
     const color = new Color(360 * h, 100 * s, 100 * l, 'hsl')
@@ -249,13 +261,19 @@ export default class Color {
 
     // Now add the components as a convenience
     const { _a, _b, _c, _d } = this
-    const components = this.space === 'rgb' ? { r: _a, g: _b, b: _c }
-      : this.space === 'xyz' ? { x: _a, y: _b, z: _c }
-      : this.space === 'hsl' ? { h: _a, s: _b, l: _c }
-      : this.space === 'lab' ? { l: _a, a: _b, b: _c }
-      : this.space === 'lch' ? { l: _a, c: _b, h: _c }
-      : this.space === 'cmyk' ? { c: _a, m: _b, y: _c, k: _d }
-      : {}
+    const components = this.space === 'rgb'
+      ? { r: _a, g: _b, b: _c }
+      : this.space === 'xyz'
+        ? { x: _a, y: _b, z: _c }
+        : this.space === 'hsl'
+          ? { h: _a, s: _b, l: _c }
+          : this.space === 'lab'
+            ? { l: _a, a: _b, b: _c }
+            : this.space === 'lch'
+              ? { l: _a, c: _b, h: _c }
+              : this.space === 'cmyk'
+                ? { c: _a, m: _b, y: _c, k: _d }
+                : {}
     Object.assign(this, components)
   }
 

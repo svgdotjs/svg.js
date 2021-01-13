@@ -83,9 +83,11 @@ export default class SVGNumber {
   }
 
   toString () {
-    return (this.unit === '%' ? ~~(this.value * 1e8) / 1e6
-      : this.unit === 's' ? this.value / 1e3
-      : this.value
+    return (this.unit === '%'
+      ? ~~(this.value * 1e8) / 1e6
+      : this.unit === 's'
+        ? this.value / 1e3
+        : this.value
     ) + this.unit
   }
 

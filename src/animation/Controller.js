@@ -140,15 +140,15 @@ export class Controller extends Stepper {
 
 function recalculate () {
   // Apply the default parameters
-  var duration = (this._duration || 500) / 1000
-  var overshoot = this._overshoot || 0
+  const duration = (this._duration || 500) / 1000
+  const overshoot = this._overshoot || 0
 
   // Calculate the PID natural response
-  var eps = 1e-10
-  var pi = Math.PI
-  var os = Math.log(overshoot / 100 + eps)
-  var zeta = -os / Math.sqrt(pi * pi + os * os)
-  var wn = 3.9 / (zeta * duration)
+  const eps = 1e-10
+  const pi = Math.PI
+  const os = Math.log(overshoot / 100 + eps)
+  const zeta = -os / Math.sqrt(pi * pi + os * os)
+  const wn = 3.9 / (zeta * duration)
 
   // Calculate the Spring values
   this.d = 2 * zeta * wn
@@ -173,11 +173,11 @@ export class Spring extends Controller {
     dt /= 1000
 
     // Get the previous velocity
-    var velocity = c.velocity || 0
+    const velocity = c.velocity || 0
 
     // Apply the control to get the new position and store it
-    var acceleration = -this.d * velocity - this.k * (current - target)
-    var newPosition = current
+    const acceleration = -this.d * velocity - this.k * (current - target)
+    const newPosition = current
       + velocity * dt
       + acceleration * dt * dt / 2
 
@@ -208,10 +208,10 @@ export class PID extends Controller {
     if (dt === Infinity) return target
     if (dt === 0) return current
 
-    var p = target - current
-    var i = (c.integral || 0) + p * dt
-    var d = (p - (c.error || 0)) / dt
-    var windup = this._windup
+    const p = target - current
+    let i = (c.integral || 0) + p * dt
+    const d = (p - (c.error || 0)) / dt
+    const windup = this._windup
 
     // antiwindup
     if (windup !== false) {

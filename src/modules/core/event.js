@@ -26,10 +26,10 @@ export function clearEvents (instance) {
 
 // Add event binder in the SVG namespace
 export function on (node, events, listener, binding, options) {
-  var l = listener.bind(binding || node)
-  var instance = makeInstance(node)
-  var bag = getEvents(instance)
-  var n = getEventTarget(instance)
+  const l = listener.bind(binding || node)
+  const instance = makeInstance(node)
+  const bag = getEvents(instance)
+  const n = getEventTarget(instance)
 
   // events can be an array of events or a string of events
   events = Array.isArray(events) ? events : events.split(delimiter)
@@ -40,8 +40,8 @@ export function on (node, events, listener, binding, options) {
   }
 
   events.forEach(function (event) {
-    var ev = event.split('.')[0]
-    var ns = event.split('.')[1] || '*'
+    const ev = event.split('.')[0]
+    const ns = event.split('.')[1] || '*'
 
     // ensure valid object
     bag[ev] = bag[ev] || {}
@@ -57,9 +57,9 @@ export function on (node, events, listener, binding, options) {
 
 // Add event unbinder in the SVG namespace
 export function off (node, events, listener, options) {
-  var instance = makeInstance(node)
-  var bag = getEvents(instance)
-  var n = getEventTarget(instance)
+  const instance = makeInstance(node)
+  const bag = getEvents(instance)
+  const n = getEventTarget(instance)
 
   // listener can be a function or a number
   if (typeof listener === 'function') {
@@ -71,9 +71,9 @@ export function off (node, events, listener, options) {
   events = Array.isArray(events) ? events : (events || '').split(delimiter)
 
   events.forEach(function (event) {
-    var ev = event && event.split('.')[0]
-    var ns = event && event.split('.')[1]
-    var namespace, l
+    const ev = event && event.split('.')[0]
+    const ns = event && event.split('.')[1]
+    let namespace, l
 
     if (listener) {
       // remove listener reference
@@ -122,7 +122,7 @@ export function off (node, events, listener, options) {
 }
 
 export function dispatch (node, event, data, options) {
-  var n = getEventTarget(node)
+  const n = getEventTarget(node)
 
   // Dispatch event
   if (event instanceof globals.window.Event) {
