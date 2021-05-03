@@ -1662,6 +1662,14 @@ declare module "@svgdotjs/svg.js" {
         plot(d: string): this
         track(): Path
     }
+    
+    // style.js
+    class Style extends Element {
+        constructor(node: SVGElement, attr?: StylingAttr);
+        addText(text: string): this;
+        font(name: string, src: string, params?: any): this;
+        rule(selector: string, obj: any): this;
+    }
 
     // use.js
     class Use extends Shape {
