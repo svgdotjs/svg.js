@@ -1667,7 +1667,9 @@ declare module "@svgdotjs/svg.js" {
     class Style extends Element {
         constructor(node: SVGElement, attr?: StylingAttr);
         addText(text: string): this;
-        font(name: string, src: string, params?: any): this;
+        font(a: object): this
+        font(a: string, v: string | number): this
+        font(a: string): string
         rule(selector: string, obj: any): this;
     }
 
