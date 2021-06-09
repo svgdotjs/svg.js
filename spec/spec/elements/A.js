@@ -4,7 +4,7 @@ import { A, G, Rect } from '../../../src/main.js'
 
 const { any } = jasmine
 
-const url = 'https://svgjs.com'
+const url = 'https://svgjs.dev'
 describe('A.js', () => {
 
   describe('()', () => {
