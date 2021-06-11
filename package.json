@@ -2,8 +2,8 @@
   "name": "@svgdotjs/svg.js",
   "version": "3.0.16",
   "description": "A lightweight library for manipulating and animating SVG.",
-  "url": "https://svgdotjs.github.io/",
-  "homepage": "https://svgdotjs.github.io/",
+  "url": "https://svgjs.dev/",
+  "homepage": "https://svgjs.dev/",
   "keywords": [
     "svg",
     "vector",
