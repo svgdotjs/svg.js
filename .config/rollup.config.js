@@ -24,18 +24,17 @@ const getBabelConfig = (node = false) => {
   
   let targets = pkg.browserslist
   const plugins = [
-    ['@babel/plugin-transform-classes'],
-    ['@babel/plugin-transform-runtime', {
-      corejs: 3,
-      helpers: true,
-      useESModules: true,
+    ['@babel/transform-runtime', {
       version: "^7.14.5",
-      regenerator: false
+      regenerator: false,
+      useESModules: true
+    }],
+    ["polyfill-corejs3", {
+      "method": "usage-pure"
     }]
   ]
 
   if (node) {
-    plugins.shift()
     targets = 'maintained node versions'
   }
 
@@ -43,14 +42,15 @@ const getBabelConfig = (node = false) => {
     include: 'src/**',
     babelHelpers: 'runtime',
     babelrc: false,
+    targets: targets,
     presets: [['@babel/preset-env', {
       modules: false,
-      targets: targets || pkg.browserslist,
       // useBuildins and plugin-transform-runtime are mutually exclusive
       // https://github.com/babel/babel/issues/10271#issuecomment-528379505
       // use babel-polyfills when released
       useBuiltIns: false,
-      bugfixes: true
+      bugfixes: true,
+      loose: true
     }]],
     plugins
   })
@@ -110,7 +110,7 @@ const config = (node, min, esm = false) => ({
   plugins: [
     resolve({ browser: !node }),
     commonjs(),
-    getBabelConfig(node && 'maintained node versions'),
+    getBabelConfig(node),
     filesize(),
     !min ? {} : terser({
       mangle: {
@@ -120,8 +120,7 @@ const config = (node, min, esm = false) => ({
         preamble: headerShort
       }
     })
-  ],
-  // external: [/@babel\/runtime/, /@babel\/runtime-corejs3/]//['@babel/runtime', '@babel/runtime-corejs3']
+  ]
 })
 
 // [node, minified, esm]
