@@ -4,8 +4,18 @@ import { proportionalSize } from '../../utils/utils.js'
 
 export function dmove (dx, dy) {
   this.children().forEach((child, i) => {
-    // Get the childs bbox
-    const bbox = child.bbox()
+
+    let bbox
+
+    // We have to wrap this for elements that dont have a bbox
+    // e.g. title and other descriptive elements
+    try {
+      // Get the childs bbox
+      bbox = child.bbox()
+    } catch (e) {
+      return
+    }
+
     // Get childs matrix
     const m = new Matrix(child)
     // Translate childs matrix by amount and

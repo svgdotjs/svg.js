@@ -29,7 +29,7 @@ const getBabelConfig = (node = false) => {
       corejs: 3,
       helpers: true,
       useESModules: true,
-      version: "^7.9.6",
+      version: "^7.14.5",
       regenerator: false
     }]
   ]
@@ -121,7 +121,7 @@ const config = (node, min, esm = false) => ({
       }
     })
   ],
-  //external: ['@babel/runtime', '@babel/runtime-corejs3']
+  // external: [/@babel\/runtime/, /@babel\/runtime-corejs3/]//['@babel/runtime', '@babel/runtime-corejs3']
 })
 
 // [node, minified, esm]

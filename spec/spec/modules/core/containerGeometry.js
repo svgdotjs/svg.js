@@ -1,6 +1,6 @@
 /* globals describe, expect, it, jasmine, spyOn, container */
 
-import { Box, G, Rect, SVG } from '../../../../src/main.js'
+import { Box, create, Element, G, Rect, SVG } from '../../../../src/main.js'
 
 const { any, objectContaining } = jasmine
 
@@ -41,6 +41,23 @@ describe('containerGeometry.js', () => {
       expect(newBox.y).toBeCloseTo(oldBox.y + 10, 4)
       expect(newBox.w).toBeCloseTo(oldBox.w, 4)
       expect(newBox.h).toBeCloseTo(oldBox.h, 4)
+    })
+
+    it('it does not fail when hitting elements without bbox', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+
+      g.add(new Rect({ width: 100, height: 120, x: 10, y: 20 }))
+      g.add(new Rect({ width: 70, height: 100, x: 50, y: 60 }))
+      g.add(new Element(create('title')))
+
+      const fn = () => g.dmove(10, 10)
+      expect(fn).not.toThrowError()
+
+      const box = g.bbox()
+      expect(box).toEqual(objectContaining({
+        x: 20, y: 30, width: box.width, height: box.height
+      }))
     })
   })
 
