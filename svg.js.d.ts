@@ -821,7 +821,7 @@ declare module "@svgdotjs/svg.js" {
 
     type TimeLike = number | TimesParam | Stepper
 
-    type EasingCallback = (...any) => number
+    type EasingCallback = (...any: any) => number
     type EasingLiteral = "<>" | "-" | "<" | ">"
 
     class Runner {
@@ -1104,7 +1104,7 @@ declare module "@svgdotjs/svg.js" {
         viewbox(x: number, y: number, width: number, height: number): this;
         textPath(text: string | Text, path: string | Path): TextPath
         symbol(): Symbol
-        zoom(level: NumberAlias, point?: Point)
+        zoom(level: NumberAlias, point?: Point): any;
     }
 
     class Defs extends Container {
