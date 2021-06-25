@@ -58,7 +58,7 @@ export default class PathArray extends SVGArray {
 
     if (!isNaN(x) && !isNaN(y)) {
       // move every point
-      for (var l, i = this.length - 1; i >= 0; i--) {
+      for (let l, i = this.length - 1; i >= 0; i--) {
         l = this[i][0]
 
         if (l === 'M' || l === 'L' || l === 'T') {
