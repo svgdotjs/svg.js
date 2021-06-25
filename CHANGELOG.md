@@ -7,6 +7,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.1.1]
+
+### Fixed
+ - fixed typings for tcs 4.2.4 (#1204, #1206, #1203)
+
 ## [3.1.0]
 
 ### Fixed
@@ -900,6 +905,8 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.1.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.1
+[3.1.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.0
 [3.0.16]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.16
 [3.0.15]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.15
 [3.0.14]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.14
