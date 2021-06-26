@@ -1,6 +1,6 @@
 /* globals describe, expect, it, beforeEach, afterEach, spyOn, jasmine */
 
-import { Runner, defaults, Ease, Controller, SVG, Timeline, Rect, Morphable, Animator, Queue, Matrix, Color, Box, Polygon, PointArray } from '../../../src/main.js'
+import { Runner, defaults, Ease, Controller, SVG, Timeline, Rect, Text, Morphable, Animator, Queue, Matrix, Color, Box, Polygon, PointArray } from '../../../src/main.js'
 import { FakeRunner, RunnerArray } from '../../../src/animation/Runner.js'
 import { getWindow } from '../../../src/utils/window.js'
 import SVGNumber from '../../../src/types/SVGNumber.js'
@@ -1767,6 +1767,31 @@ describe('Runner.js', () => {
           expect(spy).toHaveBeenCalledWith('offset', 0.5)
           expect(spy).toHaveBeenCalledWith('stop-color', '#fff')
           expect(spy).toHaveBeenCalledWith('stop-opacity', 1)
+        })
+      })
+
+      describe('text()', () => {
+        it('fails unless the runner is a text or tspan', () => {
+          const rect = new Rect(1, 2)
+          expect(() => rect.animate().text('goodbye')).toThrow('You can only animate the text of Text() objects')
+        })
+
+        it('changes the text at the half-way point', () => {
+          const element = new Text().text('hello')
+
+          const runner = element.animate(100).ease('-')
+
+          expect(element.text()).toBe('hello')
+          runner.step(49)
+          expect(element.text()).toBe('hello')
+          runner.step(1)
+          expect(element.text()).toBe('goodbye')
+          runner.step(49)
+          expect(element.text()).toBe('goodbye')
+
+          // and going backwards
+          runner.step(-80)
+          expect(element.text()).toBe('hello')
         })
       })
     })
