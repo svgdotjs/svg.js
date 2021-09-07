@@ -1104,6 +1104,7 @@ declare module "@svgdotjs/svg.js" {
         viewbox(x: number, y: number, width: number, height: number): this;
         textPath(text: string | Text, path: string | Path): TextPath
         symbol(): Symbol
+        zoom(): number
         zoom(level: NumberAlias, point?: Point): this;
     }
 
