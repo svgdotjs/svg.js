@@ -41,12 +41,12 @@ export function makeInstance (element, isHTML = false) {
   return element
 }
 
-export function nodeOrNew (name, node) {
-  return node instanceof globals.window.Node ? node : create(name)
-}
 // export function nodeOrNew (name, node) {
-//   return (node && node instanceof node.ownerDocument.defaultView.Node) ? node : create(name)
+//   return node instanceof globals.window.Node ? node : create(name)
 // }
+export function nodeOrNew (name, node) {
+  return (node && node instanceof node.ownerDocument.defaultView.Node) ? node : create(name)
+}
 
 // Adopt existing svg elements
 export function adopt (node) {
