@@ -42,7 +42,7 @@ export function makeInstance (element, isHTML = false) {
 }
 
 export function nodeOrNew (name, node) {
-  return (node && 'ownerDocument' in node && node instanceof node.ownerDocument.defaultView.Node) ? node : create(name)
+  return (node && node.ownerDocument && node instanceof node.ownerDocument.defaultView.Node) ? node : create(name)
 }
 
 // Adopt existing svg elements
