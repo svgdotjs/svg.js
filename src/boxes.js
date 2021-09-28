@@ -76,10 +76,13 @@ SVG.BBox = SVG.invent({
           while (topParent.parentNode){
             topParent = topParent.parentNode
           }
-          if (topParent != document) throw new Exception('Element not in the dom')
+          if (topParent != document || !(topParent instanceof ShadowRoot)) 
+            throw new Exception('Element not in the dom')
         } else {
           // the element is NOT in the dom, throw error
-          if(!document.documentElement.contains(element.node)) throw new Exception('Element not in the dom')
+          if(!document.documentElement.contains(element.node) &&
+              !(element.node.getRootNode() instanceof ShadowRoot))
+              throw new Exception('Element not in the dom')
         }
 
         // find native bbox
