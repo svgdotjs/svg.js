@@ -377,7 +377,6 @@ declare module "@svgdotjs/svg.js" {
         constructor(array?: ArrayAlias<ArrayXY> | number[]);
 
         toLine(): LineAttr;
-        at(pos: number): PointArray;
         transform(m: Matrix | MatrixLike): PointArray
         move(x: number, y: number): this;
         size(width: number, height: number): this;
@@ -436,7 +435,6 @@ declare module "@svgdotjs/svg.js" {
         size(width: number, height: number): this;
         equalCommands(other: PathArray): boolean
         morph(pa: PathArray): this
-        at(pos: number): PathArray
         parse(array?: ArrayAlias<PathCommand> | PathArrayAlias): PathCommand[];
         bbox(): Box;
         to(a: any): Morphable
@@ -1663,7 +1661,7 @@ declare module "@svgdotjs/svg.js" {
         plot(d: string): this
         track(): Path
     }
-    
+
     // style.js
     class Style extends Element {
         constructor(node: SVGElement, attr?: StylingAttr);
