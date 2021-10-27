@@ -58,7 +58,7 @@ export function adopt (node) {
   }
 
   // initialize variables
-  let className = capitalize(node.nodeName || 'Dom')
+  let className = capitalize((node.nodeName || "Dom").toLowerCase());
 
   // Make sure that gradients are adopted correctly
   if (className === 'LinearGradient' || className === 'RadialGradient') {
