@@ -22,63 +22,63 @@
         "[everything-else]"
       ],
       "groups": {
-        "constructor": {
+        "constructor": [{
           "name": "constructor",
           "type": "method",
           "sort": "alphabetical"
-        },
-        "properties": {
+        }],
+        "properties": [{
           "type": "property",
           "sort": "alphabetical"
-        },
-        "getters": {
+        }],
+        "getters": [{
           "kind": "get",
           "sort": "alphabetical"
-        },
-        "setters": {
+        }],
+        "setters": [{
           "kind": "set",
           "sort": "alphabetical"
-        },
-        "accessor-pairs": {
+        }],
+        "accessor-pairs": [{
           "accessorPair": true,
           "sort": "alphabetical"
-        },
-        "static-properties": {
+        }],
+        "static-properties": [{
           "type": "property",
           "static": true,
           "sort": "alphabetical"
-        },
-        "conventional-private-properties": {
+        }],
+        "conventional-private-properties": [{
           "type": "property",
           "name": "/_.+/",
           "sort": "alphabetical"
-        },
-        "arrow-function-properties": {
+        }],
+        "arrow-function-properties": [{
           "propertyType": "ArrowFunctionExpression",
           "sort": "alphabetical"
-        },
-        "methods": {
+        }],
+        "methods": [{
           "type": "method",
           "sort": "alphabetical"
-        },
-        "static-methods": {
+        }],
+        "static-methods": [{
           "type": "method",
           "static": true,
           "sort": "alphabetical"
-        },
-        "async-methods": {
+        }],
+        "async-methods": [{
           "type": "method",
           "async": true,
           "sort": "alphabetical"
-        },
-        "conventional-private-methods": {
+        }],
+        "conventional-private-methods": [{
           "type": "method",
           "name": "/_.+/",
           "sort": "alphabetical"
-        },
-        "everything-else": {
+        }],
+        "everything-else": [{
           "sort": "alphabetical"
-        }
+        }]
       }
     }]
 	}

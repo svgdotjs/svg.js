@@ -50,13 +50,8 @@ export default class Morphable {
   }
 
   at (pos) {
-    const _this = this
+    return this._morphObj.morph(this._from, this._to, pos, this._stepper, this._context)
 
-    return this._morphObj.fromArray(
-      this._from.map(function (i, index) {
-        return _this._stepper.step(i, _this._to[index], pos, _this._context[index], _this._context)
-      })
-    )
   }
 
   done () {
@@ -125,7 +120,7 @@ export default class Morphable {
           : result
     }
 
-    result = result.toArray()
+    result = result.toConsumable()
 
     this._morphObj = this._morphObj || new this._type()
     this._context = this._context
@@ -221,12 +216,35 @@ export class ObjectBag {
   }
 
   align (other) {
-    for (let i = 0, il = this.values.length; i < il; ++i) {
-      if (this.values[i] === Color) {
-        const space = other[i + 6]
-        const color = new Color(this.values.splice(i + 2, 5))[space]().toArray()
-        this.values.splice(i + 2, 0, ...color)
+    const values = this.values
+    for (let i = 0, il = values.length; i < il; ++i) {
+
+      // If the type is the same we only need to check if the color is in the correct format
+      if (values[i + 1] === other[i + 1]) {
+        if (values[i + 1] === Color && other[i + 7] !== values[i + 7]) {
+          const space = other[i + 7]
+          const color = new Color(this.values.splice(i + 3, 5))[space]().toArray()
+          this.values.splice(i + 3, 0, ...color)
+        }
+
+        i += values[i + 2] + 2
+        continue
       }
+
+      if (!other[i + 1]) {
+        return this
+      }
+
+      // The types differ, so we overwrite the new type with the old one
+      // And initialize it with the types default (e.g. black for color or 0 for number)
+      const defaultObject = new (other[i + 1])().toArray()
+
+      // Than we fix the values array
+      const toDelete = (values[i + 2]) + 3
+
+      values.splice(i, toDelete, other[i], other[i + 1], other[i + 2], ...defaultObject)
+
+      i += values[i + 2] + 2
     }
     return this
   }
@@ -268,7 +286,7 @@ export class ObjectBag {
       const Type = arr.shift()
       const num = arr.shift()
       const values = arr.splice(0, num)
-      obj[key] = new Type(values).valueOf()
+      obj[key] = new Type(values)// .valueOf()
     }
 
     return obj
@@ -291,12 +309,22 @@ export function makeMorphable () {
     to (val) {
       return new Morphable()
         .type(this.constructor)
-        .from(this.valueOf())
+        .from(this.toArray())// this.valueOf())
         .to(val)
     },
     fromArray (arr) {
       this.init(arr)
       return this
+    },
+    toConsumable () {
+      return this.toArray()
+    },
+    morph (from, to, pos, stepper, context) {
+      const mapper = function (i, index) {
+        return stepper.step(i, to[index], pos, context[index], context)
+      }
+
+      return this.fromArray(from.map(mapper))
     }
   })
 }

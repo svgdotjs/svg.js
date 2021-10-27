@@ -22,7 +22,7 @@ describe('Morphable.js', () => {
   describe('constructors', () => {
 
     it('Morphable with SVGNumber', () => {
-      var morpher = new Morphable().from(10).to(5)
+      const morpher = new Morphable().from(10).to(5)
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGNumber)
@@ -31,7 +31,7 @@ describe('Morphable.js', () => {
     })
 
     it('Morphable with String', () => {
-      var morpher = new Morphable().from('foo').to('bar')
+      const morpher = new Morphable().from('foo').to('bar')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(NonMorphable)
@@ -41,16 +41,25 @@ describe('Morphable.js', () => {
     })
 
     it('Morphable with Object', () => {
-      var morpher = new Morphable().from({ a: 5, b: 10 }).to({ a: 10, b: 20 })
+      const morpher = new Morphable().from({ a: 5, b: 10 }).to({ a: 10, b: 20 })
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(ObjectBag)
       expect(morpher.at(0.5)).toEqual(any(Object))
-      expect(morpher.at(0.5).valueOf()).toEqual(objectContaining({ a: 7.5, b: 15 }))
+      expect(morpher.at(0.5).valueOf()).toEqual(objectContaining({ a: new SVGNumber(7.5), b: new SVGNumber(15) }))
+    })
+
+    it('Morphable from object containing css values', () => {
+      const morpher = new Morphable().from({ opacity: '0', 'stroke-width': '10px' }).to({ opacity: 1, 'stroke-width': 20 })
+
+      expect(morpher).toEqual(any(Morphable))
+      expect(morpher.type()).toBe(ObjectBag)
+      expect(morpher.at(0.5)).toEqual(any(Object))
+      expect(morpher.at(0.5).valueOf()).toEqual(objectContaining({ opacity: new SVGNumber(0.5), 'stroke-width': new SVGNumber('15px') }))
     })
 
     it('Creates a morphable out of an SVGNumber', () => {
-      var morpher = new SVGNumber(5).to(10)
+      const morpher = new SVGNumber(5).to(10)
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGNumber)
@@ -59,7 +68,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an Color', () => {
-      var morpher = new Color('#fff').to('#000')
+      const morpher = new Color('#fff').to('#000')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(Color)
@@ -68,7 +77,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an Box', () => {
-      var morpher = new Box(1, 2, 3, 4).to([ 5, 6, 7, 8 ])
+      const morpher = new Box(1, 2, 3, 4).to([ 5, 6, 7, 8 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(Box)
@@ -77,7 +86,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an Matrix', () => {
-      var morpher = new Matrix(1, 2, 3, 4, 5, 6).to([ 3, 4, 5, 6, 7, 8 ])
+      const morpher = new Matrix(1, 2, 3, 4, 5, 6).to([ 3, 4, 5, 6, 7, 8 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(Matrix)
@@ -86,7 +95,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an SVGArray', () => {
-      var morpher = new SVGArray([ 1, 2, 3, 4, 5, 6 ]).to([ 3, 4, 5, 6, 7, 8 ])
+      const morpher = new SVGArray([ 1, 2, 3, 4, 5, 6 ]).to([ 3, 4, 5, 6, 7, 8 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGArray)
@@ -95,7 +104,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an PointArray', () => {
-      var morpher = new PointArray([ 1, 2, 3, 4, 5, 6 ]).to([ 3, 4, 5, 6, 7, 8 ])
+      const morpher = new PointArray([ 1, 2, 3, 4, 5, 6 ]).to([ 3, 4, 5, 6, 7, 8 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(PointArray)
@@ -104,7 +113,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an PathArray', () => {
-      var morpher = new PathArray([ 'M', 1, 2, 'L', 3, 4, 'L', 5, 6 ]).to([ 'M', 3, 4, 'L', 5, 6, 'L', 7, 8 ])
+      const morpher = new PathArray([ 'M', 1, 2, 'L', 3, 4, 'L', 5, 6 ]).to([ 'M', 3, 4, 'L', 5, 6, 'L', 7, 8 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(PathArray)
@@ -113,7 +122,7 @@ describe('Morphable.js', () => {
     })
 
     it('creates a morphable from unmorphable types', () => {
-      var morpher = new Morphable().from('Hallo').to('Welt')
+      const morpher = new Morphable().from('Hallo').to('Welt')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(NonMorphable)
@@ -123,7 +132,7 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an TransformBag', () => {
-      var morpher = new TransformBag({ rotate: 0, translateX: 0 })
+      const morpher = new TransformBag({ rotate: 0, translateX: 0 })
         .to({ rotate: 50, translateX: 20 })
 
       expect(morpher).toEqual(any(Morphable))
@@ -134,16 +143,16 @@ describe('Morphable.js', () => {
     })
 
     it('Creates a morphable out of an ObjectBag', () => {
-      var morpher = new ObjectBag({ a: 5, b: 10 }).to({ a: 10, b: 20 })
+      const morpher = new ObjectBag({ a: 5, b: 10 }).to({ a: 10, b: 20 })
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(ObjectBag)
       expect(morpher.at(0.5)).toEqual(any(Object))
-      expect(morpher.at(0.5).valueOf()).toEqual(objectContaining({ a: 7.5, b: 15 }))
+      expect(morpher.at(0.5).valueOf()).toEqual(objectContaining({ a: new SVGNumber(7.5), b: new SVGNumber(15) }))
     })
 
     it('creates a morphable from a color string', () => {
-      var morpher = new Morphable().from('#fff').to('#000')
+      let morpher = new Morphable().from('#fff').to('#000')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(Color)
@@ -159,7 +168,7 @@ describe('Morphable.js', () => {
     })
 
     it('creates a morphable from path string', () => {
-      var morpher = new Morphable().from('M 0 0 L 10 10').to('M 0 0 L 20 20')
+      const morpher = new Morphable().from('M 0 0 L 10 10').to('M 0 0 L 20 20')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(PathArray)
@@ -168,7 +177,7 @@ describe('Morphable.js', () => {
     })
 
     it('creates a morphable from number string', () => {
-      var morpher = new Morphable().from('10').to('20')
+      let morpher = new Morphable().from('10').to('20')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGNumber)
@@ -184,7 +193,7 @@ describe('Morphable.js', () => {
     })
 
     it('creates a morphable from delimited string', () => {
-      var morpher = new Morphable().from(' 0 1,  2  , 3  ').to('4,5,6,7')
+      const morpher = new Morphable().from(' 0 1,  2  , 3  ').to('4,5,6,7')
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGArray)
@@ -193,7 +202,7 @@ describe('Morphable.js', () => {
     })
 
     it('creates a morphable from an array', () => {
-      var morpher = new Morphable().from([ 0, 1, 2, 3 ]).to([ 4, 5, 6, 7 ])
+      const morpher = new Morphable().from([ 0, 1, 2, 3 ]).to([ 4, 5, 6, 7 ])
 
       expect(morpher).toEqual(any(Morphable))
       expect(morpher.type()).toBe(SVGArray)
@@ -202,7 +211,7 @@ describe('Morphable.js', () => {
     })
 
     it('converts the to-color to the from-type', () => {
-      var morpher = new Color('#fff').to(new Color(1, 2, 3, 'hsl'))
+      const morpher = new Color('#fff').to(new Color(1, 2, 3, 'hsl'))
       expect(new Color(morpher.from()).space).toBe('rgb')
       expect(morpher.at(0.5).space).toBe('rgb')
     })
@@ -216,36 +225,36 @@ describe('Morphable.js', () => {
 
   describe('from()', () => {
     it('sets the type of the runner', () => {
-      var morpher = new Morphable().from(5)
+      const morpher = new Morphable().from(5)
       expect(morpher.type()).toBe(SVGNumber)
     })
 
     it('sets the from attribute to an array representation of the morphable type', () => {
-      var morpher = new Morphable().from(5)
+      const morpher = new Morphable().from(5)
       expect(morpher.from()).toEqual(arrayContaining([ 5 ]))
     })
   })
 
   describe('type()', () => {
     it('sets the type of the runner', () => {
-      var morpher = new Morphable().type(SVGNumber)
+      const morpher = new Morphable().type(SVGNumber)
       expect(morpher._type).toBe(SVGNumber)
     })
 
     it('gets the type of the runner', () => {
-      var morpher = new Morphable().type(SVGNumber)
+      const morpher = new Morphable().type(SVGNumber)
       expect(morpher.type()).toBe(SVGNumber)
     })
   })
 
   describe('to()', () => {
     it('sets the type of the runner', () => {
-      var morpher = new Morphable().to(5)
+      const morpher = new Morphable().to(5)
       expect(morpher.type()).toBe(SVGNumber)
     })
 
     it('sets the from attribute to an array representation of the morphable type', () => {
-      var morpher = new Morphable().to(5)
+      const morpher = new Morphable().to(5)
       expect(morpher.to()).toEqual(arrayContaining([ 5 ]))
     })
   })
@@ -350,14 +359,14 @@ describe('Morphable.js', () => {
     })
 
     describe('valueOf()', () => {
-      it('create an object from the stored values', () => {
+      it('creates morphable objects from the stored values', () => {
         const bag = new ObjectBag({ foo: 1, bar: 2, baz: 3 })
-        expect(bag.valueOf()).toEqual({ foo: 1, bar: 2, baz: 3 })
+        expect(bag.valueOf()).toEqual({ foo: new SVGNumber(1), bar: new SVGNumber(2), baz: new SVGNumber(3) })
       })
 
       it('creates also morphable objects from the stored values', () => {
         const bag = new ObjectBag({ fill: new Color(), bar: 2 })
-        expect(bag.valueOf()).toEqual({ fill: objectContaining(new Color()), bar: 2 })
+        expect(bag.valueOf()).toEqual({ fill: objectContaining(new Color()), bar: new SVGNumber(2) })
       })
     })
 

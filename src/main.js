@@ -35,6 +35,7 @@ import Path from './elements/Path.js'
 import PathArray from './types/PathArray.js'
 import Pattern from './elements/Pattern.js'
 import PointArray from './types/PointArray.js'
+import Point from './types/Point.js'
 import Polygon from './elements/Polygon.js'
 import Polyline from './elements/Polyline.js'
 import Rect from './elements/Rect.js'
@@ -175,7 +176,8 @@ registerMorphableType([
   Matrix,
   SVGArray,
   PointArray,
-  PathArray
+  PathArray,
+  Point
 ])
 
 makeMorphable()

@@ -7,6 +7,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.1.2]
+
+### Fixed
+ - fixed `css()` returning camelCased properties even though they were specified in kebap-case
+ - fixed `ObjectBag` loosing information when calling `valueOf()` (Numbers lost its unit)
+
 ## [3.1.1]
 
 ### Fixed
