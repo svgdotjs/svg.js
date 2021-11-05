@@ -33,7 +33,7 @@ declare module "@svgdotjs/svg.js" {
     function dispatch(node: Node | Window, event: Event, data?: object, options?: object): Event
 
     function find(query: QuerySelector): List<Element>
-    function findOne(query: QuerySelector): Element
+    function findOne(query: QuerySelector): Element | null
 
     function getWindow(): Window;
     function registerWindow(win: Window, doc: Document): void;
@@ -990,7 +990,7 @@ declare module "@svgdotjs/svg.js" {
 
         // prototype extend Selector in selector.js
         find(query: string): List<Element>
-        findOne(query: string): Dom
+        findOne(query: string): Dom | null
 
         // prototype method register in data.js
         data(a: string): object | string | number
