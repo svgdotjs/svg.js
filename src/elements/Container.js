@@ -13,6 +13,9 @@ export default class Container extends Element {
   }
 
   ungroup (parent = this.parent(), index = parent.index(this)) {
+    if (this.isRoot()) {
+      throw new Error('Can not ungroup svg root element')
+    }
     // when parent != this, we want append all elements to the end
     index = index === -1 ? parent.children().length : index
 
