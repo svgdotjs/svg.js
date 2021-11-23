@@ -165,6 +165,7 @@ describe('Element.js', function () {
   describe('parents()', () => {
     it('returns array of parents until the passed element or root svg', () => {
       const canvas = SVG().addTo(container)
+      const groupA = canvas.group().addClass('test')
       const group1 = canvas.group().addClass('test')
       const group2 = group1.group()
       const group3 = group2.group()
@@ -174,6 +175,33 @@ describe('Element.js', function () {
       expect(rect.parents(group2)).toEqual([ group3, group2 ])
       expect(rect.parents(group1).length).toBe(3)
       expect(rect.parents()).toEqual([ group3, group2, group1, canvas ])
+    })
+
+    it('returns array of parents until the closest matching parent', () => {
+      const canvas = SVG().addTo(container)
+      const groupA = canvas.group().addClass('test')
+      const group1 = canvas.group().addClass('test')
+      const group2 = group1.group().addClass('test').addClass('foo')
+      const group3 = group2.group().addClass('foo')
+      const rect = group3.rect(100, 100)
+
+      expect(rect.parents('.test')).toEqual([ group3, group2 ])
+      expect(rect.parents('.foo')).toEqual([ group3 ])
+      expect(rect.parents('.test:not(.foo)')).toEqual([ group3, group2, group1 ])
+    })
+
+    it('returns null if the passed element is not an ancestor', () => {
+      const canvas = SVG().addTo(container)
+      const groupA = canvas.group().addClass('test')
+      const group1 = canvas.group()
+      const group2 = group1.group()
+      const group3 = group2.group()
+      const rect = group3.rect(100, 100)
+
+
+      expect(rect.parents('.does-not-exist')).toEqual(null)
+      expect(rect.parents('.test')).toEqual(null)
+      expect(rect.parents(groupA)).toEqual(null)
     })
   })
 

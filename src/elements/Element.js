@@ -87,7 +87,10 @@ export default class Element extends Dom {
 
   // return array of all ancestors of given type up to the root svg
   parents (until = this.root()) {
-    until = makeInstance(until)
+    const isSelector = typeof until === 'string'
+    if (!isSelector) {
+      until = makeInstance(until)
+    }
     const parents = new List()
     let parent = this
 
@@ -98,8 +101,15 @@ export default class Element extends Dom {
 
       parents.push(parent)
 
-      if (parent.node === until.node) {
+      if (!isSelector && (parent.node === until.node)) {
         break
+      }
+      if (isSelector && parent.matches(until)) {
+        break
+      }
+      if (parent.node === this.root().node) {
+        // We worked our way to the root and didn't match `until`
+        return null
       }
     }
 
