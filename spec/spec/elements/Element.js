@@ -175,6 +175,19 @@ describe('Element.js', function () {
       expect(rect.parents(group1).length).toBe(3)
       expect(rect.parents()).toEqual([ group3, group2, group1, canvas ])
     })
+
+    it('returns array of parents until the closest matching parent', () => {
+      const canvas = SVG().addTo(container)
+      const groupA = canvas.group().addClass('test')
+      const group1 = canvas.group().addClass('test')
+      const group2 = group1.group().addClass('test').addClass('foo')
+      const group3 = group2.group().addClass('foo')
+      const rect = group3.rect(100, 100)
+
+      expect(rect.parents('.test')).toEqual([ group3, group2 ])
+      expect(rect.parents('.foo')).toEqual([ group3 ])
+      expect(rect.parents('.test:not(.foo)')).toEqual([ group3, group2, group1 ])
+    })
   })
 
   describe('reference()', () => {
