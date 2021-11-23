@@ -188,6 +188,20 @@ describe('Element.js', function () {
       expect(rect.parents('.foo')).toEqual([ group3 ])
       expect(rect.parents('.test:not(.foo)')).toEqual([ group3, group2, group1 ])
     })
+
+    it('returns null if the passed element is not an ancestor', () => {
+      const canvas = SVG().addTo(container)
+      const groupA = canvas.group().addClass('test')
+      const group1 = canvas.group()
+      const group2 = group1.group()
+      const group3 = group2.group()
+      const rect = group3.rect(100, 100)
+
+
+      expect(rect.parents('.does-not-exist')).toEqual(null)
+      expect(rect.parents('.test')).toEqual(null)
+      expect(rect.parents(groupA)).toEqual(null)
+    })
   })
 
   describe('reference()', () => {
