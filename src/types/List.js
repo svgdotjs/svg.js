@@ -47,6 +47,11 @@ List.extend = function (methods) {
     // Don't add private methods
     if (name[0] === '_') return obj
 
+    // Allow access to original Array methods through a prefix
+    if (name in Array.prototype) {
+      obj['$' + name] = Array.prototype[name]
+    }
+
     // Relay every call to each()
     obj[name] = function (...attrs) {
       return this.each(name, ...attrs)
