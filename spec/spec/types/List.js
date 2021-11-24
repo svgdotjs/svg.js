@@ -82,6 +82,21 @@ describe('List.js', () => {
       List.extend([ 'unshift' ])
       expect(new List().unshift).toEqual(any(Function))
       expect(new List().$unshift).toEqual(Array.prototype.unshift)
+
+      // Check that it works!
+      const sourceArray = [
+        { 'unshift': () => 1 },
+        { 'unshift': () => 2 },
+        { 'unshift': () => 3 }
+      ];
+      const list = new List(sourceArray)
+
+      expect(list).toEqual(sourceArray)
+      expect(list.unshift(0)).toEqual([1,2,3])
+
+      expect(list.$unshift(0)).toEqual(4)
+      expect(list).toEqual([0].concat(sourceArray))
+
       delete List.prototype.unshift;
     });
 
