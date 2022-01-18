@@ -101,6 +101,17 @@ describe('EventTarget.js', () => {
       target.dispatch('event')
       expect(spy.calls.count()).toBe(1)
     })
+
+    it('removes an event binding with options from the target', () => {
+      const target = new EventTarget()
+      const spy = createSpy()
+      target.on('event', spy, undefined, { capture: true })
+      target.dispatch('event')
+      expect(spy.calls.count()).toBe(1)
+      target.off('event', spy, { capture: true })
+      target.dispatch('event')
+      expect(spy.calls.count()).toBe(1)
+    })
   })
 
   describe('on()', () => {

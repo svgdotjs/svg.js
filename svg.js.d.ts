@@ -27,8 +27,8 @@ declare module "@svgdotjs/svg.js" {
     function on(el: Node | Window, events: string, cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
     function on(el: Node | Window, events: Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): void;
 
-    function off(el: Node | Window, events?: string, cb?: EventListener | number): void;
-    function off(el: Node | Window, events?: Event[], cb?: EventListener | number): void;
+    function off(el: Node | Window, events?: string, cb?: EventListener | number, options?: AddEventListenerOptions): void;
+    function off(el: Node | Window, events?: Event[], cb?: EventListener | number, options?: AddEventListenerOptions): void;
 
     function dispatch(node: Node | Window, event: Event, data?: object, options?: object): Event
 
@@ -579,7 +579,7 @@ declare module "@svgdotjs/svg.js" {
         getEventTarget(): this | Node
 
         on(events: string | Event[], cb: EventListener, binbind?: any, options?: AddEventListenerOptions): this;
-        off(events?: string | Event[], cb?: EventListener | number): this;
+        off(events?: string | Event[], cb?: EventListener | number, options?: AddEventListenerOptions): this;
 
         removeEventListener(): void
     }

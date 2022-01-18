@@ -39,8 +39,8 @@ export default class EventTarget extends Base {
   }
 
   // Unbind event from listener
-  off (event, listener) {
-    off(this, event, listener)
+  off (event, listener, options) {
+    off(this, event, listener, options)
     return this
   }
 
