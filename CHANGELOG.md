@@ -10,8 +10,11 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ## [3.1.2]
 
 ### Fixed
+ - fixed several type issues (#1249, #1233, #1231, #1223, #1215)
  - fixed `css()` returning camelCased properties even though they were specified in kebap-case
  - fixed `ObjectBag` loosing information when calling `valueOf()` (Numbers lost its unit)
+ - fixed `parents()` (#1235)
+ - fixed `nodeOrNew()` to work in object tags as well (#1219)
 
 ## [3.1.1]
 
@@ -911,6 +914,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 
 <!-- Headings above link to the releases listed here -->
+[3.1.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.2
 [3.1.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.1
 [3.1.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.0
 [3.0.16]: https://github.com/svgdotjs/svg.js/releases/tag/3.0.16
