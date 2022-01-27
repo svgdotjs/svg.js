@@ -54,5 +54,5 @@ export default class Point {
 }
 
 export function point (x, y) {
-  return new Point(x, y).transform(this.screenCTM().inverse())
+  return new Point(x, y).transform0(this.screenCTM().inverse())
 }
