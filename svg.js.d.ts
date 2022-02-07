@@ -788,6 +788,7 @@ declare module "@svgdotjs/svg.js" {
         constructor()
         constructor(fn: Function)
 
+        active(): boolean
         schedule(runner: Runner, delay?: number, when?: string): this
         schedule(): ScheduledRunnerInfo[]
         unschedule(runner: Runner): this
