@@ -10,8 +10,8 @@ export default class A extends Container {
   }
 
   // Link target attribute
-  target (target) {
-    return this.attr('target', target)
+  target (targetValue) {
+    return this.attr('target', targetValue)
   }
 
   // Link url
