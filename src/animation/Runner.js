@@ -142,8 +142,8 @@ export default class Runner extends EventTarget {
     }
   }
 
-  delay (delay) {
-    return this.animate(0, delay)
+  delay (delayValue) {
+    return this.animate(0, delayValue)
   }
 
   duration () {
@@ -165,10 +165,10 @@ export default class Runner extends EventTarget {
   help us make new runners from the current runner
   */
 
-  element (element) {
-    if (element == null) return this._element
-    this._element = element
-    element._prepareRunner()
+  element (elementValue) {
+    if (elementValue == null) return this._element
+    this._element = elementValue
+    elementValue._prepareRunner()
     return this
   }
 
@@ -293,8 +293,8 @@ export default class Runner extends EventTarget {
     return this
   }
 
-  reverse (reverse) {
-    this._reverse = reverse == null ? !this._reverse : reverse
+  reverse (reverseValue) {
+    this._reverse = reverseValue == null ? !this._reverse : reverseValue
     return this
   }
 
@@ -373,19 +373,19 @@ export default class Runner extends EventTarget {
   ========================
   Control how the animation plays
   */
-  time (time) {
-    if (time == null) {
+  time (timeValue) {
+    if (timeValue == null) {
       return this._time
     }
-    const dt = time - this._time
+    const dt = timeValue - this._time
     this.step(dt)
     return this
   }
 
-  timeline (timeline) {
+  timeline (timelineValue) {
     // check explicitly for undefined so we can set the timeline to null
-    if (typeof timeline === 'undefined') return this._timeline
-    this._timeline = timeline
+    if (typeof timelineValue === 'undefined') return this._timeline
+    this._timeline = timelineValue
     return this
   }
 
@@ -865,13 +865,13 @@ extend(Runner, {
   },
 
   // Animatable x-axis
-  x (x, relative) {
-    return this._queueNumber('x', x)
+  x (xValue, relative) {
+    return this._queueNumber('x', xValue)
   },
 
   // Animatable y-axis
-  y (y) {
-    return this._queueNumber('y', y)
+  y (yValue) {
+    return this._queueNumber('y', yValue)
   },
 
   dx (x = 0) {
@@ -976,13 +976,13 @@ extend(Runner, {
   },
 
   // Add animatable width
-  width (width) {
-    return this._queueNumber('width', width)
+  width (widthValue) {
+    return this._queueNumber('width', widthValue)
   },
 
   // Add animatable height
-  height (height) {
-    return this._queueNumber('height', height)
+  height (heightValue) {
+    return this._queueNumber('height', heightValue)
   },
 
   // Add animatable plot

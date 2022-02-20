@@ -35,10 +35,10 @@ export default class Text extends Shape {
   }
 
   // Rebuild appearance type
-  rebuild (rebuild) {
+  rebuild (rebuildValue) {
     // store new rebuild flag if given
-    if (typeof rebuild === 'boolean') {
-      this._rebuild = rebuild
+    if (typeof rebuildValue === 'boolean') {
+      this._rebuild = rebuildValue
     }
 
     // define position of all lines
@@ -79,12 +79,12 @@ export default class Text extends Shape {
   }
 
   // Set the text content
-  text (text) {
+  text (textValue) {
     // act as getter
-    if (text === undefined) {
+    if (textValue === undefined) {
       const children = this.node.childNodes
       let firstLine = 0
-      text = ''
+      textValue = ''
 
       for (let i = 0, len = children.length; i < len; ++i) {
         // skip textPaths - they are no lines
@@ -95,29 +95,29 @@ export default class Text extends Shape {
 
         // add newline if its not the first child and newLined is set to true
         if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
-          text += '\n'
+          textValue += '\n'
         }
 
         // add content of this node
-        text += children[i].textContent
+        textValue += children[i].textContent
       }
 
-      return text
+      return textValue
     }
 
     // remove existing content
     this.clear().build(true)
 
-    if (typeof text === 'function') {
+    if (typeof textValue === 'function') {
       // call block
-      text.call(this, this)
+      textValue.call(this, this)
     } else {
       // store text and make sure text is not blank
-      text = (text + '').split('\n')
+      textValue = (textValue + '').split('\n')
 
       // build new lines
-      for (let j = 0, jl = text.length; j < jl; j++) {
-        this.newLine(text[j])
+      for (let j = 0, jl = textValue.length; j < jl; j++) {
+        this.newLine(textValue[j])
       }
     }
 

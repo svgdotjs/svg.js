@@ -19,13 +19,13 @@ export default class Tspan extends Shape {
   }
 
   // Shortcut dx
-  dx (dx) {
-    return this.attr('dx', dx)
+  dx (dxValue) {
+    return this.attr('dx', dxValue)
   }
 
   // Shortcut dy
-  dy (dy) {
-    return this.attr('dy', dy)
+  dy (dyValue) {
+    return this.attr('dy', dyValue)
   }
 
   // Create new line
@@ -52,15 +52,15 @@ export default class Tspan extends Shape {
   }
 
   // Set text content
-  text (text) {
-    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+  text (textValue) {
+    if (textValue == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
 
-    if (typeof text === 'function') {
+    if (typeof textValue === 'function') {
       this.clear().build(true)
-      text.call(this, this)
+      textValue.call(this, this)
       this.build(false)
     } else {
-      this.plain(text)
+      this.plain(textValue)
     }
 
     return this

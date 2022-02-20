@@ -10,44 +10,44 @@ export function registerAttrHook (fn) {
 }
 
 // Set svg element attribute
-export default function attr (attr, val, ns) {
+export default function attr (attrValue, val, ns) {
   // act as full getter
-  if (attr == null) {
+  if (attrValue == null) {
     // get an object of attributes
-    attr = {}
+    attrValue = {}
     val = this.node.attributes
 
     for (const node of val) {
-      attr[node.nodeName] = isNumber.test(node.nodeValue)
+      attrValue[node.nodeName] = isNumber.test(node.nodeValue)
         ? parseFloat(node.nodeValue)
         : node.nodeValue
     }
 
-    return attr
-  } else if (attr instanceof Array) {
+    return attrValue
+  } else if (attrValue instanceof Array) {
     // loop through array and get all values
-    return attr.reduce((last, curr) => {
+    return attrValue.reduce((last, curr) => {
       last[curr] = this.attr(curr)
       return last
     }, {})
-  } else if (typeof attr === 'object' && attr.constructor === Object) {
+  } else if (typeof attrValue === 'object' && attrValue.constructor === Object) {
     // apply every attribute individually if an object is passed
-    for (val in attr) this.attr(val, attr[val])
+    for (val in attrValue) this.attr(val, attrValue[val])
   } else if (val === null) {
     // remove value
-    this.node.removeAttribute(attr)
+    this.node.removeAttribute(attrValue)
   } else if (val == null) {
     // act as a getter if the first and only argument is not an object
-    val = this.node.getAttribute(attr)
+    val = this.node.getAttribute(attrValue)
     return val == null
-      ? defaults[attr]
+      ? defaults[attrValue]
       : isNumber.test(val)
         ? parseFloat(val)
         : val
   } else {
     // Loop through hooks and execute them to convert value
     val = hooks.reduce((_val, hook) => {
-      return hook(attr, _val, this)
+      return hook(attrValue, _val, this)
     }, val)
 
     // ensure correct numeric values (also accepts NaN and Infinity)
@@ -62,7 +62,7 @@ export default function attr (attr, val, ns) {
     }
 
     // if the passed attribute is leading...
-    if (attr === 'leading') {
+    if (attrValue === 'leading') {
       // ... call the leading method instead
       if (this.leading) {
         this.leading(val)
@@ -70,12 +70,12 @@ export default function attr (attr, val, ns) {
     } else {
       // set given attribute on node
       typeof ns === 'string'
-        ? this.node.setAttributeNS(ns, attr, val.toString())
-        : this.node.setAttribute(attr, val.toString())
+        ? this.node.setAttributeNS(ns, attrValue, val.toString())
+        : this.node.setAttribute(attrValue, val.toString())
     }
 
     // rebuild if required
-    if (this.rebuild && (attr === 'font-size' || attr === 'x')) {
+    if (this.rebuild && (attrValue === 'font-size' || attrValue === 'x')) {
       this.rebuild()
     }
   }

@@ -123,14 +123,14 @@ export default class Dom extends EventTarget {
   }
 
   // Get / set id
-  id (id) {
+  id (idValue) {
     // generate new id if no id set
-    if (typeof id === 'undefined' && !this.node.id) {
+    if (typeof idValue === 'undefined' && !this.node.id) {
       this.node.id = eid(this.type)
     }
 
     // don't set directly with this.node.id to make `null` work correctly
-    return this.attr('id', id)
+    return this.attr('id', idValue)
   }
 
   // Gets index of given element

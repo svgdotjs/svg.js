@@ -76,8 +76,8 @@ export default class Element extends Dom {
   }
 
   // Set height of element
-  height (height) {
-    return this.attr('height', height)
+  height (heightValue) {
+    return this.attr('height', heightValue)
   }
 
   // Move element to given x and y values
@@ -147,8 +147,8 @@ export default class Element extends Dom {
   }
 
   // Set width of element
-  width (width) {
-    return this.attr('width', width)
+  width (widthValue) {
+    return this.attr('width', widthValue)
   }
 
   // write svgjs data to the dom
@@ -164,13 +164,13 @@ export default class Element extends Dom {
   }
 
   // Move over x-axis
-  x (x) {
-    return this.attr('x', x)
+  x (xValue) {
+    return this.attr('x', xValue)
   }
 
   // Move over y-axis
-  y (y) {
-    return this.attr('y', y)
+  y (yValue) {
+    return this.attr('y', yValue)
   }
 }
 

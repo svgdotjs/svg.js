@@ -9,12 +9,12 @@ export default class Marker extends Container {
   }
 
   // Set height of element
-  height (height) {
-    return this.attr('markerHeight', height)
+  height (heightValue) {
+    return this.attr('markerHeight', heightValue)
   }
 
-  orient (orient) {
-    return this.attr('orient', orient)
+  orient (orientValue) {
+    return this.attr('orient', orientValue)
   }
 
   // Set marker refX and refY
@@ -41,8 +41,8 @@ export default class Marker extends Container {
   }
 
   // Set width of element
-  width (width) {
-    return this.attr('markerWidth', width)
+  width (widthValue) {
+    return this.attr('markerWidth', widthValue)
   }
 
 }
@@ -68,19 +68,19 @@ registerMethods({
   },
   marker: {
     // Create and attach markers
-    marker (marker, width, height, block) {
+    marker (markerValue, width, height, block) {
       let attr = [ 'marker' ]
 
       // Build attribute name
-      if (marker !== 'all') attr.push(marker)
+      if (markerValue !== 'all') attr.push(markerValue)
       attr = attr.join('-')
 
       // Set marker attribute
-      marker = arguments[1] instanceof Marker
+      markerValue = arguments[1] instanceof Marker
         ? arguments[1]
         : this.defs().marker(width, height, block)
 
-      return this.attr(attr, marker)
+      return this.attr(attr, markerValue)
     }
   }
 })

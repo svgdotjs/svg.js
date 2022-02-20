@@ -21,21 +21,21 @@ export function length () {
 // Move over x-axis
 // Text is moved by its bounding box
 // text-anchor does NOT matter
-export function x (x, box = this.bbox()) {
-  if (x == null) {
+export function x (xValue, box = this.bbox()) {
+  if (xValue == null) {
     return box.x
   }
 
-  return this.attr('x', this.attr('x') + x - box.x)
+  return this.attr('x', this.attr('x') + xValue - box.x)
 }
 
 // Move over y-axis
-export function y (y, box = this.bbox()) {
-  if (y == null) {
+export function y (yValue, box = this.bbox()) {
+  if (yValue == null) {
     return box.y
   }
 
-  return this.attr('y', this.attr('y') + y - box.y)
+  return this.attr('y', this.attr('y') + yValue - box.y)
 }
 
 export function move (x, y, box = this.bbox()) {
@@ -77,7 +77,7 @@ export function amove (x, y) {
 }
 
 // Enable / disable build mode
-export function build (build) {
-  this._build = !!build
+export function build (buildValue) {
+  this._build = !!buildValue
   return this
 }

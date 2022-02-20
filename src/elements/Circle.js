@@ -19,17 +19,17 @@ export default class Circle extends Shape {
   }
 
   // Radius x value
-  rx (rx) {
-    return this.attr('r', rx)
+  rx (rxValue) {
+    return this.attr('r', rxValue)
   }
 
   // Alias radius x value
-  ry (ry) {
-    return this.rx(ry)
+  ry (ryValue) {
+    return this.rx(ryValue)
   }
 
-  size (size) {
-    return this.radius(new SVGNumber(size).divide(2))
+  size (sizeValue) {
+    return this.radius(new SVGNumber(sizeValue).divide(2))
   }
 }
 

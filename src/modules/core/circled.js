@@ -1,27 +1,27 @@
 import SVGNumber from '../../types/SVGNumber.js'
 
 // Radius x value
-export function rx (rx) {
-  return this.attr('rx', rx)
+export function rx (rxValue) {
+  return this.attr('rx', rxValue)
 }
 
 // Radius y value
-export function ry (ry) {
-  return this.attr('ry', ry)
+export function ry (ryValue) {
+  return this.attr('ry', ryValue)
 }
 
 // Move over x-axis
-export function x (x) {
-  return x == null
+export function x (xValue) {
+  return xValue == null
     ? this.cx() - this.rx()
-    : this.cx(x + this.rx())
+    : this.cx(xValue + this.rx())
 }
 
 // Move over y-axis
-export function y (y) {
-  return y == null
+export function y (yValue) {
+  return yValue == null
     ? this.cy() - this.ry()
-    : this.cy(y + this.ry())
+    : this.cy(yValue + this.ry())
 }
 
 // Move by center over x-axis
@@ -35,15 +35,15 @@ export function cy (y) {
 }
 
 // Set width of element
-export function width (width) {
-  return width == null
+export function width (widthValue) {
+  return widthValue == null
     ? this.rx() * 2
-    : this.rx(new SVGNumber(width).divide(2))
+    : this.rx(new SVGNumber(widthValue).divide(2))
 }
 
 // Set height of element
-export function height (height) {
-  return height == null
+export function height (heightValue) {
+  return heightValue == null
     ? this.ry() * 2
-    : this.ry(new SVGNumber(height).divide(2))
+    : this.ry(new SVGNumber(heightValue).divide(2))
 }

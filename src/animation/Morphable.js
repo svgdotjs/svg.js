@@ -72,9 +72,9 @@ export default class Morphable {
     return this
   }
 
-  stepper (stepper) {
-    if (stepper == null) return this._stepper
-    this._stepper = stepper
+  stepper (stepperValue) {
+    if (stepperValue == null) return this._stepper
+    this._stepper = stepperValue
     return this
   }
 
@@ -87,14 +87,14 @@ export default class Morphable {
     return this
   }
 
-  type (type) {
+  type (typeValue) {
     // getter
-    if (type == null) {
+    if (typeValue == null) {
       return this._type
     }
 
     // setter
-    this._type = type
+    this._type = typeValue
     return this
   }
 

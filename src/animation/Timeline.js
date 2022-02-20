@@ -168,9 +168,9 @@ export default class Timeline extends EventTarget {
     return this
   }
 
-  speed (speed) {
-    if (speed == null) return this._speed
-    this._speed = speed
+  speed (speedValue) {
+    if (speedValue == null) return this._speed
+    this._speed = speedValue
     return this
   }
 
@@ -180,9 +180,9 @@ export default class Timeline extends EventTarget {
     return this.pause()
   }
 
-  time (time) {
-    if (time == null) return this._time
-    this._time = time
+  time (timeValue) {
+    if (timeValue == null) return this._time
+    this._time = timeValue
     return this._continue(true)
   }
 

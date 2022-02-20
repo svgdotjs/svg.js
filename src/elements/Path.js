@@ -22,8 +22,8 @@ export default class Path extends Shape {
   }
 
   // Set height of element
-  height (height) {
-    return height == null ? this.bbox().height : this.size(this.bbox().width, height)
+  height (heightValue) {
+    return heightValue == null ? this.bbox().height : this.size(this.bbox().width, heightValue)
   }
 
   // Move by left top corner
@@ -45,18 +45,18 @@ export default class Path extends Shape {
   }
 
   // Set width of element
-  width (width) {
-    return width == null ? this.bbox().width : this.size(width, this.bbox().height)
+  width (widthValue) {
+    return widthValue == null ? this.bbox().width : this.size(widthValue, this.bbox().height)
   }
 
   // Move by left top corner over x-axis
-  x (x) {
-    return x == null ? this.bbox().x : this.move(x, this.bbox().y)
+  x (xValue) {
+    return xValue == null ? this.bbox().x : this.move(xValue, this.bbox().y)
   }
 
   // Move by left top corner over y-axis
-  y (y) {
-    return y == null ? this.bbox().y : this.move(this.bbox().x, y)
+  y (yValue) {
+    return yValue == null ? this.bbox().y : this.move(this.bbox().x, yValue)
   }
 
 }
