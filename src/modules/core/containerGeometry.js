@@ -30,17 +30,17 @@ export function dmove (dx, dy) {
   return this
 }
 
-export function dx (dx) {
-  return this.dmove(dx, 0)
+export function dx (dxValue) {
+  return this.dmove(dxValue, 0)
 }
 
-export function dy (dy) {
-  return this.dmove(0, dy)
+export function dy (dyValue) {
+  return this.dmove(0, dyValue)
 }
 
-export function height (height, box = this.bbox()) {
-  if (height == null) return box.height
-  return this.size(box.width, height, box)
+export function height (heightValue, box = this.bbox()) {
+  if (heightValue == null) return box.height
+  return this.size(box.width, heightValue, box)
 }
 
 export function move (x = 0, y = 0, box = this.bbox()) {
@@ -63,17 +63,17 @@ export function size (width, height, box = this.bbox()) {
   return this
 }
 
-export function width (width, box = this.bbox()) {
-  if (width == null) return box.width
-  return this.size(width, box.height, box)
+export function width (widthValue, box = this.bbox()) {
+  if (widthValue == null) return box.width
+  return this.size(widthValue, box.height, box)
 }
 
-export function x (x, box = this.bbox()) {
-  if (x == null) return box.x
-  return this.move(x, box.y, box)
+export function x (xValue, box = this.bbox()) {
+  if (xValue == null) return box.x
+  return this.move(xValue, box.y, box)
 }
 
-export function y (y, box = this.bbox()) {
-  if (y == null) return box.y
-  return this.move(box.x, y, box)
+export function y (yValue, box = this.bbox()) {
+  if (yValue == null) return box.y
+  return this.move(box.x, yValue, box)
 }
