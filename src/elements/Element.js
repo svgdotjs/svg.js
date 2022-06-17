@@ -25,9 +25,9 @@ export default class Element extends Dom {
     // create circular reference
     this.node.instance = this
 
-    if (node.hasAttribute('svgjs:data')) {
+    if (node.hasAttribute('data')) {
       // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
-      this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+      this.setData(JSON.parse(node.getAttribute('data')) || {})
     }
   }
 
@@ -154,10 +154,10 @@ export default class Element extends Dom {
   // write svgjs data to the dom
   writeDataToDom () {
     // remove previously set data
-    this.node.removeAttribute('svgjs:data')
+    this.node.removeAttribute('data')
 
     if (Object.keys(this.dom).length) {
-      this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
+      this.node.setAttribute('data', JSON.stringify(this.dom)) // see #428
     }
 
     return super.writeDataToDom()
