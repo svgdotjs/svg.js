@@ -44,7 +44,7 @@ registerMethods({
         : this.parent().mask().add(element)
 
       // apply mask
-      return this.attr('mask', 'url("#' + masker.id() + '")')
+      return this.attr('mask', 'url(#' + masker.id() + ')')
     },
 
     // Unmask element
