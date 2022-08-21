@@ -930,7 +930,7 @@ declare module "@svgdotjs/svg.js" {
         constructor(node?: HTMLElement, attr?: object);
         constructor(att: object);
         add(element: Element, i?: number): this;
-        addTo(parent: Dom | HTMLElement | string): this
+        addTo(parent: Dom | HTMLElement | string, i?: number): this
         children(): List<Element>;
         clear(): this;
         clone(): this;
