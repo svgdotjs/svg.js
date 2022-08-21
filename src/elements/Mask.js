@@ -21,7 +21,7 @@ export default class Mask extends Container {
   }
 
   targets () {
-    return baseFind('svg [mask*="' + this.id() + '"]')
+    return baseFind('svg [mask*=' + this.id() + ']')
   }
 }
 

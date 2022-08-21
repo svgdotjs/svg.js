@@ -21,7 +21,7 @@ export default class Pattern extends Container {
   }
 
   targets () {
-    return baseFind('svg [fill*="' + this.id() + '"]')
+    return baseFind('svg [fill*=' + this.id() + ']')
   }
 
   // Alias string conversion to fill
@@ -44,7 +44,7 @@ export default class Pattern extends Container {
 
   // Return the fill id
   url () {
-    return 'url("#' + this.id() + '")'
+    return 'url(#' + this.id() + ')'
   }
 
 }

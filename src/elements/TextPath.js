@@ -97,7 +97,7 @@ registerMethods({
       })
 
       // Does not work in IE11. Use when IE support is dropped
-      // return baseFind('svg textPath[*|href*="' + this.id() + '"]')
+      // return baseFind('svg textPath[*|href*=' + this.id() + ']')
     }
   }
 })

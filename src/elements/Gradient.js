@@ -29,7 +29,7 @@ export default class Gradient extends Container {
   }
 
   targets () {
-    return baseFind('svg [fill*="' + this.id() + '"]')
+    return baseFind('svg [fill*=' + this.id() + ']')
   }
 
   // Alias string conversion to fill
@@ -52,7 +52,7 @@ export default class Gradient extends Container {
 
   // Return the fill id
   url () {
-    return 'url("#' + this.id() + '")'
+    return 'url(#' + this.id() + ')'
   }
 }
 

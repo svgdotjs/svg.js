@@ -70,7 +70,7 @@ describe('ClipPath.js', () => {
       it('sets the clip-path attribute on the element to the id of the clipPath', () => {
         const clip = new ClipPath().id('foo')
         const rect = new Rect().clipWith(clip)
-        expect(rect.attr('clip-path')).toBe('url("#foo")')
+        expect(rect.attr('clip-path')).toBe('url(#foo)')
       })
 
       it('creates a clipPath and appends the passed element to it to clip current element', () => {
@@ -78,7 +78,7 @@ describe('ClipPath.js', () => {
         const circle = canvas.circle(40)
         const rect = canvas.rect(100, 100).clipWith(circle)
         expect(circle.parent()).toEqual(any(ClipPath))
-        expect(rect.attr('clip-path')).toBe(`url("#${circle.parent().id()}")`)
+        expect(rect.attr('clip-path')).toBe(`url(#${circle.parent().id()})`)
       })
     })
 

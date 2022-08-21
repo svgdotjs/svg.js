@@ -20,7 +20,7 @@ export default class ClipPath extends Container {
   }
 
   targets () {
-    return baseFind('svg [clip-path*="' + this.id() + '"]')
+    return baseFind('svg [clip-path*=' + this.id() + ']')
   }
 }
 
@@ -44,7 +44,7 @@ registerMethods({
         : this.parent().clip().add(element)
 
       // apply mask
-      return this.attr('clip-path', 'url("#' + clipper.id() + '")')
+      return this.attr('clip-path', 'url(#' + clipper.id() + ')')
     },
 
     // Unclip element
