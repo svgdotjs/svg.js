@@ -165,12 +165,20 @@ describe('Dom.js', function () {
       expect(clone.children()).toEqual([])
     })
 
-    it('assigns a new id to the element and to child elements', () => {
+    it('assigns a new id to the element and to child elements by default', () => {
       const group = new G().id('group')
       const rect = group.rect(100, 100).id('rect')
       const clone = group.clone()
       expect(clone.get(0).id()).not.toBe(rect.id())
       expect(clone.id()).not.toBe(group.id())
+    })
+
+    it('does not assign a new id to the element and to child elements', () => {
+      const group = new G().id('group')
+      const rect = group.rect(100, 100).id('rect')
+      const clone = group.clone(true, false)
+      expect(clone.get(0).id()).toBe(rect.id())
+      expect(clone.id()).toBe(group.id())
     })
 
     it('returns an instance of the same class the method was called on', () => {
