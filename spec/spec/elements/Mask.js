@@ -71,7 +71,7 @@ describe('Mask.js', () => {
       it('sets the mask attribute on the element to the id of the maskPath', () => {
         const mask = new Mask().id('foo')
         const rect = new Rect().maskWith(mask)
-        expect(rect.attr('mask')).toBe('url("#foo")')
+        expect(rect.attr('mask')).toBe('url(#foo)')
       })
 
       it('creates a maskPath and appends the passed element to it to mask current element', () => {
@@ -79,7 +79,7 @@ describe('Mask.js', () => {
         const circle = canvas.circle(40)
         const rect = canvas.rect(100, 100).maskWith(circle)
         expect(circle.parent()).toEqual(any(Mask))
-        expect(rect.attr('mask')).toBe(`url("#${circle.parent().id()}")`)
+        expect(rect.attr('mask')).toBe(`url(#${circle.parent().id()})`)
       })
     })
 

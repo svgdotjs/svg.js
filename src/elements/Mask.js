@@ -21,7 +21,7 @@ export default class Mask extends Container {
   }
 
   targets () {
-    return baseFind('svg [mask*="' + this.id() + '"]')
+    return baseFind('svg [mask*=' + this.id() + ']')
   }
 }
 
@@ -44,7 +44,7 @@ registerMethods({
         : this.parent().mask().add(element)
 
       // apply mask
-      return this.attr('mask', 'url("#' + masker.id() + '")')
+      return this.attr('mask', 'url(#' + masker.id() + ')')
     },
 
     // Unmask element

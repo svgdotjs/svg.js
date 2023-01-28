@@ -77,7 +77,7 @@ describe('Gradient.js', () => {
   describe('url()', () => {
     it('returns url(#id)', () => {
       const gradient = new Gradient('linear').id('foo')
-      expect(gradient.url()).toBe('url("#foo")')
+      expect(gradient.url()).toBe('url(#foo)')
     })
   })
 

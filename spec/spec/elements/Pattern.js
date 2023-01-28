@@ -70,7 +70,7 @@ describe('Pattern.js', () => {
   describe('url()', () => {
     it('returns url(#id)', () => {
       const pattern = new Pattern().id('foo')
-      expect(pattern.url()).toBe('url("#foo")')
+      expect(pattern.url()).toBe('url(#foo)')
     })
   })
 
