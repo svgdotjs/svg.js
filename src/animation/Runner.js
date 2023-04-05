@@ -360,7 +360,7 @@ export default class Runner extends EventTarget {
       this.fire('step', this)
     }
     // correct the done flag here
-    // declaritive animations itself know when they converged
+    // declarative animations itself know when they converged
     this.done = this.done || (converged && declarative)
     if (justFinished) {
       this.fire('finished', this)
@@ -619,7 +619,7 @@ registerMethods({
 
     // this function searches for all runners on the element and deletes the ones
     // which run before the current one. This is because absolute transformations
-    // overwfrite anything anyway so there is no need to waste time computing
+    // overwrite anything anyway so there is no need to waste time computing
     // other runners
     _clearTransformRunnersBefore (currentRunner) {
       this._transformationRunners.clearBefore(currentRunner.id)
@@ -769,7 +769,7 @@ extend(Runner, {
       ? transforms.affine
       : (affine != null ? affine : !isMatrix)
 
-    // Create a morepher and set its type
+    // Create a morpher and set its type
     const morpher = new Morphable(this._stepper)
       .type(affine ? TransformBag : Matrix)
 

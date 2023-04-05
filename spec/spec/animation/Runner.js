@@ -915,7 +915,7 @@ describe('Runner.js', () => {
         it('throws away the morpher if it wasnt initialized yet and returns false', () => {
           const rect = new Rect().move(0, 0)
           const runner = rect.animate().move(10, 10)
-          // In that case tryRetarget is not successfull
+          // In that case tryRetarget is not successful
           expect(runner._tryRetarget('x', 20)).toBe(false)
         })
 
@@ -923,7 +923,7 @@ describe('Runner.js', () => {
           const rect = new Rect().move(0, 0)
           const runner = rect.animate().move(10, 10)
           jasmine.RequestAnimationFrame.tick(16)
-          // In that case tryRetarget is not successfull
+          // In that case tryRetarget is not successful
           expect(runner._tryRetarget('foo', 20)).toBe(false)
         })
 
@@ -931,11 +931,11 @@ describe('Runner.js', () => {
           const rect = new Rect()
           const runner = rect.animate(new Controller(() => 0)).transform({ translate: [ 10, 10 ] })
           jasmine.RequestAnimationFrame.tick(16)
-          // In that case tryRetarget is not successfull
+          // In that case tryRetarget is not successful
           expect(runner._tryRetarget('transform', { translate: [ 20, 20 ] })).toBe(true)
         })
 
-        it('starts the timeline if retarget was successfull', () => {
+        it('starts the timeline if retarget was successful', () => {
           const timeline = new Timeline()
           const rect = new Rect().move(0, 0).timeline(timeline)
           const runner = rect.animate().move(10, 10)
@@ -1334,7 +1334,7 @@ describe('Runner.js', () => {
           runner.transform({ translate: [ 10, 20 ], scale: 2, rotate: 90 })
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
           expect(element.matrix().decompose()).toEqual(objectContaining({
             translateX: 5,
@@ -1385,7 +1385,7 @@ describe('Runner.js', () => {
           runner.translate(10, 20).scale(2).rotate(45)
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
@@ -1406,7 +1406,7 @@ describe('Runner.js', () => {
           runner2.step(50)
           runner3.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
@@ -1427,7 +1427,7 @@ describe('Runner.js', () => {
           runner2.step(50)
           runner3.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           expect(runner1._queue.length).toBe(0)
@@ -1444,7 +1444,7 @@ describe('Runner.js', () => {
           runner.transform(new Matrix({ rotate: 90 }))
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
@@ -1459,7 +1459,7 @@ describe('Runner.js', () => {
           runner.transform(Object.assign({ affine: true }, new Matrix({ rotate: 90 })))
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
@@ -1474,7 +1474,7 @@ describe('Runner.js', () => {
           runner.transform(new Matrix({ rotate: 90 }), true, true)
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
-          // when every runner had the chance to add its bit of tranforms
+          // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
