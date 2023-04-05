@@ -243,12 +243,12 @@ export default class Timeline extends EventTarget {
     // the runner to position 0
 
     // FIXME:
-    // However, reseting in insertion order leads to bugs. Considering the case,
+    // However, resetting in insertion order leads to bugs. Considering the case,
     // where 2 runners change the same attribute but in different times,
-    // reseting both of them will lead to the case where the later defined
+    // resetting both of them will lead to the case where the later defined
     // runner always wins the reset even if the other runner started earlier
     // and therefore should win the attribute battle
-    // this can be solved by reseting them backwards
+    // this can be solved by resetting them backwards
     for (let k = this._runners.length; k--;) {
       // Get and run the current runner and ignore it if its inactive
       const runnerInfo = this._runners[k]
