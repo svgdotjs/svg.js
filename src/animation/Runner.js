@@ -50,7 +50,7 @@ export default class Runner extends EventTarget {
     this._time = 0
     this._lastTime = 0
 
-    // At creation, the runner is in reseted state
+    // At creation, the runner is in reset state
     this._reseted = true
 
     // Save transforms applied to this runner
@@ -67,7 +67,7 @@ export default class Runner extends EventTarget {
 
     this._frameId = null
 
-    // Stores how long a runner is stored after beeing done
+    // Stores how long a runner is stored after being done
     this._persist = this._isDeclarative ? true : null
   }
 
@@ -345,7 +345,7 @@ export default class Runner extends EventTarget {
     const declarative = this._isDeclarative
     this.done = !declarative && !justFinished && this._time >= duration
 
-    // Runner is running. So its not in reseted state anymore
+    // Runner is running. So its not in reset state anymore
     this._reseted = false
 
     let converged = false
@@ -459,7 +459,7 @@ export default class Runner extends EventTarget {
   // do nothing and return false
   _tryRetarget (method, target, extra) {
     if (this._history[method]) {
-      // if the last method wasnt even initialised, throw it away
+      // if the last method wasn't even initialised, throw it away
       if (!this._history[method].caller.initialised) {
         const index = this._queue.indexOf(this._history[method].caller)
         this._queue.splice(index, 1)
@@ -639,7 +639,7 @@ registerMethods({
       this._transformationRunners.add(runner)
 
       // Make sure that the runner merge is executed at the very end of
-      // all Animator functions. Thats why we use immediate here to execute
+      // all Animator functions. That is why we use immediate here to execute
       // the merge right after all frames are run
       Animator.cancelImmediate(this._frameId)
       this._frameId = Animator.immediate(mergeTransforms.bind(this))
@@ -889,7 +889,7 @@ extend(Runner, {
   _queueNumberDelta (method, to) {
     to = new SVGNumber(to)
 
-    // Try to change the target if we have this method already registerd
+    // Try to change the target if we have this method already registered
     if (this._tryRetarget(method, to)) return this
 
     // Make a morpher and queue the animation
@@ -912,7 +912,7 @@ extend(Runner, {
   },
 
   _queueObject (method, to) {
-    // Try to change the target if we have this method already registerd
+    // Try to change the target if we have this method already registered
     if (this._tryRetarget(method, to)) return this
 
     // Make a morpher and queue the animation

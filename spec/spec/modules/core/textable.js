@@ -244,7 +244,7 @@ describe('textable.js', () => {
 
     it('restores the content from the dom with Tspan', () => {
       // We create a new Tspan here because the one used before was part of text creation
-      // and therefore is marked as newline and thats not what we want to test
+      // and therefore is marked as newline and that is not what we want to test
       const tspan = new Tspan().plain('Just plain text!')
       expect(tspan.text()).toBe('Just plain text!')
     })

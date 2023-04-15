@@ -72,7 +72,7 @@ describe('data.js', () => {
           expect(rect.data('fill', 'string').attr('data-fill')).toBe('string')
         })
 
-        it('doesnt convert to json with third parameter true', () => {
+        it('does not convert to json with third parameter true', () => {
           const rect = new Rect()
           expect(rect.data('fill', { some: 'object' }, true).attr('data-fill')).toBe({}.toString())
         })

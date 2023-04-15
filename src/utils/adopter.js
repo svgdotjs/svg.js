@@ -36,7 +36,7 @@ export function makeInstance (element, isHTML = false) {
   // that the first char is < and thus an element
   element = adopter(wrapper.firstChild)
 
-  // make sure, that element doesnt have its wrapper attached
+  // make sure, that element doesn't have its wrapper attached
   wrapper.removeChild(wrapper.firstChild)
   return element
 }

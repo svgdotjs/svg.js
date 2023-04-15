@@ -394,7 +394,7 @@ describe('Controller.js', () => {
         expect(pid.step(0, 100, 1000, {})).toBe(500)
       })
 
-      it('doesnt uses antiwindup if disabled', () => {
+      it('does not use antiwindup if disabled', () => {
         const pid = new PID(0, 5, 0, false)
         expect(pid.step(0, 100, 1000, {})).toBe(500000)
       })

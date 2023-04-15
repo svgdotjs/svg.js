@@ -124,7 +124,7 @@ export function buildFixtures () {
   div.id = 'fixtures'
 
   try {
-    // FIXME: doesnt work in svgdom
+    // FIXME: doesn't work in svgdom
     div.style.position = 'absolute'
     div.style.top = 0
     div.style.left = 0
@@ -142,7 +142,7 @@ export function buildCanvas () {
   div.id = 'canvas'
 
   try {
-    // FIXME: doesnt work in svgdom
+    // FIXME: doesn't work in svgdom
     div.style.position = 'absolute'
     div.style.top = 0
     div.style.left = 0

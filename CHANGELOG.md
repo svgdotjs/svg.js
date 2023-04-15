@@ -39,7 +39,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed `replace()` which works without a parent now, too
  - fixed `defs()` which correctly returns `null` when called on a detached node that is not a root node
  - fixed `reference()` which correctly returns `null` instead of throwing when specifying an attribute which holds a number
- - fixed `flatten()` which correctly flattens now but doesnt accept parameters anymore (makes no sense)
+ - fixed `flatten()` which correctly flattens now but doesn't accept parameters anymore (makes no sense)
  - fixed `ungroup()` which now inserts the elements at the correct position in the correct order and has position as second argument now
  - fixed `position` for `transform()` to also allow a position of 0
  - fixed `bbox()` of `PathArray` and `PointArray` which returns an instance of `Box` now
@@ -51,7 +51,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
  - fixed animate when=after to be really "now" when no runner is on the timeline
  - fixed animate attr which is also retargetable now
  - fixed internals of ObjectBag which can hold other Morphable values now
- - fixed animate transform which didnt change its origin on retarget for declaritive animations
+ - fixed animate transform which didnt change its origin on retarget for declarative animations
  - fixed path parsing (#1145)
  - fixed `clone()` to return the correct instance (#1154)
 
