@@ -167,7 +167,7 @@ export default class Dom extends EventTarget {
 
     if (!type) return parent
 
-    // loop trough ancestors if type is given
+    // loop through ancestors if type is given
     do {
       if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
     } while ((parent = adopt(parent.node.parentNode)))

@@ -117,7 +117,7 @@ describe('Timeline.js', () => {
       expect(timeline._runners[0].start).toBe(200)
     })
 
-    it('schedules the runner as absolute if this runner wasnt on the timeline', () => {
+    it('schedules the runner as absolute if this runner was not on the timeline', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000)
       timeline.schedule(runner, 100, 'relative')
@@ -409,7 +409,7 @@ describe('Timeline.js', () => {
       expect(spy).toHaveBeenCalled()
     })
 
-    it('doesnt run runners if they are not active', () => {
+    it('does not run runners if they are not active', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000).active(false)
       timeline.schedule(runner).play() // we have to play because its synchronous here

@@ -209,7 +209,7 @@ registerMethods({
       //                        that means, their clientRect is always as big as the content.
       //                        Furthermore this size is incorrect if the element is further transformed by its parents
       // computedStyle: Only returns meaningful values if css was used with px. We dont go this route here!
-      // getBBox: returns the bounding box of its content - that doesnt help!
+      // getBBox: returns the bounding box of its content - that doesn't help!
       let { width, height } = this.attr([ 'width', 'height' ])
 
       // Width and height is a string when a number with a unit is present which we can't use

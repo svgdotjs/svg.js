@@ -239,7 +239,7 @@ export default class Timeline extends EventTarget {
     this.fire('time', this._time)
 
     // This is for the case that the timeline was seeked so that the time
-    // is now before the startTime of the runner. Thats why we need to set
+    // is now before the startTime of the runner. That is why we need to set
     // the runner to position 0
 
     // FIXME:

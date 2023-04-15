@@ -150,7 +150,7 @@ describe('Runner.js', () => {
         expect(runFn.calls.count()).toBe(2)
       })
 
-      it('calls initFn on every step if its declaritive', () => {
+      it('calls initFn on every step if its declarative', () => {
         var runner = new Runner(new Controller())
         runner.queue(initFn, runFn, true)
 
@@ -765,7 +765,7 @@ describe('Runner.js', () => {
         expect(after.element()).toBe(element)
       })
 
-      it('doesnt reuse element if not set', () => {
+      it('does not reuse element if not set', () => {
         const timeline = new Timeline()
         const runner = new Runner().timeline(timeline)
         const after = runner.animate()
@@ -878,7 +878,7 @@ describe('Runner.js', () => {
         expect(runner.time()).toBe(0)
       })
 
-      it('doesnt reset if already reseted', () => {
+      it('does not reset if already reset', () => {
         var runner = Object.freeze(new Runner().reset())
         expect(runner.reset()).toBe(runner)
       })
@@ -912,14 +912,14 @@ describe('Runner.js', () => {
           expect(runner._history.x.morpher.to()).toEqual([ 20, '' ])
         })
 
-        it('throws away the morpher if it wasnt initialized yet and returns false', () => {
+        it('throws away the morpher if it was not initialized yet and returns false', () => {
           const rect = new Rect().move(0, 0)
           const runner = rect.animate().move(10, 10)
           // In that case tryRetarget is not successful
           expect(runner._tryRetarget('x', 20)).toBe(false)
         })
 
-        it('does nothing if method wasnt found', () => {
+        it('does nothing if method was not found', () => {
           const rect = new Rect().move(0, 0)
           const runner = rect.animate().move(10, 10)
           jasmine.RequestAnimationFrame.tick(16)
@@ -953,18 +953,18 @@ describe('Runner.js', () => {
           expect(runner._initialise(false)).toBe(undefined)
         })
 
-        it('does nothing if true is passed and runner is not declaritive', () => {
+        it('does nothing if true is passed and runner is not declarative', () => {
           const runner = Object.freeze(new Runner())
           expect(runner._initialise(true)).toBe(undefined)
         })
 
-        it('calls the initializer function on the queue when runner is declaritive', () => {
+        it('calls the initializer function on the queue when runner is declarative', () => {
           const runner = new Runner(() => 0).queue(initFn, runFn)
           runner._initialise()
           expect(initFn).toHaveBeenCalledTimes(1)
         })
 
-        it('calls the initializer function on the queue when true is passed and runner is not declaritive', () => {
+        it('calls the initializer function on the queue when true is passed and runner is not declarative', () => {
           const runner = new Runner().queue(initFn, runFn)
           runner._initialise(true)
           expect(initFn).toHaveBeenCalledTimes(1)
@@ -1300,7 +1300,7 @@ describe('Runner.js', () => {
       })
 
       describe('transform()', () => {
-        it('does not retarget for non-declaritive transformations', () => {
+        it('does not retarget for non-declarative transformations', () => {
           const runner = new Runner()
           const spy = spyOn(runner, '_tryRetarget')
           runner.transform({ translate: [ 10, 20 ] })
@@ -1314,7 +1314,7 @@ describe('Runner.js', () => {
           expect(spy).not.toHaveBeenCalled()
         })
 
-        it('does retarget for absolute declaritive transformations', () => {
+        it('does retarget for absolute declarative transformations', () => {
           const runner = new Runner(new Controller(() => 0))
           const spy = spyOn(runner, '_tryRetarget')
           runner.transform({ translate: [ 10, 20 ] })
@@ -1354,7 +1354,7 @@ describe('Runner.js', () => {
 
           // transform sets its to-target to the morpher in the initialisation step
           // because it depends on the from-target. Declaritive animation run the init-step
-          // on every frame. Thats why we step here to see the effect of our retargeting
+          // on every frame. That is why we step here to see the effect of our retargeting
           runner.step(25)
 
           expect(runner._history.transform.morpher.to()).toEqual(
@@ -1371,7 +1371,7 @@ describe('Runner.js', () => {
 
           // transform sets its to-target to the morpher in the initialisation step
           // because it depends on the from-target. Declaritive animation run the init-step
-          // on every frame. Thats why we step here to see the effect of our retargeting
+          // on every frame. That is why we step here to see the effect of our retargeting
           runner.step(25)
 
           expect(runner._history.transform.morpher.to()).toEqual(
@@ -1483,7 +1483,7 @@ describe('Runner.js', () => {
           )
         })
 
-        it('correctly animates a declaritive relative rotation', () => {
+        it('correctly animates a declarative relative rotation', () => {
           const element = new Rect()
           const runner = new Runner(() => 1).element(element)
           runner.transform({ rotate: 90 }, true)

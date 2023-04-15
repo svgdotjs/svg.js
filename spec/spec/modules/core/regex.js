@@ -49,17 +49,17 @@ describe('regex.js', () => {
       expect(match[3]).toBe('56')
     })
 
-    /* it('doesnt matches without #', () => {
+    /* it('does not matches without #', () => {
       const match = '123456'.match(regex.hex)
       expect(match).toBe(null)
     }) */
 
-    it('doesnt matches other then 0-f #', () => {
+    it('does not matches other then 0-f #', () => {
       const match = '#09afhz'.match(regex.hex)
       expect(match).toBe(null)
     })
 
-    it('doesnt matches non full hex', () => {
+    it('does not matches non full hex', () => {
       const match = '#aaa'.match(regex.hex)
       expect(match).toBe(null)
     })
@@ -73,7 +73,7 @@ describe('regex.js', () => {
       expect(match[3]).toBe('56')
     })
 
-    it('doesnt match in the wrong format', () => {
+    it('does not match in the wrong format', () => {
       expect('rgb(   12 , 34  ,     56)'.match(regex.rgb)).toBe(null)
       expect('12,34,56'.match(regex.rgb)).toBe(null)
       expect('(12,34,56)'.match(regex.rgb)).toBe(null)

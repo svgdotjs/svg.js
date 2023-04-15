@@ -51,7 +51,7 @@ export default class Matrix {
     const origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
     const ox = origin.x
     const oy = origin.y
-    // We need Point to be invalid if nothing was passed because we cannot default to 0 here. Thats why NaN
+    // We need Point to be invalid if nothing was passed because we cannot default to 0 here. That is why NaN
     const position = new Point(o.position || o.px || o.positionX || NaN, o.py || o.positionY || NaN)
     const px = position.x
     const py = position.y
@@ -435,7 +435,7 @@ export default class Matrix {
     if (isFinite(t.px) || isFinite(t.py)) {
       const origin = new Point(ox, oy).transform(transformer)
       // TODO: Replace t.px with isFinite(t.px)
-      // Doesnt work because t.px is also 0 if it wasnt passed
+      // Doesn't work because t.px is also 0 if it wasn't passed
       const dx = isFinite(t.px) ? t.px - origin.x : 0
       const dy = isFinite(t.py) ? t.py - origin.y : 0
       transformer.translateO(dx, dy)

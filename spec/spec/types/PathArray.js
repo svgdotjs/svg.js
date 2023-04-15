@@ -21,7 +21,7 @@ describe('PathArray.js', () => {
     expect(arr.toString()).toBe('M0 0L100 100Z ')
   })
 
-  // this test is designed to cover a certain line but it doesnt work because of #608
+  // this test is designed to cover a certain line but it doesn't work because of #608
   it('returns the valueOf when PathArray is given', () => {
     const p = new PathArray('m10 10 h 80 v 80 h -80 l 300 400 z')
 

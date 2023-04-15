@@ -38,7 +38,7 @@ describe('event.js', () => {
       expect(eventTarget.events).toEqual({})
     })
 
-    it('doesnt do anything if no event object is found on the instance', () => {
+    it('does not do anything if no event object is found on the instance', () => {
       const eventTarget = new EventTarget()
       delete eventTarget.events
       clearEvents(eventTarget)
