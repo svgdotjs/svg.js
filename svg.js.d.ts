@@ -5,7 +5,7 @@
 declare class BuiltInArray<T> extends Array<T> { }
 
 // trick to have nice attribute list for CSS
-declare type CSSStyleName = Exclude<keyof CSSStyleDeclaration, "parentRule" | "length" >
+declare type CSSStyleName = Exclude<keyof CSSStyleDeclaration, "parentRule" | "length">
 
 declare module "@svgdotjs/svg.js" {
 
@@ -862,8 +862,8 @@ declare module "@svgdotjs/svg.js" {
         reset(): this
         finish(): this
         reverse(r?: boolean): this
-        ease(fn: EasingCallback) : this
-        ease(kind: EasingLiteral) : this
+        ease(fn: EasingCallback): this
+        ease(kind: EasingLiteral): this
         active(): boolean
         active(a: boolean): this
         addTransform(m: Matrix): this
@@ -1075,7 +1075,7 @@ declare module "@svgdotjs/svg.js" {
         clip(): ClipPath;
         ellipse(width?: number, height?: number): Ellipse;
         flatten(parent: Dom, depth?: number): this;
-        foreignObject(width: number, height: number) : ForeignObject
+        foreignObject(width: number, height: number): ForeignObject
         gradient(type: string, block?: (stop: Gradient) => void): Gradient;
         group(): G;
 
@@ -1259,7 +1259,7 @@ declare module "@svgdotjs/svg.js" {
          * then the result is only provided the list up until Svg root element which mean no Dom parent element is included.
          * @param util a parent type
          */
-        parents<T extends Dom>(util: QuerySelector | T | null ): List<Element>
+        parents<T extends Dom>(util: QuerySelector | T | null): List<Element>
         /**
          * Get reference svg element based on the given attribute.
          * @param attr a svg attribute
@@ -1298,6 +1298,7 @@ declare module "@svgdotjs/svg.js" {
         timeline(tl: Timeline): this
         toggleClass(name: string): this;
         toParent(parent: Dom): this;
+        toParent(parent: Dom, i: number): this;
         toSvg(): this;
         touchcancel(cb: Function | null): this;
         touchend(cb: Function | null): this;
