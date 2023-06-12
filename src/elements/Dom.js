@@ -72,10 +72,10 @@ export default class Dom extends EventTarget {
     this.writeDataToDom()
 
     // clone element
-    var nodeClone = this.node.cloneNode(deep);
+    let nodeClone = this.node.cloneNode(deep)
     if (assignNewIds) {
       // assign new id
-      nodeClone = assignNewId(nodeClone);
+      nodeClone = assignNewId(nodeClone)
     }
     return new this.constructor(nodeClone)
   }
