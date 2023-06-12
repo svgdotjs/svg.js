@@ -96,8 +96,7 @@ const config = (node, min, esm = false) => ({
       : node ? './dist/svg.node.js'
       : min ? './dist/svg.min.js'
       : './dist/svg.js',
-    // See https://stackoverflow.com/questions/54489234/trouble-loading-svgdotjs-svg-js-3-0-11-in-typescript-test-code-managed-by-j
-    format: esm ? 'esm' : node ? 'cjs' : 'umd',
+    format: esm ? 'esm' : node ? 'cjs' : 'iife',
     name: 'SVG',
     sourcemap: true,
     banner: headerLong,
