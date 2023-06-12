@@ -4,12 +4,12 @@ import SVGNumber from '../types/SVGNumber.js'
 import { registerMethods } from '../utils/methods.js'
 
 export default class Stop extends Element {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('stop', node), attrs)
   }
 
   // add color stops
-  update (o) {
+  update(o) {
     if (typeof o === 'number' || o instanceof SVGNumber) {
       o = {
         offset: arguments[0],

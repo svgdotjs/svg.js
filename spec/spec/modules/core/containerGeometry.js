@@ -5,7 +5,6 @@ import { Box, create, Element, G, Rect, SVG } from '../../../../src/main.js'
 const { any, objectContaining } = jasmine
 
 describe('containerGeometry.js', () => {
-
   describe('dmove()', () => {
     it('moves the bbox of the group by a certain amount (1)', () => {
       const canvas = SVG().addTo(container)
@@ -17,9 +16,14 @@ describe('containerGeometry.js', () => {
       g.dmove(10, 10)
 
       const box = g.bbox()
-      expect(box).toEqual(objectContaining({
-        x: 20, y: 30, width: box.width, height: box.height
-      }))
+      expect(box).toEqual(
+        objectContaining({
+          x: 20,
+          y: 30,
+          width: box.width,
+          height: box.height
+        })
+      )
     })
 
     it('moves the bbox of the group by a certain amount (2)', () => {
@@ -55,9 +59,14 @@ describe('containerGeometry.js', () => {
       expect(fn).not.toThrowError()
 
       const box = g.bbox()
-      expect(box).toEqual(objectContaining({
-        x: 20, y: 30, width: box.width, height: box.height
-      }))
+      expect(box).toEqual(
+        objectContaining({
+          x: 20,
+          y: 30,
+          width: box.width,
+          height: box.height
+        })
+      )
     })
   })
 
@@ -211,7 +220,6 @@ describe('containerGeometry.js', () => {
       expect(newBox.w).toBeCloseTo(100, 4)
       expect(newBox.h).toBeCloseTo(100, 4)
     })
-
   })
 
   describe('width()', () => {

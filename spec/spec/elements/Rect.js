@@ -20,7 +20,10 @@ describe('Rect.js', () => {
       it('creates a rect with given size', () => {
         const group = new G()
         const rect = group.rect(100, 100)
-        expect(rect.attr([ 'width', 'height' ])).toEqual({ width: 100, height: 100 })
+        expect(rect.attr(['width', 'height'])).toEqual({
+          width: 100,
+          height: 100
+        })
         expect(rect).toEqual(any(Rect))
       })
     })

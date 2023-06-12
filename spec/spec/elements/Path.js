@@ -25,7 +25,10 @@ describe('Path.js', () => {
     it('returns the underlying PathArray', () => {
       const array = path.plot('M1 2 3 4').array()
       expect(array).toEqual(any(PathArray))
-      expect(array).toEqual([ [ 'M', 1, 2 ], [ 'L', 3, 4 ] ])
+      expect(array).toEqual([
+        ['M', 1, 2],
+        ['L', 3, 4]
+      ])
     })
   })
 
@@ -61,9 +64,14 @@ describe('Path.js', () => {
       const canvas = SVG().addTo(container)
       const path = canvas.path('M0 0 50, 50')
       path.move(50, 50)
-      expect(path.bbox()).toEqual(objectContaining({
-        x: 50, y: 50, width: 50, height: 50
-      }))
+      expect(path.bbox()).toEqual(
+        objectContaining({
+          x: 50,
+          y: 50,
+          width: 50,
+          height: 50
+        })
+      )
     })
   })
 
@@ -82,20 +90,37 @@ describe('Path.js', () => {
 
     it('works with flat array', () => {
       const spy = spyOn(path, 'attr')
-      path.plot([ 'M', 0, 0, 'L', 50, 50 ])
-      expect(spy).toHaveBeenCalledWith('d', [ [ 'M', 0, 0 ], [ 'L', 50, 50 ] ])
+      path.plot(['M', 0, 0, 'L', 50, 50])
+      expect(spy).toHaveBeenCalledWith('d', [
+        ['M', 0, 0],
+        ['L', 50, 50]
+      ])
     })
 
     it('works with multi array', () => {
       const spy = spyOn(path, 'attr')
-      path.plot([ [ 'M', 0, 0 ], [ 'L', 50, 50 ] ])
-      expect(spy).toHaveBeenCalledWith('d', [ [ 'M', 0, 0 ], [ 'L', 50, 50 ] ])
+      path.plot([
+        ['M', 0, 0],
+        ['L', 50, 50]
+      ])
+      expect(spy).toHaveBeenCalledWith('d', [
+        ['M', 0, 0],
+        ['L', 50, 50]
+      ])
     })
 
     it('works with PathArray', () => {
       const spy = spyOn(path, 'attr')
-      path.plot(new PathArray([ [ 'M', 0, 0 ], [ 'L', 50, 50 ] ]))
-      expect(spy).toHaveBeenCalledWith('d', [ [ 'M', 0, 0 ], [ 'L', 50, 50 ] ])
+      path.plot(
+        new PathArray([
+          ['M', 0, 0],
+          ['L', 50, 50]
+        ])
+      )
+      expect(spy).toHaveBeenCalledWith('d', [
+        ['M', 0, 0],
+        ['L', 50, 50]
+      ])
     })
   })
 
@@ -108,27 +133,42 @@ describe('Path.js', () => {
       const canvas = SVG().addTo(container)
       const path = canvas.path('M0 0 50, 50')
       path.size(100, 100)
-      expect(path.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(path.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
 
     it('changes height proportionally', () => {
       const canvas = SVG().addTo(container)
       const path = canvas.path('M0 0 50, 50')
       path.size(100, null)
-      expect(path.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(path.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
 
     it('changes width proportionally', () => {
       const canvas = SVG().addTo(container)
       const path = canvas.path('M0 0 50, 50')
       path.size(null, 100)
-      expect(path.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(path.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
   })
 

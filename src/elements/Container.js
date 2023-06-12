@@ -2,7 +2,7 @@ import { register } from '../utils/adopter.js'
 import Element from './Element.js'
 
 export default class Container extends Element {
-  flatten (parent = this, index) {
+  flatten() {
     this.each(function () {
       if (this instanceof Container) {
         return this.flatten().ungroup()
@@ -12,7 +12,7 @@ export default class Container extends Element {
     return this
   }
 
-  ungroup (parent = this.parent(), index = parent.index(this)) {
+  ungroup(parent = this.parent(), index = parent.index(this)) {
     // when parent != this, we want append all elements to the end
     index = index === -1 ? parent.children().length : index
 

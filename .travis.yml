@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-  - "stable"
+  - 'stable'
 services:
   - xvfb
 addons:
-    firefox: latest
-    chrome: stable
+  firefox: latest
+  chrome: stable
 install:
   - npm install
   - npm run build

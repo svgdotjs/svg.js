@@ -8,12 +8,12 @@ const elements = {}
 export const root = '___SYMBOL___ROOT___'
 
 // Method for element creation
-export function create (name, ns = svg) {
+export function create(name, ns = svg) {
   // create element
   return globals.document.createElementNS(ns, name)
 }
 
-export function makeInstance (element, isHTML = false) {
+export function makeInstance(element, isHTML = false) {
   if (element instanceof Base) return element
 
   if (typeof element === 'object') {
@@ -41,12 +41,16 @@ export function makeInstance (element, isHTML = false) {
   return element
 }
 
-export function nodeOrNew (name, node) {
-  return (node && node.ownerDocument && node instanceof node.ownerDocument.defaultView.Node) ? node : create(name)
+export function nodeOrNew(name, node) {
+  return node &&
+    node.ownerDocument &&
+    node instanceof node.ownerDocument.defaultView.Node
+    ? node
+    : create(name)
 }
 
 // Adopt existing svg elements
-export function adopt (node) {
+export function adopt(node) {
   // check for presence of node
   if (!node) return null
 
@@ -64,7 +68,7 @@ export function adopt (node) {
   if (className === 'LinearGradient' || className === 'RadialGradient') {
     className = 'Gradient'
 
-  // Fallback to Dom if element is not known
+    // Fallback to Dom if element is not known
   } else if (!elements[className]) {
     className = 'Dom'
   }
@@ -74,11 +78,11 @@ export function adopt (node) {
 
 let adopter = adopt
 
-export function mockAdopt (mock = adopt) {
+export function mockAdopt(mock = adopt) {
   adopter = mock
 }
 
-export function register (element, name = element.name, asRoot = false) {
+export function register(element, name = element.name, asRoot = false) {
   elements[name] = element
   if (asRoot) elements[root] = element
 
@@ -87,7 +91,7 @@ export function register (element, name = element.name, asRoot = false) {
   return element
 }
 
-export function getClass (name) {
+export function getClass(name) {
   return elements[name]
 }
 
@@ -95,12 +99,12 @@ export function getClass (name) {
 let did = 1000
 
 // Get next named element id
-export function eid (name) {
-  return 'Svgjs' + capitalize(name) + (did++)
+export function eid(name) {
+  return 'Svgjs' + capitalize(name) + did++
 }
 
 // Deep new id assignment
-export function assignNewId (node) {
+export function assignNewId(node) {
   // do the same for SVG child nodes as well
   for (let i = node.children.length - 1; i >= 0; i--) {
     assignNewId(node.children[i])
@@ -115,10 +119,10 @@ export function assignNewId (node) {
 }
 
 // Method for extending objects
-export function extend (modules, methods) {
+export function extend(modules, methods) {
   let key, i
 
-  modules = Array.isArray(modules) ? modules : [ modules ]
+  modules = Array.isArray(modules) ? modules : [modules]
 
   for (i = modules.length - 1; i >= 0; i--) {
     for (key in methods) {
@@ -127,7 +131,7 @@ export function extend (modules, methods) {
   }
 }
 
-export function wrapWithAttrCheck (fn) {
+export function wrapWithAttrCheck(fn) {
   return function (...args) {
     const o = args[args.length - 1]
 

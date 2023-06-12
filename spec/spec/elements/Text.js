@@ -1,6 +1,13 @@
 /* globals describe, expect, it, spyOn jasmine, container */
 
-import { Text, Number as SVGNumber, SVG, G, Path, TextPath } from '../../../src/main.js'
+import {
+  Text,
+  Number as SVGNumber,
+  SVG,
+  G,
+  Path,
+  TextPath
+} from '../../../src/main.js'
 
 const { any } = jasmine
 

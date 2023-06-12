@@ -11,34 +11,35 @@ import Defs from './Defs.js'
 import { globals } from '../utils/window.js'
 
 export default class Svg extends Container {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('svg', node), attrs)
     this.namespace()
   }
 
   // Creates and returns defs element
-  defs () {
+  defs() {
     if (!this.isRoot()) return this.root().defs()
 
-    return adopt(this.node.querySelector('defs'))
-      || this.put(new Defs())
+    return adopt(this.node.querySelector('defs')) || this.put(new Defs())
   }
 
-  isRoot () {
-    return !this.node.parentNode
-      || (!(this.node.parentNode instanceof globals.window.SVGElement) && this.node.parentNode.nodeName !== '#document-fragment')
+  isRoot() {
+    return (
+      !this.node.parentNode ||
+      (!(this.node.parentNode instanceof globals.window.SVGElement) &&
+        this.node.parentNode.nodeName !== '#document-fragment')
+    )
   }
 
   // Add namespaces
-  namespace () {
+  namespace() {
     if (!this.isRoot()) return this.root().namespace()
-    return this
-      .attr({ xmlns: svg, version: '1.1' })
+    return this.attr({ xmlns: svg, version: '1.1' })
       .attr('xmlns:xlink', xlink, xmlns)
       .attr('xmlns:svgjs', svgjs, xmlns)
   }
 
-  removeNamespace () {
+  removeNamespace() {
     return this.attr({ xmlns: null, version: null })
       .attr('xmlns:xlink', null, xmlns)
       .attr('xmlns:svgjs', null, xmlns)
@@ -46,11 +47,10 @@ export default class Svg extends Container {
 
   // Check if this is a root svg
   // If not, call root() from this element
-  root () {
+  root() {
     if (this.isRoot()) return this
     return super.root()
   }
-
 }
 
 registerMethods({

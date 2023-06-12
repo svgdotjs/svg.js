@@ -2,10 +2,18 @@ import { registerMethods } from '../../utils/methods.js'
 import { filter, map } from '../../utils/utils.js'
 
 // Store data values on svg nodes
-export function data (a, v, r) {
+export function data(a, v, r) {
   if (a == null) {
     // get an object of attributes
-    return this.data(map(filter(this.node.attributes, (el) => el.nodeName.indexOf('data-') === 0), (el) => el.nodeName.slice(5)))
+    return this.data(
+      map(
+        filter(
+          this.node.attributes,
+          (el) => el.nodeName.indexOf('data-') === 0
+        ),
+        (el) => el.nodeName.slice(5)
+      )
+    )
   } else if (a instanceof Array) {
     const data = {}
     for (const key of a) {
@@ -23,12 +31,13 @@ export function data (a, v, r) {
       return this.attr('data-' + a)
     }
   } else {
-    this.attr('data-' + a,
+    this.attr(
+      'data-' + a,
       v === null
         ? null
         : r === true || typeof v === 'string' || typeof v === 'number'
-          ? v
-          : JSON.stringify(v)
+        ? v
+        : JSON.stringify(v)
     )
   }
 

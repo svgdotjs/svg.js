@@ -4,31 +4,31 @@ import Container from './Container.js'
 
 export default class Marker extends Container {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('marker', node), attrs)
   }
 
   // Set height of element
-  height (height) {
+  height(height) {
     return this.attr('markerHeight', height)
   }
 
-  orient (orient) {
+  orient(orient) {
     return this.attr('orient', orient)
   }
 
   // Set marker refX and refY
-  ref (x, y) {
+  ref(x, y) {
     return this.attr('refX', x).attr('refY', y)
   }
 
   // Return the fill id
-  toString () {
+  toString() {
     return 'url(#' + this.id() + ')'
   }
 
   // Update marker
-  update (block) {
+  update(block) {
     // remove all content
     this.clear()
 
@@ -41,15 +41,14 @@ export default class Marker extends Container {
   }
 
   // Set width of element
-  width (width) {
+  width(width) {
     return this.attr('markerWidth', width)
   }
-
 }
 
 registerMethods({
   Container: {
-    marker (...args) {
+    marker(...args) {
       // Create marker element in defs
       return this.defs().marker(...args)
     }
@@ -68,17 +67,18 @@ registerMethods({
   },
   marker: {
     // Create and attach markers
-    marker (marker, width, height, block) {
-      let attr = [ 'marker' ]
+    marker(marker, width, height, block) {
+      let attr = ['marker']
 
       // Build attribute name
       if (marker !== 'all') attr.push(marker)
       attr = attr.join('-')
 
       // Set marker attribute
-      marker = arguments[1] instanceof Marker
-        ? arguments[1]
-        : this.defs().marker(width, height, block)
+      marker =
+        arguments[1] instanceof Marker
+          ? arguments[1]
+          : this.defs().marker(width, height, block)
 
       return this.attr(attr, marker)
     }

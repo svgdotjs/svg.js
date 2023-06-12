@@ -6,9 +6,7 @@ describe('Point.js', () => {
   var point
 
   describe('initialization', () => {
-
     describe('without a source', () => {
-
       beforeEach(() => {
         point = new Point()
       })
@@ -17,7 +15,6 @@ describe('Point.js', () => {
         expect(point.x).toBe(0)
         expect(point.y).toBe(0)
       })
-
     })
 
     describe('with x and y given', () => {
@@ -40,7 +37,7 @@ describe('Point.js', () => {
 
     describe('with array given', () => {
       it('creates a point from array', () => {
-        var point = new Point([ 2, 4 ])
+        var point = new Point([2, 4])
 
         expect(point.x).toBe(2)
         expect(point.y).toBe(4)
@@ -68,11 +65,15 @@ describe('Point.js', () => {
 
   describe('transform()', () => {
     it('transforms a point with a matrix', () => {
-      expect(new Point().transform(new Matrix({ translate: [ 10, 10 ] }))).toEqual(new Point(10, 10))
+      expect(
+        new Point().transform(new Matrix({ translate: [10, 10] }))
+      ).toEqual(new Point(10, 10))
     })
 
     it('transforms a point with a transformation object', () => {
-      expect(new Point().transform({ translate: [ 10, 10 ] })).toEqual(new Point(10, 10))
+      expect(new Point().transform({ translate: [10, 10] })).toEqual(
+        new Point(10, 10)
+      )
     })
   })
 
@@ -89,7 +90,7 @@ describe('Point.js', () => {
   describe('toArray()', () => {
     it('creates an array representation of Point', () => {
       const p = new Point(1, 2)
-      expect(p.toArray()).toEqual([ 1, 2 ])
+      expect(p.toArray()).toEqual([1, 2])
     })
   })
 
@@ -97,7 +98,9 @@ describe('Point.js', () => {
     describe('point()', () => {
       it('transforms a screen point into the coordinate system of the element', () => {
         const rect = new Rect()
-        spyOn(rect, 'screenCTM').and.callFake(() => new Matrix(1, 0, 0, 1, 20, 20))
+        spyOn(rect, 'screenCTM').and.callFake(
+          () => new Matrix(1, 0, 0, 1, 20, 20)
+        )
         expect(rect.point({ x: 10, y: 10 })).toEqual(new Point(-10, -10))
       })
     })

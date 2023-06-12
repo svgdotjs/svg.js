@@ -32,7 +32,9 @@ describe('EventTarget.js', () => {
       const options = { cancelable: false }
       const event = target.dispatch('bla', 'foo', options)
       expect(spy).toHaveBeenCalledWith(event)
-      expect(event).toEqual(objectContaining({ type: 'bla', detail: 'foo', cancelable: false }))
+      expect(event).toEqual(
+        objectContaining({ type: 'bla', detail: 'foo', cancelable: false })
+      )
     })
   })
 

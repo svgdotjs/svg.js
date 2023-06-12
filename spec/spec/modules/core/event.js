@@ -1,5 +1,13 @@
 /* globals describe, expect, it, spyOn, jasmine */
-import { windowEvents, getEvents, getEventTarget, clearEvents, dispatch, on, off } from '../../../../src/modules/core/event.js'
+import {
+  windowEvents,
+  getEvents,
+  getEventTarget,
+  clearEvents,
+  dispatch,
+  on,
+  off
+} from '../../../../src/modules/core/event.js'
 import { getWindow } from '../../../../src/utils/window.js'
 import { EventTarget, SVG } from '../../../../src/main.js'
 
@@ -68,7 +76,7 @@ describe('event.js', () => {
     it('binds to multiple events passed as array', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
-      on(eventTarget, [ 'event1', 'event2', 'event3' ], spy)
+      on(eventTarget, ['event1', 'event2', 'event3'], spy)
       dispatch(eventTarget, 'event1')
       dispatch(eventTarget, 'event2')
       dispatch(eventTarget, 'event3')
@@ -112,11 +120,11 @@ describe('event.js', () => {
     it('unbinds multiple events with space or comma separated string', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
-      on(eventTarget, [ 'event1', 'event2', 'event3' ], spy)
+      on(eventTarget, ['event1', 'event2', 'event3'], spy)
       dispatch(eventTarget, 'event1')
       dispatch(eventTarget, 'event2')
       dispatch(eventTarget, 'event3')
-      off(eventTarget, [ 'event1', 'event2', 'event3' ], spy)
+      off(eventTarget, ['event1', 'event2', 'event3'], spy)
       dispatch(eventTarget, 'event1')
       dispatch(eventTarget, 'event2')
       dispatch(eventTarget, 'event3')
@@ -136,11 +144,11 @@ describe('event.js', () => {
     it('unbinds all events including namespaced ones when only event is passed', () => {
       const eventTarget = new EventTarget()
       const spy = createSpy('spy')
-      on(eventTarget, [ 'event1.ns1', 'event2.ns2', 'event3' ], spy)
+      on(eventTarget, ['event1.ns1', 'event2.ns2', 'event3'], spy)
       dispatch(eventTarget, 'event1')
       dispatch(eventTarget, 'event2')
       dispatch(eventTarget, 'event3')
-      off(eventTarget, [ 'event1', 'event2', 'event3' ])
+      off(eventTarget, ['event1', 'event2', 'event3'])
       dispatch(eventTarget, 'event1')
       dispatch(eventTarget, 'event2')
       dispatch(eventTarget, 'event3')
@@ -192,7 +200,12 @@ describe('event.js', () => {
     it('dispatches a custom event on the EventTarget by calling dispatchEvent()', () => {
       const eventTarget = new EventTarget()
       const spy = spyOn(eventTarget, 'dispatchEvent')
-      const event = dispatch(eventTarget, 'event', { some: 'data' }, { cancelable: false })
+      const event = dispatch(
+        eventTarget,
+        'event',
+        { some: 'data' },
+        { cancelable: false }
+      )
       expect(event).toEqual(any(getWindow().CustomEvent))
       expect(spy).toHaveBeenCalledWith(event)
       expect(event.detail).toEqual({ some: 'data' })

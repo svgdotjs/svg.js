@@ -5,7 +5,6 @@ import { Marker, SVG, Defs } from '../../../src/main.js'
 const { any } = jasmine
 
 describe('Marker.js', function () {
-
   describe('()', () => {
     it('creates a new object of type Marker', () => {
       expect(new Marker()).toEqual(any(Marker))
@@ -106,7 +105,7 @@ describe('Marker.js', function () {
         expect(marker.attr('viewBox')).toBe('0 0 10 12')
         expect(marker.attr('orient')).toBe('auto')
         expect(marker).toEqual(any(Marker))
-        expect(defs.children()).toEqual([ marker ])
+        expect(defs.children()).toEqual([marker])
       })
     })
   })
@@ -117,7 +116,9 @@ describe('Marker.js', function () {
     beforeEach(() => {
       // because we use `reference` here we need to put it into the live dom
       canvas = new SVG().addTo(container)
-      path = canvas.path('M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100')
+      path = canvas.path(
+        'M 100 200 C 200 100 300  0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
+      )
     })
 
     it('creates an instance of Marker', () => {
@@ -172,7 +173,5 @@ describe('Marker.js', function () {
         expect(path.node.getAttribute('marker-mid')).toBe(marker.toString())
       })
     })
-
   })
-
 })

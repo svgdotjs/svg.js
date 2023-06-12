@@ -98,11 +98,12 @@ describe('Tspan.js', () => {
       text.tspan('Second Line').newLine()
       const third = text.tspan('Third Line').newLine()
 
-      const fontSize = getWindow().getComputedStyle(third.node).getPropertyValue('font-size')
+      const fontSize = getWindow()
+        .getComputedStyle(third.node)
+        .getPropertyValue('font-size')
       const dy = 2 * new SVGNumber(fontSize)
       expect(third.dy()).toBe(dy)
     })
-
   })
 
   describe('Tspan', () => {

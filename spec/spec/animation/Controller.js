@@ -1,12 +1,17 @@
 /* globals describe, expect, it, jasmine */
 
 import { easing, defaults } from '../../../src/main.js'
-import { Stepper, Ease, Controller, Spring, PID } from '../../../src/animation/Controller.js'
+import {
+  Stepper,
+  Ease,
+  Controller,
+  Spring,
+  PID
+} from '../../../src/animation/Controller.js'
 
 const { any, createSpy } = jasmine
 
 describe('Controller.js', () => {
-
   describe('easing', () => {
     var easedValues = {
       '-': 0.5,
@@ -15,7 +20,7 @@ describe('Controller.js', () => {
       '<': 0.2929
     }
 
-    ;[ '-', '<>', '<', '>' ].forEach((el) => {
+    ;['-', '<>', '<', '>'].forEach((el) => {
       describe(el, () => {
         it('is 0 at 0', () => {
           expect(easing[el](0)).toBe(0)

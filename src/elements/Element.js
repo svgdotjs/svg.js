@@ -16,7 +16,7 @@ import List from '../types/List.js'
 import SVGNumber from '../types/SVGNumber.js'
 
 export default class Element extends Dom {
-  constructor (node, attrs) {
+  constructor(node, attrs) {
     super(node, attrs)
 
     // initialize data object
@@ -32,61 +32,61 @@ export default class Element extends Dom {
   }
 
   // Move element by its center
-  center (x, y) {
+  center(x, y) {
     return this.cx(x).cy(y)
   }
 
   // Move by center over x-axis
-  cx (x) {
+  cx(x) {
     return x == null
       ? this.x() + this.width() / 2
       : this.x(x - this.width() / 2)
   }
 
   // Move by center over y-axis
-  cy (y) {
+  cy(y) {
     return y == null
       ? this.y() + this.height() / 2
       : this.y(y - this.height() / 2)
   }
 
   // Get defs
-  defs () {
+  defs() {
     const root = this.root()
     return root && root.defs()
   }
 
   // Relative move over x and y axes
-  dmove (x, y) {
+  dmove(x, y) {
     return this.dx(x).dy(y)
   }
 
   // Relative move over x axis
-  dx (x = 0) {
+  dx(x = 0) {
     return this.x(new SVGNumber(x).plus(this.x()))
   }
 
   // Relative move over y axis
-  dy (y = 0) {
+  dy(y = 0) {
     return this.y(new SVGNumber(y).plus(this.y()))
   }
 
-  getEventHolder () {
+  getEventHolder() {
     return this
   }
 
   // Set height of element
-  height (height) {
+  height(height) {
     return this.attr('height', height)
   }
 
   // Move element to given x and y values
-  move (x, y) {
+  move(x, y) {
     return this.x(x).y(y)
   }
 
   // return array of all ancestors of given type up to the root svg
-  parents (until = this.root()) {
+  parents(until = this.root()) {
     const isSelector = typeof until === 'string'
     if (!isSelector) {
       until = makeInstance(until)
@@ -95,13 +95,13 @@ export default class Element extends Dom {
     let parent = this
 
     while (
-      (parent = parent.parent())
-      && parent.node !== globals.document
-      && parent.nodeName !== '#document-fragment') {
-
+      (parent = parent.parent()) &&
+      parent.node !== globals.document &&
+      parent.nodeName !== '#document-fragment'
+    ) {
       parents.push(parent)
 
-      if (!isSelector && (parent.node === until.node)) {
+      if (!isSelector && parent.node === until.node) {
         break
       }
       if (isSelector && parent.matches(until)) {
@@ -117,7 +117,7 @@ export default class Element extends Dom {
   }
 
   // Get referenced element form attribute value
-  reference (attr) {
+  reference(attr) {
     attr = this.attr(attr)
     if (!attr) return null
 
@@ -126,33 +126,31 @@ export default class Element extends Dom {
   }
 
   // Get parent document
-  root () {
+  root() {
     const p = this.parent(getClass(root))
     return p && p.root()
   }
 
   // set given data to the elements data property
-  setData (o) {
+  setData(o) {
     this.dom = o
     return this
   }
 
   // Set element size to given width and height
-  size (width, height) {
+  size(width, height) {
     const p = proportionalSize(this, width, height)
 
-    return this
-      .width(new SVGNumber(p.width))
-      .height(new SVGNumber(p.height))
+    return this.width(new SVGNumber(p.width)).height(new SVGNumber(p.height))
   }
 
   // Set width of element
-  width (width) {
+  width(width) {
     return this.attr('width', width)
   }
 
   // write svgjs data to the dom
-  writeDataToDom () {
+  writeDataToDom() {
     // remove previously set data
     this.node.removeAttribute('svgjs:data')
 
@@ -164,18 +162,23 @@ export default class Element extends Dom {
   }
 
   // Move over x-axis
-  x (x) {
+  x(x) {
     return this.attr('x', x)
   }
 
   // Move over y-axis
-  y (y) {
+  y(y) {
     return this.attr('y', y)
   }
 }
 
 extend(Element, {
-  bbox, rbox, inside, point, ctm, screenCTM
+  bbox,
+  rbox,
+  inside,
+  point,
+  ctm,
+  screenCTM
 })
 
 register(Element, 'Element')

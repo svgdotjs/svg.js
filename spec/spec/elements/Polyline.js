@@ -19,15 +19,18 @@ describe('Polyline.js', () => {
     describe('polyline()', () => {
       it('creates a polyline with given points', () => {
         const group = new G()
-        const polyline = group.polyline([ 1, 2, 3, 4 ])
-        expect(polyline.array()).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
+        const polyline = group.polyline([1, 2, 3, 4])
+        expect(polyline.array()).toEqual([
+          [1, 2],
+          [3, 4]
+        ])
         expect(polyline).toEqual(any(Polyline))
       })
 
       it('creates a polyline with one point by default', () => {
         const group = new G()
         const polyline = group.polyline()
-        expect(polyline.array()).toEqual([ [ 0, 0 ] ])
+        expect(polyline.array()).toEqual([[0, 0]])
         expect(polyline).toEqual(any(Polyline))
       })
     })

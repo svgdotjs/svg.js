@@ -61,7 +61,16 @@ describe('Container.js', () => {
     it('flattens the whole document when called on the root', () => {
       canvas.flatten()
 
-      expect(canvas.children()).toEqual([ rect1, rect2, circle1, circle2, line1, line2, circle3, rect3 ])
+      expect(canvas.children()).toEqual([
+        rect1,
+        rect2,
+        circle1,
+        circle2,
+        line1,
+        line2,
+        circle3,
+        rect3
+      ])
     })
 
     it('flattens a group and places all children into its parent when called on a group - 1', () => {
@@ -81,8 +90,15 @@ describe('Container.js', () => {
             rect3
       */
 
-      expect(canvas.children()).toEqual([ rect1, group1, group4 ])
-      expect(group1.children()).toEqual([ rect2, circle1, circle2, line1, line2, circle3 ])
+      expect(canvas.children()).toEqual([rect1, group1, group4])
+      expect(group1.children()).toEqual([
+        rect2,
+        circle1,
+        circle2,
+        line1,
+        line2,
+        circle3
+      ])
     })
 
     it('flattens a group and places all children into its parent when called on a group - 2', () => {
@@ -103,7 +119,7 @@ describe('Container.js', () => {
             rect3
       */
 
-      expect(group2.children()).toEqual([ circle2, line1, line2, circle3 ])
+      expect(group2.children()).toEqual([circle2, line1, line2, circle3])
     })
   })
 
@@ -111,21 +127,27 @@ describe('Container.js', () => {
     it('ungroups a group and inserts all children in the correct order in the parent parent of the group', () => {
       group1.ungroup()
 
-      expect(canvas.children()).toEqual([ rect1, rect2, circle1, group2, group4 ])
+      expect(canvas.children()).toEqual([rect1, rect2, circle1, group2, group4])
 
       group4.ungroup()
 
-      expect(canvas.children()).toEqual([ rect1, rect2, circle1, group2, rect3 ])
+      expect(canvas.children()).toEqual([rect1, rect2, circle1, group2, rect3])
     })
 
     it('ungroups a group into another group and appends the elements to the other group', () => {
       group1.ungroup(group4)
-      expect(group4.children()).toEqual([ rect3, rect2, circle1, group2 ])
+      expect(group4.children()).toEqual([rect3, rect2, circle1, group2])
     })
 
     it('ungroups a group into another group at the specified position', () => {
       group2.ungroup(group1, 1)
-      expect(group1.children()).toEqual([ rect2, circle2, group3, circle3, circle1 ])
+      expect(group1.children()).toEqual([
+        rect2,
+        circle2,
+        group3,
+        circle3,
+        circle1
+      ])
     })
   })
 })

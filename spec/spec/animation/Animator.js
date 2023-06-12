@@ -4,7 +4,6 @@ import { Animator, Queue } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 
 describe('Animator.js', () => {
-
   beforeEach(() => {
     jasmine.RequestAnimationFrame.install(getWindow())
     Animator.timeouts = new Queue()
@@ -19,7 +18,6 @@ describe('Animator.js', () => {
 
   describe('timeout()', () => {
     it('calls a function after a specific time', () => {
-
       var spy = jasmine.createSpy('tester')
       Animator.timeout(spy, 100)
 

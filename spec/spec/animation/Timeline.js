@@ -1,6 +1,13 @@
 /* globals describe, expect, it, beforeEach, afterEach, spyOn, container, jasmine */
 
-import { Timeline, SVG, Runner, Animator, Queue, Rect } from '../../../src/main.js'
+import {
+  Timeline,
+  SVG,
+  Runner,
+  Animator,
+  Queue,
+  Rect
+} from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 
 const { createSpy, any } = jasmine
@@ -127,7 +134,9 @@ describe('Timeline.js', () => {
     it('throws if when is not supported', () => {
       const timeline = new Timeline().schedule(new Runner(1000), 1000)
       const runner = new Runner(1000)
-      expect(() => timeline.schedule(runner, 0, 'not supported')).toThrowError('Invalid value for the "when" parameter')
+      expect(() => timeline.schedule(runner, 0, 'not supported')).toThrowError(
+        'Invalid value for the "when" parameter'
+      )
     })
 
     it('uses persist value of the runner of present', () => {
@@ -152,7 +161,9 @@ describe('Timeline.js', () => {
     it('gets a runner by its id from the timeline', () => {
       const timeline = new Timeline()
       const runner = new Runner(1000)
-      expect(timeline.schedule(runner).getRunnerInfoById(runner.id).runner).toBe(runner)
+      expect(
+        timeline.schedule(runner).getRunnerInfoById(runner.id).runner
+      ).toBe(runner)
     })
 
     it('returns null of runner not found', () => {
@@ -460,7 +471,10 @@ describe('Timeline.js', () => {
 
     it('continues if there are still runners left from us when going back in time', () => {
       const spy = createSpy()
-      const timeline = new Timeline().on('finished', spy).time(1200).reverse(true)
+      const timeline = new Timeline()
+        .on('finished', spy)
+        .time(1200)
+        .reverse(true)
       const runner = new Runner(1000)
       spy.calls.reset()
       timeline.schedule(runner, 0).play() // we have to play because its synchronous here

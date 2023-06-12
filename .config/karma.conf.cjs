@@ -1,5 +1,5 @@
 // Karma configuration
-const karmaCommon = require('./karma.conf.common.js')
+const karmaCommon = require('./karma.conf.common.cjs')
 
 let chromeBin = 'ChromeHeadless'
 if (process.platform === 'linux') {
@@ -75,7 +75,7 @@ module.exports = function (config) {
         },
         instrumenterOptions: {
           istanbul: {
-              esModules: true
+            esModules: true
           }
         }
       },

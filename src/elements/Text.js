@@ -13,7 +13,7 @@ import * as textable from '../modules/core/textable.js'
 
 export default class Text extends Shape {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('text', node), attrs)
 
     this.dom.leading = new SVGNumber(1.3) // store leading value for rebuilding
@@ -22,7 +22,7 @@ export default class Text extends Shape {
   }
 
   // Set / get leading
-  leading (value) {
+  leading(value) {
     // act as getter
     if (value == null) {
       return this.dom.leading
@@ -35,7 +35,7 @@ export default class Text extends Shape {
   }
 
   // Rebuild appearance type
-  rebuild (rebuild) {
+  rebuild(rebuild) {
     // store new rebuild flag if given
     if (typeof rebuild === 'boolean') {
       this._rebuild = rebuild
@@ -48,7 +48,8 @@ export default class Text extends Shape {
       const leading = this.dom.leading
 
       this.each(function (i) {
-        const fontSize = globals.window.getComputedStyle(this.node)
+        const fontSize = globals.window
+          .getComputedStyle(this.node)
           .getPropertyValue('font-size')
 
         const dy = leading * new SVGNumber(fontSize)
@@ -72,14 +73,14 @@ export default class Text extends Shape {
   }
 
   // overwrite method from parent to set data properly
-  setData (o) {
+  setData(o) {
     this.dom = o
     this.dom.leading = new SVGNumber(o.leading || 1.3)
     return this
   }
 
   // Set the text content
-  text (text) {
+  text(text) {
     // act as getter
     if (text === undefined) {
       const children = this.node.childNodes
@@ -94,7 +95,11 @@ export default class Text extends Shape {
         }
 
         // add newline if its not the first child and newLined is set to true
-        if (i !== firstLine && children[i].nodeType !== 3 && adopt(children[i]).dom.newLined === true) {
+        if (
+          i !== firstLine &&
+          children[i].nodeType !== 3 &&
+          adopt(children[i]).dom.newLined === true
+        ) {
           text += '\n'
         }
 
@@ -124,7 +129,6 @@ export default class Text extends Shape {
     // disable build mode and rebuild lines
     return this.build(false).rebuild()
   }
-
 }
 
 extend(Text, textable)

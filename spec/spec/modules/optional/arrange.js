@@ -11,7 +11,7 @@ describe('arrange.js', () => {
         const circle = g.circle(100)
         const line = g.line(1, 2, 3, 4)
 
-        expect(circle.siblings()).toEqual([ rect, circle, line ])
+        expect(circle.siblings()).toEqual([rect, circle, line])
       })
     })
 
@@ -77,7 +77,7 @@ describe('arrange.js', () => {
 
         rect.forward()
 
-        expect(g.children()).toEqual([ circle, rect, line ])
+        expect(g.children()).toEqual([circle, rect, line])
       })
 
       it('does nothing when the element is already the last one', () => {
@@ -88,7 +88,7 @@ describe('arrange.js', () => {
 
         line.forward()
 
-        expect(g.children()).toEqual([ rect, circle, line ])
+        expect(g.children()).toEqual([rect, circle, line])
       })
     })
 
@@ -107,7 +107,7 @@ describe('arrange.js', () => {
 
         line.backward()
 
-        expect(g.children()).toEqual([ rect, line, circle ])
+        expect(g.children()).toEqual([rect, line, circle])
       })
 
       it('does nothing when the element is already the first one', () => {
@@ -118,7 +118,7 @@ describe('arrange.js', () => {
 
         rect.backward()
 
-        expect(g.children()).toEqual([ rect, circle, line ])
+        expect(g.children()).toEqual([rect, circle, line])
       })
     })
 
@@ -137,7 +137,7 @@ describe('arrange.js', () => {
 
         rect.front()
 
-        expect(g.children()).toEqual([ circle, line, rect ])
+        expect(g.children()).toEqual([circle, line, rect])
       })
 
       it('does nothing when the element is already the last one', () => {
@@ -148,7 +148,7 @@ describe('arrange.js', () => {
 
         line.front()
 
-        expect(g.children()).toEqual([ rect, circle, line ])
+        expect(g.children()).toEqual([rect, circle, line])
       })
     })
 
@@ -167,7 +167,7 @@ describe('arrange.js', () => {
 
         line.back()
 
-        expect(g.children()).toEqual([ line, rect, circle ])
+        expect(g.children()).toEqual([line, rect, circle])
       })
 
       it('does nothing when the element is already the first one', () => {
@@ -178,7 +178,7 @@ describe('arrange.js', () => {
 
         rect.back()
 
-        expect(g.children()).toEqual([ rect, circle, line ])
+        expect(g.children()).toEqual([rect, circle, line])
       })
     })
 
@@ -191,7 +191,7 @@ describe('arrange.js', () => {
         const line = new Line()
         circle.before(line)
 
-        expect(g.children()).toEqual([ rect, line, circle ])
+        expect(g.children()).toEqual([rect, line, circle])
       })
     })
 
@@ -204,7 +204,7 @@ describe('arrange.js', () => {
         const line = new Line()
         rect.after(line)
 
-        expect(g.children()).toEqual([ rect, line, circle ])
+        expect(g.children()).toEqual([rect, line, circle])
       })
     })
 
@@ -216,7 +216,7 @@ describe('arrange.js', () => {
 
         const line = new Line().insertBefore(circle)
 
-        expect(g.children()).toEqual([ rect, line, circle ])
+        expect(g.children()).toEqual([rect, line, circle])
       })
     })
 
@@ -228,7 +228,7 @@ describe('arrange.js', () => {
 
         const line = new Line().insertAfter(rect)
 
-        expect(g.children()).toEqual([ rect, line, circle ])
+        expect(g.children()).toEqual([rect, line, circle])
       })
     })
   })

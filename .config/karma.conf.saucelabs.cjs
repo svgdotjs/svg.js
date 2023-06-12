@@ -2,9 +2,9 @@
 // https://wiki.saucelabs.com/display/DOCS/Platform+Configurator
 
 // TODO: remove dotenv after local test
-require('dotenv').config()
+// require('dotenv').config()
 
-const karmaCommon = require('./karma.conf.common.js')
+const karmaCommon = require('./karma.conf.common.cjs')
 
 const SauceLabsLaunchers = {
   /** Real mobile devices are not available
@@ -39,7 +39,7 @@ const SauceLabsLaunchers = {
     base: 'SauceLabs',
     browserName: 'internet explorer',
     version: '11.0'
-  }/*
+  } /*
   sl_windows_edge: {
     base: 'SauceLabs',
     browserName: 'MicrosoftEdge',
@@ -54,7 +54,7 @@ const SauceLabsLaunchers = {
     recordVideo: true,
     recordScreenshots: true,
     screenResolution: '1024x768'
-  } *//*,
+  } */ /*,
   sl_macos_iphone: {
     base: 'SauceLabs',
     browserName: 'Safari',
@@ -85,7 +85,9 @@ const SauceLabsLaunchers = {
 
 module.exports = function (config) {
   if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
-    console.error('SAUCE_USERNAME and SAUCE_ACCESS_KEY must be provided as environment variables.')
+    console.error(
+      'SAUCE_USERNAME and SAUCE_ACCESS_KEY must be provided as environment variables.'
+    )
     console.warn('Aborting Sauce Labs test')
     process.exit(1)
   }
@@ -100,10 +102,7 @@ module.exports = function (config) {
     // so if you are really puzzled why something isn't working, then comment
     // out plugins: [] - it's here to make karma load faster
     // get possible karma plugins by `ls node_modules | grep 'karma-*'`
-    plugins: [
-      'karma-jasmine',
-      'karma-sauce-launcher'
-    ],
+    plugins: ['karma-jasmine', 'karma-sauce-launcher'],
 
     // logLevel: config.LOG_DEBUG,
 

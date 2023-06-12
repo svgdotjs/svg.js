@@ -4,12 +4,12 @@ import Container from './Container.js'
 import baseFind from '../modules/core/selector.js'
 
 export default class ClipPath extends Container {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('clipPath', node), attrs)
   }
 
   // Unclip all clipped elements and remove itself
-  remove () {
+  remove() {
     // unclip all targets
     this.targets().forEach(function (el) {
       el.unclip()
@@ -19,7 +19,7 @@ export default class ClipPath extends Container {
     return super.remove()
   }
 
-  targets () {
+  targets() {
     return baseFind('svg [clip-path*=' + this.id() + ']')
   }
 }
@@ -33,22 +33,23 @@ registerMethods({
   },
   Element: {
     // Distribute clipPath to svg element
-    clipper () {
+    clipper() {
       return this.reference('clip-path')
     },
 
-    clipWith (element) {
+    clipWith(element) {
       // use given clip or create a new one
-      const clipper = element instanceof ClipPath
-        ? element
-        : this.parent().clip().add(element)
+      const clipper =
+        element instanceof ClipPath
+          ? element
+          : this.parent().clip().add(element)
 
       // apply mask
       return this.attr('clip-path', 'url(#' + clipper.id() + ')')
     },
 
     // Unclip element
-    unclip () {
+    unclip() {
       return this.attr('clip-path', null)
     }
   }

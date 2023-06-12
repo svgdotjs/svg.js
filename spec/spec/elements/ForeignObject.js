@@ -5,7 +5,6 @@ import { makeInstance, ForeignObject } from '../../../src/main.js'
 const { any } = jasmine
 
 describe('ForeignObject.js', () => {
-
   describe('()', () => {
     it('creates a new object of type ForeignObject', () => {
       expect(new ForeignObject()).toEqual(any(ForeignObject))

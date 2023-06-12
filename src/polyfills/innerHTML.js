@@ -1,24 +1,29 @@
-/* globals SVGElement, DOMParser */
-
-(function () {
+;(function () {
   try {
     if (SVGElement.prototype.innerHTML) return
-  } catch (e) { return }
+  } catch (e) {
+    return
+  }
 
   const serializeXML = function (node, output) {
     const nodeType = node.nodeType
     if (nodeType === 3) {
-      output.push(node.textContent.replace(/&/, '&amp;').replace(/</, '&lt;').replace('>', '&gt;'))
+      output.push(
+        node.textContent
+          .replace(/&/, '&amp;')
+          .replace(/</, '&lt;')
+          .replace('>', '&gt;')
+      )
     } else if (nodeType === 1) {
       output.push('<', node.tagName)
       if (node.hasAttributes()) {
-        [].forEach.call(node.attributes, function (attrNode) {
+        ;[].forEach.call(node.attributes, function (attrNode) {
           output.push(' ', attrNode.name, '="', attrNode.value, '"')
         })
       }
       output.push('>')
       if (node.hasChildNodes()) {
-        [].forEach.call(node.childNodes, function (childNode) {
+        ;[].forEach.call(node.childNodes, function (childNode) {
           serializeXML(childNode, output)
         })
       } else {
@@ -49,8 +54,14 @@
         const dXML = new DOMParser()
         dXML.async = false
 
-        const sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
-        const svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
+        const sXML =
+          "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+          markupText +
+          '</svg>'
+        const svgDocElement = dXML.parseFromString(
+          sXML,
+          'text/xml'
+        ).documentElement
 
         let childNode = svgDocElement.firstChild
         while (childNode) {
@@ -59,7 +70,7 @@
         }
       } catch (e) {
         throw new Error('Can not set innerHTML on node')
-      };
+      }
     }
   })
 
@@ -78,18 +89,27 @@
         const dXML = new DOMParser()
         dXML.async = false
 
-        const sXML = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'>' + markupText + '</svg>'
-        const svgDocElement = dXML.parseFromString(sXML, 'text/xml').documentElement
+        const sXML =
+          "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+          markupText +
+          '</svg>'
+        const svgDocElement = dXML.parseFromString(
+          sXML,
+          'text/xml'
+        ).documentElement
 
         let childNode = svgDocElement.firstChild
         while (childNode) {
-          this.parentNode.insertBefore(this.ownerDocument.importNode(childNode, true), this)
+          this.parentNode.insertBefore(
+            this.ownerDocument.importNode(childNode, true),
+            this
+          )
           // this.appendChild(this.ownerDocument.importNode(childNode, true));
           childNode = childNode.nextSibling
         }
       } catch (e) {
         throw new Error('Can not set outerHTML on node')
-      };
+      }
     }
   })
 })()

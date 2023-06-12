@@ -19,9 +19,7 @@ const getClassForType = (value) => {
     if (Color.isColor(value)) {
       return Color
     } else if (delimiter.test(value)) {
-      return isPathLetter.test(value)
-        ? PathArray
-        : SVGArray
+      return isPathLetter.test(value) ? PathArray : SVGArray
     } else if (numberAndUnit.test(value)) {
       return SVGNumber
     } else {
@@ -39,7 +37,7 @@ const getClassForType = (value) => {
 }
 
 export default class Morphable {
-  constructor (stepper) {
+  constructor(stepper) {
     this._stepper = stepper || new Ease('-')
 
     this._from = null
@@ -49,12 +47,17 @@ export default class Morphable {
     this._morphObj = null
   }
 
-  at (pos) {
-    return this._morphObj.morph(this._from, this._to, pos, this._stepper, this._context)
-
+  at(pos) {
+    return this._morphObj.morph(
+      this._from,
+      this._to,
+      pos,
+      this._stepper,
+      this._context
+    )
   }
 
-  done () {
+  done() {
     const complete = this._context
       .map(this._stepper.done)
       .reduce(function (last, curr) {
@@ -63,7 +66,7 @@ export default class Morphable {
     return complete
   }
 
-  from (val) {
+  from(val) {
     if (val == null) {
       return this._from
     }
@@ -72,13 +75,13 @@ export default class Morphable {
     return this
   }
 
-  stepper (stepper) {
+  stepper(stepper) {
     if (stepper == null) return this._stepper
     this._stepper = stepper
     return this
   }
 
-  to (val) {
+  to(val) {
     if (val == null) {
       return this._to
     }
@@ -87,7 +90,7 @@ export default class Morphable {
     return this
   }
 
-  type (type) {
+  type(type) {
     // getter
     if (type == null) {
       return this._type
@@ -98,33 +101,34 @@ export default class Morphable {
     return this
   }
 
-  _set (value) {
+  _set(value) {
     if (!this._type) {
       this.type(getClassForType(value))
     }
 
-    let result = (new this._type(value))
+    let result = new this._type(value)
     if (this._type === Color) {
       result = this._to
         ? result[this._to[4]]()
         : this._from
-          ? result[this._from[4]]()
-          : result
+        ? result[this._from[4]]()
+        : result
     }
 
     if (this._type === ObjectBag) {
       result = this._to
         ? result.align(this._to)
         : this._from
-          ? result.align(this._from)
-          : result
+        ? result.align(this._from)
+        : result
     }
 
     result = result.toConsumable()
 
     this._morphObj = this._morphObj || new this._type()
-    this._context = this._context
-      || Array.apply(null, Array(result.length))
+    this._context =
+      this._context ||
+      Array.apply(null, Array(result.length))
         .map(Object)
         .map(function (o) {
           o.done = true
@@ -132,36 +136,34 @@ export default class Morphable {
         })
     return result
   }
-
 }
 
 export class NonMorphable {
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  init (val) {
+  init(val) {
     val = Array.isArray(val) ? val[0] : val
     this.value = val
     return this
   }
 
-  toArray () {
-    return [ this.value ]
+  toArray() {
+    return [this.value]
   }
 
-  valueOf () {
+  valueOf() {
     return this.value
   }
-
 }
 
 export class TransformBag {
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  init (obj) {
+  init(obj) {
     if (Array.isArray(obj)) {
       obj = {
         scaleX: obj[0],
@@ -179,7 +181,7 @@ export class TransformBag {
     return this
   }
 
-  toArray () {
+  toArray() {
     const v = this
 
     return [
@@ -207,23 +209,24 @@ TransformBag.defaults = {
 }
 
 const sortByKey = (a, b) => {
-  return (a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0))
+  return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
 }
 
 export class ObjectBag {
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  align (other) {
+  align(other) {
     const values = this.values
     for (let i = 0, il = values.length; i < il; ++i) {
-
       // If the type is the same we only need to check if the color is in the correct format
       if (values[i + 1] === other[i + 1]) {
         if (values[i + 1] === Color && other[i + 7] !== values[i + 7]) {
           const space = other[i + 7]
-          const color = new Color(this.values.splice(i + 3, 5))[space]().toArray()
+          const color = new Color(this.values.splice(i + 3, 5))
+            [space]()
+            .toArray()
           this.values.splice(i + 3, 0, ...color)
         }
 
@@ -237,19 +240,26 @@ export class ObjectBag {
 
       // The types differ, so we overwrite the new type with the old one
       // And initialize it with the types default (e.g. black for color or 0 for number)
-      const defaultObject = new (other[i + 1])().toArray()
+      const defaultObject = new other[i + 1]().toArray()
 
       // Than we fix the values array
-      const toDelete = (values[i + 2]) + 3
+      const toDelete = values[i + 2] + 3
 
-      values.splice(i, toDelete, other[i], other[i + 1], other[i + 2], ...defaultObject)
+      values.splice(
+        i,
+        toDelete,
+        other[i],
+        other[i + 1],
+        other[i + 2],
+        ...defaultObject
+      )
 
       i += values[i + 2] + 2
     }
     return this
   }
 
-  init (objOrArr) {
+  init(objOrArr) {
     this.values = []
 
     if (Array.isArray(objOrArr)) {
@@ -263,7 +273,7 @@ export class ObjectBag {
     for (const i in objOrArr) {
       const Type = getClassForType(objOrArr[i])
       const val = new Type(objOrArr[i]).toArray()
-      entries.push([ i, Type, val.length, ...val ])
+      entries.push([i, Type, val.length, ...val])
     }
 
     entries.sort(sortByKey)
@@ -272,11 +282,11 @@ export class ObjectBag {
     return this
   }
 
-  toArray () {
+  toArray() {
     return this.values
   }
 
-  valueOf () {
+  valueOf() {
     const obj = {}
     const arr = this.values
 
@@ -286,40 +296,35 @@ export class ObjectBag {
       const Type = arr.shift()
       const num = arr.shift()
       const values = arr.splice(0, num)
-      obj[key] = new Type(values)// .valueOf()
+      obj[key] = new Type(values) // .valueOf()
     }
 
     return obj
   }
-
 }
 
-const morphableTypes = [
-  NonMorphable,
-  TransformBag,
-  ObjectBag
-]
+const morphableTypes = [NonMorphable, TransformBag, ObjectBag]
 
-export function registerMorphableType (type = []) {
+export function registerMorphableType(type = []) {
   morphableTypes.push(...[].concat(type))
 }
 
-export function makeMorphable () {
+export function makeMorphable() {
   extend(morphableTypes, {
-    to (val) {
+    to(val) {
       return new Morphable()
         .type(this.constructor)
-        .from(this.toArray())// this.valueOf())
+        .from(this.toArray()) // this.valueOf())
         .to(val)
     },
-    fromArray (arr) {
+    fromArray(arr) {
       this.init(arr)
       return this
     },
-    toConsumable () {
+    toConsumable() {
       return this.toArray()
     },
-    morph (from, to, pos, stepper, context) {
+    morph(from, to, pos, stepper, context) {
       const mapper = function (i, index) {
         return stepper.step(i, to[index], pos, context[index], context)
       }

@@ -3,9 +3,7 @@
 import { Queue } from '../../../src/main.js'
 
 describe('Queue.js', function () {
-
   describe('first ()', function () {
-
     it('returns null if no item in the queue', function () {
       var queue = new Queue()
       expect(queue.first()).toEqual(null)
@@ -21,7 +19,6 @@ describe('Queue.js', function () {
   })
 
   describe('last ()', function () {
-
     it('returns null if no item in the queue', function () {
       var queue = new Queue()
       expect(queue.last()).toEqual(null)
@@ -37,7 +34,6 @@ describe('Queue.js', function () {
   })
 
   describe('push ()', function () {
-
     it('adds an element to the end of the queue', function () {
       var queue = new Queue()
       queue.push(1)

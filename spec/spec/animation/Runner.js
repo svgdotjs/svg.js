@@ -1,6 +1,22 @@
 /* globals describe, expect, it, beforeEach, afterEach, spyOn, jasmine */
 
-import { Runner, defaults, Ease, Controller, SVG, Timeline, Rect, Morphable, Animator, Queue, Matrix, Color, Box, Polygon, PointArray } from '../../../src/main.js'
+import {
+  Runner,
+  defaults,
+  Ease,
+  Controller,
+  SVG,
+  Timeline,
+  Rect,
+  Morphable,
+  Animator,
+  Queue,
+  Matrix,
+  Color,
+  Box,
+  Polygon,
+  PointArray
+} from '../../../src/main.js'
 import { FakeRunner, RunnerArray } from '../../../src/animation/Runner.js'
 import { getWindow } from '../../../src/utils/window.js'
 import SVGNumber from '../../../src/types/SVGNumber.js'
@@ -8,7 +24,6 @@ import SVGNumber from '../../../src/types/SVGNumber.js'
 const { any, createSpy, objectContaining, arrayContaining } = jasmine
 
 describe('Runner.js', () => {
-
   describe('Runner', () => {
     var initFn = createSpy('initFn')
     var runFn = createSpy('runFn')
@@ -31,59 +46,73 @@ describe('Runner.js', () => {
       it('can handle all form of input', () => {
         var fn = Runner.sanitise
 
-        expect(fn(200, 200, 'now')).toEqual(objectContaining({
-          duration: 200,
-          delay: 200,
-          when: 'now',
-          times: 1,
-          wait: 0,
-          swing: false
-        }))
+        expect(fn(200, 200, 'now')).toEqual(
+          objectContaining({
+            duration: 200,
+            delay: 200,
+            when: 'now',
+            times: 1,
+            wait: 0,
+            swing: false
+          })
+        )
 
-        expect(fn(200, 200)).toEqual(objectContaining({
-          duration: 200,
-          delay: 200,
-          when: 'last',
-          times: 1,
-          wait: 0,
-          swing: false
-        }))
+        expect(fn(200, 200)).toEqual(
+          objectContaining({
+            duration: 200,
+            delay: 200,
+            when: 'last',
+            times: 1,
+            wait: 0,
+            swing: false
+          })
+        )
 
-        expect(fn(200)).toEqual(objectContaining({
-          duration: 200,
-          delay: defaults.timeline.delay,
-          when: 'last',
-          times: 1,
-          wait: 0,
-          swing: false
-        }))
+        expect(fn(200)).toEqual(
+          objectContaining({
+            duration: 200,
+            delay: defaults.timeline.delay,
+            when: 'last',
+            times: 1,
+            wait: 0,
+            swing: false
+          })
+        )
 
-        expect(fn(runFn)).toEqual(objectContaining({
-          duration: runFn,
-          delay: defaults.timeline.delay,
-          when: 'last',
-          times: 1,
-          wait: 0,
-          swing: false
-        }))
+        expect(fn(runFn)).toEqual(
+          objectContaining({
+            duration: runFn,
+            delay: defaults.timeline.delay,
+            when: 'last',
+            times: 1,
+            wait: 0,
+            swing: false
+          })
+        )
 
-        expect(fn({ delay: 200 })).toEqual(objectContaining({
-          duration: defaults.timeline.duration,
-          delay: 200,
-          when: 'last',
-          times: 1,
-          wait: 0,
-          swing: false
-        }))
+        expect(fn({ delay: 200 })).toEqual(
+          objectContaining({
+            duration: defaults.timeline.duration,
+            delay: 200,
+            when: 'last',
+            times: 1,
+            wait: 0,
+            swing: false
+          })
+        )
 
-        expect(fn({ times: 3, delay: 200, when: 'now', swing: true, wait: 200 })).toEqual(objectContaining({
-          duration: defaults.timeline.duration,
-          delay: 200,
-          when: 'now',
-          times: 3,
-          wait: 200,
-          swing: true
-        }))
+        expect(
+          fn({ times: 3, delay: 200, when: 'now', swing: true, wait: 200 })
+        ).toEqual(
+          objectContaining({
+            duration: defaults.timeline.duration,
+            delay: 200,
+            when: 'now',
+            times: 3,
+            wait: 200,
+            swing: true
+          })
+        )
       })
     })
 
@@ -115,17 +144,18 @@ describe('Runner.js', () => {
         var runner = new Runner()
         runner.queue(initFn, runFn, true)
 
-        expect(runner._queue[0]).toEqual(objectContaining({
-          initialiser: initFn,
-          initialised: false,
-          runner: runFn,
-          finished: false
-        }))
+        expect(runner._queue[0]).toEqual(
+          objectContaining({
+            initialiser: initFn,
+            initialised: false,
+            runner: runFn,
+            finished: false
+          })
+        )
       })
     })
 
     describe('step()', () => {
-
       it('returns itself', () => {
         var runner = new Runner()
         expect(runner.step()).toBe(runner)
@@ -163,7 +193,7 @@ describe('Runner.js', () => {
         expect(runFn.calls.count()).toBe(2)
       })
 
-      function getLoop (r) {
+      function getLoop(r) {
         var loopDuration = r._duration + r._wait
         var loopsDone = Math.floor(r._time / loopDuration)
         return loopsDone
@@ -447,7 +477,6 @@ describe('Runner.js', () => {
           })
         })
       })
-
     })
 
     describe('active()', () => {
@@ -613,7 +642,6 @@ describe('Runner.js', () => {
     })
 
     describe('position()', () => {
-
       it('gets the position of a runner', () => {
         var spy = createSpy('stepper')
         var runner = new Runner(1000).queue(null, spy)
@@ -718,9 +746,10 @@ describe('Runner.js', () => {
 
       it('throws if no timeline is given', () => {
         var runner = new Runner()
-        expect(() => runner.schedule(200, 'now')).toThrowError('Runner cannot be scheduled without timeline')
+        expect(() => runner.schedule(200, 'now')).toThrowError(
+          'Runner cannot be scheduled without timeline'
+        )
       })
-
     })
 
     describe('unschedule()', () => {
@@ -750,10 +779,22 @@ describe('Runner.js', () => {
         expect(runner2.timeline()).toBe(timeline)
         expect(runner2.time()).toBe(0)
 
-        expect(timeline.schedule()).toEqual(arrayContaining([
-          objectContaining({ start: t, duration: 1000, end: t + 1000, runner: runner }),
-          objectContaining({ start: t + 2000, duration: 500, end: t + 2500, runner: runner2 })
-        ]))
+        expect(timeline.schedule()).toEqual(
+          arrayContaining([
+            objectContaining({
+              start: t,
+              duration: 1000,
+              end: t + 1000,
+              runner: runner
+            }),
+            objectContaining({
+              start: t + 2000,
+              duration: 500,
+              end: t + 2500,
+              runner: runner2
+            })
+          ])
+        )
       })
 
       it('reuses timeline and element of current runner', () => {
@@ -909,7 +950,7 @@ describe('Runner.js', () => {
           const runner = rect.animate().move(10, 10)
           jasmine.RequestAnimationFrame.tick(16)
           expect(runner._tryRetarget('x', 20)).toBe(true)
-          expect(runner._history.x.morpher.to()).toEqual([ 20, '' ])
+          expect(runner._history.x.morpher.to()).toEqual([20, ''])
         })
 
         it('throws away the morpher if it was not initialized yet and returns false', () => {
@@ -929,10 +970,14 @@ describe('Runner.js', () => {
 
         it('does only work with controller for transformations and uses retarget function when retargeting transformations', () => {
           const rect = new Rect()
-          const runner = rect.animate(new Controller(() => 0)).transform({ translate: [ 10, 10 ] })
+          const runner = rect
+            .animate(new Controller(() => 0))
+            .transform({ translate: [10, 10] })
           jasmine.RequestAnimationFrame.tick(16)
           // In that case tryRetarget is not successful
-          expect(runner._tryRetarget('transform', { translate: [ 20, 20 ] })).toBe(true)
+          expect(
+            runner._tryRetarget('transform', { translate: [20, 20] })
+          ).toBe(true)
         })
 
         it('starts the timeline if retarget was successful', () => {
@@ -942,7 +987,7 @@ describe('Runner.js', () => {
           jasmine.RequestAnimationFrame.tick(16)
           const spy = spyOn(timeline, 'play')
           expect(runner._tryRetarget('x', 20)).toBe(true)
-          expect(runner._history.x.morpher.to()).toEqual([ 20, '' ])
+          expect(runner._history.x.morpher.to()).toEqual([20, ''])
           expect(spy).toHaveBeenCalledTimes(1)
         })
       })
@@ -1002,7 +1047,7 @@ describe('Runner.js', () => {
       describe('addTransform()', () => {
         it('adds a transformation by multiplying', () => {
           const runner = new Runner()
-          runner.addTransform({ translate: [ 10, 10 ] })
+          runner.addTransform({ translate: [10, 10] })
           expect(runner.transforms).toEqual(new Matrix(1, 0, 0, 1, 10, 10))
         })
       })
@@ -1010,7 +1055,7 @@ describe('Runner.js', () => {
       describe('clearTransform()', () => {
         it('resets the transformations to identity', () => {
           const runner = new Runner()
-          runner.addTransform({ translate: [ 10, 10 ] })
+          runner.addTransform({ translate: [10, 10] })
           runner.clearTransform()
           expect(runner.transforms).toEqual(new Matrix())
         })
@@ -1019,7 +1064,7 @@ describe('Runner.js', () => {
       describe('clearTransformsFromQueue', () => {
         it('deletes all functions from the queue which are transformations', () => {
           const runner = new Runner().queue(initFn, runFn)
-          runner.transform({ translate: [ 10, 20 ] })
+          runner.transform({ translate: [10, 20] })
           runner.clearTransformsFromQueue()
           expect(runner._queue.length).toBe(1)
         })
@@ -1062,17 +1107,15 @@ describe('Runner.js', () => {
         it('calculates the current transformation of this element', () => {
           const rect = new Rect()
           rect._prepareRunner()
-          const runner1 = new Runner().addTransform({ translate: [ 10, 20 ] })
+          const runner1 = new Runner().addTransform({ translate: [10, 20] })
           const runner2 = new Runner().addTransform({ rotate: 45 })
-          const runner3 = new Runner().addTransform({ translate: [ 10, 20 ] })
+          const runner3 = new Runner().addTransform({ translate: [10, 20] })
 
           rect._addRunner(runner1)
           rect._addRunner(runner2)
           rect._addRunner(runner3)
           expect(rect._currentTransform(runner3)).toEqual(
-            new Matrix({ translate: [ 10, 20 ] })
-              .rotate(45)
-              .translate(10, 20)
+            new Matrix({ translate: [10, 20] }).rotate(45).translate(10, 20)
           )
         })
       })
@@ -1132,14 +1175,26 @@ describe('Runner.js', () => {
           const runner = new Runner()
           runner.styleAttr('attr', 'x', 5)
           expect(runner._history.attr.morpher).toEqual(any(Morphable))
-          expect(runner._history.attr.morpher.to()).toEqual([ 'x', SVGNumber, 2, 5, '' ])
+          expect(runner._history.attr.morpher.to()).toEqual([
+            'x',
+            SVGNumber,
+            2,
+            5,
+            ''
+          ])
         })
 
         it('adds a morpher for css', () => {
           const runner = new Runner()
           runner.styleAttr('css', 'x', 5)
           expect(runner._history.css.morpher).toEqual(any(Morphable))
-          expect(runner._history.css.morpher.to()).toEqual([ 'x', SVGNumber, 2, 5, '' ])
+          expect(runner._history.css.morpher.to()).toEqual([
+            'x',
+            SVGNumber,
+            2,
+            5,
+            ''
+          ])
         })
 
         it('adds init and run fn for execution when runner runs', () => {
@@ -1147,8 +1202,20 @@ describe('Runner.js', () => {
           const runner = new Runner(100).ease('-').element(element)
           runner.styleAttr('attr', 'x', 5)
           runner.step(50)
-          expect(runner._history.attr.morpher.from()).toEqual([ 'x', SVGNumber, 2, 0, '' ])
-          expect(runner._history.attr.morpher.to()).toEqual([ 'x', SVGNumber, 2, 5, '' ])
+          expect(runner._history.attr.morpher.from()).toEqual([
+            'x',
+            SVGNumber,
+            2,
+            0,
+            ''
+          ])
+          expect(runner._history.attr.morpher.to()).toEqual([
+            'x',
+            SVGNumber,
+            2,
+            5,
+            ''
+          ])
           expect(element.x()).toBe(2.5)
         })
 
@@ -1157,18 +1224,54 @@ describe('Runner.js', () => {
           const runner = new Runner(100).ease('-').element(element)
           runner.styleAttr('attr', { fill: '#000', stroke: new Color('#fff') })
           runner.step(50)
-          expect(runner._history.attr.morpher.from()).toEqual(
-            [ 'fill', Color, 5, 255, 255, 255, 0, 'rgb', 'stroke', Color, 5, 0, 0, 0, 0, 'rgb' ]
-          )
+          expect(runner._history.attr.morpher.from()).toEqual([
+            'fill',
+            Color,
+            5,
+            255,
+            255,
+            255,
+            0,
+            'rgb',
+            'stroke',
+            Color,
+            5,
+            0,
+            0,
+            0,
+            0,
+            'rgb'
+          ])
 
-          expect(runner._history.attr.morpher.to()).toEqual(
-            [ 'fill', Color, 5, 0, 0, 0, 0, 'rgb', 'stroke', Color, 5, 255, 255, 255, 0, 'rgb' ]
-          )
+          expect(runner._history.attr.morpher.to()).toEqual([
+            'fill',
+            Color,
+            5,
+            0,
+            0,
+            0,
+            0,
+            'rgb',
+            'stroke',
+            Color,
+            5,
+            255,
+            255,
+            255,
+            0,
+            'rgb'
+          ])
           const result = runner._history.attr.morpher.at(0.5).valueOf()
           expect(result.fill).toEqual(any(Color))
           expect(result.stroke).toEqual(any(Color))
-          expect(result.fill.toArray()).toEqual([ 127.5, 127.5, 127.5, 0, 'rgb' ])
-          expect(result.stroke.toArray()).toEqual([ 127.5, 127.5, 127.5, 0, 'rgb' ])
+          expect(result.fill.toArray()).toEqual([127.5, 127.5, 127.5, 0, 'rgb'])
+          expect(result.stroke.toArray()).toEqual([
+            127.5,
+            127.5,
+            127.5,
+            0,
+            'rgb'
+          ])
         })
 
         it('it changes color space', () => {
@@ -1176,16 +1279,30 @@ describe('Runner.js', () => {
           const runner = new Runner(100).ease('-').element(element)
           runner.styleAttr('attr', { fill: new Color(100, 12, 12, 'hsl') })
           runner.step(50)
-          expect(runner._history.attr.morpher.from()).toEqual(
-            [ 'fill', Color, 5, 0, 0, 100, 0, 'hsl' ]
-          )
+          expect(runner._history.attr.morpher.from()).toEqual([
+            'fill',
+            Color,
+            5,
+            0,
+            0,
+            100,
+            0,
+            'hsl'
+          ])
 
-          expect(runner._history.attr.morpher.to()).toEqual(
-            [ 'fill', Color, 5, 100, 12, 12, 0, 'hsl' ]
-          )
+          expect(runner._history.attr.morpher.to()).toEqual([
+            'fill',
+            Color,
+            5,
+            100,
+            12,
+            12,
+            0,
+            'hsl'
+          ])
           const result = runner._history.attr.morpher.at(0.5).valueOf()
           expect(result.fill).toEqual(any(Color))
-          expect(result.fill.toArray()).toEqual([ 50, 6, 56, 0, 'hsl' ])
+          expect(result.fill.toArray()).toEqual([50, 6, 56, 0, 'hsl'])
           expect(element.fill()).toBe('#969388')
         })
 
@@ -1195,7 +1312,10 @@ describe('Runner.js', () => {
           runner.styleAttr('attr', { fill: new Color(100, 12, 12, 'hsl') })
           runner.step(50)
           expect(element.fill()).toBe('#969388')
-          runner.styleAttr('attr', { fill: new Color(100, 50, 50, 'hsl'), x: 50 })
+          runner.styleAttr('attr', {
+            fill: new Color(100, 50, 50, 'hsl'),
+            x: 50
+          })
           runner.step(25)
           expect(element.fill()).toBe('#b1c37c')
           expect(element.x()).toBe(37.5)
@@ -1213,14 +1333,17 @@ describe('Runner.js', () => {
         })
       })
 
-      function closeTo (number, precision = 2) {
+      function closeTo(number, precision = 2) {
         return {
           /*
            * The asymmetricMatch function is required, and must return a boolean.
            */
           asymmetricMatch: function (compareTo) {
             const factor = 10 ** precision
-            return Math.round((~~(compareTo * factor)) / factor) === Math.round((~~(number * factor)) / factor)
+            return (
+              Math.round(~~(compareTo * factor) / factor) ===
+              Math.round(~~(number * factor) / factor)
+            )
           },
 
           /*
@@ -1228,12 +1351,14 @@ describe('Runner.js', () => {
            * be seen by the user in the message when a test fails.
            */
           jasmineToString: function () {
-            return '<close to: ' + number + ' with precision: ' + precision + '>'
+            return (
+              '<close to: ' + number + ' with precision: ' + precision + '>'
+            )
           }
         }
       }
 
-      function equal (obj) {
+      function equal(obj) {
         return {
           /*
            * The asymmetricMatch function is required, and must return a boolean.
@@ -1242,7 +1367,9 @@ describe('Runner.js', () => {
             if (!(compareTo instanceof obj.constructor)) return false
 
             const keys = Object.keys(obj)
-            const difference = Object.keys(compareTo).filter((el) => !keys.includes(el))
+            const difference = Object.keys(compareTo).filter(
+              (el) => !keys.includes(el)
+            )
 
             if (difference.length) return false
 
@@ -1269,15 +1396,16 @@ describe('Runner.js', () => {
           const runner = new Runner(100).ease('-').element(element)
           runner.zoom(2, { x: 0, y: 0 })
           runner.step(50)
-          expect(runner._history.zoom.morpher.from()).toEqual(
-            [ 1, '' ]
-          )
-          expect(runner._history.zoom.morpher.to()).toEqual(
-            [ 2, '' ]
-          )
+          expect(runner._history.zoom.morpher.from()).toEqual([1, ''])
+          expect(runner._history.zoom.morpher.to()).toEqual([2, ''])
 
           expect(element.zoom()).toBeCloseTo(1.5, 10)
-          expect(element.viewbox().toArray()).toEqual([ 0, 0, closeTo(66.666, 3), closeTo(66.666, 3) ])
+          expect(element.viewbox().toArray()).toEqual([
+            0,
+            0,
+            closeTo(66.666, 3),
+            closeTo(66.666, 3)
+          ])
         })
 
         it('retargets if called twice', () => {
@@ -1286,16 +1414,17 @@ describe('Runner.js', () => {
           runner.zoom(2, { x: 0, y: 0 })
           runner.step(50)
           runner.zoom(4, { x: 0, y: 0 })
-          expect(runner._history.zoom.morpher.from()).toEqual(
-            [ 1, '' ]
-          )
-          expect(runner._history.zoom.morpher.to()).toEqual(
-            [ 4, '' ]
-          )
+          expect(runner._history.zoom.morpher.from()).toEqual([1, ''])
+          expect(runner._history.zoom.morpher.to()).toEqual([4, ''])
 
           runner.step(25)
           expect(element.zoom()).toBeCloseTo(3.25, 10)
-          expect(element.viewbox().toArray()).toEqual([ 0, 0, closeTo(30.769, 3), closeTo(30.769, 3) ])
+          expect(element.viewbox().toArray()).toEqual([
+            0,
+            0,
+            closeTo(30.769, 3),
+            closeTo(30.769, 3)
+          ])
         })
       })
 
@@ -1303,52 +1432,59 @@ describe('Runner.js', () => {
         it('does not retarget for non-declarative transformations', () => {
           const runner = new Runner()
           const spy = spyOn(runner, '_tryRetarget')
-          runner.transform({ translate: [ 10, 20 ] })
+          runner.transform({ translate: [10, 20] })
           expect(spy).not.toHaveBeenCalled()
         })
 
         it('does not retarget for relative transformations', () => {
           const runner = new Runner(new Controller(() => 0))
           const spy = spyOn(runner, '_tryRetarget')
-          runner.transform({ translate: [ 10, 20 ] }, true)
+          runner.transform({ translate: [10, 20] }, true)
           expect(spy).not.toHaveBeenCalled()
         })
 
         it('does retarget for absolute declarative transformations', () => {
           const runner = new Runner(new Controller(() => 0))
           const spy = spyOn(runner, '_tryRetarget')
-          runner.transform({ translate: [ 10, 20 ] })
+          runner.transform({ translate: [10, 20] })
           expect(spy).toHaveBeenCalled()
         })
 
         it('calls queue with isTransform=true', () => {
           const runner = new Runner()
           const spy = spyOn(runner, 'queue')
-          runner.transform({ translate: [ 10, 20 ] })
-          expect(spy).toHaveBeenCalledWith(any(Function), any(Function), any(Function), true)
+          runner.transform({ translate: [10, 20] })
+          expect(spy).toHaveBeenCalledWith(
+            any(Function),
+            any(Function),
+            any(Function),
+            true
+          )
         })
 
         it('steps an affine transformation correctly', () => {
           const element = new Rect()
           const runner = new Runner(100).ease('-').element(element)
-          runner.transform({ translate: [ 10, 20 ], scale: 2, rotate: 90 })
+          runner.transform({ translate: [10, 20], scale: 2, rotate: 90 })
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
           // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
-          expect(element.matrix().decompose()).toEqual(objectContaining({
-            translateX: 5,
-            translateY: 10,
-            scaleX: closeTo(1.5, 10),
-            scaleY: closeTo(1.5),
-            rotate: closeTo(45, 10)
-          }))
+          expect(element.matrix().decompose()).toEqual(
+            objectContaining({
+              translateX: 5,
+              translateY: 10,
+              scaleX: closeTo(1.5, 10),
+              scaleY: closeTo(1.5),
+              rotate: closeTo(45, 10)
+            })
+          )
         })
 
         it('retargets an affine transformation correctly', () => {
           const element = new Rect()
           const runner = new Runner(() => 1).element(element)
-          runner.transform({ translate: [ 10, 20 ], scale: 2, rotate: 90 })
+          runner.transform({ translate: [10, 20], scale: 2, rotate: 90 })
           runner.step(50)
           runner.transform({ scale: 2 })
 
@@ -1357,26 +1493,26 @@ describe('Runner.js', () => {
           // on every frame. That is why we step here to see the effect of our retargeting
           runner.step(25)
 
-          expect(runner._history.transform.morpher.to()).toEqual(
-            [ 2, 2, 0, 0, 0, 0, 0, 0 ]
-          )
+          expect(runner._history.transform.morpher.to()).toEqual([
+            2, 2, 0, 0, 0, 0, 0, 0
+          ])
         })
 
         it('retargets an affine transformation correctly and sets new origin', () => {
           const element = new Rect()
           const runner = new Runner(() => 1).element(element)
-          runner.transform({ translate: [ 10, 20 ], scale: 2, rotate: 90 })
+          runner.transform({ translate: [10, 20], scale: 2, rotate: 90 })
           runner.step(50)
-          runner.transform({ scale: 2, origin: [ 10, 10 ] })
+          runner.transform({ scale: 2, origin: [10, 10] })
 
           // transform sets its to-target to the morpher in the initialisation step
           // because it depends on the from-target. Declaritive animation run the init-step
           // on every frame. That is why we step here to see the effect of our retargeting
           runner.step(25)
 
-          expect(runner._history.transform.morpher.to()).toEqual(
-            [ 2, 2, 0, 0, 0, 0, 10, 10 ]
-          )
+          expect(runner._history.transform.morpher.to()).toEqual([
+            2, 2, 0, 0, 0, 0, 10, 10
+          ])
         })
 
         it('steps multiple relative animations correctly', () => {
@@ -1433,9 +1569,7 @@ describe('Runner.js', () => {
           expect(runner1._queue.length).toBe(0)
 
           // The origin is transformed with every
-          expect(element.matrix()).toEqual(
-            new Matrix().scale(1.5).rotate(22.5)
-          )
+          expect(element.matrix()).toEqual(new Matrix().scale(1.5).rotate(22.5))
         })
 
         it('correctly animates matrices directly', () => {
@@ -1456,16 +1590,16 @@ describe('Runner.js', () => {
         it('correctly animates matrices affine', () => {
           const element = new Rect()
           const runner = new Runner(100).ease('-').element(element)
-          runner.transform(Object.assign({ affine: true }, new Matrix({ rotate: 90 })))
+          runner.transform(
+            Object.assign({ affine: true }, new Matrix({ rotate: 90 }))
+          )
           runner.step(50)
           // transform sets an immediate callback to apply all merged transforms
           // when every runner had the chance to add its bit of transforms
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
-          expect(element.matrix()).toEqual(
-            new Matrix({ rotate: 45 })
-          )
+          expect(element.matrix()).toEqual(new Matrix({ rotate: 45 }))
         })
 
         it('correctly animates matrices affine by passing third parameter', () => {
@@ -1478,9 +1612,7 @@ describe('Runner.js', () => {
           jasmine.RequestAnimationFrame.tick(1)
 
           // The origin is transformed with every
-          expect(element.matrix()).toEqual(
-            new Matrix({ rotate: 45 })
-          )
+          expect(element.matrix()).toEqual(new Matrix({ rotate: 45 }))
         })
 
         it('correctly animates a declarative relative rotation', () => {
@@ -1563,8 +1695,8 @@ describe('Runner.js', () => {
           runner._queueNumberDelta('x', 10)
           runner.step(50)
           expect(runner._history.x.morpher.type()).toEqual(SVGNumber)
-          expect(runner._history.x.morpher.from()).toEqual([ 10, '' ])
-          expect(runner._history.x.morpher.to()).toEqual([ 20, '' ])
+          expect(runner._history.x.morpher.from()).toEqual([10, ''])
+          expect(runner._history.x.morpher.to()).toEqual([20, ''])
 
           expect(element.x()).toBe(15)
         })
@@ -1576,7 +1708,7 @@ describe('Runner.js', () => {
           runner.step(25)
           runner._queueNumberDelta('x', 20)
 
-          expect(runner._history.x.morpher.to()).toEqual([ 30, '' ])
+          expect(runner._history.x.morpher.to()).toEqual([30, ''])
 
           runner.step(25)
           expect(element.x()).toBe(20)
@@ -1590,8 +1722,8 @@ describe('Runner.js', () => {
           runner._queueObject('x', new SVGNumber(20))
           runner.step(50)
           expect(runner._history.x.morpher.type()).toEqual(SVGNumber)
-          expect(runner._history.x.morpher.from()).toEqual([ 10, '' ])
-          expect(runner._history.x.morpher.to()).toEqual([ 20, '' ])
+          expect(runner._history.x.morpher.from()).toEqual([10, ''])
+          expect(runner._history.x.morpher.to()).toEqual([20, ''])
 
           expect(element.x()).toBe(15)
         })
@@ -1719,25 +1851,25 @@ describe('Runner.js', () => {
 
       describe('plot()', () => {
         it('queues a morphable array', () => {
-          const element = new Polygon().plot([ 10, 10, 20, 20 ])
+          const element = new Polygon().plot([10, 10, 20, 20])
           const runner = new Runner(100).ease('-').element(element)
           runner.plot(20, 20, 30, 30)
           runner.step(50)
-          expect(runner._history.plot.morpher.from()).toEqual([ 10, 10, 20, 20 ])
-          expect(runner._history.plot.morpher.to()).toEqual([ 20, 20, 30, 30 ])
-          expect(element.array()).toEqual(new PointArray([ 15, 15, 25, 25 ]))
+          expect(runner._history.plot.morpher.from()).toEqual([10, 10, 20, 20])
+          expect(runner._history.plot.morpher.to()).toEqual([20, 20, 30, 30])
+          expect(element.array()).toEqual(new PointArray([15, 15, 25, 25]))
         })
 
         it('retargets correctly', () => {
-          const element = new Polygon().plot([ 10, 10, 20, 20 ])
+          const element = new Polygon().plot([10, 10, 20, 20])
           const runner = new Runner(100).ease('-').element(element)
           runner.plot(20, 20, 30, 30)
           runner.step(25)
           runner.plot(30, 30, 40, 40)
           runner.step(25)
-          expect(runner._history.plot.morpher.from()).toEqual([ 10, 10, 20, 20 ])
-          expect(runner._history.plot.morpher.to()).toEqual([ 30, 30, 40, 40 ])
-          expect(element.array()).toEqual(new PointArray([ 20, 20, 30, 30 ]))
+          expect(runner._history.plot.morpher.from()).toEqual([10, 10, 20, 20])
+          expect(runner._history.plot.morpher.to()).toEqual([30, 30, 40, 40])
+          expect(element.array()).toEqual(new PointArray([20, 20, 30, 30]))
         })
       })
 
@@ -1755,7 +1887,10 @@ describe('Runner.js', () => {
           const runner = new Runner()
           const spy = spyOn(runner, '_queueObject')
           runner.viewbox(10, 10, 100, 100)
-          expect(spy).toHaveBeenCalledWith('viewbox', equal(new Box(10, 10, 100, 100)))
+          expect(spy).toHaveBeenCalledWith(
+            'viewbox',
+            equal(new Box(10, 10, 100, 100))
+          )
         })
       })
 
@@ -1785,10 +1920,12 @@ describe('Runner.js', () => {
     describe('mergeWith()', () => {
       it('merges the transformations of a runner with another and returns a FakeRunner', () => {
         const fake = new FakeRunner()
-        const runner = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner = new Runner().addTransform({ translate: [10, 20] })
         const newRunner = fake.mergeWith(runner)
         expect(newRunner).toEqual(any(FakeRunner))
-        expect(newRunner.transforms).toEqual(new Matrix({ translate: [ 10, 20 ] }))
+        expect(newRunner.transforms).toEqual(
+          new Matrix({ translate: [10, 20] })
+        )
       })
     })
   })
@@ -1832,9 +1969,9 @@ describe('Runner.js', () => {
 
     describe('merge()', () => {
       it('merges all runners which are done', () => {
-        const runner1 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner1 = new Runner().addTransform({ translate: [10, 20] })
         const runner2 = new Runner().addTransform({ rotate: 45 })
-        const runner3 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner3 = new Runner().addTransform({ translate: [10, 20] })
         const arr = new RunnerArray()
         arr.add(runner1).add(runner2).add(runner3)
         runner1.done = true
@@ -1843,17 +1980,15 @@ describe('Runner.js', () => {
         arr.merge()
         expect(arr.runners[0]).toEqual(any(FakeRunner))
         expect(arr.runners[0].transforms).toEqual(
-          new Matrix({ translate: [ 10, 20 ] })
-            .rotate(45)
-            .translate(10, 20)
+          new Matrix({ translate: [10, 20] }).rotate(45).translate(10, 20)
         )
       })
 
       it('skips runners which are not done', () => {
-        const runner1 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner1 = new Runner().addTransform({ translate: [10, 20] })
         const runner2 = new Runner().addTransform({ rotate: 45 })
         const runner3 = new Runner().addTransform({ rotate: 45 })
-        const runner4 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner4 = new Runner().addTransform({ translate: [10, 20] })
         const runner5 = new Runner().addTransform({ rotate: 45 })
         const arr = new RunnerArray()
         arr.add(runner1).add(runner2).add(runner3).add(runner4).add(runner5)
@@ -1865,24 +2000,22 @@ describe('Runner.js', () => {
         arr.merge()
         expect(arr.runners[0]).toEqual(any(FakeRunner))
         expect(arr.runners[0].transforms).toEqual(
-          new Matrix({ translate: [ 10, 20 ] })
-            .rotate(45)
+          new Matrix({ translate: [10, 20] }).rotate(45)
         )
 
         expect(arr.runners[2]).toEqual(any(FakeRunner))
         expect(arr.runners[2].transforms).toEqual(
-          new Matrix({ translate: [ 10, 20 ] })
-            .rotate(45)
+          new Matrix({ translate: [10, 20] }).rotate(45)
         )
 
         expect(arr.runners[1]).toBe(runner3)
       })
 
       it('skips runners which have a timeline and are scheduled on that timeline', () => {
-        const runner1 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner1 = new Runner().addTransform({ translate: [10, 20] })
         const runner2 = new Runner().addTransform({ rotate: 45 })
         const runner3 = new Runner().addTransform({ rotate: 45 })
-        const runner4 = new Runner().addTransform({ translate: [ 10, 20 ] })
+        const runner4 = new Runner().addTransform({ translate: [10, 20] })
         const runner5 = new Runner().addTransform({ rotate: 45 })
         const arr = new RunnerArray()
         arr.add(runner1).add(runner2).add(runner3).add(runner4).add(runner5)
@@ -1896,14 +2029,12 @@ describe('Runner.js', () => {
         arr.merge()
         expect(arr.runners[0]).toEqual(any(FakeRunner))
         expect(arr.runners[0].transforms).toEqual(
-          new Matrix({ translate: [ 10, 20 ] })
-            .rotate(45)
+          new Matrix({ translate: [10, 20] }).rotate(45)
         )
 
         expect(arr.runners[2]).toEqual(any(FakeRunner))
         expect(arr.runners[2].transforms).toEqual(
-          new Matrix({ translate: [ 10, 20 ] })
-            .rotate(45)
+          new Matrix({ translate: [10, 20] }).rotate(45)
         )
 
         expect(arr.runners[1]).toBe(runner3)
@@ -1940,7 +2071,12 @@ describe('Runner.js', () => {
         arr.add(runner1).add(runner2).add(runner3).add(runner4).add(runner5)
         arr.clearBefore(runner3.id)
         expect(arr.length()).toBe(4)
-        expect(arr.runners).toEqual([ any(FakeRunner), runner3, runner4, runner5 ])
+        expect(arr.runners).toEqual([
+          any(FakeRunner),
+          runner3,
+          runner4,
+          runner5
+        ])
       })
     })
   })

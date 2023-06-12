@@ -39,7 +39,7 @@ describe('Pattern.js', () => {
       const canvas = SVG().addTo(container)
       const pattern = canvas.pattern()
       const rect = canvas.rect(100, 100).fill(pattern)
-      expect(pattern.targets()).toEqual([ rect ])
+      expect(pattern.targets()).toEqual([rect])
     })
   })
 
@@ -62,7 +62,7 @@ describe('Pattern.js', () => {
       const spy = createSpy('pattern')
       pattern.update(spy)
       expect(spy.calls.all()).toEqual([
-        objectContaining({ object: pattern, args: [ pattern ] })
+        objectContaining({ object: pattern, args: [pattern] })
       ])
     })
   })
@@ -94,9 +94,14 @@ describe('Pattern.js', () => {
       const spy = createSpy('pattern')
       const pattern = defs.pattern(100, 100, spy)
       expect(pattern).toEqual(any(Pattern))
-      expect(defs.children()).toEqual([ pattern ])
+      expect(defs.children()).toEqual([pattern])
       expect(spy).toHaveBeenCalled()
-      expect(pattern.attr([ 'x', 'y', 'width', 'height' ])).toEqual({ x: 0, y: 0, width: 100, height: 100 })
+      expect(pattern.attr(['x', 'y', 'width', 'height'])).toEqual({
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100
+      })
     })
   })
 })

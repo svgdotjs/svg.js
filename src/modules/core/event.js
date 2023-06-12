@@ -5,7 +5,7 @@ import { globals } from '../../utils/window.js'
 let listenerId = 0
 export const windowEvents = {}
 
-export function getEvents (instance) {
+export function getEvents(instance) {
   let n = instance.getEventHolder()
 
   // We dont want to save events in global space
@@ -14,18 +14,18 @@ export function getEvents (instance) {
   return n.events
 }
 
-export function getEventTarget (instance) {
+export function getEventTarget(instance) {
   return instance.getEventTarget()
 }
 
-export function clearEvents (instance) {
+export function clearEvents(instance) {
   let n = instance.getEventHolder()
   if (n === globals.window) n = windowEvents
   if (n.events) n.events = {}
 }
 
 // Add event binder in the SVG namespace
-export function on (node, events, listener, binding, options) {
+export function on(node, events, listener, binding, options) {
   const l = listener.bind(binding || node)
   const instance = makeInstance(node)
   const bag = getEvents(instance)
@@ -56,7 +56,7 @@ export function on (node, events, listener, binding, options) {
 }
 
 // Add event unbinder in the SVG namespace
-export function off (node, events, listener, options) {
+export function off(node, events, listener, options) {
   const instance = makeInstance(node)
   const bag = getEvents(instance)
   const n = getEventTarget(instance)
@@ -79,7 +79,11 @@ export function off (node, events, listener, options) {
       // remove listener reference
       if (bag[ev] && bag[ev][ns || '*']) {
         // removeListener
-        n.removeEventListener(ev, bag[ev][ns || '*'][listener], options || false)
+        n.removeEventListener(
+          ev,
+          bag[ev][ns || '*'][listener],
+          options || false
+        )
 
         delete bag[ev][ns || '*'][listener]
       }
@@ -87,7 +91,7 @@ export function off (node, events, listener, options) {
       // remove all listeners for a namespaced event
       if (bag[ev] && bag[ev][ns]) {
         for (l in bag[ev][ns]) {
-          off(n, [ ev, ns ].join('.'), l)
+          off(n, [ev, ns].join('.'), l)
         }
 
         delete bag[ev][ns]
@@ -97,7 +101,7 @@ export function off (node, events, listener, options) {
       for (event in bag) {
         for (namespace in bag[event]) {
           if (ns === namespace) {
-            off(n, [ event, ns ].join('.'))
+            off(n, [event, ns].join('.'))
           }
         }
       }
@@ -105,7 +109,7 @@ export function off (node, events, listener, options) {
       // remove all listeners for the event
       if (bag[ev]) {
         for (namespace in bag[ev]) {
-          off(n, [ ev, namespace ].join('.'))
+          off(n, [ev, namespace].join('.'))
         }
 
         delete bag[ev]
@@ -121,14 +125,18 @@ export function off (node, events, listener, options) {
   })
 }
 
-export function dispatch (node, event, data, options) {
+export function dispatch(node, event, data, options) {
   const n = getEventTarget(node)
 
   // Dispatch event
   if (event instanceof globals.window.Event) {
     n.dispatchEvent(event)
   } else {
-    event = new globals.window.CustomEvent(event, { detail: data, cancelable: true, ...options })
+    event = new globals.window.CustomEvent(event, {
+      detail: data,
+      cancelable: true,
+      ...options
+    })
     n.dispatchEvent(event)
   }
   return event

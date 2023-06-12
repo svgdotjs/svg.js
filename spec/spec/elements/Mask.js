@@ -5,7 +5,6 @@ import { Mask, SVG, Container, Rect } from '../../../src/main.js'
 const { any } = jasmine
 
 describe('Mask.js', () => {
-
   describe('()', () => {
     it('creates a new object of type Mask', () => {
       expect(new Mask()).toEqual(any(Mask))
@@ -38,7 +37,7 @@ describe('Mask.js', () => {
       const canvas = SVG().addTo(container)
       const mask = canvas.mask()
       const rect = canvas.rect(100, 100).maskWith(mask)
-      expect(mask.targets()).toEqual([ rect ])
+      expect(mask.targets()).toEqual([rect])
     })
   })
 
@@ -48,7 +47,7 @@ describe('Mask.js', () => {
         const canvas = SVG()
         const mask = canvas.mask()
         expect(mask).toEqual(any(Mask))
-        expect(canvas.defs().children()).toEqual([ mask ])
+        expect(canvas.defs().children()).toEqual([mask])
       })
     })
   })

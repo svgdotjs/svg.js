@@ -66,7 +66,11 @@ describe('Stop.js', () => {
 
       it('creates stop in the gradient with object given', () => {
         const gradient = new Gradient('linear')
-        const stop = gradient.stop({ offset: 0.1, color: '#ffffff', opacity: 0.5 })
+        const stop = gradient.stop({
+          offset: 0.1,
+          color: '#ffffff',
+          opacity: 0.5
+        })
         expect(stop.attr('offset')).toBe(0.1)
         expect(stop.attr('stop-color')).toBe('#ffffff')
         expect(stop.attr('stop-opacity')).toBe(0.5)

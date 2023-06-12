@@ -1,5 +1,6 @@
 // Parse unit value
-export const numberAndUnit = /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i
+export const numberAndUnit =
+  /^([+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?)([a-z%]*)$/i
 
 // Parse hex value
 export const hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i

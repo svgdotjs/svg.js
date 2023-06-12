@@ -3,13 +3,13 @@ import { register } from '../utils/adopter.js'
 import Base from './Base.js'
 
 export default class EventTarget extends Base {
-  addEventListener () {}
+  addEventListener() {}
 
-  dispatch (event, data, options) {
+  dispatch(event, data, options) {
     return dispatch(this, event, data, options)
   }
 
-  dispatchEvent (event) {
+  dispatchEvent(event) {
     const bag = this.getEventHolder().events
     if (!bag) return true
 
@@ -25,32 +25,32 @@ export default class EventTarget extends Base {
   }
 
   // Fire given event
-  fire (event, data, options) {
+  fire(event, data, options) {
     this.dispatch(event, data, options)
     return this
   }
 
-  getEventHolder () {
+  getEventHolder() {
     return this
   }
 
-  getEventTarget () {
+  getEventTarget() {
     return this
   }
 
   // Unbind event from listener
-  off (event, listener, options) {
+  off(event, listener, options) {
     off(this, event, listener, options)
     return this
   }
 
   // Bind given event to listener
-  on (event, listener, binding, options) {
+  on(event, listener, binding, options) {
     on(this, event, listener, binding, options)
     return this
   }
 
-  removeEventListener () {}
+  removeEventListener() {}
 }
 
 register(EventTarget, 'EventTarget')

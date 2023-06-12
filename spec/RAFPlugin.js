@@ -3,19 +3,18 @@
  * Jasmine RequestAnimationFrame: a set of helpers for testing functionality
  * that uses requestAnimationFrame under the Jasmine BDD framework for JavaScript.
  */
-function RAFPlugin (jasmine) {
-
+function RAFPlugin(jasmine) {
   var index = 0
   var callbacks = []
 
-  function MockRAF () {
+  function MockRAF() {
     this.nextTime = 0
 
     var _this = this
 
     /**
-    * Mock for window.requestAnimationFrame
-    */
+     * Mock for window.requestAnimationFrame
+     */
     this.mockRAF = function (fn) {
       if (typeof fn !== 'function') {
         throw new Error('You should pass a function to requestAnimationFrame')
@@ -28,8 +27,8 @@ function RAFPlugin (jasmine) {
     }
 
     /**
-    * Mock for window.cancelAnimationFrame
-    */
+     * Mock for window.cancelAnimationFrame
+     */
     this.mockCAF = function (requestID) {
       callbacks.splice(requestID, 1)
     }
@@ -41,8 +40,8 @@ function RAFPlugin (jasmine) {
     }
 
     /**
-    * Install request animation frame mocks.
-    */
+     * Install request animation frame mocks.
+     */
     this.install = function (global) {
       _this.realRAF = global.requestAnimationFrame
       _this.realCAF = global.cancelAnimationFrame
@@ -53,8 +52,8 @@ function RAFPlugin (jasmine) {
     }
 
     /**
-    * Uninstall request animation frame mocks.
-    */
+     * Uninstall request animation frame mocks.
+     */
     this.uninstall = function (global) {
       global.requestAnimationFrame = _this.realRAF
       global.cancelAnimationFrame = _this.realCAF
@@ -64,12 +63,14 @@ function RAFPlugin (jasmine) {
     }
 
     /**
-    * Simulate animation frame readiness.
-    */
+     * Simulate animation frame readiness.
+     */
     this.tick = function (dt) {
-      _this.nextTime += (dt || 1)
+      _this.nextTime += dt || 1
 
-      var fns = callbacks; var fn; var i
+      var fns = callbacks
+      var fn
+      var i
 
       callbacks = []
       index = 0

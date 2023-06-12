@@ -1,5 +1,4 @@
-
-export function noop () {}
+export function noop() {}
 
 // Default animation values
 export const timeline = {
@@ -10,7 +9,6 @@ export const timeline = {
 
 // Default attribute values
 export const attrs = {
-
   // fill and stroke
   'fill-opacity': 1,
   'stroke-opacity': 1,

@@ -16,7 +16,7 @@ import List from '../types/List.js'
 import attr from '../modules/core/attr.js'
 
 export default class Dom extends EventTarget {
-  constructor (node, attrs) {
+  constructor(node, attrs) {
     super()
     this.node = node
     this.type = node.nodeName
@@ -27,11 +27,14 @@ export default class Dom extends EventTarget {
   }
 
   // Add given element at a position
-  add (element, i) {
+  add(element, i) {
     element = makeInstance(element)
 
     // If non-root svg nodes are added we have to remove their namespaces
-    if (element.removeNamespace && this.node instanceof globals.window.SVGElement) {
+    if (
+      element.removeNamespace &&
+      this.node instanceof globals.window.SVGElement
+    ) {
       element.removeNamespace()
     }
 
@@ -45,19 +48,21 @@ export default class Dom extends EventTarget {
   }
 
   // Add element to given container and return self
-  addTo (parent, i) {
+  addTo(parent, i) {
     return makeInstance(parent).put(this, i)
   }
 
   // Returns all child elements
-  children () {
-    return new List(map(this.node.children, function (node) {
-      return adopt(node)
-    }))
+  children() {
+    return new List(
+      map(this.node.children, function (node) {
+        return adopt(node)
+      })
+    )
   }
 
   // Remove all elements in this container
-  clear () {
+  clear() {
     // remove children
     while (this.node.hasChildNodes()) {
       this.node.removeChild(this.node.lastChild)
@@ -67,7 +72,7 @@ export default class Dom extends EventTarget {
   }
 
   // Clone element
-  clone (deep = true, assignNewIds = true) {
+  clone(deep = true, assignNewIds = true) {
     // write dom data to the dom so the clone can pickup the data
     this.writeDataToDom()
 
@@ -81,12 +86,12 @@ export default class Dom extends EventTarget {
   }
 
   // Iterates over all children and invokes a given block
-  each (block, deep) {
+  each(block, deep) {
     const children = this.children()
     let i, il
 
     for (i = 0, il = children.length; i < il; i++) {
-      block.apply(children[i], [ i, children ])
+      block.apply(children[i], [i, children])
 
       if (deep) {
         children[i].each(block, deep)
@@ -96,39 +101,39 @@ export default class Dom extends EventTarget {
     return this
   }
 
-  element (nodeName, attrs) {
+  element(nodeName, attrs) {
     return this.put(new Dom(create(nodeName), attrs))
   }
 
   // Get first child
-  first () {
+  first() {
     return adopt(this.node.firstChild)
   }
 
   // Get a element at the given index
-  get (i) {
+  get(i) {
     return adopt(this.node.childNodes[i])
   }
 
-  getEventHolder () {
+  getEventHolder() {
     return this.node
   }
 
-  getEventTarget () {
+  getEventTarget() {
     return this.node
   }
 
   // Checks if the given element is a child
-  has (element) {
+  has(element) {
     return this.index(element) >= 0
   }
 
-  html (htmlOrFn, outerHTML) {
+  html(htmlOrFn, outerHTML) {
     return this.xml(htmlOrFn, outerHTML, html)
   }
 
   // Get / set id
-  id (id) {
+  id(id) {
     // generate new id if no id set
     if (typeof id === 'undefined' && !this.node.id) {
       this.node.id = eid(this.type)
@@ -139,24 +144,31 @@ export default class Dom extends EventTarget {
   }
 
   // Gets index of given element
-  index (element) {
+  index(element) {
     return [].slice.call(this.node.childNodes).indexOf(element.node)
   }
 
   // Get the last child
-  last () {
+  last() {
     return adopt(this.node.lastChild)
   }
 
   // matches the element vs a css selector
-  matches (selector) {
+  matches(selector) {
     const el = this.node
-    const matcher = el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector || null
+    const matcher =
+      el.matches ||
+      el.matchesSelector ||
+      el.msMatchesSelector ||
+      el.mozMatchesSelector ||
+      el.webkitMatchesSelector ||
+      el.oMatchesSelector ||
+      null
     return matcher && matcher.call(el, selector)
   }
 
   // Returns the parent element instance
-  parent (type) {
+  parent(type) {
     let parent = this
 
     // check for parent
@@ -169,26 +181,29 @@ export default class Dom extends EventTarget {
 
     // loop through ancestors if type is given
     do {
-      if (typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
+      if (
+        typeof type === 'string' ? parent.matches(type) : parent instanceof type
+      )
+        return parent
     } while ((parent = adopt(parent.node.parentNode)))
 
     return parent
   }
 
   // Basically does the same as `add()` but returns the added element instead
-  put (element, i) {
+  put(element, i) {
     element = makeInstance(element)
     this.add(element, i)
     return element
   }
 
   // Add element to given container and return container
-  putIn (parent, i) {
+  putIn(parent, i) {
     return makeInstance(parent).add(this, i)
   }
 
   // Remove element
-  remove () {
+  remove() {
     if (this.parent()) {
       this.parent().removeElement(this)
     }
@@ -197,14 +212,14 @@ export default class Dom extends EventTarget {
   }
 
   // Remove a given child
-  removeElement (element) {
+  removeElement(element) {
     this.node.removeChild(element.node)
 
     return this
   }
 
   // Replace this with element
-  replace (element) {
+  replace(element) {
     element = makeInstance(element)
 
     if (this.node.parentNode) {
@@ -214,7 +229,7 @@ export default class Dom extends EventTarget {
     return element
   }
 
-  round (precision = 2, map = null) {
+  round(precision = 2, map = null) {
     const factor = 10 ** precision
     const attrs = this.attr(map)
 
@@ -229,22 +244,22 @@ export default class Dom extends EventTarget {
   }
 
   // Import / Export raw svg
-  svg (svgOrFn, outerSVG) {
+  svg(svgOrFn, outerSVG) {
     return this.xml(svgOrFn, outerSVG, svg)
   }
 
   // Return id on string conversion
-  toString () {
+  toString() {
     return this.id()
   }
 
-  words (text) {
+  words(text) {
     // This is faster than removing all children and adding a new one
     this.node.textContent = text
     return this
   }
 
-  wrap (node) {
+  wrap(node) {
     const parent = this.parent()
 
     if (!parent) {
@@ -256,7 +271,7 @@ export default class Dom extends EventTarget {
   }
 
   // write svgjs data to the dom
-  writeDataToDom () {
+  writeDataToDom() {
     // dump variables recursively
     this.each(function () {
       this.writeDataToDom()
@@ -266,7 +281,7 @@ export default class Dom extends EventTarget {
   }
 
   // Import / Export raw svg
-  xml (xmlOrFn, outerXML, ns) {
+  xml(xmlOrFn, outerXML, ns) {
     if (typeof xmlOrFn === 'boolean') {
       ns = outerXML
       outerXML = xmlOrFn
@@ -312,9 +327,7 @@ export default class Dom extends EventTarget {
       }
 
       // Return outer or inner content
-      return outerXML
-        ? current.node.outerHTML
-        : current.node.innerHTML
+      return outerXML ? current.node.outerHTML : current.node.innerHTML
     }
 
     // Act as setter if we got a string
@@ -330,16 +343,14 @@ export default class Dom extends EventTarget {
     well.innerHTML = xmlOrFn
 
     // Transplant nodes into the fragment
-    for (let len = well.children.length; len--;) {
+    for (let len = well.children.length; len--; ) {
       fragment.appendChild(well.firstElementChild)
     }
 
     const parent = this.parent()
 
     // Add the whole fragment at once
-    return outerXML
-      ? this.replace(fragment) && parent
-      : this.add(fragment)
+    return outerXML ? this.replace(fragment) && parent : this.add(fragment)
   }
 }
 

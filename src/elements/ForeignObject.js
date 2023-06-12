@@ -3,7 +3,7 @@ import { registerMethods } from '../utils/methods.js'
 import Element from './Element.js'
 
 export default class ForeignObject extends Element {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('foreignObject', node), attrs)
   }
 }

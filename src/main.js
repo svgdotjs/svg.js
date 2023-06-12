@@ -77,7 +77,13 @@ export {
 
 /* Animation Modules */
 export { default as Animator } from './animation/Animator.js'
-export { Controller, Ease, PID, Spring, easing } from './animation/Controller.js'
+export {
+  Controller,
+  Ease,
+  PID,
+  Spring,
+  easing
+} from './animation/Controller.js'
 export { default as Queue } from './animation/Queue.js'
 export { default as Runner } from './animation/Runner.js'
 export { default as Timeline } from './animation/Timeline.js'
@@ -126,43 +132,24 @@ export { default as TextPath } from './elements/TextPath.js'
 export { default as Tspan } from './elements/Tspan.js'
 export { default as Use } from './elements/Use.js'
 
-extend([
-  Svg,
-  Symbol,
-  Image,
-  Pattern,
-  Marker
-], getMethodsFor('viewbox'))
+extend([Svg, Symbol, Image, Pattern, Marker], getMethodsFor('viewbox'))
 
-extend([
-  Line,
-  Polyline,
-  Polygon,
-  Path
-], getMethodsFor('marker'))
+extend([Line, Polyline, Polygon, Path], getMethodsFor('marker'))
 
 extend(Text, getMethodsFor('Text'))
 extend(Path, getMethodsFor('Path'))
 
 extend(Defs, getMethodsFor('Defs'))
 
-extend([
-  Text,
-  Tspan
-], getMethodsFor('Tspan'))
+extend([Text, Tspan], getMethodsFor('Tspan'))
 
-extend([
-  Rect,
-  Ellipse,
-  Gradient,
-  Runner
-], getMethodsFor('radius'))
+extend([Rect, Ellipse, Gradient, Runner], getMethodsFor('radius'))
 
 extend(EventTarget, getMethodsFor('EventTarget'))
 extend(Dom, getMethodsFor('Dom'))
 extend(Element, getMethodsFor('Element'))
 extend(Shape, getMethodsFor('Shape'))
-extend([ Container, Fragment ], getMethodsFor('Container'))
+extend([Container, Fragment], getMethodsFor('Container'))
 extend(Gradient, getMethodsFor('Gradient'))
 
 extend(Runner, getMethodsFor('Runner'))

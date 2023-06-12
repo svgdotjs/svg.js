@@ -171,10 +171,10 @@ describe('Element.js', function () {
       const group3 = group2.group()
       const rect = group3.rect(100, 100)
 
-      expect(rect.parents('.test')).toEqual([ group3, group2, group1 ])
-      expect(rect.parents(group2)).toEqual([ group3, group2 ])
+      expect(rect.parents('.test')).toEqual([group3, group2, group1])
+      expect(rect.parents(group2)).toEqual([group3, group2])
       expect(rect.parents(group1).length).toBe(3)
-      expect(rect.parents()).toEqual([ group3, group2, group1, canvas ])
+      expect(rect.parents()).toEqual([group3, group2, group1, canvas])
     })
 
     it('returns array of parents until the closest matching parent', () => {
@@ -185,9 +185,9 @@ describe('Element.js', function () {
       const group3 = group2.group().addClass('foo')
       const rect = group3.rect(100, 100)
 
-      expect(rect.parents('.test')).toEqual([ group3, group2 ])
-      expect(rect.parents('.foo')).toEqual([ group3 ])
-      expect(rect.parents('.test:not(.foo)')).toEqual([ group3, group2, group1 ])
+      expect(rect.parents('.test')).toEqual([group3, group2])
+      expect(rect.parents('.foo')).toEqual([group3])
+      expect(rect.parents('.test:not(.foo)')).toEqual([group3, group2, group1])
     })
 
     it('returns null if the passed element is not an ancestor', () => {
@@ -197,7 +197,6 @@ describe('Element.js', function () {
       const group2 = group1.group()
       const group3 = group2.group()
       const rect = group3.rect(100, 100)
-
 
       expect(rect.parents('.does-not-exist')).toEqual(null)
       expect(rect.parents('.test')).toEqual(null)
@@ -274,7 +273,9 @@ describe('Element.js', function () {
     it('writes data from the dom property into the dom', () => {
       element.dom = { foo: 'bar' }
       element.writeDataToDom()
-      expect(element.node.getAttribute('svgjs:data')).toBe(JSON.stringify({ foo: 'bar' }))
+      expect(element.node.getAttribute('svgjs:data')).toBe(
+        JSON.stringify({ foo: 'bar' })
+      )
     })
 
     it('recursively calls writeDataToDom on all children', () => {

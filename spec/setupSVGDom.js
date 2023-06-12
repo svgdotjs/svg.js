@@ -7,7 +7,7 @@ import { registerWindow } from '../src/main.js'
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 200
 
-function setup () {
+function setup() {
   const win = createHTMLWindow()
   registerWindow(win, win.document)
   buildCanvas()
@@ -15,7 +15,7 @@ function setup () {
   global.container = win.document.getElementById('canvas')
 }
 
-function teardown () {
+function teardown() {
   clear()
   global.container = null
   registerWindow()

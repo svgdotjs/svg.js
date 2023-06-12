@@ -1,7 +1,6 @@
 ---
 name: Bug Report
 about: 🐞 Report a bug that you found
-
 ---
 
 # Bug report

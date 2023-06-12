@@ -2,27 +2,27 @@ import { makeInstance } from '../../utils/adopter.js'
 import { registerMethods } from '../../utils/methods.js'
 
 // Get all siblings, including myself
-export function siblings () {
+export function siblings() {
   return this.parent().children()
 }
 
 // Get the current position siblings
-export function position () {
+export function position() {
   return this.parent().index(this)
 }
 
 // Get the next element (will return null if there is none)
-export function next () {
+export function next() {
   return this.siblings()[this.position() + 1]
 }
 
 // Get the next element (will return null if there is none)
-export function prev () {
+export function prev() {
   return this.siblings()[this.position() - 1]
 }
 
 // Send given element one step forward
-export function forward () {
+export function forward() {
   const i = this.position()
   const p = this.parent()
 
@@ -33,7 +33,7 @@ export function forward () {
 }
 
 // Send given element one step backward
-export function backward () {
+export function backward() {
   const i = this.position()
   const p = this.parent()
 
@@ -43,7 +43,7 @@ export function backward () {
 }
 
 // Send given element all the way to the front
-export function front () {
+export function front() {
   const p = this.parent()
 
   // Move node forward
@@ -53,7 +53,7 @@ export function front () {
 }
 
 // Send given element all the way to the back
-export function back () {
+export function back() {
   const p = this.parent()
 
   // Move node back
@@ -63,7 +63,7 @@ export function back () {
 }
 
 // Inserts a given element before the targeted element
-export function before (element) {
+export function before(element) {
   element = makeInstance(element)
   element.remove()
 
@@ -75,7 +75,7 @@ export function before (element) {
 }
 
 // Inserts a given element after the targeted element
-export function after (element) {
+export function after(element) {
   element = makeInstance(element)
   element.remove()
 
@@ -86,13 +86,13 @@ export function after (element) {
   return this
 }
 
-export function insertBefore (element) {
+export function insertBefore(element) {
   element = makeInstance(element)
   element.before(this)
   return this
 }
 
-export function insertAfter (element) {
+export function insertAfter(element) {
   element = makeInstance(element)
   element.after(this)
   return this

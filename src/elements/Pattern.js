@@ -6,31 +6,31 @@ import baseFind from '../modules/core/selector.js'
 
 export default class Pattern extends Container {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('pattern', node), attrs)
   }
 
   // custom attr to handle transform
-  attr (a, b, c) {
+  attr(a, b, c) {
     if (a === 'transform') a = 'patternTransform'
     return super.attr(a, b, c)
   }
 
-  bbox () {
+  bbox() {
     return new Box()
   }
 
-  targets () {
+  targets() {
     return baseFind('svg [fill*=' + this.id() + ']')
   }
 
   // Alias string conversion to fill
-  toString () {
+  toString() {
     return this.url()
   }
 
   // Update pattern by rebuilding
-  update (block) {
+  update(block) {
     // remove content
     this.clear()
 
@@ -43,16 +43,15 @@ export default class Pattern extends Container {
   }
 
   // Return the fill id
-  url () {
+  url() {
     return 'url(#' + this.id() + ')'
   }
-
 }
 
 registerMethods({
   Container: {
     // Create pattern element in defs
-    pattern (...args) {
+    pattern(...args) {
       return this.defs().pattern(...args)
     }
   },

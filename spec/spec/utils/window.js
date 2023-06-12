@@ -1,6 +1,13 @@
 /* globals describe, expect, it */
 
-import { registerWindow, globals, withWindow, getWindow, saveWindow, restoreWindow } from '../../../src/utils/window.js'
+import {
+  registerWindow,
+  globals,
+  withWindow,
+  getWindow,
+  saveWindow,
+  restoreWindow
+} from '../../../src/utils/window.js'
 
 describe('window.js', () => {
   describe('registerWindow()', () => {

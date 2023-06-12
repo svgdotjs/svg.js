@@ -1,6 +1,10 @@
 /* globals describe, expect, it */
 
-import { registerMethods, getMethodsFor, getMethodNames } from '../../../src/utils/methods.js'
+import {
+  registerMethods,
+  getMethodsFor,
+  getMethodNames
+} from '../../../src/utils/methods.js'
 
 describe('methods.js', () => {
   describe('registerMethods() / getMethodsFor() / addMethodNames / getMethodNames()', () => {

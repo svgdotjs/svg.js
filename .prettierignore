@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+.importjs.js
+test/
+node_modules/
+.vscode/
+coverage/
+spec/es5TestBundle.js
+.env
+dist
+package-lock.json

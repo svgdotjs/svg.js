@@ -5,7 +5,7 @@ import Matrix from './Matrix.js'
 
 export default class PointArray extends SVGArray {
   // Get bounding box of points
-  bbox () {
+  bbox() {
     let maxX = -Infinity
     let maxY = -Infinity
     let minX = Infinity
@@ -20,7 +20,7 @@ export default class PointArray extends SVGArray {
   }
 
   // Move point string
-  move (x, y) {
+  move(x, y) {
     const box = this.bbox()
 
     // get relative offset
@@ -30,7 +30,7 @@ export default class PointArray extends SVGArray {
     // move every point
     if (!isNaN(x) && !isNaN(y)) {
       for (let i = this.length - 1; i >= 0; i--) {
-        this[i] = [ this[i][0] + x, this[i][1] + y ]
+        this[i] = [this[i][0] + x, this[i][1] + y]
       }
     }
 
@@ -38,13 +38,14 @@ export default class PointArray extends SVGArray {
   }
 
   // Parse point string and flat array
-  parse (array = [ 0, 0 ]) {
+  parse(array = [0, 0]) {
     const points = []
 
     // if it is an array, we flatten it and therefore clone it to 1 depths
     if (array instanceof Array) {
       array = Array.prototype.concat.apply([], array)
-    } else { // Else, it is considered as a string
+    } else {
+      // Else, it is considered as a string
       // parse points
       array = array.trim().split(delimiter).map(parseFloat)
     }
@@ -55,28 +56,30 @@ export default class PointArray extends SVGArray {
 
     // wrap points in two-tuples
     for (let i = 0, len = array.length; i < len; i = i + 2) {
-      points.push([ array[i], array[i + 1] ])
+      points.push([array[i], array[i + 1]])
     }
 
     return points
   }
 
   // Resize poly string
-  size (width, height) {
+  size(width, height) {
     let i
     const box = this.bbox()
 
     // recalculate position of all points according to new size
     for (i = this.length - 1; i >= 0; i--) {
-      if (box.width) this[i][0] = ((this[i][0] - box.x) * width) / box.width + box.x
-      if (box.height) this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
+      if (box.width)
+        this[i][0] = ((this[i][0] - box.x) * width) / box.width + box.x
+      if (box.height)
+        this[i][1] = ((this[i][1] - box.y) * height) / box.height + box.y
     }
 
     return this
   }
 
   // Convert array to line object
-  toLine () {
+  toLine() {
     return {
       x1: this[0][0],
       y1: this[0][1],
@@ -86,7 +89,7 @@ export default class PointArray extends SVGArray {
   }
 
   // Convert array to string
-  toString () {
+  toString() {
     const array = []
     // convert to a poly point string
     for (let i = 0, il = this.length; i < il; i++) {
@@ -96,24 +99,23 @@ export default class PointArray extends SVGArray {
     return array.join(' ')
   }
 
-  transform (m) {
+  transform(m) {
     return this.clone().transformO(m)
   }
 
   // transform points with matrix (similar to Point.transform)
-  transformO (m) {
+  transformO(m) {
     if (!Matrix.isMatrixLike(m)) {
       m = new Matrix(m)
     }
 
-    for (let i = this.length; i--;) {
+    for (let i = this.length; i--; ) {
       // Perform the matrix multiplication
-      const [ x, y ] = this[i]
+      const [x, y] = this[i]
       this[i][0] = m.a * x + m.c * y + m.e
       this[i][1] = m.b * x + m.d * y + m.f
     }
 
     return this
   }
-
 }

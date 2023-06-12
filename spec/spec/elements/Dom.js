@@ -1,12 +1,22 @@
 /* globals describe, expect, it, beforeEach, spyOn, jasmine, container */
 
-import { SVG, G, Rect, Svg, Dom, List, Fragment, Circle, Tspan, create } from '../../../src/main.js'
+import {
+  SVG,
+  G,
+  Rect,
+  Svg,
+  Dom,
+  List,
+  Fragment,
+  Circle,
+  Tspan,
+  create
+} from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 import { svg, html } from '../../../src/modules/core/namespaces.js'
 const { any, createSpy, objectContaining } = jasmine
 
 describe('Dom.js', function () {
-
   describe('()', () => {
     it('creates a new object of type Dom', () => {
       const rect = new Rect()
@@ -119,7 +129,7 @@ describe('Dom.js', function () {
       const rect = g.rect(100, 100)
       const circle = g.circle(100, 100)
       const children = g.children()
-      expect(children).toEqual([ rect, circle ])
+      expect(children).toEqual([rect, circle])
       expect(children).toEqual(any(List))
     })
   })
@@ -197,8 +207,8 @@ describe('Dom.js', function () {
       group.each(spy)
 
       expect(spy.calls.all()).toEqual([
-        objectContaining({ object: group2, args: [ 0, [ group2, circle ] ] }),
-        objectContaining({ object: circle, args: [ 1, [ group2, circle ] ] })
+        objectContaining({ object: group2, args: [0, [group2, circle]] }),
+        objectContaining({ object: circle, args: [1, [group2, circle]] })
       ])
     })
 
@@ -211,9 +221,9 @@ describe('Dom.js', function () {
       group.each(spy, true)
 
       expect(spy.calls.all()).toEqual([
-        objectContaining({ object: group2, args: [ 0, [ group2, circle ] ] }),
-        objectContaining({ object: rect, args: [ 0, [ rect ] ] }),
-        objectContaining({ object: circle, args: [ 1, [ group2, circle ] ] })
+        objectContaining({ object: group2, args: [0, [group2, circle]] }),
+        objectContaining({ object: rect, args: [0, [rect]] }),
+        objectContaining({ object: circle, args: [1, [group2, circle]] })
       ])
     })
   })
@@ -277,7 +287,7 @@ describe('Dom.js', function () {
       expect(g.has(rect)).toBe(true)
     })
 
-    it('returns false if the element hasn\'t the passed element as child', () => {
+    it("returns false if the element hasn't the passed element as child", () => {
       const g = new G()
       const rect = new Rect()
       expect(g.has(rect)).toBe(false)
@@ -437,7 +447,7 @@ describe('Dom.js', function () {
       const rect = new Rect()
       const ret = rect.putIn(g)
       expect(ret).toEqual(any(G))
-      expect(ret.children()).toEqual([ rect ])
+      expect(ret.children()).toEqual([rect])
     })
 
     it('works with a query selector', () => {
@@ -446,7 +456,7 @@ describe('Dom.js', function () {
       const rect = canvas.rect(100, 100)
       const ret = rect.putIn('.test')
       expect(ret).toBe(g)
-      expect(g.children()).toEqual([ rect ])
+      expect(g.children()).toEqual([rect])
     })
   })
 
@@ -460,7 +470,7 @@ describe('Dom.js', function () {
     it('removes the element from the parent', () => {
       const canvas = SVG().addTo(container)
       const rect = canvas.rect(100, 100)
-      expect(canvas.children()).toEqual([ rect ])
+      expect(canvas.children()).toEqual([rect])
       rect.remove()
       expect(canvas.children()).toEqual([])
     })
@@ -473,7 +483,7 @@ describe('Dom.js', function () {
     it('also works when direct child of document-fragment', () => {
       const fragment = new Fragment()
       const rect = fragment.rect(100, 100)
-      expect(fragment.children()).toEqual([ rect ])
+      expect(fragment.children()).toEqual([rect])
       expect(rect.remove()).toBe(rect)
       expect(fragment.children()).toEqual([])
     })
@@ -518,7 +528,7 @@ describe('Dom.js', function () {
       const rect3 = g.rect(100, 100)
       const circle = new Circle()
       rect2.replace(circle)
-      expect(g.children()).toEqual([ rect1, circle, rect3 ])
+      expect(g.children()).toEqual([rect1, circle, rect3])
     })
 
     it('also works without a parent', () => {
@@ -531,17 +541,32 @@ describe('Dom.js', function () {
   describe('round()', () => {
     it('rounds all attributes whose values are numbers to two decimals by default', () => {
       const rect = new Rect({ id: 'foo', x: 10.678, y: 3, width: 123.456 })
-      expect(rect.round().attr()).toEqual({ id: 'foo', x: 10.68, y: 3, width: 123.46 })
+      expect(rect.round().attr()).toEqual({
+        id: 'foo',
+        x: 10.68,
+        y: 3,
+        width: 123.46
+      })
     })
 
     it('rounds all attributes whose values are numbers to the passed precision', () => {
       const rect = new Rect({ id: 'foo', x: 10.678, y: 3, width: 123.456 })
-      expect(rect.round(1).attr()).toEqual({ id: 'foo', x: 10.7, y: 3, width: 123.5 })
+      expect(rect.round(1).attr()).toEqual({
+        id: 'foo',
+        x: 10.7,
+        y: 3,
+        width: 123.5
+      })
     })
 
     it('rounds the given attributes whose values are numbers to the passed precision', () => {
       const rect = new Rect({ id: 'foo', x: 10.678, y: 3, width: 123.456 })
-      expect(rect.round(1, [ 'id', 'x' ]).attr()).toEqual({ id: 'foo', x: 10.7, y: 3, width: 123.456 })
+      expect(rect.round(1, ['id', 'x']).attr()).toEqual({
+        id: 'foo',
+        x: 10.7,
+        y: 3,
+        width: 123.456
+      })
     })
   })
 
@@ -632,9 +657,9 @@ describe('Dom.js', function () {
     })
   })
 
-  describe('writeDataToDom()', () => {
-    // not really testable
-  })
+  // describe('writeDataToDom()', () => {
+  //   // not really testable
+  // })
 
   describe('xml()', () => {
     describe('as setter', () => {
@@ -645,27 +670,27 @@ describe('Dom.js', function () {
 
       it('imports a single element', () => {
         const g = new G().xml('<rect />', undefined, svg)
-        expect(g.children()).toEqual([ any(Rect) ])
+        expect(g.children()).toEqual([any(Rect)])
         expect(g.children()[0].node.namespaceURI).toBe(svg)
       })
 
       it('imports multiple elements', () => {
         const g = new G().xml('<rect /><circle />', undefined, svg)
-        expect(g.children()).toEqual([ any(Rect), any(Circle) ])
+        expect(g.children()).toEqual([any(Rect), any(Circle)])
       })
 
       it('replaces the current element with the imported elements with outerHtml = true', () => {
         const canvas = new Svg()
         const g = canvas.group()
         g.xml('<rect /><circle />', true, svg)
-        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
+        expect(canvas.children()).toEqual([any(Rect), any(Circle)])
       })
 
       it('returns the parent when outerHtml = true', () => {
         const canvas = new Svg()
         const g = canvas.group()
         expect(g.xml('<rect /><circle />', true, svg)).toBe(canvas)
-        expect(canvas.children()).toEqual([ any(Rect), any(Circle) ])
+        expect(canvas.children()).toEqual([any(Rect), any(Circle)])
       })
 
       it('works without a parent', () => {
@@ -684,46 +709,58 @@ describe('Dom.js', function () {
       })
 
       it('returns the svg string of the element by default', () => {
-        expect(rect.xml(), svg).toBe('<rect width="123.456" height="234.567"></rect>')
-        expect(canvas.xml(), svg).toBe('<svg><g><rect width="123.456" height="234.567"></rect></g></svg>')
+        expect(rect.xml(), svg).toBe(
+          '<rect width="123.456" height="234.567"></rect>'
+        )
+        expect(canvas.xml(), svg).toBe(
+          '<svg><g><rect width="123.456" height="234.567"></rect></g></svg>'
+        )
       })
 
       it('returns the innerHtml when outerHtml = false', () => {
         expect(rect.xml(false, svg)).toBe('')
-        expect(canvas.xml(false, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+        expect(canvas.xml(false, svg)).toBe(
+          '<g><rect width="123.456" height="234.567"></rect></g>'
+        )
       })
 
       it('runs a function on every exported node', () => {
-        expect(rect.xml((el) => el.round(1))).toBe('<rect width="123.5" height="234.6"></rect>')
+        expect(rect.xml((el) => el.round(1))).toBe(
+          '<rect width="123.5" height="234.6"></rect>'
+        )
       })
 
       it('runs a function on every exported node and replaces node with returned node if return value is not falsy', () => {
-        expect(rect.xml((el) => new Circle(), svg)).toBe('<circle></circle>')
-        expect(canvas.xml((el) => new G(), svg)).toBe('<g></g>') // outer <svg> was replaced by an empty g
-        expect(canvas.xml((el) => {
-          if (el instanceof Rect) return new Circle()
-          if (el instanceof Svg) el.removeNamespace()
-        }, svg)).toBe('<svg><g><circle></circle></g></svg>')
+        expect(rect.xml(() => new Circle(), svg)).toBe('<circle></circle>')
+        expect(canvas.xml(() => new G(), svg)).toBe('<g></g>') // outer <svg> was replaced by an empty g
+        expect(
+          canvas.xml((el) => {
+            if (el instanceof Rect) return new Circle()
+            if (el instanceof Svg) el.removeNamespace()
+          }, svg)
+        ).toBe('<svg><g><circle></circle></g></svg>')
       })
 
       it('runs a function on every exported node and removes node if return value is false', () => {
         expect(group.xml(() => false, svg)).toBe('')
         expect(canvas.xml(() => false, svg)).toBe('')
-        expect(canvas.xml((el) => {
-          if (el instanceof Svg) {
-            el.removeNamespace()
-          } else {
-            return false
-          }
-        }, svg)).toBe('<svg></svg>')
+        expect(
+          canvas.xml((el) => {
+            if (el instanceof Svg) {
+              el.removeNamespace()
+            } else {
+              return false
+            }
+          }, svg)
+        ).toBe('<svg></svg>')
       })
 
       it('runs a function on every inner node and exports it when outerHtml = false', () => {
         expect(canvas.xml(() => false, false, svg)).toBe('')
-        expect(canvas.xml(() => undefined, false, svg)).toBe('<g><rect width="123.456" height="234.567"></rect></g>')
+        expect(canvas.xml(() => undefined, false, svg)).toBe(
+          '<g><rect width="123.456" height="234.567"></rect></g>'
+        )
       })
-
     })
-
   })
 })

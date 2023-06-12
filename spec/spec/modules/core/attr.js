@@ -6,7 +6,6 @@ import { registerAttrHook } from '../../../../src/modules/core/attr.js'
 const { objectContaining } = jasmine
 
 describe('attr.js', () => {
-
   describe('attr()', () => {
     let element
 
@@ -83,13 +82,13 @@ describe('attr.js', () => {
         'fill-opacity': 0.5
       })
 
-      const ret = element.attr([ 'x', 'fill-opacity' ])
+      const ret = element.attr(['x', 'fill-opacity'])
 
       expect(ret).toEqual({ x: 1, 'fill-opacity': 0.5 })
     })
 
     it('correctly creates SVG.Array if array given', () => {
-      element.attr('something', [ 2, 3, 4 ])
+      element.attr('something', [2, 3, 4])
       expect(element.attr('something')).toBe('2 3 4')
     })
 
@@ -120,8 +119,9 @@ describe('attr.js', () => {
         element.attr('name', 'Bob')
       }
 
-      expect(throwingFn).toThrowError('This hook should only be executed in one test')
+      expect(throwingFn).toThrowError(
+        'This hook should only be executed in one test'
+      )
     })
   })
-
 })

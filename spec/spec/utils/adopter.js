@@ -69,7 +69,9 @@ describe('adopter.js', () => {
       const rect = makeInstance('<rect width="200px" />')
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
-      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+      expect(adoptSpy).toHaveBeenCalledWith(
+        objectContaining({ nodeName: 'rect' })
+      )
       expect(rect).toEqual(any(Rect))
       expect(rect.parent()).toBe(null)
     })
@@ -78,7 +80,12 @@ describe('adopter.js', () => {
       const div = makeInstance('<div />', true)
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
-      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'DIV', namespaceURI: 'http://www.w3.org/1999/xhtml' }))
+      expect(adoptSpy).toHaveBeenCalledWith(
+        objectContaining({
+          nodeName: 'DIV',
+          namespaceURI: 'http://www.w3.org/1999/xhtml'
+        })
+      )
       expect(div).toEqual(any(Dom))
       expect(div.parent()).toBe(null)
     })
@@ -106,7 +113,9 @@ describe('adopter.js', () => {
       const rect = makeInstance(create('rect'))
 
       expect(adoptSpy).toHaveBeenCalledWith(any(Node))
-      expect(adoptSpy).toHaveBeenCalledWith(objectContaining({ nodeName: 'rect' }))
+      expect(adoptSpy).toHaveBeenCalledWith(
+        objectContaining({ nodeName: 'rect' })
+      )
       expect(rect).toEqual(any(Rect))
     })
   })
@@ -206,7 +215,10 @@ describe('adopter.js', () => {
       const A = class {}
 
       extend(A, {
-        test () { this.prop = 'test'; return this }
+        test() {
+          this.prop = 'test'
+          return this
+        }
       })
 
       expect(typeof A.prototype.test).toBe('function')
@@ -218,8 +230,11 @@ describe('adopter.js', () => {
       const B = class {}
       const C = class {}
 
-      extend([ A, B, C ], {
-        test () { this.prop = 'test'; return this }
+      extend([A, B, C], {
+        test() {
+          this.prop = 'test'
+          return this
+        }
       })
 
       expect(typeof A.prototype.test).toBe('function')
@@ -238,7 +253,8 @@ describe('adopter.js', () => {
       const A = class {}
       extend(A, {
         test: wrapWithAttrCheck(function () {
-          this.prop = 'test'; return this
+          this.prop = 'test'
+          return this
         }),
         attr: attrSpy
       })

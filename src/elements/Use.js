@@ -4,12 +4,12 @@ import { xlink } from '../modules/core/namespaces.js'
 import Shape from './Shape.js'
 
 export default class Use extends Shape {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('use', node), attrs)
   }
 
   // Use element as a reference
-  use (element, file) {
+  use(element, file) {
     // Set lined element
     return this.attr('href', (file || '') + '#' + element, xlink)
   }

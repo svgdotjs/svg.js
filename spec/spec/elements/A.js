@@ -6,7 +6,6 @@ const { any } = jasmine
 
 const url = 'https://svgjs.dev'
 describe('A.js', () => {
-
   describe('()', () => {
     it('creates a new object of type A', () => {
       expect(new A()).toEqual(any(A))
@@ -81,7 +80,7 @@ describe('A.js', () => {
         expect(link.parent()).toBe(null)
       })
 
-      it('removes also the link when link wasn\'t in document', () => {
+      it("removes also the link when link wasn't in document", () => {
         const link = new A().to(url)
         const rect = link.rect(100, 100)
 
@@ -116,5 +115,4 @@ describe('A.js', () => {
       })
     })
   })
-
 })

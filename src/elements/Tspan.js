@@ -13,23 +13,23 @@ import * as textable from '../modules/core/textable.js'
 
 export default class Tspan extends Shape {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('tspan', node), attrs)
     this._build = false // disable build mode for adding multiple lines
   }
 
   // Shortcut dx
-  dx (dx) {
+  dx(dx) {
     return this.attr('dx', dx)
   }
 
   // Shortcut dy
-  dy (dy) {
+  dy(dy) {
     return this.attr('dy', dy)
   }
 
   // Create new line
-  newLine () {
+  newLine() {
     // mark new line
     this.dom.newLined = true
 
@@ -43,7 +43,8 @@ export default class Tspan extends Shape {
 
     const i = text.index(this)
 
-    const fontSize = globals.window.getComputedStyle(this.node)
+    const fontSize = globals.window
+      .getComputedStyle(this.node)
       .getPropertyValue('font-size')
     const dy = text.dom.leading * new SVGNumber(fontSize)
 
@@ -52,8 +53,9 @@ export default class Tspan extends Shape {
   }
 
   // Set text content
-  text (text) {
-    if (text == null) return this.node.textContent + (this.dom.newLined ? '\n' : '')
+  text(text) {
+    if (text == null)
+      return this.node.textContent + (this.dom.newLined ? '\n' : '')
 
     if (typeof text === 'function') {
       this.clear().build(true)
@@ -65,7 +67,6 @@ export default class Tspan extends Shape {
 
     return this
   }
-
 }
 
 extend(Tspan, textable)

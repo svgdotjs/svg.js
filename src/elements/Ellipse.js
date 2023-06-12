@@ -11,16 +11,16 @@ import Shape from './Shape.js'
 import * as circled from '../modules/core/circled.js'
 
 export default class Ellipse extends Shape {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('ellipse', node), attrs)
   }
 
-  size (width, height) {
+  size(width, height) {
     const p = proportionalSize(this, width, height)
 
-    return this
-      .rx(new SVGNumber(p.width).divide(2))
-      .ry(new SVGNumber(p.height).divide(2))
+    return this.rx(new SVGNumber(p.width).divide(2)).ry(
+      new SVGNumber(p.height).divide(2)
+    )
   }
 }
 

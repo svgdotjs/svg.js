@@ -20,7 +20,7 @@ describe('utils.js', function () {
     var arr2
 
     beforeEach(function () {
-      arr1 = [ 1, 2, 3, 4 ]
+      arr1 = [1, 2, 3, 4]
       arr2 = map(arr1, function (el) {
         return el * 2
       })
@@ -32,7 +32,7 @@ describe('utils.js', function () {
     })
 
     it('executes a function on every element and returns the result in a new array', function () {
-      expect(arr2).toEqual([ 2, 4, 6, 8 ])
+      expect(arr2).toEqual([2, 4, 6, 8])
     })
   })
 
@@ -41,7 +41,7 @@ describe('utils.js', function () {
     var arr2
 
     beforeEach(function () {
-      arr1 = [ 1, 2, 3, 4 ]
+      arr1 = [1, 2, 3, 4]
       arr2 = filter(arr1, function (el) {
         return el % 2 === 0
       })
@@ -53,7 +53,7 @@ describe('utils.js', function () {
     })
 
     it('filters elements by function', function () {
-      expect(arr2).toEqual([ 2, 4 ])
+      expect(arr2).toEqual([2, 4])
     })
   })
 
@@ -130,16 +130,28 @@ describe('utils.js', function () {
     var el = { bbox: () => ({ width: 200, height: 100 }) }
 
     it('calculates height proportionally', function () {
-      expect(proportionalSize(el, 400, null)).toEqual({ width: 400, height: 200 })
+      expect(proportionalSize(el, 400, null)).toEqual({
+        width: 400,
+        height: 200
+      })
     })
 
     it('calculates width proportionally', function () {
-      expect(proportionalSize(el, null, 200)).toEqual({ width: 400, height: 200 })
+      expect(proportionalSize(el, null, 200)).toEqual({
+        width: 400,
+        height: 200
+      })
     })
 
     it('prefers passed box over element', function () {
-      expect(proportionalSize(el, 300, null, box)).toEqual({ width: 300, height: 200 })
-      expect(proportionalSize(el, null, 200, box)).toEqual({ width: 300, height: 200 })
+      expect(proportionalSize(el, 300, null, box)).toEqual({
+        width: 300,
+        height: 200
+      })
+      expect(proportionalSize(el, null, 200, box)).toEqual({
+        width: 300,
+        height: 200
+      })
     })
   })
 
@@ -147,48 +159,48 @@ describe('utils.js', function () {
     var el = { bbox: () => ({ width: 200, height: 100, x: 300, y: 400 }) }
 
     it('gets the origin from [ox, oy]', function () {
-      var origin = { origin: [ 10, 20 ] }
-      expect(getOrigin(origin, el)).toEqual([ 10, 20 ])
+      var origin = { origin: [10, 20] }
+      expect(getOrigin(origin, el)).toEqual([10, 20])
     })
 
     it('gets the origin from [ox, oy] as strings', function () {
-      var origin = { origin: [ 'center', 'top' ] }
-      expect(getOrigin(origin, el)).toEqual([ 400, 400 ])
+      var origin = { origin: ['center', 'top'] }
+      expect(getOrigin(origin, el)).toEqual([400, 400])
     })
 
     it('gets the origin from {x, y}', function () {
       var origin = { origin: { x: 10, y: 20 } }
-      expect(getOrigin(origin, el)).toEqual([ 10, 20 ])
+      expect(getOrigin(origin, el)).toEqual([10, 20])
     })
 
     it('gets the origin from {ox, oy}', function () {
       var origin = { ox: 10, oy: 20 }
-      expect(getOrigin(origin, el)).toEqual([ 10, 20 ])
+      expect(getOrigin(origin, el)).toEqual([10, 20])
     })
 
     it('gets the origin from {ox, oy} as strings', function () {
       var origin = { ox: 'center', oy: 'top' }
-      expect(getOrigin(origin, el)).toEqual([ 400, 400 ])
+      expect(getOrigin(origin, el)).toEqual([400, 400])
     })
 
     it('gets the origin from {originX, originY}', function () {
       var origin = { originX: 10, originY: 20 }
-      expect(getOrigin(origin, el)).toEqual([ 10, 20 ])
+      expect(getOrigin(origin, el)).toEqual([10, 20])
     })
 
     it('gets the origin from {originX, originY} as strings', function () {
       var origin = { originX: 'center', originY: 'top' }
-      expect(getOrigin(origin, el)).toEqual([ 400, 400 ])
+      expect(getOrigin(origin, el)).toEqual([400, 400])
     })
 
     it('gets the origin from string', function () {
       var origin = { origin: 'center top' }
-      expect(getOrigin(origin, el)).toEqual([ 400, 400 ])
+      expect(getOrigin(origin, el)).toEqual([400, 400])
     })
 
     it('gets the origin from number', function () {
       var origin = { origin: 5 }
-      expect(getOrigin(origin, el)).toEqual([ 5, 5 ])
+      expect(getOrigin(origin, el)).toEqual([5, 5])
     })
   })
 })

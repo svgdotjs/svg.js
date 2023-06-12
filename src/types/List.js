@@ -2,7 +2,7 @@ import { extend } from '../utils/adopter.js'
 // import { subClassArray } from './ArrayPolyfill.js'
 
 class List extends Array {
-  constructor (arr = [], ...args) {
+  constructor(arr = [], ...args) {
     super(arr, ...args)
     if (typeof arr === 'number') return this
     this.length = 0
@@ -19,25 +19,25 @@ class List extends Array {
 
 export default List
 
-extend([ List ], {
-  each (fnOrMethodName, ...args) {
+extend([List], {
+  each(fnOrMethodName, ...args) {
     if (typeof fnOrMethodName === 'function') {
       return this.map((el, i, arr) => {
         return fnOrMethodName.call(el, el, i, arr)
       })
     } else {
-      return this.map(el => {
+      return this.map((el) => {
         return el[fnOrMethodName](...args)
       })
     }
   },
 
-  toArray () {
+  toArray() {
     return Array.prototype.concat.apply([], this)
   }
 })
 
-const reserved = [ 'toArray', 'constructor', 'each' ]
+const reserved = ['toArray', 'constructor', 'each']
 
 List.extend = function (methods) {
   methods = methods.reduce((obj, name) => {
@@ -54,5 +54,5 @@ List.extend = function (methods) {
     return obj
   }, {})
 
-  extend([ List ], methods)
+  extend([List], methods)
 }

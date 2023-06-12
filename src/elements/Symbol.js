@@ -4,7 +4,7 @@ import Container from './Container.js'
 
 export default class Symbol extends Container {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('symbol', node), attrs)
   }
 }

@@ -11,7 +11,7 @@ import baseFind from '../modules/core/selector.js'
 import * as gradiented from '../modules/core/gradiented.js'
 
 export default class Gradient extends Container {
-  constructor (type, attrs) {
+  constructor(type, attrs) {
     super(
       nodeOrNew(type + 'Gradient', typeof type === 'string' ? null : type),
       attrs
@@ -19,26 +19,26 @@ export default class Gradient extends Container {
   }
 
   // custom attr to handle transform
-  attr (a, b, c) {
+  attr(a, b, c) {
     if (a === 'transform') a = 'gradientTransform'
     return super.attr(a, b, c)
   }
 
-  bbox () {
+  bbox() {
     return new Box()
   }
 
-  targets () {
+  targets() {
     return baseFind('svg [fill*=' + this.id() + ']')
   }
 
   // Alias string conversion to fill
-  toString () {
+  toString() {
     return this.url()
   }
 
   // Update gradient
-  update (block) {
+  update(block) {
     // remove all stops
     this.clear()
 
@@ -51,7 +51,7 @@ export default class Gradient extends Container {
   }
 
   // Return the fill id
-  url () {
+  url() {
     return 'url(#' + this.id() + ')'
   }
 }
@@ -61,7 +61,7 @@ extend(Gradient, gradiented)
 registerMethods({
   Container: {
     // Create gradient element in defs
-    gradient (...args) {
+    gradient(...args) {
       return this.defs().gradient(...args)
     }
   },

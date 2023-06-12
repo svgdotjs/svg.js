@@ -10,17 +10,17 @@ describe('selector.js', () => {
       const span = SVG('<span />', true).addClass('bar').addTo(div)
       const span2 = SVG('<span />', true).addTo(div)
 
-      expect(find('#canvas').map(el => el.node)).toEqual([ container ])
-      expect(find('span')).toEqual([ span, span2 ])
-      expect(find('#foo')).toEqual([ div ])
-      expect(find('.bar')).toEqual([ span ])
+      expect(find('#canvas').map((el) => el.node)).toEqual([container])
+      expect(find('span')).toEqual([span, span2])
+      expect(find('#foo')).toEqual([div])
+      expect(find('.bar')).toEqual([span])
     })
 
     it('finds all elements of a selector scoped to an element', () => {
       const div = SVG('<div />', true).id('foo').addTo(container)
 
       expect(find('#canvas', getWindow().document)[0].node).toBe(container)
-      expect(find('#foo', container)).toEqual([ div ])
+      expect(find('#foo', container)).toEqual([div])
       expect(find('#canvas', div.node)).toEqual([])
     })
   })
@@ -34,11 +34,11 @@ describe('selector.js', () => {
         const g4 = new G().addTo(g2)
         const g5 = new G().addTo(g3)
 
-        expect(g1.find('g')).toEqual([ g2, g4, g3, g5 ])
-        expect(g2.find('g')).toEqual([ g4 ])
-        expect(g1.find('#foo')).toEqual([ g2 ])
+        expect(g1.find('g')).toEqual([g2, g4, g3, g5])
+        expect(g2.find('g')).toEqual([g4])
+        expect(g1.find('#foo')).toEqual([g2])
         expect(g2.find('#foo')).toEqual([])
-        expect(g1.find('.bar')).toEqual([ g3 ])
+        expect(g1.find('.bar')).toEqual([g3])
       })
     })
 

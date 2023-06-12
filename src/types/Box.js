@@ -6,46 +6,55 @@ import Matrix from './Matrix.js'
 import Point from './Point.js'
 import parser from '../modules/core/parser.js'
 
-export function isNulledBox (box) {
+export function isNulledBox(box) {
   return !box.width && !box.height && !box.x && !box.y
 }
 
-export function domContains (node) {
-  return node === globals.document
-    || (globals.document.documentElement.contains || function (node) {
-      // This is IE - it does not support contains() for top-level SVGs
-      while (node.parentNode) {
-        node = node.parentNode
+export function domContains(node) {
+  return (
+    node === globals.document ||
+    (
+      globals.document.documentElement.contains ||
+      function (node) {
+        // This is IE - it does not support contains() for top-level SVGs
+        while (node.parentNode) {
+          node = node.parentNode
+        }
+        return node === globals.document
       }
-      return node === globals.document
-    }).call(globals.document.documentElement, node)
+    ).call(globals.document.documentElement, node)
+  )
 }
 
 export default class Box {
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  addOffset () {
+  addOffset() {
     // offset by window scroll position, because getBoundingClientRect changes when window is scrolled
     this.x += globals.window.pageXOffset
     this.y += globals.window.pageYOffset
     return new Box(this)
   }
 
-  init (source) {
-    const base = [ 0, 0, 0, 0 ]
-    source = typeof source === 'string'
-      ? source.split(delimiter).map(parseFloat)
-      : Array.isArray(source)
+  init(source) {
+    const base = [0, 0, 0, 0]
+    source =
+      typeof source === 'string'
+        ? source.split(delimiter).map(parseFloat)
+        : Array.isArray(source)
         ? source
         : typeof source === 'object'
-          ? [ source.left != null
-            ? source.left
-            : source.x, source.top != null ? source.top : source.y, source.width, source.height ]
-          : arguments.length === 4
-            ? [].slice.call(arguments)
-            : base
+        ? [
+            source.left != null ? source.left : source.x,
+            source.top != null ? source.top : source.y,
+            source.width,
+            source.height
+          ]
+        : arguments.length === 4
+        ? [].slice.call(arguments)
+        : base
 
     this.x = source[0] || 0
     this.y = source[1] || 0
@@ -61,12 +70,12 @@ export default class Box {
     return this
   }
 
-  isNulled () {
+  isNulled() {
     return isNulledBox(this)
   }
 
   // Merge rect box with another, return a new instance
-  merge (box) {
+  merge(box) {
     const x = Math.min(this.x, box.x)
     const y = Math.min(this.y, box.y)
     const width = Math.max(this.x + this.width, box.x + box.width) - x
@@ -75,15 +84,15 @@ export default class Box {
     return new Box(x, y, width, height)
   }
 
-  toArray () {
-    return [ this.x, this.y, this.width, this.height ]
+  toArray() {
+    return [this.x, this.y, this.width, this.height]
   }
 
-  toString () {
+  toString() {
     return this.x + ' ' + this.y + ' ' + this.width + ' ' + this.height
   }
 
-  transform (m) {
+  transform(m) {
     if (!(m instanceof Matrix)) {
       m = new Matrix(m)
     }
@@ -108,16 +117,11 @@ export default class Box {
       yMax = Math.max(yMax, p.y)
     })
 
-    return new Box(
-      xMin, yMin,
-      xMax - xMin,
-      yMax - yMin
-    )
+    return new Box(xMin, yMin, xMax - xMin, yMax - yMin)
   }
-
 }
 
-function getBox (el, getBBoxFn, retry) {
+function getBox(el, getBBoxFn, retry) {
   let box
 
   try {
@@ -137,7 +141,7 @@ function getBox (el, getBBoxFn, retry) {
   return box
 }
 
-export function bbox () {
+export function bbox() {
   // Function to get bbox is getBBox()
   const getBBox = (node) => node.getBBox()
 
@@ -151,7 +155,11 @@ export function bbox () {
       return box
     } catch (e) {
       // We give up...
-      throw new Error(`Getting bbox of element "${el.node.nodeName}" is not possible: ${e.toString()}`)
+      throw new Error(
+        `Getting bbox of element "${
+          el.node.nodeName
+        }" is not possible: ${e.toString()}`
+      )
     }
   }
 
@@ -161,12 +169,14 @@ export function bbox () {
   return bbox
 }
 
-export function rbox (el) {
+export function rbox(el) {
   const getRBox = (node) => node.getBoundingClientRect()
   const retry = (el) => {
     // There is no point in trying tricks here because if we insert the element into the dom ourselves
     // it obviously will be at the wrong position
-    throw new Error(`Getting rbox of element "${el.node.nodeName}" is not possible`)
+    throw new Error(
+      `Getting rbox of element "${el.node.nodeName}" is not possible`
+    )
   }
 
   const box = getBox(this, getRBox, retry)
@@ -183,18 +193,17 @@ export function rbox (el) {
 }
 
 // Checks whether the given point is inside the bounding box
-export function inside (x, y) {
+export function inside(x, y) {
   const box = this.bbox()
 
-  return x > box.x
-    && y > box.y
-    && x < box.x + box.width
-    && y < box.y + box.height
+  return (
+    x > box.x && y > box.y && x < box.x + box.width && y < box.y + box.height
+  )
 }
 
 registerMethods({
   viewbox: {
-    viewbox (x, y, width, height) {
+    viewbox(x, y, width, height) {
       // act as getter
       if (x == null) return new Box(this.attr('viewBox'))
 
@@ -202,7 +211,7 @@ registerMethods({
       return this.attr('viewBox', new Box(x, y, width, height))
     },
 
-    zoom (level, point) {
+    zoom(level, point) {
       // Its best to rely on the attributes here and here is why:
       // clientXYZ: Doesn't work on non-root svgs because they dont have a CSSBox (silly!)
       // getBoundingClientRect: Doesn't work because Chrome just ignores width and height of nested svgs completely
@@ -210,18 +219,24 @@ registerMethods({
       //                        Furthermore this size is incorrect if the element is further transformed by its parents
       // computedStyle: Only returns meaningful values if css was used with px. We dont go this route here!
       // getBBox: returns the bounding box of its content - that doesn't help!
-      let { width, height } = this.attr([ 'width', 'height' ])
+      let { width, height } = this.attr(['width', 'height'])
 
       // Width and height is a string when a number with a unit is present which we can't use
       // So we try clientXYZ
-      if ((!width && !height) || (typeof width === 'string' || typeof height === 'string')) {
+      if (
+        (!width && !height) ||
+        typeof width === 'string' ||
+        typeof height === 'string'
+      ) {
         width = this.node.clientWidth
         height = this.node.clientHeight
       }
 
       // Giving up...
       if (!width || !height) {
-        throw new Error('Impossible to get absolute width and height. Please provide an absolute width and height attribute on the zooming element')
+        throw new Error(
+          'Impossible to get absolute width and height. Please provide an absolute width and height attribute on the zooming element'
+        )
       }
 
       const v = this.viewbox()
@@ -240,7 +255,8 @@ registerMethods({
       // The * 100 is a bit of wiggle room for the matrix transformation
       if (zoomAmount === Infinity) zoomAmount = Number.MAX_SAFE_INTEGER / 100
 
-      point = point || new Point(width / 2 / zoomX + v.x, height / 2 / zoomY + v.y)
+      point =
+        point || new Point(width / 2 / zoomX + v.x, height / 2 / zoomY + v.y)
 
       const box = new Box(v).transform(
         new Matrix({ scale: zoomAmount, origin: point })

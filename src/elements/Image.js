@@ -9,35 +9,40 @@ import Shape from './Shape.js'
 import { globals } from '../utils/window.js'
 
 export default class Image extends Shape {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('image', node), attrs)
   }
 
   // (re)load image
-  load (url, callback) {
+  load(url, callback) {
     if (!url) return this
 
     const img = new globals.window.Image()
 
-    on(img, 'load', function (e) {
-      const p = this.parent(Pattern)
+    on(
+      img,
+      'load',
+      function (e) {
+        const p = this.parent(Pattern)
 
-      // ensure image size
-      if (this.width() === 0 && this.height() === 0) {
-        this.size(img.width, img.height)
-      }
-
-      if (p instanceof Pattern) {
-        // ensure pattern size if not set
-        if (p.width() === 0 && p.height() === 0) {
-          p.size(this.width(), this.height())
+        // ensure image size
+        if (this.width() === 0 && this.height() === 0) {
+          this.size(img.width, img.height)
         }
-      }
 
-      if (typeof callback === 'function') {
-        callback.call(this, e)
-      }
-    }, this)
+        if (p instanceof Pattern) {
+          // ensure pattern size if not set
+          if (p.width() === 0 && p.height() === 0) {
+            p.size(this.width(), this.height())
+          }
+        }
+
+        if (typeof callback === 'function') {
+          callback.call(this, e)
+        }
+      },
+      this
+    )
 
     on(img, 'load error', function () {
       // dont forget to unbind memory leaking events
@@ -57,9 +62,12 @@ registerAttrHook(function (attr, val, _this) {
   }
 
   if (val instanceof Image) {
-    val = _this.root().defs().pattern(0, 0, (pattern) => {
-      pattern.add(val)
-    })
+    val = _this
+      .root()
+      .defs()
+      .pattern(0, 0, (pattern) => {
+        pattern.add(val)
+      })
   }
 
   return val

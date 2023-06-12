@@ -1,22 +1,25 @@
 export default class Queue {
-  constructor () {
+  constructor() {
     this._first = null
     this._last = null
   }
 
   // Shows us the first item in the list
-  first () {
+  first() {
     return this._first && this._first.value
   }
 
   // Shows us the last item in the list
-  last () {
+  last() {
     return this._last && this._last.value
   }
 
-  push (value) {
+  push(value) {
     // An item stores an id and the provided value
-    const item = typeof value.next !== 'undefined' ? value : { value: value, next: null, prev: null }
+    const item =
+      typeof value.next !== 'undefined'
+        ? value
+        : { value: value, next: null, prev: null }
 
     // Deal with the queue being empty or populated
     if (this._last) {
@@ -33,7 +36,7 @@ export default class Queue {
   }
 
   // Removes the item that was returned from the push
-  remove (item) {
+  remove(item) {
     // Relink the previous item
     if (item.prev) item.prev.next = item.next
     if (item.next) item.next.prev = item.prev
@@ -45,7 +48,7 @@ export default class Queue {
     item.next = null
   }
 
-  shift () {
+  shift() {
     // Check if we have a value
     const remove = this._first
     if (!remove) return null
@@ -56,5 +59,4 @@ export default class Queue {
     this._last = this._first ? this._last : null
     return remove.value
   }
-
 }

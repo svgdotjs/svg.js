@@ -94,5 +94,4 @@ describe('circled.js', () => {
       expect(element.height()).toBe(100)
     })
   })
-
 })

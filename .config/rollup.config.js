@@ -1,9 +1,9 @@
-import * as pkg from '../package.json'
+import pkg from '../package.json' assert { type: 'json' }
 import babel from '@rollup/plugin-babel'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import filesize from 'rollup-plugin-filesize'
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 
 const buildDate = Date()
 
@@ -21,17 +21,22 @@ const headerLong = `/*!
 const headerShort = `/*! ${pkg.name} v${pkg.version} ${pkg.license}*/;`
 
 const getBabelConfig = (node = false) => {
-  
   let targets = pkg.browserslist
   const plugins = [
-    ['@babel/transform-runtime', {
-      version: "^7.14.5",
-      regenerator: false,
-      useESModules: true
-    }],
-    ["polyfill-corejs3", {
-      "method": "usage-pure"
-    }]
+    [
+      '@babel/transform-runtime',
+      {
+        version: '^7.14.5',
+        regenerator: false,
+        useESModules: true
+      }
+    ],
+    [
+      'polyfill-corejs3',
+      {
+        method: 'usage-pure'
+      }
+    ]
   ]
 
   if (node) {
@@ -43,15 +48,20 @@ const getBabelConfig = (node = false) => {
     babelHelpers: 'runtime',
     babelrc: false,
     targets: targets,
-    presets: [['@babel/preset-env', {
-      modules: false,
-      // useBuildins and plugin-transform-runtime are mutually exclusive
-      // https://github.com/babel/babel/issues/10271#issuecomment-528379505
-      // use babel-polyfills when released
-      useBuiltIns: false,
-      bugfixes: true,
-      loose: true
-    }]],
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          modules: false,
+          // useBuildins and plugin-transform-runtime are mutually exclusive
+          // https://github.com/babel/babel/issues/10271#issuecomment-528379505
+          // use babel-polyfills when released
+          useBuiltIns: false,
+          bugfixes: true,
+          loose: true
+        }
+      ]
+    ],
     plugins
   })
 }
@@ -90,11 +100,14 @@ const classes = [
 ]
 
 const config = (node, min, esm = false) => ({
-  input: (node || esm) ? './src/main.js' : './src/svg.js',
+  input: node || esm ? './src/main.js' : './src/svg.js',
   output: {
-    file: esm ? './dist/svg.esm.js'
-      : node ? './dist/svg.node.js'
-      : min ? './dist/svg.min.js'
+    file: esm
+      ? './dist/svg.esm.js'
+      : node
+      ? './dist/svg.node.js'
+      : min
+      ? './dist/svg.min.js'
       : './dist/svg.js',
     format: esm ? 'esm' : node ? 'cjs' : 'iife',
     name: 'SVG',
@@ -112,18 +125,20 @@ const config = (node, min, esm = false) => ({
     commonjs(),
     getBabelConfig(node),
     filesize(),
-    !min ? {} : terser({
-      mangle: {
-        reserved: classes
-      },
-      output: {
-        preamble: headerShort
-      }
-    })
+    !min
+      ? {}
+      : terser({
+          mangle: {
+            reserved: classes
+          },
+          output: {
+            preamble: headerShort
+          }
+        })
   ]
 })
 
 // [node, minified, esm]
 const modes = [[false], [false, true], [true], [false, false, true]]
 
-export default modes.map(m => config(...m))
+export default modes.map((m) => config(...m))

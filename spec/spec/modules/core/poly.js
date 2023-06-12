@@ -15,7 +15,10 @@ describe('Polygon.js', () => {
     it('returns the underlying PointArray', () => {
       const array = poly.plot('1 2 3 4').array()
       expect(array).toEqual(any(PointArray))
-      expect(array).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
+      expect(array).toEqual([
+        [1, 2],
+        [3, 4]
+      ])
     })
   })
 
@@ -36,9 +39,14 @@ describe('Polygon.js', () => {
       const canvas = SVG().addTo(container)
       const poly = canvas.polygon('0 0 50 50')
       poly.move(50, 50)
-      expect(poly.bbox()).toEqual(objectContaining({
-        x: 50, y: 50, width: 50, height: 50
-      }))
+      expect(poly.bbox()).toEqual(
+        objectContaining({
+          x: 50,
+          y: 50,
+          width: 50,
+          height: 50
+        })
+      )
     })
   })
 
@@ -57,20 +65,37 @@ describe('Polygon.js', () => {
 
     it('works with flat array', () => {
       const spy = spyOn(poly, 'attr')
-      poly.plot([ 1, 2, 3, 4 ])
-      expect(spy).toHaveBeenCalledWith('points', [ [ 1, 2 ], [ 3, 4 ] ])
+      poly.plot([1, 2, 3, 4])
+      expect(spy).toHaveBeenCalledWith('points', [
+        [1, 2],
+        [3, 4]
+      ])
     })
 
     it('works with multi array', () => {
       const spy = spyOn(poly, 'attr')
-      poly.plot([ [ 1, 2 ], [ 3, 4 ] ])
-      expect(spy).toHaveBeenCalledWith('points', [ [ 1, 2 ], [ 3, 4 ] ])
+      poly.plot([
+        [1, 2],
+        [3, 4]
+      ])
+      expect(spy).toHaveBeenCalledWith('points', [
+        [1, 2],
+        [3, 4]
+      ])
     })
 
     it('works with PointArray', () => {
       const spy = spyOn(poly, 'attr')
-      poly.plot(new PointArray([ [ 1, 2 ], [ 3, 4 ] ]))
-      expect(spy).toHaveBeenCalledWith('points', [ [ 1, 2 ], [ 3, 4 ] ])
+      poly.plot(
+        new PointArray([
+          [1, 2],
+          [3, 4]
+        ])
+      )
+      expect(spy).toHaveBeenCalledWith('points', [
+        [1, 2],
+        [3, 4]
+      ])
     })
   })
 
@@ -83,27 +108,42 @@ describe('Polygon.js', () => {
       const canvas = SVG().addTo(container)
       const poly = canvas.polygon('0 0 50 50')
       poly.size(100, 100)
-      expect(poly.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(poly.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
 
     it('changes height proportionally', () => {
       const canvas = SVG().addTo(container)
       const poly = canvas.polygon('0 0 50 50')
       poly.size(100, null)
-      expect(poly.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(poly.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
 
     it('changes width proportionally', () => {
       const canvas = SVG().addTo(container)
       const poly = canvas.polygon('0 0 50 50')
       poly.size(null, 100)
-      expect(poly.bbox()).toEqual(objectContaining({
-        width: 100, height: 100, x: 0, y: 0
-      }))
+      expect(poly.bbox()).toEqual(
+        objectContaining({
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        })
+      )
     })
   })
 })

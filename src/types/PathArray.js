@@ -3,7 +3,7 @@ import parser from '../modules/core/parser.js'
 import Box from './Box.js'
 import { pathParser } from '../utils/pathParser.js'
 
-function arrayToString (a) {
+function arrayToString(a) {
   let s = ''
   for (let i = 0, il = a.length; i < il; i++) {
     s += a[i][0]
@@ -42,13 +42,13 @@ function arrayToString (a) {
 
 export default class PathArray extends SVGArray {
   // Get bounding box of path
-  bbox () {
+  bbox() {
     parser().path.setAttribute('d', this.toString())
     return new Box(parser.nodes.path.getBBox())
   }
 
   // Move path string
-  move (x, y) {
+  move(x, y) {
     // get bounding box of current situation
     const box = this.bbox()
 
@@ -89,7 +89,7 @@ export default class PathArray extends SVGArray {
   }
 
   // Absolutize and parse path to array
-  parse (d = 'M0 0') {
+  parse(d = 'M0 0') {
     if (Array.isArray(d)) {
       d = Array.prototype.concat.apply([], d).toString()
     }
@@ -98,7 +98,7 @@ export default class PathArray extends SVGArray {
   }
 
   // Resize path string
-  size (width, height) {
+  size(width, height) {
     // get bounding box of current situation
     const box = this.bbox()
     let i, l
@@ -144,8 +144,7 @@ export default class PathArray extends SVGArray {
   }
 
   // Convert array to string
-  toString () {
+  toString() {
     return arrayToString(this)
   }
-
 }

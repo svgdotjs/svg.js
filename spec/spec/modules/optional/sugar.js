@@ -32,15 +32,18 @@ describe('sugar.js', () => {
 
         it('sets an object of fill properties', () => {
           const rect = new Rect()
-          expect(rect.fill({
-            color: 'black',
-            opacity: 0.5,
-            rule: 'even-odd'
-          }).attr()).toEqual({
+          expect(
+            rect
+              .fill({
+                color: 'black',
+                opacity: 0.5,
+                rule: 'even-odd'
+              })
+              .attr()
+          ).toEqual({
             fill: 'black',
             'fill-opacity': 0.5,
-            'fill-rule':
-          'even-odd'
+            'fill-rule': 'even-odd'
           })
         })
       })
@@ -86,16 +89,20 @@ describe('sugar.js', () => {
 
         it('sets an object of stroke properties', () => {
           const rect = new Rect()
-          expect(rect.stroke({
-            color: 'black',
-            width: 2,
-            opacity: 0.5,
-            linecap: 'butt',
-            linejoin: 'miter',
-            miterlimit: 10,
-            dasharray: '2 2',
-            dashoffset: 15
-          }).attr()).toEqual({
+          expect(
+            rect
+              .stroke({
+                color: 'black',
+                width: 2,
+                opacity: 0.5,
+                linecap: 'butt',
+                linejoin: 'miter',
+                miterlimit: 10,
+                dasharray: '2 2',
+                dashoffset: 15
+              })
+              .attr()
+          ).toEqual({
             stroke: 'black',
             'stroke-width': 2,
             'stroke-opacity': 0.5,
@@ -108,7 +115,7 @@ describe('sugar.js', () => {
         })
 
         it('sets stroke dasharray with array passed', () => {
-          const rect = new Rect().stroke({ dasharray: [ 2, 2 ] })
+          const rect = new Rect().stroke({ dasharray: [2, 2] })
           expect(rect.attr()).toEqual({ 'stroke-dasharray': '2 2' })
         })
       })
@@ -157,21 +164,30 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.skew()
-        expect(spy).toHaveBeenCalledWith({ skew: [ undefined, undefined ], ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { skew: [undefined, undefined], ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with one argument', function () {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.skew(5)
-        expect(spy).toHaveBeenCalledWith({ skew: 5, ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { skew: 5, ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with two argument', function () {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.skew(5, 6)
-        expect(spy).toHaveBeenCalledWith({ skew: [ 5, 6 ], ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { skew: [5, 6], ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with three arguments', function () {
@@ -185,7 +201,7 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.skew(5, 6, 7, 8)
-        expect(spy).toHaveBeenCalledWith({ skew: [ 5, 6 ], ox: 7, oy: 8 }, true)
+        expect(spy).toHaveBeenCalledWith({ skew: [5, 6], ox: 7, oy: 8 }, true)
       })
     })
 
@@ -203,21 +219,30 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.scale()
-        expect(spy).toHaveBeenCalledWith({ scale: [ undefined, undefined ], ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { scale: [undefined, undefined], ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with one argument', function () {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.scale(5)
-        expect(spy).toHaveBeenCalledWith({ scale: 5, ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { scale: 5, ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with two argument', function () {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.scale(5, 6)
-        expect(spy).toHaveBeenCalledWith({ scale: [ 5, 6 ], ox: undefined, oy: undefined }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { scale: [5, 6], ox: undefined, oy: undefined },
+          true
+        )
       })
 
       it('redirects to transform() with three arguments', function () {
@@ -231,7 +256,7 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.scale(5, 6, 7, 8)
-        expect(spy).toHaveBeenCalledWith({ scale: [ 5, 6 ], ox: 7, oy: 8 }, true)
+        expect(spy).toHaveBeenCalledWith({ scale: [5, 6], ox: 7, oy: 8 }, true)
       })
     })
 
@@ -240,7 +265,7 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.translate(1, 2)
-        expect(spy).toHaveBeenCalledWith({ translate: [ 1, 2 ] }, true)
+        expect(spy).toHaveBeenCalledWith({ translate: [1, 2] }, true)
       })
     })
 
@@ -249,7 +274,7 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.relative(1, 2)
-        expect(spy).toHaveBeenCalledWith({ relative: [ 1, 2 ] }, true)
+        expect(spy).toHaveBeenCalledWith({ relative: [1, 2] }, true)
       })
     })
 
@@ -265,7 +290,10 @@ describe('sugar.js', () => {
         const rect = new Rect()
         const spy = spyOn(rect, 'transform')
         rect.flip()
-        expect(spy).toHaveBeenCalledWith({ flip: 'both', origin: 'center' }, true)
+        expect(spy).toHaveBeenCalledWith(
+          { flip: 'both', origin: 'center' },
+          true
+        )
       })
 
       // this works because only x and y are valid flip values. Everything else flips on both axis
@@ -347,7 +375,6 @@ describe('sugar.js', () => {
         expect(spy).toHaveBeenCalledWith('font-size', undefined)
       })
     })
-
   })
 
   describe('radius()', () => {
@@ -395,7 +422,8 @@ describe('sugar.js', () => {
   })
 
   describe('events', () => {
-    [ 'click',
+    ;[
+      'click',
       'dblclick',
       'mousedown',
       'mouseup',
@@ -408,7 +436,8 @@ describe('sugar.js', () => {
       'touchmove',
       'touchleave',
       'touchend',
-      'touchcancel' ].forEach(ev => {
+      'touchcancel'
+    ].forEach((ev) => {
       describe(ev, () => {
         it('calls on() with the eventname set to ' + ev, () => {
           const rect = new Rect()
@@ -418,12 +447,17 @@ describe('sugar.js', () => {
           expect(spy).toHaveBeenCalledWith(ev, fn)
         })
 
-        it('calls off() with the eventname set to ' + ev + ' when null is passed as second argument', () => {
-          const rect = new Rect()
-          const spy = spyOn(rect, 'off')
-          rect[ev](null)
-          expect(spy).toHaveBeenCalledWith(ev)
-        })
+        it(
+          'calls off() with the eventname set to ' +
+            ev +
+            ' when null is passed as second argument',
+          () => {
+            const rect = new Rect()
+            const spy = spyOn(rect, 'off')
+            rect[ev](null)
+            expect(spy).toHaveBeenCalledWith(ev)
+          }
+        )
       })
     })
   })

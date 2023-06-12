@@ -8,12 +8,11 @@ describe('pointed.js', () => {
   beforeEach(() => {
     canvas = SVG().addTo(container)
     const line = canvas.line(1, 2, 3, 4)
-    const polygon = canvas.polygon([ 1, 2, 3, 4 ])
-    const polyline = canvas.polyline([ 1, 2, 3, 4 ])
+    const polygon = canvas.polygon([1, 2, 3, 4])
+    const polyline = canvas.polyline([1, 2, 3, 4])
     lines = { line, polygon, polyline }
   })
-
-  ;[ 'line', 'polygon', 'polyline' ].forEach((l) => {
+  ;['line', 'polygon', 'polyline'].forEach((l) => {
     describe('for ' + l, () => {
       describe('x()', () => {
         it('sets the x value of the ' + l + 'and returns itself', () => {

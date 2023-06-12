@@ -46,7 +46,7 @@ describe('Gradient.js', () => {
       const canvas = SVG().addTo(container)
       const gradient = canvas.gradient('linear')
       const rect = canvas.rect(100, 100).fill(gradient)
-      expect(gradient.targets()).toEqual([ rect ])
+      expect(gradient.targets()).toEqual([rect])
     })
   })
 
@@ -69,7 +69,7 @@ describe('Gradient.js', () => {
       const spy = createSpy('gradient')
       gradient.update(spy)
       expect(spy.calls.all()).toEqual([
-        objectContaining({ object: gradient, args: [ gradient ] })
+        objectContaining({ object: gradient, args: [gradient] })
       ])
     })
   })
@@ -102,7 +102,7 @@ describe('Gradient.js', () => {
       const gradient = defs.gradient('linear', spy)
       expect(gradient).toEqual(any(Gradient))
       expect(gradient.type).toBe('linearGradient')
-      expect(defs.children()).toEqual([ gradient ])
+      expect(defs.children()).toEqual([gradient])
       expect(spy).toHaveBeenCalled()
     })
   })

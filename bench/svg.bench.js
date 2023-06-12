@@ -23,9 +23,9 @@
     // Add test
     test: function (name, run) {
       // run test
-      var start = (new Date()).getTime()
+      var start = new Date().getTime()
       run()
-      this.write(name, (new Date()).getTime() - start)
+      this.write(name, new Date().getTime() - start)
 
       // clear everything
       this.clear()
@@ -54,7 +54,12 @@
 
       if (typeof ms === 'number') {
         test.className = 'test'
-        test.innerHTML = '<span class="name">' + name + '</span> completed in <span class="ms">' + ms + 'ms</span>'
+        test.innerHTML =
+          '<span class="name">' +
+          name +
+          '</span> completed in <span class="ms">' +
+          ms +
+          'ms</span>'
       } else {
         test.className = 'test skipped'
         test.innerHTML = name + ' (skipped)'

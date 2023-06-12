@@ -3,7 +3,7 @@ import { registerMethods } from '../utils/methods.js'
 import { unCamelCase } from '../utils/utils.js'
 import Element from './Element.js'
 
-function cssRule (selector, rule) {
+function cssRule(selector, rule) {
   if (!selector) return ''
   if (!rule) return selector
 
@@ -19,16 +19,16 @@ function cssRule (selector, rule) {
 }
 
 export default class Style extends Element {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('style', node), attrs)
   }
 
-  addText (w = '') {
+  addText(w = '') {
     this.node.textContent += w
     return this
   }
 
-  font (name, src, params = {}) {
+  font(name, src, params = {}) {
     return this.rule('@font-face', {
       fontFamily: name,
       src: src,
@@ -36,16 +36,16 @@ export default class Style extends Element {
     })
   }
 
-  rule (selector, obj) {
+  rule(selector, obj) {
     return this.addText(cssRule(selector, obj))
   }
 }
 
 registerMethods('Dom', {
-  style (selector, obj) {
+  style(selector, obj) {
     return this.put(new Style()).rule(selector, obj)
   },
-  fontface  (name, src, params) {
+  fontface(name, src, params) {
     return this.put(new Style()).font(name, src, params)
   }
 })

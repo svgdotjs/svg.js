@@ -33,13 +33,17 @@ describe('Style.js', () => {
     it('adds a font-face rule to load a custom font and returns itself', () => {
       const style = new Style()
       expect(style.font('fontName', 'url')).toBe(style)
-      expect(style.node.textContent).toBe('@font-face{font-family:fontName;src:url;}')
+      expect(style.node.textContent).toBe(
+        '@font-face{font-family:fontName;src:url;}'
+      )
     })
 
     it('adds extra parameters if wanted', () => {
       const style = new Style()
       style.font('fontName', 'url', { foo: 'bar' })
-      expect(style.node.textContent).toBe('@font-face{font-family:fontName;src:url;foo:bar;}')
+      expect(style.node.textContent).toBe(
+        '@font-face{font-family:fontName;src:url;foo:bar;}'
+      )
     })
   })
 
@@ -78,7 +82,9 @@ describe('Style.js', () => {
         const g = new G()
         const style = g.fontface('fontName', 'url', { foo: 'bar' })
         expect(style).toEqual(any(Style))
-        expect(style.node.textContent).toBe('@font-face{font-family:fontName;src:url;foo:bar;}')
+        expect(style.node.textContent).toBe(
+          '@font-face{font-family:fontName;src:url;foo:bar;}'
+        )
       })
     })
   })

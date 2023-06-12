@@ -3,21 +3,21 @@ import { numberAndUnit } from '../modules/core/regex.js'
 // Module for unit conversions
 export default class SVGNumber {
   // Initialize
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  convert (unit) {
+  convert(unit) {
     return new SVGNumber(this.value, unit)
   }
 
   // Divide number
-  divide (number) {
+  divide(number) {
     number = new SVGNumber(number)
     return new SVGNumber(this / number, this.unit || number.unit)
   }
 
-  init (value, unit) {
+  init(value, unit) {
     unit = Array.isArray(value) ? value[1] : unit
     value = Array.isArray(value) ? value[0] : value
 
@@ -28,7 +28,13 @@ export default class SVGNumber {
     // parse value
     if (typeof value === 'number') {
       // ensure a valid numeric value
-      this.value = isNaN(value) ? 0 : !isFinite(value) ? (value < 0 ? -3.4e+38 : +3.4e+38) : value
+      this.value = isNaN(value)
+        ? 0
+        : !isFinite(value)
+        ? value < 0
+          ? -3.4e38
+          : +3.4e38
+        : value
     } else if (typeof value === 'string') {
       unit = value.match(numberAndUnit)
 
@@ -57,42 +63,42 @@ export default class SVGNumber {
   }
 
   // Subtract number
-  minus (number) {
+  minus(number) {
     number = new SVGNumber(number)
     return new SVGNumber(this - number, this.unit || number.unit)
   }
 
   // Add number
-  plus (number) {
+  plus(number) {
     number = new SVGNumber(number)
     return new SVGNumber(this + number, this.unit || number.unit)
   }
 
   // Multiply number
-  times (number) {
+  times(number) {
     number = new SVGNumber(number)
     return new SVGNumber(this * number, this.unit || number.unit)
   }
 
-  toArray () {
-    return [ this.value, this.unit ]
+  toArray() {
+    return [this.value, this.unit]
   }
 
-  toJSON () {
+  toJSON() {
     return this.toString()
   }
 
-  toString () {
-    return (this.unit === '%'
-      ? ~~(this.value * 1e8) / 1e6
-      : this.unit === 's'
+  toString() {
+    return (
+      (this.unit === '%'
+        ? ~~(this.value * 1e8) / 1e6
+        : this.unit === 's'
         ? this.value / 1e3
-        : this.value
-    ) + this.unit
+        : this.value) + this.unit
+    )
   }
 
-  valueOf () {
+  valueOf() {
     return this.value
   }
-
 }

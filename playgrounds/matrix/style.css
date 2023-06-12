@@ -1,10 +1,9 @@
-
 * {
   box-sizing: border-box;
 }
 
 html {
-  background-color : #fefefe;
+  background-color: #fefefe;
 }
 
 body {
@@ -50,7 +49,7 @@ svg {
 }
 
 .pink {
-  fill: #FF0066;
+  fill: #ff0066;
 }
 
 .green {
@@ -62,9 +61,9 @@ svg {
 }
 
 .light-pink {
-  fill: #FF99C2;
+  fill: #ff99c2;
 }
 
 .off-white {
-   fill: #FFCCE0;
+  fill: #ffcce0;
 }

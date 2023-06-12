@@ -1,85 +1,23 @@
 {
-	"extends": "standard",
-	"plugins": [ "sort-class-members" ],
-	"rules": {
-		"operator-linebreak": [ "error", "before" ],
-		"object-curly-spacing": [ "error", "always" ],
-		"array-bracket-spacing": [ "error", "always" ],
-		"indent": [ "error", 2, 	{ "flatTernaryExpressions": true } ],
-		"padded-blocks": "off",
-		"sort-class-members/sort-class-members": [ 2, {
-      "order": [
-        "[static-properties]",
-        "[properties]",
-        "[conventional-private-properties]",
-        "constructor",
-        "[static-methods]",
-        "[methods]",
-        "[conventional-private-methods]",
-        "[accessor-pairs]",
-        "[getters]",
-        "[setters]",
-        "[everything-else]"
-      ],
-      "groups": {
-        "constructor": [{
-          "name": "constructor",
-          "type": "method",
-          "sort": "alphabetical"
-        }],
-        "properties": [{
-          "type": "property",
-          "sort": "alphabetical"
-        }],
-        "getters": [{
-          "kind": "get",
-          "sort": "alphabetical"
-        }],
-        "setters": [{
-          "kind": "set",
-          "sort": "alphabetical"
-        }],
-        "accessor-pairs": [{
-          "accessorPair": true,
-          "sort": "alphabetical"
-        }],
-        "static-properties": [{
-          "type": "property",
-          "static": true,
-          "sort": "alphabetical"
-        }],
-        "conventional-private-properties": [{
-          "type": "property",
-          "name": "/_.+/",
-          "sort": "alphabetical"
-        }],
-        "arrow-function-properties": [{
-          "propertyType": "ArrowFunctionExpression",
-          "sort": "alphabetical"
-        }],
-        "methods": [{
-          "type": "method",
-          "sort": "alphabetical"
-        }],
-        "static-methods": [{
-          "type": "method",
-          "static": true,
-          "sort": "alphabetical"
-        }],
-        "async-methods": [{
-          "type": "method",
-          "async": true,
-          "sort": "alphabetical"
-        }],
-        "conventional-private-methods": [{
-          "type": "method",
-          "name": "/_.+/",
-          "sort": "alphabetical"
-        }],
-        "everything-else": [{
-          "sort": "alphabetical"
-        }]
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "rules": {
+    "padded-blocks": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "varsIgnorePattern": "^_"
       }
-    }]
-	}
+    ]
+  }
 }

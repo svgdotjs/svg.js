@@ -8,19 +8,19 @@ import baseFind from '../modules/core/selector.js'
 
 export default class TextPath extends Text {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('textPath', node), attrs)
   }
 
   // return the array of the path track element
-  array () {
+  array() {
     const track = this.track()
 
     return track ? track.array() : null
   }
 
   // Plot path if any
-  plot (d) {
+  plot(d) {
     const track = this.track()
     let pathArray = null
 
@@ -28,11 +28,11 @@ export default class TextPath extends Text {
       pathArray = track.plot(d)
     }
 
-    return (d == null) ? pathArray : this
+    return d == null ? pathArray : this
   }
 
   // Get the path element
-  track () {
+  track() {
     return this.reference('href')
   }
 }
@@ -75,7 +75,7 @@ registerMethods({
     }),
 
     // Get the textPath children
-    textPath () {
+    textPath() {
       return this.findOne('textPath')
     }
   },
@@ -91,7 +91,7 @@ registerMethods({
       return text.path(this)
     }),
 
-    targets () {
+    targets() {
       return baseFind('svg textPath').filter((node) => {
         return (node.attr('href') || '').includes(this.id())
       })

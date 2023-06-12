@@ -9,12 +9,11 @@ describe('Matrix.js', () => {
   const comp = { a: 2, b: 0, c: 0, d: 2, e: 100, f: 50 }
 
   describe('initialization', () => {
-
     it('creates a new matrix with default values', () => {
       const matrix = new Matrix()
-      expect(matrix).toEqual(objectContaining(
-        { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }
-      ))
+      expect(matrix).toEqual(
+        objectContaining({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 })
+      )
     })
 
     it('parses the current transform matrix from an element', () => {
@@ -29,7 +28,7 @@ describe('Matrix.js', () => {
     })
 
     it('parses an array correctly', () => {
-      const matrix = new Matrix([ 2, 0, 0, 2, 100, 50 ])
+      const matrix = new Matrix([2, 0, 0, 2, 100, 50])
       expect(matrix).toEqual(objectContaining(comp))
     })
 
@@ -39,7 +38,7 @@ describe('Matrix.js', () => {
     })
 
     it('parses a transform object correctly', () => {
-      const matrix = new Matrix({ scale: 2, translate: [ 100, 50 ] })
+      const matrix = new Matrix({ scale: 2, translate: [100, 50] })
       expect(matrix).toEqual(objectContaining(comp))
     })
 
@@ -79,7 +78,11 @@ describe('Matrix.js', () => {
 
   describe('decompose()', () => {
     it('decomposes a matrix properly', () => {
-      var matrix = new Matrix().scale(3, 2.5).shear(4).rotate(30).translate(20, 30)
+      var matrix = new Matrix()
+        .scale(3, 2.5)
+        .shear(4)
+        .rotate(30)
+        .translate(20, 30)
       var decomposed = matrix.decompose()
       expect(decomposed.scaleX).toBeCloseTo(3)
       expect(decomposed.scaleY).toBeCloseTo(2.5)
@@ -90,7 +93,11 @@ describe('Matrix.js', () => {
     })
 
     it('can be recomposed to the same matrix', () => {
-      var matrix = new Matrix().scale(3, 2.5).shear(4).rotate(30).translate(20, 30)
+      var matrix = new Matrix()
+        .scale(3, 2.5)
+        .shear(4)
+        .rotate(30)
+        .translate(20, 30)
       var decomposed = matrix.decompose()
 
       // Get rid of the matrix values before recomposing with the matrix constructor
@@ -141,7 +148,7 @@ describe('Matrix.js', () => {
     it('inverses matrix', () => {
       var matrix1 = new Matrix(2, 0, 0, 5, 4, 3)
       var matrix2 = matrix1.inverse()
-      var abcdef = [ 0.5, 0, 0, 0.2, -2, -0.6 ]
+      var abcdef = [0.5, 0, 0, 0.2, -2, -0.6]
 
       for (var i in 'abcdef') {
         expect(matrix2['abcdef'[i]]).toBeCloseTo(abcdef[i])
@@ -150,7 +157,9 @@ describe('Matrix.js', () => {
 
     it('throws if matrix is not invertible', () => {
       const matrix = new Matrix(0, 0, 0, 0, 0, 0)
-      expect(() => matrix.inverse()).toThrowError('Cannot invert matrix(0,0,0,0,0,0)')
+      expect(() => matrix.inverse()).toThrowError(
+        'Cannot invert matrix(0,0,0,0,0,0)'
+      )
     })
   })
 
@@ -411,13 +420,21 @@ describe('Matrix.js', () => {
 
   describe('around()', () => {
     it('performs a matrix operation around an origin by shifting the origin to 0,0', () => {
-      const matrix = new Matrix(1, 0, 0, 1, 0, 0).around(10, 10, new Matrix().scale(2))
+      const matrix = new Matrix(1, 0, 0, 1, 0, 0).around(
+        10,
+        10,
+        new Matrix().scale(2)
+      )
 
       expect(matrix).toEqual(new Matrix(2, 0, 0, 2, -10, -10))
     })
 
     it('defaults to around center of 0,0', () => {
-      const matrix = new Matrix(1, 0, 0, 1, 0, 0).around(0, 0, new Matrix().scale(2))
+      const matrix = new Matrix(1, 0, 0, 1, 0, 0).around(
+        0,
+        0,
+        new Matrix().scale(2)
+      )
 
       expect(matrix).toEqual(new Matrix(2, 0, 0, 2, 0, 0))
     })
@@ -451,14 +468,14 @@ describe('Matrix.js', () => {
   describe('toArray', () => {
     it('converts matrix to array', () => {
       const arr = new Matrix().toArray()
-      expect(arr).toEqual([ 1, 0, 0, 1, 0, 0 ])
+      expect(arr).toEqual([1, 0, 0, 1, 0, 0])
     })
   })
 
   describe('static', () => {
     describe('fromArray()', () => {
       it('creates a matrix like object from an array', () => {
-        const matrix = Matrix.fromArray([ 1, 2, 3, 4, 5, 6 ])
+        const matrix = Matrix.fromArray([1, 2, 3, 4, 5, 6])
         expect(matrix).not.toEqual(any(Matrix))
         expect(matrix).toEqual(new Matrix(1, 2, 3, 4, 5, 6).valueOf())
       })
@@ -478,47 +495,74 @@ describe('Matrix.js', () => {
 
     describe('formatTransforms()', () => {
       it('formats all transform input varieties to a canonical form', () => {
-        expect(Matrix.formatTransforms({
-          flip: true,
-          skew: 5,
-          scale: 5,
-          originX: 5,
-          originY: 5,
-          positionX: 5,
-          positionY: 5,
-          translateX: 5,
-          translateY: 5,
-          relativeX: 5,
-          relativeY: 5
-        })).toEqual({ scaleX: -5, scaleY: -5, skewX: 5, skewY: 5, shear: 0, theta: 0, rx: 5, ry: 5, tx: 5, ty: 5, ox: 5, oy: 5, px: 5, py: 5 })
+        expect(
+          Matrix.formatTransforms({
+            flip: true,
+            skew: 5,
+            scale: 5,
+            originX: 5,
+            originY: 5,
+            positionX: 5,
+            positionY: 5,
+            translateX: 5,
+            translateY: 5,
+            relativeX: 5,
+            relativeY: 5
+          })
+        ).toEqual({
+          scaleX: -5,
+          scaleY: -5,
+          skewX: 5,
+          skewY: 5,
+          shear: 0,
+          theta: 0,
+          rx: 5,
+          ry: 5,
+          tx: 5,
+          ty: 5,
+          ox: 5,
+          oy: 5,
+          px: 5,
+          py: 5
+        })
       })
 
       it('respects flip=x', () => {
-        expect(Matrix.formatTransforms({
-          flip: 'x',
-          scale: [ 1, 2 ],
-          skew: [ 1, 2 ]
-        })).toEqual(objectContaining({ scaleX: -1, scaleY: 2, skewX: 1, skewY: 2 }))
+        expect(
+          Matrix.formatTransforms({
+            flip: 'x',
+            scale: [1, 2],
+            skew: [1, 2]
+          })
+        ).toEqual(
+          objectContaining({ scaleX: -1, scaleY: 2, skewX: 1, skewY: 2 })
+        )
       })
 
       it('respects flip=y', () => {
-        expect(Matrix.formatTransforms({
-          flip: 'y',
-          scaleX: 1,
-          scaleY: 2,
-          skewX: 1,
-          skewY: 2
-        })).toEqual(objectContaining({ scaleX: 1, scaleY: -2, skewX: 1, skewY: 2 }))
+        expect(
+          Matrix.formatTransforms({
+            flip: 'y',
+            scaleX: 1,
+            scaleY: 2,
+            skewX: 1,
+            skewY: 2
+          })
+        ).toEqual(
+          objectContaining({ scaleX: 1, scaleY: -2, skewX: 1, skewY: 2 })
+        )
       })
 
       it('makes position NaN if not passed', () => {
-        expect(Matrix.formatTransforms({
-          flip: 'y',
-          scaleX: 1,
-          scaleY: 2,
-          skewX: 1,
-          skewY: 2
-        })).toEqual(objectContaining({ px: NaN, py: NaN }))
+        expect(
+          Matrix.formatTransforms({
+            flip: 'y',
+            scaleX: 1,
+            scaleY: 2,
+            skewX: 1,
+            skewY: 2
+          })
+        ).toEqual(objectContaining({ px: NaN, py: NaN }))
       })
     })
   })
@@ -542,7 +586,10 @@ describe('Matrix.js', () => {
       })
 
       it('does extra work for nested svgs because firefox needs it', () => {
-        const spy = spyOn(getWindow().SVGGraphicsElement.prototype, 'getScreenCTM')
+        const spy = spyOn(
+          getWindow().SVGGraphicsElement.prototype,
+          'getScreenCTM'
+        )
         const svg = SVG().nested()
         svg.screenCTM()
         expect(spy).toHaveBeenCalled()

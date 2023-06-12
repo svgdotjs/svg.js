@@ -21,7 +21,7 @@ describe('Symbol.js', () => {
         const g = new G()
         const symbol = g.symbol()
         expect(symbol).toEqual(any(Symbol))
-        expect(g.children()).toEqual([ symbol ])
+        expect(g.children()).toEqual([symbol])
       })
     })
   })

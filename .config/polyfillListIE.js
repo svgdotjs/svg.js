@@ -14,7 +14,9 @@ CustomEventPolyfill()
 try {
   if (!SVGElement.prototype.children) {
     Object.defineProperty(SVGElement.prototype, 'children', {
-      get: function () { return children(this) }
+      get: function () {
+        return children(this)
+      }
     })
   }
 } catch (e) {}

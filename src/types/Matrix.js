@@ -4,87 +4,116 @@ import { register } from '../utils/adopter.js'
 import Element from '../elements/Element.js'
 import Point from './Point.js'
 
-function closeEnough (a, b, threshold) {
+function closeEnough(a, b, threshold) {
   return Math.abs(b - a) < (threshold || 1e-6)
 }
 
 export default class Matrix {
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
-  static formatTransforms (o) {
+  static formatTransforms(o) {
     // Get all of the parameters required to form the matrix
     const flipBoth = o.flip === 'both' || o.flip === true
     const flipX = o.flip && (flipBoth || o.flip === 'x') ? -1 : 1
     const flipY = o.flip && (flipBoth || o.flip === 'y') ? -1 : 1
-    const skewX = o.skew && o.skew.length
-      ? o.skew[0]
-      : isFinite(o.skew)
+    const skewX =
+      o.skew && o.skew.length
+        ? o.skew[0]
+        : isFinite(o.skew)
         ? o.skew
         : isFinite(o.skewX)
-          ? o.skewX
-          : 0
-    const skewY = o.skew && o.skew.length
-      ? o.skew[1]
-      : isFinite(o.skew)
+        ? o.skewX
+        : 0
+    const skewY =
+      o.skew && o.skew.length
+        ? o.skew[1]
+        : isFinite(o.skew)
         ? o.skew
         : isFinite(o.skewY)
-          ? o.skewY
-          : 0
-    const scaleX = o.scale && o.scale.length
-      ? o.scale[0] * flipX
-      : isFinite(o.scale)
+        ? o.skewY
+        : 0
+    const scaleX =
+      o.scale && o.scale.length
+        ? o.scale[0] * flipX
+        : isFinite(o.scale)
         ? o.scale * flipX
         : isFinite(o.scaleX)
-          ? o.scaleX * flipX
-          : flipX
-    const scaleY = o.scale && o.scale.length
-      ? o.scale[1] * flipY
-      : isFinite(o.scale)
+        ? o.scaleX * flipX
+        : flipX
+    const scaleY =
+      o.scale && o.scale.length
+        ? o.scale[1] * flipY
+        : isFinite(o.scale)
         ? o.scale * flipY
         : isFinite(o.scaleY)
-          ? o.scaleY * flipY
-          : flipY
+        ? o.scaleY * flipY
+        : flipY
     const shear = o.shear || 0
     const theta = o.rotate || o.theta || 0
-    const origin = new Point(o.origin || o.around || o.ox || o.originX, o.oy || o.originY)
+    const origin = new Point(
+      o.origin || o.around || o.ox || o.originX,
+      o.oy || o.originY
+    )
     const ox = origin.x
     const oy = origin.y
     // We need Point to be invalid if nothing was passed because we cannot default to 0 here. That is why NaN
-    const position = new Point(o.position || o.px || o.positionX || NaN, o.py || o.positionY || NaN)
+    const position = new Point(
+      o.position || o.px || o.positionX || NaN,
+      o.py || o.positionY || NaN
+    )
     const px = position.x
     const py = position.y
-    const translate = new Point(o.translate || o.tx || o.translateX, o.ty || o.translateY)
+    const translate = new Point(
+      o.translate || o.tx || o.translateX,
+      o.ty || o.translateY
+    )
     const tx = translate.x
     const ty = translate.y
-    const relative = new Point(o.relative || o.rx || o.relativeX, o.ry || o.relativeY)
+    const relative = new Point(
+      o.relative || o.rx || o.relativeX,
+      o.ry || o.relativeY
+    )
     const rx = relative.x
     const ry = relative.y
 
     // Populate all of the values
     return {
-      scaleX, scaleY, skewX, skewY, shear, theta, rx, ry, tx, ty, ox, oy, px, py
+      scaleX,
+      scaleY,
+      skewX,
+      skewY,
+      shear,
+      theta,
+      rx,
+      ry,
+      tx,
+      ty,
+      ox,
+      oy,
+      px,
+      py
     }
   }
 
-  static fromArray (a) {
+  static fromArray(a) {
     return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] }
   }
 
-  static isMatrixLike (o) {
+  static isMatrixLike(o) {
     return (
-      o.a != null
-      || o.b != null
-      || o.c != null
-      || o.d != null
-      || o.e != null
-      || o.f != null
+      o.a != null ||
+      o.b != null ||
+      o.c != null ||
+      o.d != null ||
+      o.e != null ||
+      o.f != null
     )
   }
 
   // left matrix, right matrix, target matrix which is overwritten
-  static matrixMultiply (l, r, o) {
+  static matrixMultiply(l, r, o) {
     // Work out the product directly
     const a = l.a * r.a + l.c * r.b
     const b = l.b * r.a + l.d * r.b
@@ -104,24 +133,24 @@ export default class Matrix {
     return o
   }
 
-  around (cx, cy, matrix) {
+  around(cx, cy, matrix) {
     return this.clone().aroundO(cx, cy, matrix)
   }
 
   // Transform around a center point
-  aroundO (cx, cy, matrix) {
+  aroundO(cx, cy, matrix) {
     const dx = cx || 0
     const dy = cy || 0
     return this.translateO(-dx, -dy).lmultiplyO(matrix).translateO(dx, dy)
   }
 
   // Clones this matrix
-  clone () {
+  clone() {
     return new Matrix(this)
   }
 
   // Decomposes this matrix into its affine parameters
-  decompose (cx = 0, cy = 0) {
+  decompose(cx = 0, cy = 0) {
     // Get the parameters from the matrix
     const a = this.a
     const b = this.b
@@ -138,14 +167,14 @@ export default class Matrix {
     // and the rotation of the resulting matrix
     const sx = ccw * Math.sqrt(a * a + b * b)
     const thetaRad = Math.atan2(ccw * b, ccw * a)
-    const theta = 180 / Math.PI * thetaRad
+    const theta = (180 / Math.PI) * thetaRad
     const ct = Math.cos(thetaRad)
     const st = Math.sin(thetaRad)
 
     // We can then solve the y basis vector simultaneously to get the other
     // two affine parameters directly from these parameters
     const lam = (a * c + b * d) / determinant
-    const sy = ((c * sx) / (lam * a - b)) || ((d * sx) / (lam * b + a))
+    const sy = (c * sx) / (lam * a - b) || (d * sx) / (lam * b + a)
 
     // Use the translations
     const tx = e - cx + cx * ct * sx + cy * (lam * ct * sx - st * sy)
@@ -174,45 +203,51 @@ export default class Matrix {
   }
 
   // Check if two matrices are equal
-  equals (other) {
+  equals(other) {
     if (other === this) return true
     const comp = new Matrix(other)
-    return closeEnough(this.a, comp.a) && closeEnough(this.b, comp.b)
-      && closeEnough(this.c, comp.c) && closeEnough(this.d, comp.d)
-      && closeEnough(this.e, comp.e) && closeEnough(this.f, comp.f)
+    return (
+      closeEnough(this.a, comp.a) &&
+      closeEnough(this.b, comp.b) &&
+      closeEnough(this.c, comp.c) &&
+      closeEnough(this.d, comp.d) &&
+      closeEnough(this.e, comp.e) &&
+      closeEnough(this.f, comp.f)
+    )
   }
 
   // Flip matrix on x or y, at a given offset
-  flip (axis, around) {
+  flip(axis, around) {
     return this.clone().flipO(axis, around)
   }
 
-  flipO (axis, around) {
+  flipO(axis, around) {
     return axis === 'x'
       ? this.scaleO(-1, 1, around, 0)
       : axis === 'y'
-        ? this.scaleO(1, -1, 0, around)
-        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+      ? this.scaleO(1, -1, 0, around)
+      : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
   }
 
   // Initialize
-  init (source) {
-    const base = Matrix.fromArray([ 1, 0, 0, 1, 0, 0 ])
+  init(source) {
+    const base = Matrix.fromArray([1, 0, 0, 1, 0, 0])
 
     // ensure source as object
-    source = source instanceof Element
-      ? source.matrixify()
-      : typeof source === 'string'
+    source =
+      source instanceof Element
+        ? source.matrixify()
+        : typeof source === 'string'
         ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
         : Array.isArray(source)
-          ? Matrix.fromArray(source)
-          : (typeof source === 'object' && Matrix.isMatrixLike(source))
-            ? source
-            : (typeof source === 'object')
-              ? new Matrix().transform(source)
-              : arguments.length === 6
-                ? Matrix.fromArray([].slice.call(arguments))
-                : base
+        ? Matrix.fromArray(source)
+        : typeof source === 'object' && Matrix.isMatrixLike(source)
+        ? source
+        : typeof source === 'object'
+        ? new Matrix().transform(source)
+        : arguments.length === 6
+        ? Matrix.fromArray([].slice.call(arguments))
+        : base
 
     // Merge the source matrix with the base matrix
     this.a = source.a != null ? source.a : base.a
@@ -225,12 +260,12 @@ export default class Matrix {
     return this
   }
 
-  inverse () {
+  inverse() {
     return this.clone().inverseO()
   }
 
   // Inverses matrix
-  inverseO () {
+  inverseO() {
     // Get the current parameters out of the matrix
     const a = this.a
     const b = this.b
@@ -264,40 +299,36 @@ export default class Matrix {
     return this
   }
 
-  lmultiply (matrix) {
+  lmultiply(matrix) {
     return this.clone().lmultiplyO(matrix)
   }
 
-  lmultiplyO (matrix) {
+  lmultiplyO(matrix) {
     const r = this
-    const l = matrix instanceof Matrix
-      ? matrix
-      : new Matrix(matrix)
+    const l = matrix instanceof Matrix ? matrix : new Matrix(matrix)
 
     return Matrix.matrixMultiply(l, r, this)
   }
 
   // Left multiplies by the given matrix
-  multiply (matrix) {
+  multiply(matrix) {
     return this.clone().multiplyO(matrix)
   }
 
-  multiplyO (matrix) {
+  multiplyO(matrix) {
     // Get the matrices
     const l = this
-    const r = matrix instanceof Matrix
-      ? matrix
-      : new Matrix(matrix)
+    const r = matrix instanceof Matrix ? matrix : new Matrix(matrix)
 
     return Matrix.matrixMultiply(l, r, this)
   }
 
   // Rotate matrix
-  rotate (r, cx, cy) {
+  rotate(r, cx, cy) {
     return this.clone().rotateO(r, cx, cy)
   }
 
-  rotateO (r, cx = 0, cy = 0) {
+  rotateO(r, cx = 0, cy = 0) {
     // Convert degrees to radians
     r = radians(r)
 
@@ -317,11 +348,11 @@ export default class Matrix {
   }
 
   // Scale matrix
-  scale (x, y, cx, cy) {
+  scale() {
     return this.clone().scaleO(...arguments)
   }
 
-  scaleO (x, y = x, cx = 0, cy = 0) {
+  scaleO(x, y = x, cx = 0, cy = 0) {
     // Support uniform scaling
     if (arguments.length === 3) {
       cy = cx
@@ -342,11 +373,12 @@ export default class Matrix {
   }
 
   // Shear matrix
-  shear (a, cx, cy) {
+  shear(a, cx, cy) {
     return this.clone().shearO(a, cx, cy)
   }
 
-  shearO (lx, cx = 0, cy = 0) {
+  // eslint-disable-next-line no-unused-vars
+  shearO(lx, cx = 0, cy = 0) {
     const { a, b, c, d, e, f } = this
 
     this.a = a + b * lx
@@ -357,11 +389,11 @@ export default class Matrix {
   }
 
   // Skew Matrix
-  skew (x, y, cx, cy) {
+  skew() {
     return this.clone().skewO(...arguments)
   }
 
-  skewO (x, y = x, cx = 0, cy = 0) {
+  skewO(x, y = x, cx = 0, cy = 0) {
     // support uniformal skew
     if (arguments.length === 3) {
       cy = cx
@@ -389,26 +421,40 @@ export default class Matrix {
   }
 
   // SkewX
-  skewX (x, cx, cy) {
+  skewX(x, cx, cy) {
     return this.skew(x, 0, cx, cy)
   }
 
   // SkewY
-  skewY (y, cx, cy) {
+  skewY(y, cx, cy) {
     return this.skew(0, y, cx, cy)
   }
 
-  toArray () {
-    return [ this.a, this.b, this.c, this.d, this.e, this.f ]
+  toArray() {
+    return [this.a, this.b, this.c, this.d, this.e, this.f]
   }
 
   // Convert matrix to string
-  toString () {
-    return 'matrix(' + this.a + ',' + this.b + ',' + this.c + ',' + this.d + ',' + this.e + ',' + this.f + ')'
+  toString() {
+    return (
+      'matrix(' +
+      this.a +
+      ',' +
+      this.b +
+      ',' +
+      this.c +
+      ',' +
+      this.d +
+      ',' +
+      this.e +
+      ',' +
+      this.f +
+      ')'
+    )
   }
 
   // Transform a matrix into another matrix by manipulating the space
-  transform (o) {
+  transform(o) {
     // Check if o is a matrix and then left multiply it directly
     if (Matrix.isMatrixLike(o)) {
       const matrix = new Matrix(o)
@@ -447,17 +493,17 @@ export default class Matrix {
   }
 
   // Translate matrix
-  translate (x, y) {
+  translate(x, y) {
     return this.clone().translateO(x, y)
   }
 
-  translateO (x, y) {
+  translateO(x, y) {
     this.e += x || 0
     this.f += y || 0
     return this
   }
 
-  valueOf () {
+  valueOf() {
     return {
       a: this.a,
       b: this.b,
@@ -467,14 +513,13 @@ export default class Matrix {
       f: this.f
     }
   }
-
 }
 
-export function ctm () {
+export function ctm() {
   return new Matrix(this.node.getCTM())
 }
 
-export function screenCTM () {
+export function screenCTM() {
   /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
      This is needed because FF does not return the transformation matrix
      for the inner coordinate system when getScreenCTM() is called on nested svgs.

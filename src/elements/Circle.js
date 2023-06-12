@@ -10,25 +10,25 @@ import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
 
 export default class Circle extends Shape {
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('circle', node), attrs)
   }
 
-  radius (r) {
+  radius(r) {
     return this.attr('r', r)
   }
 
   // Radius x value
-  rx (rx) {
+  rx(rx) {
     return this.attr('r', rx)
   }
 
   // Alias radius x value
-  ry (ry) {
+  ry(ry) {
     return this.rx(ry)
   }
 
-  size (size) {
+  size(size) {
     return this.radius(new SVGNumber(size).divide(2))
   }
 }
@@ -39,9 +39,7 @@ registerMethods({
   Container: {
     // Create circle element
     circle: wrapWithAttrCheck(function (size = 0) {
-      return this.put(new Circle())
-        .size(size)
-        .move(0, 0)
+      return this.put(new Circle()).size(size).move(0, 0)
     })
   }
 })

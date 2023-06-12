@@ -12,7 +12,6 @@ describe('Color.js', () => {
   })
 
   describe('()', () => {
-
     describe('constructs a color from an object in the correct color space', () => {
       it('rgb', () => {
         const color = new Color({ r: 255, g: 0, b: 128 })
@@ -73,7 +72,7 @@ describe('Color.js', () => {
     })
 
     it('constructs a color from an array', () => {
-      const color = new Color([ 30, 24, 50 ])
+      const color = new Color([30, 24, 50])
       expect(color.r).toBe(30)
       expect(color.g).toBe(24)
       expect(color.b).toBe(50)
@@ -81,7 +80,7 @@ describe('Color.js', () => {
     })
 
     it('constructs a color from an array with space in array', () => {
-      const color = new Color([ 50, 50, 5, 'lab' ])
+      const color = new Color([50, 50, 5, 'lab'])
       expect(color.l).toBe(50)
       expect(color.a).toBe(50)
       expect(color.b).toBe(5)
@@ -89,7 +88,7 @@ describe('Color.js', () => {
     })
 
     it('constructs a color from an array with space given', () => {
-      const color = new Color([ 50, 50, 5 ], 'lab')
+      const color = new Color([50, 50, 5], 'lab')
       expect(color.l).toBe(50)
       expect(color.a).toBe(50)
       expect(color.b).toBe(5)
@@ -118,7 +117,9 @@ describe('Color.js', () => {
     })
 
     it('throws an error if unsupported string format was given', () => {
-      expect(() => new Color('#0066')).toThrowError('Unsupported string format, can\'t construct Color')
+      expect(() => new Color('#0066')).toThrowError(
+        "Unsupported string format, can't construct Color"
+      )
     })
   })
 
@@ -137,7 +138,6 @@ describe('Color.js', () => {
   })
 
   describe('color spaces: The color spaces supported by our library', () => {
-
     describe('lab()', () => {
       it('can convert rgb to lab', () => {
         const color = new Color(255, 0, 128)
@@ -225,7 +225,6 @@ describe('Color.js', () => {
     })
 
     describe('hsl()', () => {
-
       it('can convert from rgb to hsl', () => {
         const color = new Color(255, 0, 128)
         const hsl = color.hsl()
@@ -315,7 +314,6 @@ describe('Color.js', () => {
     // })
 
     describe('cmyk()', () => {
-
       it('can convert from rgb to cmyk', () => {
         const color = new Color(255, 0, 128)
         const cmyk = color.cmyk()
@@ -357,9 +355,7 @@ describe('Color.js', () => {
         expect(color.b).toBeCloseTo(255, 0)
         expect(color.toHex()).toBe('#ffffff')
       })
-
     })
-
   })
 
   describe('static methods', () => {
@@ -397,7 +393,9 @@ describe('Color.js', () => {
       })
 
       it('throws an error if mode is unknown', () => {
-        expect(() => Color.random('foo')).toThrowError('Unsupported random color mode')
+        expect(() => Color.random('foo')).toThrowError(
+          'Unsupported random color mode'
+        )
       })
     })
 
@@ -446,5 +444,4 @@ describe('Color.js', () => {
       })
     })
   })
-
 })

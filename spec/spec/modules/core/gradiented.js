@@ -3,7 +3,6 @@
 import { Gradient } from '../../../../src/main.js'
 
 describe('gradiented.js', () => {
-
   describe('from()', () => {
     it('sets fx and fy for radial gradients and returns itself', () => {
       const gradient = new Gradient('radial')
@@ -35,5 +34,4 @@ describe('gradiented.js', () => {
       expect(gradient.attr('y2')).toBe(20)
     })
   })
-
 })

@@ -7,7 +7,7 @@ Base Class
 The base stepper class that will be
 ***/
 
-function makeSetterGetter (k, f) {
+function makeSetterGetter(k, f) {
   return function (v) {
     if (v == null) return this[k]
     this[k] = v
@@ -24,27 +24,27 @@ export const easing = {
     return -Math.cos(pos * Math.PI) / 2 + 0.5
   },
   '>': function (pos) {
-    return Math.sin(pos * Math.PI / 2)
+    return Math.sin((pos * Math.PI) / 2)
   },
   '<': function (pos) {
-    return -Math.cos(pos * Math.PI / 2) + 1
+    return -Math.cos((pos * Math.PI) / 2) + 1
   },
   bezier: function (x1, y1, x2, y2) {
     // see https://www.w3.org/TR/css-easing-1/#cubic-bezier-algo
     return function (t) {
       if (t < 0) {
         if (x1 > 0) {
-          return y1 / x1 * t
+          return (y1 / x1) * t
         } else if (x2 > 0) {
-          return y2 / x2 * t
+          return (y2 / x2) * t
         } else {
           return 0
         }
       } else if (t > 1) {
         if (x2 < 1) {
-          return (1 - y2) / (1 - x2) * t + (y2 - x2) / (1 - x2)
+          return ((1 - y2) / (1 - x2)) * t + (y2 - x2) / (1 - x2)
         } else if (x1 < 1) {
-          return (1 - y1) / (1 - x1) * t + (y1 - x1) / (1 - x1)
+          return ((1 - y1) / (1 - x1)) * t + (y1 - x1) / (1 - x1)
         } else {
           return 1
         }
@@ -93,7 +93,7 @@ export const easing = {
 }
 
 export class Stepper {
-  done () {
+  done() {
     return false
   }
 }
@@ -104,12 +104,12 @@ Easing Functions
 ***/
 
 export class Ease extends Stepper {
-  constructor (fn = timeline.ease) {
+  constructor(fn = timeline.ease) {
     super()
     this.ease = easing[fn] || fn
   }
 
-  step (from, to, pos) {
+  step(from, to, pos) {
     if (typeof from !== 'number') {
       return pos < 1 ? from : to
     }
@@ -123,22 +123,21 @@ Controller Types
 ***/
 
 export class Controller extends Stepper {
-  constructor (fn) {
+  constructor(fn) {
     super()
     this.stepper = fn
   }
 
-  done (c) {
+  done(c) {
     return c.done
   }
 
-  step (current, target, dt, c) {
+  step(current, target, dt, c) {
     return this.stepper(current, target, dt, c)
   }
-
 }
 
-function recalculate () {
+function recalculate() {
   // Apply the default parameters
   const duration = (this._duration || 500) / 1000
   const overshoot = this._overshoot || 0
@@ -156,13 +155,12 @@ function recalculate () {
 }
 
 export class Spring extends Controller {
-  constructor (duration = 500, overshoot = 0) {
+  constructor(duration = 500, overshoot = 0) {
     super()
-    this.duration(duration)
-      .overshoot(overshoot)
+    this.duration(duration).overshoot(overshoot)
   }
 
-  step (current, target, dt, c) {
+  step(current, target, dt, c) {
     if (typeof current === 'string') return current
     c.done = dt === Infinity
     if (dt === Infinity) return target
@@ -177,9 +175,7 @@ export class Spring extends Controller {
 
     // Apply the control to get the new position and store it
     const acceleration = -this.d * velocity - this.k * (current - target)
-    const newPosition = current
-      + velocity * dt
-      + acceleration * dt * dt / 2
+    const newPosition = current + velocity * dt + (acceleration * dt * dt) / 2
 
     // Store the velocity
     c.velocity = velocity + acceleration * dt
@@ -196,12 +192,12 @@ extend(Spring, {
 })
 
 export class PID extends Controller {
-  constructor (p = 0.1, i = 0.01, d = 0, windup = 1000) {
+  constructor(p = 0.1, i = 0.01, d = 0, windup = 1000) {
     super()
     this.p(p).i(i).d(d).windup(windup)
   }
 
-  step (current, target, dt, c) {
+  step(current, target, dt, c) {
     if (typeof current === 'string') return current
     c.done = dt === Infinity
 

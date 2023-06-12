@@ -1,7 +1,7 @@
 import { globals } from '../../utils/window.js'
 import { makeInstance } from '../../utils/adopter.js'
 
-export default function parser () {
+export default function parser() {
   // Reuse cached element if possible
   if (!parser.nodes) {
     const svg = makeInstance().size(2, 0)

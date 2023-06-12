@@ -25,7 +25,10 @@ describe('Line.js', () => {
     it('returns a PointArray containing the points of the line', () => {
       const array = line.plot(1, 2, 3, 4).array()
       expect(array).toEqual(any(PointArray))
-      expect(array).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
+      expect(array).toEqual([
+        [1, 2],
+        [3, 4]
+      ])
     })
   })
 
@@ -38,9 +41,14 @@ describe('Line.js', () => {
       const canvas = SVG().addTo(container)
       const line = canvas.line(1, 2, 3, 4)
       line.move(50, 50)
-      expect(line.bbox()).toEqual(objectContaining({
-        x: 50, y: 50, width: 2, height: 2
-      }))
+      expect(line.bbox()).toEqual(
+        objectContaining({
+          x: 50,
+          y: 50,
+          width: 2,
+          height: 2
+        })
+      )
     })
   })
 
@@ -65,19 +73,27 @@ describe('Line.js', () => {
 
     it('calls attr with line attributes when array given', () => {
       const spy = spyOn(line, 'attr')
-      line.plot([ 1, 2, 3, 4 ])
+      line.plot([1, 2, 3, 4])
       expect(spy).toHaveBeenCalledWith({ x1: 1, y1: 2, x2: 3, y2: 4 })
     })
 
     it('calls attr with line attributes when multi array given', () => {
       const spy = spyOn(line, 'attr')
-      line.plot([ [ 1, 2 ], [ 3, 4 ] ])
+      line.plot([
+        [1, 2],
+        [3, 4]
+      ])
       expect(spy).toHaveBeenCalledWith({ x1: 1, y1: 2, x2: 3, y2: 4 })
     })
 
     it('calls attr with line attributes when PointArray given', () => {
       const spy = spyOn(line, 'attr')
-      line.plot(new PointArray([ [ 1, 2 ], [ 3, 4 ] ]))
+      line.plot(
+        new PointArray([
+          [1, 2],
+          [3, 4]
+        ])
+      )
       expect(spy).toHaveBeenCalledWith({ x1: 1, y1: 2, x2: 3, y2: 4 })
     })
   })
@@ -91,27 +107,42 @@ describe('Line.js', () => {
       const canvas = SVG().addTo(container)
       const line = canvas.line(1, 2, 3, 4)
       line.size(50, 50)
-      expect(line.bbox()).toEqual(objectContaining({
-        width: 50, height: 50, x: 1, y: 2
-      }))
+      expect(line.bbox()).toEqual(
+        objectContaining({
+          width: 50,
+          height: 50,
+          x: 1,
+          y: 2
+        })
+      )
     })
 
     it('changes height proportionally', () => {
       const canvas = SVG().addTo(container)
       const line = canvas.line(1, 2, 3, 4)
       line.size(50, null)
-      expect(line.bbox()).toEqual(objectContaining({
-        width: 50, height: 50, x: 1, y: 2
-      }))
+      expect(line.bbox()).toEqual(
+        objectContaining({
+          width: 50,
+          height: 50,
+          x: 1,
+          y: 2
+        })
+      )
     })
 
     it('changes width proportionally', () => {
       const canvas = SVG().addTo(container)
       const line = canvas.line(1, 2, 3, 4)
       line.size(null, 50)
-      expect(line.bbox()).toEqual(objectContaining({
-        width: 50, height: 50, x: 1, y: 2
-      }))
+      expect(line.bbox()).toEqual(
+        objectContaining({
+          width: 50,
+          height: 50,
+          x: 1,
+          y: 2
+        })
+      )
     })
   })
 
@@ -120,14 +151,20 @@ describe('Line.js', () => {
       it('creates a line with given points', () => {
         const group = new G()
         const line = group.line(1, 2, 3, 4)
-        expect(line.array()).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
+        expect(line.array()).toEqual([
+          [1, 2],
+          [3, 4]
+        ])
         expect(line).toEqual(any(Line))
       })
 
       it('defaults to zero line', () => {
         const group = new G()
         const line = group.line()
-        expect(line.array()).toEqual([ [ 0, 0 ], [ 0, 0 ] ])
+        expect(line.array()).toEqual([
+          [0, 0],
+          [0, 0]
+        ])
         expect(line).toEqual(any(Line))
       })
     })

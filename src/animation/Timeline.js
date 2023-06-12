@@ -7,7 +7,12 @@ const makeSchedule = function (runnerInfo) {
   const start = runnerInfo.start
   const duration = runnerInfo.runner.duration()
   const end = start + duration
-  return { start: start, duration: duration, end: end, runner: runnerInfo.runner }
+  return {
+    start: start,
+    duration: duration,
+    end: end,
+    runner: runnerInfo.runner
+  }
 }
 
 const defaultSource = function () {
@@ -17,7 +22,7 @@ const defaultSource = function () {
 
 export default class Timeline extends EventTarget {
   // Construct a new timeline on the given element
-  constructor (timeSource = defaultSource) {
+  constructor(timeSource = defaultSource) {
     super()
 
     this._timeSource = timeSource
@@ -44,55 +49,55 @@ export default class Timeline extends EventTarget {
     this._stepImmediate = this._stepFn.bind(this, true)
   }
 
-  active () {
+  active() {
     return !!this._nextFrame
   }
 
-  finish () {
+  finish() {
     // Go to end and pause
     this.time(this.getEndTimeOfTimeline() + 1)
     return this.pause()
   }
 
   // Calculates the end of the timeline
-  getEndTime () {
+  getEndTime() {
     const lastRunnerInfo = this.getLastRunnerInfo()
     const lastDuration = lastRunnerInfo ? lastRunnerInfo.runner.duration() : 0
     const lastStartTime = lastRunnerInfo ? lastRunnerInfo.start : this._time
     return lastStartTime + lastDuration
   }
 
-  getEndTimeOfTimeline () {
+  getEndTimeOfTimeline() {
     const endTimes = this._runners.map((i) => i.start + i.runner.duration())
     return Math.max(0, ...endTimes)
   }
 
-  getLastRunnerInfo () {
+  getLastRunnerInfo() {
     return this.getRunnerInfoById(this._lastRunnerId)
   }
 
-  getRunnerInfoById (id) {
+  getRunnerInfoById(id) {
     return this._runners[this._runnerIds.indexOf(id)] || null
   }
 
-  pause () {
+  pause() {
     this._paused = true
     return this._continue()
   }
 
-  persist (dtOrForever) {
+  persist(dtOrForever) {
     if (dtOrForever == null) return this._persist
     this._persist = dtOrForever
     return this
   }
 
-  play () {
+  play() {
     // Now make sure we are not paused and continue the animation
     this._paused = false
     return this.updateTime()._continue()
   }
 
-  reverse (yes) {
+  reverse(yes) {
     const currentSpeed = this.speed()
     if (yes == null) return this.speed(-currentSpeed)
 
@@ -101,7 +106,7 @@ export default class Timeline extends EventTarget {
   }
 
   // schedules a runner on the timeline
-  schedule (runner, delay, when) {
+  schedule(runner, delay, when) {
     if (runner == null) {
       return this._runners.map(makeSchedule)
     }
@@ -152,42 +157,42 @@ export default class Timeline extends EventTarget {
 
     this._runners.push(runnerInfo)
     this._runners.sort((a, b) => a.start - b.start)
-    this._runnerIds = this._runners.map(info => info.runner.id)
+    this._runnerIds = this._runners.map((info) => info.runner.id)
 
     this.updateTime()._continue()
     return this
   }
 
-  seek (dt) {
+  seek(dt) {
     return this.time(this._time + dt)
   }
 
-  source (fn) {
+  source(fn) {
     if (fn == null) return this._timeSource
     this._timeSource = fn
     return this
   }
 
-  speed (speed) {
+  speed(speed) {
     if (speed == null) return this._speed
     this._speed = speed
     return this
   }
 
-  stop () {
+  stop() {
     // Go to start and pause
     this.time(0)
     return this.pause()
   }
 
-  time (time) {
+  time(time) {
     if (time == null) return this._time
     this._time = time
     return this._continue(true)
   }
 
   // Remove the runner from this timeline
-  unschedule (runner) {
+  unschedule(runner) {
     const index = this._runnerIds.indexOf(runner.id)
     if (index < 0) return this
 
@@ -199,7 +204,7 @@ export default class Timeline extends EventTarget {
   }
 
   // Makes sure, that after pausing the time doesn't jump
-  updateTime () {
+  updateTime() {
     if (!this.active()) {
       this._lastSourceTime = this._timeSource()
     }
@@ -207,7 +212,7 @@ export default class Timeline extends EventTarget {
   }
 
   // Checks if we are running and continues the animation
-  _continue (immediateStep = false) {
+  _continue(immediateStep = false) {
     Animator.cancelFrame(this._nextFrame)
     this._nextFrame = null
 
@@ -218,7 +223,7 @@ export default class Timeline extends EventTarget {
     return this
   }
 
-  _stepFn (immediateStep = false) {
+  _stepFn(immediateStep = false) {
     // Get the time delta from the last time and update the time
     const time = this._timeSource()
     let dtSource = time - this._lastSourceTime
@@ -249,7 +254,7 @@ export default class Timeline extends EventTarget {
     // runner always wins the reset even if the other runner started earlier
     // and therefore should win the attribute battle
     // this can be solved by resetting them backwards
-    for (let k = this._runners.length; k--;) {
+    for (let k = this._runners.length; k--; ) {
       // Get and run the current runner and ignore it if its inactive
       const runnerInfo = this._runners[k]
       const runner = runnerInfo.runner
@@ -309,7 +314,10 @@ export default class Timeline extends EventTarget {
 
     // Basically: we continue when there are runners right from us in time
     // when -->, and when runners are left from us when <--
-    if ((runnersLeft && !(this._speed < 0 && this._time === 0)) || (this._runnerIds.length && this._speed < 0 && this._time > 0)) {
+    if (
+      (runnersLeft && !(this._speed < 0 && this._time === 0)) ||
+      (this._runnerIds.length && this._speed < 0 && this._time > 0)
+    ) {
       this._continue()
     } else {
       this.pause()
@@ -318,14 +326,13 @@ export default class Timeline extends EventTarget {
 
     return this
   }
-
 }
 
 registerMethods({
   Element: {
     timeline: function (timeline) {
       if (timeline == null) {
-        this._timeline = (this._timeline || new Timeline())
+        this._timeline = this._timeline || new Timeline()
         return this._timeline
       } else {
         this._timeline = timeline

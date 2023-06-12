@@ -5,12 +5,12 @@ import SVGArray from '../../types/SVGArray.js'
 import SVGNumber from '../../types/SVGNumber.js'
 
 const hooks = []
-export function registerAttrHook (fn) {
+export function registerAttrHook(fn) {
   hooks.push(fn)
 }
 
 // Set svg element attribute
-export default function attr (attr, val, ns) {
+export default function attr(attr, val, ns) {
   // act as full getter
   if (attr == null) {
     // get an object of attributes
@@ -42,8 +42,8 @@ export default function attr (attr, val, ns) {
     return val == null
       ? defaults[attr]
       : isNumber.test(val)
-        ? parseFloat(val)
-        : val
+      ? parseFloat(val)
+      : val
   } else {
     // Loop through hooks and execute them to convert value
     val = hooks.reduce((_val, hook) => {

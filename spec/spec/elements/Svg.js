@@ -1,13 +1,16 @@
 /* globals describe, expect, it, jasmine, container */
 
 import { Svg, SVG, Defs } from '../../../src/main.js'
-import { svg as ns, xlink, svgjs } from '../../../src/modules/core/namespaces.js'
+import {
+  svg as ns,
+  xlink,
+  svgjs
+} from '../../../src/modules/core/namespaces.js'
 import { getWindow } from '../../../src/utils/window.js'
 
 const { any } = jasmine
 
 describe('Svg.js', () => {
-
   describe('()', () => {
     it('creates a new object of type Svg', () => {
       expect(new Svg()).toEqual(any(Svg))

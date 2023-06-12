@@ -257,7 +257,10 @@ describe('textable.js', () => {
         add.tspan('The second.')
         add.tspan('The third.')
       })
-      expect(text.length()).toBeCloseTo(text.get(0).length() + text.get(1).length() + text.get(2).length(), 3)
+      expect(text.length()).toBeCloseTo(
+        text.get(0).length() + text.get(1).length() + text.get(2).length(),
+        3
+      )
     })
 
     it('gets total length of tspan', () => {
@@ -266,7 +269,10 @@ describe('textable.js', () => {
         add.tspan('The second.')
         add.tspan('The third.')
       })
-      expect(tspan.length()).toBeCloseTo(tspan.get(0).length() + tspan.get(1).length() + tspan.get(2).length(), 3)
+      expect(tspan.length()).toBeCloseTo(
+        tspan.get(0).length() + tspan.get(1).length() + tspan.get(2).length(),
+        3
+      )
     })
   })
 
@@ -284,7 +290,9 @@ describe('textable.js', () => {
       text.tspan('A great piece!')
       text.tspan('Another great piece!')
       expect(text.node.childNodes[0].childNodes[0].data).toBe('A great piece!')
-      expect(text.node.childNodes[1].childNodes[0].data).toBe('Another great piece!')
+      expect(text.node.childNodes[1].childNodes[0].data).toBe(
+        'Another great piece!'
+      )
     })
 
     it('disables adding multiple plain text nodes when given false for Text', () => {
@@ -299,7 +307,9 @@ describe('textable.js', () => {
       text.clear().build(true)
       text.tspan('A great piece!')
       text.build(false).tspan('Another great piece!')
-      expect(text.node.childNodes[0].childNodes[0].data).toBe('Another great piece!')
+      expect(text.node.childNodes[0].childNodes[0].data).toBe(
+        'Another great piece!'
+      )
       expect(text.node.childNodes[1]).toBe(undefined)
     })
 
@@ -316,7 +326,9 @@ describe('textable.js', () => {
       tspan.tspan('A great piece!')
       tspan.tspan('Another great piece!')
       expect(tspan.node.childNodes[0].childNodes[0].data).toBe('A great piece!')
-      expect(tspan.node.childNodes[1].childNodes[0].data).toBe('Another great piece!')
+      expect(tspan.node.childNodes[1].childNodes[0].data).toBe(
+        'Another great piece!'
+      )
     })
 
     it('disables adding multiple plain text nodes when given false for Tspan', () => {
@@ -331,9 +343,10 @@ describe('textable.js', () => {
       tspan.clear().build(true)
       tspan.tspan('A great piece!')
       tspan.build(false).tspan('Another great piece!')
-      expect(tspan.node.childNodes[0].childNodes[0].data).toBe('Another great piece!')
+      expect(tspan.node.childNodes[0].childNodes[0].data).toBe(
+        'Another great piece!'
+      )
       expect(tspan.node.childNodes[1]).toBe(undefined)
     })
   })
-
 })

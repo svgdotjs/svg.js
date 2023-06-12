@@ -5,12 +5,12 @@ import baseFind from '../modules/core/selector.js'
 
 export default class Mask extends Container {
   // Initialize node
-  constructor (node, attrs = node) {
+  constructor(node, attrs = node) {
     super(nodeOrNew('mask', node), attrs)
   }
 
   // Unmask all masked elements and remove itself
-  remove () {
+  remove() {
     // unmask all targets
     this.targets().forEach(function (el) {
       el.unmask()
@@ -20,7 +20,7 @@ export default class Mask extends Container {
     return super.remove()
   }
 
-  targets () {
+  targets() {
     return baseFind('svg [mask*=' + this.id() + ']')
   }
 }
@@ -33,22 +33,21 @@ registerMethods({
   },
   Element: {
     // Distribute mask to svg element
-    masker () {
+    masker() {
       return this.reference('mask')
     },
 
-    maskWith (element) {
+    maskWith(element) {
       // use given mask or create a new one
-      const masker = element instanceof Mask
-        ? element
-        : this.parent().mask().add(element)
+      const masker =
+        element instanceof Mask ? element : this.parent().mask().add(element)
 
       // apply mask
       return this.attr('mask', 'url(#' + masker.id() + ')')
     },
 
     // Unmask element
-    unmask () {
+    unmask() {
       return this.attr('mask', null)
     }
   }

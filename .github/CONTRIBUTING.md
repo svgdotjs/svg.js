@@ -1,8 +1,6 @@
-
 # Contributing
 
 When contributing to this repository, please first discuss the change you wish to make on gitter, or with an issue to increase your chances of getting your pull request merged into the main code base.
-
 
 ## Pull Request Process
 
@@ -12,14 +10,12 @@ When you want to make contributions to the project, the process is pretty simple
 2. Fork the repository to make your own local copy
 3. Make a branch in the format of <issue-number>-<friendly-name>. So for example if I made an issue to change the default color, and it was issue 385 (random) on the repo, the branch would be called `385-change-default-color`
 4. Make the changes to the src and perhaps make a playground by duplicating the playgrounds we already have.
-    - Build the code during the development process with `npm run build:dev` so that we don't throw a huge number of pointless errors
-    - When you're done making changes, run `npm run build` to build the code and run the linter
-5. If applicable - please write new tests, we like to keep our code well tested 🎉. Run the tests by either opening the SpecRunner.html file or just run `npm test`, either is fine.
+   - When you're done making changes, run `npm run build` to build the code and run the linter
+5. If applicable - please write new tests, we like to keep our code well tesvted 🎉. Run the tests by running `npm test`
 6. Push the code and make a pull request on the main svg.js repo
 7. Enjoy our endless love and gratitude ❤️
 
 Seriously, we love pull requests! So go wild!
-
 
 ## Code of Conduct
 

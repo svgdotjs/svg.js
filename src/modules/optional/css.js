@@ -3,11 +3,12 @@ import { isBlank } from '../core/regex.js'
 import { registerMethods } from '../../utils/methods.js'
 
 // Dynamic style generator
-export function css (style, val) {
+export function css(style, val) {
   const ret = {}
   if (arguments.length === 0) {
     // get full style as object
-    this.node.style.cssText.split(/\s*;\s*/)
+    this.node.style.cssText
+      .split(/\s*;\s*/)
       .filter(function (el) {
         return !!el.length
       })
@@ -37,36 +38,39 @@ export function css (style, val) {
     if (typeof style === 'object') {
       for (const name in style) {
         // set empty string if null/undefined/'' was given
-        this.node.style[camelCase(name)]
-          = (style[name] == null || isBlank.test(style[name])) ? '' : style[name]
+        this.node.style[camelCase(name)] =
+          style[name] == null || isBlank.test(style[name]) ? '' : style[name]
       }
     }
   }
 
   // set style for property
   if (arguments.length === 2) {
-    this.node.style[camelCase(style)]
-      = (val == null || isBlank.test(val)) ? '' : val
+    this.node.style[camelCase(style)] =
+      val == null || isBlank.test(val) ? '' : val
   }
 
   return this
 }
 
 // Show element
-export function show () {
+export function show() {
   return this.css('display', '')
 }
 
 // Hide element
-export function hide () {
+export function hide() {
   return this.css('display', 'none')
 }
 
 // Is element visible?
-export function visible () {
+export function visible() {
   return this.css('display') !== 'none'
 }
 
 registerMethods('Dom', {
-  css, show, hide, visible
+  css,
+  show,
+  hide,
+  visible
 })

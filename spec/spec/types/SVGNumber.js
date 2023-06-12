@@ -56,13 +56,15 @@ describe('Number.js', () => {
     })
 
     it('falls back to maximum value if given number is positive infinite', () => {
-      number = new SVGNumber(1.7976931348623157E+10308)
-      expect(number.value).toBe(3.4e+38)
+      // eslint-disable-next-line no-loss-of-precision
+      number = new SVGNumber(1.7976931348623157e10308)
+      expect(number.value).toBe(3.4e38)
     })
 
     it('falls back to minimum value if given number is negative infinite', () => {
-      number = new SVGNumber(-1.7976931348623157E+10308)
-      expect(number.value).toBe(-3.4e+38)
+      // eslint-disable-next-line no-loss-of-precision
+      number = new SVGNumber(-1.7976931348623157e10308)
+      expect(number.value).toBe(-3.4e38)
     })
   })
 

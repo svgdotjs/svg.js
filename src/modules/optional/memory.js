@@ -1,7 +1,7 @@
 import { registerMethods } from '../../utils/methods.js'
 
 // Remember arbitrary data
-export function remember (k, v) {
+export function remember(k, v) {
   // remember every item in an object individually
   if (typeof arguments[0] === 'object') {
     for (const key in k) {
@@ -19,7 +19,7 @@ export function remember (k, v) {
 }
 
 // Erase a given memory
-export function forget () {
+export function forget() {
   if (arguments.length === 0) {
     this._memory = {}
   } else {
@@ -33,7 +33,7 @@ export function forget () {
 // This triggers creation of a new hidden class which is not performant
 // However, this function is not rarely used so it will not happen frequently
 // Return local memory object
-export function memory () {
+export function memory() {
   return (this._memory = this._memory || {})
 }
 

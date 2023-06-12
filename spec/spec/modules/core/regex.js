@@ -96,14 +96,26 @@ describe('regex.js', () => {
 
   describe('transforms', () => {
     it('splits a transform chain', () => {
-      const split = 'rotate(34) translate(1,2), translate(1 ,  3),rotate(12)    ,   something(1,2,3)'.split(regex.transforms)
-      expect(split).toEqual([ 'rotate(34', 'translate(1,2', 'translate(1 ,  3', 'rotate(12', 'something(1,2,3', '' ])
+      const split =
+        'rotate(34) translate(1,2), translate(1 ,  3),rotate(12)    ,   something(1,2,3)'.split(
+          regex.transforms
+        )
+      expect(split).toEqual([
+        'rotate(34',
+        'translate(1,2',
+        'translate(1 ,  3',
+        'rotate(12',
+        'something(1,2,3',
+        ''
+      ])
     })
   })
 
   describe('whitespace', () => {
     it('replaces all whitespaces', () => {
-      expect('   \n \r   \t   '.replace(regex.whitespace, ' ')).toBe('             ')
+      expect('   \n \r   \t   '.replace(regex.whitespace, ' ')).toBe(
+        '             '
+      )
     })
   })
 
@@ -196,7 +208,7 @@ describe('regex.js', () => {
   describe('delimiter', () => {
     it('splits at whitespace and comma', () => {
       const split = '1,2 3 , 4   5,,  6'.split(regex.delimiter)
-      expect(split).toEqual([ '1', '2', '3', '4', '5', '6' ])
+      expect(split).toEqual(['1', '2', '3', '4', '5', '6'])
     })
   })
 

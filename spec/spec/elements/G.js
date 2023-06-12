@@ -5,7 +5,6 @@ import { G, SVG } from '../../../src/main.js'
 const { any } = jasmine
 
 describe('G.js', () => {
-
   describe('()', () => {
     it('creates a new object of type G', () => {
       expect(new G()).toEqual(any(G))

@@ -9,7 +9,7 @@ const Animator = {
   timer: () => globals.window.performance || globals.window.Date,
   transforms: [],
 
-  frame (fn) {
+  frame(fn) {
     // Store the node
     const node = Animator.frames.push({ run: fn })
 
@@ -22,7 +22,7 @@ const Animator = {
     return node
   },
 
-  timeout (fn, delay) {
+  timeout(fn, delay) {
     delay = delay || 0
 
     // Work out when the event should fire
@@ -39,7 +39,7 @@ const Animator = {
     return node
   },
 
-  immediate (fn) {
+  immediate(fn) {
     // Add the immediate fn to the end of the queue
     const node = Animator.immediates.push(fn)
     // Request another animation frame if we need one
@@ -50,19 +50,19 @@ const Animator = {
     return node
   },
 
-  cancelFrame (node) {
+  cancelFrame(node) {
     node != null && Animator.frames.remove(node)
   },
 
-  clearTimeout (node) {
+  clearTimeout(node) {
     node != null && Animator.timeouts.remove(node)
   },
 
-  cancelImmediate (node) {
+  cancelImmediate(node) {
     node != null && Animator.immediates.remove(node)
   },
 
-  _draw (now) {
+  _draw(now) {
     // Run all the timeouts we can run, if they are not ready yet, add them
     // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
     let nextTimeout = null
@@ -82,7 +82,7 @@ const Animator = {
     // Run all of the animation frames
     let nextFrame = null
     const lastFrame = Animator.frames.last()
-    while ((nextFrame !== lastFrame) && (nextFrame = Animator.frames.shift())) {
+    while (nextFrame !== lastFrame && (nextFrame = Animator.frames.shift())) {
       nextFrame.run(now)
     }
 
@@ -92,9 +92,10 @@ const Animator = {
     }
 
     // If we have remaining timeouts or frames, draw until we don't anymore
-    Animator.nextDraw = Animator.timeouts.first() || Animator.frames.first()
-      ? globals.window.requestAnimationFrame(Animator._draw)
-      : null
+    Animator.nextDraw =
+      Animator.timeouts.first() || Animator.frames.first()
+        ? globals.window.requestAnimationFrame(Animator._draw)
+        : null
   }
 }
 

@@ -37,7 +37,7 @@ describe('ClipPath.js', () => {
       const canvas = SVG().addTo(container)
       const clip = canvas.clip()
       const rect = canvas.rect(100, 100).clipWith(clip)
-      expect(clip.targets()).toEqual([ rect ])
+      expect(clip.targets()).toEqual([rect])
     })
   })
 
@@ -47,7 +47,7 @@ describe('ClipPath.js', () => {
         const canvas = SVG()
         const clip = canvas.clip()
         expect(clip).toEqual(any(ClipPath))
-        expect(canvas.defs().children()).toEqual([ clip ])
+        expect(canvas.defs().children()).toEqual([clip])
       })
     })
   })

@@ -2,24 +2,24 @@ import Matrix from './Matrix.js'
 
 export default class Point {
   // Initialize
-  constructor (...args) {
+  constructor(...args) {
     this.init(...args)
   }
 
   // Clone point
-  clone () {
+  clone() {
     return new Point(this)
   }
 
-  init (x, y) {
+  init(x, y) {
     const base = { x: 0, y: 0 }
 
     // ensure source as object
     const source = Array.isArray(x)
       ? { x: x[0], y: x[1] }
       : typeof x === 'object'
-        ? { x: x.x, y: x.y }
-        : { x: x, y: y }
+      ? { x: x.x, y: x.y }
+      : { x: x, y: y }
 
     // merge source
     this.x = source.x == null ? base.x : source.x
@@ -28,16 +28,16 @@ export default class Point {
     return this
   }
 
-  toArray () {
-    return [ this.x, this.y ]
+  toArray() {
+    return [this.x, this.y]
   }
 
-  transform (m) {
+  transform(m) {
     return this.clone().transformO(m)
   }
 
   // Transform point with matrix
-  transformO (m) {
+  transformO(m) {
     if (!Matrix.isMatrixLike(m)) {
       m = new Matrix(m)
     }
@@ -50,9 +50,8 @@ export default class Point {
 
     return this
   }
-
 }
 
-export function point (x, y) {
+export function point(x, y) {
   return new Point(x, y).transformO(this.screenCTM().inverseO())
 }

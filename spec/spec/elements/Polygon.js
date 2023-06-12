@@ -19,8 +19,11 @@ describe('Polygon.js', () => {
     describe('polygon()', () => {
       it('creates a polygon with given points', () => {
         const group = new G()
-        const polygon = group.polygon([ 1, 2, 3, 4 ])
-        expect(polygon.array()).toEqual([ [ 1, 2 ], [ 3, 4 ] ])
+        const polygon = group.polygon([1, 2, 3, 4])
+        expect(polygon.array()).toEqual([
+          [1, 2],
+          [3, 4]
+        ])
         expect(polygon).toEqual(any(Polygon))
       })
     })
@@ -28,7 +31,7 @@ describe('Polygon.js', () => {
     it('creates a polygon with one point by default', () => {
       const group = new G()
       const polygon = group.polygon()
-      expect(polygon.array()).toEqual([ [ 0, 0 ] ])
+      expect(polygon.array()).toEqual([[0, 0]])
       expect(polygon).toEqual(any(Polygon))
     })
   })
