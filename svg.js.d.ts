@@ -1204,8 +1204,7 @@ declare module '@svgdotjs/svg.js' {
     height: number
   }
 
-  // Fragment is special Container: maybe there is a way to avoid this duplication?
-  class Fragment extends Dom {
+  class Containable {
     circle(size?: NumberAlias): Circle
     circle(size: number, unit: number): Circle
     clip(): ClipPath
@@ -1250,51 +1249,25 @@ declare module '@svgdotjs/svg.js' {
     zoom(level: NumberAlias, point?: Point): this
   }
 
-  class Container extends Element {
-    circle(size?: NumberAlias): Circle
-    circle(size: number, unit: number): Circle
-    clip(): ClipPath
-    ellipse(width?: number, height?: number): Ellipse
-    flatten(parent: Dom, depth?: number): this
-    foreignObject(width: number, height: number): ForeignObject
-    gradient(type: string, block?: (stop: Gradient) => void): Gradient
-    group(): G
+  type DynamicExtends<T extends {}> = {
+    new (...args: any[]): Containable & T
+  }
+  
+  /**
+   * only for declaration purpose. actually cannot be used.
+   */
+  let ContainableDom: DynamicExtends<Dom>
+  class Fragment extends ContainableDom{
+    constructor(node?: Node)
+  }
 
-    image(): Image
-    image(href?: string, callback?: (e: Event) => void): Image
-    line(points?: PointArrayAlias): Line
-    line(x1: number, y1: number, x2: number, y2: number): Line
-    link(url: string): A
-    marker(
-      width?: number,
-      height?: number,
-      block?: (marker: Marker) => void
-    ): Marker
-    mask(): Mask
-    nested(): Svg
-    path(): Path
-    path(d: PathArrayAlias): Path
-    pattern(
-      width?: number,
-      height?: number,
-      block?: (pattern: Pattern) => void
-    ): Pattern
-    plain(text: string): Text
-    polygon(points?: PointArrayAlias): Polygon
-    polyline(points?: PointArrayAlias): Polyline
-    rect(width?: number, height?: number): Rect
-    style(): Style
-    text(block: (tspan: Tspan) => void): Text
-    text(text: string): Text
+  /**
+   * only for declaration purpose. actually cannot be used.
+   */
+  let ContainableElement: DynamicExtends<Element>
+  class Container extends ContainableElement {
+    flatten(parent: Dom, depth?: number): this
     ungroup(parent: Dom, depth?: number): this
-    use(element: Element | string, file?: string): Use
-    viewbox(): Box
-    viewbox(viewbox: ViewBoxLike | string): this
-    viewbox(x: number, y: number, width: number, height: number): this
-    textPath(text: string | Text, path: string | Path): TextPath
-    symbol(): Symbol
-    zoom(): number
-    zoom(level: NumberAlias, point?: Point): this
   }
 
   class Defs extends Container {
