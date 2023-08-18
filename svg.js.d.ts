@@ -1204,12 +1204,11 @@ declare module '@svgdotjs/svg.js' {
     height: number
   }
 
-  class Container extends Element {
+  class Containable {
     circle(size?: NumberAlias): Circle
     circle(size: number, unit: number): Circle
     clip(): ClipPath
     ellipse(width?: number, height?: number): Ellipse
-    flatten(parent: Dom, depth?: number): this
     foreignObject(width: number, height: number): ForeignObject
     gradient(type: string, block?: (stop: Gradient) => void): Gradient
     group(): G
@@ -1240,7 +1239,6 @@ declare module '@svgdotjs/svg.js' {
     style(): Style
     text(block: (tspan: Tspan) => void): Text
     text(text: string): Text
-    ungroup(parent: Dom, depth?: number): this
     use(element: Element | string, file?: string): Use
     viewbox(): Box
     viewbox(viewbox: ViewBoxLike | string): this
@@ -1249,6 +1247,28 @@ declare module '@svgdotjs/svg.js' {
     symbol(): Symbol
     zoom(): number
     zoom(level: NumberAlias, point?: Point): this
+  }
+
+  type DynamicExtends<T extends {}> = {
+    new (...args: any[]): Containable & T
+  }
+  
+  /**
+   * only for declaration purpose. actually cannot be used.
+   */
+  let ContainableDom: DynamicExtends<Dom>
+  class Fragment extends ContainableDom{
+    constructor(node?: Node)
+  }
+
+  /**
+   * only for declaration purpose. actually cannot be used.
+   */
+  let ContainableElement: DynamicExtends<Element>
+  class Container extends ContainableElement {
+    constructor()
+    flatten(parent: Dom, depth?: number): this
+    ungroup(parent: Dom, depth?: number): this
   }
 
   class Defs extends Container {
