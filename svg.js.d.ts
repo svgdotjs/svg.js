@@ -1266,6 +1266,7 @@ declare module '@svgdotjs/svg.js' {
    */
   let ContainableElement: DynamicExtends<Element>
   class Container extends ContainableElement {
+    constructor()
     flatten(parent: Dom, depth?: number): this
     ungroup(parent: Dom, depth?: number): this
   }
