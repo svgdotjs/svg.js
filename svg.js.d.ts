@@ -1206,7 +1206,6 @@ declare module '@svgdotjs/svg.js' {
 
   class Containable {
     circle(size?: NumberAlias): Circle
-    circle(size: number, unit: number): Circle
     clip(): ClipPath
     ellipse(width?: number, height?: number): Ellipse
     foreignObject(width: number, height: number): ForeignObject
@@ -1235,7 +1234,7 @@ declare module '@svgdotjs/svg.js' {
     plain(text: string): Text
     polygon(points?: PointArrayAlias): Polygon
     polyline(points?: PointArrayAlias): Polyline
-    rect(width?: number, height?: number): Rect
+    rect(width?: NumberAlias, height?: NumberAlias): Rect
     style(): Style
     text(block: (tspan: Tspan) => void): Text
     text(text: string): Text
@@ -1252,12 +1251,12 @@ declare module '@svgdotjs/svg.js' {
   type DynamicExtends<T extends {}> = {
     new (...args: any[]): Containable & T
   }
-  
+
   /**
    * only for declaration purpose. actually cannot be used.
    */
   let ContainableDom: DynamicExtends<Dom>
-  class Fragment extends ContainableDom{
+  class Fragment extends ContainableDom {
     constructor(node?: Node)
   }
 
