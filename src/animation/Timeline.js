@@ -27,26 +27,8 @@ export default class Timeline extends EventTarget {
 
     this._timeSource = timeSource
 
-    // Store the timing variables
-    this._startTime = 0
-    this._speed = 1.0
-
-    // Determines how long a runner is hold in memory. Can be a dt or true/false
-    this._persist = 0
-
-    // Keep track of the running animations and their starting parameters
-    this._nextFrame = null
-    this._paused = true
-    this._runners = []
-    this._runnerIds = []
-    this._lastRunnerId = -1
-    this._time = 0
-    this._lastSourceTime = 0
-    this._lastStepTime = 0
-
-    // Make sure that step is always called in class context
-    this._step = this._stepFn.bind(this, false)
-    this._stepImmediate = this._stepFn.bind(this, true)
+    // terminate resets all variables to their initial state
+    this.terminate()
   }
 
   active() {
@@ -325,6 +307,31 @@ export default class Timeline extends EventTarget {
     }
 
     return this
+  }
+
+  terminate() {
+    // cleanup memory
+
+    // Store the timing variables
+    this._startTime = 0
+    this._speed = 1.0
+
+    // Determines how long a runner is hold in memory. Can be a dt or true/false
+    this._persist = 0
+
+    // Keep track of the running animations and their starting parameters
+    this._nextFrame = null
+    this._paused = true
+    this._runners = []
+    this._runnerIds = []
+    this._lastRunnerId = -1
+    this._time = 0
+    this._lastSourceTime = 0
+    this._lastStepTime = 0
+
+    // Make sure that step is always called in class context
+    this._step = this._stepFn.bind(this, false)
+    this._stepImmediate = this._stepFn.bind(this, true)
   }
 }
 
