@@ -8,3 +8,5 @@ coverage/
 spec/es5TestBundle.js
 .env
 dist
+index.html
+index.js

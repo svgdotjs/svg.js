@@ -120,3 +120,7 @@ export function getOrigin(o, element) {
   // Return the origin as it is if it wasn't a string
   return [ox, oy]
 }
+
+const descriptiveElements = new Set(['desc', 'metadata', 'title'])
+export const isDescriptive = (element) =>
+  descriptiveElements.has(element.nodeName)

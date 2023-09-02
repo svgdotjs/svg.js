@@ -1,4 +1,4 @@
-import { getOrigin } from '../../utils/utils.js'
+import { getOrigin, isDescriptive } from '../../utils/utils.js'
 import { delimiter, transforms } from '../core/regex.js'
 import { registerMethods } from '../../utils/methods.js'
 import Matrix from '../../types/Matrix.js'
@@ -39,6 +39,9 @@ export function matrixify() {
 // add an element to another parent without changing the visual representation on the screen
 export function toParent(parent, i) {
   if (this === parent) return this
+
+  if (isDescriptive(this.node)) return this.addTo(parent, i)
+
   const ctm = this.screenCTM()
   const pCtm = parent.screenCTM().inverse()
 

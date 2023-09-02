@@ -53,12 +53,14 @@ describe('Text.js', () => {
       expect(text.text()).toBe('Hello World\nHow is it\ngoing')
     })
 
-    it('returns the correct text with newlines and skips textPaths', () => {
+    it('returns the correct text with newlines and skips textPaths and descriptive elements', () => {
       const path = new Path()
       const text = new Text()
       const textPath = text.text('Hello World\nHow is it\ngoing').path(path)
       textPath.children().addTo(text)
       text.add(new TextPath(), 3)
+      text.add(SVG('<title>MyText</title>'))
+
       expect(text.text()).toBe('Hello World\nHow is it\ngoing')
     })
 
@@ -113,6 +115,7 @@ describe('Text.js', () => {
         t.tspan('Hello World').newLine()
         t.tspan('How is it').newLine()
         t.tspan('going').newLine()
+        t.add('<title>My Text</title>')
       })
 
       const dy = text.get(1).dy()

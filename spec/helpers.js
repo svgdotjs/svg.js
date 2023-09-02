@@ -154,7 +154,9 @@ export function buildFixtures() {
     div.style.position = 'absolute'
     div.style.top = 0
     div.style.left = 0
-  } catch (e) {}
+  } catch (e) {
+    //
+  }
 
   div.appendChild(fixtures())
   body.appendChild(div)
@@ -172,7 +174,9 @@ export function buildCanvas() {
     div.style.position = 'absolute'
     div.style.top = 0
     div.style.left = 0
-  } catch (e) {}
+  } catch (e) {
+    //
+  }
   body.appendChild(div)
 }
 

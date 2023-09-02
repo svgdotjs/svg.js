@@ -10,6 +10,7 @@ import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
 import { globals } from '../utils/window.js'
 import * as textable from '../modules/core/textable.js'
+import { isDescriptive } from '../utils/utils.js'
 
 export default class Text extends Shape {
   // Initialize node
@@ -48,6 +49,8 @@ export default class Text extends Shape {
       const leading = this.dom.leading
 
       this.each(function (i) {
+        if (isDescriptive(this.node)) return
+
         const fontSize = globals.window
           .getComputedStyle(this.node)
           .getPropertyValue('font-size')
@@ -89,8 +92,8 @@ export default class Text extends Shape {
 
       for (let i = 0, len = children.length; i < len; ++i) {
         // skip textPaths - they are no lines
-        if (children[i].nodeName === 'textPath') {
-          if (i === 0) firstLine = 1
+        if (children[i].nodeName === 'textPath' || isDescriptive(children[i])) {
+          if (i === 0) firstLine = i + 1
           continue
         }
 
