@@ -152,6 +152,7 @@ function isExponential(parser) {
   return parser.lastToken.toUpperCase() === 'E'
 }
 
+const pathDelimiters = new Set([' ', ',', '\t', '\n', '\r', '\f'])
 export function pathParser(d, toAbsolute = true) {
   let index = 0
   let token = ''
@@ -201,14 +202,14 @@ export function pathParser(d, toAbsolute = true) {
       continue
     }
 
-    if (token === ' ' || token === ',') {
+    if (pathDelimiters.has(token)) {
       if (parser.inNumber) {
         finalizeNumber(parser, false)
       }
       continue
     }
 
-    if (token === '-') {
+    if (token === '-' || token === '+') {
       if (parser.inNumber && !isExponential(parser)) {
         finalizeNumber(parser, false)
         --index
