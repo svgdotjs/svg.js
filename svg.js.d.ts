@@ -11,7 +11,7 @@ declare type CSSStyleName = Exclude<
 >
 
 // create our own style declaration that includes css vars
-export interface CSSStyleDeclarationWithVars extends CSSStyleDeclaration {
+interface CSSStyleDeclarationWithVars extends CSSStyleDeclaration {
   [key: `--${string}`]: string
 }
 
@@ -969,7 +969,7 @@ declare module '@svgdotjs/svg.js' {
     element(el: Element): this
     timeline(): Timeline
     timeline(timeline: Timeline): this
-    animate(duration: TimeLike, delay?: number, when?: string): this
+    animate(duration?: TimeLike, delay?: number, when?: string): this
     schedule(delay: number, when?: string): this
     schedule(timeline: Timeline, delay?: number, when?: string): this
     unschedule(): this
