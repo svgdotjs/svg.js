@@ -25,9 +25,13 @@ export default class Element extends Dom {
     // create circular reference
     this.node.instance = this
 
-    if (node.hasAttribute('svgjs:data')) {
+    if (node.hasAttribute('data-svgjs') || node.hasAttribute('svgjs:data')) {
       // pull svgjs data from the dom (getAttributeNS doesn't work in html5)
-      this.setData(JSON.parse(node.getAttribute('svgjs:data')) || {})
+      this.setData(
+        JSON.parse(node.getAttribute('data-svgjs')) ??
+          JSON.parse(node.getAttribute('svgjs:data')) ??
+          {}
+      )
     }
   }
 

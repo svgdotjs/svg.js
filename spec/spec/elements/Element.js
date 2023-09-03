@@ -1,6 +1,6 @@
 /* globals describe, expect, it, beforeEach, spyOn, jasmine, container */
 
-import { Element, create, Rect, G, SVG } from '../../../src/main.js'
+import { Element, create, Rect, G, SVG, Text } from '../../../src/main.js'
 const { any, objectContaining } = jasmine
 
 describe('Element.js', function () {
@@ -34,8 +34,13 @@ describe('Element.js', function () {
     })
 
     it('falls back to empty object when attribute is null', () => {
-      element.node.setAttribute('svgjs:data', 'null')
+      element.node.setAttribute('data-svg', 'null')
       expect(new Element(element.node).dom).toEqual({})
+    })
+
+    it('uses old svgjs:data attribute if present', () => {
+      element.node.setAttribute('svgjs:data', '{"foo":"bar"}')
+      expect(new Element(element.node).dom).toEqual({ foo: 'bar' })
     })
   })
 
@@ -265,15 +270,15 @@ describe('Element.js', function () {
 
   describe('writeDataToDom()', () => {
     it('removes previously set data', () => {
-      element.node.setAttribute('svgjs:data', JSON.stringify({ foo: 'bar' }))
+      element.node.setAttribute('data-svgjs', JSON.stringify({ foo: 'bar' }))
       element.writeDataToDom()
-      expect(element.node.getAttribute('svgjs:data')).toBe(null)
+      expect(element.node.getAttribute('data-svgjs')).toBe(null)
     })
 
     it('writes data from the dom property into the dom', () => {
       element.dom = { foo: 'bar' }
       element.writeDataToDom()
-      expect(element.node.getAttribute('svgjs:data')).toBe(
+      expect(element.node.getAttribute('data-svgjs')).toBe(
         JSON.stringify({ foo: 'bar' })
       )
     })
@@ -284,6 +289,16 @@ describe('Element.js', function () {
       const spy = spyOn(rect, 'writeDataToDom')
       g.writeDataToDom()
       expect(spy).toHaveBeenCalled()
+    })
+
+    it('filters out default data', () => {
+      const node1 = new Text()
+      const node2 = new Text()
+      node2.dom.foo = 'bar'
+      node1.writeDataToDom()
+      node2.writeDataToDom()
+      expect(node1.node.getAttribute('data-svgjs')).toBe(null)
+      expect(node2.node.getAttribute('data-svgjs')).toBe('{"foo":"bar"}')
     })
   })
 

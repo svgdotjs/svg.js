@@ -4,7 +4,7 @@ import {
   register,
   wrapWithAttrCheck
 } from '../utils/adopter.js'
-import { svg, svgjs, xlink, xmlns } from '../modules/core/namespaces.js'
+import { svg, xlink, xmlns } from '../modules/core/namespaces.js'
 import { registerMethods } from '../utils/methods.js'
 import Container from './Container.js'
 import Defs from './Defs.js'
@@ -34,9 +34,11 @@ export default class Svg extends Container {
   // Add namespaces
   namespace() {
     if (!this.isRoot()) return this.root().namespace()
-    return this.attr({ xmlns: svg, version: '1.1' })
-      .attr('xmlns:xlink', xlink, xmlns)
-      .attr('xmlns:svgjs', svgjs, xmlns)
+    return this.attr({ xmlns: svg, version: '1.1' }).attr(
+      'xmlns:xlink',
+      xlink,
+      xmlns
+    )
   }
 
   removeNamespace() {

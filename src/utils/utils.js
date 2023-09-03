@@ -135,8 +135,9 @@ export const writeDataToDom = (element, data, defaults = {}) => {
   }
 
   if (Object.keys(cloned).length) {
-    element.node.setAttribute('svgjs:data', JSON.stringify(cloned)) // see #428
+    element.node.setAttribute('data-svgjs', JSON.stringify(cloned)) // see #428
   } else {
+    element.node.removeAttribute('data-svgjs')
     element.node.removeAttribute('svgjs:data')
   }
 }

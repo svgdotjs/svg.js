@@ -1,11 +1,7 @@
 /* globals describe, expect, it, jasmine, container */
 
 import { Svg, SVG, Defs } from '../../../src/main.js'
-import {
-  svg as ns,
-  xlink,
-  svgjs
-} from '../../../src/modules/core/namespaces.js'
+import { svg as ns, xlink } from '../../../src/modules/core/namespaces.js'
 import { getWindow } from '../../../src/utils/window.js'
 
 const { any } = jasmine
@@ -26,7 +22,6 @@ describe('Svg.js', () => {
       expect(svg.attr('xmlns')).toBe(ns)
       expect(svg.attr('version')).toBe(1.1)
       expect(svg.attr('xmlns:xlink')).toBe(xlink)
-      expect(svg.attr('xmlns:svgjs')).toBe(svgjs)
     })
   })
 
@@ -71,7 +66,6 @@ describe('Svg.js', () => {
       expect(svg.attr('xmlns')).toBe(ns)
       expect(svg.attr('version')).toBe(1.1)
       expect(svg.attr('xmlns:xlink')).toBe(xlink)
-      expect(svg.attr('xmlns:svgjs')).toBe(svgjs)
     })
   })
 

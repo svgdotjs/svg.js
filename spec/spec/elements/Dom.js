@@ -10,8 +10,7 @@ import {
   Fragment,
   Circle,
   Tspan,
-  create,
-  Text
+  create
 } from '../../../src/main.js'
 import { getWindow } from '../../../src/utils/window.js'
 import { svg, html } from '../../../src/modules/core/namespaces.js'
@@ -655,25 +654,6 @@ describe('Dom.js', function () {
       expect(rect.parent()).toEqual(any(G))
       expect(rect.parent().node).toBe(node)
       expect(rect.parent().parent()).toBe(canvas)
-    })
-  })
-
-  describe('writeDataToDom()', () => {
-    it('writes the data to the dom', () => {
-      const node = new Rect()
-      node.setData({ foo: 'bar' })
-      node.writeDataToDom()
-      expect(node.node.getAttribute('svgjs:data')).toBe('{"foo":"bar"}')
-    })
-
-    it('filters out default data', () => {
-      const node1 = new Text()
-      const node2 = new Text()
-      node2.dom.foo = 'bar'
-      node1.writeDataToDom()
-      node2.writeDataToDom()
-      expect(node1.node.getAttribute('svgjs:data')).toBe(null)
-      expect(node2.node.getAttribute('svgjs:data')).toBe('{"foo":"bar"}')
     })
   })
 
