@@ -1,6 +1,6 @@
 /* globals describe, expect, it, beforeEach, spyOn, jasmine */
 
-import { Element, create, Text } from '../../../../src/main.js'
+import { Element, create, Text, Rect } from '../../../../src/main.js'
 import { registerAttrHook } from '../../../../src/modules/core/attr.js'
 
 const { objectContaining } = jasmine
@@ -103,6 +103,12 @@ describe('attr.js', () => {
     it('ignores leading if no leading method is available', () => {
       const frozen = Object.freeze(element)
       expect(frozen.attr('leading', 2)).toBe(frozen)
+    })
+
+    it('only applies transforms color values if the attribute is designed to take a color as input', () => {
+      const rect = new Rect().attr('id', '#ff0')
+
+      expect(rect.attr('id')).toBe('#ff0')
     })
 
     it('executes registered hooks', () => {

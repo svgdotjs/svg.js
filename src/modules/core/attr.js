@@ -4,6 +4,16 @@ import Color from '../../types/Color.js'
 import SVGArray from '../../types/SVGArray.js'
 import SVGNumber from '../../types/SVGNumber.js'
 
+const colorAttributes = new Set([
+  'fill',
+  'stroke',
+  'color',
+  'bgcolor',
+  'stop-color',
+  'flood-color',
+  'lighting-color'
+])
+
 const hooks = []
 export function registerAttrHook(fn) {
   hooks.push(fn)
@@ -53,7 +63,7 @@ export default function attr(attr, val, ns) {
     // ensure correct numeric values (also accepts NaN and Infinity)
     if (typeof val === 'number') {
       val = new SVGNumber(val)
-    } else if (Color.isColor(val)) {
+    } else if (colorAttributes.has(attr) && Color.isColor(val)) {
       // ensure full hex color
       val = new Color(val)
     } else if (val.constructor === Array) {
