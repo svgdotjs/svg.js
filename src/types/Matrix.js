@@ -520,17 +520,24 @@ export function ctm() {
 }
 
 export function screenCTM() {
-  /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
-     This is needed because FF does not return the transformation matrix
-     for the inner coordinate system when getScreenCTM() is called on nested svgs.
-     However all other Browsers do that */
-  if (typeof this.isRoot === 'function' && !this.isRoot()) {
-    const rect = this.rect(1, 1)
-    const m = rect.node.getScreenCTM()
-    rect.remove()
-    return new Matrix(m)
+  try {
+    /* https://bugzilla.mozilla.org/show_bug.cgi?id=1344537
+       This is needed because FF does not return the transformation matrix
+       for the inner coordinate system when getScreenCTM() is called on nested svgs.
+       However all other Browsers do that */
+    if (typeof this.isRoot === 'function' && !this.isRoot()) {
+      const rect = this.rect(1, 1)
+      const m = rect.node.getScreenCTM()
+      rect.remove()
+      return new Matrix(m)
+    }
+    return new Matrix(this.node.getScreenCTM())
+  } catch (e) {
+    console.warn(
+      `Cannot get CTM from SVG node ${this.node.nodeName}. Is the element rendered?`
+    )
+    return new Matrix()
   }
-  return new Matrix(this.node.getScreenCTM())
 }
 
 register(Matrix, 'Matrix')

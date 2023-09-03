@@ -1,8 +1,5 @@
-import { camelCase } from '../../utils/utils.js'
 import { isBlank } from '../core/regex.js'
 import { registerMethods } from '../../utils/methods.js'
-
-const camelCaseWithVars = (str) => (str.startsWith('--') ? str : camelCase(str))
 
 // Dynamic style generator
 export function css(style, val) {
@@ -25,7 +22,7 @@ export function css(style, val) {
     // get style properties as array
     if (Array.isArray(style)) {
       for (const name of style) {
-        const cased = camelCaseWithVars(name)
+        const cased = name
         ret[name] = this.node.style.getPropertyValue(cased)
       }
       return ret
@@ -33,7 +30,7 @@ export function css(style, val) {
 
     // get style for property
     if (typeof style === 'string') {
-      return this.node.style.getPropertyValue(camelCaseWithVars(style))
+      return this.node.style.getPropertyValue(style)
     }
 
     // set styles in object
@@ -41,7 +38,7 @@ export function css(style, val) {
       for (const name in style) {
         // set empty string if null/undefined/'' was given
         this.node.style.setProperty(
-          camelCaseWithVars(name),
+          name,
           style[name] == null || isBlank.test(style[name]) ? '' : style[name]
         )
       }
@@ -51,7 +48,7 @@ export function css(style, val) {
   // set style for property
   if (arguments.length === 2) {
     this.node.style.setProperty(
-      camelCaseWithVars(style),
+      style,
       val == null || isBlank.test(val) ? '' : val
     )
   }

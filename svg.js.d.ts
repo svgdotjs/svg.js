@@ -1340,35 +1340,29 @@ declare module '@svgdotjs/svg.js' {
   }
 
   interface Sugar {
-    fill(): any
+    fill(): string
     fill(fill: FillData): this
     fill(color: string): this
     fill(pattern: Element): this
     fill(image: Image): this
-    stroke(): any
+    stroke(): string
     stroke(stroke: StrokeData): this
     stroke(color: string): this
+    matrix(): Matrix
     matrix(
-      a?: number,
-      b?: number,
-      c?: number,
-      d?: number,
-      e?: number,
-      f?: number
+      a: number,
+      b: number,
+      c: number,
+      d: number,
+      e: number,
+      f: number
     ): this
-    matrix(
-      mat: MatrixAlias,
-      b?: number,
-      c?: number,
-      d?: number,
-      e?: number,
-      f?: number
-    ): this
+    matrix(mat: MatrixAlias): this
     rotate(degrees: number, cx?: number, cy?: number): this
     skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this
     scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this
     translate(x: number, y: number): this
-    shear(lam: Matrix, cx: number, cy: number): this
+    shear(lam: number, cx: number, cy: number): this
     relative(x: number, y: number): this
     flip(direction?: string, around?: number): this
     flip(around: number): this

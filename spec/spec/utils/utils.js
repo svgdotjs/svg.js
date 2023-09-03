@@ -5,7 +5,6 @@ import {
   filter,
   radians,
   degrees,
-  camelCase,
   unCamelCase,
   capitalize,
   proportionalSize,
@@ -78,22 +77,6 @@ describe('utils.js', function () {
     it('caps at 2 PI', function () {
       expect(degrees(2 * Math.PI)).toBe(0)
       expect(degrees(3 * Math.PI)).toBe(180)
-    })
-  })
-
-  describe('camelCase()', function () {
-    it('converts dash-case and PascalCase to camelCase', function () {
-      var dash1 = 'dash-1'
-      var dashTwo = 'dash-two'
-      var camelOne = 'camelOne'
-      var pascalOne = 'PascalOne'
-      var mixOne = 'mix-One'
-
-      expect(camelCase(dash1)).toBe('dash1')
-      expect(camelCase(dashTwo)).toBe('dashTwo')
-      expect(camelCase(camelOne)).toBe('camelone')
-      expect(camelCase(pascalOne)).toBe('pascalone')
-      expect(camelCase(mixOne)).toBe('mixOne')
     })
   })
 

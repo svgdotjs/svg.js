@@ -594,6 +594,11 @@ describe('Matrix.js', () => {
         svg.screenCTM()
         expect(spy).toHaveBeenCalled()
       })
+
+      it('does not throw and returns identity matrix if element is not rendered', () => {
+        const canvas = SVG().viewbox(0, 0, 0, 0)
+        expect(canvas.screenCTM()).toEqual(new Matrix())
+      })
     })
   })
 })

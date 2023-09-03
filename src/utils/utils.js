@@ -36,13 +36,6 @@ export function degrees(r) {
   return ((r * 180) / Math.PI) % 360
 }
 
-// Convert dash-separated-string to camelCase
-export function camelCase(s) {
-  return s.toLowerCase().replace(/-(.)/g, function (m, g) {
-    return g.toUpperCase()
-  })
-}
-
 // Convert camel cased string to dash separated
 export function unCamelCase(s) {
   return s.replace(/([A-Z])/g, function (m, g) {
