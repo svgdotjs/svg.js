@@ -124,3 +124,19 @@ export function getOrigin(o, element) {
 const descriptiveElements = new Set(['desc', 'metadata', 'title'])
 export const isDescriptive = (element) =>
   descriptiveElements.has(element.nodeName)
+
+export const writeDataToDom = (element, data, defaults = {}) => {
+  const cloned = { ...data }
+
+  for (const key in cloned) {
+    if (cloned[key].valueOf() === defaults[key]) {
+      delete cloned[key]
+    }
+  }
+
+  if (Object.keys(cloned).length) {
+    element.node.setAttribute('svgjs:data', JSON.stringify(cloned)) // see #428
+  } else {
+    element.node.removeAttribute('svgjs:data')
+  }
+}

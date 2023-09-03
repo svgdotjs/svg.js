@@ -165,7 +165,7 @@ describe('Element.js', function () {
   describe('parents()', () => {
     it('returns array of parents until the passed element or root svg', () => {
       const canvas = SVG().addTo(container)
-      const groupA = canvas.group().addClass('test')
+      const _groupA = canvas.group().addClass('test')
       const group1 = canvas.group().addClass('test')
       const group2 = group1.group()
       const group3 = group2.group()
@@ -179,7 +179,7 @@ describe('Element.js', function () {
 
     it('returns array of parents until the closest matching parent', () => {
       const canvas = SVG().addTo(container)
-      const groupA = canvas.group().addClass('test')
+      const _groupA = canvas.group().addClass('test')
       const group1 = canvas.group().addClass('test')
       const group2 = group1.group().addClass('test').addClass('foo')
       const group3 = group2.group().addClass('foo')

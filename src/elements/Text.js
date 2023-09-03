@@ -10,14 +10,14 @@ import SVGNumber from '../types/SVGNumber.js'
 import Shape from './Shape.js'
 import { globals } from '../utils/window.js'
 import * as textable from '../modules/core/textable.js'
-import { isDescriptive } from '../utils/utils.js'
+import { isDescriptive, writeDataToDom } from '../utils/utils.js'
 
 export default class Text extends Shape {
   // Initialize node
   constructor(node, attrs = node) {
     super(nodeOrNew('text', node), attrs)
 
-    this.dom.leading = new SVGNumber(1.3) // store leading value for rebuilding
+    this.dom.leading = this.dom.leading ?? new SVGNumber(1.3) // store leading value for rebuilding
     this._rebuild = true // enable automatic updating of dy values
     this._build = false // disable build mode for adding multiple lines
   }
@@ -79,6 +79,11 @@ export default class Text extends Shape {
   setData(o) {
     this.dom = o
     this.dom.leading = new SVGNumber(o.leading || 1.3)
+    return this
+  }
+
+  writeDataToDom() {
+    writeDataToDom(this, this.dom, { leading: 1.3 })
     return this
   }
 

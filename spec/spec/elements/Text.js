@@ -6,7 +6,8 @@ import {
   SVG,
   G,
   Path,
-  TextPath
+  TextPath,
+  Svg
 } from '../../../src/main.js'
 
 const { any } = jasmine
@@ -19,6 +20,13 @@ describe('Text.js', () => {
 
     it('sets passed attributes on the element', () => {
       expect(new Text({ id: 'foo' }).id()).toBe('foo')
+    })
+
+    it('recovers leading data from dom', () => {
+      const svg = new Svg().namespace()
+      svg.text('').leading(3)
+      const newSvg = SVG(svg.svg())
+      expect(newSvg.findOne('text').leading().valueOf()).toBe(3)
     })
   })
 

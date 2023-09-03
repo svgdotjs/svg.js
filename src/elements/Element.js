@@ -9,7 +9,7 @@ import {
 } from '../utils/adopter.js'
 import { globals } from '../utils/window.js'
 import { point } from '../types/Point.js'
-import { proportionalSize } from '../utils/utils.js'
+import { proportionalSize, writeDataToDom } from '../utils/utils.js'
 import { reference } from '../modules/core/regex.js'
 import Dom from './Dom.js'
 import List from '../types/List.js'
@@ -151,13 +151,7 @@ export default class Element extends Dom {
 
   // write svgjs data to the dom
   writeDataToDom() {
-    // remove previously set data
-    this.node.removeAttribute('svgjs:data')
-
-    if (Object.keys(this.dom).length) {
-      this.node.setAttribute('svgjs:data', JSON.stringify(this.dom)) // see #428
-    }
-
+    writeDataToDom(this, this.dom)
     return super.writeDataToDom()
   }
 
