@@ -1044,6 +1044,38 @@ declare module '@svgdotjs/svg.js' {
     ry(ry: number): this
     from(x: NumberAlias, y: NumberAlias): this
     to(x: NumberAlias, y: NumberAlias): this
+
+    fill(): string
+    fill(fill: FillData): this
+    fill(color: string): this
+    fill(pattern: Element): this
+    fill(image: Image): this
+    stroke(): string
+    stroke(stroke: StrokeData): this
+    stroke(color: string): this
+    matrix(): Matrix
+    matrix(
+      a: number,
+      b: number,
+      c: number,
+      d: number,
+      e: number,
+      f: number
+    ): this
+    matrix(mat: MatrixAlias): this
+    rotate(degrees: number, cx?: number, cy?: number): this
+    skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this
+    scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this
+    translate(x: number, y: number): this
+    shear(lam: number, cx: number, cy: number): this
+    relative(x: number, y: number): this
+    flip(direction?: string, around?: number): this
+    flip(around: number): this
+    opacity(): number
+    opacity(value: number): this
+    font(a: string): string
+    font(a: string, v: string | number): this
+    font(a: object): this
   }
 
   // Animator.js
