@@ -1339,6 +1339,8 @@ declare module '@svgdotjs/svg.js' {
     isRoot(): boolean
   }
 
+  type EventHandler<T extends Event> = (event: T) => void
+
   interface Sugar {
     fill(): string
     fill(fill: FillData): this
@@ -1371,6 +1373,28 @@ declare module '@svgdotjs/svg.js' {
     font(a: string): string
     font(a: string, v: string | number): this
     font(a: object): this
+
+    click(cb: EventHandler<MouseEvent>): this
+    dblclick(cb: EventHandler<MouseEvent>): this
+    mousedown(cb: EventHandler<MouseEvent>): this
+    mouseup(cb: EventHandler<MouseEvent>): this
+    mouseover(cb: EventHandler<MouseEvent>): this
+    mouseout(cb: EventHandler<MouseEvent>): this
+    mousemove(cb: EventHandler<MouseEvent>): this
+    mouseenter(cb: EventHandler<MouseEvent>): this
+    mouseleave(cb: EventHandler<MouseEvent>): this
+    touchstart(cb: EventHandler<TouchEvent>): this
+    touchmove(cb: EventHandler<TouchEvent>): this
+    touchleave(cb: EventHandler<TouchEvent>): this
+    touchend(cb: EventHandler<TouchEvent>): this
+    touchcancel(cb: EventHandler<TouchEvent>): this
+    contextmenu(cb: EventHandler<MouseEvent>): this
+    wheel(cb: EventHandler<WheelEvent>): this
+    pointerdown(cb: EventHandler<PointerEvent>): this
+    pointermove(cb: EventHandler<PointerEvent>): this
+    pointerup(cb: EventHandler<PointerEvent>): this
+    pointerleave(cb: EventHandler<PointerEvent>): this
+    pointercancel(cb: EventHandler<PointerEvent>): this
   }
 
   // Symbol.js
@@ -1402,7 +1426,6 @@ declare module '@svgdotjs/svg.js' {
     before(element: Element): Element
     center(x: number, y: number): this
     classes(): string[]
-    click(cb: Function | null): this
     clipper(): ClipPath
     clipWith(element: Element): this
     clone(deep?: boolean, assignNewIds?: boolean): this
@@ -1414,24 +1437,14 @@ declare module '@svgdotjs/svg.js' {
     data(name: string, value: any, sustain?: boolean): this
     data(name: string): any
     data(val: object): this
-    dblclick(cb: Function | null): this
     defs(): Defs
     dmove(x: NumberAlias, y: NumberAlias): this
     dx(x: NumberAlias): this
     dy(y: NumberAlias): this
     event(): Event | CustomEvent
-    fill(): any
-    fill(color: string): this
-    fill(color: Color | ColorLike): this
-    fill(color: FillData): this
-    fill(pattern: Element): this
+
     fire(event: Event): this
     fire(event: string, data?: any): this
-    flip(a: string, offset?: number): this
-    flip(offset?: number): this
-    font(a: object): this
-    font(a: string, v: string | number): this
-    font(a: string): string
     forget(...keys: string[]): this
     forget(): this
     forward(): this
@@ -1451,41 +1464,13 @@ declare module '@svgdotjs/svg.js' {
     maskWith(element: Element): this
     maskWith(mask: Mask): this
     matches(selector: string): boolean
-    matrix(): Matrix
-    matrix(
-      a?: number,
-      b?: number,
-      c?: number,
-      d?: number,
-      e?: number,
-      f?: number
-    ): this
-    matrix(
-      mat: MatrixAlias,
-      b?: number,
-      c?: number,
-      d?: number,
-      e?: number,
-      f?: number
-    ): this
     matrixify(): Matrix
     memory(): object
-    mousedown(cb: Function | null): this
-    mousemove(cb: Function | null): this
-    mouseout(cb: Function | null): this
-    mouseover(cb: Function | null): this
-    mouseup(cb: Function | null): this
-    mouseenter(cb: Function | null): this
-    mouseleave(cb: Function | null): this
     move(x: NumberAlias, y: NumberAlias): this
     native(): LinkedHTMLElement
     next(): Element
     // off(events?: string | Event[], cb?: EventListener | number): this;
     // on(event: string, cb: Function, context?: object): this;
-    opacity(): number
-    opacity(o: number): this
-    relative(x: number, y: number): this
-    shear(lam: Matrix, cx: number, cy: number): this
     toRoot(): Svg
     /**
      * By default parents will return a list of elements up until the root svg.
@@ -1517,14 +1502,11 @@ declare module '@svgdotjs/svg.js' {
     remove(): this
     removeClass(name: string): this
     root(): Svg
-    rotate(d: number, cx?: number, cy?: number): this
-    scale(x?: number, y?: number, cx?: number, cy?: number): this
     screenCTM(): Matrix
     setData(data: object): this
     show(): this
     show(): this
     size(width?: NumberAlias, height?: NumberAlias): this
-    skew(x?: number, y?: number, cx?: number, cy?: number): this
     stop(jumpToEnd: boolean, clearQueue: boolean): Animation
     stop(
       offset?: NumberAlias | string,
@@ -1536,23 +1518,14 @@ declare module '@svgdotjs/svg.js' {
       color?: NumberAlias
       opacity?: NumberAlias
     }): Stop
-    stroke(): any
-    stroke(color: string): this
-    stroke(stroke: StrokeData): this
     timeline(): Timeline
     timeline(tl: Timeline): this
     toggleClass(name: string): this
     toParent(parent: Dom): this
     toParent(parent: Dom, i: number): this
     toSvg(): this
-    touchcancel(cb: Function | null): this
-    touchend(cb: Function | null): this
-    touchleave(cb: Function | null): this
-    touchmove(cb: Function | null): this
-    touchstart(cb: Function | null): this
     transform(): MatrixExtract
     transform(t: MatrixAlias, relative?: boolean): this
-    translate(x: number, y: number): this
     unclip(): this
     unmask(): this
     untransform(): this
@@ -1563,6 +1536,60 @@ declare module '@svgdotjs/svg.js' {
     x(x: NumberAlias): this
     y(): NumberAlias
     y(y: NumberAlias): this
+
+    fill(): string
+    fill(fill: FillData): this
+    fill(color: string): this
+    fill(pattern: Element): this
+    fill(image: Image): this
+    stroke(): string
+    stroke(stroke: StrokeData): this
+    stroke(color: string): this
+    matrix(): Matrix
+    matrix(
+      a: number,
+      b: number,
+      c: number,
+      d: number,
+      e: number,
+      f: number
+    ): this
+    matrix(mat: MatrixAlias): this
+    rotate(degrees: number, cx?: number, cy?: number): this
+    skew(skewX?: number, skewY?: number, cx?: number, cy?: number): this
+    scale(scaleX?: number, scaleY?: number, cx?: number, cy?: number): this
+    translate(x: number, y: number): this
+    shear(lam: number, cx: number, cy: number): this
+    relative(x: number, y: number): this
+    flip(direction?: string, around?: number): this
+    flip(around: number): this
+    opacity(): number
+    opacity(value: number): this
+    font(a: string): string
+    font(a: string, v: string | number): this
+    font(a: object): this
+
+    click(cb: EventHandler<MouseEvent>): this
+    dblclick(cb: EventHandler<MouseEvent>): this
+    mousedown(cb: EventHandler<MouseEvent>): this
+    mouseup(cb: EventHandler<MouseEvent>): this
+    mouseover(cb: EventHandler<MouseEvent>): this
+    mouseout(cb: EventHandler<MouseEvent>): this
+    mousemove(cb: EventHandler<MouseEvent>): this
+    mouseenter(cb: EventHandler<MouseEvent>): this
+    mouseleave(cb: EventHandler<MouseEvent>): this
+    touchstart(cb: EventHandler<TouchEvent>): this
+    touchmove(cb: EventHandler<TouchEvent>): this
+    touchleave(cb: EventHandler<TouchEvent>): this
+    touchend(cb: EventHandler<TouchEvent>): this
+    touchcancel(cb: EventHandler<TouchEvent>): this
+    contextmenu(cb: EventHandler<MouseEvent>): this
+    wheel(cb: EventHandler<WheelEvent>): this
+    pointerdown(cb: EventHandler<PointerEvent>): this
+    pointermove(cb: EventHandler<PointerEvent>): this
+    pointerup(cb: EventHandler<PointerEvent>): this
+    pointerleave(cb: EventHandler<PointerEvent>): this
+    pointercancel(cb: EventHandler<PointerEvent>): this
   }
 
   // ellipse.js

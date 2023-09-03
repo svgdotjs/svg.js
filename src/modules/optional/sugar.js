@@ -174,7 +174,14 @@ const methods = [
   'touchmove',
   'touchleave',
   'touchend',
-  'touchcancel'
+  'touchcancel',
+  'contextmenu',
+  'wheel',
+  'pointerdown',
+  'pointermove',
+  'pointerup',
+  'pointerleave',
+  'pointercancel'
 ].reduce(function (last, event) {
   // add event to Element
   const fn = function (f) {
