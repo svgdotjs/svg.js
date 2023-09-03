@@ -22,6 +22,7 @@ import {
 import { mockAdopt, assignNewId, adopt } from '../../../src/utils/adopter.js'
 import { buildFixtures } from '../../helpers.js'
 import { globals, getWindow } from '../../../src/utils/window.js'
+import { svg } from '../../../src/modules/core/namespaces.js'
 
 const { any, createSpy, objectContaining } = jasmine
 
@@ -171,6 +172,18 @@ describe('adopter.js', () => {
 
       // jasmine chucks on this when using the node directly
       expect(node.outerHTML).toBe(div.outerHTML)
+    })
+
+    it('gracefully handles nodes that are not yet imported into the document', () => {
+      const otherDoc = globals.document.implementation.createDocument(
+        svg,
+        'svg'
+      )
+      const rect = otherDoc.createElementNS(svg, 'rect')
+
+      const node = nodeOrNew('rect', rect)
+
+      expect(node).toEqual(rect)
     })
   })
 
