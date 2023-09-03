@@ -72,18 +72,18 @@ export default class Runner extends EventTarget {
     let times = 1
     let swing = false
     let wait = 0
-    duration = duration || timeline.duration
-    delay = delay || timeline.delay
+    duration = duration ?? timeline.duration
+    delay = delay ?? timeline.delay
     when = when || 'last'
 
     // If we have an object, unpack the values
     if (typeof duration === 'object' && !(duration instanceof Stepper)) {
-      delay = duration.delay || delay
-      when = duration.when || when
+      delay = duration.delay ?? delay
+      when = duration.when ?? when
       swing = duration.swing || swing
-      times = duration.times || times
-      wait = duration.wait || wait
-      duration = duration.duration || timeline.duration
+      times = duration.times ?? times
+      wait = duration.wait ?? wait
+      duration = duration.duration ?? timeline.duration
     }
 
     return {
