@@ -12,7 +12,11 @@ declare type CSSStyleName = Exclude<
 
 declare module '@svgdotjs/svg.js' {
   function SVG(): Svg
-  function SVG(selector: QuerySelector): Element
+  /**
+   * @param selectorOrHtml pass in a css selector or an html/svg string
+   * @param isHTML only used if first argument is an html string. Will treat the svg/html as html and not svg
+   */
+  function SVG(selectorOrHtml: QuerySelector, isHTML?: boolean): Element
   function SVG<T>(el: T): SVGTypeMapping<T>
   function SVG(domElement: HTMLElement): Element
 
