@@ -1019,12 +1019,15 @@ declare module '@svgdotjs/svg.js' {
     ): this
     x(x: number): this
     y(y: number): this
+    ax(x: number): this
+    ay(y: number): this
     dx(dx: number): this
     dy(dy: number): this
     cx(x: number): this
     cy(y: number): this
     dmove(dx: number, dy: number): this
     move(x: number, y: number): this
+    amove(x: number, y: number): this
     center(x: number, y: number): this
     size(width: number, height: number): this
     width(width: number): this

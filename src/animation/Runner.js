@@ -899,6 +899,14 @@ extend(Runner, {
     return this._queueNumber('y', y)
   },
 
+  ax(x) {
+    return this._queueNumber('ax', x)
+  },
+
+  ay(y) {
+    return this._queueNumber('ay', y)
+  },
+
   dx(x = 0) {
     return this._queueNumberDelta('x', x)
   },
@@ -978,6 +986,10 @@ extend(Runner, {
   // Add animatable move
   move(x, y) {
     return this.x(x).y(y)
+  },
+
+  amove(x, y) {
+    return this.ax(x).ay(y)
   },
 
   // Add animatable center
