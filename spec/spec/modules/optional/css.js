@@ -34,6 +34,13 @@ describe('css.js', () => {
           expect(rect.css('fill')).toBe('none')
         })
 
+        it('correctly returns css vars', () => {
+          const rect = new Rect({
+            style: '--foo: red;'
+          })
+          expect(rect.css('--foo')).toBe('red')
+        })
+
         it('returns undefined if css property is not set', () => {
           const rect = new Rect({
             style: 'fill: none; outline-width: 1px; stroke: none'
@@ -93,6 +100,22 @@ describe('css.js', () => {
             style: 'fill: none; outline-width: 1px; stroke: none'
           })
           expect(rect.css({ fill: null, stroke: 'black' }).css('fill')).toBe('')
+        })
+
+        it('allows single set of css vars', () => {
+          const rect = new Rect().css('--foo', 'red').css('--foo', 'green')
+          expect(rect.css()).toEqual({
+            '--foo': 'green'
+          })
+        })
+
+        it('allows multiple set of css vars via object', () => {
+          const rect = new Rect().css({ '--foo': 'red', '--bar': 'green' })
+
+          expect(rect.css()).toEqual({
+            '--foo': 'red',
+            '--bar': 'green'
+          })
         })
       })
     })

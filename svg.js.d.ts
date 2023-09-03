@@ -10,6 +10,11 @@ declare type CSSStyleName = Exclude<
   'parentRule' | 'length'
 >
 
+// create our own style declaration that includes css vars
+export interface CSSStyleDeclarationWithVars extends CSSStyleDeclaration {
+  [key: `--${string}`]: string
+}
+
 declare module '@svgdotjs/svg.js' {
   function SVG(): Svg
   /**
@@ -1160,11 +1165,16 @@ declare module '@svgdotjs/svg.js' {
     toggleClass(name: string): this
 
     // prototype method register in css.js
-    css(): Partial<CSSStyleDeclaration>
-    css<T extends CSSStyleName>(style: T): CSSStyleDeclaration[T]
-    css<T extends CSSStyleName[]>(style: T): Partial<CSSStyleDeclaration>
-    css<T extends CSSStyleName>(style: T, val: CSSStyleDeclaration[T]): this
-    css(style: Partial<CSSStyleDeclaration>): this
+    css(): Partial<CSSStyleDeclarationWithVars>
+    css<T extends CSSStyleName>(style: T): CSSStyleDeclarationWithVars[T]
+    css<T extends CSSStyleName[]>(
+      style: T
+    ): Partial<CSSStyleDeclarationWithVars>
+    css<T extends CSSStyleName>(
+      style: T,
+      val: CSSStyleDeclarationWithVars[T]
+    ): this
+    css(style: Partial<CSSStyleDeclarationWithVars>): this
     show(): this
     hide(): this
     visible(): boolean
