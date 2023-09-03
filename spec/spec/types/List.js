@@ -73,6 +73,35 @@ describe('List.js', () => {
       delete List.prototype.fooBar
     })
 
+    it('keeps Array prototype names prefixed with $', () => {
+      // We're picking a function that we know isn't part of core svg.js
+      // If we implement an 'unshift' function at some point, change this to something else
+      if (List.prototype.hasOwnProperty('unshift')) {
+        fail('List.unshift is already a function - change this test to use a different name!');
+        return;
+      }
+
+      List.extend([ 'unshift' ])
+      expect(new List().unshift).toEqual(any(Function))
+      expect(new List().$unshift).toEqual(Array.prototype.unshift)
+
+      // Check that it works!
+      const sourceArray = [
+        { 'unshift': () => 1 },
+        { 'unshift': () => 2 },
+        { 'unshift': () => 3 }
+      ];
+      const list = new List(sourceArray)
+
+      expect(list).toEqual(sourceArray)
+      expect(list.unshift(0)).toEqual([1,2,3])
+
+      expect(list.$unshift(0)).toEqual(4)
+      expect(list).toEqual([0].concat(sourceArray))
+
+      delete List.prototype.unshift;
+    });
+
     it('skips reserved names', () => {
       const { constructor, each, toArray } = List.prototype
       List.extend(['constructor', 'each', 'toArray'])
