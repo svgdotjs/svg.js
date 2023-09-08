@@ -12,11 +12,15 @@
     "animation"
   ],
   "author": "Wout Fierens <wout@mick-wout.com>",
-  "main": "dist/svg.node.js",
+  "main": "dist/svg.node.cjs",
   "unpkg": "dist/svg.min.js",
   "jsdelivr": "dist/svg.min.js",
   "browser": "dist/svg.esm.js",
   "module": "src/main.js",
+  "exports": {
+    "import": "./src/main.js",
+    "require": "./dist/svg.node.cjs"
+  },
   "files": [
     "/dist",
     "/src",

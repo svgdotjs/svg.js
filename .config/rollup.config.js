@@ -105,7 +105,7 @@ const config = (node, min, esm = false) => ({
     file: esm
       ? './dist/svg.esm.js'
       : node
-      ? './dist/svg.node.js'
+      ? './dist/svg.node.cjs'
       : min
       ? './dist/svg.min.js'
       : './dist/svg.js',
