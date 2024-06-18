@@ -6,6 +6,13 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+
+## [3.2.3]
+
+### Fixed
+
+- fixed import map for father (#1317)
+
 ## [3.2.2]
 
 ### Fixed
