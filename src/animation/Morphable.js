@@ -58,11 +58,12 @@ export default class Morphable {
   }
 
   done() {
-    const complete = this._context
-      .map(this._stepper.done)
-      .reduce(function (last, curr) {
-        return last && curr
-      }, true)
+    const complete = this._context.map(this._stepper.done).reduce(function (
+      last,
+      curr
+    ) {
+      return last && curr
+    }, true)
     return complete
   }
 
@@ -111,16 +112,16 @@ export default class Morphable {
       result = this._to
         ? result[this._to[4]]()
         : this._from
-        ? result[this._from[4]]()
-        : result
+          ? result[this._from[4]]()
+          : result
     }
 
     if (this._type === ObjectBag) {
       result = this._to
         ? result.align(this._to)
         : this._from
-        ? result.align(this._from)
-        : result
+          ? result.align(this._from)
+          : result
     }
 
     result = result.toConsumable()

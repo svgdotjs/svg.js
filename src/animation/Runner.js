@@ -251,8 +251,8 @@ export default class Runner extends EventTarget {
         x <= 0
           ? Math.round(f(1e-5))
           : x < endTime
-          ? f(x)
-          : Math.round(f(endTime - 1e-5))
+            ? f(x)
+            : Math.round(f(endTime - 1e-5))
       return position
     }
 
@@ -790,8 +790,8 @@ extend(Runner, {
       transforms.affine != null
         ? transforms.affine
         : affine != null
-        ? affine
-        : !isMatrix
+          ? affine
+          : !isMatrix
 
     // Create a morpher and set its type
     const morpher = new Morphable(this._stepper).type(

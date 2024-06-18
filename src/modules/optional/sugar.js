@@ -147,15 +147,15 @@ registerMethods(['Element', 'Runner'], {
     return a === 'leading'
       ? this.leading(v)
       : a === 'anchor'
-      ? this.attr('text-anchor', v)
-      : a === 'size' ||
-        a === 'family' ||
-        a === 'weight' ||
-        a === 'stretch' ||
-        a === 'variant' ||
-        a === 'style'
-      ? this.attr('font-' + a, v)
-      : this.attr(a, v)
+        ? this.attr('text-anchor', v)
+        : a === 'size' ||
+            a === 'family' ||
+            a === 'weight' ||
+            a === 'stretch' ||
+            a === 'variant' ||
+            a === 'style'
+          ? this.attr('font-' + a, v)
+          : this.attr(a, v)
   }
 })
 

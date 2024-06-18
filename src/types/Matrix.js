@@ -22,34 +22,34 @@ export default class Matrix {
       o.skew && o.skew.length
         ? o.skew[0]
         : isFinite(o.skew)
-        ? o.skew
-        : isFinite(o.skewX)
-        ? o.skewX
-        : 0
+          ? o.skew
+          : isFinite(o.skewX)
+            ? o.skewX
+            : 0
     const skewY =
       o.skew && o.skew.length
         ? o.skew[1]
         : isFinite(o.skew)
-        ? o.skew
-        : isFinite(o.skewY)
-        ? o.skewY
-        : 0
+          ? o.skew
+          : isFinite(o.skewY)
+            ? o.skewY
+            : 0
     const scaleX =
       o.scale && o.scale.length
         ? o.scale[0] * flipX
         : isFinite(o.scale)
-        ? o.scale * flipX
-        : isFinite(o.scaleX)
-        ? o.scaleX * flipX
-        : flipX
+          ? o.scale * flipX
+          : isFinite(o.scaleX)
+            ? o.scaleX * flipX
+            : flipX
     const scaleY =
       o.scale && o.scale.length
         ? o.scale[1] * flipY
         : isFinite(o.scale)
-        ? o.scale * flipY
-        : isFinite(o.scaleY)
-        ? o.scaleY * flipY
-        : flipY
+          ? o.scale * flipY
+          : isFinite(o.scaleY)
+            ? o.scaleY * flipY
+            : flipY
     const shear = o.shear || 0
     const theta = o.rotate || o.theta || 0
     const origin = new Point(
@@ -225,8 +225,8 @@ export default class Matrix {
     return axis === 'x'
       ? this.scaleO(-1, 1, around, 0)
       : axis === 'y'
-      ? this.scaleO(1, -1, 0, around)
-      : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
+        ? this.scaleO(1, -1, 0, around)
+        : this.scaleO(-1, -1, axis, around || axis) // Define an x, y flip point
   }
 
   // Initialize
@@ -238,16 +238,16 @@ export default class Matrix {
       source instanceof Element
         ? source.matrixify()
         : typeof source === 'string'
-        ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
-        : Array.isArray(source)
-        ? Matrix.fromArray(source)
-        : typeof source === 'object' && Matrix.isMatrixLike(source)
-        ? source
-        : typeof source === 'object'
-        ? new Matrix().transform(source)
-        : arguments.length === 6
-        ? Matrix.fromArray([].slice.call(arguments))
-        : base
+          ? Matrix.fromArray(source.split(delimiter).map(parseFloat))
+          : Array.isArray(source)
+            ? Matrix.fromArray(source)
+            : typeof source === 'object' && Matrix.isMatrixLike(source)
+              ? source
+              : typeof source === 'object'
+                ? new Matrix().transform(source)
+                : arguments.length === 6
+                  ? Matrix.fromArray([].slice.call(arguments))
+                  : base
 
     // Merge the source matrix with the base matrix
     this.a = source.a != null ? source.a : base.a

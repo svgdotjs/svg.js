@@ -52,8 +52,8 @@ export default function attr(attr, val, ns) {
     return val == null
       ? defaults[attr]
       : isNumber.test(val)
-      ? parseFloat(val)
-      : val
+        ? parseFloat(val)
+        : val
   } else {
     // Loop through hooks and execute them to convert value
     val = hooks.reduce((_val, hook) => {

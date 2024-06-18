@@ -31,10 +31,10 @@ export default class SVGNumber {
       this.value = isNaN(value)
         ? 0
         : !isFinite(value)
-        ? value < 0
-          ? -3.4e38
-          : +3.4e38
-        : value
+          ? value < 0
+            ? -3.4e38
+            : +3.4e38
+          : value
     } else if (typeof value === 'string') {
       unit = value.match(numberAndUnit)
 
@@ -93,8 +93,8 @@ export default class SVGNumber {
       (this.unit === '%'
         ? ~~(this.value * 1e8) / 1e6
         : this.unit === 's'
-        ? this.value / 1e3
-        : this.value) + this.unit
+          ? this.value / 1e3
+          : this.value) + this.unit
     )
   }
 

@@ -1,4 +1,4 @@
-import pkg from '../package.json' assert { type: 'json' }
+import pkg from '../package.json' with { type: 'json' }
 import babel from '@rollup/plugin-babel'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
@@ -105,10 +105,10 @@ const config = (node, min, esm = false) => ({
     file: esm
       ? './dist/svg.esm.js'
       : node
-      ? './dist/svg.node.cjs'
-      : min
-      ? './dist/svg.min.js'
-      : './dist/svg.js',
+        ? './dist/svg.node.cjs'
+        : min
+          ? './dist/svg.min.js'
+          : './dist/svg.js',
     format: esm ? 'esm' : node ? 'cjs' : 'iife',
     name: 'SVG',
     sourcemap: true,

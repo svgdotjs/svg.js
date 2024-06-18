@@ -320,44 +320,44 @@ declare module '@svgdotjs/svg.js' {
   type SVGTypeMapping<T> = T extends HTMLElement
     ? Dom
     : T extends SVGSVGElement
-    ? Svg
-    : T extends SVGRectElement
-    ? Rect
-    : T extends SVGCircleElement
-    ? Circle
-    : T extends SVGPathElement
-    ? Path
-    : T extends SVGTextElement
-    ? Text
-    : T extends SVGTextPathElement
-    ? TextPath
-    : T extends SVGGElement
-    ? G
-    : T extends SVGLineElement
-    ? Line
-    : T extends SVGPolylineElement
-    ? Polyline
-    : T extends SVGPolygonElement
-    ? Polygon
-    : T extends SVGGradientElement
-    ? Gradient
-    : T extends SVGImageElement
-    ? Image
-    : T extends SVGEllipseElement
-    ? Ellipse
-    : T extends SVGMaskElement
-    ? Mask
-    : T extends SVGMarkerElement
-    ? Marker
-    : T extends SVGClipPathElement
-    ? ClipPath
-    : T extends SVGTSpanElement
-    ? Tspan
-    : T extends SVGSymbolElement
-    ? Symbol
-    : T extends SVGUseElement
-    ? Use
-    : Element
+      ? Svg
+      : T extends SVGRectElement
+        ? Rect
+        : T extends SVGCircleElement
+          ? Circle
+          : T extends SVGPathElement
+            ? Path
+            : T extends SVGTextElement
+              ? Text
+              : T extends SVGTextPathElement
+                ? TextPath
+                : T extends SVGGElement
+                  ? G
+                  : T extends SVGLineElement
+                    ? Line
+                    : T extends SVGPolylineElement
+                      ? Polyline
+                      : T extends SVGPolygonElement
+                        ? Polygon
+                        : T extends SVGGradientElement
+                          ? Gradient
+                          : T extends SVGImageElement
+                            ? Image
+                            : T extends SVGEllipseElement
+                              ? Ellipse
+                              : T extends SVGMaskElement
+                                ? Mask
+                                : T extends SVGMarkerElement
+                                  ? Marker
+                                  : T extends SVGClipPathElement
+                                    ? ClipPath
+                                    : T extends SVGTSpanElement
+                                      ? Tspan
+                                      : T extends SVGSymbolElement
+                                        ? Symbol
+                                        : T extends SVGUseElement
+                                          ? Use
+                                          : Element
 
   // element type as string
   type SvgType = 'svg'

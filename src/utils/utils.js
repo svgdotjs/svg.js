@@ -82,8 +82,8 @@ export function getOrigin(o, element) {
     ;[ox, oy] = Array.isArray(origin)
       ? origin
       : typeof origin === 'object'
-      ? [origin.x, origin.y]
-      : [origin, origin]
+        ? [origin.x, origin.y]
+        : [origin, origin]
   }
 
   // Make sure to only call bbox when actually needed
@@ -97,16 +97,16 @@ export function getOrigin(o, element) {
       ox = ox.includes('left')
         ? x
         : ox.includes('right')
-        ? x + width
-        : x + width / 2
+          ? x + width
+          : x + width / 2
     }
 
     if (condY) {
       oy = oy.includes('top')
         ? y
         : oy.includes('bottom')
-        ? y + height
-        : y + height / 2
+          ? y + height
+          : y + height / 2
     }
   }
 
