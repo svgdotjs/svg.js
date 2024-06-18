@@ -18,8 +18,16 @@
   "browser": "dist/svg.esm.js",
   "module": "src/main.js",
   "exports": {
-    "import": "./src/main.js",
-    "require": "./dist/svg.node.cjs"
+    ".": {
+      "import": {
+        "default": "./src/main.js",
+        "types": "./svg.js.d.ts"
+      },
+      "require": {
+        "default": "./dist/svg.node.cjs",
+        "types": "./svg.js.d.ts"
+      }
+    }
   },
   "files": [
     "/dist",
