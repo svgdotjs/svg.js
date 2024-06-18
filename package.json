@@ -20,12 +20,12 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./src/main.js",
-        "types": "./svg.js.d.ts"
+        "types": "./svg.js.d.ts",
+        "default": "./src/main.js"
       },
       "require": {
-        "default": "./dist/svg.node.cjs",
-        "types": "./svg.js.d.ts"
+        "types": "./svg.js.d.ts",
+        "default": "./dist/svg.node.cjs"
       }
     }
   },
