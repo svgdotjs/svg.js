@@ -1,6 +1,6 @@
 {
   "name": "@svgdotjs/svg.js",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "type": "module",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgjs.dev/",
@@ -20,12 +20,12 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./src/main.js",
-        "types": "./svg.js.d.ts"
+        "types": "./svg.js.d.ts",
+        "default": "./src/main.js"
       },
       "require": {
-        "default": "./dist/svg.node.cjs",
-        "types": "./svg.js.d.ts"
+        "types": "./svg.js.d.ts",
+        "default": "./dist/svg.node.cjs"
       }
     }
   },
