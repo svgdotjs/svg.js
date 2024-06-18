@@ -11,7 +11,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 ### Fixed
 
 - skip descriptive elements on rebuild and `toParent()` (#1304)
-- allow 0 as animation duration and delay (#1125)
+- allow 0 as animation duration and delay (#1225)
 - allow nodes that are not imported yet (#1252)
 - only apply color conversion to attributes that can take a color (#1241)
 - support css vars (#1230)
