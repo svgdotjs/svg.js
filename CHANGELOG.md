@@ -6,6 +6,27 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.2.1]
+
+### Fixed
+
+- skip descriptive elements on rebuild and `toParent()` (#1304)
+- allow 0 as animation duration and delay (#1125)
+- allow nodes that are not imported yet (#1252)
+- only apply color conversion to attributes that can take a color (#1241)
+- support css vars (#1230)
+- fix import of leading, dont write data to dom if not neccessary
+- discontinue use of svgjs:data in favor of data-svg
+- allow + as delemiter in paths (#1165)
+- added `amove()` methods to runner (#1131)
+- fix `css()`, dont throw when screenCtm fails (#968)
+- several type fixes
+
+### Added
+
+- add terminate method to timeline so memory can be freed (#1295)
+- add more events to sugar (#1217)
+
 ## [3.2.0]
 
 ### Fixed
@@ -1012,6 +1033,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 <!-- Headings above link to the releases listed here -->
 
+[3.2.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.1
 [3.2.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.0
 [3.1.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.2
 [3.1.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.1
