@@ -26,7 +26,7 @@ const getBabelConfig = (node = false) => {
     [
       '@babel/transform-runtime',
       {
-        version: '^7.14.5',
+        version: '^7.24.7',
         regenerator: false,
         useESModules: true
       }
