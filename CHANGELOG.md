@@ -6,6 +6,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.2.2]
+
+### Fixed
+
+- fixed import map
+
 ## [3.2.1]
 
 ### Fixed
@@ -1033,6 +1039,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 <!-- Headings above link to the releases listed here -->
 
+[3.2.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.2
 [3.2.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.1
 [3.2.0]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.0
 [3.1.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.1.2
