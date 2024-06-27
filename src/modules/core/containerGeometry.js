@@ -1,6 +1,8 @@
 import Matrix from '../../types/Matrix.js'
 import Point from '../../types/Point.js'
+import Box from '../../types/Box.js'
 import { proportionalSize } from '../../utils/utils.js'
+import { getWindow } from '../../utils/window.js'
 
 export function dmove(dx, dy) {
   this.children().forEach((child) => {
@@ -10,7 +12,12 @@ export function dmove(dx, dy) {
     // e.g. title and other descriptive elements
     try {
       // Get the childs bbox
-      bbox = child.bbox()
+      // Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1905039
+      // Because bbox for nested svgs returns the contents bbox in the coordinate space of the svg itself (weird!), we cant use bbox for svgs
+      // Therefore we have to use getBoundingClientRect. But THAT is broken (as explained in the bug).
+      // Funnily enough the broken behavior would work for us but that breaks it in chrome
+      // So we have to replicate the broken behavior of FF by just reading the attributes of the svg itself
+      bbox = child.node instanceof getWindow().SVGSVGElement ? new Box(child.attr(['x', 'y', 'width', 'height'])) : child.bbox()
     } catch (e) {
       return
     }

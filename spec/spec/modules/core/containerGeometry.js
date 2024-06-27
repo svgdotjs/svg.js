@@ -47,6 +47,60 @@ describe('containerGeometry.js', () => {
       expect(newBox.h).toBeCloseTo(oldBox.h, 4)
     })
 
+    it('moves nested svgs in a group correctly when calling dmove', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      const s1 = g.nested().size(100, 100).move(100, 100)
+      s1.rect(100, 100).move(50, 50).rotate(10)
+
+      const oldBox = g.bbox()
+
+      g.dmove(10, 10)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x + 10, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y + 10, 4)
+      expect(newBox.w).toBeCloseTo(oldBox.w, 4)
+      expect(newBox.h).toBeCloseTo(oldBox.h, 4)
+    })
+
+    it('moves nested svgs in a group correctly when calling dmove (2)', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      const s1 = g.nested().move(100, 100)
+      s1.rect(100, 100).move(50, 50).rotate(10)
+
+      const oldBox = g.bbox()
+
+      g.dmove(10, 10)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x + 10, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y + 10, 4)
+      expect(newBox.w).toBeCloseTo(oldBox.w, 4)
+      expect(newBox.h).toBeCloseTo(oldBox.h, 4)
+    })
+
+    it('moves nested svgs in a group correctly when calling dmove (3)', () => {
+      const canvas = SVG().addTo(container)
+      const g = canvas.group()
+      const s1 = g.nested()
+      s1.rect(100, 100).move(50, 50).rotate(10)
+
+      const oldBox = g.bbox()
+
+      g.dmove(10, 10)
+
+      const newBox = g.bbox()
+
+      expect(newBox.x).toBeCloseTo(oldBox.x + 10, 4)
+      expect(newBox.y).toBeCloseTo(oldBox.y + 10, 4)
+      expect(newBox.w).toBeCloseTo(oldBox.w, 4)
+      expect(newBox.h).toBeCloseTo(oldBox.h, 4)
+    })
+
     it('it does not fail when hitting elements without bbox', () => {
       const canvas = SVG().addTo(container)
       const g = canvas.group()
