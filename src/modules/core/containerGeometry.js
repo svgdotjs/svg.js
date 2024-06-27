@@ -17,7 +17,10 @@ export function dmove(dx, dy) {
       // Therefore we have to use getBoundingClientRect. But THAT is broken (as explained in the bug).
       // Funnily enough the broken behavior would work for us but that breaks it in chrome
       // So we have to replicate the broken behavior of FF by just reading the attributes of the svg itself
-      bbox = child.node instanceof getWindow().SVGSVGElement ? new Box(child.attr(['x', 'y', 'width', 'height'])) : child.bbox()
+      bbox =
+        child.node instanceof getWindow().SVGSVGElement
+          ? new Box(child.attr(['x', 'y', 'width', 'height']))
+          : child.bbox()
     } catch (e) {
       return
     }
