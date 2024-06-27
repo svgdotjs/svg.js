@@ -1,6 +1,6 @@
 {
   "name": "@svgdotjs/svg.js",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "type": "module",
   "description": "A lightweight library for manipulating and animating SVG.",
   "url": "https://svgjs.dev/",

@@ -6,6 +6,12 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 ====
 
+## [3.2.4]
+
+### Fixed
+
+- fixed dmove for nested svgs (https://github.com/svgdotjs/svg.draggable.js/issues/127)
+
 ## [3.2.3]
 
 ### Fixed
@@ -1045,6 +1051,7 @@ The document follows the conventions described in [“Keep a CHANGELOG”](http:
 
 <!-- Headings above link to the releases listed here -->
 
+[3.2.4]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.4
 [3.2.3]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.3
 [3.2.2]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.2
 [3.2.1]: https://github.com/svgdotjs/svg.js/releases/tag/3.2.1
