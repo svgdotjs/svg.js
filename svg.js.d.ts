@@ -10,8 +10,20 @@ declare type CSSStyleName = Exclude<
   'parentRule' | 'length'
 >
 
+// camelCase to kebab-case
+type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
+	? U extends Uncapitalize<U>
+	? `${Lowercase<T>}${CamelToKebab<U>}`
+	: `${Lowercase<T>}-${CamelToKebab<U>}`
+	: S;
+
+type ConvertKeysToKebab<T> = {
+	[K in keyof T as CamelToKebab<K & string>]: T[K];
+};
+
+
 // create our own style declaration that includes css vars
-interface CSSStyleDeclarationWithVars extends CSSStyleDeclaration {
+interface CSSStyleDeclarationWithVars extends ConvertKeysToKebab<CSSStyleDeclaration> {
   [key: `--${string}`]: string
 }
 
