@@ -4,26 +4,27 @@
 // trick to keep reference to Array build-in type
 declare class BuiltInArray<T> extends Array<T> {}
 
-// trick to have nice attribute list for CSS
-declare type CSSStyleName = Exclude<
-  keyof CSSStyleDeclaration,
-  'parentRule' | 'length'
->
-
 // camelCase to kebab-case
-type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
-	? U extends Uncapitalize<U>
-	? `${Lowercase<T>}${CamelToKebab<U>}`
-	: `${Lowercase<T>}-${CamelToKebab<U>}`
-	: S;
+declare type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
+  ? U extends Uncapitalize<U>
+  ? `${Lowercase<T>}${CamelToKebab<U>}`
+  : `${Lowercase<T>}-${CamelToKebab<U>}`
+  : S;
 
-type ConvertKeysToKebab<T> = {
-	[K in keyof T as CamelToKebab<K & string>]: T[K];
+declare type ConvertKeysToKebab<T> = {
+  [K in keyof T as CamelToKebab<K & string>]: T[K];
 };
 
+declare type KebabCSSStyleDeclaration = ConvertKeysToKebab<CSSStyleDeclaration>
+
+// trick to have nice attribute list for CSS
+declare type CSSStyleName = Exclude<
+  keyof KebabCSSStyleDeclaration,
+  'parent-rule' | 'length'
+>
 
 // create our own style declaration that includes css vars
-interface CSSStyleDeclarationWithVars extends ConvertKeysToKebab<CSSStyleDeclaration> {
+interface CSSStyleDeclarationWithVars extends KebabCSSStyleDeclaration {
   [key: `--${string}`]: string
 }
 
