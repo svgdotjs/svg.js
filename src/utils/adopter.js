@@ -127,7 +127,9 @@ export function extend(modules, methods) {
 
   for (i = modules.length - 1; i >= 0; i--) {
     for (key in methods) {
-      modules[i].prototype[key] = methods[key]
+      if (!modules[i].prototype[key]) {
+        modules[i].prototype[key] = methods[key]
+      }
     }
   }
 }
