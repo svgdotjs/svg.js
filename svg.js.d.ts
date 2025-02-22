@@ -1677,7 +1677,6 @@ declare module '@svgdotjs/svg.js' {
     constructor(node?: SVGGElement)
     constructor(attr: object)
     node: SVGGElement
-    gbox(): Box
   }
 
   // hyperlink.js
