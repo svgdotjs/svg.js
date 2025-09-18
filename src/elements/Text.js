@@ -49,21 +49,21 @@ export default class Text extends Shape {
       const leading = this.dom.leading
 
       this.each(function (i) {
-        if (isDescriptive(this.node)) return
+        if (isDescriptive(self.node)) return
 
         const fontSize = globals.window
-          .getComputedStyle(this.node)
+          .getComputedStyle(self.node)
           .getPropertyValue('font-size')
 
         const dy = leading * new SVGNumber(fontSize)
 
-        if (this.dom.newLined) {
-          this.attr('x', self.attr('x'))
+        if (self.dom.newLined) {
+          self.attr('x', self.attr('x'))
 
-          if (this.text() === '\n') {
+          if (self.text() === '\n') {
             blankLineOffset += dy
           } else {
-            this.attr('dy', i ? dy + blankLineOffset : 0)
+            self.attr('dy', i ? dy + blankLineOffset : 0)
             blankLineOffset = 0
           }
         }
