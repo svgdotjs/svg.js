@@ -49,7 +49,7 @@ export default class Tspan extends Shape {
     const dy = text.dom.leading * new SVGNumber(fontSize)
 
     // apply new position
-    return this.dy(i ? dy : 0).attr('x', text.x())
+    return this.dy(i ? dy : 0).attr('dx', text.x())
   }
 
   // Set text content
