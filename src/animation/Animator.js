@@ -62,21 +62,20 @@ const Animator = {
   },
 
   _draw(now) {
-    try {
-      // Run all the timeouts we can run, if they are not ready yet, add them
-      // to the end of the queue immediately! (bad timeouts!!! [sarcasm])
-      let nextTimeout = null
-      const lastTimeout = Animator.timeouts.last()
-      while ((nextTimeout = Animator.timeouts.shift())) {
-        // Run the timeout if its time, or push it to the end
-        if (now >= nextTimeout.time) {
-          nextTimeout.run()
-        } else {
-          Animator.timeouts.push(nextTimeout)
-        }
+    let sentinel = null
 
-        // If we hit the last item, we should stop shifting out more items
-        if (nextTimeout === lastTimeout) break
+    try {
+      let node = null
+      sentinel = Animator.timeouts._first ? Animator.timeouts.push({}) : null
+
+      while ((node = Animator.timeouts.shiftNode())) {
+        if (node === sentinel) break
+
+        if (now >= node.value.time) {
+          node.value.run()
+        } else {
+          Animator.timeouts.push(node)
+        }
       }
 
       // Run all of the animation frames
@@ -91,6 +90,10 @@ const Animator = {
         nextImmediate()
       }
     } finally {
+      if (sentinel) {
+        Animator.timeouts.remove(sentinel)
+      }
+
       // Callback errors intentionally propagate. Always restore the scheduler
       // first so queued work can continue on a later frame.
       const pending =

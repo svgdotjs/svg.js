@@ -59,4 +59,12 @@ export default class Queue {
     this._last = this._first ? this._last : null
     return remove.value
   }
+
+  shiftNode() {
+    const node = this._first
+    if (!node) return null
+
+    this.remove(node)
+    return node
+  }
 }
