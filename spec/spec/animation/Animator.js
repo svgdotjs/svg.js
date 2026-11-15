@@ -26,6 +26,33 @@ describe('Animator.js', () => {
       jasmine.RequestAnimationFrame.tick()
       expect(spy).toHaveBeenCalled()
     })
+
+    it('preserves execution order across multiple timeouts', () => {
+      const order = []
+      Animator.timeout(() => order.push('t2'), 100)
+      Animator.timeout(() => order.push('t1'), 50)
+      Animator.timeout(() => order.push('t3'), 150)
+
+      jasmine.RequestAnimationFrame.tick(60)
+      expect(order).toEqual(['t1'])
+      jasmine.RequestAnimationFrame.tick(50)
+      expect(order).toEqual(['t1', 't2'])
+      jasmine.RequestAnimationFrame.tick(50)
+      expect(order).toEqual(['t1', 't2', 't3'])
+    })
+
+    it('does not synchronously execute timeouts added during the current draw loop', () => {
+      const nestedSpy = jasmine.createSpy('nested')
+      Animator.timeout(() => {
+        Animator.timeout(nestedSpy, 0)
+      }, 0)
+
+      jasmine.RequestAnimationFrame.tick(1)
+      expect(nestedSpy).not.toHaveBeenCalled()
+
+      jasmine.RequestAnimationFrame.tick(1)
+      expect(nestedSpy).toHaveBeenCalled()
+    })
   })
 
   describe('cancelTimeout()', () => {
@@ -37,6 +64,65 @@ describe('Animator.js', () => {
       expect(spy).not.toHaveBeenCalled()
       jasmine.RequestAnimationFrame.tick(100)
       expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('cancels a timeout after an intermediate animation frame has rendered', () => {
+      const spy = jasmine.createSpy('tester')
+      const id = Animator.timeout(spy, 100)
+
+      jasmine.RequestAnimationFrame.tick(50)
+      expect(spy).not.toHaveBeenCalled()
+
+      Animator.clearTimeout(id)
+
+      jasmine.RequestAnimationFrame.tick(60)
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('preserves the queue node instance across requeues', () => {
+      const id = Animator.timeout(() => {}, 100)
+      jasmine.RequestAnimationFrame.tick(50)
+
+      expect(Animator.timeouts._first).toBe(id)
+    })
+
+    it('does not loop infinitely when an earlier callback cancels the last timeout in the batch', () => {
+      let t3
+      let shifts = 0
+      const maxShifts = 10
+      const originalShiftNode = Animator.timeouts.shiftNode.bind(
+        Animator.timeouts
+      )
+
+      spyOn(Animator.timeouts, 'shiftNode').and.callFake(() => {
+        if (++shifts > maxShifts) {
+          throw new Error(
+            'Timeout processing exceeded maximum expected iterations'
+          )
+        }
+        return originalShiftNode()
+      })
+
+      const t1Spy = jasmine.createSpy('t1').and.callFake(() => {
+        Animator.clearTimeout(t3)
+      })
+      const t2Spy = jasmine.createSpy('t2')
+      const t3Spy = jasmine.createSpy('t3')
+
+      Animator.timeout(t1Spy, 0)
+      Animator.timeout(t2Spy, 100)
+      t3 = Animator.timeout(t3Spy, 100)
+
+      jasmine.RequestAnimationFrame.tick(1)
+
+      expect(shifts).toBeLessThanOrEqual(maxShifts)
+      expect(t1Spy).toHaveBeenCalled()
+      expect(t2Spy).not.toHaveBeenCalled()
+      expect(t3Spy).not.toHaveBeenCalled()
+
+      jasmine.RequestAnimationFrame.tick(100)
+      expect(t2Spy).toHaveBeenCalled()
+      expect(t3Spy).not.toHaveBeenCalled()
     })
   })
 

@@ -104,4 +104,31 @@ describe('Queue.js', function () {
       expect(val).toBe(1)
     })
   })
+
+  describe('shiftNode()', function () {
+    it('returns null if queue is empty', function () {
+      var queue = new Queue()
+      expect(queue.shiftNode()).toBeNull()
+    })
+
+    it('removes and returns the node instance without unwrapping value', function () {
+      var queue = new Queue()
+      var item1 = queue.push(1)
+      var item2 = queue.push(2)
+      var item3 = queue.push(3)
+
+      var node = queue.shiftNode()
+
+      expect(node).toBe(item1)
+      expect(node.value).toBe(1)
+      expect(node.prev).toBeNull()
+      expect(node.next).toBeNull()
+
+      expect(queue.first()).toBe(2)
+      expect(queue.last()).toBe(3)
+
+      queue.remove(item2)
+      expect(queue.first()).toBe(3)
+    })
+  })
 })
