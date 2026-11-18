@@ -72,6 +72,7 @@ declare module '@svgdotjs/svg.js' {
   type SVGClass<T = any> = new (...args: any[]) => T
 
   function eid(name: string): string
+  function resetDid(): void
   function create(name: string): SVGElement
   function create(
     name: string,

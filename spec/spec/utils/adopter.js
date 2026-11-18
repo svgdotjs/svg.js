@@ -7,6 +7,7 @@ import {
   register,
   getClass,
   eid,
+  resetDid,
   extend,
   wrapWithAttrCheck,
   Rect,
@@ -208,6 +209,17 @@ describe('adopter.js', () => {
   describe('eid()', () => {
     it('returns a unique id', () => {
       expect(eid('foo')).not.toBe(eid('foo'))
+    })
+  })
+
+  describe('resetDid()', () => {
+    it('restarts the id counter so ids are reproducible', () => {
+      resetDid()
+      const first = eid('foo')
+      eid('foo')
+      resetDid()
+      expect(eid('foo')).toBe(first)
+      expect(first).toBe('SvgjsFoo1000')
     })
   })
 

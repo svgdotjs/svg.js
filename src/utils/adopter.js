@@ -103,6 +103,10 @@ export function eid(name) {
   return 'Svgjs' + capitalize(name) + did++
 }
 
+export function resetDid() {
+  did = 1000
+}
+
 // Deep new id assignment
 export function assignNewId(node) {
   // do the same for SVG child nodes as well
