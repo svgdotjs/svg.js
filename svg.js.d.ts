@@ -1522,9 +1522,9 @@ declare module '@svgdotjs/svg.js' {
     clone(deep?: boolean, assignNewIds?: boolean): this
     ctm(): Matrix
     cx(): number
-    cx(x: number): this
+    cx(x: NumberAlias): this
     cy(): number
-    cy(y: number): this
+    cy(y: NumberAlias): this
     data(name: string, value: any, sustain?: boolean): this
     data(name: string): any
     data(val: object): this
@@ -1933,7 +1933,7 @@ declare module '@svgdotjs/svg.js' {
     rx(rx: NumberAlias): this
     ry(): NumberAlias
     ry(ry: NumberAlias): this
-    radius(x: number, y?: number): this
+    radius(x: NumberAlias, y?: NumberAlias): this
   }
 
   // shape.js
@@ -1942,7 +1942,7 @@ declare module '@svgdotjs/svg.js' {
   // sugar.js
   interface StrokeData {
     color?: string
-    width?: number
+    width?: NumberAlias
     opacity?: number
     linecap?: string
     linejoin?: string
