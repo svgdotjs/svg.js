@@ -111,6 +111,12 @@ describe('attr.js', () => {
       expect(rect.attr('id')).toBe('#ff0')
     })
 
+    it('converts rgb colors with decimal components', () => {
+      const rect = new Rect().attr('fill', 'rgb(127.5, 0, 0)')
+
+      expect(rect.attr('fill')).toBe('#800000')
+    })
+
     it('executes registered hooks', () => {
       registerAttrHook((attr, val, el) => {
         if (el.node.id === 'somethingVeryRandom' && attr === 'name') {

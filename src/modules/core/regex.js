@@ -5,8 +5,9 @@ export const numberAndUnit =
 // Parse hex value
 export const hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
 
-// Parse rgb value
-export const rgb = /rgb\((\d+),(\d+),(\d+)\)/
+// Parse rgb value (integer, decimal or percentage components)
+export const rgb =
+  /rgb\(((?:\d+(?:\.\d*)?|\.\d+)%?),((?:\d+(?:\.\d*)?|\.\d+)%?),((?:\d+(?:\.\d*)?|\.\d+)%?)\)/
 
 // Parse reference id
 export const reference = /^(#[^\s]+)$/

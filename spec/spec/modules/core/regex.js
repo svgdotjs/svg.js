@@ -49,6 +49,13 @@ describe('regex.js', () => {
       expect(match[3]).toBe('56')
     })
 
+    it('matches decimal and percentage rgb values', () => {
+      const match = 'rgb(12.5,100%,.5%)'.match(regex.rgb)
+      expect(match[1]).toBe('12.5')
+      expect(match[2]).toBe('100%')
+      expect(match[3]).toBe('.5%')
+    })
+
     /* it('does not matches without #', () => {
       const match = '123456'.match(regex.hex)
       expect(match).toBe(null)
