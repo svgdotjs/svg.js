@@ -102,6 +102,28 @@ describe('Color.js', () => {
       expect(color.b).toBe(128)
     })
 
+    it('parses rgb strings with decimal components', () => {
+      const color = new Color('rgb(127.5, 0.25, 255)')
+      expect(color.r).toBe(127.5)
+      expect(color.g).toBe(0.25)
+      expect(color.b).toBe(255)
+      expect(color.toHex()).toBe('#8000ff')
+    })
+
+    it('parses rgb strings with percentages', () => {
+      const color = new Color('rgb(100%, 50%, 0%)')
+      expect(color.r).toBe(255)
+      expect(color.g).toBe(127.5)
+      expect(color.b).toBe(0)
+      expect(color.toHex()).toBe('#ff8000')
+    })
+
+    it('throws the unsupported format error for rgb strings it cannot parse', () => {
+      expect(() => new Color('rgb(255 0 128)')).toThrowError(
+        "Unsupported string format, can't construct Color"
+      )
+    })
+
     it('correclty parses a 3 digit hex string', () => {
       color = new Color('#f06')
       expect(color.r).toBe(255)

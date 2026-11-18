@@ -233,10 +233,15 @@ export default class Color {
     } else if (typeof a === 'string') {
       if (isRgb.test(a)) {
         const noWhitespace = a.replace(whitespace, '')
-        const [_a, _b, _c] = rgb
-          .exec(noWhitespace)
+        const match = rgb.exec(noWhitespace)
+        if (!match) {
+          throw Error("Unsupported string format, can't construct Color")
+        }
+        const [_a, _b, _c] = match
           .slice(1, 4)
-          .map((v) => parseInt(v))
+          .map((v) =>
+            v.endsWith('%') ? (parseFloat(v) / 100) * 255 : parseFloat(v)
+          )
         Object.assign(this, { _a, _b, _c, _d: 0, space: 'rgb' })
       } else if (isHex.test(a)) {
         const hexParse = (v) => parseInt(v, 16)
